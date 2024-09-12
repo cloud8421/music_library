@@ -1,0 +1,31 @@
+<.header>
+  Record <%= @record.id %>
+  <:subtitle>This is a record record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/records/#{@record}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit record</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Type"><%= @record.type %></:item>
+  <:item title="Title"><%= @record.title %></:item>
+  <:item title="Musicbrainz"><%= @record.musicbrainz_id %></:item>
+  <:item title="Year"><%= @record.year %></:item>
+  <:item title="Genres"><%= @record.genres %></:item>
+  <:item title="Image"><%= @record.image %></:item>
+</.list>
+
+<.back navigate={~p"/records"}>Back to records</.back>
+
+<.modal :if={@live_action == :edit} id="record-modal" show on_cancel={JS.patch(~p"/records/#{@record}")}>
+  <.live_component
+    module={MusicLibraryWeb.RecordLive.FormComponent}
+    id={@record.id}
+    title={@page_title}
+    action={@live_action}
+    record={@record}
+    patch={~p"/records/#{@record}"}
+  />
+</.modal>

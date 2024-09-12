@@ -1,0 +1,46 @@
+<.header>
+  Listing Records
+  <:actions>
+    <.link patch={~p"/records/new"}>
+      <.button>New Record</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="records"
+  rows={@streams.records}
+  row_click={fn {_id, record} -> JS.navigate(~p"/records/#{record}") end}
+>
+  <:col :let={{_id, record}} label="Type"><%= record.type %></:col>
+  <:col :let={{_id, record}} label="Title"><%= record.title %></:col>
+  <:col :let={{_id, record}} label="Musicbrainz"><%= record.musicbrainz_id %></:col>
+  <:col :let={{_id, record}} label="Year"><%= record.year %></:col>
+  <:col :let={{_id, record}} label="Genres"><%= record.genres %></:col>
+  <:col :let={{_id, record}} label="Image"><%= record.image %></:col>
+  <:action :let={{_id, record}}>
+    <div class="sr-only">
+      <.link navigate={~p"/records/#{record}"}>Show</.link>
+    </div>
+    <.link patch={~p"/records/#{record}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, record}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="record-modal" show on_cancel={JS.patch(~p"/records")}>
+  <.live_component
+    module={MusicLibraryWeb.RecordLive.FormComponent}
+    id={@record.id || :new}
+    title={@page_title}
+    action={@live_action}
+    record={@record}
+    patch={~p"/records"}
+  />
+</.modal>
