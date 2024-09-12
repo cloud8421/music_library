@@ -42,8 +42,9 @@ defmodule MusicLibraryWeb do
         formats: [:html, :json],
         layouts: [html: MusicLibraryWeb.Layouts]
 
+      use Gettext, backend: MusicLibraryWeb.Gettext
+
       import Plug.Conn
-      import MusicLibraryWeb.Gettext
 
       unquote(verified_routes())
     end

@@ -17,7 +17,7 @@ defmodule MusicLibraryWeb.CoreComponents do
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS
-  import MusicLibraryWeb.Gettext
+  use Gettext, backend: MusicLibraryWeb.Gettext
 
   @doc """
   Renders a modal.
