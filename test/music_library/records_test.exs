@@ -8,7 +8,14 @@ defmodule MusicLibrary.RecordsTest do
 
     import MusicLibrary.RecordsFixtures
 
-    @invalid_attrs %{type: nil, title: nil, image: nil, year: nil, musicbrainz_id: nil, genres: nil}
+    @invalid_attrs %{
+      type: nil,
+      title: nil,
+      image: nil,
+      year: nil,
+      musicbrainz_id: nil,
+      genres: nil
+    }
 
     test "list_records/0 returns all records" do
       record = record_fixture()
@@ -21,7 +28,14 @@ defmodule MusicLibrary.RecordsTest do
     end
 
     test "create_record/1 with valid data creates a record" do
-      valid_attrs = %{type: :album, title: "some title", image: "some image", year: 42, musicbrainz_id: "7488a646-e31f-11e4-aace-600308960662", genres: ["option1", "option2"]}
+      valid_attrs = %{
+        type: :album,
+        title: "some title",
+        image: "some image",
+        year: 42,
+        musicbrainz_id: "7488a646-e31f-11e4-aace-600308960662",
+        genres: ["option1", "option2"]
+      }
 
       assert {:ok, %Record{} = record} = Records.create_record(valid_attrs)
       assert record.type == :album
@@ -38,7 +52,15 @@ defmodule MusicLibrary.RecordsTest do
 
     test "update_record/2 with valid data updates the record" do
       record = record_fixture()
-      update_attrs = %{type: :ep, title: "some updated title", image: "some updated image", year: 43, musicbrainz_id: "7488a646-e31f-11e4-aace-600308960668", genres: ["option1"]}
+
+      update_attrs = %{
+        type: :ep,
+        title: "some updated title",
+        image: "some updated image",
+        year: 43,
+        musicbrainz_id: "7488a646-e31f-11e4-aace-600308960668",
+        genres: ["option1"]
+      }
 
       assert {:ok, %Record{} = record} = Records.update_record(record, update_attrs)
       assert record.type == :ep
