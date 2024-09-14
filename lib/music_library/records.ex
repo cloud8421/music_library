@@ -18,7 +18,9 @@ defmodule MusicLibrary.Records do
 
   """
   def list_records do
-    Repo.all(Record)
+    Record
+    |> limit(10)
+    |> Repo.all()
   end
 
   @doc """
