@@ -4,8 +4,22 @@ defmodule MusicLibraryWeb.RecordLiveTest do
   import Phoenix.LiveViewTest
   import MusicLibrary.RecordsFixtures
 
-  @create_attrs %{type: :album, title: "some title", image: "some image", year: 42, musicbrainz_id: "7488a646-e31f-11e4-aace-600308960662", genres: ["option1", "option2"]}
-  @update_attrs %{type: :ep, title: "some updated title", image: "some updated image", year: 43, musicbrainz_id: "7488a646-e31f-11e4-aace-600308960668", genres: ["option1"]}
+  @create_attrs %{
+    type: :album,
+    title: "some title",
+    image: "some image",
+    year: 42,
+    musicbrainz_id: "7488a646-e31f-11e4-aace-600308960662",
+    genres: ["option1", "option2"]
+  }
+  @update_attrs %{
+    type: :ep,
+    title: "some updated title",
+    image: "some updated image",
+    year: 43,
+    musicbrainz_id: "7488a646-e31f-11e4-aace-600308960668",
+    genres: ["option1"]
+  }
   @invalid_attrs %{type: nil, title: nil, image: nil, year: nil, musicbrainz_id: nil, genres: []}
 
   defp create_record(_) do

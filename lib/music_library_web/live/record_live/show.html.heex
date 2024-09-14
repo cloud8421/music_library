@@ -19,7 +19,12 @@
 
 <.back navigate={~p"/records"}>Back to records</.back>
 
-<.modal :if={@live_action == :edit} id="record-modal" show on_cancel={JS.patch(~p"/records/#{@record}")}>
+<.modal
+  :if={@live_action == :edit}
+  id="record-modal"
+  show
+  on_cancel={JS.patch(~p"/records/#{@record}")}
+>
   <.live_component
     module={MusicLibraryWeb.RecordLive.FormComponent}
     id={@record.id}

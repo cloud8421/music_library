@@ -11,8 +11,7 @@ defmodule MusicLibrary.Application do
       MusicLibraryWeb.Telemetry,
       MusicLibrary.Repo,
       {Ecto.Migrator,
-        repos: Application.fetch_env!(:music_library, :ecto_repos),
-        skip: skip_migrations?()},
+       repos: Application.fetch_env!(:music_library, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:music_library, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: MusicLibrary.PubSub},
       # Start a worker by calling: MusicLibrary.Worker.start_link(arg)
