@@ -1,6 +1,6 @@
 defmodule MusicLibrary.Records.ParserTest do
   use ExUnit.Case, async: true
-  alias MusicLibrary.Records.{Parser, Record}
+  alias MusicLibrary.Records.Parser
 
   @obsidian_entry_path Path.expand("../../support/fixtures/marillion-marbles.md", __DIR__)
 
@@ -9,7 +9,7 @@ defmodule MusicLibrary.Records.ParserTest do
 
     assert Parser.from_entry_contents(entry_contents) ==
              {:ok,
-              %Record{
+              %{
                 type: :album,
                 musicbrainz_id: "20790e26-98e4-3ad3-a67f-b674758b942d",
                 title: "Marbles",
@@ -25,6 +25,44 @@ defmodule MusicLibrary.Records.ParserTest do
                   "psychedelic pop",
                   "rock"
                 ]
+              }}
+  end
+
+  test "handles special characters in titles" do
+    entry_contents = """
+    ---
+    type: "musicRelease"
+    subType: "Album"
+    title: "Guardians of the Galaxy: Awesome Mix, Vol. 1"
+    englishTitle: "Guardians of the Galaxy: Awesome Mix, Vol. 1"
+    year: "2014"
+    dataSource: "MusicBrainz API"
+    url: "https://musicbrainz.org/release-group/950092d6-45f6-4269-87da-99a9ff2fcc52"
+    id: "950092d6-45f6-4269-87da-99a9ff2fcc52"
+    genres:
+      - "classic rock"
+      - "pop"
+      - "pop rock"
+      - "rock"
+    artists:
+      - "Various Artists"
+    image: "https://coverartarchive.org/release-group/950092d6-45f6-4269-87da-99a9ff2fcc52/front"
+    rating: 9.6
+    personalRating: 0
+    tags: "mediaDB/music/Album"
+    ---
+    """
+
+    assert Parser.from_entry_contents(entry_contents) ==
+             {:ok,
+              %{
+                genres: ["classic rock", "pop", "pop rock", "rock"],
+                image:
+                  "https://coverartarchive.org/release-group/950092d6-45f6-4269-87da-99a9ff2fcc52/front",
+                musicbrainz_id: "950092d6-45f6-4269-87da-99a9ff2fcc52",
+                title: "Guardians of the Galaxy: Awesome Mix, Vol. 1",
+                type: :album,
+                year: 2014
               }}
   end
 end
