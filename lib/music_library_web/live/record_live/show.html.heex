@@ -10,6 +10,7 @@
 
 <.list>
   <:item title="Type"><%= @record.type %></:item>
+  <:item title="Artists"><%= Enum.map(@record.artists, fn a -> a.name end) %></:item>
   <:item title="Title"><%= @record.title %></:item>
   <:item title="Musicbrainz"><%= @record.musicbrainz_id %></:item>
   <:item title="Year"><%= @record.year %></:item>
