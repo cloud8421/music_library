@@ -10,6 +10,7 @@ defmodule MusicLibrary.Application do
     children = [
       MusicLibraryWeb.Telemetry,
       MusicLibrary.Repo,
+      {Finch, name: MusicLibrary.Finch},
       {Ecto.Migrator,
        repos: Application.fetch_env!(:music_library, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:music_library, :dns_cluster_query) || :ignore},
