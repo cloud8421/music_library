@@ -25,8 +25,8 @@ defmodule MusicLibrary.Records.Record do
   @doc false
   def changeset(record, attrs) do
     record
-    |> cast(attrs, [:type, :title, :musicbrainz_id, :year, :genres, :image, :artists])
-    |> validate_required([:type, :title, :musicbrainz_id, :year, :genres, :image, :artists])
+    |> cast(attrs, [:type, :title, :musicbrainz_id, :year, :genres, :image])
+    |> validate_required([:type, :title, :musicbrainz_id, :year, :genres, :image])
   end
 
   def add_artists(record, artists_attrs) do
