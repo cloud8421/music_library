@@ -22,7 +22,7 @@
   <:col :let={{_id, record}} label="Title"><%= record.title %></:col>
   <:col :let={{_id, record}} label="Musicbrainz"><%= record.musicbrainz_id %></:col>
   <:col :let={{_id, record}} label="Year"><%= record.year %></:col>
-  <:col :let={{_id, record}} label="Genres"><%= Enum.join(record.genres, ",") %></:col>
+  <:col :let={{_id, record}} label="Genres"><%= Enum.join(record.genres || [], ",") %></:col>
   <:action :let={{_id, record}}>
     <div class="sr-only">
       <.link navigate={~p"/records/#{record}"}>Show</.link>
