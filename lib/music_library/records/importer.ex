@@ -1,7 +1,10 @@
 defmodule MusicLibrary.Records.Importer do
-  alias Ecto.Multi
+  require Logger
+  import Ecto.Query, warn: false
 
-  @doc """
+  alias MusicLibrary.Records.Record, as: Rec
+
+  @moduledoc """
   The original data from Obsidian maps records to release groups, so to find artists for a record we can
   use the [lookup](https://musicbrainz.org/doc/MusicBrainz_API#Lookups) endpoint with the release group id and include the
   artist credits.
@@ -40,52 +43,58 @@ defmodule MusicLibrary.Records.Importer do
       "https://musicbrainz.org/ws/2/release-group/#{record.musicbrainz_id}?fmt=json&inc=artist-credits"
 
     with {:ok, data} <- json_get(url) do
-      current_time =
-        DateTime.utc_now()
-        |> DateTime.truncate(:second)
-
-      artist_entries =
+      artists_attrs =
         data
         |> get_in(["artist-credit", Access.all(), "artist"])
         |> Enum.map(fn artist ->
           %{
             name: artist["name"],
             musicbrainz_id: artist["id"],
-            inserted_at: current_time,
-            updated_at: current_time
+            sort_name: artist["sort-name"],
+            disambiguation: artist["disambiguation"]
           }
         end)
 
-      Multi.new()
-      |> Multi.insert_all(:artists, MusicLibrary.Records.Artist, artist_entries,
-        on_conflict: :nothing,
-        returning: true
-      )
-      |> Multi.insert_all(:artists_records, MusicLibrary.Records.ArtistRecord, fn %{
-                                                                                    artists:
-                                                                                      {_inserted_count,
-                                                                                       artists}
-                                                                                  } ->
-        Enum.map(artists, fn a ->
-          %{
-            artist_id: a.id,
-            record_id: record.id,
-            inserted_at: current_time,
-            updated_at: current_time
-          }
-        end)
-      end)
-      |> MusicLibrary.Repo.transaction()
+      record
+      |> Rec.add_artists(artists_attrs)
+      |> MusicLibrary.Repo.update!()
     end
   end
 
+  def import_all do
+    Rec
+    |> MusicLibrary.Repo.all()
+    |> Enum.each(fn r ->
+      import_artists(r)
+      Process.sleep(1000)
+    end)
+  end
+
+  def import_missing do
+    q = from(r in Rec, where: is_nil(r.artists))
+
+    q
+    |> MusicLibrary.Repo.all()
+    |> Enum.each(fn r ->
+      import_artists(r)
+      Process.sleep(1000)
+    end)
+  end
+
   defp json_get(url) do
-    case Finch.build(:get, url) |> Finch.request(MusicLibrary.Finch) do
+    req =
+      Finch.build(:get, url, [
+        {"User-Agent", "MusicLibrary/0.1.0 ( cloud8421@gmail.com )"}
+      ])
+
+    case Finch.request(req, MusicLibrary.Finch) do
       {:ok, response} when response.status == 200 ->
         {:ok, Jason.decode!(response.body)}
 
       other ->
-        {:error, "Failed to fetch data from #{url}, reason: #{inspect(other)}"}
+        msg = "Failed to fetch data from #{url}, reason: #{inspect(other)}"
+        Logger.error(msg)
+        {:error, msg}
     end
   end
 end

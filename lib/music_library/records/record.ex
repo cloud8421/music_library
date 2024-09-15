@@ -14,6 +14,8 @@ defmodule MusicLibrary.Records.Record do
 
     embeds_many :artists, Artist do
       field :name, :string
+      field :sort_name, :string
+      field :disambiguation, :string
       field :musicbrainz_id, Ecto.UUID
     end
 
@@ -23,8 +25,8 @@ defmodule MusicLibrary.Records.Record do
   @doc false
   def changeset(record, attrs) do
     record
-    |> cast(attrs, [:type, :title, :musicbrainz_id, :year, :genres, :image])
-    |> validate_required([:type, :title, :musicbrainz_id, :year, :genres, :image])
+    |> cast(attrs, [:type, :title, :musicbrainz_id, :year, :genres, :image, :artists])
+    |> validate_required([:type, :title, :musicbrainz_id, :year, :genres, :image, :artists])
   end
 
   def add_artists(record, artists_attrs) do
