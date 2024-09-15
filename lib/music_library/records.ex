@@ -18,9 +18,12 @@ defmodule MusicLibrary.Records do
 
   """
   def list_records do
-    Record
-    |> limit(10)
-    |> Repo.all()
+    q =
+      from r in Record,
+        order_by: r.artists[0]["sort_name"],
+        limit: 50
+
+    Repo.all(q)
   end
 
   @doc """
