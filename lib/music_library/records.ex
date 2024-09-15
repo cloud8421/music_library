@@ -37,15 +37,7 @@ defmodule MusicLibrary.Records do
       ** (Ecto.NoResultsError)
 
   """
-  def get_record!(id) do
-    q =
-      from r in Record,
-        left_join: a in assoc(r, :artists),
-        preload: [artists: a],
-        where: r.id == ^id
-
-    Repo.one!(q)
-  end
+  def get_record!(id), do: Repo.get!(Record, id)
 
   @doc """
   Creates a record.

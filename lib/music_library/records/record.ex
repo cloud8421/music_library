@@ -2,8 +2,6 @@ defmodule MusicLibrary.Records.Record do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias MusicLibrary.{Records.Artist, Records.ArtistRecord}
-
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "records" do
@@ -14,7 +12,10 @@ defmodule MusicLibrary.Records.Record do
     field :musicbrainz_id, Ecto.UUID
     field :genres, {:array, :string}
 
-    many_to_many :artists, Artist, join_through: ArtistRecord
+    embeds_many :artists, Artist do
+      field :name, :string
+      field :musicbrainz_id, Ecto.UUID
+    end
 
     timestamps(type: :utc_datetime)
   end
@@ -24,5 +25,11 @@ defmodule MusicLibrary.Records.Record do
     record
     |> cast(attrs, [:type, :title, :musicbrainz_id, :year, :genres, :image])
     |> validate_required([:type, :title, :musicbrainz_id, :year, :genres, :image])
+  end
+
+  def add_artists(record, artists_attrs) do
+    record
+    |> change()
+    |> put_embed(:artists, artists_attrs)
   end
 end
