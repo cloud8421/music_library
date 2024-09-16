@@ -1,9 +1,4 @@
 defmodule MusicLibrary.Records.Importer do
-  require Logger
-  import Ecto.Query, warn: false
-
-  alias MusicLibrary.Records.Record, as: Rec
-
   @moduledoc """
   The original data from Obsidian maps records to release groups, so to find artists for a record we can
   use the [lookup](https://musicbrainz.org/doc/MusicBrainz_API#Lookups) endpoint with the release group id and include the
@@ -38,6 +33,12 @@ defmodule MusicLibrary.Records.Importer do
         ]
       }
   """
+
+  require Logger
+  import Ecto.Query, warn: false
+
+  alias MusicLibrary.Records.Record, as: Rec
+
   def import_artists(record) do
     url =
       "https://musicbrainz.org/ws/2/release-group/#{record.musicbrainz_id}?fmt=json&inc=artist-credits"
