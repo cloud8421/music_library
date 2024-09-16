@@ -61,6 +61,14 @@ defmodule MusicLibrary.Records.Importer do
     end
   end
 
+  def import_cover_image(record) do
+    with {:ok, image_data} <- blob_get(record.image_url) do
+      record
+      |> Rec.add_image_data(image_data)
+      |> MusicLibrary.Repo.update!()
+    end
+  end
+
   def import_all do
     Rec
     |> MusicLibrary.Repo.all()
@@ -90,6 +98,27 @@ defmodule MusicLibrary.Records.Importer do
     case Finch.request(req, MusicLibrary.Finch) do
       {:ok, response} when response.status == 200 ->
         {:ok, Jason.decode!(response.body)}
+
+      other ->
+        msg = "Failed to fetch data from #{url}, reason: #{inspect(other)}"
+        Logger.error(msg)
+        {:error, msg}
+    end
+  end
+
+  defp blob_get(url) do
+    req =
+      Finch.build(:get, url, [
+        {"User-Agent", "MusicLibrary/0.1.0 ( cloud8421@gmail.com )"}
+      ])
+
+    case Finch.request(req, MusicLibrary.Finch) do
+      {:ok, response} when response.status == 200 ->
+        {:ok, response.body}
+
+      {:ok, response} when response.status in 301..308 ->
+        location = :proplists.get_value("location", response.headers)
+        blob_get(location)
 
       other ->
         msg = "Failed to fetch data from #{url}, reason: #{inspect(other)}"

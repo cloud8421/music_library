@@ -13,7 +13,7 @@
   row_click={fn {_id, record} -> JS.navigate(~p"/records/#{record}") end}
 >
   <:col :let={{_id, record}} label="Image">
-    <img class="max-w-16" src={record.image} alt={record.title} />
+    <img class="max-w-16" src={~p"/images/#{record.id}"} alt={record.title} />
   </:col>
   <:col :let={{_id, record}} label="Artists">
     <%= Enum.map(record.artists, fn a -> a.name end) %>

@@ -42,6 +42,11 @@ defmodule MusicLibrary.Records do
   """
   def get_record!(id), do: Repo.get!(Record, id)
 
+  def get_image!(id) do
+    record = get_record!(id)
+    {:ok, record.image_data}
+  end
+
   @doc """
   Creates a record.
 

@@ -18,6 +18,7 @@ defmodule MusicLibraryWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/images/:record_id", ImageController, :show
 
     live "/records", RecordLive.Index, :index
     live "/records/new", RecordLive.Index, :new

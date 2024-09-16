@@ -12,7 +12,7 @@ defmodule MusicLibrary.RecordsFixtures do
       attrs
       |> Enum.into(%{
         genres: ["option1", "option2"],
-        image: "some image",
+        image_url: "some image url",
         musicbrainz_id: "7488a646-e31f-11e4-aace-600308960662",
         title: "some title",
         type: :album,

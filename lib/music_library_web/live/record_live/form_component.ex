@@ -36,7 +36,7 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
           label="Genres"
           options={[{"Option 1", "option1"}, {"Option 2", "option2"}]}
         />
-        <.input field={@form[:image]} type="text" label="Image" />
+        <.input field={@form[:image_url]} type="text" label="Image url" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Record</.button>
         </:actions>

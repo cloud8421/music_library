@@ -15,7 +15,9 @@
   <:item title="Musicbrainz"><%= @record.musicbrainz_id %></:item>
   <:item title="Year"><%= @record.year %></:item>
   <:item title="Genres"><%= @record.genres %></:item>
-  <:item title="Image"><%= @record.image %></:item>
+  <:item title="Image">
+    <img class="max-w-32" src={~p"/images/#{@record.id}"} alt={@record.title} />
+  </:item>
 </.list>
 
 <.back navigate={~p"/records"}>Back to records</.back>

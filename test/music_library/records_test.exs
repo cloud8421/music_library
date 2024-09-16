@@ -11,7 +11,7 @@ defmodule MusicLibrary.RecordsTest do
     @invalid_attrs %{
       type: nil,
       title: nil,
-      image: nil,
+      image_url: nil,
       year: nil,
       musicbrainz_id: nil,
       genres: nil
@@ -31,7 +31,7 @@ defmodule MusicLibrary.RecordsTest do
       valid_attrs = %{
         type: :album,
         title: "some title",
-        image: "some image",
+        image_url: "some image url",
         year: 42,
         musicbrainz_id: "7488a646-e31f-11e4-aace-600308960662",
         genres: ["option1", "option2"]
@@ -40,7 +40,7 @@ defmodule MusicLibrary.RecordsTest do
       assert {:ok, %Record{} = record} = Records.create_record(valid_attrs)
       assert record.type == :album
       assert record.title == "some title"
-      assert record.image == "some image"
+      assert record.image_url == "some image url"
       assert record.year == 42
       assert record.musicbrainz_id == "7488a646-e31f-11e4-aace-600308960662"
       assert record.genres == ["option1", "option2"]
@@ -56,7 +56,7 @@ defmodule MusicLibrary.RecordsTest do
       update_attrs = %{
         type: :ep,
         title: "some updated title",
-        image: "some updated image",
+        image_url: "some updated image url",
         year: 43,
         musicbrainz_id: "7488a646-e31f-11e4-aace-600308960668",
         genres: ["option1"]
@@ -65,7 +65,7 @@ defmodule MusicLibrary.RecordsTest do
       assert {:ok, %Record{} = record} = Records.update_record(record, update_attrs)
       assert record.type == :ep
       assert record.title == "some updated title"
-      assert record.image == "some updated image"
+      assert record.image_url == "some updated image url"
       assert record.year == 43
       assert record.musicbrainz_id == "7488a646-e31f-11e4-aace-600308960668"
       assert record.genres == ["option1"]
