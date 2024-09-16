@@ -4,6 +4,8 @@ defmodule MusicLibraryWeb.ImageController do
   alias MusicLibrary.Records
 
   def show(conn, %{"record_id" => record_id}) do
+    # TODO: better error handling
+    # TODO: serve correct caching headers
     {:ok, image_data} = Records.get_image!(record_id)
 
     if image_data do

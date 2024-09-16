@@ -69,6 +69,21 @@ defmodule MusicLibrary.Records.Importer do
     end
   end
 
+  def import_all_cover_images do
+    Rec
+    |> MusicLibrary.Repo.all()
+    |> Task.async_stream(
+      fn r ->
+        if r.image_data == nil do
+          import_cover_image(r)
+          IO.puts("Imported cover image for #{r.title}")
+        end
+      end,
+      timeout: 10_000
+    )
+    |> Stream.run()
+  end
+
   def import_all do
     Rec
     |> MusicLibrary.Repo.all()
