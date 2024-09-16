@@ -6,7 +6,7 @@ defmodule MusicLibraryWeb.ImageController do
   def show(conn, %{"record_id" => record_id}) do
     # TODO: better error handling
     # TODO: serve correct caching headers
-    {:ok, image_data} = Records.get_image!(record_id)
+    image_data = Records.get_image!(record_id)
 
     if image_data do
       conn
