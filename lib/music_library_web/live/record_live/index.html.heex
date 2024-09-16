@@ -12,17 +12,17 @@
   rows={@streams.records}
   row_click={fn {_id, record} -> JS.navigate(~p"/records/#{record}") end}
 >
-  <:col :let={{_id, record}} label="Type"><%= record.type %></:col>
-  <:col :let={{_id, record}} label="Artists">
-    <%= Enum.map(record.artists, fn a -> a.name end) %>
-  </:col>
   <:col :let={{_id, record}} label="Image">
     <img class="max-w-16" src={record.image} alt={record.title} />
   </:col>
+  <:col :let={{_id, record}} label="Artists">
+    <%= Enum.map(record.artists, fn a -> a.name end) %>
+  </:col>
   <:col :let={{_id, record}} label="Title"><%= record.title %></:col>
-  <:col :let={{_id, record}} label="Musicbrainz"><%= record.musicbrainz_id %></:col>
   <:col :let={{_id, record}} label="Year"><%= record.year %></:col>
-  <:col :let={{_id, record}} label="Genres"><%= Enum.join(record.genres || [], ",") %></:col>
+  <:action :let={{_id, record}}>
+    <.link href={musicbrainz_url(record)} target=".blank">MB</.link>
+  </:action>
   <:action :let={{_id, record}}>
     <div class="sr-only">
       <.link navigate={~p"/records/#{record}"}>Show</.link>
