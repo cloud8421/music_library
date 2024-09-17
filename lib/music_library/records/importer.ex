@@ -64,10 +64,22 @@ defmodule MusicLibrary.Records.Importer do
 
   def import_cover_image(record) do
     with {:ok, image_data} <- blob_get(record.image_url) do
+      {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(image_data, 400)
+      {:ok, thumb_data} = Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
+
       record
-      |> Rec.add_image_data(image_data)
+      |> Rec.add_image_data(thumb_data)
       |> MusicLibrary.Repo.update!()
     end
+  end
+
+  def resize_cover_image(record) do
+    {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(record.image_data, 400)
+    {:ok, thumb_data} = Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
+
+    record
+    |> Rec.add_image_data(thumb_data)
+    |> MusicLibrary.Repo.update!()
   end
 
   def import_all_cover_images do
@@ -77,6 +89,17 @@ defmodule MusicLibrary.Records.Importer do
       if r.image_data == nil do
         import_cover_image(r)
         IO.puts("Imported cover image for #{r.title}")
+      end
+    end)
+  end
+
+  def resize_all_cover_images do
+    Rec
+    |> MusicLibrary.Repo.all()
+    |> Enum.each(fn r ->
+      if r.image_data != nil do
+        resize_cover_image(r)
+        IO.puts("Resized cover image for #{r.title}")
       end
     end)
   end

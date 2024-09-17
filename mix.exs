@@ -40,6 +40,7 @@ defmodule MusicLibrary.MixProject do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:yaml_elixir, "~> 2.11"},
       {:finch, "~> 0.19.0"},
+      {:vix, "~> 0.30.0"},
       # TODO bump on release to {:phoenix_live_view, "~> 1.0.0"},
       {:phoenix_live_view, "~> 1.0.0-rc.1", override: true},
       {:floki, ">= 0.30.0", only: :test},
