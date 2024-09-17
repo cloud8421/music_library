@@ -4,13 +4,21 @@ defmodule MusicLibrary.Records do
 
   alias MusicLibrary.Records.Record
 
-  def list_records do
+  def list_records(opts \\ []) do
+    limit = Keyword.get(opts, :limit, 20)
+    offset = Keyword.get(opts, :offset, 0)
+
     q =
       from r in Record,
         order_by: r.artists[0]["sort_name"],
-        limit: 50
+        limit: ^limit,
+        offset: ^offset
 
     Repo.all(q)
+  end
+
+  def count_records do
+    Repo.aggregate(Record, :count)
   end
 
   def get_record!(id), do: Repo.get!(Record, id)
