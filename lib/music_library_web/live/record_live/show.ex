@@ -18,4 +18,8 @@ defmodule MusicLibraryWeb.RecordLive.Show do
 
   defp page_title(:show), do: "Show Record"
   defp page_title(:edit), do: "Edit Record"
+
+  defp musicbrainz_url(record) do
+    "https://musicbrainz.org/release-group/#{record.musicbrainz_id}"
+  end
 end

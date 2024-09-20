@@ -1,6 +1,6 @@
 <.header>
-  Record <%= @record.id %>
-  <:subtitle>This is a record record from your database.</:subtitle>
+  <%= @record.title %>
+  <:subtitle><%= Enum.map(@record.artists, fn a -> a.name end) %></:subtitle>
   <:actions>
     <.link patch={~p"/records/#{@record}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit record</.button>
@@ -10,11 +10,13 @@
 
 <.list>
   <:item title="Type"><%= @record.type %></:item>
-  <:item title="Artists"><%= Enum.map(@record.artists, fn a -> a.name end) %></:item>
-  <:item title="Title"><%= @record.title %></:item>
-  <:item title="Musicbrainz"><%= @record.musicbrainz_id %></:item>
+  <:item title="Musicbrainz ID">
+    <a href={musicbrainz_url(@record)}>
+      <%= @record.musicbrainz_id %>
+    </a>
+  </:item>
   <:item title="Year"><%= @record.year %></:item>
-  <:item title="Genres"><%= @record.genres %></:item>
+  <:item title="Genres"><%= Enum.join(@record.genres, ", ") %></:item>
   <:item title="Image">
     <img class="max-w-32" src={~p"/images/#{@record.id}"} alt={@record.title} />
   </:item>
