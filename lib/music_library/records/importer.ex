@@ -38,12 +38,10 @@ defmodule MusicLibrary.Records.Importer do
   import Ecto.Query, warn: false
 
   alias MusicLibrary.Records.Record, as: Rec
+  alias MusicLibrary.Records.MusicBrainz
 
   def import_artists(record) do
-    url =
-      "https://musicbrainz.org/ws/2/release-group/#{record.musicbrainz_id}?fmt=json&inc=artist-credits"
-
-    with {:ok, data} <- json_get(url) do
+    with {:ok, data} <- MusicBrainz.get_release_group(record.musicbrainz_id) do
       artists_attrs =
         data
         |> get_in(["artist-credit", Access.all(), "artist"])
@@ -122,23 +120,6 @@ defmodule MusicLibrary.Records.Importer do
       import_artists(r)
       Process.sleep(1000)
     end)
-  end
-
-  defp json_get(url) do
-    req =
-      Finch.build(:get, url, [
-        {"User-Agent", "MusicLibrary/0.1.0 ( cloud8421@gmail.com )"}
-      ])
-
-    case Finch.request(req, MusicLibrary.Finch) do
-      {:ok, response} when response.status == 200 ->
-        {:ok, Jason.decode!(response.body)}
-
-      other ->
-        msg = "Failed to fetch data from #{url}, reason: #{inspect(other)}"
-        Logger.error(msg)
-        {:error, msg}
-    end
   end
 
   defp blob_get(url) do
