@@ -10,7 +10,7 @@ defmodule MusicLibrary.Records do
 
     q =
       from r in Record,
-        order_by: r.artists[0]["sort_name"],
+        order_by: [r.artists[0]["sort_name"], r.title],
         limit: ^limit,
         offset: ^offset
 
