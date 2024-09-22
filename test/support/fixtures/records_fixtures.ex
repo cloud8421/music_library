@@ -4,19 +4,46 @@ defmodule MusicLibrary.RecordsFixtures do
   entities via the `MusicLibrary.Records` context.
   """
 
-  @doc """
-  Generate a record.
-  """
+  @genres [
+    "progressive rock",
+    "art rock",
+    "symphonic rock",
+    "jazz fusion",
+    "psychedelic rock",
+    "space rock",
+    "krautrock",
+    "canterbury scene",
+    "zeuhl",
+    "avant-prog"
+  ]
+  @titles [
+    "In the Court of the Crimson King",
+    "Close to the Edge",
+    "The Dark Side of the Moon",
+    "Wish You Were Here",
+    "Selling England by the Pound",
+    "Larks' Tongues in Aspic",
+    "Red",
+    "Foxtrot",
+    "The Lamb Lies Down on Broadway",
+    "Thick as a Brick"
+  ]
+  # While it would be great to have this random, it's ok to use one single image
+  @image_data_path "#{__DIR__}/marillion-marbles.jpg"
+
   def record_fixture(attrs \\ %{}) do
+    musicbrainz_id = Ecto.UUID.generate()
+
     {:ok, record} =
       attrs
       |> Enum.into(%{
-        genres: ["option1", "option2"],
-        image_url: "some image url",
-        musicbrainz_id: "7488a646-e31f-11e4-aace-600308960662",
-        title: "some title",
+        genres: Enum.take_random(@genres, :rand.uniform(3)),
+        image_url: "https://coverartarchive.org/release-group/#{musicbrainz_id}/front",
+        image_data: File.read!(@image_data_path),
+        musicbrainz_id: musicbrainz_id,
+        title: Enum.random(@titles),
         type: :album,
-        year: 42
+        year: Enum.random(1969..2024)
       })
       |> MusicLibrary.Records.create_record()
 
