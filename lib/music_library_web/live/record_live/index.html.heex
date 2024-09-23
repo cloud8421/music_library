@@ -4,6 +4,9 @@
     <.link patch={~p"/records/new"}>
       <.button>New Record</.button>
     </.link>
+    <.link patch={~p"/records/search"}>
+      <.button>Search Record</.button>
+    </.link>
   </:actions>
 </.header>
 
@@ -52,6 +55,18 @@
     action={@live_action}
     record={@record}
     patch={~p"/records"}
+  />
+</.modal>
+
+<.modal :if={@live_action == :search} id="record-modal" show on_cancel={JS.patch(~p"/records")}>
+  <.live_component
+    module={MusicLibraryWeb.RecordLive.SearchComponent}
+    id={:search}
+    title={@page_title}
+    action={@live_action}
+    record={@record}
+    patch={~p"/records"}
+    initial_query=""
   />
 </.modal>
 

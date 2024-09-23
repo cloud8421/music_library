@@ -22,6 +22,7 @@ defmodule MusicLibraryWeb.Router do
 
     live "/records", RecordLive.Index, :index
     live "/records/new", RecordLive.Index, :new
+    live "/records/search", RecordLive.Index, :search
     live "/records/:id/edit", RecordLive.Index, :edit
 
     live "/records/:id", RecordLive.Show, :show

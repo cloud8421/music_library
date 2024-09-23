@@ -1,0 +1,122 @@
+defmodule MusicLibraryWeb.RecordLive.SearchComponent do
+  use MusicLibraryWeb, :live_component
+
+  alias MusicLibrary.Records.MusicBrainz
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <div>
+      <.simple_form
+        for={@form}
+        id="search-form"
+        phx-target={@myself}
+        phx-change="search"
+        phx-submit="search"
+      >
+        <.input
+          field={@form[:query]}
+          type="text"
+          label="Search"
+          prompt="Search for records"
+          phx-debounce="500"
+        />
+      </.simple_form>
+      <ul role="list" class="divide-y divide-gray-100">
+        <.result :for={record <- @records} record={record} />
+      </ul>
+    </div>
+    """
+  end
+
+  defp result(assigns) do
+    ~H"""
+    <li
+      class="flex justify-between gap-x-6 py-5 cursor-pointer hover:bg-gray-50"
+      phx-click={JS.push("import", value: %{id: @record.id})}
+      data-confirm="Are you sure you want to import this record?"
+    >
+      <div class="flex min-w-0 gap-x-4">
+        <div class="min-w-0 flex-auto">
+          <p class="text-sm font-semibold leading-6 text-gray-900">
+            <%= @record.title %>
+
+            <span class="mt-1 text-xs leading-5 text-gray-500">
+              <%= @record.year %>
+            </span>
+          </p>
+          <p class="mt-1 truncate text-xs leading-5 text-gray-500"><%= @record.artists %></p>
+        </div>
+      </div>
+      <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+        <.type_badge type={@record.type} />
+      </div>
+    </li>
+    """
+  end
+
+  attr :type, :string, required: true
+
+  defp type_badge(assigns) do
+    ~H"""
+    <span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+      <%= @type %>
+    </span>
+    """
+  end
+
+  @impl true
+  def mount(socket) do
+    {:ok,
+     socket
+     |> assign(:records, [])
+     |> assign(:form, to_form(%{"query" => ""}))}
+  end
+
+  @impl true
+  def handle_event("search", %{"query" => query}, socket) do
+    {:ok, records} = search(query)
+
+    {:noreply,
+     socket
+     |> assign(:records, records)
+     |> assign(:form, to_form(%{"query" => query}))}
+  end
+
+  defp search(""), do: {:ok, []}
+
+  defp search(query) do
+    case MusicBrainz.search_release_group(query) do
+      {:ok, result} ->
+        {:ok,
+         Enum.map(result["release-groups"], fn rg ->
+           %{
+             id: rg["id"],
+             type: parse_subtype(rg["primary-type"]),
+             title: rg["title"],
+             artists:
+               rg["artist-credit"]
+               |> Enum.map(fn ac -> ac["artist"]["name"] end)
+               |> Enum.join(", "),
+             year: parse_year(rg["first-release-date"])
+           }
+         end)}
+
+      error ->
+        error
+    end
+  end
+
+  defp parse_year(iso_date) do
+    case Date.from_iso8601(iso_date) do
+      {:ok, date} -> date.year
+      _error -> nil
+    end
+  end
+
+  defp parse_subtype("Album"), do: :album
+  defp parse_subtype("EP"), do: :ep
+  defp parse_subtype("Live"), do: :live
+  defp parse_subtype("Compilation"), do: :compilation
+  defp parse_subtype("Single"), do: :single
+  defp parse_subtype(_), do: :other
+end

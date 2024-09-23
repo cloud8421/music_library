@@ -43,7 +43,7 @@ defmodule MusicLibrary.Records.MusicBrainz do
   """
   def get_release_group(id) do
     url =
-      "https://musicbrainz.org/ws/2/release-group/#{id}?fmt=json&inc=artist-credits"
+      "https://musicbrainz.org/ws/2/release-group/#{id}?fmt=json&inc=artist-credits+genres"
 
     json_get(url)
   end
@@ -165,6 +165,15 @@ defmodule MusicLibrary.Records.MusicBrainz do
     json_get(url)
   end
 
+  def get_cover_art(musicbrainz_id) do
+    url = "https://coverartarchive.org/release-group/#{musicbrainz_id}/front"
+
+    with {:ok, image_data} <- blob_get(url),
+         {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(image_data, 400) do
+      Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
+    end
+  end
+
   defp json_get(url) do
     req =
       Finch.build(:get, url, [
@@ -176,6 +185,30 @@ defmodule MusicLibrary.Records.MusicBrainz do
     case Finch.request(req, MusicLibrary.Finch) do
       {:ok, response} when response.status == 200 ->
         {:ok, Jason.decode!(response.body)}
+
+      other ->
+        msg = "Failed to fetch data from #{url}, reason: #{inspect(other)}"
+        Logger.error(msg)
+        {:error, msg}
+    end
+  end
+
+  defp blob_get(url) do
+    req =
+      Finch.build(:get, url, [
+        {"User-Agent", "MusicLibrary/0.1.0 ( cloud8421@gmail.com )"}
+      ])
+
+    Logger.debug("Fetching data from #{url}")
+
+    case Finch.request(req, MusicLibrary.Finch) do
+      {:ok, response} when response.status == 200 ->
+        {:ok, response.body}
+
+      {:ok, response} when response.status in 301..308 ->
+        location = :proplists.get_value("location", response.headers)
+        Logger.debug("Following redirect to #{location}")
+        blob_get(location)
 
       other ->
         msg = "Failed to fetch data from #{url}, reason: #{inspect(other)}"
