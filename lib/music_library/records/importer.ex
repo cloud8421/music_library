@@ -1,5 +1,32 @@
 defmodule MusicLibrary.Records.Importer do
-  @moduledoc """
+  require Logger
+  import Ecto.Query, warn: false
+
+  alias MusicLibrary.Records.Record, as: Rec
+  alias MusicLibrary.Records.MusicBrainz
+  alias MusicLibrary.Repo
+
+  def import_all_artists do
+    Rec
+    |> Repo.all()
+    |> Enum.each(fn r ->
+      import_artists(r)
+      Process.sleep(1000)
+    end)
+  end
+
+  def import_missing_artists do
+    q = from(r in Rec, where: is_nil(r.artists))
+
+    q
+    |> Repo.all()
+    |> Enum.each(fn r ->
+      import_artists(r)
+      Process.sleep(1000)
+    end)
+  end
+
+  @doc """
   The original data from Obsidian maps records to release groups, so to find artists for a record we can
   use the [lookup](https://musicbrainz.org/doc/MusicBrainz_API#Lookups) endpoint with the release group id and include the
   artist credits.
@@ -33,13 +60,6 @@ defmodule MusicLibrary.Records.Importer do
         ]
       }
   """
-
-  require Logger
-  import Ecto.Query, warn: false
-
-  alias MusicLibrary.Records.Record, as: Rec
-  alias MusicLibrary.Records.MusicBrainz
-
   def import_artists(record) do
     with {:ok, data} <- MusicBrainz.get_release_group(record.musicbrainz_id) do
       artists_attrs =
@@ -56,10 +76,14 @@ defmodule MusicLibrary.Records.Importer do
 
       record
       |> Rec.add_artists(artists_attrs)
-      |> MusicLibrary.Repo.update!()
+      |> Repo.update!()
     end
   end
 
+  @doc """
+  Pull the cover image from the stored url and keep a local, resized copy in
+  the database for fast access/use.
+  """
   def import_cover_image(record) do
     with {:ok, image_data} <- blob_get(record.image_url) do
       {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(image_data, 400)
@@ -67,22 +91,25 @@ defmodule MusicLibrary.Records.Importer do
 
       record
       |> Rec.add_image_data(thumb_data)
-      |> MusicLibrary.Repo.update!()
+      |> Repo.update!()
     end
   end
 
+  @doc """
+  Given an already stored image in the database, resize it to a 400px wide thumbnail.
+  """
   def resize_cover_image(record) do
     {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(record.image_data, 400)
     {:ok, thumb_data} = Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
 
     record
     |> Rec.add_image_data(thumb_data)
-    |> MusicLibrary.Repo.update!()
+    |> Repo.update!()
   end
 
   def import_all_cover_images do
     Rec
-    |> MusicLibrary.Repo.all()
+    |> Repo.all()
     |> Enum.each(fn r ->
       if r.image_data == nil do
         import_cover_image(r)
@@ -93,32 +120,12 @@ defmodule MusicLibrary.Records.Importer do
 
   def resize_all_cover_images do
     Rec
-    |> MusicLibrary.Repo.all()
+    |> Repo.all()
     |> Enum.each(fn r ->
       if r.image_data != nil do
         resize_cover_image(r)
         IO.puts("Resized cover image for #{r.title}")
       end
-    end)
-  end
-
-  def import_all do
-    Rec
-    |> MusicLibrary.Repo.all()
-    |> Enum.each(fn r ->
-      import_artists(r)
-      Process.sleep(1000)
-    end)
-  end
-
-  def import_missing do
-    q = from(r in Rec, where: is_nil(r.artists))
-
-    q
-    |> MusicLibrary.Repo.all()
-    |> Enum.each(fn r ->
-      import_artists(r)
-      Process.sleep(1000)
     end)
   end
 
@@ -128,12 +135,15 @@ defmodule MusicLibrary.Records.Importer do
         {"User-Agent", "MusicLibrary/0.1.0 ( cloud8421@gmail.com )"}
       ])
 
+    Logger.debug("Fetching data from #{url}")
+
     case Finch.request(req, MusicLibrary.Finch) do
       {:ok, response} when response.status == 200 ->
         {:ok, response.body}
 
       {:ok, response} when response.status in 301..308 ->
         location = :proplists.get_value("location", response.headers)
+        Logger.debug("Following redirect to #{location}")
         blob_get(location)
 
       other ->
