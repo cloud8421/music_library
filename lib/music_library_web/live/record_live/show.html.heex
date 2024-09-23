@@ -8,19 +8,20 @@
   </:actions>
 </.header>
 
-<.list>
-  <:item title="Type"><%= @record.type %></:item>
-  <:item title="Musicbrainz ID">
-    <a href={musicbrainz_url(@record)}>
-      <%= @record.musicbrainz_id %>
-    </a>
-  </:item>
-  <:item title="Year"><%= @record.year %></:item>
-  <:item title="Genres"><%= Enum.join(@record.genres, ", ") %></:item>
-  <:item title="Image">
-    <img class="max-w-32" src={~p"/images/#{@record.id}"} alt={@record.title} />
-  </:item>
-</.list>
+<div class="columns-2">
+  <img class="w-full" src={~p"/images/#{@record.id}"} alt={@record.title} />
+
+  <.list>
+    <:item title="Type"><%= @record.type %></:item>
+    <:item title="Musicbrainz ID">
+      <a href={musicbrainz_url(@record)}>
+        <%= @record.musicbrainz_id %>
+      </a>
+    </:item>
+    <:item title="Year"><%= @record.year %></:item>
+    <:item title="Genres"><%= Enum.join(@record.genres, ", ") %></:item>
+  </.list>
+</div>
 
 <.back navigate={~p"/records"}>Back to records</.back>
 
