@@ -4,131 +4,82 @@ defmodule MusicLibraryWeb.RecordLiveTest do
   import Phoenix.LiveViewTest
   import MusicLibrary.RecordsFixtures
 
-  @create_attrs %{
-    type: :album,
-    title: "some title",
-    image_url: "some image url",
-    year: 42,
-    musicbrainz_id: "7488a646-e31f-11e4-aace-600308960662",
-    genres: ["option1", "option2"]
-  }
-  @update_attrs %{
-    type: :ep,
-    title: "some updated title",
-    image_url: "some updated image url",
-    year: 43,
-    musicbrainz_id: "7488a646-e31f-11e4-aace-600308960668",
-    genres: ["option1"]
-  }
-  @invalid_attrs %{
-    type: nil,
-    title: nil,
-    image_url: nil,
-    year: nil,
-    musicbrainz_id: nil,
-    genres: []
-  }
-
-  defp create_record(_) do
-    record = record_fixture()
-    %{record: record}
+  defp create_records(_) do
+    records = Enum.map(1..30, fn _ -> record_fixture() end)
+    %{records: records}
   end
 
-  describe "Index" do
-    setup [:create_record]
+  defp escape(string) do
+    string
+    |> Phoenix.HTML.html_escape()
+    |> Phoenix.HTML.safe_to_string()
+  end
 
-    test "lists all records", %{conn: conn, record: record} do
+  describe "Paginated list of records" do
+    setup [:create_records]
+
+    test "lists all records within default pagination params", %{conn: conn, records: records} do
       {:ok, _index_live, html} = live(conn, ~p"/records")
 
       assert html =~ "Listing Records"
-      assert html =~ record.title
+
+      {present, absent} =
+        Enum.split_with(records, fn record ->
+          html =~ record.id
+        end)
+
+      assert length(present) == 20
+      assert length(absent) == 10
+
+      for record <- present do
+        assert html =~ escape(record.title)
+        assert html =~ to_string(record.year)
+
+        for artist <- record.artists do
+          assert html =~ escape(artist["name"])
+        end
+      end
     end
 
-    test "saves new record", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/records")
+    test "paginates records", %{conn: conn, records: records} do
+      {:ok, page_2_live, page_2_html} = live(conn, ~p"/records?page=2&page_size=5")
 
-      assert index_live |> element("a", "New Record") |> render_click() =~
-               "New Record"
+      {page_2_present, page_2_absent} =
+        Enum.split_with(records, fn record ->
+          page_2_html =~ record.id
+        end)
 
-      assert_patch(index_live, ~p"/records/new")
+      assert length(page_2_present) == 5
+      assert length(page_2_absent) == 25
 
-      assert index_live
-             |> form("#record-form", record: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
+      page_2_pagination = page_2_live |> with_target("#pagination")
+      refute has_element?(page_2_pagination, "a", "2")
+      assert has_element?(page_2_pagination, "a", "1")
+      assert has_element?(page_2_pagination, "a", "3")
+      assert has_element?(page_2_pagination, "a", "4")
+      assert has_element?(page_2_pagination, "a", "5")
 
-      assert index_live
-             |> form("#record-form", record: @create_attrs)
-             |> render_submit()
+      {:ok, page_3_live, page_3_html} = live(conn, ~p"/records?page=3&page_size=5")
 
-      assert_patch(index_live, ~p"/records")
+      {page_3_present, page_3_absent} =
+        Enum.split_with(records, fn record ->
+          page_3_html =~ record.id
+        end)
 
-      html = render(index_live)
-      assert html =~ "Record created successfully"
-      assert html =~ "some title"
-    end
+      assert length(page_3_present) == 5
+      assert length(page_3_absent) == 25
 
-    test "updates record in listing", %{conn: conn, record: record} do
-      {:ok, index_live, _html} = live(conn, ~p"/records")
+      page_3_pagination = page_3_live |> with_target("#pagination")
+      refute has_element?(page_3_pagination, "a", "3")
+      assert has_element?(page_3_pagination, "a", "1")
+      assert has_element?(page_3_pagination, "a", "2")
+      assert has_element?(page_3_pagination, "a", "4")
+      assert has_element?(page_3_pagination, "a", "5")
 
-      assert index_live |> element("#records-#{record.id} a", "Edit") |> render_click() =~
-               "Edit Record"
-
-      assert_patch(index_live, ~p"/records/#{record}/edit")
-
-      assert index_live
-             |> form("#record-form", record: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert index_live
-             |> form("#record-form", record: @update_attrs)
-             |> render_submit()
-
-      assert_patch(index_live, ~p"/records")
-
-      html = render(index_live)
-      assert html =~ "Record updated successfully"
-      assert html =~ "some updated title"
-    end
-
-    test "deletes record in listing", %{conn: conn, record: record} do
-      {:ok, index_live, _html} = live(conn, ~p"/records")
-
-      assert index_live |> element("#records-#{record.id} a", "Delete") |> render_click()
-      refute has_element?(index_live, "#records-#{record.id}")
-    end
-  end
-
-  describe "Show" do
-    setup [:create_record]
-
-    test "displays record", %{conn: conn, record: record} do
-      {:ok, _show_live, html} = live(conn, ~p"/records/#{record}")
-
-      assert html =~ "Show Record"
-      assert html =~ record.title
-    end
-
-    test "updates record within modal", %{conn: conn, record: record} do
-      {:ok, show_live, _html} = live(conn, ~p"/records/#{record}")
-
-      assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit Record"
-
-      assert_patch(show_live, ~p"/records/#{record}/show/edit")
-
-      assert show_live
-             |> form("#record-form", record: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert show_live
-             |> form("#record-form", record: @update_attrs)
-             |> render_submit()
-
-      assert_patch(show_live, ~p"/records/#{record}")
-
-      html = render(show_live)
-      assert html =~ "Record updated successfully"
-      assert html =~ "some updated title"
+      # All records in page 3 were not present in page 2
+      assert page_3_present -- page_2_absent == []
+      # All records in page 2 are not present in page 3
+      assert page_2_present -- page_3_absent == []
     end
   end
 end
