@@ -27,7 +27,15 @@ defmodule MusicLibrary.Records.Record do
   def changeset(record, attrs) do
     record
     |> cast(attrs, [:type, :title, :musicbrainz_id, :year, :genres, :image_url, :image_data])
+    |> cast_embed(:artists, with: &artist_changeset/2)
     |> validate_required([:type, :title, :musicbrainz_id, :year, :genres])
+  end
+
+  @doc false
+  def artist_changeset(artist, attrs) do
+    artist
+    |> cast(attrs, [:name, :sort_name, :disambiguation, :musicbrainz_id])
+    |> validate_required([:name, :sort_name, :musicbrainz_id])
   end
 
   def add_artists(record, artists_attrs) do

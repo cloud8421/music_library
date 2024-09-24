@@ -106,6 +106,8 @@ defmodule MusicLibraryWeb.RecordLive.SearchComponent do
     end
   end
 
+  defp parse_year(nil), do: ""
+
   defp parse_year(iso_date) do
     case Date.from_iso8601(iso_date) do
       {:ok, date} -> date.year

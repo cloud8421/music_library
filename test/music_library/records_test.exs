@@ -34,7 +34,15 @@ defmodule MusicLibrary.RecordsTest do
         image_url: "some image url",
         year: 42,
         musicbrainz_id: "7488a646-e31f-11e4-aace-600308960662",
-        genres: ["option1", "option2"]
+        genres: ["option1", "option2"],
+        artists: [
+          %{
+            name: "some artist",
+            sort_name: "some artist",
+            disambiguation: "some artist",
+            musicbrainz_id: "7488a646-e31f-11e4-aace-600308960663"
+          }
+        ]
       }
 
       assert {:ok, %Record{} = record} = Records.create_record(valid_attrs)
@@ -44,6 +52,15 @@ defmodule MusicLibrary.RecordsTest do
       assert record.year == 42
       assert record.musicbrainz_id == "7488a646-e31f-11e4-aace-600308960662"
       assert record.genres == ["option1", "option2"]
+
+      assert [
+               %Record.Artist{
+                 name: "some artist",
+                 sort_name: "some artist",
+                 disambiguation: "some artist",
+                 musicbrainz_id: "7488a646-e31f-11e4-aace-600308960663"
+               }
+             ] = record.artists
     end
 
     test "create_record/1 with invalid data returns error changeset" do
