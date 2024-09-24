@@ -21,7 +21,6 @@ defmodule MusicLibraryWeb.Router do
     get "/images/:record_id", ImageController, :show
 
     live "/records", RecordLive.Index, :index
-    live "/records/new", RecordLive.Index, :new
     live "/records/search", RecordLive.Index, :search
     live "/records/:id/edit", RecordLive.Index, :edit
 

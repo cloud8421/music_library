@@ -3,7 +3,6 @@ defmodule MusicLibraryWeb.RecordLive.Index do
   import MusicLibraryWeb.Pagination
 
   alias MusicLibrary.Records
-  alias MusicLibrary.Records.Record
 
   @impl true
   def mount(params, _session, socket) do
@@ -34,12 +33,6 @@ defmodule MusicLibraryWeb.RecordLive.Index do
     socket
     |> assign(:page_title, "Edit Record")
     |> assign(:record, Records.get_record!(id))
-  end
-
-  defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:page_title, "New Record")
-    |> assign(:record, %Record{})
   end
 
   defp apply_action(socket, :index, params) do

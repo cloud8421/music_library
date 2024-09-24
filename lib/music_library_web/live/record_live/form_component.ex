@@ -80,20 +80,5 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
     end
   end
 
-  defp save_record(socket, :new, record_params) do
-    case Records.create_record(record_params) do
-      {:ok, record} ->
-        notify_parent({:saved, record})
-
-        {:noreply,
-         socket
-         |> put_flash(:info, "Record created successfully")
-         |> push_patch(to: socket.assigns.patch)}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
-    end
-  end
-
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
 end
