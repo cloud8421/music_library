@@ -16,6 +16,14 @@ defmodule MusicLibraryWeb.RecordLive.Show do
      |> assign(:record, Records.get_record!(id))}
   end
 
+  @impl true
+  def handle_event("delete", %{"id" => id}, socket) do
+    record = Records.get_record!(id)
+    {:ok, _} = Records.delete_record(record)
+
+    {:noreply, push_navigate(socket, to: ~p"/records")}
+  end
+
   defp page_title(:show), do: "Show Record"
   defp page_title(:edit), do: "Edit Metadata"
 
