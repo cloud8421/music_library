@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.RecordLive.SearchComponent do
+defmodule MusicLibraryWeb.RecordLive.ImportComponent do
   use MusicLibraryWeb, :live_component
 
   alias MusicLibrary.Records
@@ -17,13 +17,13 @@ defmodule MusicLibraryWeb.RecordLive.SearchComponent do
         <.input
           field={@form[:query]}
           type="text"
-          label="Search"
+          label="Search for a record on MusicBrainz"
           prompt="Search for records"
           phx-debounce="500"
         />
       </.simple_form>
       <ul role="list" class="divide-y divide-gray-100">
-        <.result :for={record <- @records} record={record} />
+        <.result :for={release_group <- @release_groups} release_group={release_group} />
       </ul>
     </div>
     """
@@ -33,22 +33,22 @@ defmodule MusicLibraryWeb.RecordLive.SearchComponent do
     ~H"""
     <li
       class="flex justify-between gap-x-6 py-5 cursor-pointer hover:bg-gray-50"
-      phx-click={JS.push("import", value: %{id: @record.id}, page_loading: true)}
+      phx-click={JS.push("import", value: %{id: @release_group.id}, page_loading: true)}
     >
       <div class="flex min-w-0 gap-x-4">
         <div class="min-w-0 flex-auto">
           <p class="text-sm font-semibold leading-6 text-gray-900">
-            <%= @record.title %>
+            <%= @release_group.title %>
 
             <span class="mt-1 text-xs leading-5 text-gray-500">
-              <%= @record.year %>
+              <%= @release_group.year %>
             </span>
           </p>
-          <p class="mt-1 truncate text-xs leading-5 text-gray-500"><%= @record.artists %></p>
+          <p class="mt-1 truncate text-xs leading-5 text-gray-500"><%= @release_group.artists %></p>
         </div>
       </div>
       <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-        <.type_badge type={@record.type} />
+        <.type_badge type={@release_group.type} />
       </div>
     </li>
     """
@@ -68,17 +68,17 @@ defmodule MusicLibraryWeb.RecordLive.SearchComponent do
   def mount(socket) do
     {:ok,
      socket
-     |> assign(:records, [])
+     |> assign(:release_groups, [])
      |> assign(:form, to_form(%{"query" => ""}))}
   end
 
   @impl true
   def handle_event("search", %{"query" => query}, socket) do
-    {:ok, records} = search(query)
+    {:ok, release_groups} = search(query)
 
     {:noreply,
      socket
-     |> assign(:records, records)
+     |> assign(:release_groups, release_groups)
      |> assign(:form, to_form(%{"query" => query}))}
   end
 

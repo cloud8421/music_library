@@ -23,9 +23,9 @@ defmodule MusicLibraryWeb.RecordLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :search, _params) do
+  defp apply_action(socket, :import, _params) do
     socket
-    |> assign(:page_title, "Search Records")
+    |> assign(:page_title, "Import from MusicBrainz")
     |> assign(:record, nil)
   end
 
