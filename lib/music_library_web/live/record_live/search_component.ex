@@ -1,7 +1,8 @@
 defmodule MusicLibraryWeb.RecordLive.SearchComponent do
   use MusicLibraryWeb, :live_component
 
-  alias MusicLibrary.Records.MusicBrainz
+  alias MusicLibrary.Records
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -32,8 +33,7 @@ defmodule MusicLibraryWeb.RecordLive.SearchComponent do
     ~H"""
     <li
       class="flex justify-between gap-x-6 py-5 cursor-pointer hover:bg-gray-50"
-      phx-click={JS.push("import", value: %{id: @record.id})}
-      data-confirm="Are you sure you want to import this record?"
+      phx-click={JS.push("import", value: %{id: @record.id}, page_loading: true)}
     >
       <div class="flex min-w-0 gap-x-4">
         <div class="min-w-0 flex-auto">
@@ -85,7 +85,7 @@ defmodule MusicLibraryWeb.RecordLive.SearchComponent do
   defp search(""), do: {:ok, []}
 
   defp search(query) do
-    case MusicBrainz.search_release_group(query) do
+    case Records.search_release_group(query, limit: 10) do
       {:ok, result} ->
         {:ok,
          Enum.map(result["release-groups"], fn rg ->

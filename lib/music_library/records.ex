@@ -32,6 +32,12 @@ defmodule MusicLibrary.Records do
     Repo.one!(q)
   end
 
+  def search_release_group(query, opts \\ []) do
+    limit = Keyword.get(opts, :limit, 20)
+    offset = Keyword.get(opts, :offset, 0)
+    MusicBrainz.search_release_group(query, limit: limit, offset: offset)
+  end
+
   def import_from_musicbrainz(musicbrainz_id) do
     with {:ok, release_group} <- MusicBrainz.get_release_group(musicbrainz_id),
          {:ok, image_data} <- MusicBrainz.get_cover_art(musicbrainz_id),

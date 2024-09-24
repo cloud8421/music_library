@@ -148,9 +148,9 @@ defmodule MusicLibrary.Records.MusicBrainz do
         ]
       }
   """
-  def search_release_group(query, opts \\ []) do
-    limit = Keyword.get(opts, :limit, 20)
-    offset = Keyword.get(opts, :offset, 0)
+  def search_release_group(query, opts) do
+    limit = Keyword.fetch!(opts, :limit)
+    offset = Keyword.fetch!(opts, :offset)
 
     qs = [
       query: query,
