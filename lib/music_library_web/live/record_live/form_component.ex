@@ -9,7 +9,7 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Use this form to manage record records in your database.</:subtitle>
+        <:subtitle></:subtitle>
       </.header>
 
       <.simple_form
@@ -26,17 +26,7 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
           prompt="Choose a value"
           options={Ecto.Enum.values(MusicLibrary.Records.Record, :type)}
         />
-        <.input field={@form[:title]} type="text" label="Title" />
-        <.input field={@form[:musicbrainz_id]} type="text" label="Musicbrainz" />
         <.input field={@form[:year]} type="number" label="Year" />
-        <.input
-          field={@form[:genres]}
-          type="select"
-          multiple
-          label="Genres"
-          options={[{"Option 1", "option1"}, {"Option 2", "option2"}]}
-        />
-        <.input field={@form[:image_url]} type="text" label="Image url" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Record</.button>
         </:actions>

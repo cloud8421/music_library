@@ -3,7 +3,7 @@
   <:subtitle><%= Enum.map(@record.artists, fn a -> a.name end) %></:subtitle>
   <:actions>
     <.link patch={~p"/records/#{@record}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit record</.button>
+      <.button>Edit Metadata</.button>
     </.link>
   </:actions>
 </.header>
