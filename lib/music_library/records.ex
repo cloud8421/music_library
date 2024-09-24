@@ -17,6 +17,20 @@ defmodule MusicLibrary.Records do
     Repo.all(q)
   end
 
+  def search_records(query, opts \\ []) do
+    limit = Keyword.get(opts, :limit, 20)
+    offset = Keyword.get(opts, :offset, 0)
+
+    q =
+      from r in Record,
+        where: like(r.title, ^"%#{query}%") or like(r.artists[0]["name"], ^"%#{query}%"),
+        order_by: [r.artists[0]["sort_name"], r.title],
+        limit: ^limit,
+        offset: ^offset
+
+    Repo.all(q)
+  end
+
   def count_records do
     Repo.aggregate(Record, :count)
   end
