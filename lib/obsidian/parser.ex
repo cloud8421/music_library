@@ -1,20 +1,22 @@
-defmodule MusicLibrary.Records.Parser do
-  def from_entry_contents(entry_contents) do
-    with {:ok, [meta]} <- parse_frontmatter(entry_contents) do
+defmodule Obsidian.Parser do
+  alias Obsidian.Entry
+
+  def from_file_contents(file_contents) do
+    with {:ok, [meta]} <- parse_frontmatter(file_contents) do
       {:ok,
-       %{
+       %Entry{
          type: parse_subtype(meta["subType"]),
          musicbrainz_id: meta["id"],
          title: meta["title"],
          year: meta["year"] |> maybe_parse_year(),
-         image: meta["image"],
+         image_url: meta["image"],
          genres: meta["genres"]
        }}
     end
   end
 
-  defp parse_frontmatter(entry_contents) do
-    case entry_contents do
+  defp parse_frontmatter(file_contents) do
+    case file_contents do
       "---\n" <> rest ->
         case String.split(rest, "\n---\n") do
           [frontmatter, _] ->

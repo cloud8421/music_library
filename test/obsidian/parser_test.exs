@@ -1,20 +1,21 @@
-defmodule MusicLibrary.Records.ParserTest do
+defmodule Obsidian.ParserTest do
   use ExUnit.Case, async: true
-  alias MusicLibrary.Records.Parser
+  alias Obsidian.{Entry, Parser}
 
-  @obsidian_entry_path Path.expand("../../support/fixtures/marillion-marbles.md", __DIR__)
+  @marbles_entry_path Path.expand("../support/fixtures/marillion-marbles.md", __DIR__)
+  @guardians_entry_path Path.expand("../support/fixtures/guardians.md", __DIR__)
 
   test "parses the content of the Obsidian album entry" do
-    entry_contents = File.read!(@obsidian_entry_path)
+    entry_contents = File.read!(@marbles_entry_path)
 
-    assert Parser.from_entry_contents(entry_contents) ==
+    assert Parser.from_file_contents(entry_contents) ==
              {:ok,
-              %{
+              %Entry{
                 type: :album,
                 musicbrainz_id: "20790e26-98e4-3ad3-a67f-b674758b942d",
                 title: "Marbles",
                 year: 2004,
-                image:
+                image_url:
                   "https://coverartarchive.org/release-group/20790e26-98e4-3ad3-a67f-b674758b942d/front",
                 genres: [
                   "alternative rock",
@@ -29,35 +30,13 @@ defmodule MusicLibrary.Records.ParserTest do
   end
 
   test "handles special characters in titles" do
-    entry_contents = """
-    ---
-    type: "musicRelease"
-    subType: "Album"
-    title: "Guardians of the Galaxy: Awesome Mix, Vol. 1"
-    englishTitle: "Guardians of the Galaxy: Awesome Mix, Vol. 1"
-    year: "2014"
-    dataSource: "MusicBrainz API"
-    url: "https://musicbrainz.org/release-group/950092d6-45f6-4269-87da-99a9ff2fcc52"
-    id: "950092d6-45f6-4269-87da-99a9ff2fcc52"
-    genres:
-      - "classic rock"
-      - "pop"
-      - "pop rock"
-      - "rock"
-    artists:
-      - "Various Artists"
-    image: "https://coverartarchive.org/release-group/950092d6-45f6-4269-87da-99a9ff2fcc52/front"
-    rating: 9.6
-    personalRating: 0
-    tags: "mediaDB/music/Album"
-    ---
-    """
+    entry_contents = File.read!(@guardians_entry_path)
 
-    assert Parser.from_entry_contents(entry_contents) ==
+    assert Parser.from_file_contents(entry_contents) ==
              {:ok,
-              %{
+              %Entry{
                 genres: ["classic rock", "pop", "pop rock", "rock"],
-                image:
+                image_url:
                   "https://coverartarchive.org/release-group/950092d6-45f6-4269-87da-99a9ff2fcc52/front",
                 musicbrainz_id: "950092d6-45f6-4269-87da-99a9ff2fcc52",
                 title: "Guardians of the Galaxy: Awesome Mix, Vol. 1",

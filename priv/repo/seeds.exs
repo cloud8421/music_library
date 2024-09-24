@@ -26,14 +26,18 @@ case System.argv() do
 
         case entry
              |> File.read!()
-             |> MusicLibrary.Records.Parser.from_entry_contents() do
+             |> Obsidian.Parser.from_file_contents() do
           {:ok, parsed_entry} ->
-            inserted_at = file_stat.ctime
+            inserted_at =
+              file_stat.ctime
               |> NaiveDateTime.from_erl!()
               |> DateTime.from_naive!("Etc/UTC")
-            updated_at = file_stat.mtime
+
+            updated_at =
+              file_stat.mtime
               |> NaiveDateTime.from_erl!()
               |> DateTime.from_naive!("Etc/UTC")
+
             data =
               parsed_entry
               |> Map.put(:inserted_at, inserted_at)
