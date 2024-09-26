@@ -23,7 +23,7 @@ defmodule MusicLibrary.Records do
 
     q =
       from r in Record,
-        where: like(r.title, ^"%#{query}%") or like(r.artists[0]["name"], ^"%#{query}%"),
+        where: like(r.title, ^"%#{query}%") or like(r.artists, ^"%#{query}%"),
         order_by: [r.artists[0]["sort_name"], r.title],
         limit: ^limit,
         offset: ^offset
