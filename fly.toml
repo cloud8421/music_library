@@ -11,7 +11,7 @@ kill_signal = 'SIGTERM'
 
 [env]
   DATABASE_PATH = '/mnt/music_library/music_library_prod.db'
-  PHX_HOST = 'music-library-billowing-bird-8038.fly.dev'
+  PHX_HOST = 'music-library.claudio-ortolina.org'
   PORT = '8080'
 
 [[mounts]]
