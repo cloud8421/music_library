@@ -1,0 +1,37 @@
+# fly.toml app configuration file generated for music-library-billowing-bird-8038 on 2024-09-27T17:29:03+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'music-library-billowing-bird-8038'
+primary_region = 'lhr'
+kill_signal = 'SIGTERM'
+
+[build]
+
+[env]
+  DATABASE_PATH = '/mnt/music_library/music_library_prod.db'
+  PHX_HOST = 'music-library-billowing-bird-8038.fly.dev'
+  PORT = '8080'
+
+[[mounts]]
+  source = 'music_library'
+  destination = '/mnt/music_library'
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+  [http_service.concurrency]
+    type = 'connections'
+    hard_limit = 1000
+    soft_limit = 1000
+
+[[vm]]
+  memory = '512mb'
+  cpu_kind = 'shared'
+  cpus = 1
