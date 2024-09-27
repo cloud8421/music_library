@@ -15,21 +15,24 @@ defmodule MusicLibraryWeb.Pagination do
       class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
     >
       <%!-- Only on smallest viewport --%>
-      <div class="flex flex-1 justify-between sm:hidden">
-        <a
+      <div class={[
+        "flex flex-1 sm:hidden",
+        justify_content(@page_links.prev_page, @page_links.next_page)
+      ]}>
+        <.link
           :if={@page_links.prev_page}
-          href="#"
+          patch={"?" <> encode_query(page: @page_links.prev_page, page_size: @pagination_params.page_size, query: @pagination_params.query)}
           class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
           Previous
-        </a>
-        <a
+        </.link>
+        <.link
           :if={@page_links.next_page}
-          href="#"
+          patch={"?" <> encode_query(page: @page_links.next_page, page_size: @pagination_params.page_size, query: @pagination_params.query)}
           class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
           Next
-        </a>
+        </.link>
       </div>
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-items-center sm:justify-center">
         <div>
@@ -73,6 +76,10 @@ defmodule MusicLibraryWeb.Pagination do
     </div>
     """
   end
+
+  defp justify_content(nil, _next_page), do: "justify-end"
+  defp justify_content(_prev_page, nil), do: "justify-start"
+  defp justify_content(_prev_page, _next_page), do: "justify-between"
 
   attr :page_number, :integer, required: true
   attr :page_size, :integer, required: true
