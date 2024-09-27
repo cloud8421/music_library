@@ -1,7 +1,6 @@
 defmodule MusicLibraryWeb.Pagination do
   use Phoenix.Component
 
-  # alias Phoenix.LiveView.JS
   use Gettext, backend: MusicLibraryWeb.Gettext
 
   attr :pagination_params, :map, required: true
@@ -39,11 +38,13 @@ defmodule MusicLibraryWeb.Pagination do
               :if={@page_links.prev_page}
               page_number={@page_links.prev_page}
               page_size={@pagination_params.page_size}
+              query={@pagination_params.query}
             />
             <.numbered_link
               :for={page_number <- @page_links.visible_left_pages}
               page_number={page_number}
               page_size={@pagination_params.page_size}
+              query={@pagination_params.query}
             />
             <.separator :if={@page_links.left_separator} />
             <.numbered_link
@@ -51,17 +52,20 @@ defmodule MusicLibraryWeb.Pagination do
               page_number={page_number}
               active={page_number == @pagination_params.page}
               page_size={@pagination_params.page_size}
+              query={@pagination_params.query}
             />
             <.separator :if={@page_links.right_separator} />
             <.numbered_link
               :for={page_number <- @page_links.visible_right_pages}
               page_number={page_number}
               page_size={@pagination_params.page_size}
+              query={@pagination_params.query}
             />
             <.next_link
               :if={@page_links.next_page}
               page_number={@page_links.next_page}
               page_size={@pagination_params.page_size}
+              query={@pagination_params.query}
             />
           </nav>
         </div>
@@ -72,12 +76,13 @@ defmodule MusicLibraryWeb.Pagination do
 
   attr :page_number, :integer, required: true
   attr :page_size, :integer, required: true
+  attr :query, :string, required: true
 
   defp next_link(assigns) do
     ~H"""
     <.link
       class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-      patch={"?" <> URI.encode_query(page: @page_number, page_size: @page_size)}
+      patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query)}
     >
       <span class="sr-only">Next</span>
       <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -93,12 +98,13 @@ defmodule MusicLibraryWeb.Pagination do
 
   attr :page_number, :integer, required: true
   attr :page_size, :integer, required: true
+  attr :query, :string, required: true
 
   defp prev_link(assigns) do
     ~H"""
     <.link
       class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-      patch={"?" <> URI.encode_query(page: @page_number, page_size: @page_size)}
+      patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query)}
     >
       <span class="sr-only">Previous</span>
       <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -123,6 +129,7 @@ defmodule MusicLibraryWeb.Pagination do
   attr :page_number, :integer, required: true
   attr :page_size, :integer, required: true
   attr :active, :boolean, default: false
+  attr :query, :string, required: true
 
   defp numbered_link(assigns) when assigns.active do
     ~H"""
@@ -136,29 +143,15 @@ defmodule MusicLibraryWeb.Pagination do
     ~H"""
     <.link
       class="relative hidden items-center first:rounded-l-md last:rounded-r-md px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex"
-      patch={"?" <> URI.encode_query(page: @page_number, page_size: @page_size)}
+      patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query)}
     >
       <%= @page_number %>
     </.link>
     """
   end
 
-  def get_pagination_params(params, total_records) do
-    %{
-      total_entries: total_records,
-      page: parse_int_or_default(params["page"], 1),
-      page_size: parse_int_or_default(params["page_size"], 20)
-    }
-  end
-
   def page_to_offset(page, per_page) do
     (page - 1) * per_page
-  end
-
-  defp parse_int_or_default(nil, default), do: default
-
-  defp parse_int_or_default(value, _default) when is_binary(value) do
-    String.to_integer(value)
   end
 
   defp total_pages(total_entries, page_size) do
@@ -169,6 +162,12 @@ defmodule MusicLibraryWeb.Pagination do
     else
       without_remainder + 1
     end
+  end
+
+  defp encode_query(params) do
+    params
+    |> Enum.filter(fn {_, v} -> v not in ["", nil] end)
+    |> URI.encode_query()
   end
 
   @visible_left_pages 3
@@ -208,6 +207,7 @@ defmodule MusicLibraryWeb.Pagination do
     visible_right_pages = Enum.take(right_pages, -@visible_right_pages)
 
     %{
+      query: pagination_params.query,
       total_pages: total_pages,
       prev_page: prev_page,
       visible_left_pages: visible_left_pages,

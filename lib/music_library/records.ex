@@ -35,6 +35,14 @@ defmodule MusicLibrary.Records do
     Repo.aggregate(Record, :count)
   end
 
+  def search_records_count(query) do
+    q =
+      from r in Record,
+        where: like(r.title, ^"%#{query}%") or like(r.artists, ^"%#{query}%")
+
+    Repo.aggregate(q, :count)
+  end
+
   def get_record!(id), do: Repo.get!(Record, id)
 
   def get_image!(id) do

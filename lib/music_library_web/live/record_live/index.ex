@@ -4,17 +4,28 @@ defmodule MusicLibraryWeb.RecordLive.Index do
 
   alias MusicLibrary.Records
 
+  @default_records_list_params %{
+    query: "",
+    page: 1,
+    page_size: 20
+  }
+
   @impl true
   def mount(params, _session, socket) do
-    total_records = Records.count_records()
+    query = params["query"] || ""
+    total_records = Records.search_records_count(query)
 
-    pagination_params = get_pagination_params(params, total_records)
-    offset = page_to_offset(pagination_params.page, pagination_params.page_size)
-    records = Records.list_records(limit: pagination_params.page_size, offset: offset)
+    record_list_params =
+      @default_records_list_params
+      |> merge_query(params["query"])
+      |> merge_pagination(params, total_records)
+
+    offset = page_to_offset(record_list_params.page, record_list_params.page_size)
+    records = Records.search_records(query, limit: record_list_params.page_size, offset: offset)
 
     {:ok,
      socket
-     |> assign(:pagination_params, pagination_params)
+     |> assign(:record_list_params, record_list_params)
      |> stream(:records, records)}
   end
 
@@ -41,19 +52,20 @@ defmodule MusicLibraryWeb.RecordLive.Index do
       |> assign(:page_title, "Listing Records")
       |> assign(:record, nil)
 
-    total_records = Records.count_records()
-    pagination_params = get_pagination_params(params, total_records)
+    query = params["query"] || socket.assigns.record_list_params.query
+    total_records = Records.search_records_count(query)
 
-    if pagination_params != socket.assigns.pagination_params do
-      offset = page_to_offset(pagination_params.page, pagination_params.page_size)
-      records = Records.list_records(limit: pagination_params.page_size, offset: offset)
+    record_list_params =
+      socket.assigns.record_list_params
+      |> merge_query(params["query"])
+      |> merge_pagination(params, total_records)
 
-      new_socket
-      |> assign(:pagination_params, pagination_params)
-      |> stream(:records, records, reset: true)
-    else
-      new_socket
-    end
+    offset = page_to_offset(record_list_params.page, record_list_params.page_size)
+    records = Records.search_records(query, limit: record_list_params.page_size, offset: offset)
+
+    new_socket
+    |> assign(:record_list_params, record_list_params)
+    |> stream(:records, records, reset: true)
   end
 
   @impl true
@@ -71,6 +83,16 @@ defmodule MusicLibraryWeb.RecordLive.Index do
     {:ok, _} = Records.delete_record(record)
 
     {:noreply, stream_delete(socket, :records, record)}
+  end
+
+  def handle_event("search", %{"query" => query}, socket) do
+    qs =
+      @default_records_list_params
+      |> Map.put(:query, query)
+      |> Map.take([:query, :page, :page_size])
+      |> URI.encode_query()
+
+    {:noreply, push_patch(socket, to: ~s"/records?#{qs}")}
   end
 
   def handle_event("import", %{"id" => musicbrainz_id}, socket) do
@@ -92,6 +114,28 @@ defmodule MusicLibraryWeb.RecordLive.Index do
          |> put_flash(:error, "Error importing record, #{inspect(reason)}")
          |> push_patch(to: ~p"/records")}
     end
+  end
+
+  defp merge_query(record_list_params, nil), do: record_list_params
+
+  defp merge_query(record_list_params, query) do
+    Map.put(record_list_params, :query, query)
+  end
+
+  defp merge_pagination(record_list_params, params, total_records) do
+    record_list_params
+    |> Map.put(:page, parse_int_or_default(params["page"], record_list_params.page))
+    |> Map.put(
+      :page_size,
+      parse_int_or_default(params["page_size"], record_list_params.page_size)
+    )
+    |> Map.put(:total_entries, total_records)
+  end
+
+  defp parse_int_or_default(nil, default), do: default
+
+  defp parse_int_or_default(value, _default) when is_binary(value) do
+    String.to_integer(value)
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})

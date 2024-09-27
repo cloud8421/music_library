@@ -1,11 +1,22 @@
-<.header>
-  Listing Records
-  <:actions>
+<header class="gap-6 mb-2">
+  <h1 class="text-lg font-semibold leading-8 text-zinc-800">All Records</h1>
+  <div class="flex items-center justify-between gap-6 mb-2 mt-2">
+    <form class="w-1/2" for={@record_list_params.query} phx-submit="search" phx-change="search">
+      <input
+        type="search"
+        class="w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6"
+        id="query"
+        name="query"
+        value={@record_list_params.query}
+        placeholder="Search"
+        phx-debounce="500"
+      />
+    </form>
     <.link patch={~p"/records/import"}>
       <.button>Import from MusicBrainz</.button>
     </.link>
-  </:actions>
-</.header>
+  </div>
+</header>
 
 <.table
   id="records"
@@ -62,4 +73,4 @@
   />
 </.modal>
 
-<.pagination pagination_params={@pagination_params} />
+<.pagination pagination_params={@record_list_params} />
