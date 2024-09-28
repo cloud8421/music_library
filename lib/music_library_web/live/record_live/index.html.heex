@@ -24,7 +24,12 @@
   row_click={fn {_id, record} -> JS.navigate(~p"/records/#{record}") end}
 >
   <:col :let={{_id, record}} label="Image">
-    <img class="max-w-16 rounded-lg shadow" src={~p"/images/#{record.id}"} alt={record.title} />
+    <span class="relative inline-block">
+      <img class="max-w-16 rounded-lg shadow" src={~p"/images/#{record.id}"} alt={record.title} />
+      <span class="absolute right-0 bottom-0 block h-6 w-6 text-white drop-shadow-md">
+        <%= Records.Record.format_short_label(record.format) %>
+      </span>
+    </span>
   </:col>
   <:col :let={{_id, record}} label="Record">
     <p class="text-sm max-sm:text-xs"><%= Enum.map(record.artists, fn a -> a.name end) %></p>

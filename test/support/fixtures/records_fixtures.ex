@@ -43,6 +43,7 @@ defmodule MusicLibrary.RecordsFixtures do
         musicbrainz_id: musicbrainz_id,
         title: Enum.random(@titles),
         type: :album,
+        format: :cd,
         year: Enum.random(1969..2024)
       })
       |> MusicLibrary.Records.create_record()

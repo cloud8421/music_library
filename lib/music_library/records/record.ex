@@ -6,6 +6,7 @@ defmodule MusicLibrary.Records.Record do
   @foreign_key_type :binary_id
   schema "records" do
     field :type, Ecto.Enum, values: [:album, :ep, :live, :compilation, :single, :other]
+    field :format, Ecto.Enum, values: [:cd, :vinyl, :blu_ray, :dvd, :multi]
     field :title, :string
     field :image_url, :string
     field :image_data, :binary
@@ -26,7 +27,16 @@ defmodule MusicLibrary.Records.Record do
   @doc false
   def changeset(record, attrs) do
     record
-    |> cast(attrs, [:type, :title, :musicbrainz_id, :year, :genres, :image_url, :image_data])
+    |> cast(attrs, [
+      :type,
+      :format,
+      :title,
+      :musicbrainz_id,
+      :year,
+      :genres,
+      :image_url,
+      :image_data
+    ])
     |> cast_embed(:artists, with: &artist_changeset/2)
     |> validate_required([:type, :title, :musicbrainz_id, :year, :genres])
   end
@@ -47,4 +57,10 @@ defmodule MusicLibrary.Records.Record do
   def add_image_data(record, image_data) do
     change(record, image_data: image_data)
   end
+
+  def format_short_label(:cd), do: "CD"
+  def format_short_label(:vinyl), do: "V"
+  def format_short_label(:blu_ray), do: "BR"
+  def format_short_label(:dvd), do: "DVD"
+  def format_short_label(:multi), do: "MLT"
 end
