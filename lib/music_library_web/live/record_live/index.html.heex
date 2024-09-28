@@ -32,20 +32,41 @@
     <p class="text-sm max-sm:text-xs"><%= record.year %></p>
   </:col>
   <:action :let={{_id, record}}>
-    <.link href={musicbrainz_url(record)} target=".blank">MB</.link>
+    <div class="sr-only">
+      <.link href={musicbrainz_url(record)} target=".blank">
+        MusicBrainz
+      </.link>
+    </div>
+    <.link href={musicbrainz_url(record)} target=".blank">
+      <.icon name="hero-arrow-top-right-on-square" class="h-6 w-6" />
+    </.link>
   </:action>
   <:action :let={{_id, record}}>
     <div class="sr-only">
       <.link navigate={~p"/records/#{record}"}>Show</.link>
     </div>
-    <.link patch={~p"/records/#{record}/edit"}>Edit</.link>
+
+    <div class="sr-only">
+      <.link patch={~p"/records/#{record}/edit"}>Edit</.link>
+    </div>
+    <.link patch={~p"/records/#{record}/edit"}>
+      <.icon name="hero-pencil-square-solid" class="h-6 w-6" />
+    </.link>
   </:action>
   <:action :let={{id, record}}>
+    <div class="sr-only">
+      <.link
+        phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
+        data-confirm="Are you sure?"
+      >
+        Delete
+      </.link>
+    </div>
     <.link
       phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
       data-confirm="Are you sure?"
     >
-      Delete
+      <.icon name="hero-trash-solid" class="h-6 w-6" />
     </.link>
   </:action>
 </.table>
