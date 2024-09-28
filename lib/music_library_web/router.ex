@@ -19,8 +19,8 @@ defmodule MusicLibraryWeb.Router do
 
     get "/health", HealthController, :index
     get "/images/:record_id", ImageController, :show
+    get "/", StatsController, :index
 
-    live "/", RecordLive.Index, :index
     live "/records", RecordLive.Index, :index
     live "/records/import", RecordLive.Index, :import
     live "/records/:id/edit", RecordLive.Index, :edit
