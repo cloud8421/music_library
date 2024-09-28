@@ -38,6 +38,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
       <div class="flex min-w-0 gap-x-4">
         <div class="min-w-0 flex-auto">
           <p class="text-sm font-semibold leading-6 text-gray-900">
+            <.type_badge type={@release_group.type} />
             <%= @release_group.title %>
 
             <span class="mt-1 text-xs leading-5 text-gray-500">
@@ -47,8 +48,18 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
           <p class="mt-1 truncate text-xs leading-5 text-gray-500"><%= @release_group.artists %></p>
         </div>
       </div>
+
       <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-        <.type_badge type={@release_group.type} />
+        <span class="isolate inline-flex rounded-md shadow-sm">
+          <button
+            :for={format <- Records.Record.formats()}
+            phx-click={JS.push("import", value: %{id: @release_group.id, format: format})}
+            type="button"
+            class="relative -ml-px inline-flex items-center first:rounded-l-md last:rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
+          >
+            <%= Records.Record.format_short_label(format) %>
+          </button>
+        </span>
       </div>
     </li>
     """

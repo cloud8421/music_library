@@ -2,11 +2,13 @@ defmodule MusicLibrary.Records.Record do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @formats [:cd, :vinyl, :blu_ray, :dvd, :multi]
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "records" do
     field :type, Ecto.Enum, values: [:album, :ep, :live, :compilation, :single, :other]
-    field :format, Ecto.Enum, values: [:cd, :vinyl, :blu_ray, :dvd, :multi]
+    field :format, Ecto.Enum, values: @formats
     field :title, :string
     field :image_url, :string
     field :image_data, :binary
@@ -57,6 +59,8 @@ defmodule MusicLibrary.Records.Record do
   def add_image_data(record, image_data) do
     change(record, image_data: image_data)
   end
+
+  def formats, do: @formats
 
   def format_short_label(:cd), do: "CD"
   def format_short_label(:vinyl), do: "V"

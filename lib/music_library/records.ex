@@ -60,17 +60,18 @@ defmodule MusicLibrary.Records do
     MusicBrainz.search_release_group(query, limit: limit, offset: offset)
   end
 
-  def import_from_musicbrainz(musicbrainz_id) do
-    with {:ok, release_group} <- MusicBrainz.get_release_group(musicbrainz_id),
+  def import_from_musicbrainz(musicbrainz_id, opts \\ []) do
+    with format = Keyword.get(opts, :format, "cd"),
+         {:ok, release_group} <- MusicBrainz.get_release_group(musicbrainz_id),
          {:ok, image_data} <- MusicBrainz.get_cover_art(musicbrainz_id),
-         record_params = build_record_params(release_group, image_data) do
+         record_params = build_record_params(release_group, image_data, format) do
       create_record(record_params)
     else
       error -> error
     end
   end
 
-  defp build_record_params(release_group, image_data) do
+  defp build_record_params(release_group, image_data, format) do
     musicbrainz_id = release_group["id"]
 
     artists_attrs =
@@ -91,6 +92,7 @@ defmodule MusicLibrary.Records do
       "artists" => artists_attrs,
       "year" => parse_year(release_group["first-release-date"]),
       "type" => parse_subtype(release_group["primary-type"]),
+      "format" => format,
       "genres" => Enum.map(release_group["genres"], fn g -> g["name"] end),
       "image_url" => "https://coverartarchive.org/release-group/#{musicbrainz_id}/front",
       "image_data" => image_data

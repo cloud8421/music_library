@@ -95,8 +95,8 @@ defmodule MusicLibraryWeb.RecordLive.Index do
     {:noreply, push_patch(socket, to: ~s"/records?#{qs}")}
   end
 
-  def handle_event("import", %{"id" => musicbrainz_id}, socket) do
-    case Records.import_from_musicbrainz(musicbrainz_id) do
+  def handle_event("import", %{"id" => musicbrainz_id, "format" => format}, socket) do
+    case Records.import_from_musicbrainz(musicbrainz_id, format: format) do
       {:ok, record} ->
         notify_parent({:saved, record})
 
