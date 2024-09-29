@@ -25,6 +25,7 @@ defmodule MusicLibraryWeb.RecordLive.Index do
 
     {:ok,
      socket
+     |> assign(:nav_section, :records)
      |> assign(:record_list_params, record_list_params)
      |> stream(:records, records)}
   end
