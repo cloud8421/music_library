@@ -5,6 +5,7 @@ defmodule MusicLibraryWeb.StatsController do
 
   def index(conn, _params) do
     records_count = Records.count_records()
-    render(conn, :index, records_count: records_count)
+    record = Records.get_latest_record!()
+    render(conn, :index, records_count: records_count, record: record)
   end
 end

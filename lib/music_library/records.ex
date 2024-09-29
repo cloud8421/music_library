@@ -45,6 +45,15 @@ defmodule MusicLibrary.Records do
 
   def get_record!(id), do: Repo.get!(Record, id)
 
+  def get_latest_record! do
+    q =
+      from r in Record,
+        order_by: [desc: r.inserted_at],
+        limit: 1
+
+    Repo.one!(q)
+  end
+
   def get_image!(id) do
     q =
       from r in Record,

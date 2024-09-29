@@ -1,11 +1,60 @@
 <div>
   <h1 class="text-base font-semibold leading-6 text-gray-900">Music Library</h1>
-  <dl class="mt-5 grid grid-cols-1 divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow md:grid-cols-3 md:divide-x md:divide-y-0">
-    <div class="px-4 py-5 sm:p-6">
-      <dt class="text-base font-normal text-gray-900">Total Records</dt>
-      <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
-        <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-          <%= @records_count %>
+
+  <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="relative overflow-hidden rounded-lg bg-white px-4 pb-12 pt-5 shadow sm:px-6 sm:pt-6">
+      <dt>
+        <div class="absolute rounded-md bg-indigo-500 p-3">
+          <svg
+            class="h-6 w-6 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              fill-rule="evenodd"
+              d="M19.952 1.651a.75.75 0 0 1 .298.599V16.303a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.403-4.909l2.311-.66a1.5 1.5 0 0 0 1.088-1.442V6.994l-9 2.572v9.737a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.402-4.909l2.31-.66a1.5 1.5 0 0 0 1.088-1.442V5.25a.75.75 0 0 1 .544-.721l10.5-3a.75.75 0 0 1 .658.122Z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </div>
+        <p class="ml-16 truncate text-sm font-medium text-gray-500">Total Records</p>
+      </dt>
+      <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
+        <p class="text-2xl font-semibold text-gray-900"><%= @records_count %></p>
+        <div class="absolute inset-x-0 bottom-0 bg-gray-50 px-4 py-4 sm:px-6">
+          <div class="text-sm">
+            <a href={~p"/records"} class="font-medium text-indigo-600 hover:text-indigo-500">
+              View all<span class="sr-only"> records</span>
+            </a>
+          </div>
+        </div>
+      </dd>
+    </div>
+    <div class="relative overflow-hidden rounded-lg bg-white px-4 pb-12 pt-5 shadow sm:px-6 sm:pt-6 lg:col-span-2">
+      <dt>
+        <img
+          class="absolute max-w-12 rounded-lg shadow"
+          src={~p"/images/#{@record.id}"}
+          alt={@record.title}
+        />
+        <p class="ml-16 truncate text-sm font-medium text-gray-500">Latest record</p>
+      </dt>
+      <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
+        <p class="text-2xl font-semibold text-gray-900"><%= @record.title %></p>
+        <div class="absolute inset-x-0 bottom-0 bg-gray-50 px-4 py-4 sm:px-6">
+          <div class="text-sm">
+            <a
+              href={~p"/records/#{@record.id}"}
+              class="font-medium text-indigo-600 hover:text-indigo-500"
+            >
+              View<span class="sr-only"> record</span>
+            </a>
+          </div>
         </div>
       </dd>
     </div>

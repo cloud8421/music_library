@@ -27,3 +27,19 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   [Exqlite](https://github.com/elixir-sqlite/exqlite?tab=readme-ov-file) recommends using [ExSqlean](https://github.com/mindreframer/ex_sqlean),
   which in turn uses [Sqlean](https://github.com/mindreframer/sqlean), but the extension is NOT part of the ExSQlean set.
   Need to investigate with forking and PR.
+
+### Queries
+
+- To get the count of records per genre:
+
+  ```
+  select genre.value, count(genre.value) as c from records, json_each(records.genres) genre group by genre.value order by c desc;
+  ```
+
+- To get the count of records per artist:
+
+  ```
+  select json_extract(artist.value, '$.name') AS name, count(1) as c from records, json_each(records.artists) artist group by name order by c desc;
+  ```
+
+  Note that this query would fail to disambiguate artists with the same name - can be fixed by using the artist `musicbrainz_id`.
