@@ -61,12 +61,16 @@ defmodule MusicLibraryWeb.RecordLive.Index do
       |> merge_query(params["query"])
       |> merge_pagination(params, total_records)
 
-    offset = page_to_offset(record_list_params.page, record_list_params.page_size)
-    records = Records.search_records(query, limit: record_list_params.page_size, offset: offset)
+    if record_list_params != socket.assigns.record_list_params do
+      offset = page_to_offset(record_list_params.page, record_list_params.page_size)
+      records = Records.search_records(query, limit: record_list_params.page_size, offset: offset)
 
-    new_socket
-    |> assign(:record_list_params, record_list_params)
-    |> stream(:records, records, reset: true)
+      new_socket
+      |> assign(:record_list_params, record_list_params)
+      |> stream(:records, records, reset: true)
+    else
+      new_socket
+    end
   end
 
   @impl true
