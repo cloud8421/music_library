@@ -4,6 +4,14 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
   alias MusicLibrary.Records
 
   @impl true
+  def mount(socket) do
+    {:ok,
+     socket
+     |> assign(:uploaded_images, [])
+     |> allow_upload(:image_data, accept: ~w(.jpg .jpeg), max_entries: 1)}
+  end
+
+  @impl true
   def render(assigns) do
     ~H"""
     <div>
@@ -27,6 +35,15 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
           options={Ecto.Enum.values(MusicLibrary.Records.Record, :type)}
         />
         <.input field={@form[:year]} type="number" label="Year" />
+        <div>
+          <.label for={@uploads.image_data.ref}>
+            Cover art
+          </.label>
+          <.live_file_input
+            class="mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6"
+            upload={@uploads.image_data}
+          />
+        </div>
         <:actions>
           <.button phx-disable-with="Saving...">Save Record</.button>
         </:actions>
@@ -52,16 +69,30 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
   end
 
   def handle_event("save", %{"record" => record_params}, socket) do
-    save_record(socket, socket.assigns.action, record_params)
+    uploaded_images =
+      consume_uploaded_entries(socket, :image_data, fn %{path: path}, _entry ->
+        {:ok, File.read!(path)}
+      end)
+
+    socket
+    |> assign(:uploaded_images, uploaded_images)
+    |> save_record(socket.assigns.action, record_params)
   end
 
   defp save_record(socket, :edit, record_params) do
-    case Records.update_record(socket.assigns.record, record_params) do
+    params =
+      case socket.assigns.uploaded_images do
+        [] -> record_params
+        [image_path] -> Map.put(record_params, "image_data", image_path)
+      end
+
+    case Records.update_record(socket.assigns.record, params) do
       {:ok, record} ->
         notify_parent({:saved, record})
 
         {:noreply,
          socket
+         |> assign(:uploaded_images, [])
          |> put_flash(:info, "Record updated successfully")
          |> push_patch(to: socket.assigns.patch)}
 
