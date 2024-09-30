@@ -12,6 +12,7 @@ defmodule MusicLibrary.Records.Record do
     field :title, :string
     field :image_url, :string
     field :image_data, :binary
+    field :image_data_hash, :string
     field :year, :integer
     field :musicbrainz_id, Ecto.UUID
     field :genres, {:array, :string}
@@ -40,6 +41,7 @@ defmodule MusicLibrary.Records.Record do
       :image_data
     ])
     |> cast_embed(:artists, with: &artist_changeset/2)
+    |> generate_image_data_hash()
     |> validate_required([:type, :title, :musicbrainz_id, :year, :genres])
   end
 
@@ -57,7 +59,28 @@ defmodule MusicLibrary.Records.Record do
   end
 
   def add_image_data(record, image_data) do
-    change(record, image_data: image_data)
+    record
+    |> change(image_data: image_data)
+    |> generate_image_data_hash()
+  end
+
+  def generate_image_data_hash(record = %__MODULE__{image_data: image_data}) do
+    hash = :crypto.hash(:sha256, image_data) |> Base.encode16()
+
+    record
+    |> change()
+    |> put_change(:image_data_hash, hash)
+  end
+
+  def generate_image_data_hash(changeset) do
+    case get_change(changeset, :image_data) do
+      nil ->
+        changeset
+
+      image_data ->
+        hash = :crypto.hash(:sha256, image_data) |> Base.encode16()
+        put_change(changeset, :image_data_hash, hash)
+    end
   end
 
   def formats, do: @formats

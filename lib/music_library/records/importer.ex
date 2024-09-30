@@ -129,6 +129,23 @@ defmodule MusicLibrary.Records.Importer do
     end)
   end
 
+  def generate_all_cover_hashes do
+    Rec
+    |> Repo.all()
+    |> Enum.each(fn r ->
+      if r.image_data != nil do
+        generate_cover_image_hash(r)
+        IO.puts("Generated cover image hash for #{r.title}")
+      end
+    end)
+  end
+
+  def generate_cover_image_hash(record) do
+    record
+    |> Rec.generate_image_data_hash()
+    |> Repo.update!()
+  end
+
   defp blob_get(url) do
     req =
       Finch.build(:get, url, [

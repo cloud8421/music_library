@@ -25,7 +25,11 @@
 >
   <:col :let={{_id, record}} label="Image">
     <span class="relative inline-block drop-shadow-xl">
-      <img class="max-w-16 rounded-lg" src={~p"/images/#{record.id}"} alt={record.title} />
+      <img
+        class="max-w-16 rounded-lg"
+        alt={record.title}
+        src={~p"/images/#{record.id}?vsn=#{record.image_data_hash || ""}"}
+      />
       <span class="absolute right-1 bottom-0 block text-white drop-shadow-md">
         <%= Records.Record.format_short_label(record.format) %>
       </span>
