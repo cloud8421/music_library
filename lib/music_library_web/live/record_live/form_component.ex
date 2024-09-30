@@ -7,7 +7,6 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
   def mount(socket) do
     {:ok,
      socket
-     |> assign(:uploaded_images, [])
      |> allow_upload(:image_data, accept: ~w(.jpg .jpeg), max_entries: 1)}
   end
 
@@ -74,14 +73,12 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
         {:ok, File.read!(path)}
       end)
 
-    socket
-    |> assign(:uploaded_images, uploaded_images)
-    |> save_record(socket.assigns.action, record_params)
+    save_record(socket, record_params, uploaded_images)
   end
 
-  defp save_record(socket, :edit, record_params) do
+  defp save_record(socket, record_params, uploaded_images) do
     params =
-      case socket.assigns.uploaded_images do
+      case uploaded_images do
         [] -> record_params
         [image_path] -> Map.put(record_params, "image_data", image_path)
       end
@@ -92,7 +89,6 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
 
         {:noreply,
          socket
-         |> assign(:uploaded_images, [])
          |> put_flash(:info, "Record updated successfully")
          |> push_patch(to: socket.assigns.patch)}
 
