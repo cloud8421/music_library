@@ -24,7 +24,11 @@
   </span>
 
   <.list>
-    <:item title="Type"><%= @record.type %></:item>
+    <:item title="Type">
+      <span class="inline-flex items-center mr-2 rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+        <%= @record.type %>
+      </span>
+    </:item>
     <:item title="Musicbrainz ID">
       <a href={musicbrainz_url(@record)}>
         <code><%= @record.musicbrainz_id %></code>
