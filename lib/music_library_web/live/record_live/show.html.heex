@@ -11,9 +11,9 @@
   </:actions>
 </.header>
 
-<div class="columns-2">
-  <span class="relative inline-block">
-    <img class="w-full shadow" src={~p"/images/#{@record.id}"} alt={@record.title} />
+<div class="md:columns-2">
+  <span class="relative block md:inline-block drop-shadow">
+    <img class="w-full" src={~p"/images/#{@record.id}"} alt={@record.title} />
     <span class="absolute right-2 bottom-1 block text-white drop-shadow-md">
       <%= Records.Record.format_short_label(@record.format) %>
     </span>
@@ -23,11 +23,18 @@
     <:item title="Type"><%= @record.type %></:item>
     <:item title="Musicbrainz ID">
       <a href={musicbrainz_url(@record)}>
-        <%= @record.musicbrainz_id %>
+        <code><%= @record.musicbrainz_id %></code>
       </a>
     </:item>
     <:item title="Year"><%= @record.year %></:item>
-    <:item title="Genres"><%= Enum.join(@record.genres, ", ") %></:item>
+    <:item title="Genres">
+      <span
+        :for={genre <- @record.genres}
+        class="inline-flex items-center mr-2 rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"
+      >
+        <%= genre %>
+      </span>
+    </:item>
   </.list>
 </div>
 
