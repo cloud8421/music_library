@@ -24,8 +24,8 @@
   row_click={fn {_id, record} -> JS.navigate(~p"/records/#{record}") end}
 >
   <:col :let={{_id, record}} label="Image">
-    <span class="relative inline-block">
-      <img class="max-w-16 rounded-lg shadow" src={~p"/images/#{record.id}"} alt={record.title} />
+    <span class="relative inline-block drop-shadow-xl">
+      <img class="max-w-16 rounded-lg" src={~p"/images/#{record.id}"} alt={record.title} />
       <span class="absolute right-1 bottom-0 block text-white drop-shadow-md">
         <%= Records.Record.format_short_label(record.format) %>
       </span>
