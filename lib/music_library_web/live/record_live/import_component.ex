@@ -9,12 +9,14 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
     <div>
       <.simple_form
         for={@form}
-        id="search-form"
+        id={:import_form}
         phx-target={@myself}
         phx-change="search"
         phx-submit="search"
       >
         <.input
+          id={:import_query}
+          name={:import_query}
           field={@form[:query]}
           type="text"
           label="Search for a record on MusicBrainz"
