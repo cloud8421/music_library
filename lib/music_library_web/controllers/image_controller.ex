@@ -8,10 +8,7 @@ defmodule MusicLibraryWeb.ImageController do
       nil ->
         send_resp(conn, 404, "Not found")
 
-      image_data ->
-        # TODO: move hash result to database
-        etag = :crypto.hash(:sha256, image_data) |> Base.encode16()
-
+      %{image_data: image_data, image_data_hash: etag} ->
         case get_req_header(conn, "if-none-match") do
           [^etag] ->
             send_resp(conn, 304, "")

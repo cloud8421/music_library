@@ -58,7 +58,7 @@ defmodule MusicLibrary.Records do
     q =
       from r in Record,
         where: r.id == ^id,
-        select: r.image_data
+        select: %{image_data: r.image_data, image_data_hash: r.image_data_hash}
 
     Repo.one!(q)
   end
