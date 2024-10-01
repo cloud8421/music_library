@@ -15,9 +15,9 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
         phx-submit="search"
       >
         <.input
-          id={:import_query}
-          name={:import_query}
-          field={@form[:query]}
+          id={:mb_query}
+          name={:mb_query}
+          field={@form[:mb_query]}
           type="text"
           label="Search for a record on MusicBrainz"
           prompt="Search for records"
@@ -33,10 +33,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
 
   defp result(assigns) do
     ~H"""
-    <li
-      class="flex justify-between gap-x-6 py-5 cursor-pointer hover:bg-gray-50"
-      phx-click={JS.push("import", value: %{id: @release_group.id}, page_loading: true)}
-    >
+    <li class="flex justify-between gap-x-6 py-5 hover:bg-gray-50">
       <div class="flex min-w-0 gap-x-4">
         <div class="min-w-0 flex-auto">
           <p class="text-sm font-semibold leading-6 text-gray-900">
@@ -55,7 +52,9 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
         <span class="isolate inline-flex rounded-md shadow-sm">
           <button
             :for={format <- Records.Record.formats()}
-            phx-click={JS.push("import", value: %{id: @release_group.id, format: format})}
+            phx-click={
+              JS.push("import", value: %{id: @release_group.id, format: format}, page_loading: true)
+            }
             type="button"
             class="relative -ml-px inline-flex items-center first:rounded-l-md last:rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
           >
@@ -82,22 +81,22 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
     {:ok,
      socket
      |> assign(:release_groups, [])
-     |> assign(:form, to_form(%{"import_query" => ""}))}
+     |> assign(:form, to_form(%{"mb_query" => ""}))}
   end
 
   @impl true
-  def handle_event("search", %{"import_query" => query}, socket) do
-    {:ok, release_groups} = search(query)
+  def handle_event("search", %{"mb_query" => mb_query}, socket) do
+    {:ok, release_groups} = search(mb_query)
 
     {:noreply,
      socket
      |> assign(:release_groups, release_groups)
-     |> assign(:form, to_form(%{"import_query" => query}))}
+     |> assign(:form, to_form(%{"mb_query" => mb_query}))}
   end
 
   defp search(""), do: {:ok, []}
 
-  defp search(query) do
-    Records.search_release_group(query, limit: 10)
+  defp search(mb_query) do
+    Records.search_release_group(mb_query, limit: 10)
   end
 end
