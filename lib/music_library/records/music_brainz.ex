@@ -162,7 +162,21 @@ defmodule MusicLibrary.Records.MusicBrainz do
     url =
       "https://musicbrainz.org/ws/2/release-group?#{URI.encode_query(qs)}"
 
-    json_get(url)
+    with {:ok, result} <- json_get(url) do
+      {:ok,
+       Enum.map(result["release-groups"], fn rg ->
+         %{
+           id: rg["id"],
+           type: parse_subtype(rg["primary-type"]),
+           title: rg["title"],
+           artists:
+             rg["artist-credit"]
+             |> Enum.map(fn ac -> ac["artist"]["name"] end)
+             |> Enum.join(", "),
+           year: parse_year(rg["first-release-date"])
+         }
+       end)}
+    end
   end
 
   def get_cover_art(musicbrainz_id) do
@@ -216,4 +230,20 @@ defmodule MusicLibrary.Records.MusicBrainz do
         {:error, msg}
     end
   end
+
+  defp parse_year(nil), do: ""
+
+  defp parse_year(iso_date) do
+    case Date.from_iso8601(iso_date) do
+      {:ok, date} -> date.year
+      _error -> nil
+    end
+  end
+
+  defp parse_subtype("Album"), do: :album
+  defp parse_subtype("EP"), do: :ep
+  defp parse_subtype("Live"), do: :live
+  defp parse_subtype("Compilation"), do: :compilation
+  defp parse_subtype("Single"), do: :single
+  defp parse_subtype(_), do: :other
 end

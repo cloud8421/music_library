@@ -98,40 +98,6 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
   defp search(""), do: {:ok, []}
 
   defp search(query) do
-    case Records.search_release_group(query, limit: 10) do
-      {:ok, result} ->
-        {:ok,
-         Enum.map(result["release-groups"], fn rg ->
-           %{
-             id: rg["id"],
-             type: parse_subtype(rg["primary-type"]),
-             title: rg["title"],
-             artists:
-               rg["artist-credit"]
-               |> Enum.map(fn ac -> ac["artist"]["name"] end)
-               |> Enum.join(", "),
-             year: parse_year(rg["first-release-date"])
-           }
-         end)}
-
-      error ->
-        error
-    end
+    Records.search_release_group(query, limit: 10)
   end
-
-  defp parse_year(nil), do: ""
-
-  defp parse_year(iso_date) do
-    case Date.from_iso8601(iso_date) do
-      {:ok, date} -> date.year
-      _error -> nil
-    end
-  end
-
-  defp parse_subtype("Album"), do: :album
-  defp parse_subtype("EP"), do: :ep
-  defp parse_subtype("Live"), do: :live
-  defp parse_subtype("Compilation"), do: :compilation
-  defp parse_subtype("Single"), do: :single
-  defp parse_subtype(_), do: :other
 end
