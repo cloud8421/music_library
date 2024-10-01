@@ -48,7 +48,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
         </div>
       </div>
 
-      <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+      <div class="shrink-0 sm:flex sm:flex-col sm:items-end">
         <span class="isolate inline-flex rounded-md shadow-sm">
           <button
             :for={format <- Records.Record.formats()}
@@ -56,7 +56,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
               JS.push("import", value: %{id: @release_group.id, format: format}, page_loading: true)
             }
             type="button"
-            class="relative -ml-px inline-flex items-center first:rounded-l-md last:rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
+            class="relative -ml-px inline-flex items-center first:rounded-l-md last:rounded-r-md bg-white px-2 sm:px-3 py-1 sm:py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
           >
             <%= Records.Record.format_short_label(format) %>
           </button>
