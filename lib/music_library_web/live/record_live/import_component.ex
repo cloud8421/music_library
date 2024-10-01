@@ -82,17 +82,17 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
     {:ok,
      socket
      |> assign(:release_groups, [])
-     |> assign(:form, to_form(%{"query" => ""}))}
+     |> assign(:form, to_form(%{"import_query" => ""}))}
   end
 
   @impl true
-  def handle_event("search", %{"query" => query}, socket) do
+  def handle_event("search", %{"import_query" => query}, socket) do
     {:ok, release_groups} = search(query)
 
     {:noreply,
      socket
      |> assign(:release_groups, release_groups)
-     |> assign(:form, to_form(%{"query" => query}))}
+     |> assign(:form, to_form(%{"import_query" => query}))}
   end
 
   defp search(""), do: {:ok, []}
