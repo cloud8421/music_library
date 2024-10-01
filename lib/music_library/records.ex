@@ -4,6 +4,8 @@ defmodule MusicLibrary.Records do
 
   alias MusicLibrary.Records.{MusicBrainz, Record}
 
+  @fields [:id, :type, :format, :title, :year, :genres, :musicbrainz_id, :image_data_hash]
+
   def list_records(opts \\ []) do
     limit = Keyword.get(opts, :limit, 20)
     offset = Keyword.get(opts, :offset, 0)
@@ -12,7 +14,8 @@ defmodule MusicLibrary.Records do
       from r in Record,
         order_by: [r.artists[0]["sort_name"], r.title],
         limit: ^limit,
-        offset: ^offset
+        offset: ^offset,
+        select: ^@fields
 
     Repo.all(q)
   end
@@ -26,7 +29,8 @@ defmodule MusicLibrary.Records do
         where: like(r.title, ^"%#{query}%") or like(r.artists, ^"%#{query}%"),
         order_by: [r.artists[0]["sort_name"], r.title],
         limit: ^limit,
-        offset: ^offset
+        offset: ^offset,
+        select: ^@fields
 
     Repo.all(q)
   end
@@ -49,7 +53,8 @@ defmodule MusicLibrary.Records do
     q =
       from r in Record,
         order_by: [desc: r.inserted_at],
-        limit: 1
+        limit: 1,
+        select: ^@fields
 
     Repo.one!(q)
   end
