@@ -39,6 +39,15 @@ defmodule MusicLibrary.Records do
     Repo.aggregate(Record, :count)
   end
 
+  def count_records_by_format do
+    q =
+      from r in Record,
+        group_by: r.format,
+        select: {r.format, count(r.id)}
+
+    Repo.all(q)
+  end
+
   def search_records_count(query) do
     q =
       from r in Record,
