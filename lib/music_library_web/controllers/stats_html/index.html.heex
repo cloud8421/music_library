@@ -40,17 +40,17 @@
       <dt>
         <img
           class="absolute max-w-12 rounded-lg shadow"
-          src={~p"/images/#{@record.id}"}
-          alt={@record.title}
+          src={~p"/images/#{@latest_record.id}"}
+          alt={@latest_record.title}
         />
         <p class="ml-16 truncate text-sm font-medium text-gray-500">Latest record</p>
       </dt>
       <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
-        <p class="text-2xl font-semibold text-gray-900"><%= @record.title %></p>
+        <p class="text-2xl font-semibold text-gray-900"><%= @latest_record.title %></p>
         <div class="absolute inset-x-0 bottom-0 bg-gray-50 px-4 py-4 sm:px-6">
           <div class="text-sm">
             <a
-              href={~p"/records/#{@record.id}"}
+              href={~p"/records/#{@latest_record.id}"}
               class="font-medium text-zinc-600 hover:text-zinc-500"
             >
               View<span class="sr-only"> record</span>
