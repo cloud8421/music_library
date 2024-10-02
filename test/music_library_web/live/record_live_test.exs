@@ -33,7 +33,7 @@ defmodule MusicLibraryWeb.RecordLiveTest do
 
       for record <- present do
         assert html =~ escape(record.title)
-        assert html =~ to_string(record.year)
+        assert html =~ to_string(record.release)
 
         for artist <- record.artists do
           assert html =~ escape(artist["name"])

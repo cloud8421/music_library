@@ -14,7 +14,7 @@ defmodule Obsidian.ParserTest do
                 type: :album,
                 musicbrainz_id: "20790e26-98e4-3ad3-a67f-b674758b942d",
                 title: "Marbles",
-                year: 2004,
+                release: "2004",
                 image_url:
                   "https://coverartarchive.org/release-group/20790e26-98e4-3ad3-a67f-b674758b942d/front",
                 genres: [
@@ -41,7 +41,7 @@ defmodule Obsidian.ParserTest do
                 musicbrainz_id: "950092d6-45f6-4269-87da-99a9ff2fcc52",
                 title: "Guardians of the Galaxy: Awesome Mix, Vol. 1",
                 type: :album,
-                year: 2014
+                release: "2014"
               }}
   end
 end

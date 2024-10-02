@@ -44,7 +44,7 @@ defmodule MusicLibrary.RecordsFixtures do
         title: Enum.random(@titles),
         type: :album,
         format: :cd,
-        year: Enum.random(1969..2024)
+        release: Enum.random(1969..2024) |> Integer.to_string()
       })
       |> MusicLibrary.Records.create_record()
 

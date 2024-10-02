@@ -8,7 +8,7 @@ defmodule Obsidian.Parser do
          type: parse_subtype(meta["subType"]),
          musicbrainz_id: meta["id"],
          title: meta["title"],
-         year: meta["year"] |> maybe_parse_year(),
+         release: meta["year"] |> parse_release(),
          image_url: meta["image"],
          genres: meta["genres"]
        }}
@@ -41,11 +41,7 @@ defmodule Obsidian.Parser do
   defp parse_subtype("Single"), do: :single
   defp parse_subtype(_), do: :other
 
-  defp maybe_parse_year(nil), do: nil
-  defp maybe_parse_year(year) when is_integer(year), do: year
-
-  defp maybe_parse_year(year) when is_binary(year) do
-    {integer, _remainder} = Integer.parse(year, 10)
-    integer
-  end
+  defp parse_release(nil), do: nil
+  defp parse_release(year) when is_integer(year), do: Integer.to_string(year)
+  defp parse_release(year) when is_binary(year), do: year
 end

@@ -1,3 +1,3 @@
 defmodule Obsidian.Entry do
-  defstruct [:type, :musicbrainz_id, :title, :year, :image_url, :genres]
+  defstruct [:type, :musicbrainz_id, :title, :release, :image_url, :genres]
 end

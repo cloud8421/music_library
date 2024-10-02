@@ -41,7 +41,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
             <%= @release_group.title %>
 
             <span class="mt-1 text-xs leading-5 text-gray-500">
-              <%= @release_group.year %>
+              <%= @release_group.release %>
             </span>
           </p>
           <p class="mt-1 truncate text-xs leading-5 text-gray-500"><%= @release_group.artists %></p>

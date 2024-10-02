@@ -16,6 +16,7 @@ defmodule MusicLibrary.Records.Record do
     field :year, :integer
     field :musicbrainz_id, Ecto.UUID
     field :genres, {:array, :string}
+    field :release, :string
 
     embeds_many :artists, Artist do
       field :name, :string
@@ -35,14 +36,14 @@ defmodule MusicLibrary.Records.Record do
       :format,
       :title,
       :musicbrainz_id,
-      :year,
+      :release,
       :genres,
       :image_url,
       :image_data
     ])
     |> cast_embed(:artists, with: &artist_changeset/2)
     |> generate_image_data_hash()
-    |> validate_required([:type, :title, :musicbrainz_id, :year, :genres])
+    |> validate_required([:type, :title, :musicbrainz_id, :release, :genres])
   end
 
   @doc false

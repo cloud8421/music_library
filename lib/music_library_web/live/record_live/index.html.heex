@@ -38,7 +38,7 @@
   <:col :let={{_id, record}} label="Record">
     <p class="text-sm max-sm:text-xs"><%= Enum.map(record.artists, fn a -> a.name end) %></p>
     <p class="text-base font-semibold text-wrap max-sm:text-xs"><%= record.title %></p>
-    <p class="text-sm max-sm:text-xs"><%= record.year %></p>
+    <p class="text-sm max-sm:text-xs"><%= record.release %></p>
   </:col>
   <:action :let={{_id, record}}>
     <div class="sr-only">

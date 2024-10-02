@@ -4,7 +4,7 @@ defmodule MusicLibrary.Records do
 
   alias MusicLibrary.Records.{MusicBrainz, Record}
 
-  @fields [:id, :type, :format, :title, :year, :genres, :musicbrainz_id, :image_data_hash]
+  @fields [:id, :type, :format, :title, :release, :genres, :musicbrainz_id, :image_data_hash]
 
   def list_records(opts \\ []) do
     limit = Keyword.get(opts, :limit, 20)
@@ -104,24 +104,13 @@ defmodule MusicLibrary.Records do
       "musicbrainz_id" => musicbrainz_id,
       "title" => release_group["title"],
       "artists" => artists_attrs,
-      "year" => parse_year(release_group["first-release-date"]),
+      "release" => release_group["first-release-date"],
       "type" => parse_subtype(release_group["primary-type"]),
       "format" => format,
       "genres" => Enum.map(release_group["genres"], fn g -> g["name"] end),
       "image_url" => "https://coverartarchive.org/release-group/#{musicbrainz_id}/front",
       "image_data" => image_data
     }
-  end
-
-  defp parse_year(iso_date) when is_binary(iso_date) do
-    case Date.from_iso8601(iso_date) do
-      {:ok, date} ->
-        date.year
-
-      _error ->
-        {year, _rest} = Integer.parse(iso_date)
-        {:ok, year}
-    end
   end
 
   defp parse_subtype("Album"), do: :album

@@ -173,7 +173,7 @@ defmodule MusicLibrary.Records.MusicBrainz do
              rg["artist-credit"]
              |> Enum.map(fn ac -> ac["artist"]["name"] end)
              |> Enum.join(", "),
-           year: parse_year(rg["first-release-date"])
+           release: rg["first-release-date"]
          }
        end)}
     end
@@ -228,15 +228,6 @@ defmodule MusicLibrary.Records.MusicBrainz do
         msg = "Failed to fetch data from #{url}, reason: #{inspect(other)}"
         Logger.error(msg)
         {:error, msg}
-    end
-  end
-
-  defp parse_year(nil), do: ""
-
-  defp parse_year(iso_date) do
-    case Date.from_iso8601(iso_date) do
-      {:ok, date} -> date.year
-      _error -> nil
     end
   end
 

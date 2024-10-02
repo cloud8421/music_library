@@ -33,7 +33,7 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
           prompt="Choose a value"
           options={Ecto.Enum.values(MusicLibrary.Records.Record, :type)}
         />
-        <.input field={@form[:year]} type="number" label="Year" />
+        <.input field={@form[:release]} type="text" label="Release" />
         <div>
           <.label for={@uploads.image_data.ref}>
             Cover art
