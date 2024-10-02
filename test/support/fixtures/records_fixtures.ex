@@ -29,7 +29,7 @@ defmodule MusicLibrary.RecordsFixtures do
     "Thick as a Brick"
   ]
   # While it would be great to have this random, it's ok to use one single image
-  @image_data_path "#{__DIR__}/marillion-marbles.jpg"
+  @cover_data_path "#{__DIR__}/marillion-marbles.jpg"
 
   def record_fixture(attrs \\ %{}) do
     musicbrainz_id = Ecto.UUID.generate()
@@ -38,8 +38,8 @@ defmodule MusicLibrary.RecordsFixtures do
       attrs
       |> Enum.into(%{
         genres: Enum.take_random(@genres, :rand.uniform(3)),
-        image_url: "https://coverartarchive.org/release-group/#{musicbrainz_id}/front",
-        image_data: File.read!(@image_data_path),
+        cover_url: "https://coverartarchive.org/release-group/#{musicbrainz_id}/front",
+        cover_data: File.read!(@cover_data_path),
         musicbrainz_id: musicbrainz_id,
         title: Enum.random(@titles),
         type: :album,

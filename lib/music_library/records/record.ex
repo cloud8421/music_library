@@ -10,9 +10,9 @@ defmodule MusicLibrary.Records.Record do
     field :type, Ecto.Enum, values: [:album, :ep, :live, :compilation, :single, :other]
     field :format, Ecto.Enum, values: @formats
     field :title, :string
-    field :image_url, :string
-    field :image_data, :binary
-    field :image_data_hash, :string
+    field :cover_url, :string
+    field :cover_data, :binary
+    field :cover_hash, :string
     field :musicbrainz_id, Ecto.UUID
     field :genres, {:array, :string}
     field :release, :string
@@ -37,11 +37,11 @@ defmodule MusicLibrary.Records.Record do
       :musicbrainz_id,
       :release,
       :genres,
-      :image_url,
-      :image_data
+      :cover_url,
+      :cover_data
     ])
     |> cast_embed(:artists, with: &artist_changeset/2)
-    |> generate_image_data_hash()
+    |> generate_cover_hash()
     |> validate_required([:type, :title, :musicbrainz_id, :release, :genres])
   end
 
@@ -58,28 +58,28 @@ defmodule MusicLibrary.Records.Record do
     |> put_embed(:artists, artists_attrs)
   end
 
-  def add_image_data(record, image_data) do
+  def add_cover_data(record, cover_data) do
     record
-    |> change(image_data: image_data)
-    |> generate_image_data_hash()
+    |> change(cover_data: cover_data)
+    |> generate_cover_hash()
   end
 
-  def generate_image_data_hash(record = %__MODULE__{image_data: image_data}) do
-    hash = :crypto.hash(:sha256, image_data) |> Base.encode16()
+  def generate_cover_hash(record = %__MODULE__{cover_data: cover_data}) do
+    hash = :crypto.hash(:sha256, cover_data) |> Base.encode16()
 
     record
     |> change()
-    |> put_change(:image_data_hash, hash)
+    |> put_change(:cover_hash, hash)
   end
 
-  def generate_image_data_hash(changeset) do
-    case get_change(changeset, :image_data) do
+  def generate_cover_hash(changeset) do
+    case get_change(changeset, :cover_data) do
       nil ->
         changeset
 
-      image_data ->
-        hash = :crypto.hash(:sha256, image_data) |> Base.encode16()
-        put_change(changeset, :image_data_hash, hash)
+      cover_data ->
+        hash = :crypto.hash(:sha256, cover_data) |> Base.encode16()
+        put_change(changeset, :cover_hash, hash)
     end
   end
 

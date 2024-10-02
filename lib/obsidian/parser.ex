@@ -9,7 +9,7 @@ defmodule Obsidian.Parser do
          musicbrainz_id: meta["id"],
          title: meta["title"],
          release: meta["year"] |> parse_release(),
-         image_url: meta["image"],
+         cover_url: meta["image"],
          genres: meta["genres"]
        }}
     end

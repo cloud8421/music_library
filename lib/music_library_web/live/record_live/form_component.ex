@@ -7,7 +7,7 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
   def mount(socket) do
     {:ok,
      socket
-     |> allow_upload(:image_data, accept: ~w(.jpg .jpeg), max_entries: 1)}
+     |> allow_upload(:cover_data, accept: ~w(.jpg .jpeg), max_entries: 1)}
   end
 
   @impl true
@@ -35,12 +35,12 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
         />
         <.input field={@form[:release]} type="text" label="Release" />
         <div>
-          <.label for={@uploads.image_data.ref}>
+          <.label for={@uploads.cover_data.ref}>
             Cover art
           </.label>
           <.live_file_input
             class="mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6"
-            upload={@uploads.image_data}
+            upload={@uploads.cover_data}
           />
         </div>
         <:actions>
@@ -68,19 +68,19 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
   end
 
   def handle_event("save", %{"record" => record_params}, socket) do
-    uploaded_images =
-      consume_uploaded_entries(socket, :image_data, fn %{path: path}, _entry ->
+    uploaded_covers =
+      consume_uploaded_entries(socket, :cover_data, fn %{path: path}, _entry ->
         {:ok, File.read!(path)}
       end)
 
-    save_record(socket, record_params, uploaded_images)
+    save_record(socket, record_params, uploaded_covers)
   end
 
-  defp save_record(socket, record_params, uploaded_images) do
+  defp save_record(socket, record_params, uploaded_covers) do
     params =
-      case uploaded_images do
+      case uploaded_covers do
         [] -> record_params
-        [image_path] -> Map.put(record_params, "image_data", image_path)
+        [cover_data] -> Map.put(record_params, "cover_data", cover_data)
       end
 
     case Records.update_record(socket.assigns.record, params) do

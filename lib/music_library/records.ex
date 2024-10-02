@@ -4,7 +4,7 @@ defmodule MusicLibrary.Records do
 
   alias MusicLibrary.Records.{MusicBrainz, Record}
 
-  @fields [:id, :type, :format, :title, :release, :genres, :musicbrainz_id, :image_data_hash]
+  @fields [:id, :type, :format, :title, :release, :genres, :musicbrainz_id, :cover_hash]
 
   def list_records(opts \\ []) do
     limit = Keyword.get(opts, :limit, 20)
@@ -59,11 +59,11 @@ defmodule MusicLibrary.Records do
     Repo.one!(q)
   end
 
-  def get_image!(id) do
+  def get_cover!(id) do
     q =
       from r in Record,
         where: r.id == ^id,
-        select: %{image_data: r.image_data, image_data_hash: r.image_data_hash}
+        select: %{cover_data: r.cover_data, cover_hash: r.cover_hash}
 
     Repo.one!(q)
   end
@@ -77,15 +77,15 @@ defmodule MusicLibrary.Records do
   def import_from_musicbrainz(musicbrainz_id, opts \\ []) do
     with format = Keyword.get(opts, :format, "cd"),
          {:ok, release_group} <- MusicBrainz.get_release_group(musicbrainz_id),
-         {:ok, image_data} <- MusicBrainz.get_cover_art(musicbrainz_id),
-         record_params = build_record_params(release_group, image_data, format) do
+         {:ok, cover_data} <- MusicBrainz.get_cover_art(musicbrainz_id),
+         record_params = build_record_params(release_group, cover_data, format) do
       create_record(record_params)
     else
       error -> error
     end
   end
 
-  defp build_record_params(release_group, image_data, format) do
+  defp build_record_params(release_group, cover_data, format) do
     musicbrainz_id = release_group["id"]
 
     artists_attrs =
@@ -108,8 +108,8 @@ defmodule MusicLibrary.Records do
       "type" => parse_subtype(release_group["primary-type"]),
       "format" => format,
       "genres" => Enum.map(release_group["genres"], fn g -> g["name"] end),
-      "image_url" => "https://coverartarchive.org/release-group/#{musicbrainz_id}/front",
-      "image_data" => image_data
+      "cover_url" => "https://coverartarchive.org/release-group/#{musicbrainz_id}/front",
+      "cover_data" => cover_data
     }
   end
 

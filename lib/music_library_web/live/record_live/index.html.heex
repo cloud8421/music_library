@@ -23,12 +23,12 @@
   rows={@streams.records}
   row_click={fn {_id, record} -> JS.navigate(~p"/records/#{record}") end}
 >
-  <:col :let={{_id, record}} label="Image">
+  <:col :let={{_id, record}} label="Cover">
     <span class="relative inline-block drop-shadow-xl">
       <img
         class="max-w-16 rounded-lg"
         alt={record.title}
-        src={~p"/images/#{record.id}?vsn=#{record.image_data_hash || ""}"}
+        src={~p"/images/#{record.id}?vsn=#{record.cover_hash || ""}"}
       />
       <span class="absolute right-1 bottom-0 block text-white drop-shadow-md">
         <%= Records.Record.format_short_label(record.format) %>

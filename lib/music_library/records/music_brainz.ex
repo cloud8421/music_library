@@ -182,8 +182,8 @@ defmodule MusicLibrary.Records.MusicBrainz do
   def get_cover_art(musicbrainz_id) do
     url = "https://coverartarchive.org/release-group/#{musicbrainz_id}/front"
 
-    with {:ok, image_data} <- blob_get(url),
-         {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(image_data, 400) do
+    with {:ok, cover_data} <- blob_get(url),
+         {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(cover_data, 400) do
       Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
     end
   end

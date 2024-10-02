@@ -81,50 +81,50 @@ defmodule MusicLibrary.Records.Importer do
   end
 
   @doc """
-  Pull the cover image from the stored url and keep a local, resized copy in
+  Pull the cover from the stored url and keep a local, resized copy in
   the database for fast access/use.
   """
-  def import_cover_image(record) do
-    with {:ok, image_data} <- blob_get(record.image_url) do
-      {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(image_data, 400)
+  def import_cover(record) do
+    with {:ok, cover_data} <- blob_get(record.cover_url) do
+      {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(cover_data, 400)
       {:ok, thumb_data} = Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
 
       record
-      |> Rec.add_image_data(thumb_data)
+      |> Rec.add_cover_data(thumb_data)
       |> Repo.update!()
     end
   end
 
   @doc """
-  Given an already stored image in the database, resize it to a 400px wide thumbnail.
+  Given an already stored cover, resize it to a 400px wide thumbnail.
   """
-  def resize_cover_image(record) do
-    {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(record.image_data, 400)
+  def resize_cover(record) do
+    {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(record.cover_data, 400)
     {:ok, thumb_data} = Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
 
     record
-    |> Rec.add_image_data(thumb_data)
+    |> Rec.add_cover_data(thumb_data)
     |> Repo.update!()
   end
 
-  def import_all_cover_images do
+  def import_all_covers do
     Rec
     |> Repo.all()
     |> Enum.each(fn r ->
-      if r.image_data == nil do
-        import_cover_image(r)
-        IO.puts("Imported cover image for #{r.title}")
+      if r.cover_data == nil do
+        import_cover(r)
+        IO.puts("Imported cover for #{r.title}")
       end
     end)
   end
 
-  def resize_all_cover_images do
+  def resize_all_covers do
     Rec
     |> Repo.all()
     |> Enum.each(fn r ->
-      if r.image_data != nil do
-        resize_cover_image(r)
-        IO.puts("Resized cover image for #{r.title}")
+      if r.cover_data != nil do
+        resize_cover(r)
+        IO.puts("Resized cover for #{r.title}")
       end
     end)
   end
@@ -133,16 +133,16 @@ defmodule MusicLibrary.Records.Importer do
     Rec
     |> Repo.all()
     |> Enum.each(fn r ->
-      if r.image_data != nil do
-        generate_cover_image_hash(r)
-        IO.puts("Generated cover image hash for #{r.title}")
+      if r.cover_data != nil do
+        generate_cover_hash(r)
+        IO.puts("Generated cover hash for #{r.title}")
       end
     end)
   end
 
-  def generate_cover_image_hash(record) do
+  def generate_cover_hash(record) do
     record
-    |> Rec.generate_image_data_hash()
+    |> Rec.generate_cover_hash()
     |> Repo.update!()
   end
 
