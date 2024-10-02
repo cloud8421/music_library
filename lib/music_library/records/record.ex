@@ -13,7 +13,6 @@ defmodule MusicLibrary.Records.Record do
     field :image_url, :string
     field :image_data, :binary
     field :image_data_hash, :string
-    field :year, :integer
     field :musicbrainz_id, Ecto.UUID
     field :genres, {:array, :string}
     field :release, :string
