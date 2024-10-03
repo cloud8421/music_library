@@ -42,10 +42,10 @@ jobs:
       # *most* day-to-day development), force a full recompile only on builds
       # that are retried.
       - name: Clean to rule out incremental build as a source of flakiness
-      if: github.run_attempt != '1'
-      run: |
-        mix deps.clean --all
-        mix clean
-      shell: sh
+        if: github.run_attempt != '1'
+        run: |
+          mix deps.clean --all
+          mix clean
+        shell: sh
       - run: mix deps.get
       - run: mix test
