@@ -43,3 +43,7 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   ```
 
   Note that this query would fail to disambiguate artists with the same name - can be fixed by using the artist `musicbrainz_id`.
+
+### CI
+
+See the `.github` folder.
