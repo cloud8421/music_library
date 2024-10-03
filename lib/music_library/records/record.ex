@@ -3,11 +3,12 @@ defmodule MusicLibrary.Records.Record do
   import Ecto.Changeset
 
   @formats [:cd, :vinyl, :blu_ray, :dvd, :multi]
+  @types [:album, :ep, :live, :compilation, :single, :other]
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "records" do
-    field :type, Ecto.Enum, values: [:album, :ep, :live, :compilation, :single, :other]
+    field :type, Ecto.Enum, values: @types
     field :format, Ecto.Enum, values: @formats
     field :title, :string
     field :cover_url, :string
