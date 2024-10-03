@@ -4,9 +4,11 @@ defmodule MusicLibraryWeb.ImageController do
   alias MusicLibrary.Records
 
   def show(conn, %{"record_id" => record_id}) do
-    case Records.get_cover!(record_id) do
+    case Records.get_cover(record_id) do
       nil ->
-        send_resp(conn, 404, "Not found")
+        conn
+        |> put_status(:not_found)
+        |> text("Not found")
 
       %{cover_data: cover_data, cover_hash: etag} ->
         case get_req_header(conn, "if-none-match") do

@@ -68,13 +68,13 @@ defmodule MusicLibrary.Records do
     Repo.one!(q)
   end
 
-  def get_cover!(id) do
+  def get_cover(id) do
     q =
       from r in Record,
         where: r.id == ^id,
         select: %{cover_data: r.cover_data, cover_hash: r.cover_hash}
 
-    Repo.one!(q)
+    Repo.one(q)
   end
 
   def search_release_group(query, opts \\ []) do
