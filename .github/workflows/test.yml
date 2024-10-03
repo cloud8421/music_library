@@ -3,9 +3,10 @@ on: push
 jobs:
   test:
     runs-on: ubuntu-20.04
-    version-file: .tool-versions
     steps:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
+        with:
+          version-file: .tool-versions
       - run: mix deps.get
       - run: mix test
