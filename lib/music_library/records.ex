@@ -4,7 +4,7 @@ defmodule MusicLibrary.Records do
 
   alias MusicLibrary.Records.{MusicBrainz, Record}
 
-  @fields [:id, :type, :format, :title, :release, :genres, :musicbrainz_id, :cover_hash]
+  @fields [:id, :type, :artists, :format, :title, :release, :genres, :musicbrainz_id, :cover_hash]
 
   def list_records(opts \\ []) do
     limit = Keyword.get(opts, :limit, 20)
