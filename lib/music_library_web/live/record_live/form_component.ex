@@ -26,20 +26,22 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input
-          field={@form[:type]}
-          type="select"
-          label="Type"
-          prompt="Choose a value"
-          options={Ecto.Enum.values(MusicLibrary.Records.Record, :type)}
-        />
-        <.input
-          field={@form[:format]}
-          type="select"
-          label="Format"
-          prompt="Choose a value"
-          options={Ecto.Enum.values(MusicLibrary.Records.Record, :format)}
-        />
+        <div class="sm:columns-2">
+          <.input
+            field={@form[:type]}
+            type="select"
+            label="Type"
+            prompt="Choose a value"
+            options={Ecto.Enum.values(MusicLibrary.Records.Record, :type)}
+          />
+          <.input
+            field={@form[:format]}
+            type="select"
+            label="Format"
+            prompt="Choose a value"
+            options={Ecto.Enum.values(MusicLibrary.Records.Record, :format)}
+          />
+        </div>
         <.input field={@form[:release]} type="text" label="Release" />
         <div>
           <.label for={@uploads.cover_data.ref}>
