@@ -4,6 +4,8 @@ defmodule MusicLibrary.RecordsFixtures do
   entities via the `MusicLibrary.Records` context.
   """
 
+  alias MusicLibrary.Records.Record
+
   @genres [
     "progressive rock",
     "art rock",
@@ -43,7 +45,7 @@ defmodule MusicLibrary.RecordsFixtures do
         musicbrainz_id: musicbrainz_id,
         title: Enum.random(@titles),
         type: :album,
-        format: :cd,
+        format: Record.formats() |> Enum.random(),
         release: Enum.random(1969..2024) |> Integer.to_string()
       })
       |> MusicLibrary.Records.create_record()

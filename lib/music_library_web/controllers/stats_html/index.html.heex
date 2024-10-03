@@ -46,7 +46,12 @@
         <p class="ml-16 truncate text-sm font-medium text-gray-500">Latest record</p>
       </dt>
       <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
-        <p class="text-2xl font-semibold text-gray-900"><%= @latest_record.title %></p>
+        <p class="font-semibold">
+          <span class="text-2xl text-gray-900">
+            <%= Enum.map(@latest_record.artists, fn a -> a.name end) %>
+          </span>
+          <span class="text-gray-600"><%= @latest_record.title %></span>
+        </p>
         <div class="absolute inset-x-0 bottom-0 bg-gray-50 px-4 py-4 sm:px-6">
           <div class="text-sm">
             <a
