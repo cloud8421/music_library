@@ -3,6 +3,7 @@ defmodule MusicLibraryWeb.RecordLiveTest do
 
   import Phoenix.LiveViewTest
   import MusicLibrary.RecordsFixtures
+  alias MusicLibrary.Records.Record
 
   defp create_records(_) do
     records = Enum.map(1..30, fn _ -> record_fixture() end)
@@ -19,7 +20,7 @@ defmodule MusicLibraryWeb.RecordLiveTest do
     setup [:create_records]
 
     test "lists all records within default pagination params", %{conn: conn, records: records} do
-      {:ok, _index_live, html} = live(conn, ~p"/records")
+      {:ok, index_live, html} = live(conn, ~p"/records")
 
       assert html =~ "Listing Records"
 
@@ -32,11 +33,20 @@ defmodule MusicLibraryWeb.RecordLiveTest do
       assert length(absent) == 10
 
       for record <- present do
-        assert html =~ escape(record.title)
-        assert html =~ to_string(record.release)
+        record_row =
+          index_live
+          |> with_target("#records-#{record.id}")
+
+        record_row_html = record_row |> render()
+
+        assert record_row_html =~ escape(record.title)
+        assert record_row_html =~ to_string(record.release)
+        assert record_row_html =~ Record.format_short_label(record.format)
+        assert record_row_html =~ record.release
+        assert record_row_html =~ ~p"/images/#{record.id}?vsn=#{record.cover_hash}"
 
         for artist <- record.artists do
-          assert html =~ escape(artist["name"])
+          assert record_row_html =~ escape(artist["name"])
         end
       end
     end
