@@ -51,6 +51,7 @@ jobs:
         shell: sh
       - run: mix deps.get
       - run: mix test
+      - run: mix format --check-formatted
 
   deploy:
     name: Deploy
