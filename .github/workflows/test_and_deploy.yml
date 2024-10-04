@@ -3,6 +3,7 @@ on: push
 
 jobs:
   test:
+    name: Test
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -52,7 +53,7 @@ jobs:
       - run: mix test
 
   deploy:
-    name: Deploy app
+    name: Deploy
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
