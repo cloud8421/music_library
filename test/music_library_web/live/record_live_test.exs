@@ -19,7 +19,7 @@ defmodule MusicLibraryWeb.RecordLiveTest do
   describe "Paginated list of records" do
     setup [:create_records]
 
-    test "lists all records within default pagination params", %{conn: conn, records: records} do
+    test "uses default params", %{conn: conn, records: records} do
       {:ok, index_live, html} = live(conn, ~p"/records")
 
       assert html =~ "Listing Records"
@@ -51,7 +51,7 @@ defmodule MusicLibraryWeb.RecordLiveTest do
       end
     end
 
-    test "paginates records", %{conn: conn, records: records} do
+    test "uses query string params", %{conn: conn, records: records} do
       {:ok, page_2_live, page_2_html} = live(conn, ~p"/records?page=2&page_size=5")
 
       {page_2_present, page_2_absent} =
@@ -90,6 +90,65 @@ defmodule MusicLibraryWeb.RecordLiveTest do
       assert page_3_present -- page_2_absent == []
       # All records in page 2 are not present in page 3
       assert page_2_present -- page_3_absent == []
+    end
+  end
+
+  describe "Updating record metadata" do
+    test "can navigate to the record edit form", %{conn: conn} do
+      record = record_fixture()
+
+      {:ok, index_live, _html} = live(conn, ~p"/records")
+
+      assert index_live
+             |> element("#records-#{record.id} a", "Edit")
+             |> render_click() =~ "Edit Metadata"
+
+      assert_patch(index_live, ~p"/records/#{record}/edit")
+
+      assert index_live |> render() =~ "Edit Metadata"
+    end
+
+    test "can change the record cover", %{conn: conn} do
+      record = record_fixture(cover_data: File.read!(marbles_cover_fixture()))
+      {:ok, form_live, html} = live(conn, ~p"/records/#{record.id}/edit")
+
+      assert html =~ ~p"/images/#{record.id}?vsn=#{record.cover_hash}"
+
+      cover_metadata = cover_metadata(raven_cover_fixture())
+
+      cover_input = file_input(form_live, "#record-form", :cover_data, [cover_metadata])
+
+      assert render_upload(cover_input, cover_metadata.name) =~ "100%"
+
+      list_html = form_live |> element("#record-form") |> render_submit()
+
+      assert list_html =~ "Record updated successfully"
+
+      # We trigger another render to force the list view to update
+      # and display the new cover
+      list_html = form_live |> render()
+
+      updated_cover = MusicLibrary.Records.get_cover(record.id)
+
+      assert updated_cover.cover_hash !== record.cover_hash
+
+      assert list_html =~ ~p"/images/#{record.id}?vsn=#{updated_cover.cover_hash}"
+    end
+
+    defp cover_metadata(path) do
+      stat = File.stat!(path)
+
+      %{
+        last_modified:
+          stat.mtime
+          |> NaiveDateTime.from_erl!()
+          |> DateTime.from_naive!("Etc/UTC")
+          |> DateTime.to_unix(),
+        name: Path.basename(path),
+        content: File.read!(path),
+        size: stat.size,
+        type: "image/jpeg"
+      }
     end
   end
 end

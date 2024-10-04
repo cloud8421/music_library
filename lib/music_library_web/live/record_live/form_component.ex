@@ -43,10 +43,14 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
           />
         </div>
         <.input field={@form[:release]} type="text" label="Release" />
-        <div>
+        <div phx-drop-target={@uploads.cover_data.ref}>
           <.label for={@uploads.cover_data.ref}>
             Cover art
           </.label>
+          <span :if={@uploads.cover_data.entries == []} class="float-right">No cover selected</span>
+          <%= for entry <- @uploads.cover_data.entries do %>
+            <span class="float-right"><%= entry.progress %>%</span>
+          <% end %>
           <.live_file_input
             class="mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6"
             upload={@uploads.cover_data}
