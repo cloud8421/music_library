@@ -3,7 +3,6 @@ defmodule MusicLibrary.Records.Importer do
   import Ecto.Query, warn: false
 
   alias MusicLibrary.Records.Record, as: Rec
-  alias MusicLibrary.Records.MusicBrainz
   alias MusicLibrary.Repo
 
   def import_all_artists do
@@ -26,42 +25,8 @@ defmodule MusicLibrary.Records.Importer do
     end)
   end
 
-  @doc """
-  The original data from Obsidian maps records to release groups, so to find artists for a record we can
-  use the [lookup](https://musicbrainz.org/doc/MusicBrainz_API#Lookups) endpoint with the release group id and include the
-  artist credits.
-
-  Example request: https://musicbrainz.org/ws/2/release-group/ae504fd6-8498-463e-8d96-14f9e11d1863?fmt=json&inc=artist-credits
-
-  Example response:
-
-      {
-        "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
-        "id": "ae504fd6-8498-463e-8d96-14f9e11d1863",
-        "primary-type": "Album",
-        "secondary-types": [],
-        "disambiguation": "",
-        "title": "Dwellers of the Deep",
-        "secondary-type-ids": [],
-        "first-release-date": "2020-10-23",
-        "artist-credit": [
-          {
-            "artist": {
-              "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b",
-              "sort-name": "Wobbler",
-              "id": "923b9160-251f-4ebe-8af2-ae670c425e55",
-              "type": "Group",
-              "name": "Wobbler",
-              "disambiguation": "Symphonic Prog, Norway"
-            },
-            "name": "Wobbler",
-            "joinphrase": ""
-          }
-        ]
-      }
-  """
   def import_artists(record) do
-    with {:ok, data} <- MusicBrainz.get_release_group(record.musicbrainz_id) do
+    with {:ok, data} <- musicbrainz().get_release_group(record.musicbrainz_id) do
       artists_attrs =
         data
         |> get_in(["artist-credit", Access.all(), "artist"])
@@ -168,5 +133,9 @@ defmodule MusicLibrary.Records.Importer do
         Logger.error(msg)
         {:error, msg}
     end
+  end
+
+  defp musicbrainz do
+    Application.get_env(:music_library, :music_brainz, MusicLibrary.Records.MusicBrainz.APIImpl)
   end
 end

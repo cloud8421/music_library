@@ -2,7 +2,7 @@ defmodule MusicLibrary.Records do
   import Ecto.Query, warn: false
   alias MusicLibrary.Repo
 
-  alias MusicLibrary.Records.{MusicBrainz, Record}
+  alias MusicLibrary.Records.Record
 
   @fields [:id, :type, :artists, :format, :title, :release, :genres, :musicbrainz_id, :cover_hash]
 
@@ -80,13 +80,13 @@ defmodule MusicLibrary.Records do
   def search_release_group(query, opts \\ []) do
     limit = Keyword.get(opts, :limit, 20)
     offset = Keyword.get(opts, :offset, 0)
-    MusicBrainz.search_release_group(query, limit: limit, offset: offset)
+    musicbrainz().search_release_group(query, limit: limit, offset: offset)
   end
 
   def import_from_musicbrainz(musicbrainz_id, opts \\ []) do
     with format = Keyword.get(opts, :format, "cd"),
-         {:ok, release_group} <- MusicBrainz.get_release_group(musicbrainz_id),
-         {:ok, cover_data} <- MusicBrainz.get_cover_art(musicbrainz_id),
+         {:ok, release_group} <- musicbrainz().get_release_group(musicbrainz_id),
+         {:ok, cover_data} <- musicbrainz().get_cover_art(musicbrainz_id),
          record_params = build_record_params(release_group, cover_data, format) do
       create_record(record_params)
     else
@@ -147,5 +147,9 @@ defmodule MusicLibrary.Records do
 
   def change_record(%Record{} = record, attrs \\ %{}) do
     Record.changeset(record, attrs)
+  end
+
+  defp musicbrainz do
+    Application.get_env(:music_library, :music_brainz, MusicLibrary.Records.MusicBrainz.APIImpl)
   end
 end

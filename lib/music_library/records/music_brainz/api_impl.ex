@@ -1,10 +1,12 @@
-defmodule MusicLibrary.Records.MusicBrainz do
+defmodule MusicLibrary.Records.MusicBrainz.APIImpl do
   @moduledoc """
   The original data from Obsidian maps records to MusicBrainz release groups, so we can leverage the MusicBrainz API to:
 
   - Import new records
   - Extend the metadata associated with existing records
   """
+
+  @behaviour MusicLibrary.Records.MusicBrainz.APIBehaviour
 
   require Logger
 
@@ -41,6 +43,7 @@ defmodule MusicLibrary.Records.MusicBrainz do
         ]
       }
   """
+  @impl true
   def get_release_group(id) do
     url =
       "https://musicbrainz.org/ws/2/release-group/#{id}?fmt=json&inc=artist-credits+genres"
@@ -148,6 +151,7 @@ defmodule MusicLibrary.Records.MusicBrainz do
         ]
       }
   """
+  @impl true
   def search_release_group(query, opts) do
     limit = Keyword.fetch!(opts, :limit)
     offset = Keyword.fetch!(opts, :offset)
@@ -179,6 +183,10 @@ defmodule MusicLibrary.Records.MusicBrainz do
     end
   end
 
+  @doc """
+  Uses the [cover art](https://musicbrainz.org/doc/Cover_Art_Archive/API) endpoint with the release group id to get the cover image.
+  """
+  @impl true
   def get_cover_art(musicbrainz_id) do
     url = "https://coverartarchive.org/release-group/#{musicbrainz_id}/front"
 
