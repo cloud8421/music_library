@@ -78,10 +78,6 @@ defmodule MusicLibraryWeb.RecordLive.Index do
     {:noreply, stream_insert(socket, :records, record)}
   end
 
-  def handle_info({__MODULE__, {:saved, record}}, socket) do
-    {:noreply, push_navigate(socket, to: ~p"/records/#{record}")}
-  end
-
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     record = Records.get_record!(id)
@@ -103,12 +99,10 @@ defmodule MusicLibraryWeb.RecordLive.Index do
   def handle_event("import", %{"id" => musicbrainz_id, "format" => format}, socket) do
     case Records.import_from_musicbrainz(musicbrainz_id, format: format) do
       {:ok, record} ->
-        notify_parent({:saved, record})
-
         {:noreply,
          socket
          |> put_flash(:info, "Record imported successfully")
-         |> push_patch(to: ~p"/records")}
+         |> push_navigate(to: ~p"/records/#{record.id}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
@@ -142,8 +136,6 @@ defmodule MusicLibraryWeb.RecordLive.Index do
   defp parse_int_or_default(value, _default) when is_binary(value) do
     String.to_integer(value)
   end
-
-  defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
 
   defp musicbrainz_url(record) do
     "https://musicbrainz.org/release-group/#{record.musicbrainz_id}"

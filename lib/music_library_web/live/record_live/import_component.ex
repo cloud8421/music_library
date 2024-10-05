@@ -33,7 +33,10 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
 
   defp result(assigns) do
     ~H"""
-    <li class="flex justify-between gap-x-6 py-5 hover:bg-gray-50">
+    <li
+      id={"music_brainz_" <> @release_group.id}
+      class="flex justify-between gap-x-6 py-5 hover:bg-gray-50"
+    >
       <div class="flex min-w-0 gap-x-4">
         <div class="min-w-0 flex-auto">
           <p class="text-sm font-semibold leading-6 text-gray-900">

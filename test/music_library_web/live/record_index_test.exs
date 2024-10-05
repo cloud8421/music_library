@@ -3,7 +3,10 @@ defmodule MusicLibraryWeb.RecordIndexTest do
 
   import Phoenix.LiveViewTest
   import MusicLibrary.RecordsFixtures
+  import Mox
   alias MusicLibrary.Records.Record
+
+  setup :verify_on_exit!
 
   defp create_records(_) do
     records = Enum.map(1..30, fn _ -> record_fixture() end)
@@ -149,6 +152,186 @@ defmodule MusicLibraryWeb.RecordIndexTest do
         size: stat.size,
         type: "image/jpeg"
       }
+    end
+  end
+
+  describe "Importing a new record" do
+    test "it shows the import modal", %{conn: conn} do
+      {:ok, index_live, _html} = live(conn, ~p"/records")
+
+      assert index_live
+             |> element("a", "Import from MusicBrainz")
+             |> render_click() =~ "Search for a record on MusicBrainz"
+
+      assert_patch(index_live, ~p"/records/import")
+    end
+
+    test "it imports a record when selected", %{conn: conn} do
+      {:ok, import_live, _html} = live(conn, ~p"/records/import")
+
+      mock_results =
+        [
+          %{
+            id: "20790e26-98e4-3ad3-a67f-b674758b942d",
+            type: :album,
+            title: "Marbles",
+            artists: "Marillion",
+            release: "2004-05-03"
+          },
+          %{
+            id: "bf20ac32-a793-3bb4-beff-f7b9bffaca38",
+            type: :album,
+            title: "Marbles Live",
+            artists: "Marillion",
+            release: "2005-10-24"
+          }
+        ]
+
+      expect(APIBehaviourMock, :search_release_group, fn "Marillion Marbles",
+                                                         limit: 10,
+                                                         offset: 0 ->
+        {:ok, mock_results}
+      end)
+
+      assert import_live
+             |> element("#import_form")
+             |> render_change(%{mb_query: "Marillion Marbles"})
+
+      updated_list = import_live |> render()
+
+      for result <- mock_results do
+        assert updated_list =~ result.title
+        assert updated_list =~ result.release
+        assert updated_list =~ result.artists
+      end
+
+      first_result = hd(mock_results)
+      first_result_id = first_result.id
+
+      expect(APIBehaviourMock, :get_release_group, fn ^first_result_id ->
+        release_group = %{
+          "artist-credit" => [
+            %{
+              "artist" => %{
+                "disambiguation" => "British progressive rock band",
+                "genres" => [
+                  %{
+                    "count" => 10,
+                    "disambiguation" => "",
+                    "id" => "ae9b8279-3959-48d8-8a88-741a7f6d4a48",
+                    "name" => "progressive rock"
+                  }
+                ],
+                "id" => "1932f5b6-0b7b-4050-b1df-833ca89e5f44",
+                "name" => "Marillion",
+                "sort-name" => "Marillion",
+                "type" => "Group",
+                "type-id" => "e431f5f6-b5d2-343d-8b36-72607fffb74b"
+              },
+              "joinphrase" => "",
+              "name" => "Marillion"
+            }
+          ],
+          "disambiguation" => "",
+          "first-release-date" => "2004-05-03",
+          "genres" => [
+            %{
+              "count" => 1,
+              "disambiguation" => "",
+              "id" => "ceeaa283-5d7b-4202-8d1d-e25d116b2a18",
+              "name" => "alternative rock"
+            },
+            %{
+              "count" => 1,
+              "disambiguation" => "",
+              "id" => "b7ef058e-6d83-4ca4-8123-9724bff4648b",
+              "name" => "art rock"
+            },
+            %{
+              "count" => 1,
+              "disambiguation" => "",
+              "id" => "150eb95a-7739-4fde-a5fe-b62ca576a928",
+              "name" => "baroque pop"
+            },
+            %{
+              "count" => 1,
+              "disambiguation" => "",
+              "id" => "797e2e85-5ffd-495c-a757-8b4079052f0e",
+              "name" => "pop rock"
+            },
+            %{
+              "count" => 2,
+              "disambiguation" => "",
+              "id" => "ae9b8279-3959-48d8-8a88-741a7f6d4a48",
+              "name" => "progressive rock"
+            },
+            %{
+              "count" => 1,
+              "disambiguation" => "",
+              "id" => "2aeb5340-c474-4677-b9a6-35ddac9b6a58",
+              "name" => "psychedelic pop"
+            },
+            %{
+              "count" => 2,
+              "disambiguation" => "",
+              "id" => "0e3fc579-2d24-4f20-9dae-736e1ec78798",
+              "name" => "rock"
+            }
+          ],
+          "id" => "20790e26-98e4-3ad3-a67f-b674758b942d",
+          "primary-type" => "Album",
+          "primary-type-id" => "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+          "secondary-type-ids" => [],
+          "secondary-types" => [],
+          "title" => "Marbles"
+        }
+
+        {:ok, release_group}
+      end)
+
+      cover_data = File.read!(marbles_cover_fixture())
+
+      expect(APIBehaviourMock, :get_cover_art, fn ^first_result_id ->
+        {:ok, cover_data}
+      end)
+
+      import_live
+      |> element("#music_brainz_#{first_result_id} button", "CD")
+      |> render_click()
+
+      [record] = MusicLibrary.Repo.all(MusicLibrary.Records.Record)
+
+      assert record.musicbrainz_id == first_result_id
+      assert record.title == "Marbles"
+      assert record.release == "2004-05-03"
+      assert record.format == :cd
+
+      assert record.genres == [
+               "alternative rock",
+               "art rock",
+               "baroque pop",
+               "pop rock",
+               "progressive rock",
+               "psychedelic pop",
+               "rock"
+             ]
+
+      assert record.cover_hash ==
+               "599407DDF69907D4A60FE13CCAA824D25CF08DC124FD6AA3E8E7ECD98C885FFE"
+
+      assert record.cover_data == cover_data
+
+      [marillion] = record.artists
+
+      assert %MusicLibrary.Records.Record.Artist{
+               id: _,
+               name: "Marillion",
+               sort_name: "Marillion",
+               disambiguation: "British progressive rock band",
+               musicbrainz_id: "1932f5b6-0b7b-4050-b1df-833ca89e5f44"
+             } = marillion
+
+      assert_redirect(import_live, ~p"/records/#{record.id}")
     end
   end
 end
