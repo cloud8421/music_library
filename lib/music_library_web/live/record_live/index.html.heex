@@ -28,7 +28,7 @@
       <img
         class="max-w-16 rounded-lg"
         alt={record.title}
-        src={~p"/images/#{record.id}?vsn=#{record.cover_hash || ""}"}
+        src={~p"/covers/#{record.id}?vsn=#{record.cover_hash || ""}"}
       />
       <span class="absolute right-1 bottom-0 block text-white drop-shadow-md">
         <%= Records.Record.format_short_label(record.format) %>

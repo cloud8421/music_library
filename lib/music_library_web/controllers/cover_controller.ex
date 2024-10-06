@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.ImageController do
+defmodule MusicLibraryWeb.CoverController do
   use MusicLibraryWeb, :controller
 
   alias MusicLibrary.Records

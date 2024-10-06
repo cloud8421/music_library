@@ -46,7 +46,7 @@ defmodule MusicLibraryWeb.RecordIndexTest do
         assert record_row_html =~ to_string(record.release)
         assert record_row_html =~ Record.format_short_label(record.format)
         assert record_row_html =~ record.release
-        assert record_row_html =~ ~p"/images/#{record.id}?vsn=#{record.cover_hash}"
+        assert record_row_html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
 
         for artist <- record.artists do
           assert record_row_html =~ escape(artist["name"])
@@ -115,7 +115,7 @@ defmodule MusicLibraryWeb.RecordIndexTest do
       record = record_fixture(cover_data: File.read!(marbles_cover_fixture()))
       {:ok, form_live, html} = live(conn, ~p"/records/#{record.id}/edit")
 
-      assert html =~ ~p"/images/#{record.id}?vsn=#{record.cover_hash}"
+      assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
 
       cover_metadata = cover_metadata(raven_cover_fixture())
 
@@ -135,7 +135,7 @@ defmodule MusicLibraryWeb.RecordIndexTest do
 
       assert updated_cover.cover_hash !== record.cover_hash
 
-      assert list_html =~ ~p"/images/#{record.id}?vsn=#{updated_cover.cover_hash}"
+      assert list_html =~ ~p"/covers/#{record.id}?vsn=#{updated_cover.cover_hash}"
     end
 
     defp cover_metadata(path) do

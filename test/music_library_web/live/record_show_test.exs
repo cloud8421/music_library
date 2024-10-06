@@ -35,7 +35,7 @@ defmodule MusicLibraryWeb.RecordShowTest do
       assert html =~ to_string(record.release)
       assert html =~ Record.format_short_label(record.format)
       assert html =~ record.release
-      assert html =~ ~p"/images/#{record.id}?vsn=#{record.cover_hash}"
+      assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
 
       for artist <- record.artists do
         assert html =~ escape(artist["name"])
