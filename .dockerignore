@@ -45,4 +45,4 @@ erl_crash.dump
 /priv/static/cache_manifest.json
 
 # Dev databases
-*.db*
+/data/*.db*

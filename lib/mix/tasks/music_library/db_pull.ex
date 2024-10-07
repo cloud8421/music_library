@@ -13,7 +13,7 @@ defmodule Mix.Tasks.MusicLibrary.DbPull do
 
     current_time = DateTime.utc_now()
     remote_db = "/mnt/music_library/music_library_prod.db"
-    local_db = "music_library_prod_#{DateTime.to_unix(current_time)}.db"
+    local_db = "data/music_library_prod_#{DateTime.to_unix(current_time)}.db"
 
     System.cmd("flyctl", ["ssh", "sftp", "get", remote_db, local_db], into: IO.stream())
 
@@ -21,9 +21,9 @@ defmodule Mix.Tasks.MusicLibrary.DbPull do
 
     IO.puts("Restoring as local dev database")
 
-    Path.wildcard("music_library_dev.db*")
+    Path.wildcard("data/music_library_dev.db*")
     |> Enum.each(&File.rm!/1)
 
-    File.cp!(local_db, "music_library_dev.db")
+    File.cp!(local_db, "data/music_library_dev.db")
   end
 end
