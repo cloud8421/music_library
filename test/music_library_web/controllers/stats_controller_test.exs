@@ -1,6 +1,8 @@
 defmodule MusicLibraryWeb.StatsControllerTest do
   use MusicLibraryWeb.ConnCase
 
+  alias MusicLibrary.Records.Record
+
   import MusicLibrary.RecordsFixtures
 
   defp create_records(_) do
@@ -25,7 +27,7 @@ defmodule MusicLibraryWeb.StatsControllerTest do
       records
       |> Enum.frequencies_by(& &1.format)
       |> Enum.each(fn {format, count} ->
-        assert html_response(conn, 200) =~ "#{count} #{format}"
+        assert html_response(conn, 200) =~ "#{count} #{Record.format_long_label(format)}"
       end)
     end
 

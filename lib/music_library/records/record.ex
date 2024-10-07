@@ -98,4 +98,10 @@ defmodule MusicLibrary.Records.Record do
   def format_short_label(:blu_ray), do: "BR"
   def format_short_label(:dvd), do: "DVD"
   def format_short_label(:multi), do: "MLT"
+
+  def format_long_label(:cd), do: "CD"
+  def format_long_label(:vinyl), do: "Vinyl"
+  def format_long_label(:blu_ray), do: "Blu-ray"
+  def format_long_label(:dvd), do: "DVD"
+  def format_long_label(:multi), do: "Multi"
 end
