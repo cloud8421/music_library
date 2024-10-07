@@ -5,7 +5,16 @@ defmodule MusicLibraryWeb.RecordLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    back_url =
+      if connected?(socket) do
+        socket
+        |> get_connect_params()
+        |> Map.get("_live_referer", ~p"/records")
+      else
+        ~p"/records"
+      end
+
+    {:ok, assign(socket, :back_url, back_url)}
   end
 
   @impl true
