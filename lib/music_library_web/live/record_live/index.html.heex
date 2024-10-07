@@ -18,6 +18,11 @@
   </div>
 </header>
 
+<p class="text-right text-base max-sm:text-xs mt-8">
+  Showing <b><%= Enum.count(@streams.records) %></b>
+  of <b><%= @record_list_params.total_entries %></b>
+  records
+</p>
 <.table
   id="records"
   rows={@streams.records}
