@@ -7,7 +7,7 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
   def mount(socket) do
     {:ok,
      socket
-     |> allow_upload(:cover_data, accept: ~w(.jpg .jpeg), max_entries: 1)}
+     |> allow_upload(:cover_data, accept: ~w(.jpg .jpeg .png), max_entries: 1)}
   end
 
   @impl true
