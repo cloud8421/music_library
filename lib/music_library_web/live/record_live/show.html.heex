@@ -1,6 +1,6 @@
 <.header>
   <%= @record.title %>
-  <:subtitle><%= Enum.map(@record.artists, fn a -> a.name end) %></:subtitle>
+  <:subtitle><%= format_artist_names(@record.artists) %></:subtitle>
   <:actions>
     <.link patch={~p"/records/#{@record}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit Metadata</.button>

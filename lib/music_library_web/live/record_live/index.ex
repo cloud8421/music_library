@@ -1,6 +1,7 @@
 defmodule MusicLibraryWeb.RecordLive.Index do
   use MusicLibraryWeb, :live_view
   import MusicLibraryWeb.Pagination
+  import MusicLibraryWeb.ArtistHelpers
 
   alias MusicLibrary.Records
 

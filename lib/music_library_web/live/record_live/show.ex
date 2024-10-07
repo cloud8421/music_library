@@ -1,5 +1,6 @@
 defmodule MusicLibraryWeb.RecordLive.Show do
   use MusicLibraryWeb, :live_view
+  import MusicLibraryWeb.ArtistHelpers
 
   alias MusicLibrary.Records
 

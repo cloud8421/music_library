@@ -48,7 +48,7 @@
       <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
         <p class="font-semibold">
           <span class="text-2xl text-gray-900">
-            <%= Enum.map(@latest_record.artists, fn a -> a.name end) %>
+            <%= format_artist_names(@latest_record.artists) %>
           </span>
           <span class="text-gray-600"><%= @latest_record.title %></span>
         </p>
