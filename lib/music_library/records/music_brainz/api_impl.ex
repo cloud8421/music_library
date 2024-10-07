@@ -217,6 +217,10 @@ defmodule MusicLibrary.Records.MusicBrainz.APIImpl do
     end
   end
 
+  @fallback_cover File.read!(
+                    (:code.priv_dir(:music_library) |> to_string()) <> "/cover-not-found.jpg"
+                  )
+
   @doc """
   Uses the [cover art](https://musicbrainz.org/doc/Cover_Art_Archive/API) endpoint with the release group id to get the cover image.
   """
@@ -227,6 +231,9 @@ defmodule MusicLibrary.Records.MusicBrainz.APIImpl do
     with {:ok, cover_data} <- blob_get(url),
          {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(cover_data, 400) do
       Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
+    else
+      {:error, :not_found} -> {:ok, @fallback_cover}
+      error -> error
     end
   end
 
@@ -265,6 +272,9 @@ defmodule MusicLibrary.Records.MusicBrainz.APIImpl do
         location = :proplists.get_value("location", response.headers)
         Logger.debug("Following redirect to #{location}")
         blob_get(location)
+
+      {:ok, response} when response.status == 404 ->
+        {:error, :not_found}
 
       other ->
         msg = "Failed to fetch data from #{url}, reason: #{inspect(other)}"
