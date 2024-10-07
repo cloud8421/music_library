@@ -24,9 +24,15 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
           phx-debounce="500"
         />
       </.simple_form>
-      <ul role="list" class="divide-y divide-gray-100">
+      <ul :if={@release_groups !== []} role="list" class="divide-y divide-gray-100">
         <.result :for={release_group <- @release_groups} release_group={release_group} />
       </ul>
+      <div
+        :if={@release_groups == []}
+        class="flex items-center justify-center h-32 text-sm text-gray-500"
+      >
+        No results
+      </div>
     </div>
     """
   end

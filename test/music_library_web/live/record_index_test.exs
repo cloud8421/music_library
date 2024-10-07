@@ -159,9 +159,13 @@ defmodule MusicLibraryWeb.RecordIndexTest do
     test "it shows the import modal", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, ~p"/records")
 
-      assert index_live
-             |> element("a", "Import")
-             |> render_click() =~ "Search for a record on MusicBrainz"
+      import_dialog =
+        index_live
+        |> element("a", "Import")
+        |> render_click()
+
+      assert import_dialog =~ "Search for a record on MusicBrainz"
+      assert import_dialog =~ "No results"
 
       assert_patch(index_live, ~p"/records/import")
     end
