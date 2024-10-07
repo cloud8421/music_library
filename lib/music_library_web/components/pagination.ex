@@ -12,7 +12,7 @@ defmodule MusicLibraryWeb.Pagination do
     ~H"""
     <div
       id="pagination"
-      class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
+      class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 mb-4"
     >
       <%!-- Only on smallest viewport --%>
       <div class={[
