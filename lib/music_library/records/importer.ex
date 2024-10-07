@@ -105,6 +105,25 @@ defmodule MusicLibrary.Records.Importer do
     end)
   end
 
+  def import_missing_musicbrainz_data do
+    q = from(r in Rec, where: is_nil(r.musicbrainz_data))
+
+    q
+    |> Repo.all()
+    |> Enum.each(fn r ->
+      import_musicbrainz_data(r)
+      Process.sleep(1000)
+    end)
+  end
+
+  def import_musicbrainz_data(record) do
+    with {:ok, data} <- musicbrainz().get_release_group(record.musicbrainz_id) do
+      record
+      |> Rec.add_musicbrainz_data(data)
+      |> Repo.update!()
+    end
+  end
+
   def generate_cover_hash(record) do
     record
     |> Rec.generate_cover_hash()

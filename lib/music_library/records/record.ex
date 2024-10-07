@@ -15,6 +15,7 @@ defmodule MusicLibrary.Records.Record do
     field :cover_data, :binary
     field :cover_hash, :string
     field :musicbrainz_id, Ecto.UUID
+    field :musicbrainz_data, :map
     field :genres, {:array, :string}
     field :release, :string
 
@@ -36,6 +37,7 @@ defmodule MusicLibrary.Records.Record do
       :format,
       :title,
       :musicbrainz_id,
+      :musicbrainz_data,
       :release,
       :genres,
       :cover_url,
@@ -63,6 +65,11 @@ defmodule MusicLibrary.Records.Record do
     record
     |> change(cover_data: cover_data)
     |> generate_cover_hash()
+  end
+
+  def add_musicbrainz_data(record, musicbrainz_data) do
+    record
+    |> change(musicbrainz_data: musicbrainz_data)
   end
 
   def generate_cover_hash(record = %__MODULE__{cover_data: cover_data}) do

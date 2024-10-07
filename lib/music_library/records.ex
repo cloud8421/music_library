@@ -111,6 +111,7 @@ defmodule MusicLibrary.Records do
 
     %{
       "musicbrainz_id" => musicbrainz_id,
+      "musicbrainz_data" => release_group,
       "title" => release_group["title"],
       "artists" => artists_attrs,
       "release" => release_group["first-release-date"],
