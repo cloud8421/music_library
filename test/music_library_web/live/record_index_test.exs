@@ -296,7 +296,7 @@ defmodule MusicLibraryWeb.RecordIndexTest do
       end)
 
       import_live
-      |> element("#music_brainz_#{first_result_id} button", "CD")
+      |> element("#musicbrainz_#{first_result_id} button", "CD")
       |> render_click()
 
       [record] = MusicLibrary.Repo.all(MusicLibrary.Records.Record)

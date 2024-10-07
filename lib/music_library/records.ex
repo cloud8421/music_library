@@ -150,6 +150,6 @@ defmodule MusicLibrary.Records do
   end
 
   defp musicbrainz do
-    Application.get_env(:music_library, :music_brainz, MusicLibrary.Records.MusicBrainz.APIImpl)
+    Application.get_env(:music_library, :musicbrainz, MusicLibrary.Records.MusicBrainz.APIImpl)
   end
 end
