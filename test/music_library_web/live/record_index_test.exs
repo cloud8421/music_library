@@ -160,7 +160,7 @@ defmodule MusicLibraryWeb.RecordIndexTest do
       {:ok, index_live, _html} = live(conn, ~p"/records")
 
       assert index_live
-             |> element("a", "Import from MusicBrainz")
+             |> element("a", "Import")
              |> render_click() =~ "Search for a record on MusicBrainz"
 
       assert_patch(index_live, ~p"/records/import")
