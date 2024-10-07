@@ -19,29 +19,63 @@ defmodule MusicLibrary.Records.MusicBrainz.APIImpl do
   Example response:
 
       {
-        "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
-        "id": "ae504fd6-8498-463e-8d96-14f9e11d1863",
-        "primary-type": "Album",
-        "secondary-types": [],
-        "disambiguation": "",
-        "title": "Dwellers of the Deep",
-        "secondary-type-ids": [],
-        "first-release-date": "2020-10-23",
         "artist-credit": [
           {
             "artist": {
-              "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b",
-              "sort-name": "Wobbler",
+              "disambiguation": "Symphonic Prog, Norway",
+              "genres": [
+                {
+                  "count": 3,
+                  "disambiguation": "",
+                  "id": "ae9b8279-3959-48d8-8a88-741a7f6d4a48",
+                  "name": "progressive rock"
+                },
+                {
+                  "count": 2,
+                  "disambiguation": "",
+                  "id": "166be36f-febb-4523-a005-1fb3603bd3f6",
+                  "name": "symphonic prog"
+                }
+              ],
               "id": "923b9160-251f-4ebe-8af2-ae670c425e55",
-              "type": "Group",
               "name": "Wobbler",
-              "disambiguation": "Symphonic Prog, Norway"
+              "sort-name": "Wobbler",
+              "type": "Group",
+              "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b"
             },
-            "name": "Wobbler",
-            "joinphrase": ""
+            "joinphrase": "",
+            "name": "Wobbler"
           }
-        ]
-      }
+        ],
+        "disambiguation": "",
+        "first-release-date": "2020-10-23",
+        "genres": [
+          {
+            "count": 3,
+            "disambiguation": "",
+            "id": "ae9b8279-3959-48d8-8a88-741a7f6d4a48",
+            "name": "progressive rock"
+          },
+          {
+            "count": 1,
+            "disambiguation": "",
+            "id": "0e3fc579-2d24-4f20-9dae-736e1ec78798",
+            "name": "rock"
+          },
+          {
+            "count": 1,
+            "disambiguation": "",
+            "id": "f729e6f8-30dc-4b81-9ff4-f4e7de82225d",
+            "name": "symphonic rock"
+          }
+        ],
+        "id": "ae504fd6-8498-463e-8d96-14f9e11d1863",
+        "primary-type": "Album",
+        "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+        "secondary-type-ids": [],
+        "secondary-types": [],
+        "title": "Dwellers of the Deep"
+      }    
   """
   @impl true
   def get_release_group(id) do
