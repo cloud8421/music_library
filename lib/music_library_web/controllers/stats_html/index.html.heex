@@ -69,3 +69,18 @@
     </div>
   </dl>
 </div>
+
+<div>
+  <dl class="mt-5 grid divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow grid-cols-5 md:divide-x md:divide-y-0">
+    <div :for={{format, count} <- @records_count_by_format} class="px-4 py-5 sm:p-6">
+      <dt class="text-base max-sm:text-xs font-normal text-gray-900 break-keep">
+        <%= Record.format_long_label(format) %>
+      </dt>
+      <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
+        <div class="flex items-baseline text-2xl font-semibold">
+          <%= count %>
+        </div>
+      </dd>
+    </div>
+  </dl>
+</div>
