@@ -23,6 +23,7 @@
   of <b><%= @record_list_params.total_entries %></b>
   records
 </p>
+
 <.table
   id="records"
   rows={@streams.records}
@@ -108,4 +109,4 @@
   />
 </.modal>
 
-<.pagination pagination_params={@record_list_params} />
+<.pagination id={:bottom_pagination} pagination_params={@record_list_params} />

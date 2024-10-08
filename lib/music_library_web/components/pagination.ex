@@ -4,6 +4,7 @@ defmodule MusicLibraryWeb.Pagination do
   use Gettext, backend: MusicLibraryWeb.Gettext
 
   attr :pagination_params, :map, required: true
+  attr :id, :atom, required: true
 
   def pagination(assigns) do
     page_links = generate_page_links(assigns.pagination_params)
@@ -11,7 +12,7 @@ defmodule MusicLibraryWeb.Pagination do
 
     ~H"""
     <div
-      id="pagination"
+      id={@id}
       class="flex items-center justify-between border-t border-zinc-200 bg-white px-4 py-6 sm:px-6 mb-4"
     >
       <%!-- Only on smallest viewport --%>
