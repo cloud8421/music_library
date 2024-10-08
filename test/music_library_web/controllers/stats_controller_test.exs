@@ -27,7 +27,9 @@ defmodule MusicLibraryWeb.StatsControllerTest do
       records
       |> Enum.frequencies_by(& &1.format)
       |> Enum.each(fn {format, count} ->
-        assert html_response(conn, 200) =~ "#{count} #{Record.format_long_label(format)}"
+        response = html_response(conn, 200)
+        assert response =~ "\n#{count}\n"
+        assert response =~ "\n#{Record.format_long_label(format)}\n"
       end)
     end
 

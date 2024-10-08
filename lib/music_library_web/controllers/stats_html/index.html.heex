@@ -1,59 +1,24 @@
 <div>
-  <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
-    <div class="relative overflow-hidden rounded-lg bg-white px-4 pb-12 pt-5 shadow sm:px-6 sm:pt-6">
-      <dt>
-        <div class="absolute rounded-md bg-zinc-900 p-3">
-          <svg
-            class="h-6 w-6 text-white fill-zinc-900"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"
-            />
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"
-            />
-          </svg>
-        </div>
-        <p class="ml-16 truncate text-sm font-medium text-gray-500">Total Records</p>
-      </dt>
-      <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
-        <p class="text-2xl font-semibold text-gray-900"><%= @records_count %></p>
-        <p class="ml-2 flex items-baseline text-sm font-medium">
-          <%= format_records_count(@records_count_by_format) %>
-        </p>
-        <div class="absolute inset-x-0 bottom-0 bg-gray-50 px-4 py-4 sm:px-6">
-          <div class="text-sm">
-            <a href={~p"/records"} class="font-medium text-zinc-600 hover:text-zinc-500">
-              View all<span class="sr-only"> records</span>
-            </a>
-          </div>
-        </div>
-      </dd>
-    </div>
-    <div class="relative overflow-hidden rounded-lg bg-white px-4 pb-12 pt-5 shadow sm:px-6 sm:pt-6">
+  <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
+    <div class="relative overflow-hidden rounded-lg bg-white px-4 pb-12 pt-5 shadow sm:px-6 sm:pt-6 sm:col-span-2">
       <dt>
         <img
-          class="absolute max-w-12 rounded-lg shadow"
+          class="absolute max-w-14 rounded-lg shadow"
           src={~p"/covers/#{@latest_record.id}"}
           alt={@latest_record.title}
         />
-        <p class="ml-16 truncate text-sm font-medium text-gray-500">Latest record</p>
+        <p class="ml-16 truncate text-xs sm:text-sm font-medium text-gray-500">
+          Latest record
+        </p>
       </dt>
       <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
         <p class="font-semibold">
-          <span class="text-2xl text-gray-900">
+          <span class="text-sm md:text-base lg:text-2xl text-gray-900">
             <%= format_artist_names(@latest_record.artists) %>
           </span>
-          <span class="text-gray-600"><%= @latest_record.title %></span>
+          <span class="text-sm md:text-base block sm:inline text-gray-600">
+            <%= @latest_record.title %>
+          </span>
         </p>
         <div class="absolute inset-x-0 bottom-0 bg-gray-50 px-4 py-4 sm:px-6">
           <div class="text-sm">
@@ -62,6 +27,21 @@
               class="font-medium text-zinc-600 hover:text-zinc-500"
             >
               View<span class="sr-only"> record</span>
+            </a>
+          </div>
+        </div>
+      </dd>
+    </div>
+    <div class="relative overflow-hidden rounded-lg bg-white px-4 pb-12 pt-5 shadow sm:px-6 sm:pt-6">
+      <dt>
+        <p class="truncate text-sm font-medium text-gray-500">Total Records</p>
+      </dt>
+      <dd class="flex items-baseline pb-6 sm:pb-7">
+        <p class="text-2xl font-semibold text-gray-900"><%= @records_count %></p>
+        <div class="absolute inset-x-0 bottom-0 bg-gray-50 px-4 py-4 sm:px-6">
+          <div class="text-sm">
+            <a href={~p"/records"} class="font-medium text-zinc-600 hover:text-zinc-500">
+              View all<span class="sr-only"> records</span>
             </a>
           </div>
         </div>
