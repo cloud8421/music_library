@@ -15,6 +15,13 @@ defmodule MusicLibraryWeb.RecordLive.Show do
         ~p"/records"
       end
 
+    socket =
+      if static_changed?(socket) do
+        put_flash(socket, :warning, "The application has been updated, please reload.")
+      else
+        socket
+      end
+
     {:ok, assign(socket, :back_url, back_url)}
   end
 

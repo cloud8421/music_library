@@ -24,6 +24,13 @@ defmodule MusicLibraryWeb.RecordLive.Index do
     offset = page_to_offset(record_list_params.page, record_list_params.page_size)
     records = Records.search_records(query, limit: record_list_params.page_size, offset: offset)
 
+    socket =
+      if static_changed?(socket) do
+        put_flash(socket, :warning, "The application has been updated, please reload.")
+      else
+        socket
+      end
+
     {:ok,
      socket
      |> assign(:nav_section, :records)
