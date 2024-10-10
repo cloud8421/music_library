@@ -15,15 +15,20 @@ defmodule Mix.Tasks.MusicLibrary.DbPull do
     remote_db = "/mnt/music_library/music_library_prod.db"
     local_db = "data/music_library_prod_#{DateTime.to_unix(current_time)}.db"
 
-    System.cmd("flyctl", ["ssh", "sftp", "get", remote_db, local_db], into: IO.stream())
+    case System.cmd("flyctl", ["ssh", "sftp", "get", remote_db, local_db], into: IO.stream()) do
+      {_stream, 1} ->
+        IO.puts("Failed to pull the database")
+        System.halt(1)
 
-    IO.puts("Database pulled successfully")
+      {_stream, 0} ->
+        IO.puts("Database pulled successfully")
 
-    IO.puts("Restoring as local dev database")
+        IO.puts("Restoring as local dev database")
 
-    Path.wildcard("data/music_library_dev.db*")
-    |> Enum.each(&File.rm!/1)
+        Path.wildcard("data/music_library_dev.db*")
+        |> Enum.each(&File.rm!/1)
 
-    File.cp!(local_db, "data/music_library_dev.db")
+        File.cp!(local_db, "data/music_library_dev.db")
+    end
   end
 end
