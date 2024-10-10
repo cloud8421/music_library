@@ -232,8 +232,12 @@ defmodule MusicLibrary.Records.MusicBrainz.APIImpl do
          {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(cover_data, 400) do
       Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
     else
-      {:error, :not_found} -> {:ok, @fallback_cover}
-      error -> error
+      {:error, reason} ->
+        Logger.error(
+          "Failed to fetch cover art for #{musicbrainz_id}, reason: #{inspect(reason)}"
+        )
+
+        {:ok, @fallback_cover}
     end
   end
 
@@ -273,13 +277,12 @@ defmodule MusicLibrary.Records.MusicBrainz.APIImpl do
         Logger.debug("Following redirect to #{location}")
         blob_get(location)
 
-      {:ok, response} when response.status == 404 ->
-        {:error, :not_found}
+      # all non-success responses can be treated as errors
+      {:ok, response} ->
+        {:error, response}
 
-      other ->
-        msg = "Failed to fetch data from #{url}, reason: #{inspect(other)}"
-        Logger.error(msg)
-        {:error, msg}
+      error ->
+        error
     end
   end
 
