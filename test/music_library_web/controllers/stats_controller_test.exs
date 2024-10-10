@@ -41,7 +41,7 @@ defmodule MusicLibraryWeb.StatsControllerTest do
       assert html_response(conn, 200) =~ escape(latest_record.title)
 
       for artist <- latest_record.artists do
-        assert html_response(conn, 200) =~ escape(artist["name"])
+        assert html_response(conn, 200) =~ escape(artist.name)
       end
     end
   end

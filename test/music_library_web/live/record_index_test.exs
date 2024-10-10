@@ -49,7 +49,7 @@ defmodule MusicLibraryWeb.RecordIndexTest do
         assert record_row_html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
 
         for artist <- record.artists do
-          assert record_row_html =~ escape(artist["name"])
+          assert record_row_html =~ escape(artist.name)
         end
       end
     end

@@ -40,7 +40,7 @@ defmodule MusicLibraryWeb.RecordShowTest do
       assert html =~ Phoenix.HTML.Safe.to_iodata(record.updated_at)
 
       for artist <- record.artists do
-        assert html =~ escape(artist["name"])
+        assert html =~ escape(artist.name)
       end
     end
   end

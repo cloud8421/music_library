@@ -28,7 +28,17 @@ defmodule MusicLibrary.RecordsFixtures do
     "Red",
     "Foxtrot",
     "The Lamb Lies Down on Broadway",
-    "Thick as a Brick"
+    "Thick as a Brick",
+    "Marbles",
+    "Vigil in a Wilderness of Mirrors"
+  ]
+  @artists [
+    "Steven Wilson",
+    "King Crimson",
+    "Pink Floyd",
+    "Genesis",
+    "Marillion",
+    "Fish"
   ]
   # While it would be great to have this random, it's ok to use one single image
   @marbles_cover_data_path "#{__DIR__}/marillion-marbles.jpg"
@@ -38,19 +48,30 @@ defmodule MusicLibrary.RecordsFixtures do
   def raven_cover_fixture, do: @raven_cover_data_path
 
   def record_fixture(attrs \\ %{}) do
-    musicbrainz_id = Ecto.UUID.generate()
+    record_musicbrainz_id = Ecto.UUID.generate()
+    artist_name = Enum.random(@artists)
+
+    artists_attrs = [
+      %{
+        name: artist_name,
+        musicbrainz_id: Ecto.UUID.generate(),
+        sort_name: artist_name,
+        disambiguation: artist_name
+      }
+    ]
 
     {:ok, record} =
       attrs
       |> Enum.into(%{
         genres: Enum.take_random(@genres, :rand.uniform(3)),
-        cover_url: "https://coverartarchive.org/release-group/#{musicbrainz_id}/front",
+        cover_url: "https://coverartarchive.org/release-group/#{record_musicbrainz_id}/front",
         cover_data: File.read!(@marbles_cover_data_path),
-        musicbrainz_id: musicbrainz_id,
+        musicbrainz_id: record_musicbrainz_id,
         title: Enum.random(@titles),
         type: :album,
         format: Record.formats() |> Enum.random(),
-        release: Enum.random(1969..2024) |> Integer.to_string()
+        release: Enum.random(1969..2024) |> Integer.to_string(),
+        artists: artists_attrs
       })
       |> MusicLibrary.Records.create_record()
 
