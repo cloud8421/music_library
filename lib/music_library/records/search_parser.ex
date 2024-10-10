@@ -28,14 +28,18 @@ defmodule MusicLibrary.Records.SearchParser do
   Parse a search query.
 
     iex> MusicLibrary.Records.SearchParser.parse("")
-    {:ok, %{}}
+    {:ok, %{query: ""}}
     iex> MusicLibrary.Records.SearchParser.parse("marbles")
     {:ok, %{query: "marbles"}}
     iex> MusicLibrary.Records.SearchParser.parse("artist:marillion album:marbles")
     {:ok, %{artist: "marillion", album: "marbles"}}
     iex> MusicLibrary.Records.SearchParser.parse("artist:marillion album:fugazi artist:fish")
     {:ok, %{artist: "marillion fish", album: "fugazi"}}
+    iex> MusicLibrary.Records.SearchParser.parse(~s(artist:"the pineapple thief" wilderness))
+    {:ok, %{artist: "the pineapple thief", query: "wilderness"}}
   """
+  def parse(""), do: {:ok, %{query: ""}}
+
   def parse(query) do
     {:ok, result, _rest, _context, _line, _byte_offset} = search_parser(query)
     {:ok, normalize(result)}

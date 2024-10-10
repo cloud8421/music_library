@@ -2,7 +2,7 @@ defmodule MusicLibrary.Records do
   import Ecto.Query, warn: false
   alias MusicLibrary.Repo
 
-  alias MusicLibrary.Records.Record
+  alias MusicLibrary.Records.{Record, SearchParser}
 
   @fields [:id, :type, :artists, :format, :title, :release, :genres, :musicbrainz_id, :cover_hash]
 
@@ -24,15 +24,46 @@ defmodule MusicLibrary.Records do
     limit = Keyword.get(opts, :limit, 20)
     offset = Keyword.get(opts, :offset, 0)
 
-    q =
-      from r in Record,
-        where: like(r.title, ^"%#{query}%") or like(r.artists, ^"%#{query}%"),
-        order_by: [r.artists[0]["sort_name"], r.title],
-        limit: ^limit,
-        offset: ^offset,
-        select: ^@fields
+    search =
+      query
+      |> build_search()
+      |> limit(^limit)
+      |> offset(^offset)
+      |> select(^@fields)
 
-    Repo.all(q)
+    Repo.all(search)
+  end
+
+  def search_records_count(query) do
+    search = build_search(query)
+
+    Repo.aggregate(search, :count)
+  end
+
+  defp build_search(query) do
+    {:ok, parsed_query} = SearchParser.parse(query)
+
+    base_search =
+      from r in Record,
+        order_by: [r.artists[0]["sort_name"], r.title]
+
+    Enum.reduce(parsed_query, base_search, fn
+      {:artist, artist}, search ->
+        search |> where([r], like(r.artists, ^"%#{artist}%"))
+
+      {:album, album}, search ->
+        search |> where([r], like(r.title, ^"%#{album}%"))
+
+      {:mbid, mbid}, search ->
+        search |> where([r], r.musicbrainz_id == ^mbid)
+
+      {:query, raw_query}, search ->
+        search
+        |> where(
+          [r],
+          like(r.title, ^"%#{raw_query}%") or like(r.artists, ^"%#{raw_query}%")
+        )
+    end)
   end
 
   def count_records do
@@ -46,14 +77,6 @@ defmodule MusicLibrary.Records do
         select: {r.format, count(r.id)}
 
     Repo.all(q)
-  end
-
-  def search_records_count(query) do
-    q =
-      from r in Record,
-        where: like(r.title, ^"%#{query}%") or like(r.artists, ^"%#{query}%")
-
-    Repo.aggregate(q, :count)
   end
 
   def get_record!(id), do: Repo.get!(Record, id)

@@ -96,6 +96,73 @@ defmodule MusicLibraryWeb.RecordIndexTest do
     end
   end
 
+  describe "Tagged search" do
+    setup [:create_records]
+
+    test "supports raw queries", %{conn: conn, records: records} do
+      [record | _rest] = records
+      qs = [query: record.title]
+      {:ok, index_live, _html} = live(conn, ~p"/records?#{qs}")
+
+      record_row =
+        index_live
+        |> with_target("#records-#{record.id}")
+
+      record_row_html = record_row |> render()
+
+      assert record_row_html =~ escape(record.title)
+      assert record_row_html =~ to_string(record.release)
+      assert record_row_html =~ Record.format_short_label(record.format)
+      assert record_row_html =~ record.release
+      assert record_row_html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+
+      for artist <- record.artists do
+        assert record_row_html =~ escape(artist.name)
+      end
+    end
+
+    test "supports filters", %{conn: conn, records: records} do
+      {artist_with_most_records, _records_count} =
+        records
+        |> Enum.frequencies_by(fn r ->
+          [artist] = r.artists
+          artist.name
+        end)
+        |> Enum.max_by(fn {_artist, count} -> count end)
+
+      {present, absent} =
+        Enum.split_with(records, fn r ->
+          [artist] = r.artists
+          artist.name == artist_with_most_records
+        end)
+
+      qs = [query: ~s(artist:"#{artist_with_most_records}"), page_size: 30]
+      {:ok, index_live, _html} = live(conn, ~p"/records?#{qs}")
+
+      for record <- present do
+        record_row =
+          index_live
+          |> with_target("#records-#{record.id}")
+
+        record_row_html = record_row |> render()
+
+        assert record_row_html =~ escape(record.title)
+        assert record_row_html =~ to_string(record.release)
+        assert record_row_html =~ Record.format_short_label(record.format)
+        assert record_row_html =~ record.release
+        assert record_row_html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+
+        for artist <- record.artists do
+          assert record_row_html =~ escape(artist.name)
+        end
+      end
+
+      for record <- absent do
+        refute has_element?(index_live, "#records-#{record.id}")
+      end
+    end
+  end
+
   describe "Updating record metadata" do
     test "can navigate to the record edit form", %{conn: conn} do
       record = record_fixture()
