@@ -10,6 +10,8 @@
         value={@record_list_params.query}
         placeholder="Search"
         phx-debounce="500"
+        autocorrect="off"
+        autocapitalize="none"
       />
     </form>
     <.link patch={~p"/records/import"}>
