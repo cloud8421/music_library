@@ -2,11 +2,11 @@ defmodule MusicLibrary.Records.SearchParser do
   @moduledoc """
   This module includes functions to parse a search string containing tagged entities,
   e.g. artists or albums.
-  
+
   Implementation is most likely suboptimal, non-idiomatic and failing against specific
   edge cases I haven't thought about - not an expert in parsing.
   """
- 
+
   import NimbleParsec
 
   word = utf8_string([not: ?\s], min: 1)
