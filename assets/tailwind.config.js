@@ -18,7 +18,7 @@ module.exports = {
         brand: "#D4AF37",
       },
       fontFamily: {
-        sans: ['InterVariable', ...defaultTheme.fontFamily.sans],
+        sans: ['Inter', ...defaultTheme.fontFamily.sans],
       },
     },
   },
