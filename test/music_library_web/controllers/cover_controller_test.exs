@@ -1,5 +1,5 @@
 defmodule MusicLibraryWeb.CoverControllerTest do
-  use MusicLibraryWeb.ConnCase, async: true
+  use MusicLibraryWeb.ConnCase
 
   import MusicLibrary.RecordsFixtures
 

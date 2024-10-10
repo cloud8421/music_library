@@ -1,5 +1,5 @@
 defmodule MusicLibraryWeb.RecordIndexTest do
-  use MusicLibraryWeb.ConnCase, async: true
+  use MusicLibraryWeb.ConnCase
 
   import Phoenix.LiveViewTest
   import MusicLibrary.RecordsFixtures

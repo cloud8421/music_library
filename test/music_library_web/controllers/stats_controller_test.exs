@@ -1,5 +1,5 @@
 defmodule MusicLibraryWeb.StatsControllerTest do
-  use MusicLibraryWeb.ConnCase, async: true
+  use MusicLibraryWeb.ConnCase
 
   alias MusicLibrary.Records.Record
 
