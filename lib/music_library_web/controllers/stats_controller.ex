@@ -15,7 +15,7 @@ defmodule MusicLibraryWeb.StatsController do
       records_count_by_format: records_count_by_format,
       records_count: records_count,
       latest_record: latest_record,
-      nav_section: :dashboard
+      nav_section: :stats
     )
   end
 end

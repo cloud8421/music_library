@@ -25,7 +25,7 @@ defmodule MusicLibraryWeb.RecordIndexTest do
     test "uses default params", %{conn: conn, records: records} do
       {:ok, index_live, html} = live(conn, ~p"/records")
 
-      assert html =~ "Listing Records"
+      assert html =~ "Collection"
 
       {present, absent} =
         Enum.split_with(records, fn record ->

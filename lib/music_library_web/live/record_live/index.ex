@@ -58,7 +58,7 @@ defmodule MusicLibraryWeb.RecordLive.Index do
   defp apply_action(socket, :index, params) do
     new_socket =
       socket
-      |> assign(:page_title, "Listing Records")
+      |> assign(:page_title, "Collection")
       |> assign(:record, nil)
 
     query = params["query"] || socket.assigns.record_list_params.query
