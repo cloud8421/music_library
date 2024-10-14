@@ -104,4 +104,15 @@ defmodule MusicLibrary.Records.Record do
   def format_long_label(:blu_ray), do: "Blu-ray"
   def format_long_label(:dvd), do: "DVD"
   def format_long_label(:multi), do: "Multi"
+
+  def format_release(nil), do: "N/A"
+
+  def format_release(release) do
+    case String.split(release, "-") do
+      [] -> "N/A"
+      [year] -> year
+      [year, month] -> "#{month}/#{year}"
+      [year, month, day] -> "#{day}/#{month}/#{year}"
+    end
+  end
 end
