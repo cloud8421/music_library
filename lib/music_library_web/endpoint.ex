@@ -1,5 +1,4 @@
 defmodule MusicLibraryWeb.Endpoint do
-  use Sentry.PlugCapture
   use Phoenix.Endpoint, otp_app: :music_library
 
   # The session will be stored in the cookie and signed,
@@ -13,8 +12,8 @@ defmodule MusicLibraryWeb.Endpoint do
   ]
 
   socket "/live", Phoenix.LiveView.Socket,
-    websocket: [connect_info: [:peer_data, :uri, :user_agent, session: @session_options]],
-    longpoll: [connect_info: [:peer_data, :uri, :user_agent, session: @session_options]]
+    websocket: [connect_info: [session: @session_options]],
+    longpoll: [connect_info: [session: @session_options]]
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -46,8 +45,6 @@ defmodule MusicLibraryWeb.Endpoint do
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
     json_decoder: Phoenix.json_library()
-
-  plug Sentry.PlugContext
 
   plug Plug.MethodOverride
   plug Plug.Head
