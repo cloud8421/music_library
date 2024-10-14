@@ -36,7 +36,11 @@ defmodule MusicLibrary.Records.SearchParser do
     |> choice()
     |> map({__MODULE__, :resolve_format, []})
 
-  format = concat(format_filter, formats) |> tag(:format)
+  invalid_format = concat(format_filter, word)
+
+  format =
+    choice([concat(format_filter, formats), ignore(invalid_format)])
+    |> tag(:format)
 
   search = repeat(choice([artist, album, mbid, space, format, query]))
 
@@ -57,6 +61,8 @@ defmodule MusicLibrary.Records.SearchParser do
     {:ok, %{artist: "the pineapple thief", query: "wilderness"}}
     iex> MusicLibrary.Records.SearchParser.parse(~s(artist:"the pineapple thief" format:cd))
     {:ok, %{artist: "the pineapple thief", format: :cd}}
+    iex> MusicLibrary.Records.SearchParser.parse("format:vin")
+    {:ok, %{query: ""}}
   """
   def parse(""), do: {:ok, %{query: ""}}
 
@@ -87,6 +93,9 @@ defmodule MusicLibrary.Records.SearchParser do
 
       {:query, [value]}, acc ->
         Map.update(acc, :query, value, &(&1 <> " " <> value))
+
+      _, %{} ->
+        %{query: ""}
 
       _, acc ->
         acc
