@@ -28,7 +28,17 @@ defmodule MusicLibrary.Records.SearchParser do
   mbid_filter = ignore(string("mbid:"))
   mbid = concat(mbid_filter, query) |> tag(:mbid)
 
-  search = repeat(choice([artist, album, mbid, space, query]))
+  format_filter = ignore(string("format:"))
+
+  formats =
+    Ecto.Enum.dump_values(MusicLibrary.Records.Record, :format)
+    |> Enum.map(&string/1)
+    |> choice()
+    |> map({String, :to_existing_atom, []})
+
+  format = concat(format_filter, formats) |> tag(:format)
+
+  search = repeat(choice([artist, album, mbid, space, format, query]))
 
   defparsecp(:search_parser, search)
 
@@ -45,11 +55,14 @@ defmodule MusicLibrary.Records.SearchParser do
     {:ok, %{artist: "marillion fish", album: "fugazi"}}
     iex> MusicLibrary.Records.SearchParser.parse(~s(artist:"the pineapple thief" wilderness))
     {:ok, %{artist: "the pineapple thief", query: "wilderness"}}
+    iex> MusicLibrary.Records.SearchParser.parse(~s(artist:"the pineapple thief" format:cd))
+    {:ok, %{artist: "the pineapple thief", format: :cd}}
   """
   def parse(""), do: {:ok, %{query: ""}}
 
   def parse(query) do
     {:ok, result, _rest, _context, _line, _byte_offset} = search_parser(query)
+
     {:ok, normalize(result)}
   end
 
@@ -63,6 +76,9 @@ defmodule MusicLibrary.Records.SearchParser do
 
       {:mbid, [{:query, [value]}]}, acc ->
         Map.put(acc, :mbid, value)
+
+      {:format, [value]}, acc ->
+        Map.put(acc, :format, value)
 
       {:query, [value]}, acc ->
         Map.update(acc, :query, value, &(&1 <> " " <> value))

@@ -57,6 +57,9 @@ defmodule MusicLibrary.Records do
       {:mbid, mbid}, search ->
         search |> where([r], r.musicbrainz_id == ^mbid or like(r.artists, ^"%#{mbid}%"))
 
+      {:format, format}, search ->
+        search |> where([r], r.format == ^format)
+
       {:query, raw_query}, search ->
         search
         |> where(
