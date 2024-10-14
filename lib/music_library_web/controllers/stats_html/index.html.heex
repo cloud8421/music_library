@@ -6,20 +6,20 @@
     >
       <dt>
         <img
-          class="absolute max-w-14 rounded-lg shadow"
+          class="absolute max-w-20 rounded-lg shadow"
           src={~p"/covers/#{@latest_record.id}"}
           alt={@latest_record.title}
         />
-        <p class="ml-16 truncate text-xs sm:text-sm font-medium text-gray-500">
+        <p class="ml-24 truncate text-xs sm:text-sm font-medium text-gray-500">
           Latest record
         </p>
       </dt>
-      <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
+      <dd class="ml-24 flex items-baseline pb-6 sm:pb-7">
         <p class="font-semibold">
           <span class="text-sm md:text-base lg:text-2xl text-gray-900">
             <%= format_artist_names(@latest_record.artists) %>
           </span>
-          <span class="text-sm md:text-base block sm:inline text-gray-600">
+          <span class="text-sm md:text-base block text-gray-600">
             <%= @latest_record.title %>
           </span>
         </p>
