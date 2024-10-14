@@ -19,17 +19,25 @@ defmodule MusicLibraryWeb.StatsControllerTest do
   describe "GET /" do
     setup [:create_records]
 
-    test "it shows the record count (total and by format)", %{conn: conn, records: records} do
+    test "it shows the record counts (total, format, and type)", %{conn: conn, records: records} do
       conn = get(conn, "/")
 
-      assert html_response(conn, 200) =~ records |> length() |> Integer.to_string()
+      response = html_response(conn, 200)
+
+      assert response =~ records |> length() |> Integer.to_string()
 
       records
       |> Enum.frequencies_by(& &1.format)
       |> Enum.each(fn {format, count} ->
-        response = html_response(conn, 200)
         assert response =~ "\n#{count}\n"
         assert response =~ "\n#{Record.format_long_label(format)}\n"
+      end)
+
+      records
+      |> Enum.frequencies_by(& &1.type)
+      |> Enum.each(fn {type, count} ->
+        assert response =~ "\n#{count}\n"
+        assert response =~ "\n#{Record.type_long_label(type)}\n"
       end)
     end
 
