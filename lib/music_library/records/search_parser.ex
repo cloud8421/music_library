@@ -34,7 +34,7 @@ defmodule MusicLibrary.Records.SearchParser do
     Ecto.Enum.dump_values(MusicLibrary.Records.Record, :format)
     |> Enum.map(&string/1)
     |> choice()
-    |> map({String, :to_existing_atom, []})
+    |> map({__MODULE__, :resolve_format, []})
 
   format = concat(format_filter, formats) |> tag(:format)
 
@@ -64,6 +64,11 @@ defmodule MusicLibrary.Records.SearchParser do
     {:ok, result, _rest, _context, _line, _byte_offset} = search_parser(query)
 
     {:ok, normalize(result)}
+  end
+
+  def resolve_format(format) do
+    Ecto.Enum.mappings(MusicLibrary.Records.Record, :format)
+    |> Enum.find_value(fn {key, value} -> if value == format, do: key end)
   end
 
   defp normalize(result) do
