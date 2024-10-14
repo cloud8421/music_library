@@ -42,7 +42,21 @@ defmodule MusicLibrary.Records.SearchParser do
     choice([concat(format_filter, formats), ignore(invalid_format)])
     |> tag(:format)
 
-  search = repeat(choice([artist, album, mbid, space, format, query]))
+  type_filter = ignore(string("type:"))
+
+  types =
+    Ecto.Enum.dump_values(MusicLibrary.Records.Record, :type)
+    |> Enum.map(&string/1)
+    |> choice()
+    |> map({__MODULE__, :resolve_type, []})
+
+  invalid_type = concat(type_filter, word)
+
+  type =
+    choice([concat(type_filter, types), ignore(invalid_type)])
+    |> tag(:type)
+
+  search = repeat(choice([artist, album, mbid, space, format, type, query]))
 
   defparsecp(:search_parser, search)
 
@@ -63,6 +77,10 @@ defmodule MusicLibrary.Records.SearchParser do
     {:ok, %{artist: "the pineapple thief", format: :cd}}
     iex> MusicLibrary.Records.SearchParser.parse("format:vin")
     {:ok, %{query: ""}}
+    iex> MusicLibrary.Records.SearchParser.parse("type:alb")
+    {:ok, %{query: ""}}
+    iex> MusicLibrary.Records.SearchParser.parse("type:album")
+    {:ok, %{type: :album}}
   """
   def parse(""), do: {:ok, %{query: ""}}
 
@@ -75,6 +93,11 @@ defmodule MusicLibrary.Records.SearchParser do
   def resolve_format(format) do
     Ecto.Enum.mappings(MusicLibrary.Records.Record, :format)
     |> Enum.find_value(fn {key, value} -> if value == format, do: key end)
+  end
+
+  def resolve_type(type) do
+    Ecto.Enum.mappings(MusicLibrary.Records.Record, :type)
+    |> Enum.find_value(fn {key, value} -> if value == type, do: key end)
   end
 
   defp normalize(result) do
@@ -90,6 +113,9 @@ defmodule MusicLibrary.Records.SearchParser do
 
       {:format, [value]}, acc ->
         Map.put(acc, :format, value)
+
+      {:type, [value]}, acc ->
+        Map.put(acc, :type, value)
 
       {:query, [value]}, acc ->
         Map.update(acc, :query, value, &(&1 <> " " <> value))

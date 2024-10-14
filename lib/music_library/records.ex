@@ -60,6 +60,9 @@ defmodule MusicLibrary.Records do
       {:format, format}, search ->
         search |> where([r], r.format == ^format)
 
+      {:type, type}, search ->
+        search |> where([r], r.type == ^type)
+
       {:query, raw_query}, search ->
         search
         |> where(
@@ -78,6 +81,15 @@ defmodule MusicLibrary.Records do
       from r in Record,
         group_by: r.format,
         select: {r.format, count(r.id)}
+
+    Repo.all(q)
+  end
+
+  def count_records_by_type do
+    q =
+      from r in Record,
+        group_by: r.type,
+        select: {r.type, count(r.id)}
 
     Repo.all(q)
   end

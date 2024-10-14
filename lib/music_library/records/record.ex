@@ -105,6 +105,20 @@ defmodule MusicLibrary.Records.Record do
   def format_long_label(:dvd), do: "DVD"
   def format_long_label(:multi), do: "Multi"
 
+  def type_short_label(:album), do: "ALB"
+  def type_short_label(:ep), do: "EP"
+  def type_short_label(:live), do: "LIVE"
+  def type_short_label(:compilation), do: "CMP"
+  def type_short_label(:single), do: "SNG"
+  def type_short_label(:other), do: "OTH"
+
+  def type_long_label(:album), do: "Album"
+  def type_long_label(:ep), do: "EP"
+  def type_long_label(:live), do: "Live"
+  def type_long_label(:compilation), do: "Comp"
+  def type_long_label(:single), do: "Single"
+  def type_long_label(:other), do: "Other"
+
   def format_release(nil), do: "N/A"
 
   def format_release(release) do
