@@ -1,10 +1,10 @@
 <header class="gap-6 mb-2">
   <h1 class="text-lg font-semibold leading-8 text-zinc-800">All Records</h1>
   <div class="flex items-center justify-between gap-6 mb-2 mt-2">
-    <form class="w-1/2" for={@record_list_params.query} phx-submit="search" phx-change="search">
+    <form class="w-2/3" for={@record_list_params.query} phx-submit="search" phx-change="search">
       <input
         type="search"
-        class="w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6"
+        class="w-full rounded-lg text-zinc-900 border-gray-300 focus:border-zinc-400 focus:ring-0 sm:text-sm sm:leading-6"
         id={:query}
         name={:query}
         value={@record_list_params.query}
