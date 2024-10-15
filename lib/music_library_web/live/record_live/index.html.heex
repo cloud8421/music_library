@@ -34,7 +34,7 @@
   row_click={fn {_id, record} -> JS.navigate(~p"/records/#{record}") end}
 >
   <:col :let={{_id, record}}>
-    <span class="relative inline-block drop-shadow-xl">
+    <span class="relative inline-block drop-shadow-xl w-16 h-16">
       <img
         class="max-w-16 rounded-lg"
         alt={record.title}
