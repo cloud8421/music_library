@@ -46,7 +46,14 @@
     </span>
   </:col>
   <:col :let={{_id, record}}>
-    <p class="text-sm max-sm:text-xs"><%= format_artist_names(record.artists) %></p>
+    <p class="text-sm max-sm:text-xs">
+      <.link
+        :for={artist <- record.artists}
+        patch={~p"/records?query=mbid:#{artist.musicbrainz_id}"}
+      >
+        <%= artist.name %>
+      </.link>
+    </p>
     <p class="text-base font-semibold text-wrap max-sm:text-xs"><%= record.title %></p>
     <p class="text-sm max-sm:text-xs">
       <%= Records.Record.format_release(record.release) %>

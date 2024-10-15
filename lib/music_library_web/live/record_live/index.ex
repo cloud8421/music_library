@@ -1,7 +1,6 @@
 defmodule MusicLibraryWeb.RecordLive.Index do
   use MusicLibraryWeb, :live_view
   import MusicLibraryWeb.Pagination
-  import MusicLibraryWeb.ArtistHelpers
 
   alias MusicLibrary.Records
 
@@ -65,7 +64,7 @@ defmodule MusicLibraryWeb.RecordLive.Index do
     total_records = Records.search_records_count(query)
 
     record_list_params =
-      socket.assigns.record_list_params
+      @default_records_list_params
       |> merge_query(params["query"])
       |> merge_pagination(params, total_records)
 
