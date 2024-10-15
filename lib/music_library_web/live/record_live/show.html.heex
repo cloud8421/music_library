@@ -1,6 +1,8 @@
 <.header>
-  <%= @record.title %>
-  <:subtitle><%= format_artist_names(@record.artists) %></:subtitle>
+  <%= format_artist_names(@record.artists) %>
+  <:subtitle>
+    <%= @record.title %>
+  </:subtitle>
   <:actions>
     <.link patch={~p"/records/#{@record}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit Metadata</.button>
@@ -11,17 +13,17 @@
   </:actions>
 </.header>
 
-<div class="md:columns-2">
-  <span class="relative block md:inline-block drop-shadow">
+<div class="md:columns-2 mt-4">
+  <div class="relative block md:inline-block drop-shadow">
     <img
-      class="w-full"
+      class="w-full rounded-lg shadow"
       src={~p"/covers/#{@record.id}?vsn=#{@record.cover_hash || ""}"}
       alt={@record.title}
     />
     <span class="absolute right-2 bottom-1 block text-white drop-shadow-md">
       <%= Records.Record.format_short_label(@record.format) %>
     </span>
-  </span>
+  </div>
 
   <.list>
     <:item title="Type">
@@ -50,7 +52,9 @@
   </.list>
 </div>
 
-<.back navigate={@back_url}>Back to records</.back>
+<div class="mt-8">
+  <.back navigate={@back_url}>Back to records</.back>
+</div>
 
 <.modal
   :if={@live_action == :edit}

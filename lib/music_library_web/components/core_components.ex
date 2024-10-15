@@ -431,15 +431,15 @@ defmodule MusicLibraryWeb.CoreComponents do
       @actions != [] && "sm:flex sm:items-center sm:justify-between sm:gap-6 mb-2",
       @class
     ]}>
-      <div>
-        <h1 class="text-lg font-semibold leading-8 text-zinc-800">
+      <div class="font-semibold">
+        <h1 class="text-sm md:text-base lg:text-2xl text-gray-900">
           <%= render_slot(@inner_block) %>
         </h1>
-        <p :if={@subtitle != []} class="mt-2 text-base leading-6 text-zinc-600">
+        <h2 :if={@subtitle != []} class="mt-2 text-sm md:text-base text-gray-600">
           <%= render_slot(@subtitle) %>
-        </p>
+        </h2>
       </div>
-      <div class="flex justify-center gap-2 sm:flex-none mt-2 mb-2"><%= render_slot(@actions) %></div>
+      <div class="flex justify-center gap-2 sm:flex-none mt-4 mb-4"><%= render_slot(@actions) %></div>
     </header>
     """
   end
