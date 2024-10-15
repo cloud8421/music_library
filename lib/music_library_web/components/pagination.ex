@@ -11,10 +11,7 @@ defmodule MusicLibraryWeb.Pagination do
     assigns = assign(assigns, :page_links, page_links)
 
     ~H"""
-    <div
-      id={@id}
-      class="flex items-center justify-between border-t border-zinc-200 bg-white px-4 py-6 sm:px-6 mb-4"
-    >
+    <div id={@id} class="flex items-center justify-between bg-white px-4 py-6 mb-4">
       <%!-- Only on smallest viewport --%>
       <div class={[
         "flex flex-1 sm:hidden",
