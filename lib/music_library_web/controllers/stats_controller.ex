@@ -15,7 +15,9 @@ defmodule MusicLibraryWeb.StatsController do
     records_count = Enum.reduce(records_count_by_format, 0, fn {_, count}, acc -> acc + count end)
     latest_record = Records.get_latest_record!()
 
-    render(conn, :index,
+    conn
+    |> assign(:page_title, "Stats")
+    |> render(:index,
       records_count_by_format: records_count_by_format,
       records_count_by_type: records_count_by_type,
       records_count: records_count,
