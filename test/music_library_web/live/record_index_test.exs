@@ -8,8 +8,11 @@ defmodule MusicLibraryWeb.RecordIndexTest do
 
   setup :verify_on_exit!
 
+  @default_records_page_size 100
+  @total_records @default_records_page_size + 10
+
   defp create_records(_) do
-    records = Enum.map(1..30, fn _ -> record_fixture() end)
+    records = Enum.map(1..@total_records, fn _ -> record_fixture() end)
     %{records: records}
   end
 
@@ -32,8 +35,8 @@ defmodule MusicLibraryWeb.RecordIndexTest do
           html =~ record.id
         end)
 
-      assert length(present) == 20
-      assert length(absent) == 10
+      assert length(present) == @default_records_page_size
+      assert length(absent) == @total_records - @default_records_page_size
 
       for record <- present do
         record_row =
@@ -55,15 +58,15 @@ defmodule MusicLibraryWeb.RecordIndexTest do
     end
 
     test "uses query string params", %{conn: conn, records: records} do
-      {:ok, page_2_live, page_2_html} = live(conn, ~p"/records?page=2&page_size=5")
+      {:ok, page_2_live, page_2_html} = live(conn, ~p"/records?page=2&page_size=25")
 
       {page_2_present, page_2_absent} =
         Enum.split_with(records, fn record ->
           page_2_html =~ record.id
         end)
 
-      assert length(page_2_present) == 5
-      assert length(page_2_absent) == 25
+      assert length(page_2_present) == 25
+      assert length(page_2_absent) == @total_records - 25
 
       page_2_pagination = page_2_live |> with_target("#pagination")
       refute has_element?(page_2_pagination, "a", "2")
@@ -72,15 +75,15 @@ defmodule MusicLibraryWeb.RecordIndexTest do
       assert has_element?(page_2_pagination, "a", "4")
       assert has_element?(page_2_pagination, "a", "5")
 
-      {:ok, page_3_live, page_3_html} = live(conn, ~p"/records?page=3&page_size=5")
+      {:ok, page_3_live, page_3_html} = live(conn, ~p"/records?page=3&page_size=25")
 
       {page_3_present, page_3_absent} =
         Enum.split_with(records, fn record ->
           page_3_html =~ record.id
         end)
 
-      assert length(page_3_present) == 5
-      assert length(page_3_absent) == 25
+      assert length(page_3_present) == 25
+      assert length(page_3_absent) == @total_records - 25
 
       page_3_pagination = page_3_live |> with_target("#pagination")
       refute has_element?(page_3_pagination, "a", "3")
