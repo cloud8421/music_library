@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.MusicLibrary.DbPull do
+defmodule Mix.Tasks.MusicLibrary.Prod.DbPull do
   use Mix.Task
   @shortdoc "Pulls the latest database from the production server"
   @moduledoc """
