@@ -49,6 +49,7 @@
     <p class="text-sm max-sm:text-xs">
       <.link
         :for={artist <- record.artists}
+        class=" hover:text-gray-500"
         patch={~p"/records?query=mbid:#{artist.musicbrainz_id}"}
       >
         <%= artist.name %>

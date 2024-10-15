@@ -1,5 +1,11 @@
 <.header>
-  <%= format_artist_names(@record.artists) %>
+  <.link
+    :for={artist <- @record.artists}
+    class=" hover:text-gray-500"
+    patch={~p"/records?query=mbid:#{artist.musicbrainz_id}"}
+  >
+    <%= artist.name %>
+  </.link>
   <:subtitle>
     <%= @record.title %>
   </:subtitle>
