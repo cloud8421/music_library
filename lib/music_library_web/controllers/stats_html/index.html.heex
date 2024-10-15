@@ -34,7 +34,7 @@
         <p class="truncate text-sm font-medium text-gray-500">Total Records</p>
       </dt>
       <dd class="flex items-baseline pb-6 sm:pb-7">
-        <a href={~p"/records"} class="text-2xl font-semibold text-gray-900">
+        <a href={~p"/records"} class="text-2xl font-semibold text-gray-900 hover:text-gray-500">
           <%= @records_count %>
         </a>
       </dd>
@@ -50,7 +50,7 @@
       </dt>
       <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
         <div class="flex items-baseline text-2xl font-semibold">
-          <a href={~p"/records?query=format:#{format}"}>
+          <a class="hover:text-gray-500" href={~p"/records?query=format:#{format}"}>
             <%= count %>
           </a>
         </div>
@@ -67,7 +67,7 @@
       </dt>
       <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
         <div class="flex items-baseline text-2xl font-semibold">
-          <a href={~p"/records?query=type:#{type}"}>
+          <a class="hover:text-gray-500" href={~p"/records?query=type:#{type}"}>
             <%= count %>
           </a>
         </div>
