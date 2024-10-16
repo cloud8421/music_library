@@ -11,18 +11,7 @@ defmodule MusicLibraryWeb.RecordLive.Index do
   }
 
   @impl true
-  def mount(params, _session, socket) do
-    query = params["query"] || ""
-    total_records = Records.search_records_count(query)
-
-    record_list_params =
-      @default_records_list_params
-      |> merge_query(params["query"])
-      |> merge_pagination(params, total_records)
-
-    offset = page_to_offset(record_list_params.page, record_list_params.page_size)
-    records = Records.search_records(query, limit: record_list_params.page_size, offset: offset)
-
+  def mount(_params, _session, socket) do
     socket =
       if static_changed?(socket) do
         put_flash(socket, :warning, "The application has been updated, please reload.")
@@ -30,11 +19,7 @@ defmodule MusicLibraryWeb.RecordLive.Index do
         socket
       end
 
-    {:ok,
-     socket
-     |> assign(:nav_section, :records)
-     |> assign(:record_list_params, record_list_params)
-     |> stream(:records, records)}
+    {:ok, assign(socket, :nav_section, :records)}
   end
 
   @impl true
@@ -42,42 +27,51 @@ defmodule MusicLibraryWeb.RecordLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :import, _params) do
+  defp apply_action(socket, :import, params) do
+    socket =
+      if get_in(socket.assigns, [:streams, :records]) == nil do
+        socket
+        |> apply_action(:index, params)
+      else
+        socket
+      end
+
     socket
     |> assign(:page_title, "Import from MusicBrainz")
     |> assign(:record, nil)
   end
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
+  defp apply_action(socket, :edit, params = %{"id" => id}) do
+    socket =
+      if get_in(socket.assigns, [:streams, :records]) == nil do
+        socket
+        |> apply_action(:index, params)
+      else
+        socket
+      end
+
     socket
     |> assign(:page_title, "Edit Metadata")
     |> assign(:record, Records.get_record!(id))
   end
 
   defp apply_action(socket, :index, params) do
-    new_socket =
-      socket
-      |> assign(:page_title, "Collection")
-      |> assign(:record, nil)
-
-    query = params["query"] || socket.assigns.record_list_params.query
+    query = params["query"] || ""
     total_records = Records.search_records_count(query)
 
     record_list_params =
       @default_records_list_params
-      |> merge_query(params["query"])
+      |> merge_query(query)
       |> merge_pagination(params, total_records)
 
-    if record_list_params != socket.assigns.record_list_params do
-      offset = page_to_offset(record_list_params.page, record_list_params.page_size)
-      records = Records.search_records(query, limit: record_list_params.page_size, offset: offset)
+    offset = page_to_offset(record_list_params.page, record_list_params.page_size)
+    records = Records.search_records(query, limit: record_list_params.page_size, offset: offset)
 
-      new_socket
-      |> assign(:record_list_params, record_list_params)
-      |> stream(:records, records, reset: true)
-    else
-      new_socket
-    end
+    socket
+    |> assign(:page_title, "Collection")
+    |> assign(:record, nil)
+    |> assign(:record_list_params, record_list_params)
+    |> stream(:records, records, reset: true)
   end
 
   @impl true
