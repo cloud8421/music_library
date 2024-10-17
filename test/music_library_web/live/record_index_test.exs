@@ -47,7 +47,8 @@ defmodule MusicLibraryWeb.RecordIndexTest do
 
         assert record_row_html =~ escape(record.title)
         assert record_row_html =~ to_string(record.release)
-        assert record_row_html =~ Record.format_short_label(record.format)
+        assert record_row_html =~ Record.format_long_label(record.format)
+        assert record_row_html =~ Record.type_long_label(record.type)
         assert record_row_html =~ record.release
         assert record_row_html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
 
@@ -115,7 +116,8 @@ defmodule MusicLibraryWeb.RecordIndexTest do
 
       assert record_row_html =~ escape(record.title)
       assert record_row_html =~ to_string(record.release)
-      assert record_row_html =~ Record.format_short_label(record.format)
+      assert record_row_html =~ Record.format_long_label(record.format)
+      assert record_row_html =~ Record.type_long_label(record.type)
       assert record_row_html =~ record.release
       assert record_row_html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
 
@@ -151,7 +153,8 @@ defmodule MusicLibraryWeb.RecordIndexTest do
 
         assert record_row_html =~ escape(record.title)
         assert record_row_html =~ to_string(record.release)
-        assert record_row_html =~ Record.format_short_label(record.format)
+        assert record_row_html =~ Record.format_long_label(record.format)
+        assert record_row_html =~ Record.type_long_label(record.type)
         assert record_row_html =~ record.release
         assert record_row_html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
 

@@ -28,77 +28,134 @@
   </p>
 </div>
 
-<.table
-  id="records"
-  rows={@streams.records}
-  row_click={fn {_id, record} -> JS.navigate(~p"/records/#{record}") end}
->
-  <:col :let={{_id, record}}>
-    <span class="relative inline-block drop-shadow-xl w-16 h-16">
+<ul class="divide-y divide-gray-100" role="list" id="record-collection" phx-update="stream">
+  <li
+    :for={{id, record} <- @streams.records}
+    phx-click={JS.navigate(~p"/records/#{record}")}
+    class="flex justify-between gap-x-6 py-5 hover:bg-gray-50 cursor-pointer"
+    id={id}
+  >
+    <div class="flex min-w-0 gap-x-4 items-center">
       <img
-        class="max-w-16 rounded-lg"
+        class="max-h-20 max-w-20 flex-none rounded-lg"
         alt={record.title}
         src={~p"/covers/#{record.id}?vsn=#{record.cover_hash || ""}"}
       />
-      <span class="absolute right-1 bottom-0 block text-white drop-shadow-md">
-        <%= Records.Record.format_short_label(record.format) %>
-      </span>
-    </span>
-  </:col>
-  <:col :let={{_id, record}}>
-    <p class="text-sm max-sm:text-xs">
-      <.link
-        :for={artist <- record.artists}
-        class=" hover:text-gray-500"
-        patch={~p"/records?query=mbid:#{artist.musicbrainz_id}"}
-      >
-        <%= artist.name %>
-      </.link>
-    </p>
-    <p class="text-base font-semibold text-wrap max-sm:text-xs"><%= record.title %></p>
-    <p class="text-sm max-sm:text-xs">
-      <%= Records.Record.format_release(record.release) %>
-    </p>
-  </:col>
-  <:action :let={{_id, record}}>
-    <div class="sr-only">
-      <.link href={musicbrainz_url(record)} target=".blank">
-        MusicBrainz
-      </.link>
+      <div class="min-w-0 flex-auto">
+        <h1 class="text-sm leading-6 text-zinc-700">
+          <.link
+            :for={artist <- record.artists}
+            class="hover:text-zinc-500"
+            patch={~p"/records?query=mbid:#{artist.musicbrainz_id}"}
+          >
+            <%= artist.name %>
+          </.link>
+        </h1>
+        <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 text-wrap">
+          <%= record.title %>
+        </h2>
+        <p class="mt-1 text-xs leading-5 text-gray-500">
+          <%= Records.Record.format_release(record.release) %>
+          <span class="sm:hidden">
+            · <%= Records.Record.format_long_label(record.format) %> · <%= Records.Record.type_long_label(
+              record.type
+            ) %>
+          </span>
+        </p>
+      </div>
     </div>
-    <.link href={musicbrainz_url(record)} target=".blank">
-      <.icon name="hero-arrow-top-right-on-square" class="h-6 w-6" />
-    </.link>
-  </:action>
-  <:action :let={{_id, record}}>
-    <div class="sr-only">
-      <.link navigate={~p"/records/#{record}"}>Show</.link>
-    </div>
+    <div class="flex shrink-0 items-center gap-x-6">
+      <div class="hidden sm:flex sm:flex-col sm:items-end">
+        <p class="text-sm leading-6 text-gray-900">
+          <%= Records.Record.format_long_label(record.format) %>
+          <%= Records.Record.type_long_label(record.type) %>
+        </p>
+      </div>
+      <div class="relative flex-none">
+        <button
+          type="button"
+          class="-m-2.5 block p-2.5 text-gray-500 hover:text-gray-900"
+          aria-expanded="false"
+          aria-haspopup="true"
+          phx-click={JS.toggle(to: "#actions-#{record.id}")}
+          phx-click-away={JS.hide(to: "#actions-#{record.id}")}
+        >
+          <span class="sr-only">Open options</span>
+          <svg
+            class="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+            data-slot="icon"
+          >
+            <path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
+          </svg>
+        </button>
+        <!--
+          Dropdown menu, show/hide based on menu state.
 
-    <div class="sr-only">
-      <.link patch={~p"/records/#{record}/edit"}>Edit</.link>
+          Entering: "transition ease-out duration-100"
+            From: "transform opacity-0 scale-95"
+            To: "transform opacity-100 scale-100"
+          Leaving: "transition ease-in duration-75"
+            From: "transform opacity-100 scale-100"
+            To: "transform opacity-0 scale-95"
+        -->
+        <div
+          id={"actions-#{record.id}"}
+          class={[
+            "hidden absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none"
+          ]}
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="options-menu-0-button"
+          tabindex="-1"
+        >
+          <.link
+            class="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50"
+            role="menuitem"
+            tabindex="-1"
+            id={"actions-#{record.id}-show"}
+            navigate={~p"/records/#{record}"}
+          >
+            Show
+          </.link>
+          <a
+            href={musicbrainz_url(record)}
+            target=".blank"
+            class="block px-3 py-1 text-sm leading-6 text-gray-900  hover:bg-gray-50"
+            role="menuitem"
+            tabindex="-1"
+            id={"actions-#{record.id}-musicbrainz"}
+          >
+            View on MusicBrainz
+          </a>
+
+          <.link
+            class="block px-3 py-1 text-sm leading-6 text-gray-900  hover:bg-gray-50"
+            role="menuitem"
+            tabindex="-1"
+            id={"actions-#{record.id}-edit"}
+            patch={~p"/records/#{record}/edit"}
+          >
+            Edit
+          </.link>
+
+          <.link
+            class="block px-3 py-1 text-sm leading-6 text-red-900  hover:bg-red-50"
+            role="menuitem"
+            tabindex="-1"
+            id={"actions-#{record.id}-delete"}
+            phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
+            data-confirm="Are you sure?"
+          >
+            Delete
+          </.link>
+        </div>
+      </div>
     </div>
-    <.link patch={~p"/records/#{record}/edit"}>
-      <.icon name="hero-pencil-square-solid" class="h-6 w-6" />
-    </.link>
-  </:action>
-  <:action :let={{id, record}}>
-    <div class="sr-only">
-      <.link
-        phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
-        data-confirm="Are you sure?"
-      >
-        Delete
-      </.link>
-    </div>
-    <.link
-      phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
-      data-confirm="Are you sure?"
-    >
-      <.icon name="hero-trash-solid" class="h-6 w-6" />
-    </.link>
-  </:action>
-</.table>
+  </li>
+</ul>
 
 <.modal :if={@live_action == :edit} id="record-modal" show on_cancel={JS.patch(~p"/records")}>
   <.live_component
