@@ -57,7 +57,7 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
           />
         </div>
         <:actions>
-          <.button phx-disable-with="Saving...">Save Record</.button>
+          <.button phx-disable-with="Saving...">Save</.button>
         </:actions>
       </.simple_form>
     </div>

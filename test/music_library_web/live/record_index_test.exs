@@ -177,11 +177,11 @@ defmodule MusicLibraryWeb.RecordIndexTest do
 
       assert index_live
              |> element("#records-#{record.id} a", "Edit")
-             |> render_click() =~ "Edit Metadata"
+             |> render_click() =~ "Edit"
 
       assert_patch(index_live, ~p"/records/#{record}/edit")
 
-      assert index_live |> render() =~ "Edit Metadata"
+      assert index_live |> render() =~ "Edit"
     end
 
     test "can change the record cover", %{conn: conn} do

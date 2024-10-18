@@ -51,7 +51,7 @@ defmodule MusicLibraryWeb.RecordLive.Index do
       end
 
     socket
-    |> assign(:page_title, "Edit Metadata")
+    |> assign(:page_title, "Edit")
     |> assign(:record, Records.get_record!(id))
   end
 

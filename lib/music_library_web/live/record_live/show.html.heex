@@ -11,10 +11,10 @@
   </:subtitle>
   <:actions>
     <.link patch={~p"/records/#{@record}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit Metadata</.button>
+      <.button>Edit</.button>
     </.link>
     <.link phx-click={JS.push("delete", value: %{id: @record.id})} data-confirm="Are you sure?">
-      <.button class="!bg-red-900 hover:!bg-red-700">Delete record</.button>
+      <.button class="!bg-red-900 hover:!bg-red-700">Delete</.button>
     </.link>
   </:actions>
 </.header>

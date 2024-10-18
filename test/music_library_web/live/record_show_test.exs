@@ -18,8 +18,8 @@ defmodule MusicLibraryWeb.RecordShowTest do
       {:ok, show_live, _html} = live(conn, ~p"/records/#{record.id}")
 
       assert show_live
-             |> element("a", "Edit Metadata")
-             |> render_click() =~ "Edit Metadata"
+             |> element("a", "Edit")
+             |> render_click() =~ "Edit"
 
       assert_patch(show_live, ~p"/records/#{record}/show/edit")
     end
