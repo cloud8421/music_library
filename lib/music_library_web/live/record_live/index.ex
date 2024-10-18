@@ -116,8 +116,6 @@ defmodule MusicLibraryWeb.RecordLive.Index do
     end
   end
 
-  defp merge_query(record_list_params, nil), do: record_list_params
-
   defp merge_query(record_list_params, query) do
     Map.put(record_list_params, :query, query)
   end
