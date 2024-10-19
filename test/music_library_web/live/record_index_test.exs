@@ -141,7 +141,11 @@ defmodule MusicLibraryWeb.RecordIndexTest do
           artist.name == artist_with_most_records
         end)
 
-      qs = [query: ~s(artist:"#{artist_with_most_records}"), page_size: 30]
+      qs = [
+        query: ~s(artist:"#{artist_with_most_records}"),
+        page_size: @default_records_page_size
+      ]
+
       {:ok, index_live, _html} = live(conn, ~p"/records?#{qs}")
 
       for record <- present do
