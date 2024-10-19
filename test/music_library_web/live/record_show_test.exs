@@ -36,6 +36,7 @@ defmodule MusicLibraryWeb.RecordShowTest do
       assert html =~ Record.format_short_label(record.format)
       assert html =~ record.release
       assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+      assert html =~ Phoenix.HTML.Safe.to_iodata(record.purchased_at)
       assert html =~ Phoenix.HTML.Safe.to_iodata(record.inserted_at)
       assert html =~ Phoenix.HTML.Safe.to_iodata(record.updated_at)
 
