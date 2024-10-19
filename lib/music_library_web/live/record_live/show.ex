@@ -41,6 +41,11 @@ defmodule MusicLibraryWeb.RecordLive.Show do
     {:noreply, push_navigate(socket, to: ~p"/records")}
   end
 
+  @impl true
+  def handle_info({MusicLibraryWeb.RecordLive.FormComponent, {:saved, record}}, socket) do
+    {:noreply, assign(socket, :record, record)}
+  end
+
   defp page_title(:show), do: "Show Record"
   defp page_title(:edit), do: "Edit"
 
