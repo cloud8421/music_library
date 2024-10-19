@@ -43,6 +43,7 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
           />
         </div>
         <.input field={@form[:release]} type="text" label="Release" />
+        <.input field={@form[:purchased_at]} type="datetime-local" label="Purchased at" />
         <div phx-drop-target={@uploads.cover_data.ref}>
           <.label for={@uploads.cover_data.ref}>
             Cover art
