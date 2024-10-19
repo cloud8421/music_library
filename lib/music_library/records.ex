@@ -99,7 +99,7 @@ defmodule MusicLibrary.Records do
   def get_latest_record! do
     q =
       from r in Record,
-        order_by: [desc: r.inserted_at],
+        order_by: [desc: r.purchased_at],
         limit: 1,
         select: ^@fields
 

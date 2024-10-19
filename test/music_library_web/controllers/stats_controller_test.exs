@@ -42,7 +42,7 @@ defmodule MusicLibraryWeb.StatsControllerTest do
     end
 
     test "it shows the latest record", %{conn: conn, records: records} do
-      latest_record = Enum.max_by(records, & &1.inserted_at)
+      latest_record = Enum.max_by(records, & &1.purchased_at)
 
       conn = get(conn, "/")
 

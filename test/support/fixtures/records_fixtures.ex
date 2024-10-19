@@ -50,6 +50,7 @@ defmodule MusicLibrary.RecordsFixtures do
   def record_fixture(attrs \\ %{}) do
     record_musicbrainz_id = Ecto.UUID.generate()
     artist_name = Enum.random(@artists)
+    current_time = DateTime.utc_now()
 
     artists_attrs = [
       %{
@@ -71,6 +72,7 @@ defmodule MusicLibrary.RecordsFixtures do
         type: :album,
         format: Record.formats() |> Enum.random(),
         release: Enum.random(1969..2024) |> Integer.to_string(),
+        purchased_at: current_time,
         artists: artists_attrs
       })
       |> MusicLibrary.Records.create_record()
