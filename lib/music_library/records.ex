@@ -123,16 +123,17 @@ defmodule MusicLibrary.Records do
 
   def import_from_musicbrainz(musicbrainz_id, opts \\ []) do
     with format = Keyword.get(opts, :format, "cd"),
+         purchased_at = Keyword.get(opts, :purchased_at, DateTime.utc_now()),
          {:ok, release_group} <- musicbrainz().get_release_group(musicbrainz_id),
          {:ok, cover_data} <- musicbrainz().get_cover_art(musicbrainz_id),
-         record_params = build_record_params(release_group, cover_data, format) do
+         record_params = build_record_params(release_group, cover_data, format, purchased_at) do
       create_record(record_params)
     else
       error -> error
     end
   end
 
-  defp build_record_params(release_group, cover_data, format) do
+  defp build_record_params(release_group, cover_data, format, purchased_at) do
     musicbrainz_id = release_group["id"]
 
     artists_attrs =
@@ -157,7 +158,8 @@ defmodule MusicLibrary.Records do
       "format" => format,
       "genres" => Enum.map(release_group["genres"], fn g -> g["name"] end),
       "cover_url" => "https://coverartarchive.org/release-group/#{musicbrainz_id}/front",
-      "cover_data" => cover_data
+      "cover_data" => cover_data,
+      "purchased_at" => purchased_at
     }
   end
 

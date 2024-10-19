@@ -18,6 +18,7 @@ defmodule MusicLibrary.Records.Record do
     field :musicbrainz_data, :map
     field :genres, {:array, :string}
     field :release, :string
+    field :purchased_at, :utc_datetime
 
     embeds_many :artists, Artist do
       field :name, :string
@@ -41,7 +42,8 @@ defmodule MusicLibrary.Records.Record do
       :release,
       :genres,
       :cover_url,
-      :cover_data
+      :cover_data,
+      :purchased_at
     ])
     |> cast_embed(:artists, with: &artist_changeset/2)
     |> generate_cover_hash()

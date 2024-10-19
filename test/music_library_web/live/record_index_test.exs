@@ -399,6 +399,10 @@ defmodule MusicLibraryWeb.RecordIndexTest do
 
       assert record.cover_data == cover_data
 
+      assert record.inserted_at !== nil
+      assert record.updated_at !== nil
+      assert record.purchased_at !== nil
+
       [marillion] = record.artists
 
       assert %MusicLibrary.Records.Record.Artist{
