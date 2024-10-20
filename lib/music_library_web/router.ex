@@ -14,22 +14,30 @@ defmodule MusicLibraryWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :require_login do
+    plug MusicLibraryWeb.Plug.RequireLogin
+  end
+
   scope "/", MusicLibraryWeb do
     pipe_through :browser
 
     get "/health", HealthController, :index
-    get "/covers/:record_id", CoverController, :show
-    get "/", StatsController, :index
-
     get "/login", SessionController, :new
     post "/sessions/create", SessionController, :create
 
-    live "/records", RecordLive.Index, :index
-    live "/records/import", RecordLive.Index, :import
-    live "/records/:id/edit", RecordLive.Index, :edit
+    scope "/" do
+      pipe_through :require_login
 
-    live "/records/:id", RecordLive.Show, :show
-    live "/records/:id/show/edit", RecordLive.Show, :edit
+      get "/covers/:record_id", CoverController, :show
+      get "/", StatsController, :index
+
+      live "/records", RecordLive.Index, :index
+      live "/records/import", RecordLive.Index, :import
+      live "/records/:id/edit", RecordLive.Index, :edit
+
+      live "/records/:id", RecordLive.Show, :show
+      live "/records/:id/show/edit", RecordLive.Show, :edit
+    end
   end
 
   # Other scopes may use custom stacks.

@@ -33,6 +33,11 @@ defmodule MusicLibraryWeb.ConnCase do
 
   setup tags do
     MusicLibrary.DataCase.setup_sandbox(tags)
-    {:ok, conn: Phoenix.ConnTest.build_conn()}
+
+    conn =
+      Phoenix.ConnTest.build_conn()
+      |> Phoenix.ConnTest.init_test_session(%{logged_in: true})
+
+    {:ok, conn: conn}
   end
 end

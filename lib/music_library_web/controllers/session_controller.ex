@@ -11,7 +11,9 @@ defmodule MusicLibraryWeb.SessionController do
     password = params["password"]
 
     if password == "password" do
-      redirect(conn, to: "/")
+      conn
+      |> put_session(:logged_in, true)
+      |> redirect(to: "/")
     else
       conn
       |> put_flash(:error, "Invalid password")
