@@ -21,6 +21,9 @@ defmodule MusicLibraryWeb.Router do
     get "/covers/:record_id", CoverController, :show
     get "/", StatsController, :index
 
+    get "/login", SessionController, :new
+    post "/sessions/create", SessionController, :create
+
     live "/records", RecordLive.Index, :index
     live "/records/import", RecordLive.Index, :import
     live "/records/:id/edit", RecordLive.Index, :edit
