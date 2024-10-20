@@ -1,4 +1,4 @@
-defmodule MusicLibrary.Records.MusicBrainz.APIImpl do
+defmodule MusicBrainz.APIImpl do
   @moduledoc """
   The original data from Obsidian maps records to MusicBrainz release groups, so we can leverage the MusicBrainz API to:
 
@@ -6,7 +6,7 @@ defmodule MusicLibrary.Records.MusicBrainz.APIImpl do
   - Extend the metadata associated with existing records
   """
 
-  @behaviour MusicLibrary.Records.MusicBrainz.APIBehaviour
+  @behaviour MusicBrainz.APIBehaviour
 
   require Logger
 

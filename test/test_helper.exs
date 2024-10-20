@@ -1,4 +1,4 @@
-Mox.defmock(APIBehaviourMock, for: MusicLibrary.Records.MusicBrainz.APIBehaviour)
+Mox.defmock(APIBehaviourMock, for: MusicBrainz.APIBehaviour)
 Application.put_env(:music_library, :musicbrainz, APIBehaviourMock)
 
 ExUnit.start()

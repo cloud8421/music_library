@@ -1,4 +1,4 @@
-defmodule MusicLibrary.Records.MusicBrainz.APIBehaviour do
+defmodule MusicBrainz.APIBehaviour do
   @type musicbrainz_id :: String.t()
 
   @callback get_release_group(musicbrainz_id) :: {:ok, map()} | {:error, String.t()}
