@@ -82,11 +82,11 @@ defmodule MusicLibraryWeb do
 
   defp html_helpers do
     quote do
+      use Gettext, backend: MusicLibraryWeb.Gettext
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
       import MusicLibraryWeb.CoreComponents
-      import MusicLibraryWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
