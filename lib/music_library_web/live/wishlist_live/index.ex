@@ -1,0 +1,99 @@
+defmodule MusicLibraryWeb.WishlistLive.Index do
+  use MusicLibraryWeb, :live_view
+  import MusicLibraryWeb.Pagination
+
+  alias MusicLibrary.Wishlist
+  alias MusicLibrary.Records
+
+  @default_records_list_params %{
+    query: "",
+    page: 1,
+    page_size: 100
+  }
+
+  @impl true
+  def mount(_params, _session, socket) do
+    socket =
+      if static_changed?(socket) do
+        put_flash(socket, :warning, gettext("The application has been updated, please reload."))
+      else
+        socket
+      end
+
+    {:ok, assign(socket, :nav_section, :wishlist)}
+  end
+
+  @impl true
+  def handle_params(params, _url, socket) do
+    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+  end
+
+  defp apply_action(socket, :index, params) do
+    query = params["query"] || ""
+    total_records = Wishlist.search_records_count(query)
+
+    record_list_params =
+      @default_records_list_params
+      |> merge_query(query)
+      |> merge_pagination(params, total_records)
+
+    offset = page_to_offset(record_list_params.page, record_list_params.page_size)
+    records = Wishlist.search_records(query, limit: record_list_params.page_size, offset: offset)
+
+    socket
+    |> assign(:page_title, gettext("Collection"))
+    |> assign(:record, nil)
+    |> assign(:record_list_params, record_list_params)
+    |> stream(:records, records, reset: true)
+  end
+
+  @impl true
+  def handle_info({MusicLibraryWeb.RecordLive.FormComponent, {:saved, record}}, socket) do
+    {:noreply, stream_insert(socket, :records, record)}
+  end
+
+  @impl true
+  def handle_event("search", %{"query" => query}, socket) do
+    qs =
+      @default_records_list_params
+      |> Map.put(:query, query)
+      |> Map.take([:query, :page, :page_size])
+      |> URI.encode_query()
+
+    {:noreply, push_patch(socket, to: ~s"/records?#{qs}")}
+  end
+
+  defp merge_query(record_list_params, query) do
+    Map.put(record_list_params, :query, query)
+  end
+
+  defp merge_pagination(record_list_params, params, total_records) do
+    record_list_params
+    |> Map.put(:page, parse_int_or_default(params["page"], record_list_params.page))
+    |> Map.put(
+      :page_size,
+      parse_int_or_default(params["page_size"], record_list_params.page_size)
+    )
+    |> Map.put(:total_entries, total_records)
+  end
+
+  defp parse_int_or_default(nil, default), do: default
+
+  defp parse_int_or_default(value, _default) when is_binary(value) do
+    String.to_integer(value)
+  end
+
+  defp musicbrainz_url(record) do
+    "https://musicbrainz.org/release-group/#{record.musicbrainz_id}"
+  end
+
+  defp toggle_actions_menu(record_id) do
+    JS.toggle(to: "#actions-#{record_id}")
+    |> JS.toggle_class("pointer-events-none", to: "#records > li")
+  end
+
+  def close_actions_menu(record_id) do
+    JS.hide(to: "#actions-#{record_id}")
+    |> JS.remove_class("pointer-events-none", to: "#records > li")
+  end
+end
