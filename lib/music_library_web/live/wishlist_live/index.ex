@@ -69,7 +69,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
     records = Wishlist.search_records(query, limit: record_list_params.page_size, offset: offset)
 
     socket
-    |> assign(:page_title, gettext("Collection"))
+    |> assign(:page_title, gettext("Wishlist"))
     |> assign(:record, nil)
     |> assign(:record_list_params, record_list_params)
     |> stream(:records, records, reset: true)
