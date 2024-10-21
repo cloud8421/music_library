@@ -98,7 +98,12 @@ defmodule MusicLibraryWeb.RecordLive.Index do
   end
 
   def handle_event("import", %{"id" => musicbrainz_id, "format" => format}, socket) do
-    case Records.import_from_musicbrainz(musicbrainz_id, format: format) do
+    current_time = DateTime.utc_now()
+
+    case Records.import_from_musicbrainz(musicbrainz_id,
+           format: format,
+           purchased_at: current_time
+         ) do
       {:ok, record} ->
         {:noreply,
          socket

@@ -124,7 +124,7 @@ defmodule MusicLibrary.Records do
 
   def import_from_musicbrainz(musicbrainz_id, opts \\ []) do
     with format = Keyword.get(opts, :format, "cd"),
-         purchased_at = Keyword.get(opts, :purchased_at, DateTime.utc_now()),
+         purchased_at = Keyword.get(opts, :purchased_at),
          {:ok, release_group} <- musicbrainz().get_release_group(musicbrainz_id),
          {:ok, cover_data} <- musicbrainz().get_cover_art(musicbrainz_id),
          record_params = build_record_params(release_group, cover_data, format, purchased_at) do

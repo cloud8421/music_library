@@ -28,6 +28,34 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
+  defp apply_action(socket, :import, params) do
+    socket =
+      if get_in(socket.assigns, [:streams, :records]) == nil do
+        socket
+        |> apply_action(:index, params)
+      else
+        socket
+      end
+
+    socket
+    |> assign(:page_title, gettext("Import from MusicBrainz"))
+    |> assign(:record, nil)
+  end
+
+  defp apply_action(socket, :edit, params = %{"id" => id}) do
+    socket =
+      if get_in(socket.assigns, [:streams, :records]) == nil do
+        socket
+        |> apply_action(:index, params)
+      else
+        socket
+      end
+
+    socket
+    |> assign(:page_title, gettext("Edit"))
+    |> assign(:record, Records.get_record!(id))
+  end
+
   defp apply_action(socket, :index, params) do
     query = params["query"] || ""
     total_records = Wishlist.search_records_count(query)
@@ -53,6 +81,14 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
   end
 
   @impl true
+
+  def handle_event("delete", %{"id" => id}, socket) do
+    record = Records.get_record!(id)
+    {:ok, _} = Records.delete_record(record)
+
+    {:noreply, stream_delete(socket, :records, record)}
+  end
+
   def handle_event("search", %{"query" => query}, socket) do
     qs =
       @default_records_list_params
@@ -61,6 +97,25 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
       |> URI.encode_query()
 
     {:noreply, push_patch(socket, to: ~s"/wishlist?#{qs}")}
+  end
+
+  def handle_event("import", %{"id" => musicbrainz_id, "format" => format}, socket) do
+    case Records.import_from_musicbrainz(musicbrainz_id, format: format, purchased_at: nil) do
+      {:ok, record} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, gettext("Record imported successfully"))
+         |> push_navigate(to: ~p"/wishlist/#{record.id}")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, form: to_form(changeset))}
+
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, gettext("Error importing record") <> "," <> inspect(reason))
+         |> push_patch(to: ~p"/wishlist")}
+    end
   end
 
   defp merge_query(record_list_params, query) do
