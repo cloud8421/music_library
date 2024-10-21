@@ -4,10 +4,10 @@
       <div class="flex">
         <div class="flex space-x-8">
           <a href="/" class={nav_link_class(assigns[:nav_section], :stats)}>
-            Stats
+            <%= gettext("Stats") %>
           </a>
           <a href={~p"/records"} class={nav_link_class(assigns[:nav_section], :records)}>
-            Collection
+            <%= gettext("Collection") %>
           </a>
         </div>
       </div>
@@ -16,7 +16,7 @@
           class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium border-transparent text-gray-500 hover:text-gray-700"
           href={~p"/login"}
         >
-          Logout
+          <%= gettext("Logout") %>
         </a>
       </div>
     </div>

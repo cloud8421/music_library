@@ -76,3 +76,18 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "You must be logged in to access this page"
 msgstr ""
+
+#: lib/music_library_web/components/layouts/app.html.heex:10
+#, elixir-autogen, elixir-format
+msgid "Collection"
+msgstr ""
+
+#: lib/music_library_web/components/layouts/app.html.heex:19
+#, elixir-autogen, elixir-format
+msgid "Logout"
+msgstr ""
+
+#: lib/music_library_web/components/layouts/app.html.heex:7
+#, elixir-autogen, elixir-format
+msgid "Stats"
+msgstr ""
