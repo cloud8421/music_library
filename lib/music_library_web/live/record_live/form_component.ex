@@ -30,25 +30,27 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
           <.input
             field={@form[:type]}
             type="select"
-            label="Type"
-            prompt="Choose a value"
+            label={gettext("Type")}
+            prompt={gettext("Choose a value")}
             options={Ecto.Enum.values(MusicLibrary.Records.Record, :type)}
           />
           <.input
             field={@form[:format]}
             type="select"
-            label="Format"
-            prompt="Choose a value"
+            label={gettext("Format")}
+            prompt={gettext("Choose a value")}
             options={Ecto.Enum.values(MusicLibrary.Records.Record, :format)}
           />
         </div>
-        <.input field={@form[:release]} type="text" label="Release" />
-        <.input field={@form[:purchased_at]} type="datetime-local" label="Purchased at" />
+        <.input field={@form[:release]} type="text" label={gettext("Release")} />
+        <.input field={@form[:purchased_at]} type="datetime-local" label={gettext("Purchased at")} />
         <div phx-drop-target={@uploads.cover_data.ref}>
           <.label for={@uploads.cover_data.ref}>
-            Cover art
+            <%= gettext("Cover art") %>
           </.label>
-          <span :if={@uploads.cover_data.entries == []} class="float-right">No cover selected</span>
+          <span :if={@uploads.cover_data.entries == []} class="float-right">
+            <%= gettext("No cover selected") %>
+          </span>
           <%= for entry <- @uploads.cover_data.entries do %>
             <span class="float-right"><%= entry.progress %>%</span>
           <% end %>
@@ -58,7 +60,7 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
           />
         </div>
         <:actions>
-          <.button phx-disable-with="Saving...">Save</.button>
+          <.button phx-disable-with={gettext("Saving...")}><%= gettext("Save") %></.button>
         </:actions>
       </.simple_form>
     </div>
@@ -103,7 +105,7 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
 
         {:noreply,
          socket
-         |> put_flash(:info, "Record updated successfully")
+         |> put_flash(:info, gettext("Record updated successfully"))
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
