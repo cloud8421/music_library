@@ -34,9 +34,15 @@ defmodule MusicLibraryWeb.ConnCase do
   setup tags do
     MusicLibrary.DataCase.setup_sandbox(tags)
 
+    # The majority of functionality assumes a logged in user,
+    # so we default to that.
     conn =
-      Phoenix.ConnTest.build_conn()
-      |> Phoenix.ConnTest.init_test_session(%{logged_in: true})
+      if tags[:logged_out] do
+        Phoenix.ConnTest.build_conn()
+      else
+        Phoenix.ConnTest.build_conn()
+        |> Phoenix.ConnTest.init_test_session(%{logged_in: true})
+      end
 
     {:ok, conn: conn}
   end

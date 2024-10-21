@@ -4,7 +4,9 @@ defmodule MusicLibraryWeb.SessionController do
   @empty_form %{"password" => ""}
 
   def new(conn, _params) do
-    conn |> render(:new, form: @empty_form, layout: {MusicLibraryWeb.Layouts, "unauthenticated"})
+    conn
+    |> delete_session(:logged_in)
+    |> render(:new, form: @empty_form, layout: {MusicLibraryWeb.Layouts, "unauthenticated"})
   end
 
   def create(conn, %{"password" => request_password}) do
