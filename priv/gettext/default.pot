@@ -91,3 +91,15 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Stats"
 msgstr ""
+
+#: lib/music_library_web/components/pagination.ex:36
+#: lib/music_library_web/components/pagination.ex:96
+#, elixir-autogen, elixir-format
+msgid "Next"
+msgstr ""
+
+#: lib/music_library_web/components/pagination.ex:29
+#: lib/music_library_web/components/pagination.ex:118
+#, elixir-autogen, elixir-format
+msgid "Previous"
+msgstr ""

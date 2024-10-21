@@ -26,14 +26,14 @@ defmodule MusicLibraryWeb.Pagination do
           patch={"?" <> encode_query(page: @page_links.prev_page, page_size: @pagination_params.page_size, query: @pagination_params.query)}
           class="relative inline-flex items-center rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
         >
-          Previous
+          <%= gettext("Previous") %>
         </.link>
         <.link
           :if={@page_links.next_page}
           patch={"?" <> encode_query(page: @page_links.next_page, page_size: @pagination_params.page_size, query: @pagination_params.query)}
           class="relative ml-3 inline-flex items-center rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
         >
-          Next
+          <%= gettext("Next") %>
         </.link>
       </div>
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-items-center sm:justify-center">
@@ -93,7 +93,7 @@ defmodule MusicLibraryWeb.Pagination do
       class="relative inline-flex items-center rounded-r-md px-2 py-2 text-zinc-400 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 focus:z-20 focus:outline-offset-0"
       patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query)}
     >
-      <span class="sr-only">Next</span>
+      <span class="sr-only"><%= gettext("Next") %></span>
       <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path
           fill-rule="evenodd"
@@ -115,7 +115,7 @@ defmodule MusicLibraryWeb.Pagination do
       class="relative inline-flex items-center rounded-l-md px-2 py-2 text-zinc-400 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 focus:z-20 focus:outline-offset-0"
       patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query)}
     >
-      <span class="sr-only">Previous</span>
+      <span class="sr-only"><%= gettext("Previous") %></span>
       <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path
           fill-rule="evenodd"
