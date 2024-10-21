@@ -11,7 +11,7 @@
           alt={@latest_record.title}
         />
         <p class="ml-24 truncate text-xs sm:text-sm font-medium text-gray-500">
-          Latest record
+          <%= gettext("Latest record") %>
         </p>
       </dt>
       <dd class="ml-24 flex items-baseline pb-6 sm:pb-7">
@@ -31,7 +31,7 @@
     </div>
     <div class="overflow-hidden rounded-lg bg-white px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6">
       <dt>
-        <p class="truncate text-sm font-medium text-gray-500">Total Records</p>
+        <p class="truncate text-sm font-medium text-gray-500"><%= gettext("Total Records") %></p>
       </dt>
       <dd class="flex items-baseline pb-6 sm:pb-7">
         <a href={~p"/records"} class="text-2xl font-semibold text-gray-900 hover:text-gray-500">

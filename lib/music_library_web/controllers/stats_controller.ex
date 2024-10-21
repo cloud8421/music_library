@@ -16,7 +16,7 @@ defmodule MusicLibraryWeb.StatsController do
     latest_record = Records.get_latest_record!()
 
     conn
-    |> assign(:page_title, "Stats")
+    |> assign(:page_title, gettext("Stats"))
     |> render(:index,
       records_count_by_format: records_count_by_format,
       records_count_by_type: records_count_by_type,
