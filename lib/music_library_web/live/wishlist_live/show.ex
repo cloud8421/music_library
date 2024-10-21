@@ -9,9 +9,9 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
       if connected?(socket) do
         socket
         |> get_connect_params()
-        |> Map.get("_live_referer", ~p"/records")
+        |> Map.get("_live_referer", ~p"/wishlist")
       else
-        ~p"/records"
+        ~p"/wishlist"
       end
 
     socket =
@@ -38,7 +38,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
     record = Records.get_record!(id)
     {:ok, _} = Records.delete_record(record)
 
-    {:noreply, push_navigate(socket, to: ~p"/records")}
+    {:noreply, push_navigate(socket, to: ~p"/wishlist")}
   end
 
   @impl true
