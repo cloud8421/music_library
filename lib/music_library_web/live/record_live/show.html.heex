@@ -11,10 +11,17 @@
   </:subtitle>
   <:actions>
     <.link patch={~p"/records/#{@record}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit</.button>
+      <.button>
+        <%= gettext("Edit") %>
+      </.button>
     </.link>
-    <.link phx-click={JS.push("delete", value: %{id: @record.id})} data-confirm="Are you sure?">
-      <.button class="!bg-red-900 hover:!bg-red-700">Delete</.button>
+    <.link
+      phx-click={JS.push("delete", value: %{id: @record.id})}
+      data-confirm={gettext("Are you sure?")}
+    >
+      <.button class="!bg-red-900 hover:!bg-red-700">
+        <%= gettext("Delete") %>"
+      </.button>
     </.link>
   </:actions>
 </.header>
@@ -32,20 +39,20 @@
   </div>
 
   <.list>
-    <:item title="Type">
+    <:item title={gettext("Type")}>
       <span class="inline-flex items-center mr-2 rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
         <%= @record.type %>
       </span>
     </:item>
-    <:item title="Musicbrainz ID">
+    <:item title={gettext("Musicbrainz ID")}>
       <a href={musicbrainz_url(@record)}>
         <code><%= @record.musicbrainz_id %></code>
       </a>
     </:item>
-    <:item title="Release">
+    <:item title={gettext("Release")}>
       <%= Records.Record.format_release(@record.release) %>
     </:item>
-    <:item title="Genres">
+    <:item title={gettext("Genres")}>
       <span
         :for={genre <- @record.genres}
         class="inline-flex items-center mr-2 mb-2 rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"
@@ -53,14 +60,16 @@
         <%= genre %>
       </span>
     </:item>
-    <:item title="Purchased at"><%= @record.purchased_at %></:item>
-    <:item title="Inserted at"><%= @record.inserted_at %></:item>
-    <:item title="Updated at"><%= @record.updated_at %></:item>
+    <:item title={gettext("Purchased at")}><%= @record.purchased_at %></:item>
+    <:item title={gettext("Inserted at")}><%= @record.inserted_at %></:item>
+    <:item title={gettext("Updated at")}><%= @record.updated_at %></:item>
   </.list>
 </div>
 
 <div class="mt-8">
-  <.back navigate={@back_url}>Back to records</.back>
+  <.back navigate={@back_url}>
+    <%= gettext("Back to records") %>
+  </.back>
 </div>
 
 <.modal

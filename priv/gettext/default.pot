@@ -138,6 +138,7 @@ msgid "No cover selected"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/form_component.ex:46
+#: lib/music_library_web/live/record_live/show.html.heex:63
 #, elixir-autogen, elixir-format
 msgid "Purchased at"
 msgstr ""
@@ -148,6 +149,7 @@ msgid "Record updated successfully"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/form_component.ex:45
+#: lib/music_library_web/live/record_live/show.html.heex:52
 #, elixir-autogen, elixir-format
 msgid "Release"
 msgstr ""
@@ -163,6 +165,7 @@ msgid "Saving..."
 msgstr ""
 
 #: lib/music_library_web/live/record_live/form_component.ex:33
+#: lib/music_library_web/live/record_live/show.html.heex:42
 #, elixir-autogen, elixir-format
 msgid "Type"
 msgstr ""
@@ -188,17 +191,21 @@ msgid "All Records"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/index.html.heex:154
+#: lib/music_library_web/live/record_live/show.html.heex:20
 #, elixir-autogen, elixir-format
 msgid "Are you sure?"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/index.html.heex:156
+#: lib/music_library_web/live/record_live/show.html.heex:23
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/index.ex:54
 #: lib/music_library_web/live/record_live/index.html.heex:145
+#: lib/music_library_web/live/record_live/show.ex:50
+#: lib/music_library_web/live/record_live/show.html.heex:15
 #, elixir-autogen, elixir-format
 msgid "Edit"
 msgstr ""
@@ -234,6 +241,7 @@ msgid "Search"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/index.html.heex:125
+#: lib/music_library_web/live/record_live/show.ex:49
 #, elixir-autogen, elixir-format
 msgid "Show"
 msgstr ""
@@ -244,6 +252,7 @@ msgid "Showing <b>%{visible}</b> of <b>%{total}</b> records"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/index.ex:17
+#: lib/music_library_web/live/record_live/show.ex:19
 #, elixir-autogen, elixir-format
 msgid "The application has been updated, please reload."
 msgstr ""
@@ -251,4 +260,29 @@ msgstr ""
 #: lib/music_library_web/live/record_live/index.html.heex:135
 #, elixir-autogen, elixir-format
 msgid "View on MusicBrainz"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/show.html.heex:71
+#, elixir-autogen, elixir-format
+msgid "Back to records"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/show.html.heex:55
+#, elixir-autogen, elixir-format
+msgid "Genres"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/show.html.heex:64
+#, elixir-autogen, elixir-format
+msgid "Inserted at"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/show.html.heex:47
+#, elixir-autogen, elixir-format
+msgid "Musicbrainz ID"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/show.html.heex:65
+#, elixir-autogen, elixir-format
+msgid "Updated at"
 msgstr ""

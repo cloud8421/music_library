@@ -16,7 +16,7 @@ defmodule MusicLibraryWeb.RecordLive.Show do
 
     socket =
       if static_changed?(socket) do
-        put_flash(socket, :warning, "The application has been updated, please reload.")
+        put_flash(socket, :warning, gettext("The application has been updated, please reload."))
       else
         socket
       end
@@ -46,8 +46,8 @@ defmodule MusicLibraryWeb.RecordLive.Show do
     {:noreply, assign(socket, :record, record)}
   end
 
-  defp page_title(:show), do: "Show Record"
-  defp page_title(:edit), do: "Edit"
+  defp page_title(:show), do: gettext("Show")
+  defp page_title(:edit), do: gettext("Edit")
 
   defp musicbrainz_url(record) do
     "https://musicbrainz.org/release-group/#{record.musicbrainz_id}"
