@@ -1,0 +1,88 @@
+<.header>
+  <.link
+    :for={artist <- @record.artists}
+    class=" hover:text-gray-500"
+    patch={~p"/wishlist?query=mbid:#{artist.musicbrainz_id}"}
+  >
+    <%= artist.name %>
+  </.link>
+  <:subtitle>
+    <%= @record.title %>
+  </:subtitle>
+  <:actions>
+    <.link patch={~p"/wishlist/#{@record}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>
+        <%= gettext("Edit") %>
+      </.button>
+    </.link>
+    <.link
+      phx-click={JS.push("delete", value: %{id: @record.id})}
+      data-confirm={gettext("Are you sure?")}
+    >
+      <.button class="!bg-red-900 hover:!bg-red-700">
+        <%= gettext("Delete") %>
+      </.button>
+    </.link>
+  </:actions>
+</.header>
+
+<div class="md:columns-2 mt-4">
+  <div class="relative block md:inline-block drop-shadow">
+    <img
+      class="w-full rounded-lg shadow"
+      src={~p"/covers/#{@record.id}?vsn=#{@record.cover_hash || ""}"}
+      alt={@record.title}
+    />
+    <span class="absolute right-2 bottom-1 block text-white drop-shadow-md">
+      <%= Records.Record.format_short_label(@record.format) %>
+    </span>
+  </div>
+
+  <.list>
+    <:item title={gettext("Type")}>
+      <span class="inline-flex items-center mr-2 rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+        <%= @record.type %>
+      </span>
+    </:item>
+    <:item title={gettext("Musicbrainz ID")}>
+      <a href={musicbrainz_url(@record)}>
+        <code><%= @record.musicbrainz_id %></code>
+      </a>
+    </:item>
+    <:item title={gettext("Release")}>
+      <%= Records.Record.format_release(@record.release) %>
+    </:item>
+    <:item title={gettext("Genres")}>
+      <span
+        :for={genre <- @record.genres}
+        class="inline-flex items-center mr-2 mb-2 rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"
+      >
+        <%= genre %>
+      </span>
+    </:item>
+    <:item title={gettext("Inserted at")}><%= @record.inserted_at %></:item>
+    <:item title={gettext("Updated at")}><%= @record.updated_at %></:item>
+  </.list>
+</div>
+
+<div class="mt-8">
+  <.back navigate={@back_url}>
+    <%= gettext("Back to wishlist") %>
+  </.back>
+</div>
+
+<.modal
+  :if={@live_action == :edit}
+  id="record-modal"
+  show
+  on_cancel={JS.patch(~p"/wishlist/#{@record}")}
+>
+  <.live_component
+    module={MusicLibraryWeb.RecordLive.FormComponent}
+    id={@record.id}
+    title={@page_title}
+    action={@live_action}
+    record={@record}
+    patch={~p"/wishlist/#{@record}"}
+  />
+</.modal>

@@ -60,7 +60,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
       |> Map.take([:query, :page, :page_size])
       |> URI.encode_query()
 
-    {:noreply, push_patch(socket, to: ~s"/records?#{qs}")}
+    {:noreply, push_patch(socket, to: ~s"/wishlist?#{qs}")}
   end
 
   defp merge_query(record_list_params, query) do

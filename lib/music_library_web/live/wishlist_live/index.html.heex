@@ -17,7 +17,7 @@
           autocapitalize="none"
         />
       </form>
-      <.link patch={~p"/records/import"}>
+      <.link patch={~p"/wishlist/import"}>
         <.button><%= gettext("Import") %></.button>
       </.link>
     </div>
@@ -35,7 +35,7 @@
 <ul class="divide-y divide-gray-100" role="list" id="records" phx-update="stream">
   <li
     :for={{id, record} <- @streams.records}
-    phx-click={JS.navigate(~p"/records/#{record}")}
+    phx-click={JS.navigate(~p"/wishlist/#{record}")}
     class="flex justify-between gap-x-6 py-5 hover:bg-gray-50 px-2 -mx-2 md:px-4 md:-mx-4 rounded-lg cursor-pointer"
     id={id}
   >
@@ -50,7 +50,7 @@
           <.link
             :for={artist <- record.artists}
             class="hover:text-zinc-500"
-            patch={~p"/records?query=mbid:#{artist.musicbrainz_id}"}
+            patch={~p"/wishlist?query=mbid:#{artist.musicbrainz_id}"}
           >
             <%= artist.name %>
           </.link>
@@ -120,7 +120,7 @@
             role="menuitem"
             tabindex="-1"
             id={"actions-#{record.id}-show"}
-            navigate={~p"/records/#{record}"}
+            navigate={~p"/wishlist/#{record}"}
           >
             <%= gettext("Show") %>
           </.link>
@@ -140,7 +140,7 @@
             role="menuitem"
             tabindex="-1"
             id={"actions-#{record.id}-edit"}
-            patch={~p"/records/#{record}/edit"}
+            patch={~p"/wishlist/#{record}/edit"}
           >
             <%= gettext("Edit") %>
           </.link>
@@ -161,25 +161,25 @@
   </li>
 </ul>
 
-<.modal :if={@live_action == :edit} id="record-modal" show on_cancel={JS.patch(~p"/records")}>
+<.modal :if={@live_action == :edit} id="record-modal" show on_cancel={JS.patch(~p"/wishlist")}>
   <.live_component
     module={MusicLibraryWeb.RecordLive.FormComponent}
     id={@record.id}
     title={@page_title}
     action={@live_action}
     record={@record}
-    patch={~p"/records"}
+    patch={~p"/wishlist"}
   />
 </.modal>
 
-<.modal :if={@live_action == :import} id="record-modal" show on_cancel={JS.patch(~p"/records")}>
+<.modal :if={@live_action == :import} id="record-modal" show on_cancel={JS.patch(~p"/wishlist")}>
   <.live_component
     module={MusicLibraryWeb.RecordLive.ImportComponent}
     id={:search}
     title={@page_title}
     action={@live_action}
     record={@record}
-    patch={~p"/records"}
+    patch={~p"/wishlist"}
     initial_query=""
   />
 </.modal>
