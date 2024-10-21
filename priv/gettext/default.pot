@@ -78,6 +78,7 @@ msgid "You must be logged in to access this page"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:10
+#: lib/music_library_web/live/record_live/index.ex:71
 #, elixir-autogen, elixir-format
 msgid "Collection"
 msgstr ""
@@ -179,4 +180,75 @@ msgstr ""
 #: lib/music_library_web/live/record_live/import_component.ex:23
 #, elixir-autogen, elixir-format
 msgid "Search for records"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/index.html.heex:4
+#, elixir-autogen, elixir-format
+msgid "All Records"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/index.html.heex:154
+#, elixir-autogen, elixir-format
+msgid "Are you sure?"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/index.html.heex:156
+#, elixir-autogen, elixir-format
+msgid "Delete"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/index.ex:54
+#: lib/music_library_web/live/record_live/index.html.heex:145
+#, elixir-autogen, elixir-format
+msgid "Edit"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/index.ex:114
+#, elixir-autogen, elixir-format
+msgid "Error importing record"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/index.html.heex:21
+#, elixir-autogen, elixir-format
+msgid "Import"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/index.ex:40
+#, elixir-autogen, elixir-format
+msgid "Import from MusicBrainz"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/index.html.heex:87
+#, elixir-autogen, elixir-format
+msgid "Open options"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/index.ex:105
+#, elixir-autogen, elixir-format
+msgid "Record imported successfully"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/index.html.heex:14
+#, elixir-autogen, elixir-format
+msgid "Search"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/index.html.heex:125
+#, elixir-autogen, elixir-format
+msgid "Show"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/index.html.heex:27
+#, elixir-autogen, elixir-format
+msgid "Showing <b>%{visible}</b> of <b>%{total}</b> records"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/index.ex:17
+#, elixir-autogen, elixir-format
+msgid "The application has been updated, please reload."
+msgstr ""
+
+#: lib/music_library_web/live/record_live/index.html.heex:135
+#, elixir-autogen, elixir-format
+msgid "View on MusicBrainz"
 msgstr ""

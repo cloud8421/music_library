@@ -14,7 +14,7 @@ defmodule MusicLibraryWeb.RecordLive.Index do
   def mount(_params, _session, socket) do
     socket =
       if static_changed?(socket) do
-        put_flash(socket, :warning, "The application has been updated, please reload.")
+        put_flash(socket, :warning, gettext("The application has been updated, please reload."))
       else
         socket
       end
@@ -37,7 +37,7 @@ defmodule MusicLibraryWeb.RecordLive.Index do
       end
 
     socket
-    |> assign(:page_title, "Import from MusicBrainz")
+    |> assign(:page_title, gettext("Import from MusicBrainz"))
     |> assign(:record, nil)
   end
 
@@ -51,7 +51,7 @@ defmodule MusicLibraryWeb.RecordLive.Index do
       end
 
     socket
-    |> assign(:page_title, "Edit")
+    |> assign(:page_title, gettext("Edit"))
     |> assign(:record, Records.get_record!(id))
   end
 
@@ -68,7 +68,7 @@ defmodule MusicLibraryWeb.RecordLive.Index do
     records = Records.search_records(query, limit: record_list_params.page_size, offset: offset)
 
     socket
-    |> assign(:page_title, "Collection")
+    |> assign(:page_title, gettext("Collection"))
     |> assign(:record, nil)
     |> assign(:record_list_params, record_list_params)
     |> stream(:records, records, reset: true)
@@ -102,7 +102,7 @@ defmodule MusicLibraryWeb.RecordLive.Index do
       {:ok, record} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Record imported successfully")
+         |> put_flash(:info, gettext("Record imported successfully"))
          |> push_navigate(to: ~p"/records/#{record.id}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -111,7 +111,7 @@ defmodule MusicLibraryWeb.RecordLive.Index do
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Error importing record, #{inspect(reason)}")
+         |> put_flash(:error, gettext("Error importing record") <> "," <> inspect(reason))
          |> push_patch(to: ~p"/records")}
     end
   end
