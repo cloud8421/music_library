@@ -118,6 +118,22 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
     end
   end
 
+  def handle_event("purchase", %{"id" => id}, socket) do
+    record = Records.get_record!(id)
+    current_time = DateTime.utc_now()
+
+    case Records.update_record(record, %{"purchased_at" => current_time}) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, gettext("Record updated successfully"))
+         |> push_patch(to: ~p"/wishlist")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, form: to_form(changeset))}
+    end
+  end
+
   defp merge_query(record_list_params, query) do
     Map.put(record_list_params, :query, query)
   end

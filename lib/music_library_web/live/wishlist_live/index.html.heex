@@ -146,6 +146,16 @@
           </.link>
 
           <.link
+            class="block px-3 py-1 text-sm leading-6 text-gray-900  hover:bg-gray-50"
+            role="menuitem"
+            tabindex="-1"
+            id={"actions-#{record.id}-purchase"}
+            phx-click={JS.push("purchase", value: %{id: record.id})}
+          >
+            <%= gettext("Purchase") %>
+          </.link>
+
+          <.link
             class="block px-3 py-1 text-sm leading-6 text-red-900  hover:bg-red-50"
             role="menuitem"
             tabindex="-1"
