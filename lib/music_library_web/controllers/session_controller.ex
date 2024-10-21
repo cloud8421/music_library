@@ -16,7 +16,7 @@ defmodule MusicLibraryWeb.SessionController do
       |> redirect(to: "/")
     else
       conn
-      |> put_flash(:error, "Invalid password")
+      |> put_flash(:error, gettext("Invalid password"))
       |> redirect(to: ~p"/login")
     end
   end

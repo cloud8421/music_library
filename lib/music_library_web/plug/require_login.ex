@@ -1,6 +1,7 @@
 defmodule MusicLibraryWeb.Plug.RequireLogin do
   @behaviour Plug
 
+  use Gettext, backend: MusicLibraryWeb.Gettext
   import Plug.Conn
   import Phoenix.Controller, only: [put_flash: 3, redirect: 2]
 
@@ -13,7 +14,7 @@ defmodule MusicLibraryWeb.Plug.RequireLogin do
       conn
     else
       conn
-      |> put_flash(:error, "You must be logged in to access this page")
+      |> put_flash(:error, gettext("You must be logged in to access this page"))
       |> redirect(to: "/login")
       |> halt()
     end
