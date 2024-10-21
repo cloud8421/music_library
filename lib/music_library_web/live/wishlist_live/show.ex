@@ -28,7 +28,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply,
      socket
-     |> assign(:nav_section, :records)
+     |> assign(:nav_section, :wishlist)
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:record, Records.get_record!(id))}
   end
