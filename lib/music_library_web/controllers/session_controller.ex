@@ -7,10 +7,8 @@ defmodule MusicLibraryWeb.SessionController do
     conn |> render(:new, form: @empty_form, layout: {MusicLibraryWeb.Layouts, "unauthenticated"})
   end
 
-  def create(conn, params) do
-    password = params["password"]
-
-    if password == "password" do
+  def create(conn, %{"password" => request_password}) do
+    if Plug.Crypto.secure_compare(password(), request_password) do
       conn
       |> put_session(:logged_in, true)
       |> redirect(to: "/")
@@ -19,5 +17,10 @@ defmodule MusicLibraryWeb.SessionController do
       |> put_flash(:error, "Invalid password")
       |> redirect(to: ~p"/login")
     end
+  end
+
+  def password do
+    Application.get_env(:music_library, MusicLibraryWeb)
+    |> Keyword.fetch!(:auth_password)
   end
 end

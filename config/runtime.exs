@@ -44,8 +44,16 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
+  auth_password =
+    System.get_env("AUTH_PASSWORD") ||
+      raise """
+      environment variable AUTH_PASSWORD is missing.
+      """
+
   host = System.get_env("PHX_HOST") || "example.com"
   port = String.to_integer(System.get_env("PORT") || "4000")
+
+  config :music_library, MusicLibraryWeb, auth_password: auth_password
 
   config :music_library, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 

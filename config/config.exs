@@ -11,6 +11,8 @@ config :music_library,
   ecto_repos: [MusicLibrary.Repo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 
+config :music_library, MusicLibraryWeb, auth_password: "change me"
+
 # Configures the endpoint
 config :music_library, MusicLibraryWeb.Endpoint,
   url: [host: "localhost"],
