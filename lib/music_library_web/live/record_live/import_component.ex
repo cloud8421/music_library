@@ -19,8 +19,8 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
           name={:mb_query}
           field={@form[:mb_query]}
           type="text"
-          label="Search for a record on MusicBrainz"
-          prompt="Search for records"
+          label={gettext("Search for a record on MusicBrainz")}
+          prompt={gettext("Search for records")}
           phx-debounce="500"
         />
       </.simple_form>
@@ -31,7 +31,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
         :if={@release_groups == []}
         class="flex items-center justify-center h-32 text-sm text-gray-500"
       >
-        No results
+        <%= gettext("No results") %>
       </div>
     </div>
     """

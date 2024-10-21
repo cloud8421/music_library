@@ -165,3 +165,18 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Type"
 msgstr ""
+
+#: lib/music_library_web/live/record_live/import_component.ex:34
+#, elixir-autogen, elixir-format
+msgid "No results"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/import_component.ex:22
+#, elixir-autogen, elixir-format
+msgid "Search for a record on MusicBrainz"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/import_component.ex:23
+#, elixir-autogen, elixir-format
+msgid "Search for records"
+msgstr ""
