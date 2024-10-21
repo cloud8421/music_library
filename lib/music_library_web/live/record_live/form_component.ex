@@ -43,7 +43,12 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
           />
         </div>
         <.input field={@form[:release]} type="text" label={gettext("Release")} />
-        <.input field={@form[:purchased_at]} type="datetime-local" label={gettext("Purchased at")} />
+        <.input
+          :if={@show_purchased_at}
+          field={@form[:purchased_at]}
+          type="datetime-local"
+          label={gettext("Purchased at")}
+        />
         <div phx-drop-target={@uploads.cover_data.ref}>
           <.label for={@uploads.cover_data.ref}>
             <%= gettext("Cover art") %>
