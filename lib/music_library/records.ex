@@ -80,6 +80,7 @@ defmodule MusicLibrary.Records do
   def count_records_by_format do
     q =
       from r in Record,
+        where: not is_nil(r.purchased_at),
         group_by: r.format,
         select: {r.format, count(r.id)}
 
@@ -89,6 +90,7 @@ defmodule MusicLibrary.Records do
   def count_records_by_type do
     q =
       from r in Record,
+        where: not is_nil(r.purchased_at),
         group_by: r.type,
         select: {r.type, count(r.id)}
 
@@ -100,6 +102,7 @@ defmodule MusicLibrary.Records do
   def get_latest_record! do
     q =
       from r in Record,
+        where: not is_nil(r.purchased_at),
         order_by: [desc: r.purchased_at],
         limit: 1,
         select: ^@fields
