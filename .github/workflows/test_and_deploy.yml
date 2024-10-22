@@ -50,6 +50,7 @@ jobs:
           mix clean
         shell: sh
       - run: mix deps.get
+      - run: mix gettext.extract --check-up-to-date
       - run: mix test
 
   deploy:
