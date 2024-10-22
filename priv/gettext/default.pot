@@ -36,11 +36,6 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: lib/music_library_web/controllers/session_html/new.html.heex:29
-#, elixir-autogen, elixir-format
-msgid "Sign in"
-msgstr ""
-
 #: lib/music_library_web/components/core_components.ex:167
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
@@ -329,4 +324,9 @@ msgstr ""
 #: lib/music_library_web/live/wishlist_live/index.ex:72
 #, elixir-autogen, elixir-format
 msgid "Wishlist"
+msgstr ""
+
+#: lib/music_library_web/controllers/session_html/new.html.heex:29
+#, elixir-autogen, elixir-format
+msgid "Login"
 msgstr ""

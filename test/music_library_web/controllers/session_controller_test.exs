@@ -9,7 +9,7 @@ defmodule MusicLibraryWeb.SessionControllerTest do
       response = html_response(conn, 200)
       assert response =~ "Welcome to your Music Library"
       assert response =~ "Password"
-      assert response =~ "Sign in"
+      assert response =~ "Login"
     end
 
     test "it resets the session", %{conn: conn} do
