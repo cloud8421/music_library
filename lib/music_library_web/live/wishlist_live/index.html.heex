@@ -171,7 +171,12 @@
   </li>
 </ul>
 
-<.modal :if={@live_action == :edit} id="record-modal" show on_cancel={JS.patch(~p"/wishlist")}>
+<.modal
+  :if={@live_action == :edit}
+  id="record-modal"
+  show
+  on_cancel={JS.patch(back_path(@record_list_params))}
+>
   <.live_component
     module={MusicLibraryWeb.RecordLive.FormComponent}
     id={@record.id}
@@ -179,18 +184,23 @@
     action={@live_action}
     show_purchased_at={false}
     record={@record}
-    patch={~p"/wishlist"}
+    patch={back_path(@record_list_params)}
   />
 </.modal>
 
-<.modal :if={@live_action == :import} id="record-modal" show on_cancel={JS.patch(~p"/wishlist")}>
+<.modal
+  :if={@live_action == :import}
+  id="record-modal"
+  show
+  on_cancel={JS.patch(back_path(@record_list_params))}
+>
   <.live_component
     module={MusicLibraryWeb.RecordLive.ImportComponent}
     id={:search}
     title={@page_title}
     action={@live_action}
     record={@record}
-    patch={~p"/wishlist"}
+    patch={back_path(@record_list_params)}
     initial_query=""
   />
 </.modal>
