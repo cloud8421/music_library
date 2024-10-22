@@ -11,7 +11,7 @@
           alt={@latest_record.title}
         />
         <p class="ml-24 truncate text-xs sm:text-sm font-medium text-gray-500">
-          <%= gettext("Latest record") %>
+          <%= gettext("Latest purchase") %>
         </p>
       </dt>
       <dd class="ml-24 flex items-baseline pb-6 sm:pb-7">
@@ -31,11 +31,13 @@
     </div>
     <div class="overflow-hidden rounded-lg bg-white px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6">
       <dt>
-        <p class="truncate text-sm font-medium text-gray-500"><%= gettext("Total Records") %></p>
+        <p class="truncate text-sm font-medium text-gray-500">
+          <%= gettext("Total collection") %>
+        </p>
       </dt>
       <dd class="flex items-baseline pb-6 sm:pb-7">
         <a href={~p"/records"} class="text-2xl font-semibold text-gray-900 hover:text-gray-500">
-          <%= @records_count %>
+          <%= @collection_count %>
         </a>
       </dd>
     </div>
@@ -44,7 +46,7 @@
 
 <div>
   <dl class="mt-5 grid divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow grid-cols-5 md:divide-x md:divide-y-0">
-    <div :for={{format, count} <- @records_count_by_format} class="px-4 py-5 sm:p-6">
+    <div :for={{format, count} <- @collection_count_by_format} class="px-4 py-5 sm:p-6">
       <dt class="text-base max-sm:text-xs font-normal text-gray-900 break-keep">
         <%= Record.format_long_label(format) %>
       </dt>
@@ -61,7 +63,7 @@
 
 <div>
   <dl class="mt-5 grid divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow grid-cols-6 md:divide-x md:divide-y-0">
-    <div :for={{type, count} <- @records_count_by_type} class="px-4 py-5 sm:p-6">
+    <div :for={{type, count} <- @collection_count_by_type} class="px-4 py-5 sm:p-6">
       <dt class="text-base max-sm:text-xs font-normal text-gray-900 break-keep">
         <%= Record.type_long_label(type) %>
       </dt>
