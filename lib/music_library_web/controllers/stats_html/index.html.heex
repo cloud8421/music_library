@@ -1,4 +1,7 @@
 <div>
+  <h1 class="mt-5 text-base lg:text-2xl text-gray-900 font-semibold">
+    <%= gettext("Basics") %>
+  </h1>
   <dl class="mt-5 grid grid-cols-2 gap-5 sm:grid-cols-5">
     <div
       class="relative overflow-hidden rounded-lg bg-white px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6 col-span-2 sm:col-span-3 cursor-pointer"
@@ -57,6 +60,9 @@
 </div>
 
 <div>
+  <h1 class="mt-5 text-base lg:text-2xl text-gray-900 font-semibold">
+    <%= gettext("Formats") %>
+  </h1>
   <dl class="mt-5 grid divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow grid-cols-5 md:divide-x md:divide-y-0">
     <div :for={{format, count} <- @collection_count_by_format} class="px-4 py-5 sm:p-6">
       <dt class="text-base max-sm:text-xs font-normal text-gray-900 break-keep">
@@ -74,6 +80,9 @@
 </div>
 
 <div>
+  <h1 class="mt-5 text-base lg:text-2xl text-gray-900 font-semibold">
+    <%= gettext("Types") %>
+  </h1>
   <dl class="mt-5 grid divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow grid-cols-6 md:divide-x md:divide-y-0">
     <div :for={{type, count} <- @collection_count_by_type} class="px-4 py-5 sm:p-6">
       <dt class="text-base max-sm:text-xs font-normal text-gray-900 break-keep">

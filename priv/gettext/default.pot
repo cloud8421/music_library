@@ -315,17 +315,32 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: lib/music_library_web/controllers/stats_html/index.html.heex:14
+#: lib/music_library_web/controllers/stats_html/index.html.heex:17
 #, elixir-autogen, elixir-format
 msgid "Latest purchase"
 msgstr ""
 
-#: lib/music_library_web/controllers/stats_html/index.html.heex:35
+#: lib/music_library_web/controllers/stats_html/index.html.heex:38
 #, elixir-autogen, elixir-format
 msgid "Total collection"
 msgstr ""
 
-#: lib/music_library_web/controllers/stats_html/index.html.heex:47
+#: lib/music_library_web/controllers/stats_html/index.html.heex:50
 #, elixir-autogen, elixir-format
 msgid "Total wishlist"
+msgstr ""
+
+#: lib/music_library_web/controllers/stats_html/index.html.heex:3
+#, elixir-autogen, elixir-format
+msgid "Basics"
+msgstr ""
+
+#: lib/music_library_web/controllers/stats_html/index.html.heex:64
+#, elixir-autogen, elixir-format
+msgid "Formats"
+msgstr ""
+
+#: lib/music_library_web/controllers/stats_html/index.html.heex:84
+#, elixir-autogen, elixir-format
+msgid "Types"
 msgstr ""
