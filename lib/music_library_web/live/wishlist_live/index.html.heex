@@ -1,8 +1,5 @@
 <div>
   <header class="gap-6 mb-2">
-    <h1 class="text-lg font-semibold leading-8 text-zinc-800">
-      <%= gettext("All Records") %>
-    </h1>
     <div class="flex items-center justify-between gap-6 mb-2 mt-2">
       <form class="w-2/3" for={@record_list_params.query} phx-submit="search" phx-change="search">
         <input
