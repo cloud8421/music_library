@@ -50,7 +50,9 @@ defmodule MusicLibraryWeb.StatsControllerTest do
     end
 
     test "it shows the latest purchase", %{conn: conn, collection: collection} do
-      latest_record = Enum.max_by(collection, & &1.purchased_at)
+      # purchased_at has second precision, so finding the latest purchased using then
+      # highest purchsed_at value doesn't work, as it picks the wrong value.
+      latest_record = List.last(collection)
 
       conn = get(conn, "/")
 
