@@ -141,6 +141,15 @@ defmodule MusicLibraryWeb.RecordLive.Index do
     String.to_integer(value)
   end
 
+  defp back_path(record_list_params) do
+    qs =
+      record_list_params
+      |> Map.take([:query, :page, :page_size])
+      |> Enum.filter(fn {_, v} -> v not in ["", nil] end)
+
+    ~p"/records?#{qs}"
+  end
+
   defp musicbrainz_url(record) do
     "https://musicbrainz.org/release-group/#{record.musicbrainz_id}"
   end
