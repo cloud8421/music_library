@@ -70,9 +70,10 @@
     </div>
     <div class="flex shrink-0 items-center gap-x-6">
       <div class="hidden sm:flex sm:flex-col sm:items-end">
-        <p class="text-sm leading-6 text-gray-900">
-          <%= Records.Record.format_long_label(record.format) %>
-          <%= Records.Record.type_long_label(record.type) %>
+        <p class="text-xs leading-6 text-gray-900">
+          <%= Records.Record.format_long_label(record.format) %> · <%= Records.Record.type_long_label(
+            record.type
+          ) %>
         </p>
       </div>
       <div class="relative flex-none">
