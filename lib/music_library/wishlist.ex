@@ -26,6 +26,14 @@ defmodule MusicLibrary.Wishlist do
     Repo.aggregate(search, :count)
   end
 
+  def count do
+    q =
+      from r in Record,
+        where: is_nil(r.purchased_at)
+
+    Repo.aggregate(q, :count)
+  end
+
   defp build_search(query) do
     {:ok, parsed_query} = SearchParser.parse(query)
 

@@ -1,7 +1,7 @@
 defmodule MusicLibraryWeb.StatsController do
   use MusicLibraryWeb, :controller
 
-  alias MusicLibrary.Records
+  alias MusicLibrary.{Records, Wishlist}
 
   def index(conn, _params) do
     collection_count_by_format =
@@ -15,6 +15,8 @@ defmodule MusicLibraryWeb.StatsController do
     collection_count =
       Enum.reduce(collection_count_by_format, 0, fn {_, count}, acc -> acc + count end)
 
+    wishlist_count = Wishlist.count()
+
     latest_record = Records.get_latest_record!()
 
     conn
@@ -23,6 +25,7 @@ defmodule MusicLibraryWeb.StatsController do
       collection_count_by_format: collection_count_by_format,
       collection_count_by_type: collection_count_by_type,
       collection_count: collection_count,
+      wishlist_count: wishlist_count,
       latest_record: latest_record,
       nav_section: :stats
     )

@@ -5,9 +5,14 @@ defmodule MusicLibraryWeb.StatsControllerTest do
 
   import MusicLibrary.RecordsFixtures
 
-  defp create_records(_) do
-    records = Enum.map(1..30, fn _ -> record_fixture() end)
-    %{records: records}
+  defp fill_collection(_) do
+    records = Enum.map(1..5, fn _ -> record_fixture() end)
+    %{collection: records}
+  end
+
+  defp fill_wishlist(_) do
+    records = Enum.map(1..30, fn _ -> record_fixture(%{purchased_at: nil}) end)
+    %{wishlist: records}
   end
 
   defp escape(string) do
@@ -17,23 +22,26 @@ defmodule MusicLibraryWeb.StatsControllerTest do
   end
 
   describe "GET /" do
-    setup [:create_records]
+    setup [:fill_collection, :fill_wishlist]
 
-    test "it shows the record counts (total, format, and type)", %{conn: conn, records: records} do
+    test "it shows the collection counts (total, format, and type)", %{
+      conn: conn,
+      collection: collection
+    } do
       conn = get(conn, "/")
 
       response = html_response(conn, 200)
 
-      assert response =~ records |> length() |> Integer.to_string()
+      assert response =~ collection |> length() |> Integer.to_string()
 
-      records
+      collection
       |> Enum.frequencies_by(& &1.format)
       |> Enum.each(fn {format, count} ->
         assert response =~ "\n#{count}\n"
         assert response =~ "\n#{Record.format_long_label(format)}\n"
       end)
 
-      records
+      collection
       |> Enum.frequencies_by(& &1.type)
       |> Enum.each(fn {type, count} ->
         assert response =~ "\n#{count}\n"
@@ -41,8 +49,8 @@ defmodule MusicLibraryWeb.StatsControllerTest do
       end)
     end
 
-    test "it shows the latest record", %{conn: conn, records: records} do
-      latest_record = Enum.max_by(records, & &1.purchased_at)
+    test "it shows the latest purchase", %{conn: conn, collection: collection} do
+      latest_record = Enum.max_by(collection, & &1.purchased_at)
 
       conn = get(conn, "/")
 
@@ -51,6 +59,14 @@ defmodule MusicLibraryWeb.StatsControllerTest do
       for artist <- latest_record.artists do
         assert html_response(conn, 200) =~ escape(artist.name)
       end
+    end
+
+    test "it shows the wishlist total count", %{conn: conn, wishlist: wishlist} do
+      conn = get(conn, "/")
+
+      response = html_response(conn, 200)
+
+      assert response =~ wishlist |> length() |> Integer.to_string()
     end
   end
 end
