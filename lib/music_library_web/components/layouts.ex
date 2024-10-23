@@ -12,12 +12,19 @@ defmodule MusicLibraryWeb.Layouts do
 
   embed_templates "layouts/*"
 
-  @base_classes "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
-  def nav_link_class(current_section, section) when current_section == section do
-    [@base_classes, "border-zinc-500 text-gray-900"]
+  @nav_base_classes "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
+  @nav_inactive_classes "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-200"
+  @nav_active_classes "border-zinc-500 text-gray-900 dark:text-gray-100"
+
+  def section_link_classes(current_section, section) when current_section == section do
+    [@nav_base_classes, @nav_active_classes]
   end
 
-  def nav_link_class(_current_section, _section) do
-    [@base_classes, "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"]
+  def section_link_classes(_current_section, _section) do
+    [@nav_base_classes, @nav_inactive_classes]
+  end
+
+  def nav_link_classes do
+    [@nav_base_classes, @nav_inactive_classes]
   end
 end
