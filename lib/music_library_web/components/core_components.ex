@@ -231,8 +231,11 @@ defmodule MusicLibraryWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
-        "text-sm font-semibold leading-6 text-white active:text-white/80",
+        "phx-submit-loading:opacity-75 rounded-md py-2 px-3",
+        "text-sm font-semibold leading-6 ",
+        "bg-zinc-900 hover:bg-zinc-700 dark:bg-zinc-100 dark:hover:bg-zinc-400",
+        "text-white active:text-white/80 dark:text-gray-900 dark:active:text-gray-900/80",
+        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600",
         @class
       ]}
       {@rest}
