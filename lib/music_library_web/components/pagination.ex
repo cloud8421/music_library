@@ -14,7 +14,7 @@ defmodule MusicLibraryWeb.Pagination do
     <div
       :if={@page_links.total_pages > 1}
       id={@id}
-      class="flex items-center justify-between bg-white px-4 py-6 mb-4"
+      class="flex items-center justify-between bg-white dark:bg-zinc-800 px-4 py-6 mb-4"
     >
       <%!-- Only on smallest viewport --%>
       <div class={[
@@ -24,14 +24,26 @@ defmodule MusicLibraryWeb.Pagination do
         <.link
           :if={@page_links.prev_page}
           patch={"?" <> encode_query(page: @page_links.prev_page, page_size: @pagination_params.page_size, query: @pagination_params.query)}
-          class="relative inline-flex items-center rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+          class={[
+            "relative inline-flex items-center rounded-md border",
+            "px-3 py-2 text-sm font-medium",
+            "bg-zinc-900 hover:bg-zinc-700 dark:bg-zinc-100 dark:hover:bg-zinc-400",
+            "text-white active:text-white/80 dark:text-gray-900 dark:active:text-gray-900/80",
+            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
+          ]}
         >
           <%= gettext("Previous") %>
         </.link>
         <.link
           :if={@page_links.next_page}
           patch={"?" <> encode_query(page: @page_links.next_page, page_size: @pagination_params.page_size, query: @pagination_params.query)}
-          class="relative ml-3 inline-flex items-center rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+          class={[
+            "relative ml-3 inline-flex items-center rounded-md border",
+            "px-3 py-2 text-sm font-medium",
+            "bg-zinc-900 hover:bg-zinc-700 dark:bg-zinc-100 dark:hover:bg-zinc-400",
+            "text-white active:text-white/80 dark:text-gray-900 dark:active:text-gray-900/80",
+            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
+          ]}
         >
           <%= gettext("Next") %>
         </.link>
@@ -90,7 +102,10 @@ defmodule MusicLibraryWeb.Pagination do
   defp next_link(assigns) do
     ~H"""
     <.link
-      class="relative inline-flex items-center rounded-r-md px-2 py-2 text-zinc-400 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 focus:z-20 focus:outline-offset-0"
+      class={[
+        "relative inline-flex items-center rounded-r-md px-2 py-2",
+        "text-zinc-400 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 focus:z-20 focus:outline-offset-0"
+      ]}
       patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query)}
     >
       <span class="sr-only"><%= gettext("Next") %></span>
@@ -129,7 +144,7 @@ defmodule MusicLibraryWeb.Pagination do
 
   defp separator(assigns) do
     ~H"""
-    <span class="relative hidden items-center px-4 py-2 text-sm font-semibold text-zinc-900 ring-1 ring-inset ring-zinc-300 focus:z-20 focus:outline-offset-0 md:inline-flex">
+    <span class="relative hidden items-center px-4 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-400 ring-1 ring-inset ring-zinc-300 focus:z-20 focus:outline-offset-0 md:inline-flex">
       ...
     </span>
     """
@@ -142,7 +157,7 @@ defmodule MusicLibraryWeb.Pagination do
 
   defp numbered_link(assigns) when assigns.active do
     ~H"""
-    <span class="relative z-10 inline-flex items-center first:rounded-l-md last:rounded-r-md bg-zinc-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600">
+    <span class="relative z-10 inline-flex items-center first:rounded-l-md last:rounded-r-md bg-zinc-600 dark:bg-zinc-300 px-4 py-2 text-sm font-semibold text-white dark:text-zinc-700 focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600">
       <%= @page_number %>
     </span>
     """
@@ -151,7 +166,7 @@ defmodule MusicLibraryWeb.Pagination do
   defp numbered_link(assigns) do
     ~H"""
     <.link
-      class="relative hidden items-center first:rounded-l-md last:rounded-r-md px-4 py-2 text-sm font-semibold text-zinc-900 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-100 focus:z-20 focus:outline-offset-0 md:inline-flex"
+      class="relative hidden items-center first:rounded-l-md last:rounded-r-md px-4 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-400 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-300 hover:text-zinc-500 focus:z-20 focus:outline-offset-0 md:inline-flex"
       patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query)}
     >
       <%= @page_number %>
