@@ -29,7 +29,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
       </ul>
       <div
         :if={@release_groups == []}
-        class="flex items-center justify-center h-32 text-sm text-gray-500"
+        class="flex items-center justify-center h-32 text-md text-zinc-500"
       >
         <%= gettext("No results") %>
       </div>
