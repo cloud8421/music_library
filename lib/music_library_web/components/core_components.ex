@@ -74,7 +74,7 @@ defmodule MusicLibraryWeb.CoreComponents do
                 "shadow-zinc-700/10 ring-zinc-700/10",
                 "relative hidden rounded-2xl",
                 "bg-white dark:bg-zinc-800",
-                "p-14 shadow-lg ring-1 transition"
+                "p-8 shadow-lg ring-1 transition"
               ]}
             >
               <div class="absolute top-6 right-5">

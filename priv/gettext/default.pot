@@ -158,17 +158,17 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/import_component.ex:34
+#: lib/music_library_web/live/record_live/import_component.ex:39
 #, elixir-autogen, elixir-format
 msgid "No results"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/import_component.ex:22
+#: lib/music_library_web/live/record_live/import_component.ex:23
 #, elixir-autogen, elixir-format
 msgid "Search for a record on MusicBrainz"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/import_component.ex:23
+#: lib/music_library_web/live/record_live/import_component.ex:24
 #, elixir-autogen, elixir-format
 msgid "Search for records"
 msgstr ""
@@ -219,7 +219,7 @@ msgstr ""
 msgid "Import from MusicBrainz"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/import_component.ex:70
+#: lib/music_library_web/live/record_live/import_component.ex:74
 #: lib/music_library_web/live/record_live/index.html.heex:99
 #: lib/music_library_web/live/wishlist_live/index.html.heex:99
 #, elixir-autogen, elixir-format

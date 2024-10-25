@@ -282,7 +282,7 @@ defmodule MusicLibraryWeb.RecordIndexTest do
 
       for result <- mock_results do
         assert updated_list =~ result.title
-        assert updated_list =~ result.release
+        assert updated_list =~ Record.format_release(result.release)
         assert updated_list =~ result.artists
       end
 

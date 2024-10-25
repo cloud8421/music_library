@@ -13,6 +13,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
         phx-target={@myself}
         phx-change="search"
         phx-submit="search"
+        class="px-4"
       >
         <.input
           id={:mb_query}
@@ -24,7 +25,11 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
           phx-debounce="500"
         />
       </.simple_form>
-      <ul :if={@release_groups !== []} role="list" class="divide-y divide-gray-100">
+      <ul
+        :if={@release_groups !== []}
+        role="list"
+        class="divide-y divide-gray-100 dark:divide-slate-300/30 mt-5"
+      >
         <.result :for={release_group <- @release_groups} release_group={release_group} />
       </ul>
       <div
@@ -41,23 +46,22 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
     ~H"""
     <li
       id={"musicbrainz_" <> @release_group.id}
-      class="flex justify-between gap-x-6 py-5 hover:bg-gray-50"
+      class="flex justify-between gap-x-6 py-5 hover:bg-gray-50 dark:hover:bg-zinc-700"
     >
-      <div class="flex min-w-0 gap-x-4">
+      <div class="shrink-0 flex items-center justify-between w-full px-4">
         <div class="min-w-0 flex-auto">
-          <p class="text-sm font-semibold leading-6 text-gray-900">
-            <.type_badge type={@release_group.type} />
+          <h1 class="text-sm leading-6 text-zinc-700 dark:text-zinc-400">
+            <%= @release_group.artists %>
+          </h1>
+          <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
             <%= @release_group.title %>
-
-            <span class="mt-1 text-xs leading-5 text-gray-500">
-              <%= @release_group.release %>
-            </span>
+          </h2>
+          <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+            <%= Records.Record.format_release(@release_group.release) %> · <%= Records.Record.type_long_label(
+              @release_group.type
+            ) %>
           </p>
-          <p class="mt-1 truncate text-xs leading-5 text-gray-500"><%= @release_group.artists %></p>
         </div>
-      </div>
-
-      <div class="shrink-0 flex items-center">
         <div class="relative flex-none">
           <button
             type="button"
@@ -103,7 +107,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
               class="block px-3 py-1 text-sm leading-6 text-gray-900 dark:text-zinc-400 hover:bg-gray-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
               role="menuitem"
               tabindex="-1"
-              id={"actions-#{format}-import"}
+              id={"actions-#{@release_group.id}-#{format}-import"}
               phx-click={
                 JS.push("import", value: %{id: @release_group.id, format: format}, page_loading: true)
               }
