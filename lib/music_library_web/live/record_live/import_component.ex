@@ -57,19 +57,61 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
         </div>
       </div>
 
-      <div class="shrink-0 sm:flex sm:flex-col sm:items-end">
-        <span class="isolate inline-flex rounded-md shadow-sm">
+      <div class="shrink-0 flex items-center">
+        <div class="relative flex-none">
           <button
-            :for={format <- Records.Record.formats()}
-            phx-click={
-              JS.push("import", value: %{id: @release_group.id, format: format}, page_loading: true)
-            }
             type="button"
-            class="relative -ml-px inline-flex items-center first:rounded-l-md last:rounded-r-md bg-white px-2 sm:px-3 py-1 sm:py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
+            class="-m-2.5 block p-2.5 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-300"
+            aria-expanded="false"
+            aria-haspopup="true"
+            phx-click={toggle_actions_menu(@release_group.id)}
+            phx-click-away={close_actions_menu(@release_group.id)}
           >
-            <%= Records.Record.format_short_label(format) %>
+            <span class="sr-only"><%= gettext("Open options") %></span>
+            <svg
+              class="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+              data-slot="icon"
+            >
+              <path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
+            </svg>
           </button>
-        </span>
+          <!--
+          Dropdown menu, show/hide based on menu state.
+
+          Entering: "transition ease-out duration-100"
+            From: "transform opacity-0 scale-95"
+            To: "transform opacity-100 scale-100"
+          Leaving: "transition ease-in duration-75"
+            From: "transform opacity-100 scale-100"
+            To: "transform opacity-0 scale-95"
+        -->
+          <.focus_wrap
+            id={"actions-#{@release_group.id}"}
+            class={[
+              "hidden pointer-events-auto absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-zinc-800 py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none"
+            ]}
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="options-menu-0-button"
+            tabindex="-1"
+          >
+            <.link
+              :for={format <- Records.Record.formats()}
+              class="block px-3 py-1 text-sm leading-6 text-gray-900 dark:text-zinc-400 hover:bg-gray-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
+              role="menuitem"
+              tabindex="-1"
+              id={"actions-#{format}-import"}
+              phx-click={
+                JS.push("import", value: %{id: @release_group.id, format: format}, page_loading: true)
+              }
+            >
+              <%= Records.Record.format_short_label(format) %>
+            </.link>
+          </.focus_wrap>
+        </div>
       </div>
     </li>
     """
@@ -107,5 +149,15 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
 
   defp search(mb_query) do
     Records.search_release_group(mb_query, limit: 10)
+  end
+
+  defp toggle_actions_menu(record_id) do
+    JS.toggle(to: "#actions-#{record_id}")
+    |> JS.toggle_class("pointer-events-none", to: "#records > li")
+  end
+
+  def close_actions_menu(record_id) do
+    JS.hide(to: "#actions-#{record_id}")
+    |> JS.remove_class("pointer-events-none", to: "#records > li")
   end
 end

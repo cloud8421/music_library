@@ -219,6 +219,7 @@ msgstr ""
 msgid "Import from MusicBrainz"
 msgstr ""
 
+#: lib/music_library_web/live/record_live/import_component.ex:70
 #: lib/music_library_web/live/record_live/index.html.heex:99
 #: lib/music_library_web/live/wishlist_live/index.html.heex:99
 #, elixir-autogen, elixir-format
