@@ -1,68 +1,85 @@
-<.header>
-  <.link
-    :for={artist <- @record.artists}
-    class=" hover:text-gray-500"
-    patch={~p"/wishlist?query=mbid:#{artist.musicbrainz_id}"}
-  >
-    <%= artist.name %>
+<nav class="flex justify-end gap-x-4">
+  <.link patch={~p"/wishlist/#{@record}/show/edit"} phx-click={JS.push_focus()}>
+    <.button>
+      <%= gettext("Edit") %>
+    </.button>
   </.link>
-  <:subtitle>
-    <%= @record.title %>
-  </:subtitle>
-  <:actions>
-    <.link patch={~p"/wishlist/#{@record}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>
-        <%= gettext("Edit") %>
-      </.button>
-    </.link>
-    <.link
-      phx-click={JS.push("delete", value: %{id: @record.id})}
-      data-confirm={gettext("Are you sure?")}
-    >
-      <.button class="!bg-red-900 hover:!bg-red-700">
-        <%= gettext("Delete") %>
-      </.button>
-    </.link>
-  </:actions>
-</.header>
+  <.link
+    phx-click={JS.push("delete", value: %{id: @record.id})}
+    data-confirm={gettext("Are you sure?")}
+  >
+    <.button class="!bg-red-900 hover:!bg-red-700 dark:text-white">
+      <%= gettext("Delete") %>
+    </.button>
+  </.link>
+</nav>
 
-<div class="md:columns-2 mt-4">
-  <div class="relative block md:inline-block drop-shadow">
+<div class="md:columns-2 mt-4 px-4">
+  <div class="drop-shadow">
     <img
       class="w-full rounded-lg shadow"
       src={~p"/covers/#{@record.id}?vsn=#{@record.cover_hash || ""}"}
       alt={@record.title}
     />
-    <span class="absolute right-2 bottom-1 block text-white drop-shadow-md">
-      <%= Records.Record.format_short_label(@record.format) %>
-    </span>
   </div>
 
-  <.list>
-    <:item title={gettext("Type")}>
-      <span class="inline-flex items-center mr-2 rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-        <%= @record.type %>
-      </span>
-    </:item>
-    <:item title={gettext("Musicbrainz ID")}>
-      <a href={musicbrainz_url(@record)}>
-        <code><%= @record.musicbrainz_id %></code>
-      </a>
-    </:item>
-    <:item title={gettext("Release")}>
-      <%= Records.Record.format_release(@record.release) %>
-    </:item>
-    <:item title={gettext("Genres")}>
-      <span
-        :for={genre <- @record.genres}
-        class="inline-flex items-center mr-2 mb-2 rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"
+  <div class="mt-4 md:mt-0">
+    <h1 class="text-base font-medium leading-6 text-zinc-700">
+      <.link
+        :for={artist <- @record.artists}
+        class="text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
+        patch={~p"/wishlist?query=mbid:#{artist.musicbrainz_id}"}
       >
-        <%= genre %>
-      </span>
-    </:item>
-    <:item title={gettext("Inserted at")}><%= @record.inserted_at %></:item>
-    <:item title={gettext("Updated at")}><%= @record.updated_at %></:item>
-  </.list>
+        <%= artist.name %>
+      </.link>
+    </h1>
+    <h2 class="mt-1 flex font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+      <%= @record.title %>
+    </h2>
+    <p class="mt-1 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
+      <%= Records.Record.format_release(@record.release) %> · <%= Records.Record.format_long_label(
+        @record.format
+      ) %> · <%= Records.Record.type_long_label(@record.type) %>
+    </p>
+  </div>
+  <div>
+    <dl class="mt-4 divide-y divide-gray-100 dark:divide-slate-300/30">
+      <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+          <%= gettext("Genres") %>
+        </dt>
+        <dd class="mt-1 text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+          <%= Enum.join(@record.genres, ", ") %>
+        </dd>
+      </div>
+      <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+          <%= gettext("MusicBrainz ID") %>
+        </dt>
+        <dd class="mt-1 text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+          <a href={musicbrainz_url(@record)}>
+            <code><%= @record.musicbrainz_id %></code>
+          </a>
+        </dd>
+      </div>
+      <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+          <%= gettext("Inserted at") %>
+        </dt>
+        <dd class="mt-1 text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+          <%= @record.inserted_at %>
+        </dd>
+      </div>
+      <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+          <%= gettext("Updated at") %>
+        </dt>
+        <dd class="mt-1 text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+          <%= @record.updated_at %>
+        </dd>
+      </div>
+    </dl>
+  </div>
 </div>
 
 <div class="mt-8">
