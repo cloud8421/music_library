@@ -112,7 +112,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
                 JS.push("import", value: %{id: @release_group.id, format: format}, page_loading: true)
               }
             >
-              <%= Records.Record.format_short_label(format) %>
+              <%= Records.Record.format_long_label(format) %>
             </.link>
           </.focus_wrap>
         </div>
