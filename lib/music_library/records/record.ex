@@ -95,24 +95,11 @@ defmodule MusicLibrary.Records.Record do
 
   def formats, do: @formats
 
-  def format_short_label(:cd), do: "CD"
-  def format_short_label(:vinyl), do: "V"
-  def format_short_label(:blu_ray), do: "BR"
-  def format_short_label(:dvd), do: "DVD"
-  def format_short_label(:multi), do: "MLT"
-
   def format_long_label(:cd), do: "CD"
   def format_long_label(:vinyl), do: "Vinyl"
   def format_long_label(:blu_ray), do: "Blu-ray"
   def format_long_label(:dvd), do: "DVD"
   def format_long_label(:multi), do: "Multi"
-
-  def type_short_label(:album), do: "ALB"
-  def type_short_label(:ep), do: "EP"
-  def type_short_label(:live), do: "LIVE"
-  def type_short_label(:compilation), do: "CMP"
-  def type_short_label(:single), do: "SNG"
-  def type_short_label(:other), do: "OTH"
 
   def type_long_label(:album), do: "Album"
   def type_long_label(:ep), do: "EP"
