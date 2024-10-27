@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 
-#: lib/music_library_web/components/core_components.ex:503
+#: lib/music_library_web/components/core_components.ex:515
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr ""
@@ -101,54 +101,54 @@ msgstr ""
 msgid "Previous"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/form_component.ex:34
-#: lib/music_library_web/live/record_live/form_component.ex:41
+#: lib/music_library_web/live/record_live/form_component.ex:35
+#: lib/music_library_web/live/record_live/form_component.ex:42
 #, elixir-autogen, elixir-format
 msgid "Choose a value"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/form_component.ex:54
+#: lib/music_library_web/live/record_live/form_component.ex:55
 #, elixir-autogen, elixir-format
 msgid "Cover art"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/form_component.ex:40
+#: lib/music_library_web/live/record_live/form_component.ex:41
 #, elixir-autogen, elixir-format
 msgid "Format"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/form_component.ex:57
+#: lib/music_library_web/live/record_live/form_component.ex:61
 #, elixir-autogen, elixir-format
 msgid "No cover selected"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/form_component.ex:50
+#: lib/music_library_web/live/record_live/form_component.ex:51
 #, elixir-autogen, elixir-format
 msgid "Purchased at"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/form_component.ex:113
+#: lib/music_library_web/live/record_live/form_component.ex:117
 #: lib/music_library_web/live/wishlist_live/index.ex:129
 #, elixir-autogen, elixir-format
 msgid "Record updated successfully"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/form_component.ex:45
+#: lib/music_library_web/live/record_live/form_component.ex:46
 #, elixir-autogen, elixir-format
 msgid "Release"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/form_component.ex:68
+#: lib/music_library_web/live/record_live/form_component.ex:72
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/form_component.ex:68
+#: lib/music_library_web/live/record_live/form_component.ex:72
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr ""
 
-#: lib/music_library_web/live/record_live/form_component.ex:33
+#: lib/music_library_web/live/record_live/form_component.ex:34
 #, elixir-autogen, elixir-format
 msgid "Type"
 msgstr ""

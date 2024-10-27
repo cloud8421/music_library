@@ -14,10 +14,11 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
   def render(assigns) do
     ~H"""
     <div>
-      <.header>
-        <%= @title %>
-        <:subtitle></:subtitle>
-      </.header>
+      <header>
+        <h1 class="text-base font-medium leading-6 text-zinc-700 dark:text-zinc-400">
+          <%= @title %>
+        </h1>
+      </header>
 
       <.simple_form
         for={@form}
@@ -53,14 +54,17 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
           <.label for={@uploads.cover_data.ref}>
             <%= gettext("Cover art") %>
           </.label>
-          <span :if={@uploads.cover_data.entries == []} class="float-right">
+          <span
+            :if={@uploads.cover_data.entries == []}
+            class="float-right text-zinc-700 dark:text-zinc-400"
+          >
             <%= gettext("No cover selected") %>
           </span>
           <%= for entry <- @uploads.cover_data.entries do %>
-            <span class="float-right"><%= entry.progress %>%</span>
+            <span class="float-right text-zinc-700 dark:text-zinc-400"><%= entry.progress %>%</span>
           <% end %>
           <.live_file_input
-            class="mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6"
+            class="mt-2 block w-full rounded-lg text-zinc-900 dark:text-zinc-200 focus:ring-0 sm:text-sm sm:leading-6"
             upload={@uploads.cover_data}
           />
         </div>
