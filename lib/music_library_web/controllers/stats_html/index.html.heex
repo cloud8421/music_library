@@ -4,12 +4,12 @@
   </h1>
   <dl class="mt-5 grid grid-cols-2 gap-5 sm:grid-cols-5">
     <div
-      class="relative overflow-hidden rounded-lg bg-white dark:bg-zinc-700 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6 col-span-2 sm:col-span-3 cursor-pointer"
+      class="relative overflow-hidden rounded-md bg-white dark:bg-zinc-700 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6 col-span-2 sm:col-span-3 cursor-pointer"
       phx-click={JS.navigate(~p"/records/#{@latest_record}")}
     >
       <dt>
         <img
-          class="absolute w-20 rounded-lg shadow"
+          class="absolute w-20 rounded-md shadow"
           src={~p"/covers/#{@latest_record.id}"}
           alt={@latest_record.title}
         />
@@ -32,7 +32,7 @@
         </p>
       </dd>
     </div>
-    <div class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6">
+    <div class="overflow-hidden rounded-md bg-white dark:bg-zinc-700 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6">
       <dt>
         <p class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">
           <%= gettext("Total collection") %>
@@ -47,7 +47,7 @@
         </a>
       </dd>
     </div>
-    <div class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6">
+    <div class="overflow-hidden rounded-md bg-white dark:bg-zinc-700 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6">
       <dt>
         <p class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">
           <%= gettext("Total wishlist") %>
@@ -69,7 +69,7 @@
   <h1 class="mt-5 text-base lg:text-2xl text-gray-900 dark:text-gray-200 font-semibold">
     <%= gettext("Formats") %>
   </h1>
-  <dl class="mt-5 grid divide-y divide-gray-200 dark:divide-slate-300/50 overflow-hidden rounded-lg bg-white dark:bg-zinc-700 shadow grid-cols-5 md:divide-x md:divide-y-0">
+  <dl class="mt-5 grid divide-gray-200 dark:divide-slate-300/50 overflow-hidden rounded-md bg-white dark:bg-zinc-700 shadow grid-cols-5 divide-x">
     <div :for={{format, count} <- @collection_count_by_format} class="px-4 py-5 sm:p-6">
       <dt class="text-base max-sm:text-xs font-normal text-gray-900 dark:text-gray-400 break-keep">
         <%= Record.format_long_label(format) %>
@@ -92,7 +92,7 @@
   <h1 class="mt-5 text-base lg:text-2xl text-gray-900 dark:text-gray-200 font-semibold">
     <%= gettext("Types") %>
   </h1>
-  <dl class="mt-5 grid divide-y divide-gray-200 dark:divide-slate-300/50 overflow-hidden rounded-lg bg-white dark:bg-zinc-700 shadow grid-cols-6 md:divide-x md:divide-y-0">
+  <dl class="mt-5 grid divide-gray-200 dark:divide-slate-300/50 overflow-hidden rounded-md bg-white dark:bg-zinc-700 shadow grid-cols-6 divide-x">
     <div :for={{type, count} <- @collection_count_by_type} class="px-4 py-5 sm:p-6">
       <dt class="text-base max-sm:text-xs font-normal text-gray-900 dark:text-gray-400 break-keep">
         <%= Record.type_long_label(type) %>
