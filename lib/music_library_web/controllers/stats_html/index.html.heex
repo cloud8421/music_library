@@ -38,7 +38,7 @@
           <%= gettext("Total collection") %>
         </p>
       </dt>
-      <dd class="flex items-baseline pb-6 sm:pb-7">
+      <dd class="flex items-baseline mt-1 pb-6 sm:pb-7">
         <a
           href={~p"/records"}
           class="text-2xl font-semibold text-gray-900 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
@@ -53,7 +53,7 @@
           <%= gettext("Total wishlist") %>
         </p>
       </dt>
-      <dd class="flex items-baseline pb-6 sm:pb-7">
+      <dd class="flex items-baseline mt-1 pb-6 sm:pb-7">
         <a
           href={~p"/wishlist"}
           class="text-2xl font-semibold text-gray-900 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
@@ -71,12 +71,12 @@
   </h1>
   <dl class="mt-5 grid divide-gray-200 dark:divide-slate-300/50 overflow-hidden rounded-md bg-white dark:bg-zinc-700 shadow grid-cols-5 divide-x">
     <div :for={{format, count} <- @collection_count_by_format} class="px-2 py-5 sm:px-4">
-      <dt class="text-base text-center max-sm:text-xs font-normal text-gray-900 dark:text-gray-400 break-keep">
+      <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 text-center max-sm:text-xs break-keep">
         <%= Record.format_long_label(format) %>
       </dt>
       <dd class="mt-1 text-center">
         <a
-          class="text-xl font-semibold hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
+          class="text-xl lg:text-2xl font-semibold hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
           href={~p"/records?query=format:#{format}"}
         >
           <%= count %>
@@ -92,12 +92,12 @@
   </h1>
   <dl class="mt-5 grid divide-gray-200 dark:divide-slate-300/50 overflow-hidden rounded-md bg-white dark:bg-zinc-700 shadow grid-cols-6 divide-x">
     <div :for={{type, count} <- @collection_count_by_type} class="px-2 py-5 sm:px-4">
-      <dt class="text-base text-center max-sm:text-xs font-normal text-gray-900 dark:text-gray-400 break-keep">
+      <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 text-center max-sm:text-xs break-keep">
         <%= Record.type_long_label(type) %>
       </dt>
       <dd class="mt-1 text-center">
         <a
-          class="text-xl font-semibold hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
+          class="text-xl lg:text-2xl font-semibold hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
           href={~p"/records?query=type:#{type}"}
         >
           <%= count %>
