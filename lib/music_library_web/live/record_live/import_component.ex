@@ -23,6 +23,8 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
           label={gettext("Search for a record on MusicBrainz")}
           prompt={gettext("Search for records")}
           phx-debounce="500"
+          autocorrect="off"
+          autocapitalize="none"
         />
       </.simple_form>
       <ul
