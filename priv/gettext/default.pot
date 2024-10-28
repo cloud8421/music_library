@@ -330,7 +330,7 @@ msgstr ""
 msgid "Formats"
 msgstr ""
 
-#: lib/music_library_web/controllers/stats_html/index.html.heex:93
+#: lib/music_library_web/controllers/stats_html/index.html.heex:91
 #, elixir-autogen, elixir-format
 msgid "Types"
 msgstr ""
