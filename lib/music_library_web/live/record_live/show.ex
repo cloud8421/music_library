@@ -52,4 +52,8 @@ defmodule MusicLibraryWeb.RecordLive.Show do
   defp musicbrainz_url(record) do
     "https://musicbrainz.org/release-group/#{record.musicbrainz_id}"
   end
+
+  defp human_datetime(dt) do
+    "#{dt.day}/#{dt.month}/#{dt.year}"
+  end
 end

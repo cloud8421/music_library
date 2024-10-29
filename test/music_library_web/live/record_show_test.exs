@@ -11,6 +11,10 @@ defmodule MusicLibraryWeb.RecordShowTest do
     |> Phoenix.HTML.safe_to_string()
   end
 
+  defp human_datetime(dt) do
+    "#{dt.day}/#{dt.month}/#{dt.year}"
+  end
+
   describe "Edit record from show page" do
     test "can navigate to the record edit form", %{conn: conn} do
       record = record_fixture()
@@ -36,9 +40,9 @@ defmodule MusicLibraryWeb.RecordShowTest do
       assert html =~ Record.format_long_label(record.format)
       assert html =~ record.release
       assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
-      assert html =~ Phoenix.HTML.Safe.to_iodata(record.purchased_at)
-      assert html =~ Phoenix.HTML.Safe.to_iodata(record.inserted_at)
-      assert html =~ Phoenix.HTML.Safe.to_iodata(record.updated_at)
+      assert html =~ human_datetime(record.purchased_at)
+      assert html =~ human_datetime(record.inserted_at)
+      assert html =~ human_datetime(record.updated_at)
 
       for artist <- record.artists do
         assert html =~ escape(artist.name)
