@@ -72,13 +72,13 @@ msgstr ""
 msgid "You must be logged in to access this page"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex:10
+#: lib/music_library_web/components/layouts/app.html.heex:13
 #: lib/music_library_web/live/record_live/index.ex:71
 #, elixir-autogen, elixir-format
 msgid "Collection"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex:19
+#: lib/music_library_web/components/layouts/app.html.heex:25
 #, elixir-autogen, elixir-format
 msgid "Logout"
 msgstr ""
@@ -294,7 +294,7 @@ msgstr ""
 msgid "Purchase"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex:13
+#: lib/music_library_web/components/layouts/app.html.heex:19
 #: lib/music_library_web/live/wishlist_live/index.ex:72
 #, elixir-autogen, elixir-format
 msgid "Wishlist"

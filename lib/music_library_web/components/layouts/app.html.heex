@@ -3,15 +3,21 @@
     <div class="flex h-16 justify-between">
       <div class="flex">
         <div class="flex space-x-8">
-          <a href="/" class={section_link_classes(assigns[:nav_section], :stats)}>
+          <.link navigate={~p"/"} class={section_link_classes(assigns[:nav_section], :stats)}>
             <%= gettext("Stats") %>
-          </a>
-          <a href={~p"/records"} class={section_link_classes(assigns[:nav_section], :records)}>
+          </.link>
+          <.link
+            navigate={~p"/records"}
+            class={section_link_classes(assigns[:nav_section], :records)}
+          >
             <%= gettext("Collection") %>
-          </a>
-          <a href={~p"/wishlist"} class={section_link_classes(assigns[:nav_section], :wishlist)}>
+          </.link>
+          <.link
+            navigate={~p"/wishlist"}
+            class={section_link_classes(assigns[:nav_section], :wishlist)}
+          >
             <%= gettext("Wishlist") %>
-          </a>
+          </.link>
         </div>
       </div>
       <div class="flex space-x-8">
