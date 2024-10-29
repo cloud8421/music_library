@@ -1,9 +1,9 @@
-defmodule MusicLibraryWeb.StatsControllerTest do
+defmodule MusicLibraryWeb.StatsIndexTest do
   use MusicLibraryWeb.ConnCase
 
-  alias MusicLibrary.Records.Record
-
+  import Phoenix.LiveViewTest
   import MusicLibrary.RecordsFixtures
+  alias MusicLibrary.Records.Record
 
   defp fill_collection(_) do
     records = Enum.map(1..99, fn _ -> record_fixture() end)
@@ -28,24 +28,22 @@ defmodule MusicLibraryWeb.StatsControllerTest do
       conn: conn,
       collection: collection
     } do
-      conn = get(conn, "/")
+      {:ok, _stats_live, html} = live(conn, "/")
 
-      response = html_response(conn, 200)
-
-      assert response =~ collection |> length() |> Integer.to_string()
+      assert html =~ collection |> length() |> Integer.to_string()
 
       collection
       |> Enum.frequencies_by(& &1.format)
       |> Enum.each(fn {format, count} ->
-        assert response =~ "\n#{count}\n"
-        assert response =~ "\n#{Record.format_long_label(format)}\n"
+        assert html =~ "\n#{count}\n"
+        assert html =~ "\n#{Record.format_long_label(format)}\n"
       end)
 
       collection
       |> Enum.frequencies_by(& &1.type)
       |> Enum.each(fn {type, count} ->
-        assert response =~ "\n#{count}\n"
-        assert response =~ "\n#{Record.type_long_label(type)}\n"
+        assert html =~ "\n#{count}\n"
+        assert html =~ "\n#{Record.type_long_label(type)}\n"
       end)
     end
 
@@ -54,21 +52,19 @@ defmodule MusicLibraryWeb.StatsControllerTest do
       # highest purchsed_at value doesn't work, as it picks the wrong value.
       latest_record = List.last(collection)
 
-      conn = get(conn, "/")
+      {:ok, _stats_live, html} = live(conn, "/")
 
-      assert html_response(conn, 200) =~ escape(latest_record.title)
+      assert html =~ escape(latest_record.title)
 
       for artist <- latest_record.artists do
-        assert html_response(conn, 200) =~ escape(artist.name)
+        assert html =~ escape(artist.name)
       end
     end
 
     test "it shows the wishlist total count", %{conn: conn, wishlist: wishlist} do
-      conn = get(conn, "/")
+      {:ok, _stats_live, html} = live(conn, "/")
 
-      response = html_response(conn, 200)
-
-      assert response =~ wishlist |> length() |> Integer.to_string()
+      assert html =~ wishlist |> length() |> Integer.to_string()
     end
   end
 end

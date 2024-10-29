@@ -29,7 +29,8 @@ defmodule MusicLibraryWeb.Router do
       pipe_through :require_login
 
       get "/covers/:record_id", CoverController, :show
-      get "/", StatsController, :index
+
+      live "/", StatsLive.Index, :index
 
       live "/records", RecordLive.Index, :index
       live "/records/import", RecordLive.Index, :import
