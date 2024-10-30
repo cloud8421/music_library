@@ -13,10 +13,44 @@
   </dl>
 </div>
 
-<.stats_grid
-  data={@collection_count_by_format}
-  title={gettext("Formats")}
-  col_class="grid-cols-5"
-/>
+<div>
+  <h1 class="mt-5 text-base lg:text-2xl text-gray-900 dark:text-gray-200 font-semibold">
+    <%= gettext("Formats") %>
+  </h1>
+  <dl class="mt-5 grid divide-gray-200 dark:divide-slate-300/50 overflow-hidden rounded-md bg-white dark:bg-zinc-700 shadow grid-cols-5 divide-x">
+    <div :for={{format, count} <- @collection_count_by_format} class="px-2 py-5 sm:px-4">
+      <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 text-center max-sm:text-xs break-keep">
+        <%= Record.format_long_label(format) %>
+      </dt>
+      <dd class="mt-1 text-center">
+        <a
+          class="text-xl lg:text-2xl font-semibold hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
+          href={~p"/records?query=format:#{format}"}
+        >
+          <%= count %>
+        </a>
+      </dd>
+    </div>
+  </dl>
+</div>
 
-<.stats_grid data={@collection_count_by_type} title={gettext("Types")} col_class="grid-cols-6" />
+<div>
+  <h1 class="mt-5 text-base lg:text-2xl text-gray-900 dark:text-gray-200 font-semibold">
+    <%= gettext("Types") %>
+  </h1>
+  <dl class="mt-5 grid divide-gray-200 dark:divide-slate-300/50 overflow-hidden rounded-md bg-white dark:bg-zinc-700 shadow grid-cols-6 divide-x">
+    <div :for={{type, count} <- @collection_count_by_type} class="px-2 py-5 sm:px-4">
+      <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 text-center max-sm:text-xs break-keep">
+        <%= Record.type_long_label(type) %>
+      </dt>
+      <dd class="mt-1 text-center">
+        <a
+          class="text-xl lg:text-2xl font-semibold hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
+          href={~p"/records?query=type:#{type}"}
+        >
+          <%= count %>
+        </a>
+      </dd>
+    </div>
+  </dl>
+</div>

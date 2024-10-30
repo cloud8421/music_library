@@ -35,15 +35,15 @@ defmodule MusicLibraryWeb.StatsIndexTest do
       collection
       |> Enum.frequencies_by(& &1.format)
       |> Enum.each(fn {format, count} ->
-        assert html =~ "#{count}\n"
-        assert html =~ "#{Record.format_long_label(format)}\n"
+        assert html =~ "\n#{count}\n"
+        assert html =~ "\n#{Record.format_long_label(format)}\n"
       end)
 
       collection
       |> Enum.frequencies_by(& &1.type)
       |> Enum.each(fn {type, count} ->
-        assert html =~ "#{count}\n"
-        assert html =~ "#{Record.type_long_label(type)}\n"
+        assert html =~ "\n#{count}\n"
+        assert html =~ "\n#{Record.type_long_label(type)}\n"
       end)
     end
 

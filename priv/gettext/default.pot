@@ -269,7 +269,7 @@ msgid "Something went wrong!"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:7
-#: lib/music_library_web/live/stats_live/index.ex:30
+#: lib/music_library_web/live/stats_live/index.ex:28
 #, elixir-autogen, elixir-format
 msgid "Stats"
 msgstr ""
@@ -302,7 +302,7 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:22
+#: lib/music_library_web/live/stats_live/index.html.heex:39
 #, elixir-autogen, elixir-format
 msgid "Types"
 msgstr ""
