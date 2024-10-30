@@ -39,4 +39,28 @@ defmodule MusicLibraryWeb.StatsLive.DataComponents do
     </div>
     """
   end
+
+  attr :title, :string, required: true
+  attr :count, :integer, required: true
+  attr :path, :string, required: true
+
+  def counter(assigns) do
+    ~H"""
+    <div class="overflow-hidden rounded-md bg-white dark:bg-zinc-700 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6">
+      <dt>
+        <p class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">
+          <%= @title %>
+        </p>
+      </dt>
+      <dd class="flex items-baseline mt-1 pb-6 sm:pb-7">
+        <a
+          href={@path}
+          class="text-2xl font-semibold text-gray-900 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
+        >
+          <%= @count %>
+        </a>
+      </dd>
+    </div>
+    """
+  end
 end
