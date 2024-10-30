@@ -1,16 +1,20 @@
 defmodule MusicLibraryWeb.StatsLive.Index do
   use MusicLibraryWeb, :live_view
 
+  import MusicLibraryWeb.StatsLive.DataComponents
+
   alias MusicLibrary.{Records, Wishlist}
   alias Records.Record
 
   def mount(_params, _session, socket) do
     collection_count_by_format =
       Records.count_records_by_format()
+      |> Enum.map(fn {format, count} -> {Record.format_long_label(format), count} end)
       |> Enum.sort_by(fn {_format, count} -> count end, :desc)
 
     collection_count_by_type =
       Records.count_records_by_type()
+      |> Enum.map(fn {type, count} -> {Record.type_long_label(type), count} end)
       |> Enum.sort_by(fn {_type, count} -> count end, :desc)
 
     collection_count =
