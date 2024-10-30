@@ -3,35 +3,11 @@
     <%= gettext("Basics") %>
   </h1>
   <dl class="mt-5 grid grid-cols-2 gap-5 sm:grid-cols-5">
-    <div
-      class="relative overflow-hidden rounded-md bg-white dark:bg-zinc-700 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6 col-span-2 sm:col-span-3 cursor-pointer"
-      phx-click={JS.navigate(~p"/records/#{@latest_record}")}
-    >
-      <dt>
-        <img
-          class="absolute w-20 rounded-md shadow"
-          src={~p"/covers/#{@latest_record.id}"}
-          alt={@latest_record.title}
-        />
-        <p class="ml-24 truncate text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
-          <%= gettext("Latest purchase") %>
-        </p>
-      </dt>
-      <dd class="ml-24 flex items-baseline pb-6 sm:pb-7">
-        <p class="font-semibold">
-          <.link
-            :for={artist <- @latest_record.artists}
-            class="text-sm md:text-base lg:text-2xl text-gray-900 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
-            patch={~p"/records?query=mbid:#{artist.musicbrainz_id}"}
-          >
-            <%= artist.name %>
-          </.link>
-          <span class="text-sm md:text-base block text-gray-600 dark:text-gray-200">
-            <%= @latest_record.title %>
-          </span>
-        </p>
-      </dd>
-    </div>
+    <.album_preview
+      record={@latest_record}
+      title={gettext("Latest purchase")}
+      class="col-span-2 sm:col-span-3"
+    />
     <.counter title={gettext("Total collection")} count={@collection_count} path={~p"/records"} />
     <.counter title={gettext("Total wishlist")} count={@wishlist_count} path={~p"/wishlist"} />
   </dl>

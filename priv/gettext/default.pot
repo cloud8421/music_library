@@ -97,7 +97,7 @@ msgstr ""
 msgid "Format"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:42
+#: lib/music_library_web/live/stats_live/index.html.heex:18
 #, elixir-autogen, elixir-format
 msgid "Formats"
 msgstr ""
@@ -136,7 +136,7 @@ msgstr ""
 msgid "Invalid password"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:17
+#: lib/music_library_web/live/stats_live/index.html.heex:8
 #, elixir-autogen, elixir-format
 msgid "Latest purchase"
 msgstr ""
@@ -287,12 +287,12 @@ msgstr ""
 msgid "The application has been updated, please reload."
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:35
+#: lib/music_library_web/live/stats_live/index.html.heex:11
 #, elixir-autogen, elixir-format
 msgid "Total collection"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:36
+#: lib/music_library_web/live/stats_live/index.html.heex:12
 #, elixir-autogen, elixir-format
 msgid "Total wishlist"
 msgstr ""
@@ -302,7 +302,7 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:46
+#: lib/music_library_web/live/stats_live/index.html.heex:22
 #, elixir-autogen, elixir-format
 msgid "Types"
 msgstr ""

@@ -1,6 +1,47 @@
 defmodule MusicLibraryWeb.StatsLive.DataComponents do
   use MusicLibraryWeb, :live_component
 
+  attr :record, MusicLibrary.Records.Record, required: true
+  attr :title, :string, required: true
+  attr :class, :string, default: ""
+
+  def album_preview(assigns) do
+    ~H"""
+    <div
+      class={[
+        "relative overflow-hidden rounded-md bg-white dark:bg-zinc-700 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6 cursor-pointer",
+        @class
+      ]}
+      phx-click={JS.navigate(~p"/records/#{@record}")}
+    >
+      <dt>
+        <img
+          class="absolute w-20 rounded-md shadow"
+          src={~p"/covers/#{@record.id}"}
+          alt={@record.title}
+        />
+        <p class="ml-24 truncate text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
+          <%= @title %>
+        </p>
+      </dt>
+      <dd class="ml-24 flex items-baseline pb-6 sm:pb-7">
+        <p class="font-semibold">
+          <.link
+            :for={artist <- @record.artists}
+            class="text-sm md:text-base lg:text-2xl text-gray-900 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
+            patch={~p"/records?query=mbid:#{artist.musicbrainz_id}"}
+          >
+            <%= artist.name %>
+          </.link>
+          <span class="text-sm md:text-base block text-gray-600 dark:text-gray-200">
+            <%= @record.title %>
+          </span>
+        </p>
+      </dd>
+    </div>
+    """
+  end
+
   attr :data, :list,
     required: true,
     doc: """
