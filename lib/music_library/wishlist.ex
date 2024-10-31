@@ -40,7 +40,10 @@ defmodule MusicLibrary.Wishlist do
     base_search =
       from r in Record,
         where: is_nil(r.purchased_at),
-        order_by: [r.artists[0]["sort_name"], r.title]
+        order_by:
+          fragment(
+            "json_extract(artists, '$[0].sort_name') COLLATE NOCASE ASC, title COLLATE NOCASE ASC"
+          )
 
     Enum.reduce(parsed_query, base_search, fn
       {:artist, artist}, search ->
