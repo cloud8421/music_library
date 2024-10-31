@@ -51,6 +51,7 @@ jobs:
         shell: sh
       - run: mix deps.get
       - run: mix gettext.extract --check-up-to-date
+      - run: mix format --check-formatted
       - run: mix test
 
   deploy:
