@@ -6,20 +6,6 @@ defmodule MusicLibrary.Records do
 
   @fields [:id, :type, :artists, :format, :title, :release, :genres, :musicbrainz_id, :cover_hash]
 
-  def list_records(opts \\ []) do
-    limit = Keyword.get(opts, :limit, 20)
-    offset = Keyword.get(opts, :offset, 0)
-
-    q =
-      from r in Record,
-        order_by: [r.artists[0]["sort_name"], r.title],
-        limit: ^limit,
-        offset: ^offset,
-        select: ^@fields
-
-    Repo.all(q)
-  end
-
   def search_records(query, opts \\ []) do
     limit = Keyword.get(opts, :limit, 20)
     offset = Keyword.get(opts, :offset, 0)
@@ -71,10 +57,6 @@ defmodule MusicLibrary.Records do
           like(r.title, ^"%#{raw_query}%") or like(r.artists, ^"%#{raw_query}%")
         )
     end)
-  end
-
-  def count_records do
-    Repo.aggregate(Record, :count)
   end
 
   def count_records_by_format do
