@@ -94,9 +94,8 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
       @default_records_list_params
       |> Map.put(:query, query)
       |> Map.take([:query, :page, :page_size])
-      |> URI.encode_query()
 
-    {:noreply, push_patch(socket, to: ~s"/wishlist?#{qs}")}
+    {:noreply, push_patch(socket, to: ~p"/wishlist?#{qs}")}
   end
 
   def handle_event("import", %{"id" => musicbrainz_id, "format" => format}, socket) do
