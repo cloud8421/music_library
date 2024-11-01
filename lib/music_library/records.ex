@@ -67,6 +67,7 @@ defmodule MusicLibrary.Records do
       from r in Record,
         where: not is_nil(r.purchased_at),
         group_by: r.format,
+        order_by: [desc: count(r.id)],
         select: {r.format, count(r.id)}
 
     Repo.all(q)
@@ -77,6 +78,7 @@ defmodule MusicLibrary.Records do
       from r in Record,
         where: not is_nil(r.purchased_at),
         group_by: r.type,
+        order_by: [desc: count(r.id)],
         select: {r.type, count(r.id)}
 
     Repo.all(q)

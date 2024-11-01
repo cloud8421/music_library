@@ -7,13 +7,9 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   alias Records.Record
 
   def mount(_params, _session, socket) do
-    collection_count_by_format =
-      Records.count_records_by_format()
-      |> Enum.sort_by(fn {_format, count} -> count end, :desc)
+    collection_count_by_format = Records.count_records_by_format()
 
-    collection_count_by_type =
-      Records.count_records_by_type()
-      |> Enum.sort_by(fn {_type, count} -> count end, :desc)
+    collection_count_by_type = Records.count_records_by_type()
 
     collection_count =
       Enum.reduce(collection_count_by_format, 0, fn {_, count}, acc -> acc + count end)
