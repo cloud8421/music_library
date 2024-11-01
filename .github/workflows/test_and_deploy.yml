@@ -58,6 +58,7 @@ jobs:
     name: Deploy
     needs: test
     runs-on: ubuntu-latest
+    environment: production
     if: github.ref == 'refs/heads/main'
     concurrency: deploy-group    # optional: ensure only one action runs at a time
     steps:
