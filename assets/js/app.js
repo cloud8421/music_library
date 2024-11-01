@@ -32,6 +32,14 @@ let liveSocket = new LiveSocket("/live", Socket, {
 topbar.config({barColors: {0: "#FD4F00"}, shadowColor: "rgba(0, 0, 0, .3)"})
 window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
 window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
+window.addEventListener("music_library:clipcopy", (event) => {
+  if ("clipboard" in navigator) {
+    const text = event.target.textContent;
+    navigator.clipboard.writeText(text);
+  } else {
+    alert("Sorry, your browser does not support clipboard copy.");
+  }
+});
 
 // connect if there are any LiveViews on the page
 liveSocket.connect()

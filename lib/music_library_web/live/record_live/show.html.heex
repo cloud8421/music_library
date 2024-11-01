@@ -56,10 +56,24 @@
         <dt class="text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
           <%= gettext("MusicBrainz ID") %>
         </dt>
-        <dd class="mt-1 text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+        <dd class="mt-1 text-sm flex leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
           <a href={musicbrainz_url(@record)}>
-            <code><%= @record.musicbrainz_id %></code>
+            <code id={"mb-#{@record.musicbrainz_id}"}><%= @record.musicbrainz_id %></code>
           </a>
+          <button
+            class="transition-colors"
+            phx-click={
+              JS.dispatch("music_library:clipcopy", to: "#mb-" <> @record.musicbrainz_id)
+            }
+          >
+            <span class="sr-only"><%= gettext("Copy MusicBrainz ID to clipboard") %></span>
+            <.icon
+              name="hero-clipboard-document"
+              class="-mt-1 h-5 w-5"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+          </button>
         </dd>
       </div>
       <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
