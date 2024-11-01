@@ -302,7 +302,7 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:39
+#: lib/music_library_web/live/stats_live/index.html.heex:42
 #, elixir-autogen, elixir-format
 msgid "Types"
 msgstr ""

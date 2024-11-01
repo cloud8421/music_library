@@ -34,4 +34,22 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        nav_section: :stats
      )}
   end
+
+  # The Tailwind build step requires all needed classes to be explicitly referenced
+  # in the source code, and not dynamically generated. This implies that one cannot
+  # (for example) interpolate a number in a class name.
+  defp stats_class(collection) do
+    case Enum.count(collection) do
+      1 -> "grid-cols-1"
+      2 -> "grid-cols-2"
+      3 -> "grid-cols-3"
+      4 -> "grid-cols-4"
+      5 -> "grid-cols-5"
+      6 -> "grid-cols-6"
+      7 -> "grid-cols-7"
+      8 -> "grid-cols-8"
+      9 -> "grid-cols-9"
+      _other -> ""
+    end
+  end
 end
