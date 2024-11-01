@@ -95,6 +95,11 @@
   </div>
 </div>
 
+<details class="mt-4 px-4 text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300">
+  <summary class="text-xs sm:text-sm"><%= gettext("MusicBrainz data") %></summary>
+  <pre><code class="text-xs sm:text-sm"><%= Jason.encode!(@record.musicbrainz_data, pretty: true) %></code></pre>
+</details>
+
 <div class="mt-8">
   <.back navigate={@back_url}>
     <%= gettext("Back to wishlist") %>

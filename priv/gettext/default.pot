@@ -29,12 +29,12 @@ msgstr ""
 msgid "Attempting to reconnect"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/show.html.heex:107
+#: lib/music_library_web/live/record_live/show.html.heex:112
 #, elixir-autogen, elixir-format
 msgid "Back to records"
 msgstr ""
 
-#: lib/music_library_web/live/wishlist_live/show.html.heex:100
+#: lib/music_library_web/live/wishlist_live/show.html.heex:105
 #, elixir-autogen, elixir-format
 msgid "Back to wishlist"
 msgstr ""
@@ -350,4 +350,10 @@ msgstr ""
 #: lib/music_library_web/live/wishlist_live/show.html.heex:68
 #, elixir-autogen, elixir-format
 msgid "Copy MusicBrainz ID to clipboard"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/show.html.heex:106
+#: lib/music_library_web/live/wishlist_live/show.html.heex:99
+#, elixir-autogen, elixir-format
+msgid "MusicBrainz data"
 msgstr ""
