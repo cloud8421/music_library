@@ -60,12 +60,10 @@
           <a href={musicbrainz_url(@record)}>
             <code id={"mb-#{@record.musicbrainz_id}"}><%= @record.musicbrainz_id %></code>
           </a>
-          <button
-            class="transition-colors"
-            phx-click={
-              JS.dispatch("music_library:clipcopy", to: "#mb-" <> @record.musicbrainz_id)
-            }
-          >
+          <button phx-click={
+            JS.dispatch("music_library:clipcopy", to: "#mb-" <> @record.musicbrainz_id)
+            |> JS.transition("animate-shake")
+          }>
             <span class="sr-only"><%= gettext("Copy MusicBrainz ID to clipboard") %></span>
             <.icon
               name="hero-clipboard-document"

@@ -42,6 +42,7 @@
       ) %> · <%= Records.Record.type_long_label(@record.type) %>
     </p>
   </div>
+
   <div>
     <dl class="mt-4 divide-y divide-gray-100 dark:divide-slate-300/30">
       <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -60,12 +61,10 @@
           <a href={musicbrainz_url(@record)}>
             <code id={"mb-#{@record.musicbrainz_id}"}><%= @record.musicbrainz_id %></code>
           </a>
-          <button
-            class="transition-colors"
-            phx-click={
-              JS.dispatch("music_library:clipcopy", to: "#mb-" <> @record.musicbrainz_id)
-            }
-          >
+          <button phx-click={
+            JS.dispatch("music_library:clipcopy", to: "#mb-" <> @record.musicbrainz_id)
+            |> JS.transition("animate-shake")
+          }>
             <span class="sr-only"><%= gettext("Copy MusicBrainz ID to clipboard") %></span>
             <.icon
               name="hero-clipboard-document"
