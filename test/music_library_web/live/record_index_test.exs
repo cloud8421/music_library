@@ -11,9 +11,14 @@ defmodule MusicLibraryWeb.RecordIndexTest do
   @default_records_page_size 100
   @total_records @default_records_page_size + 10
 
-  defp create_records(_) do
+  defp fill_collection(_) do
     records = Enum.map(1..@total_records, fn _ -> record_fixture() end)
-    %{records: records}
+    %{collection: records}
+  end
+
+  defp fill_wishlist(_) do
+    records = Enum.map(1..@total_records, fn _ -> record_fixture(%{purchased_at: nil}) end)
+    %{wishlist: records}
   end
 
   defp escape(string) do
@@ -22,10 +27,21 @@ defmodule MusicLibraryWeb.RecordIndexTest do
     |> Phoenix.HTML.safe_to_string()
   end
 
-  describe "Paginated list of records" do
-    setup [:create_records]
+  describe "Collection" do
+    setup [:fill_collection, :fill_wishlist]
 
-    test "uses default params", %{conn: conn, records: records} do
+    test "does not show wishlist records", %{
+      conn: conn,
+      wishlist: wishlist_records
+    } do
+      {:ok, index_live, html} = live(conn, ~p"/records")
+
+      for record <- wishlist_records do
+        refute has_element?(index_live, "#records-#{record.id}")
+      end
+    end
+
+    test "shows purchased records", %{conn: conn, collection: records} do
       {:ok, index_live, html} = live(conn, ~p"/records")
 
       assert html =~ "Collection"
@@ -57,8 +73,12 @@ defmodule MusicLibraryWeb.RecordIndexTest do
         end
       end
     end
+  end
 
-    test "uses query string params", %{conn: conn, records: records} do
+  describe "Search and pagination" do
+    setup [:fill_collection]
+
+    test "uses query string params", %{conn: conn, collection: records} do
       {:ok, page_2_live, page_2_html} = live(conn, ~p"/records?page=2&page_size=25")
 
       {page_2_present, page_2_absent} =
@@ -101,9 +121,9 @@ defmodule MusicLibraryWeb.RecordIndexTest do
   end
 
   describe "Tagged search" do
-    setup [:create_records]
+    setup [:fill_collection]
 
-    test "supports raw queries", %{conn: conn, records: records} do
+    test "supports raw queries", %{conn: conn, collection: records} do
       [record | _rest] = records
       qs = [query: record.title]
       {:ok, index_live, _html} = live(conn, ~p"/records?#{qs}")
@@ -126,7 +146,7 @@ defmodule MusicLibraryWeb.RecordIndexTest do
       end
     end
 
-    test "supports filters", %{conn: conn, records: records} do
+    test "supports filters", %{conn: conn, collection: records} do
       {artist_with_most_records, _records_count} =
         records
         |> Enum.frequencies_by(fn r ->
