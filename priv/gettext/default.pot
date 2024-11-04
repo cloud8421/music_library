@@ -269,7 +269,7 @@ msgid "Something went wrong!"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:7
-#: lib/music_library_web/live/stats_live/index.ex:24
+#: lib/music_library_web/live/stats_live/index.ex:26
 #, elixir-autogen, elixir-format
 msgid "Stats"
 msgstr ""
@@ -356,4 +356,9 @@ msgstr ""
 #: lib/music_library_web/live/wishlist_live/show.html.heex:99
 #, elixir-autogen, elixir-format
 msgid "MusicBrainz data"
+msgstr ""
+
+#: lib/music_library_web/live/stats_live/index.html.heex:66
+#, elixir-autogen, elixir-format
+msgid "Scrobble activity"
 msgstr ""

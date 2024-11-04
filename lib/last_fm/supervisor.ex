@@ -6,15 +6,11 @@ defmodule LastFm.Supervisor do
   end
 
   @impl true
-  def init(opts) do
+  def init(_opts) do
     :ok = LastFm.Feed.create_table!()
 
-    api =
-      Keyword.fetch!(opts, :api)
-      |> IO.inspect()
-
     children = [
-      {LastFm.Refresh, %{api: api, user: "cloud8421", api_key: api_key()}}
+      {LastFm.Refresh, %{api: api(), user: "cloud8421", api_key: api_key()}}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
@@ -23,5 +19,9 @@ defmodule LastFm.Supervisor do
   defp api_key do
     Application.get_env(:music_library, LastFm, [])
     |> Keyword.get(:api_key)
+  end
+
+  defp api do
+    Application.get_env(:music_library, :last_fm, LastFm.APIImpl)
   end
 end

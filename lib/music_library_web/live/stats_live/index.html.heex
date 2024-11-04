@@ -60,3 +60,36 @@
     </div>
   </dl>
 </div>
+
+<div class="flow-root">
+  <h1 class="mt-5 text-base lg:text-2xl text-gray-900 dark:text-gray-200 font-semibold">
+    <%= gettext("Scrobble activity") %>
+  </h1>
+  <ul role="list" class="-mb-8 mt-5">
+    <li :for={{id, track} <- @recent_tracks} id={"track-#{id}"} class="group">
+      <div class="relative pb-8">
+        <span
+          class="group-last:hidden absolute left-6 top-6 -ml-px h-full w-0.5 bg-gray-200"
+          aria-hidden="true"
+        >
+        </span>
+        <div class="relative flex space-x-3 items-center">
+          <img class="h-12 w-12 rounded-md" src={track.cover_url} alt={track.title} />
+          <div class="flex min-w-0 flex-1 justify-between space-x-4">
+            <div class="font-semibold">
+              <p class="text-sm md:text-base block text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300">
+                <%= track.artist.name %>
+              </p>
+              <p class="text-sm md:text-base text-zinc-700 dark:text-zinc-300">
+                <%= track.title %>
+              </p>
+            </div>
+            <div class="whitespace-nowrap text-right text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+              <%= track.scrobbled_at_label %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

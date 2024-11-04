@@ -18,6 +18,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
     latest_record = Records.get_latest_record!()
 
+    recent_tracks = LastFm.Feed.all()
+
     {:ok,
      socket
      |> assign(
@@ -27,6 +29,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        collection_count: collection_count,
        wishlist_count: wishlist_count,
        latest_record: latest_record,
+       recent_tracks: recent_tracks,
        nav_section: :stats
      )}
   end
