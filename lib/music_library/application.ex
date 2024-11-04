@@ -15,6 +15,7 @@ defmodule MusicLibrary.Application do
        repos: Application.fetch_env!(:music_library, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:music_library, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: MusicLibrary.PubSub},
+      LastFm.Supervisor,
       # Start a worker by calling: MusicLibrary.Worker.start_link(arg)
       # {MusicLibrary.Worker, arg},
       # Start to serve requests, typically the last entry

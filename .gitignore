@@ -38,3 +38,6 @@ npm-debug.log
 # Database files
 /data/*.db
 /data/*.db-*
+
+# Environment secrets
+/.secrets
