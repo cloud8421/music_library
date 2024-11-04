@@ -65,8 +65,8 @@
   <h1 class="mt-5 text-base lg:text-2xl text-gray-900 dark:text-gray-200 font-semibold">
     <%= gettext("Scrobble activity") %>
   </h1>
-  <ul role="list" class="-mb-8 mt-5">
-    <li :for={{id, track} <- @recent_tracks} id={"track-#{id}"} class="group">
+  <ul id="scrobble-activity" role="list" class="-mb-8 mt-5" phx-update="stream">
+    <li :for={{id, track} <- @streams.recent_tracks} id={"track-#{id}"} class="group">
       <div class="relative pb-8">
         <span
           class="group-last:hidden absolute left-6 top-6 -ml-px h-full w-0.5 bg-gray-200"

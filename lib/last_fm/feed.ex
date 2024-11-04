@@ -17,11 +17,19 @@ defmodule LastFm.Feed do
     :ets.delete_all_objects(__MODULE__)
     :ets.insert(__MODULE__, data)
 
-    Phoenix.PubSub.broadcast(LastFm.PubSub, "feed:update", %{tracks: data})
+    Phoenix.PubSub.broadcast(LastFm.PubSub, "feed:update", %{tracks: tracks})
   end
 
   def all do
-    :ets.tab2list(__MODULE__)
+    m = [
+      {
+        {:_, :_},
+        [],
+        [{:element, 2, :"$_"}]
+      }
+    ]
+
+    :ets.select(__MODULE__, m)
     |> Enum.reverse()
   end
 

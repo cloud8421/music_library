@@ -26,6 +26,10 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
     {:ok,
      socket
+     |> stream_configure(:recent_tracks,
+       dom_id: fn track -> "track-#{track.scrobbled_at_uts}" end
+     )
+     |> stream(:recent_tracks, recent_tracks)
      |> assign(
        page_title: gettext("Stats"),
        collection_count_by_format: collection_count_by_format,
@@ -33,20 +37,12 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        collection_count: collection_count,
        wishlist_count: wishlist_count,
        latest_record: latest_record,
-       recent_tracks: recent_tracks,
        nav_section: :stats
      )}
   end
 
   def handle_info(%{tracks: tracks}, socket) do
-    socket =
-      if socket.assigns.recent_tracks !== tracks do
-        assign(socket, :recent_tracks, tracks)
-      else
-        socket
-      end
-
-    {:noreply, socket}
+    {:noreply, stream(socket, :recent_tracks, tracks, reset: true)}
   end
 
   # The Tailwind build step requires all needed classes to be explicitly referenced
