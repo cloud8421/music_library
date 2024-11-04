@@ -3,7 +3,7 @@ defmodule LastFm.Refresh do
 
   require Logger
 
-  alias LastFm.{API, Feed}
+  alias LastFm.Feed
 
   @refresh_interval System.convert_time_unit(30, :second, :millisecond)
 
@@ -12,7 +12,7 @@ defmodule LastFm.Refresh do
   end
 
   def init(config) do
-    if config.api_key do
+    if enabled?(config) do
       {:ok, config, {:continue, :refresh}}
     else
       :ignore
@@ -20,7 +20,7 @@ defmodule LastFm.Refresh do
   end
 
   def handle_continue(:refresh, config) do
-    case API.get_recent_tracks(config.user, config.api_key) do
+    case config.api.get_recent_tracks(config.user, config.api_key) do
       {:ok, tracks} ->
         Feed.update(tracks)
         Process.send_after(self(), :refresh, @refresh_interval)
@@ -31,5 +31,9 @@ defmodule LastFm.Refresh do
         Process.send_after(self(), :refresh, @refresh_interval)
         {:noreply, config}
     end
+  end
+
+  defp enabled?(config) do
+    config.api && config.api_key
   end
 end

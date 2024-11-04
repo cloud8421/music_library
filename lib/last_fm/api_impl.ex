@@ -1,10 +1,13 @@
-defmodule LastFm.API do
+defmodule LastFm.APIImpl do
+  @behaviour LastFm.APIBehaviour
+
   require Logger
 
   alias LastFm.Track
 
   @base_url "http://ws.audioscrobbler.com/2.0/"
 
+  @impl true
   def get_recent_tracks(user, api_key) do
     options = [
       method: "user.getrecenttracks",
