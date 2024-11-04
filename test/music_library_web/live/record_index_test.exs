@@ -5,6 +5,7 @@ defmodule MusicLibraryWeb.RecordIndexTest do
   import MusicLibrary.RecordsFixtures
   import Mox
   alias MusicLibrary.Records.Record
+  alias MusicBrainz.APIBehaviourMock
 
   setup :verify_on_exit!
 
