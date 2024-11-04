@@ -5,7 +5,7 @@ defmodule LastFm.Refresh do
 
   alias LastFm.Feed
 
-  @refresh_interval System.convert_time_unit(10, :second, :millisecond)
+  @refresh_interval System.convert_time_unit(60, :second, :millisecond)
 
   def start_link(config) do
     GenServer.start_link(__MODULE__, config, name: __MODULE__)
