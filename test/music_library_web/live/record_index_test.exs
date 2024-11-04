@@ -34,7 +34,7 @@ defmodule MusicLibraryWeb.RecordIndexTest do
       conn: conn,
       wishlist: wishlist_records
     } do
-      {:ok, index_live, html} = live(conn, ~p"/records")
+      {:ok, index_live, _html} = live(conn, ~p"/records")
 
       for record <- wishlist_records do
         refute has_element?(index_live, "#records-#{record.id}")
