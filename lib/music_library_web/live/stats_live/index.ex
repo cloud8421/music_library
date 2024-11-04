@@ -20,6 +20,10 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
     recent_tracks = LastFm.Feed.all()
 
+    if connected?(socket) do
+      LastFm.Feed.subscribe()
+    end
+
     {:ok,
      socket
      |> assign(
@@ -32,6 +36,17 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        recent_tracks: recent_tracks,
        nav_section: :stats
      )}
+  end
+
+  def handle_info(%{tracks: tracks}, socket) do
+    socket =
+      if socket.assigns.recent_tracks !== tracks do
+        assign(socket, :recent_tracks, tracks)
+      else
+        socket
+      end
+
+    {:noreply, socket}
   end
 
   # The Tailwind build step requires all needed classes to be explicitly referenced

@@ -14,11 +14,18 @@ defmodule LastFm.Feed do
   def update(tracks) do
     data = Enum.map(tracks, fn t -> {t.scrobbled_at_uts, t} end)
 
+    :ets.delete_all_objects(__MODULE__)
     :ets.insert(__MODULE__, data)
+
+    Phoenix.PubSub.broadcast(LastFm.PubSub, "feed:update", %{tracks: data})
   end
 
   def all do
     :ets.tab2list(__MODULE__)
     |> Enum.reverse()
+  end
+
+  def subscribe do
+    Phoenix.PubSub.subscribe(LastFm.PubSub, "feed:update")
   end
 end

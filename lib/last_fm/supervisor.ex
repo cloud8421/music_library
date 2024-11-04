@@ -10,6 +10,7 @@ defmodule LastFm.Supervisor do
     :ok = LastFm.Feed.create_table!()
 
     children = [
+      {Phoenix.PubSub, name: LastFm.PubSub},
       {LastFm.Refresh, %{api: api(), user: "cloud8421", api_key: api_key()}}
     ]
 
