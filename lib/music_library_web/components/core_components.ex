@@ -350,7 +350,7 @@ defmodule MusicLibraryWeb.CoreComponents do
         name={@name}
         class={[
           "mt-2 block w-full rounded-md",
-          "border border-zinc-300",
+          "border-0 border-zinc-300",
           "bg-white shadow-sm dark:bg-zinc-700",
           "ring-1 ring-inset focus:z-10 focus:ring-2 focus:ring-inset",
           "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:ring-zinc-300 focus:ring-0",
@@ -401,7 +401,7 @@ defmodule MusicLibraryWeb.CoreComponents do
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
           "mt-2 block w-full rounded-md",
-          "border border-zinc-300",
+          "border-0 border-zinc-300",
           "bg-white shadow-sm dark:bg-zinc-700",
           "ring-1 ring-inset focus:z-10 focus:ring-2 focus:ring-inset",
           "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:ring-zinc-300 focus:ring-0",
