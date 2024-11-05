@@ -29,7 +29,7 @@
 </div>
 
 <ul
-  class="divide-y divide-gray-100 dark:divide-slate-300/30 mt-5"
+  class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5"
   role="list"
   id="records"
   phx-update="stream"
@@ -37,7 +37,7 @@
   <li
     :for={{id, record} <- @streams.records}
     phx-click={JS.navigate(~p"/wishlist/#{record}")}
-    class="flex justify-between gap-x-6 py-5 hover:bg-gray-50 dark:hover:bg-zinc-700 px-2 -mx-2 md:px-4 md:-mx-4 cursor-pointer"
+    class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700 px-2 -mx-2 md:px-4 md:-mx-4 cursor-pointer"
     id={id}
   >
     <div class="flex min-w-0 gap-x-4 items-center">
@@ -107,7 +107,7 @@
         <.focus_wrap
           id={"actions-#{record.id}"}
           class={[
-            "hidden pointer-events-auto absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-zinc-800 py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none"
+            "hidden pointer-events-auto absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-zinc-800 py-2 shadow-lg ring-1 ring-zinc-900/5 focus:outline-none"
           ]}
           role="menu"
           aria-orientation="vertical"
@@ -115,7 +115,7 @@
           tabindex="-1"
         >
           <.link
-            class="block px-3 py-1 text-sm leading-6 text-gray-900 dark:text-zinc-400 hover:bg-gray-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
+            class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
             role="menuitem"
             tabindex="-1"
             id={"actions-#{record.id}-show"}
@@ -126,7 +126,7 @@
           <a
             href={musicbrainz_url(record)}
             target=".blank"
-            class="block px-3 py-1 text-sm leading-6 text-gray-900 dark:text-zinc-400 hover:bg-gray-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
+            class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
             role="menuitem"
             tabindex="-1"
             id={"actions-#{record.id}-musicbrainz"}
@@ -135,7 +135,7 @@
           </a>
 
           <.link
-            class="block px-3 py-1 text-sm leading-6 text-gray-900 dark:text-zinc-400 hover:bg-gray-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
+            class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
             role="menuitem"
             tabindex="-1"
             id={"actions-#{record.id}-edit"}
@@ -145,7 +145,7 @@
           </.link>
 
           <.link
-            class="block px-3 py-1 text-sm leading-6 text-gray-900 dark:text-zinc-400 hover:bg-gray-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
+            class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
             role="menuitem"
             tabindex="-1"
             id={"actions-#{record.id}-purchase"}

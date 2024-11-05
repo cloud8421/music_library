@@ -28,7 +28,7 @@ defmodule MusicLibraryWeb.Pagination do
             "relative inline-flex items-center rounded-md border",
             "px-3 py-2 text-sm font-medium",
             "bg-zinc-900 hover:bg-zinc-700 dark:bg-zinc-100 dark:hover:bg-zinc-400",
-            "text-white active:text-white/80 dark:text-gray-900 dark:active:text-gray-900/80",
+            "text-white active:text-white/80 dark:text-zinc-900 dark:active:text-zinc-900/80",
             "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
           ]}
         >
@@ -41,7 +41,7 @@ defmodule MusicLibraryWeb.Pagination do
             "relative ml-3 inline-flex items-center rounded-md border",
             "px-3 py-2 text-sm font-medium",
             "bg-zinc-900 hover:bg-zinc-700 dark:bg-zinc-100 dark:hover:bg-zinc-400",
-            "text-white active:text-white/80 dark:text-gray-900 dark:active:text-gray-900/80",
+            "text-white active:text-white/80 dark:text-zinc-900 dark:active:text-zinc-900/80",
             "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
           ]}
         >

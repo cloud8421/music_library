@@ -30,7 +30,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
       <ul
         :if={@release_groups !== []}
         role="list"
-        class="divide-y divide-gray-100 dark:divide-slate-300/30 mt-5"
+        class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5"
       >
         <.result :for={release_group <- @release_groups} release_group={release_group} />
       </ul>
@@ -48,7 +48,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
     ~H"""
     <li
       id={"musicbrainz_" <> @release_group.id}
-      class="flex justify-between gap-x-6 py-5 hover:bg-gray-50 dark:hover:bg-zinc-700"
+      class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700"
     >
       <div class="shrink-0 flex items-center justify-between w-full px-4">
         <div class="min-w-0 flex-auto">
@@ -94,7 +94,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
           <.focus_wrap
             id={"actions-#{@release_group.id}"}
             class={[
-              "hidden pointer-events-auto absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-zinc-800 py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none"
+              "hidden pointer-events-auto absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-zinc-800 py-2 shadow-lg ring-1 ring-zinc-900/5 focus:outline-none"
             ]}
             role="menu"
             aria-orientation="vertical"
@@ -103,7 +103,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
           >
             <.link
               :for={format <- Records.Record.formats()}
-              class="block px-3 py-1 text-sm leading-6 text-gray-900 dark:text-zinc-400 hover:bg-gray-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
+              class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
               role="menuitem"
               tabindex="-1"
               id={"actions-#{@release_group.id}-#{format}-import"}
@@ -124,7 +124,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
 
   defp type_badge(assigns) do
     ~H"""
-    <span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+    <span class="inline-flex items-center rounded-md bg-zinc-50 px-2 py-1 text-xs font-medium text-zinc-600 ring-1 ring-inset ring-zinc-500/10">
       <%= @type %>
     </span>
     """

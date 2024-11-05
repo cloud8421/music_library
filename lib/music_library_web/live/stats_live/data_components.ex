@@ -20,7 +20,7 @@ defmodule MusicLibraryWeb.StatsLive.DataComponents do
           src={~p"/covers/#{@record.id}"}
           alt={@record.title}
         />
-        <p class="ml-24 truncate text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
+        <p class="ml-24 truncate text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400">
           <%= @title %>
         </p>
       </dt>
@@ -28,12 +28,12 @@ defmodule MusicLibraryWeb.StatsLive.DataComponents do
         <p class="font-semibold">
           <.link
             :for={artist <- @record.artists}
-            class="text-sm md:text-base lg:text-2xl text-gray-900 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
+            class="text-sm md:text-base lg:text-2xl text-zinc-900 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
             patch={~p"/records?query=mbid:#{artist.musicbrainz_id}"}
           >
             <%= artist.name %>
           </.link>
-          <span class="text-sm md:text-base block text-gray-600 dark:text-gray-200">
+          <span class="text-sm md:text-base block text-zinc-600 dark:text-zinc-200">
             <%= @record.title %>
           </span>
         </p>
@@ -50,14 +50,14 @@ defmodule MusicLibraryWeb.StatsLive.DataComponents do
     ~H"""
     <div class="overflow-hidden rounded-md bg-white dark:bg-zinc-700 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6">
       <dt>
-        <p class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">
+        <p class="truncate text-sm font-medium text-zinc-500 dark:text-zinc-400">
           <%= @title %>
         </p>
       </dt>
       <dd class="flex items-baseline mt-1 pb-6 sm:pb-7">
         <a
           href={@path}
-          class="text-2xl font-semibold text-gray-900 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
+          class="text-2xl font-semibold text-zinc-900 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
         >
           <%= @count %>
         </a>
