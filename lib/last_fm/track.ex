@@ -43,7 +43,7 @@ defmodule LastFm.Track do
 
   defp parse_cover_url(track) do
     track["image"]
-    |> Enum.find(%{"#text" => nil}, fn i -> i["size"] == "small" end)
+    |> Enum.find(%{"#text" => nil}, fn i -> i["size"] == "medium" end)
     |> Map.get("#text")
   end
 

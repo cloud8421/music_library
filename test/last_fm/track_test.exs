@@ -24,7 +24,7 @@ defmodule LastFm.TrackTest do
                    title: "Machinarium Soundtrack"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/b301ac9a72f14eb4ce3ddd785eb562b2.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/b301ac9a72f14eb4ce3ddd785eb562b2.jpg",
                  scrobbled_at_uts: 1_730_678_348,
                  scrobbled_at_label: "03 Nov 2024, 23:59"
                },
@@ -40,7 +40,7 @@ defmodule LastFm.TrackTest do
                    title: "Machinarium Soundtrack"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/b301ac9a72f14eb4ce3ddd785eb562b2.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/b301ac9a72f14eb4ce3ddd785eb562b2.jpg",
                  scrobbled_at_uts: 1_730_592_942,
                  scrobbled_at_label: "03 Nov 2024, 00:15"
                },
@@ -56,7 +56,7 @@ defmodule LastFm.TrackTest do
                    title: "Machinarium Soundtrack"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/b301ac9a72f14eb4ce3ddd785eb562b2.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/b301ac9a72f14eb4ce3ddd785eb562b2.jpg",
                  scrobbled_at_uts: 1_730_592_775,
                  scrobbled_at_label: "03 Nov 2024, 00:12"
                },
@@ -72,7 +72,7 @@ defmodule LastFm.TrackTest do
                    title: "Machinarium Soundtrack"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/b301ac9a72f14eb4ce3ddd785eb562b2.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/b301ac9a72f14eb4ce3ddd785eb562b2.jpg",
                  scrobbled_at_uts: 1_730_587_431,
                  scrobbled_at_label: "02 Nov 2024, 22:43"
                },
@@ -88,7 +88,7 @@ defmodule LastFm.TrackTest do
                    title: "Machinarium Soundtrack"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/b301ac9a72f14eb4ce3ddd785eb562b2.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/b301ac9a72f14eb4ce3ddd785eb562b2.jpg",
                  scrobbled_at_uts: 1_730_587_213,
                  scrobbled_at_label: "02 Nov 2024, 22:40"
                },
@@ -104,7 +104,7 @@ defmodule LastFm.TrackTest do
                    title: "Machinarium Soundtrack"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/b301ac9a72f14eb4ce3ddd785eb562b2.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/b301ac9a72f14eb4ce3ddd785eb562b2.jpg",
                  scrobbled_at_uts: 1_730_586_978,
                  scrobbled_at_label: "02 Nov 2024, 22:36"
                },
@@ -120,7 +120,7 @@ defmodule LastFm.TrackTest do
                    title: "Machinarium Soundtrack"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/b301ac9a72f14eb4ce3ddd785eb562b2.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/b301ac9a72f14eb4ce3ddd785eb562b2.jpg",
                  scrobbled_at_uts: 1_730_586_696,
                  scrobbled_at_label: "02 Nov 2024, 22:31"
                },
@@ -136,7 +136,7 @@ defmodule LastFm.TrackTest do
                    title: "The Last Flight"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/7272b50a02fb3e35c59376d2f96cad97.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/7272b50a02fb3e35c59376d2f96cad97.jpg",
                  scrobbled_at_uts: 1_730_583_124,
                  scrobbled_at_label: "02 Nov 2024, 21:32"
                },
@@ -152,7 +152,7 @@ defmodule LastFm.TrackTest do
                    title: "The Last Flight"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/7272b50a02fb3e35c59376d2f96cad97.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/7272b50a02fb3e35c59376d2f96cad97.jpg",
                  scrobbled_at_uts: 1_730_582_915,
                  scrobbled_at_label: "02 Nov 2024, 21:28"
                },
@@ -168,7 +168,7 @@ defmodule LastFm.TrackTest do
                    title: "The Last Flight"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/7272b50a02fb3e35c59376d2f96cad97.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/7272b50a02fb3e35c59376d2f96cad97.jpg",
                  scrobbled_at_uts: 1_730_582_721,
                  scrobbled_at_label: "02 Nov 2024, 21:25"
                },
@@ -184,7 +184,7 @@ defmodule LastFm.TrackTest do
                    title: "The Last Flight"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/7272b50a02fb3e35c59376d2f96cad97.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/7272b50a02fb3e35c59376d2f96cad97.jpg",
                  scrobbled_at_uts: 1_730_582_531,
                  scrobbled_at_label: "02 Nov 2024, 21:22"
                },
@@ -200,7 +200,7 @@ defmodule LastFm.TrackTest do
                    title: "The Last Flight"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/7272b50a02fb3e35c59376d2f96cad97.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/7272b50a02fb3e35c59376d2f96cad97.jpg",
                  scrobbled_at_uts: 1_730_582_162,
                  scrobbled_at_label: "02 Nov 2024, 21:16"
                },
@@ -216,7 +216,7 @@ defmodule LastFm.TrackTest do
                    title: "The Last Flight"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/7272b50a02fb3e35c59376d2f96cad97.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/7272b50a02fb3e35c59376d2f96cad97.jpg",
                  scrobbled_at_uts: 1_730_581_791,
                  scrobbled_at_label: "02 Nov 2024, 21:09"
                },
@@ -232,7 +232,7 @@ defmodule LastFm.TrackTest do
                    title: "The Last Flight"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/7272b50a02fb3e35c59376d2f96cad97.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/7272b50a02fb3e35c59376d2f96cad97.jpg",
                  scrobbled_at_uts: 1_730_581_574,
                  scrobbled_at_label: "02 Nov 2024, 21:06"
                },
@@ -248,7 +248,7 @@ defmodule LastFm.TrackTest do
                    title: "The Last Flight"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/7272b50a02fb3e35c59376d2f96cad97.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/7272b50a02fb3e35c59376d2f96cad97.jpg",
                  scrobbled_at_uts: 1_730_581_335,
                  scrobbled_at_label: "02 Nov 2024, 21:02"
                },
@@ -264,7 +264,7 @@ defmodule LastFm.TrackTest do
                    title: "The Last Flight"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/7272b50a02fb3e35c59376d2f96cad97.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/7272b50a02fb3e35c59376d2f96cad97.jpg",
                  scrobbled_at_uts: 1_730_581_095,
                  scrobbled_at_label: "02 Nov 2024, 20:58"
                },
@@ -280,7 +280,7 @@ defmodule LastFm.TrackTest do
                    title: "The Last Flight"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/7272b50a02fb3e35c59376d2f96cad97.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/7272b50a02fb3e35c59376d2f96cad97.jpg",
                  scrobbled_at_uts: 1_730_580_883,
                  scrobbled_at_label: "02 Nov 2024, 20:54"
                },
@@ -296,7 +296,7 @@ defmodule LastFm.TrackTest do
                    title: "The Last Flight"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/7272b50a02fb3e35c59376d2f96cad97.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/7272b50a02fb3e35c59376d2f96cad97.jpg",
                  scrobbled_at_uts: 1_730_580_673,
                  scrobbled_at_label: "02 Nov 2024, 20:51"
                },
@@ -312,7 +312,7 @@ defmodule LastFm.TrackTest do
                    title: "The Last Flight"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/7272b50a02fb3e35c59376d2f96cad97.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/7272b50a02fb3e35c59376d2f96cad97.jpg",
                  scrobbled_at_uts: 1_730_580_481,
                  scrobbled_at_label: "02 Nov 2024, 20:48"
                },
@@ -328,7 +328,7 @@ defmodule LastFm.TrackTest do
                    title: "The Last Flight"
                  },
                  cover_url:
-                   "https://lastfm.freetls.fastly.net/i/u/34s/7272b50a02fb3e35c59376d2f96cad97.jpg",
+                   "https://lastfm.freetls.fastly.net/i/u/64s/7272b50a02fb3e35c59376d2f96cad97.jpg",
                  scrobbled_at_uts: 1_730_580_290,
                  scrobbled_at_label: "02 Nov 2024, 20:44"
                }
