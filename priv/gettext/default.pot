@@ -82,7 +82,8 @@ msgid "Edit"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/index.ex:118
-#: lib/music_library_web/live/wishlist_live/index.ex:115
+#: lib/music_library_web/live/wishlist_live/index.ex:114
+#: lib/music_library_web/live/wishlist_live/index.ex:121
 #, elixir-autogen, elixir-format
 msgid "Error importing record"
 msgstr ""
@@ -213,7 +214,7 @@ msgid "Record imported successfully"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/form_component.ex:117
-#: lib/music_library_web/live/wishlist_live/index.ex:128
+#: lib/music_library_web/live/wishlist_live/index.ex:134
 #, elixir-autogen, elixir-format
 msgid "Record updated successfully"
 msgstr ""
