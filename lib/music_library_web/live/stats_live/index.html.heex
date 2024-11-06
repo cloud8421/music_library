@@ -68,7 +68,7 @@
   <ul
     id="scrobble-activity"
     role="list"
-    class="-mb-8 mt-5 rounded-md px-2 py-5 sm:px-4 shadow"
+    class="-mb-8 mt-5 rounded-md px-4 py-5 shadow"
     phx-update="stream"
   >
     <li :for={{id, track} <- @streams.recent_tracks} id={id} class="group">
@@ -79,7 +79,7 @@
         >
         </span>
         <div class="relative flex space-x-3 items-center">
-          <img class="h-12 w-12 rounded-md" src={track.cover_url} alt={track.title} />
+          <img class="h-12 w-12 rounded-md shadow" src={track.cover_url} alt={track.title} />
           <div class="flex min-w-0 flex-1 justify-between space-x-4">
             <div class="font-semibold">
               <p class="text-sm md:text-base block cursor-pointer text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300">
