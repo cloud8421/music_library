@@ -24,6 +24,13 @@ config :music_library, MusicLibraryWeb.Endpoint,
   pubsub_server: MusicLibrary.PubSub,
   live_view: [signing_salt: "g/qw4SNo"]
 
+config :music_library, LastFm,
+  # to avoid runtime errors, set the user to a valid Last.fm username
+  user: "username",
+  api: LastFm.APIImpl,
+  refresh_interval: System.convert_time_unit(60, :second, :millisecond),
+  api_key: "change me"
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",

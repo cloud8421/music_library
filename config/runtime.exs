@@ -24,6 +24,10 @@ if api_key = System.get_env("LAST_FM_API_KEY") do
   config :music_library, LastFm, api_key: api_key
 end
 
+if user = System.get_env("LAST_FM_USER") do
+  config :music_library, LastFm, user: user
+end
+
 if config_env() == :prod do
   database_path =
     System.get_env("DATABASE_PATH") ||
