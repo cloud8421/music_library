@@ -62,4 +62,10 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       _other -> ""
     end
   end
+
+  defp format_scrobbled_at_uts(uts) do
+    uts
+    |> DateTime.from_unix!()
+    |> DateTime.to_iso8601()
+  end
 end
