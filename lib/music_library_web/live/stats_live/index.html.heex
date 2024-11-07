@@ -18,7 +18,7 @@
     <%= gettext("Formats") %>
   </h1>
   <dl class={[
-    "mt-5 grid divide-zinc-200 dark:divide-slate-300/50 overflow-hidden rounded-md bg-white dark:bg-zinc-700 shadow divide-x",
+    "mt-5 grid divide-zinc-200 dark:divide-slate-300/50 overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow divide-x",
     stats_class(@collection_count_by_format)
   ]}>
     <div :for={{format, count} <- @collection_count_by_format} class="px-2 py-5 sm:px-4">
@@ -42,7 +42,7 @@
     <%= gettext("Types") %>
   </h1>
   <dl class={[
-    "mt-5 grid divide-zinc-200 dark:divide-slate-300/50 overflow-hidden rounded-md bg-white dark:bg-zinc-700 shadow divide-x",
+    "mt-5 grid divide-zinc-200 dark:divide-slate-300/50 overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow divide-x",
     stats_class(@collection_count_by_type)
   ]}>
     <div :for={{type, count} <- @collection_count_by_type} class="px-2 py-5 sm:px-4">

@@ -242,7 +242,7 @@ defmodule MusicLibraryWeb.CoreComponents do
       class={[
         "phx-submit-loading:opacity-75 rounded-md py-2 px-3",
         "text-sm font-semibold leading-6 ",
-        "bg-zinc-900 hover:bg-zinc-700 dark:bg-zinc-100 dark:hover:bg-zinc-400",
+        "bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-400",
         "text-white active:text-white/80 dark:text-zinc-900 dark:active:text-zinc-900/80",
         "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600",
         @class
@@ -351,7 +351,7 @@ defmodule MusicLibraryWeb.CoreComponents do
         class={[
           "mt-2 block w-full rounded-md",
           "border-0 border-zinc-300",
-          "bg-white shadow-sm dark:bg-zinc-700",
+          "bg-white shadow-sm dark:bg-zinc-800",
           "ring-1 ring-inset focus:z-10 focus:ring-2 focus:ring-inset",
           "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:ring-zinc-300 focus:ring-0",
           "sm:text-sm",
@@ -402,7 +402,7 @@ defmodule MusicLibraryWeb.CoreComponents do
         class={[
           "mt-2 block w-full rounded-md",
           "border-0 border-zinc-300",
-          "bg-white shadow-sm dark:bg-zinc-700",
+          "bg-white shadow-sm dark:bg-zinc-800",
           "ring-1 ring-inset focus:z-10 focus:ring-2 focus:ring-inset",
           "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:ring-zinc-300 focus:ring-0",
           "sm:text-sm",

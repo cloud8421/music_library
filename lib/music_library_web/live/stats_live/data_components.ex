@@ -9,7 +9,7 @@ defmodule MusicLibraryWeb.StatsLive.DataComponents do
     ~H"""
     <div
       class={[
-        "relative overflow-hidden rounded-md bg-white dark:bg-zinc-700 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6 cursor-pointer",
+        "relative overflow-hidden rounded-md bg-white dark:bg-zinc-800 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6 cursor-pointer",
         @class
       ]}
       phx-click={JS.navigate(~p"/records/#{@record}")}
@@ -48,7 +48,7 @@ defmodule MusicLibraryWeb.StatsLive.DataComponents do
 
   def counter(assigns) do
     ~H"""
-    <div class="overflow-hidden rounded-md bg-white dark:bg-zinc-700 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6">
+    <div class="overflow-hidden rounded-md bg-white dark:bg-zinc-800 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6">
       <dt>
         <p class="truncate text-sm font-medium text-zinc-500 dark:text-zinc-400">
           <%= @title %>
