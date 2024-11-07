@@ -249,7 +249,7 @@ defmodule MusicBrainz.APIImpl do
 
     Logger.debug("Fetching data from #{url}")
 
-    case Finch.request(req, MusicLibrary.Finch) do
+    case Finch.request(req, MusicBrainz.Finch) do
       {:ok, response} when response.status == 200 ->
         {:ok, Jason.decode!(response.body)}
 
@@ -268,7 +268,7 @@ defmodule MusicBrainz.APIImpl do
 
     Logger.debug("Fetching data from #{url}")
 
-    case Finch.request(req, MusicLibrary.Finch) do
+    case Finch.request(req, MusicBrainz.Finch) do
       {:ok, response} when response.status == 200 ->
         {:ok, response.body}
 

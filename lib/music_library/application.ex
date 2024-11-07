@@ -10,11 +10,11 @@ defmodule MusicLibrary.Application do
     children = [
       MusicLibraryWeb.Telemetry,
       MusicLibrary.Repo,
-      {Finch, name: MusicLibrary.Finch},
       {Ecto.Migrator,
        repos: Application.fetch_env!(:music_library, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:music_library, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: MusicLibrary.PubSub},
+      MusicBrainz.Supervisor,
       {LastFm.Supervisor, last_fm_config()},
       # Start a worker by calling: MusicLibrary.Worker.start_link(arg)
       # {MusicLibrary.Worker, arg},
