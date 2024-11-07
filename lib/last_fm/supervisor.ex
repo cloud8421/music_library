@@ -10,6 +10,7 @@ defmodule LastFm.Supervisor do
     :ok = LastFm.Feed.create_table!()
 
     children = [
+      {Finch, name: LastFm.Finch},
       {Phoenix.PubSub, name: LastFm.PubSub},
       {LastFm.Refresh, config}
     ]

@@ -41,7 +41,7 @@ defmodule LastFm.APIImpl do
         {"User-Agent", "MusicLibrary/0.1.0 ( cloud8421@gmail.com )"}
       ])
 
-    case Finch.request(req, MusicLibrary.Finch) do
+    case Finch.request(req, LastFm.Finch) do
       {:ok, response} when response.status == 200 ->
         Jason.decode(response.body)
 
