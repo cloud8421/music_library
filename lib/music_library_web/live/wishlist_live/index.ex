@@ -99,7 +99,10 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
   end
 
   def handle_event("import", %{"id" => musicbrainz_id, "format" => format}, socket) do
-    case Records.import_from_musicbrainz(musicbrainz_id, format: format, purchased_at: nil) do
+    case Records.import_from_musicbrainz_release_group(musicbrainz_id,
+           format: format,
+           purchased_at: nil
+         ) do
       {:ok, record} ->
         {:noreply,
          socket

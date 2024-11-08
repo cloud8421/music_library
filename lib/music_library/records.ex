@@ -116,14 +116,14 @@ defmodule MusicLibrary.Records do
     case musicbrainz().get_release(musicbrainz_id) do
       {:ok, release} ->
         release_group_id = release["release-group"]["id"]
-        import_from_musicbrainz(release_group_id, opts)
+        import_from_musicbrainz_release_group(release_group_id, opts)
 
       error ->
         error
     end
   end
 
-  def import_from_musicbrainz(musicbrainz_id, opts \\ []) do
+  def import_from_musicbrainz_release_group(musicbrainz_id, opts \\ []) do
     with format = Keyword.get(opts, :format, "cd"),
          purchased_at = Keyword.get(opts, :purchased_at),
          {:ok, release_group} <- musicbrainz().get_release_group(musicbrainz_id),

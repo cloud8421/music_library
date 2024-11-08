@@ -84,8 +84,8 @@ msgstr ""
 #: lib/music_library_web/live/record_live/index.ex:118
 #: lib/music_library_web/live/stats_live/index.ex:60
 #: lib/music_library_web/live/stats_live/index.ex:67
-#: lib/music_library_web/live/wishlist_live/index.ex:114
-#: lib/music_library_web/live/wishlist_live/index.ex:121
+#: lib/music_library_web/live/wishlist_live/index.ex:117
+#: lib/music_library_web/live/wishlist_live/index.ex:124
 #, elixir-autogen, elixir-format
 msgid "Error importing record"
 msgstr ""
@@ -212,13 +212,13 @@ msgstr ""
 
 #: lib/music_library_web/live/record_live/index.ex:109
 #: lib/music_library_web/live/stats_live/index.ex:52
-#: lib/music_library_web/live/wishlist_live/index.ex:106
+#: lib/music_library_web/live/wishlist_live/index.ex:109
 #, elixir-autogen, elixir-format
 msgid "Record imported successfully"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/form_component.ex:117
-#: lib/music_library_web/live/wishlist_live/index.ex:134
+#: lib/music_library_web/live/wishlist_live/index.ex:137
 #, elixir-autogen, elixir-format
 msgid "Record updated successfully"
 msgstr ""
