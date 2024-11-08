@@ -112,6 +112,17 @@ defmodule MusicLibrary.Records do
     musicbrainz().search_release_group(query, limit: limit, offset: offset)
   end
 
+  def import_from_musicbrainz_release(musicbrainz_id, opts \\ []) do
+    case musicbrainz().get_release(musicbrainz_id) do
+      {:ok, release} ->
+        release_group_id = release["release-group"]["id"]
+        import_from_musicbrainz(release_group_id, opts)
+
+      error ->
+        error
+    end
+  end
+
   def import_from_musicbrainz(musicbrainz_id, opts \\ []) do
     with format = Keyword.get(opts, :format, "cd"),
          purchased_at = Keyword.get(opts, :purchased_at),

@@ -86,6 +86,77 @@ defmodule MusicBrainz.APIImpl do
   end
 
   @doc """
+  Uses the [lookup](https://musicbrainz.org/doc/MusicBrainz_API#Lookups) endpoint with the release id and include the
+  release group.
+
+  Example request: https://musicbrainz.org/ws/2/release/a444b9ca-865d-4f78-a7d9-7e68999e2ca9?fmt=json&inc=release-groups
+
+  Example response:
+      {
+        "asin": null,
+        "barcode": null,
+        "country": "XW",
+        "cover-art-archive": {
+          "artwork": true,
+          "back": false,
+          "count": 1,
+          "darkened": false,
+          "front": true
+        },
+        "date": "2022-05-05",
+        "disambiguation": "",
+        "id": "a444b9ca-865d-4f78-a7d9-7e68999e2ca9",
+        "packaging": null,
+        "packaging-id": null,
+        "quality": "normal",
+        "release-events": [
+          {
+            "area": {
+              "disambiguation": "",
+              "id": "525d4e18-3d00-31b9-a58b-a146a916de8f",
+              "iso-3166-1-codes": [
+                "XW"
+              ],
+              "name": "[Worldwide]",
+              "sort-name": "[Worldwide]",
+              "type": null,
+              "type-id": null
+            },
+            "date": "2022-05-05"
+          }
+        ],
+        "release-group": {
+          "disambiguation": "",
+          "first-release-date": "2022-05-05",
+          "id": "6916dd75-e196-4d2f-986f-345579290043",
+          "primary-type": "Album",
+          "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+          "secondary-type-ids": [
+            "22a628ad-c082-3c4f-b1b6-d41665107b88"
+          ],
+          "secondary-types": [
+            "Soundtrack"
+          ],
+          "title": "Clark (A Dramatic Score From the Netflix Series)"
+        },
+        "status": "Official",
+        "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+        "text-representation": {
+          "language": null,
+          "script": null
+        },
+        "title": "Clark (Soundtrack From the Netflix Series)"
+      }
+  """
+  @impl true
+  def get_release(id) do
+    url =
+      "https://musicbrainz.org/ws/2/release/#{id}?fmt=json&inc=release-groups"
+
+    json_get(url)
+  end
+
+  @doc """
   Uses the [search](https://musicbrainz.org/doc/MusicBrainz_API/Search#Release_Group) endpoint with a search query string.
 
   Note that the returned release groups are different from a lookup result

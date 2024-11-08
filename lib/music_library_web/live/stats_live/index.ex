@@ -41,6 +41,34 @@ defmodule MusicLibraryWeb.StatsLive.Index do
      )}
   end
 
+  def handle_event("import", %{"id" => musicbrainz_id, "format" => format}, socket) do
+    case Records.import_from_musicbrainz_release(musicbrainz_id,
+           format: format,
+           purchased_at: nil
+         ) do
+      {:ok, record} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, gettext("Record imported successfully"))
+         |> push_navigate(to: ~p"/wishlist/#{record.id}")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           gettext("Error importing record") <> "," <> inspect(changeset.errors)
+         )
+         |> push_patch(to: ~p"/wishlist")}
+
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, gettext("Error importing record") <> "," <> inspect(reason))
+         |> push_patch(to: ~p"/wishlist")}
+    end
+  end
+
   def handle_info(%{tracks: tracks}, socket) do
     {:noreply, stream(socket, :recent_tracks, tracks, reset: true)}
   end
@@ -67,5 +95,15 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     uts
     |> DateTime.from_unix!()
     |> DateTime.to_iso8601()
+  end
+
+  defp toggle_actions_menu(track_id) do
+    JS.toggle(to: "#actions-#{track_id}")
+    |> JS.toggle_class("pointer-events-none", to: "#scrobble-activity > li")
+  end
+
+  def close_actions_menu(track_id) do
+    JS.hide(to: "#actions-#{track_id}")
+    |> JS.remove_class("pointer-events-none", to: "#scrobble-activity > li")
   end
 end
