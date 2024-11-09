@@ -74,12 +74,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
             phx-click-away={close_actions_menu(@release_group.id)}
           >
             <span class="sr-only"><%= gettext("Open options") %></span>
-            <.icon
-              name="hero-ellipsis-vertical"
-              class="-mt-1 h-5 w-5"
-              aria-hidden="true"
-              data-slot="icon"
-            />
+            <.icon name="hero-plus" class="-mt-1 h-5 w-5" aria-hidden="true" data-slot="icon" />
           </button>
           <!--
           Dropdown menu, show/hide based on menu state.
