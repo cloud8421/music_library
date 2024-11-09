@@ -449,6 +449,11 @@ defmodule MusicBrainz.APIImpl do
       {:ok, response} when response.status == 200 ->
         {:ok, Jason.decode!(response.body)}
 
+      {:ok, response} when response.status in 301..308 ->
+        location = :proplists.get_value("location", response.headers)
+        Logger.debug("Following redirect to #{location}")
+        json_get(location)
+
       other ->
         msg = "Failed to fetch data from #{url}, reason: #{inspect(other)}"
         Logger.error(msg)
