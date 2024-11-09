@@ -116,6 +116,15 @@ defmodule MusicLibrary.Records.Importer do
     end)
   end
 
+  def refresh_musicbrainz_data do
+    Rec
+    |> Repo.all()
+    |> Enum.each(fn r ->
+      import_musicbrainz_data(r)
+      Process.sleep(1000)
+    end)
+  end
+
   def import_musicbrainz_data(record) do
     with {:ok, data} <- musicbrainz().get_release_group(record.musicbrainz_id) do
       record
