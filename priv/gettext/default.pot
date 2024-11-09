@@ -171,12 +171,11 @@ msgstr ""
 msgid "No cover selected"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/import_component.ex:41
+#: lib/music_library_web/live/record_live/import_component.ex:45
 #, elixir-autogen, elixir-format
 msgid "No results"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/import_component.ex:76
 #: lib/music_library_web/live/record_live/index.html.heex:89
 #: lib/music_library_web/live/stats_live/index.html.heex:112
 #: lib/music_library_web/live/wishlist_live/index.html.heex:89
@@ -366,4 +365,9 @@ msgstr ""
 #: lib/music_library_web/live/stats_live/index.html.heex:66
 #, elixir-autogen, elixir-format
 msgid "Scrobble activity"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/import_component.ex:80
+#, elixir-autogen, elixir-format
+msgid "Choose which format to import"
 msgstr ""

@@ -32,7 +32,11 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
         role="list"
         class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5"
       >
-        <.result :for={release_group <- @release_groups} release_group={release_group} />
+        <.result
+          :for={release_group <- @release_groups}
+          release_group={release_group}
+          icon_name={@icon_name}
+        />
       </ul>
       <div
         :if={@release_groups == []}
@@ -73,8 +77,8 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
             phx-click={toggle_actions_menu(@release_group.id)}
             phx-click-away={close_actions_menu(@release_group.id)}
           >
-            <span class="sr-only"><%= gettext("Open options") %></span>
-            <.icon name="hero-plus" class="-mt-1 h-5 w-5" aria-hidden="true" data-slot="icon" />
+            <span class="sr-only"><%= gettext("Choose which format to import") %></span>
+            <.icon name={@icon_name} class="-mt-1 h-5 w-5" aria-hidden="true" data-slot="icon" />
           </button>
           <!--
           Dropdown menu, show/hide based on menu state.
