@@ -178,7 +178,7 @@ msgstr ""
 
 #: lib/music_library_web/live/record_live/import_component.ex:76
 #: lib/music_library_web/live/record_live/index.html.heex:89
-#: lib/music_library_web/live/stats_live/index.html.heex:108
+#: lib/music_library_web/live/stats_live/index.html.heex:109
 #: lib/music_library_web/live/wishlist_live/index.html.heex:89
 #, elixir-autogen, elixir-format
 msgid "Open options"
