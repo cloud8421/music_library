@@ -29,8 +29,7 @@ defmodule LastFm.Feed do
       }
     ]
 
-    :ets.select(__MODULE__, m)
-    |> Enum.reverse()
+    :ets.select_reverse(__MODULE__, m)
   end
 
   def subscribe do
