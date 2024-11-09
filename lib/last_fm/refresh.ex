@@ -21,22 +21,12 @@ defmodule LastFm.Refresh do
   end
 
   @impl true
-  def handle_continue(:refresh, config) do
-    case config.api.get_recent_tracks(config.user, config.api_key) do
-      {:ok, tracks} ->
-        Feed.update(tracks)
-        Process.send_after(self(), :refresh, config.refresh_interval)
-        {:noreply, config}
-
-      {:error, _reason} ->
-        # TODO: think about failure scenario - error is logged at the API level
-        Process.send_after(self(), :refresh, config.refresh_interval)
-        {:noreply, config}
-    end
-  end
+  def handle_continue(:refresh, config), do: refresh(config)
 
   @impl true
-  def handle_info(:refresh, config) do
+  def handle_info(:refresh, config), do: refresh(config)
+
+  defp refresh(config) do
     case config.api.get_recent_tracks(config.user, config.api_key) do
       {:ok, tracks} ->
         Feed.update(tracks)
