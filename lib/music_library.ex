@@ -1,9 +1,9 @@
 defmodule MusicLibrary do
   @moduledoc """
-  MusicLibrary keeps the contexts that define your domain
-  and business logic.
+  Important contexts:
 
-  Contexts are also responsible for managing your data, regardless
-  if it comes from the database, an external API or others.
+  - `MusicLibrary.Records` contains functions to access and manipulate records _irrespectively_ of being in the collection or wishlist
+  - `MusicLibrary.Collection` contains functions to access and manipulate records in the collection
+  - `MusicLibrary.Wishlist` contains functions to access and manipulate records in the wishlist
   """
 end
