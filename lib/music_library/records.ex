@@ -1,4 +1,8 @@
 defmodule MusicLibrary.Records do
+  @moduledoc """
+  Provides function to work with records _irrespectively_ of their status as port of the collection or of the wishlist.
+  """
+
   import Ecto.Query, warn: false
   alias MusicLibrary.Repo
 
@@ -97,8 +101,13 @@ defmodule MusicLibrary.Records do
          purchased_at = Keyword.get(opts, :purchased_at),
          {:ok, release_group} <- musicbrainz().get_release_group(musicbrainz_id),
          {:ok, cover_data} <- musicbrainz().get_cover_art({:musicbrainz_id, musicbrainz_id}),
-         record_params = build_record_params(release_group, cover_data, format, purchased_at) do
-      create_record(record_params)
+         record_attrs =
+           build_record_attrs(release_group, %{
+             "cover_data" => cover_data,
+             "format" => format,
+             "purchased_at" => purchased_at
+           }) do
+      create_record(record_attrs)
     else
       error -> error
     end
@@ -115,7 +124,7 @@ defmodule MusicLibrary.Records do
     end
   end
 
-  defp build_record_params(release_group, cover_data, format, purchased_at) do
+  defp build_record_attrs(release_group, attrs) do
     musicbrainz_id = release_group["id"]
 
     artists_attrs =
@@ -130,19 +139,19 @@ defmodule MusicLibrary.Records do
         }
       end)
 
-    %{
-      "musicbrainz_id" => musicbrainz_id,
-      "musicbrainz_data" => release_group,
-      "title" => release_group["title"],
-      "artists" => artists_attrs,
-      "release" => release_group["first-release-date"],
-      "type" => parse_subtype(release_group["primary-type"]),
-      "format" => format,
-      "genres" => Enum.map(release_group["genres"], fn g -> g["name"] end),
-      "cover_url" => "https://coverartarchive.org/release-group/#{musicbrainz_id}/front",
-      "cover_data" => cover_data,
-      "purchased_at" => purchased_at
-    }
+    Map.merge(
+      attrs,
+      %{
+        "musicbrainz_id" => musicbrainz_id,
+        "musicbrainz_data" => release_group,
+        "title" => release_group["title"],
+        "artists" => artists_attrs,
+        "release" => release_group["first-release-date"],
+        "type" => parse_subtype(release_group["primary-type"]),
+        "genres" => Enum.map(release_group["genres"], fn g -> g["name"] end),
+        "cover_url" => "https://coverartarchive.org/release-group/#{musicbrainz_id}/front"
+      }
+    )
   end
 
   defp parse_subtype("Album"), do: :album
