@@ -1,4 +1,4 @@
-defmodule MusicLibrary.Records.Importer do
+defmodule MusicLibrary.Records.Batch do
   require Logger
   import Ecto.Query, warn: false
 
