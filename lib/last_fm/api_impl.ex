@@ -14,7 +14,7 @@ defmodule LastFm.APIImpl do
       user: user,
       api_key: api_key,
       format: "json",
-      limit: 20
+      limit: 50
     ]
 
     url = @base_url <> "?" <> URI.encode_query(options)
