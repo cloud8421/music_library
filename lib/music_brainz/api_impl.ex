@@ -421,17 +421,19 @@ defmodule MusicBrainz.APIImpl do
   Uses the [cover art](https://musicbrainz.org/doc/Cover_Art_Archive/API) endpoint with the release group id to get the cover image.
   """
   @impl true
-  def get_cover_art(musicbrainz_id) do
+  def get_cover_art({:musicbrainz_id, musicbrainz_id}) do
     url = "https://coverartarchive.org/release-group/#{musicbrainz_id}/front"
 
+    get_cover_art({:url, url})
+  end
+
+  def get_cover_art({:url, url}) do
     with {:ok, cover_data} <- blob_get(url),
          {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(cover_data, 400) do
       Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
     else
       {:error, reason} ->
-        Logger.error(
-          "Failed to fetch cover art for #{musicbrainz_id}, reason: #{inspect(reason)}"
-        )
+        Logger.error("Failed to fetch cover art for #{url}, reason: #{inspect(reason)}")
 
         {:ok, @fallback_cover}
     end

@@ -393,7 +393,7 @@ defmodule MusicLibraryWeb.RecordIndexTest do
 
       cover_data = File.read!(marbles_cover_fixture())
 
-      expect(APIBehaviourMock, :get_cover_art, fn ^first_result_id ->
+      expect(APIBehaviourMock, :get_cover_art, fn {:musicbrainz_id, ^first_result_id} ->
         {:ok, cover_data}
       end)
 

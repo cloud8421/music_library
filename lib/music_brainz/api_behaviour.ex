@@ -7,5 +7,6 @@ defmodule MusicBrainz.APIBehaviour do
 
   @callback search_release_group(String.t(), Keyword.t()) :: {:ok, [map()]} | {:error, String.t()}
 
-  @callback get_cover_art(musicbrainz_id) :: {:ok, binary()} | {:error, String.t()}
+  @callback get_cover_art({:musicbrainz_id, musicbrainz_id()} | {:url, String.t()}) ::
+              {:ok, binary()} | {:error, String.t()}
 end

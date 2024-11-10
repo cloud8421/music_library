@@ -96,11 +96,22 @@ defmodule MusicLibrary.Records do
     with format = Keyword.get(opts, :format, "cd"),
          purchased_at = Keyword.get(opts, :purchased_at),
          {:ok, release_group} <- musicbrainz().get_release_group(musicbrainz_id),
-         {:ok, cover_data} <- musicbrainz().get_cover_art(musicbrainz_id),
+         {:ok, cover_data} <- musicbrainz().get_cover_art({:musicbrainz_id, musicbrainz_id}),
          record_params = build_record_params(release_group, cover_data, format, purchased_at) do
       create_record(record_params)
     else
       error -> error
+    end
+  end
+
+  def refresh_cover(record) do
+    with {:ok, cover_data} <- musicbrainz().get_cover_art({:url, record.cover_url}) do
+      {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(cover_data, 400)
+      {:ok, thumb_data} = Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
+
+      record
+      |> Record.add_cover_data(thumb_data)
+      |> Repo.update!()
     end
   end
 
