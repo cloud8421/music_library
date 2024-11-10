@@ -37,13 +37,11 @@ defmodule MusicLibrary.Collection do
   end
 
   def get_latest_record! do
-    fields = Records.minimal_record_fields()
-
     q =
       from r in base_search(),
         order_by: [desc: r.purchased_at],
         limit: 1,
-        select: ^fields
+        select: ^Records.essential_fields()
 
     Repo.one!(q)
   end

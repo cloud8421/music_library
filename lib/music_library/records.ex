@@ -8,9 +8,19 @@ defmodule MusicLibrary.Records do
 
   alias MusicLibrary.Records.{Record, SearchParser}
 
-  @fields [:id, :type, :artists, :format, :title, :release, :genres, :musicbrainz_id, :cover_hash]
-
-  def minimal_record_fields, do: @fields
+  def essential_fields do
+    [
+      :id,
+      :type,
+      :artists,
+      :format,
+      :title,
+      :release,
+      :genres,
+      :musicbrainz_id,
+      :cover_hash
+    ]
+  end
 
   def search_records(initial_search, query, opts) do
     limit = Keyword.fetch!(opts, :limit)
@@ -21,7 +31,7 @@ defmodule MusicLibrary.Records do
       |> build_search(query)
       |> limit(^limit)
       |> offset(^offset)
-      |> select(^@fields)
+      |> select(^essential_fields())
 
     Repo.all(search)
   end
