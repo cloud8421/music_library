@@ -51,7 +51,7 @@ msgid "Choose a value"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:13
-#: lib/music_library_web/live/record_live/index.ex:71
+#: lib/music_library_web/live/record_live/index.ex:74
 #, elixir-autogen, elixir-format
 msgid "Collection"
 msgstr ""
@@ -69,7 +69,7 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/index.ex:54
+#: lib/music_library_web/live/record_live/index.ex:55
 #: lib/music_library_web/live/record_live/index.html.heex:144
 #: lib/music_library_web/live/record_live/show.ex:50
 #: lib/music_library_web/live/record_live/show.html.heex:4
@@ -81,7 +81,7 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/index.ex:118
+#: lib/music_library_web/live/record_live/index.ex:121
 #: lib/music_library_web/live/stats_live/index.ex:60
 #: lib/music_library_web/live/stats_live/index.ex:66
 #: lib/music_library_web/live/wishlist_live/index.ex:117
@@ -122,7 +122,7 @@ msgstr ""
 msgid "Import"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/index.ex:40
+#: lib/music_library_web/live/record_live/index.ex:41
 #: lib/music_library_web/live/wishlist_live/index.ex:41
 #, elixir-autogen, elixir-format
 msgid "Import from MusicBrainz"
@@ -209,7 +209,7 @@ msgstr ""
 msgid "Purchased on"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/index.ex:109
+#: lib/music_library_web/live/record_live/index.ex:112
 #: lib/music_library_web/live/stats_live/index.ex:52
 #: lib/music_library_web/live/wishlist_live/index.ex:109
 #, elixir-autogen, elixir-format
@@ -283,7 +283,7 @@ msgstr ""
 msgid "Success!"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/index.ex:17
+#: lib/music_library_web/live/record_live/index.ex:18
 #: lib/music_library_web/live/record_live/show.ex:19
 #: lib/music_library_web/live/wishlist_live/index.ex:18
 #: lib/music_library_web/live/wishlist_live/show.ex:19

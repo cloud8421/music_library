@@ -3,20 +3,20 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
   import MusicLibraryWeb.StatsLive.DataComponents
 
-  alias MusicLibrary.{Records, Wishlist}
+  alias MusicLibrary.{Collection, Records, Wishlist}
   alias Records.Record
 
   def mount(_params, _session, socket) do
-    collection_count_by_format = Records.count_records_by_format()
+    collection_count_by_format = Collection.count_records_by_format()
 
-    collection_count_by_type = Records.count_records_by_type()
+    collection_count_by_type = Collection.count_records_by_type()
 
     collection_count =
       Enum.reduce(collection_count_by_format, 0, fn {_, count}, acc -> acc + count end)
 
     wishlist_count = Wishlist.count()
 
-    latest_record = Records.get_latest_record!()
+    latest_record = Collection.get_latest_record!()
 
     recent_tracks = LastFm.Feed.all()
 

@@ -3,6 +3,7 @@ defmodule MusicLibraryWeb.RecordLive.Index do
   import MusicLibraryWeb.Pagination
 
   alias MusicLibrary.Records
+  alias MusicLibrary.Collection
 
   @default_records_list_params %{
     query: "",
@@ -57,7 +58,7 @@ defmodule MusicLibraryWeb.RecordLive.Index do
 
   defp apply_action(socket, :index, params) do
     query = params["query"] || ""
-    total_records = Records.search_records_count(query)
+    total_records = Collection.search_records_count(query)
 
     record_list_params =
       @default_records_list_params
@@ -65,7 +66,9 @@ defmodule MusicLibraryWeb.RecordLive.Index do
       |> merge_pagination(params, total_records)
 
     offset = page_to_offset(record_list_params.page, record_list_params.page_size)
-    records = Records.search_records(query, limit: record_list_params.page_size, offset: offset)
+
+    records =
+      Collection.search_records(query, limit: record_list_params.page_size, offset: offset)
 
     socket
     |> assign(:page_title, gettext("Collection"))

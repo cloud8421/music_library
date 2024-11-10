@@ -6,13 +6,15 @@ defmodule MusicLibrary.Records do
 
   @fields [:id, :type, :artists, :format, :title, :release, :genres, :musicbrainz_id, :cover_hash]
 
-  def search_records(query, opts \\ []) do
-    limit = Keyword.get(opts, :limit, 20)
-    offset = Keyword.get(opts, :offset, 0)
+  def minimal_record_fields, do: @fields
+
+  def search_records(initial_search, query, opts) do
+    limit = Keyword.fetch!(opts, :limit)
+    offset = Keyword.fetch!(opts, :offset)
 
     search =
-      query
-      |> build_search()
+      initial_search
+      |> build_search(query)
       |> limit(^limit)
       |> offset(^offset)
       |> select(^@fields)
@@ -20,24 +22,24 @@ defmodule MusicLibrary.Records do
     Repo.all(search)
   end
 
-  def search_records_count(query) do
-    search = build_search(query)
+  def search_records_count(initial_search, query) do
+    search = build_search(initial_search, query)
 
     Repo.aggregate(search, :count)
   end
 
-  defp build_search(query) do
+  defp build_search(initial_search, query) do
     {:ok, parsed_query} = SearchParser.parse(query)
 
-    base_search =
-      from r in Record,
-        where: not is_nil(r.purchased_at),
-        order_by:
-          fragment(
-            "json_extract(artists, '$[0].sort_name') COLLATE NOCASE ASC, title COLLATE NOCASE ASC"
-          )
+    search_with_order =
+      initial_search
+      |> order_by(
+        fragment(
+          "json_extract(artists, '$[0].sort_name') COLLATE NOCASE ASC, title COLLATE NOCASE ASC"
+        )
+      )
 
-    Enum.reduce(parsed_query, base_search, fn
+    Enum.reduce(parsed_query, search_with_order, fn
       {:artist, artist}, search ->
         search |> where([r], like(r.artists, ^"%#{artist}%"))
 
@@ -62,40 +64,7 @@ defmodule MusicLibrary.Records do
     end)
   end
 
-  def count_records_by_format do
-    q =
-      from r in Record,
-        where: not is_nil(r.purchased_at),
-        group_by: r.format,
-        order_by: [desc: count(r.id)],
-        select: {r.format, count(r.id)}
-
-    Repo.all(q)
-  end
-
-  def count_records_by_type do
-    q =
-      from r in Record,
-        where: not is_nil(r.purchased_at),
-        group_by: r.type,
-        order_by: [desc: count(r.id)],
-        select: {r.type, count(r.id)}
-
-    Repo.all(q)
-  end
-
   def get_record!(id), do: Repo.get!(Record, id)
-
-  def get_latest_record! do
-    q =
-      from r in Record,
-        where: not is_nil(r.purchased_at),
-        order_by: [desc: r.purchased_at],
-        limit: 1,
-        select: ^@fields
-
-    Repo.one!(q)
-  end
 
   def get_cover(id) do
     q =
