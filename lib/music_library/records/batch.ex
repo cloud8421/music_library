@@ -2,11 +2,11 @@ defmodule MusicLibrary.Records.Batch do
   require Logger
   import Ecto.Query, warn: false
 
-  alias MusicLibrary.Records.Record, as: Rec
+  alias MusicLibrary.Records.Record
   alias MusicLibrary.Repo
 
   def import_all_artists do
-    Rec
+    Record
     |> Repo.all()
     |> Enum.each(fn r ->
       import_artists(r)
@@ -15,7 +15,7 @@ defmodule MusicLibrary.Records.Batch do
   end
 
   def import_missing_artists do
-    q = from(r in Rec, where: is_nil(r.artists))
+    q = from(r in Record, where: is_nil(r.artists))
 
     q
     |> Repo.all()
@@ -40,7 +40,7 @@ defmodule MusicLibrary.Records.Batch do
         end)
 
       record
-      |> Rec.add_artists(artists_attrs)
+      |> Record.add_artists(artists_attrs)
       |> Repo.update!()
     end
   end
@@ -55,7 +55,7 @@ defmodule MusicLibrary.Records.Batch do
       {:ok, thumb_data} = Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
 
       record
-      |> Rec.add_cover_data(thumb_data)
+      |> Record.add_cover_data(thumb_data)
       |> Repo.update!()
     end
   end
@@ -68,12 +68,12 @@ defmodule MusicLibrary.Records.Batch do
     {:ok, thumb_data} = Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
 
     record
-    |> Rec.add_cover_data(thumb_data)
+    |> Record.add_cover_data(thumb_data)
     |> Repo.update!()
   end
 
   def import_all_covers do
-    Rec
+    Record
     |> Repo.all()
     |> Enum.each(fn r ->
       if r.cover_data == nil do
@@ -84,7 +84,7 @@ defmodule MusicLibrary.Records.Batch do
   end
 
   def resize_all_covers do
-    Rec
+    Record
     |> Repo.all()
     |> Enum.each(fn r ->
       if r.cover_data != nil do
@@ -95,7 +95,7 @@ defmodule MusicLibrary.Records.Batch do
   end
 
   def generate_all_cover_hashes do
-    Rec
+    Record
     |> Repo.all()
     |> Enum.each(fn r ->
       if r.cover_data != nil do
@@ -106,7 +106,7 @@ defmodule MusicLibrary.Records.Batch do
   end
 
   def import_missing_musicbrainz_data do
-    q = from(r in Rec, where: is_nil(r.musicbrainz_data))
+    q = from(r in Record, where: is_nil(r.musicbrainz_data))
 
     q
     |> Repo.all()
@@ -117,7 +117,7 @@ defmodule MusicLibrary.Records.Batch do
   end
 
   def refresh_musicbrainz_data do
-    Rec
+    Record
     |> Repo.all()
     |> Enum.each(fn r ->
       import_musicbrainz_data(r)
@@ -128,14 +128,14 @@ defmodule MusicLibrary.Records.Batch do
   def import_musicbrainz_data(record) do
     with {:ok, data} <- musicbrainz().get_release_group(record.musicbrainz_id) do
       record
-      |> Rec.add_musicbrainz_data(data)
+      |> Record.add_musicbrainz_data(data)
       |> Repo.update!()
     end
   end
 
   def generate_cover_hash(record) do
     record
-    |> Rec.generate_cover_hash()
+    |> Record.generate_cover_hash()
     |> Repo.update!()
   end
 
