@@ -1,0 +1,70 @@
+defmodule MusicLibrary.CollectionTest do
+  use MusicLibrary.DataCase
+
+  alias MusicLibrary.Collection
+  import MusicLibrary.RecordsFixtures
+
+  defp fill_collection(_) do
+    records = [
+      record_fixture(%{title: "Brave", format: :cd, type: :album}),
+      record_fixture(%{title: "Brave", format: :vinyl, type: :live}),
+      record_fixture(%{format: :vinyl, type: :ep}),
+      record_fixture(%{title: "Brave", format: :dvd, purchased_at: nil, type: :live})
+    ]
+
+    %{collection: records}
+  end
+
+  describe "search_records/2" do
+    setup [:fill_collection]
+
+    test "returns matching records, excluding wishlisted records" do
+      assert [%{title: "Brave"}, %{title: "Brave"}] = Collection.search_records("brave")
+    end
+
+    test "it respects limit" do
+      assert [%{title: "Brave"}] = Collection.search_records("brave", limit: 1)
+    end
+
+    test "it respects offset" do
+      [first_match] = Collection.search_records("brave", limit: 1)
+      [second_match] = Collection.search_records("brave", limit: 1, offset: 1)
+      assert first_match !== second_match
+    end
+  end
+
+  describe "search_records_count/1" do
+    setup [:fill_collection]
+
+    test "returns the count of matching records, excluding wishlisted records" do
+      assert 2 = Collection.search_records_count("brave")
+    end
+  end
+
+  describe "count_records_by_format/0" do
+    setup [:fill_collection]
+
+    test "returns the count of records in the collection by format, excluding wishlisted records" do
+      assert [vinyl: 2, cd: 1] = Collection.count_records_by_format()
+    end
+  end
+
+  describe "count_records_by_type/0" do
+    setup [:fill_collection]
+
+    test "returns the count of records in the collection by type, excluding wishlisted records" do
+      assert [live: 1, ep: 1, album: 1] = Collection.count_records_by_type()
+    end
+  end
+
+  describe "get_latest_record!/0" do
+    setup [:fill_collection]
+
+    test "returns the most recently purchased record" do
+      expected_record = record_fixture(%{purchased_at: DateTime.utc_now()})
+      most_recent_purchase = Collection.get_latest_record!()
+
+      assert expected_record.id == most_recent_purchase.id
+    end
+  end
+end
