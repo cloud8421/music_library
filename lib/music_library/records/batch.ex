@@ -1,6 +1,5 @@
 defmodule MusicLibrary.Records.Batch do
   require Logger
-  import Ecto.Query, warn: false
 
   alias MusicLibrary.Records.Record
   alias MusicLibrary.Repo
