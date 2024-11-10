@@ -94,6 +94,33 @@ defmodule MusicLibrary.Records.Record do
     end
   end
 
+  def attrs_from_release_group(release_group) do
+    musicbrainz_id = release_group["id"]
+
+    artists_attrs =
+      release_group
+      |> get_in(["artist-credit", Access.all(), "artist"])
+      |> Enum.map(fn artist ->
+        %{
+          name: artist["name"],
+          musicbrainz_id: artist["id"],
+          sort_name: artist["sort-name"],
+          disambiguation: artist["disambiguation"]
+        }
+      end)
+
+    %{
+      "musicbrainz_id" => musicbrainz_id,
+      "musicbrainz_data" => release_group,
+      "title" => release_group["title"],
+      "artists" => artists_attrs,
+      "release" => release_group["first-release-date"],
+      "type" => parse_subtype(release_group["primary-type"]),
+      "genres" => Enum.map(release_group["genres"], fn g -> g["name"] end),
+      "cover_url" => "https://coverartarchive.org/release-group/#{musicbrainz_id}/front"
+    }
+  end
+
   def formats, do: @formats
 
   def format_long_label(:cd), do: "CD"
@@ -119,4 +146,11 @@ defmodule MusicLibrary.Records.Record do
       [year, month, day] -> "#{day}/#{month}/#{year}"
     end
   end
+
+  defp parse_subtype("Album"), do: :album
+  defp parse_subtype("EP"), do: :ep
+  defp parse_subtype("Live"), do: :live
+  defp parse_subtype("Compilation"), do: :compilation
+  defp parse_subtype("Single"), do: :single
+  defp parse_subtype(_), do: :other
 end

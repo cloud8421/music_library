@@ -125,41 +125,10 @@ defmodule MusicLibrary.Records do
   end
 
   defp build_record_attrs(release_group, attrs) do
-    musicbrainz_id = release_group["id"]
-
-    artists_attrs =
-      release_group
-      |> get_in(["artist-credit", Access.all(), "artist"])
-      |> Enum.map(fn artist ->
-        %{
-          name: artist["name"],
-          musicbrainz_id: artist["id"],
-          sort_name: artist["sort-name"],
-          disambiguation: artist["disambiguation"]
-        }
-      end)
-
-    Map.merge(
-      attrs,
-      %{
-        "musicbrainz_id" => musicbrainz_id,
-        "musicbrainz_data" => release_group,
-        "title" => release_group["title"],
-        "artists" => artists_attrs,
-        "release" => release_group["first-release-date"],
-        "type" => parse_subtype(release_group["primary-type"]),
-        "genres" => Enum.map(release_group["genres"], fn g -> g["name"] end),
-        "cover_url" => "https://coverartarchive.org/release-group/#{musicbrainz_id}/front"
-      }
-    )
+    release_group
+    |> Record.attrs_from_release_group()
+    |> Map.merge(attrs)
   end
-
-  defp parse_subtype("Album"), do: :album
-  defp parse_subtype("EP"), do: :ep
-  defp parse_subtype("Live"), do: :live
-  defp parse_subtype("Compilation"), do: :compilation
-  defp parse_subtype("Single"), do: :single
-  defp parse_subtype(_), do: :other
 
   def create_record(attrs \\ %{}) do
     %Record{}
