@@ -58,14 +58,12 @@ defmodule MusicLibraryWeb.StatsLive.Index do
          |> put_flash(
            :error,
            gettext("Error importing record") <> "," <> inspect(changeset.errors)
-         )
-         |> push_patch(to: ~p"/wishlist")}
+         )}
 
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(:error, gettext("Error importing record") <> "," <> inspect(reason))
-         |> push_patch(to: ~p"/wishlist")}
+         |> put_flash(:error, gettext("Error importing record") <> "," <> inspect(reason))}
     end
   end
 
