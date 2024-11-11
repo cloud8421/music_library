@@ -17,6 +17,16 @@ defmodule LastFm.Track do
     :scrobbled_at_label
   ]
 
+  @type t :: %__MODULE__{
+          musicbrainz_id: String.t(),
+          title: String.t(),
+          artist: Artist.t(),
+          album: Album.t(),
+          cover_url: String.t(),
+          scrobbled_at_uts: integer(),
+          scrobbled_at_label: String.t()
+        }
+
   def from_api_response(raw_tracks) do
     Enum.map(raw_tracks, fn t ->
       album = %Album{

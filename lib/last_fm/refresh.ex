@@ -5,11 +5,20 @@ defmodule LastFm.Refresh do
 
   alias LastFm.Feed
 
+  @type config :: %{
+          api: module(),
+          api_key: String.t(),
+          user: String.t(),
+          refresh_interval: pos_integer()
+        }
+
+  @spec start_link(config) :: GenServer.on_start()
   def start_link(config) do
     GenServer.start_link(__MODULE__, config, name: __MODULE__)
   end
 
   @impl true
+  @spec init(config) :: {:ok, config, {:continue, :refresh}} | :ignore
   def init(config) do
     config = Map.new(config)
 
@@ -21,9 +30,11 @@ defmodule LastFm.Refresh do
   end
 
   @impl true
+  @spec handle_continue(atom(), config) :: {:noreply, config}
   def handle_continue(:refresh, config), do: refresh(config)
 
   @impl true
+  @spec handle_info(atom(), config) :: {:noreply, config}
   def handle_info(:refresh, config), do: refresh(config)
 
   defp refresh(config) do
