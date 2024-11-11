@@ -52,15 +52,6 @@ defmodule MusicLibrary.RecordsFixtures do
     artist_name = Enum.random(@artists)
     current_time = DateTime.utc_now()
 
-    artists_attrs = [
-      %{
-        name: artist_name,
-        musicbrainz_id: artist_uuid(artist_name),
-        sort_name: artist_name,
-        disambiguation: artist_name
-      }
-    ]
-
     {:ok, record} =
       attrs
       |> Enum.into(%{
@@ -73,7 +64,7 @@ defmodule MusicLibrary.RecordsFixtures do
         format: Record.formats() |> Enum.random(),
         release: Enum.random(1969..2024) |> Integer.to_string(),
         purchased_at: current_time,
-        artists: artists_attrs
+        artists: [artist_attrs(artist_name)]
       })
       |> MusicLibrary.Records.create_record()
 
@@ -81,18 +72,18 @@ defmodule MusicLibrary.RecordsFixtures do
   end
 
   def record_fixture_with_artist(artist_name, record_attrs \\ %{}) do
-    artists_attrs = [
-      %{
-        name: artist_name,
-        musicbrainz_id: artist_uuid(artist_name),
-        sort_name: artist_name,
-        disambiguation: artist_name
-      }
-    ]
-
     record_attrs
-    |> Map.put(:artists, artists_attrs)
+    |> Map.put(:artists, [artist_attrs(artist_name)])
     |> record_fixture()
+  end
+
+  defp artist_attrs(name) do
+    %{
+      name: name,
+      musicbrainz_id: artist_uuid(name),
+      sort_name: name,
+      disambiguation: name
+    }
   end
 
   # The following functions have been lifted from `Ecto.UUID`'s source.
