@@ -95,6 +95,9 @@ defmodule MusicLibrary.RecordsFixtures do
     |> record_fixture()
   end
 
+  # The following functions have been lifted from `Ecto.UUID`'s source.
+  # The purpose is to provide a deterministic implementation of uuid generation
+  # that can be used in tests to generate the same artist uuid.
   defp artist_uuid(name) do
     <<u0::48, _::4, u1::12, _::2, u2::62>> = :crypto.hash(:md5, name)
     encode(<<u0::48, 4::4, u1::12, 2::2, u2::62>>)
