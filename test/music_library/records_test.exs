@@ -35,7 +35,7 @@ defmodule MusicLibrary.RecordsTest do
       assert [brave_live_cd.id] == search("brave", 1, 1)
     end
 
-    test "tagged search - album", %{records: [brave_vinyl, brave_live_cd | _rest]} do
+    test "tagged search - album", %{records: [_brave_vinyl, brave_live_cd | _rest]} do
       assert [brave_live_cd.id] == search(~s(album:"Brave \(Live\)"), 10, 0)
     end
 
