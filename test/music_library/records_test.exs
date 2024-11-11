@@ -96,4 +96,24 @@ defmodule MusicLibrary.RecordsTest do
       assert 1 == Records.search_records_count(Record, "mbid:#{airbag_au_mbid}")
     end
   end
+
+  describe "get_record!/1" do
+    test "it fetches the record by id" do
+      # while this test may seem redundant, it implicitely checks that ALL record fields are returned,
+      # as opposed to other code paths where we only return essential ones.
+      expected = record_fixture()
+
+      assert expected == Records.get_record!(expected.id)
+    end
+  end
+
+  describe "get_cover/1" do
+    test "it returns the record cover by id" do
+      # while this test may seem redundant, it implicitely checks that ALL record fields are returned,
+      # as opposed to other code paths where we only return essential ones.
+      expected = record_fixture()
+
+      assert Map.take(expected, [:cover_hash, :cover_data]) == Records.get_cover(expected.id)
+    end
+  end
 end
