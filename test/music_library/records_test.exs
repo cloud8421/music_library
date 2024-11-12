@@ -207,4 +207,25 @@ defmodule MusicLibrary.RecordsTest do
       assert record.purchased_at == DateTime.truncate(current_time, :second)
     end
   end
+
+  describe "refresh cover/1" do
+    test "it fetches and stores the updated cover" do
+      record = record_fixture(cover_data: File.read!(marbles_cover_fixture()))
+
+      raven_cover_data = File.read!(raven_cover_fixture())
+
+      cover_url = record.cover_url
+
+      expect(APIBehaviourMock, :get_cover_art, fn {:url, ^cover_url} ->
+        {:ok, raven_cover_data}
+      end)
+
+      updated_record = Records.refresh_cover(record)
+
+      assert updated_record.cover_data !== record.cover_data
+
+      assert updated_record.cover_hash ==
+               "D3C045598B566563E59A743D25D6E653FBDA8A2A3F1B60A5855FD29F98A56B6B"
+    end
+  end
 end
