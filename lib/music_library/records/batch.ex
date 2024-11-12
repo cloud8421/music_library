@@ -21,6 +21,18 @@ defmodule MusicLibrary.Records.Batch do
     end
   end
 
+  def update_release_ids do
+    Record
+    |> Repo.all()
+    |> Enum.each(&update_release_ids/1)
+  end
+
+  def update_release_ids(record) do
+    record
+    |> Record.update_release_ids()
+    |> Repo.update!()
+  end
+
   defp musicbrainz do
     Application.get_env(:music_library, :musicbrainz, MusicBrainz.APIImpl)
   end

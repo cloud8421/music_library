@@ -77,6 +77,13 @@ defmodule MusicLibrary.Records.Record do
     |> change(musicbrainz_data: musicbrainz_data)
   end
 
+  def update_release_ids(record) do
+    release_ids = Enum.map(record.musicbrainz_data["releases"], fn r -> r["id"] end)
+
+    record
+    |> change(release_ids: release_ids)
+  end
+
   def generate_cover_hash(record = %__MODULE__{cover_data: cover_data}) do
     hash = :crypto.hash(:sha256, cover_data) |> Base.encode16()
 
