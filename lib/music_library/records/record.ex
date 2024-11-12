@@ -19,6 +19,7 @@ defmodule MusicLibrary.Records.Record do
     field :genres, {:array, :string}
     field :release, :string
     field :purchased_at, :utc_datetime
+    field :release_ids, {:array, :string}
 
     embeds_many :artists, Artist do
       field :name, :string
@@ -41,6 +42,7 @@ defmodule MusicLibrary.Records.Record do
       :musicbrainz_data,
       :release,
       :genres,
+      :release_ids,
       :cover_url,
       :cover_data,
       :purchased_at
@@ -117,6 +119,7 @@ defmodule MusicLibrary.Records.Record do
       "release" => release_group["first-release-date"],
       "type" => parse_subtype(release_group["primary-type"]),
       "genres" => Enum.map(release_group["genres"], fn g -> g["name"] end),
+      "release_ids" => Enum.map(release_group["releases"], fn r -> r["id"] end),
       "cover_url" => "https://coverartarchive.org/release-group/#{musicbrainz_id}/front"
     }
   end

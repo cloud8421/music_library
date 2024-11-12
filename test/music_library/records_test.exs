@@ -165,6 +165,19 @@ defmodule MusicLibrary.RecordsTest do
       assert record.title == "Marbles"
       assert record.format == :vinyl
       assert record.purchased_at == DateTime.truncate(current_time, :second)
+
+      assert record.release_ids ==
+               [
+                 "0e290154-5375-4f4f-a658-4a92bf02faa5",
+                 "3f1cc80f-4507-48a9-899c-c1bda83280c2",
+                 "d3f9b9e2-73f5-4b47-a2a7-2c2199aad608",
+                 "2c4ecd84-7a84-4f42-a600-2f00ed8978c9",
+                 "ab151aa6-7538-4e93-be60-eded52b5b7b7",
+                 "b94bbd1f-ae5d-4e7b-98ff-28bfe135f20c",
+                 "4b9fe13b-4837-4c02-9368-e97ba6f5a086",
+                 "a4b02377-0b5e-448e-9cd6-5500c0378523",
+                 "f3937bc5-b99f-443a-9609-a404201f21ca"
+               ]
     end
   end
 
@@ -205,6 +218,19 @@ defmodule MusicLibrary.RecordsTest do
       assert record.title == "Marbles"
       assert record.format == :vinyl
       assert record.purchased_at == DateTime.truncate(current_time, :second)
+
+      assert record.release_ids ==
+               [
+                 "0e290154-5375-4f4f-a658-4a92bf02faa5",
+                 "3f1cc80f-4507-48a9-899c-c1bda83280c2",
+                 "d3f9b9e2-73f5-4b47-a2a7-2c2199aad608",
+                 "2c4ecd84-7a84-4f42-a600-2f00ed8978c9",
+                 "ab151aa6-7538-4e93-be60-eded52b5b7b7",
+                 "b94bbd1f-ae5d-4e7b-98ff-28bfe135f20c",
+                 "4b9fe13b-4837-4c02-9368-e97ba6f5a086",
+                 "a4b02377-0b5e-448e-9cd6-5500c0378523",
+                 "f3937bc5-b99f-443a-9609-a404201f21ca"
+               ]
     end
   end
 
