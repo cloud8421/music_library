@@ -3,7 +3,12 @@ defmodule MusicLibrary.RecordsTest do
 
   alias MusicLibrary.Records
   alias MusicLibrary.Records.Record
+  alias MusicBrainz.APIBehaviourMock
   import MusicLibrary.RecordsFixtures
+  import MusicLibrary.ReleaseGroupsFixtures
+  import Mox
+
+  setup :verify_on_exit!
 
   defp create_records(_) do
     records = [
@@ -114,6 +119,52 @@ defmodule MusicLibrary.RecordsTest do
       expected = record_fixture()
 
       assert Map.take(expected, [:cover_hash, :cover_data]) == Records.get_cover(expected.id)
+    end
+  end
+
+  describe "search_release_group/2" do
+    test "it returns results with correct limit and offset" do
+      mock_results = release_group_search_results()
+
+      expect(APIBehaviourMock, :search_release_group, fn "Marillion", limit: 20, offset: 10 ->
+        {:ok, mock_results}
+      end)
+
+      assert {:ok, mock_results} ==
+               Records.search_release_group("Marillion", limit: 20, offset: 10)
+    end
+  end
+
+  describe "import_from_musicbrainz_release_group/2" do
+    test "it saves a record with its cover art" do
+      current_time = DateTime.utc_now()
+
+      release_group = release_group()
+      release_group_id = release_group_id()
+
+      expect(APIBehaviourMock, :get_release_group, fn ^release_group_id ->
+        {:ok, release_group}
+      end)
+
+      cover_data = File.read!(marbles_cover_fixture())
+
+      expect(APIBehaviourMock, :get_cover_art, fn {:musicbrainz_id, ^release_group_id} ->
+        {:ok, cover_data}
+      end)
+
+      assert {:ok, record} =
+               Records.import_from_musicbrainz_release_group(release_group_id,
+                 format: :vinyl,
+                 purchased_at: current_time
+               )
+
+      assert [artist] = record.artists
+      assert artist.name == "Marillion"
+
+      assert record.musicbrainz_id == release_group_id
+      assert record.title == "Marbles"
+      assert record.format == :vinyl
+      assert record.purchased_at == DateTime.truncate(current_time, :second)
     end
   end
 end
