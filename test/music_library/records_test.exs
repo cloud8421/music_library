@@ -167,4 +167,44 @@ defmodule MusicLibrary.RecordsTest do
       assert record.purchased_at == DateTime.truncate(current_time, :second)
     end
   end
+
+  describe "import_from_musicbrainz_release/2" do
+    test "it saves a record with its cover art" do
+      current_time = DateTime.utc_now()
+
+      release = release()
+      release_id = release_id()
+
+      release_group = release_group()
+      release_group_id = release_group_id()
+
+      expect(APIBehaviourMock, :get_release, fn ^release_id ->
+        {:ok, release}
+      end)
+
+      expect(APIBehaviourMock, :get_release_group, fn ^release_group_id ->
+        {:ok, release_group}
+      end)
+
+      cover_data = File.read!(marbles_cover_fixture())
+
+      expect(APIBehaviourMock, :get_cover_art, fn {:musicbrainz_id, ^release_group_id} ->
+        {:ok, cover_data}
+      end)
+
+      assert {:ok, record} =
+               Records.import_from_musicbrainz_release(release_id,
+                 format: :vinyl,
+                 purchased_at: current_time
+               )
+
+      assert [artist] = record.artists
+      assert artist.name == "Marillion"
+
+      assert record.musicbrainz_id == release_group_id
+      assert record.title == "Marbles"
+      assert record.format == :vinyl
+      assert record.purchased_at == DateTime.truncate(current_time, :second)
+    end
+  end
 end

@@ -100,4 +100,57 @@ defmodule MusicLibrary.ReleaseGroupsFixtures do
       "title" => "Marbles"
     }
   end
+
+  def release_id do
+    release() |> Map.get("id")
+  end
+
+  def release do
+    %{
+      "asin" => nil,
+      "barcode" => "",
+      "country" => "XE",
+      "cover-art-archive" => %{
+        "artwork" => false,
+        "back" => false,
+        "count" => 0,
+        "darkened" => false,
+        "front" => false
+      },
+      "date" => "2004-05-03",
+      "disambiguation" => "non‐deluxe double CD with o‐card",
+      "id" => "0e290154-5375-4f4f-a658-4a92bf02faa5",
+      "packaging" => "Jewel Case",
+      "packaging-id" => "ec27701a-4a22-37f4-bfac-6616e0f9750a",
+      "quality" => "normal",
+      "release-events" => [
+        %{
+          "area" => %{
+            "disambiguation" => "",
+            "id" => "89a675c2-3e37-3518-b83c-418bad59a85a",
+            "iso-3166-1-codes" => ["XE"],
+            "name" => "Europe",
+            "sort-name" => "Europe",
+            "type" => nil,
+            "type-id" => nil
+          },
+          "date" => "2004-05-03"
+        }
+      ],
+      "release-group" => %{
+        "disambiguation" => "",
+        "first-release-date" => "2004-05-03",
+        "id" => "20790e26-98e4-3ad3-a67f-b674758b942d",
+        "primary-type" => "Album",
+        "primary-type-id" => "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+        "secondary-type-ids" => [],
+        "secondary-types" => [],
+        "title" => "Marbles"
+      },
+      "status" => "Official",
+      "status-id" => "4e304316-386d-3409-af2e-78857eec5cfe",
+      "text-representation" => %{"language" => "eng", "script" => "Latn"},
+      "title" => "Marbles"
+    }
+  end
 end
