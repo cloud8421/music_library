@@ -20,6 +20,14 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
     recent_tracks = LastFm.Feed.all()
 
+    release_ids =
+      recent_tracks
+      |> Enum.map(fn t -> t.album.musicbrainz_id end)
+      |> Enum.uniq()
+
+    collected_release_ids = Collection.collected_release_ids(release_ids)
+    wishlisted_release_ids = Wishlist.wishlisted_release_ids(release_ids)
+
     if connected?(socket) do
       LastFm.Feed.subscribe()
     end
@@ -37,6 +45,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        collection_count: collection_count,
        wishlist_count: wishlist_count,
        latest_record: latest_record,
+       collected_release_ids: collected_release_ids,
+       wishlisted_release_ids: wishlisted_release_ids,
        nav_section: :stats
      )}
   end
