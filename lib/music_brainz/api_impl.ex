@@ -204,6 +204,8 @@ defmodule MusicBrainz.APIImpl do
 
   @impl true
   def get_release_group(id) do
+    # TODO: See adding 'release-group-rels' as in 'https://musicbrainz.org/ws/2/release-group/61077431-0057-4119-8f06-0df1098d21e5?fmt=json&inc=artists+genres+releases+release-group-rels'
+    # to account for records included in other compilations
     url =
       "https://musicbrainz.org/ws/2/release-group/#{id}?fmt=json&inc=artists+genres+releases"
 
