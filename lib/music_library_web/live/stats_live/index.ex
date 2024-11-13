@@ -77,8 +77,22 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     end
   end
 
-  def handle_info(%{tracks: tracks}, socket) do
-    {:noreply, stream(socket, :recent_tracks, tracks, reset: true)}
+  def handle_info(%{tracks: recent_tracks}, socket) do
+    release_ids =
+      recent_tracks
+      |> Enum.map(fn t -> t.album.musicbrainz_id end)
+      |> Enum.uniq()
+
+    collected_release_ids = Collection.collected_release_ids(release_ids)
+    wishlisted_release_ids = Wishlist.wishlisted_release_ids(release_ids)
+
+    {:noreply,
+     socket
+     |> assign(
+       collected_release_ids: collected_release_ids,
+       wishlisted_release_ids: wishlisted_release_ids
+     )
+     |> stream(:recent_tracks, recent_tracks, reset: true)}
   end
 
   # The Tailwind build step requires all needed classes to be explicitly referenced
