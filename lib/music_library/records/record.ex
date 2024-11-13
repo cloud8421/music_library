@@ -19,7 +19,7 @@ defmodule MusicLibrary.Records.Record do
     field :genres, {:array, :string}
     field :release, :string
     field :purchased_at, :utc_datetime
-    field :release_ids, {:array, :string}
+    field :release_ids, {:array, :string}, default: []
 
     embeds_many :artists, Artist do
       field :name, :string
