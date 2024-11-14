@@ -61,6 +61,9 @@ defmodule MusicLibrary.Records.Record do
         relation["type"] == "included in" and
         relation["direction"] == "backward"
     end)
+    |> Enum.map(fn relation ->
+      MusicBrainz.ReleaseGroup.from_api_response(relation["release_group"])
+    end)
   end
 
   def child_release_groups_count(record) do

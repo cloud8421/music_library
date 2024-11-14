@@ -29,7 +29,7 @@ msgstr ""
 msgid "Attempting to reconnect"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/show.html.heex:112
+#: lib/music_library_web/live/record_live/show.html.heex:127
 #, elixir-autogen, elixir-format
 msgid "Back to records"
 msgstr ""
@@ -128,7 +128,7 @@ msgstr ""
 msgid "Import from MusicBrainz"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/show.html.heex:87
+#: lib/music_library_web/live/record_live/show.html.heex:102
 #: lib/music_library_web/live/wishlist_live/show.html.heex:80
 #, elixir-autogen, elixir-format
 msgid "Inserted at"
@@ -311,7 +311,7 @@ msgstr ""
 msgid "Types"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/show.html.heex:95
+#: lib/music_library_web/live/record_live/show.html.heex:110
 #: lib/music_library_web/live/wishlist_live/show.html.heex:88
 #, elixir-autogen, elixir-format
 msgid "Updated at"
@@ -356,7 +356,7 @@ msgstr ""
 msgid "Copy MusicBrainz ID to clipboard"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/show.html.heex:106
+#: lib/music_library_web/live/record_live/show.html.heex:121
 #: lib/music_library_web/live/wishlist_live/show.html.heex:99
 #, elixir-autogen, elixir-format
 msgid "MusicBrainz data"
@@ -388,4 +388,9 @@ msgstr ""
 #: lib/music_library_web/live/wishlist_live/index.html.heex:97
 #, elixir-autogen, elixir-format
 msgid "Number of included records"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/show.html.heex:90
+#, elixir-autogen, elixir-format
+msgid "Includes"
 msgstr ""
