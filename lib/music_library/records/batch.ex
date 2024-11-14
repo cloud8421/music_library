@@ -13,7 +13,7 @@ defmodule MusicLibrary.Records.Batch do
     end)
   end
 
-  defp import_musicbrainz_data(record) do
+  def import_musicbrainz_data(record) do
     with {:ok, data} <- musicbrainz().get_release_group(record.musicbrainz_id) do
       record
       |> Record.add_musicbrainz_data(data)
