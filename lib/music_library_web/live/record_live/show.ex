@@ -26,11 +26,13 @@ defmodule MusicLibraryWeb.RecordLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
+    record = Records.get_record!(id)
+
     {:noreply,
      socket
      |> assign(:nav_section, :records)
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:record, Records.get_record!(id))}
+     |> assign(:record, record)}
   end
 
   @impl true

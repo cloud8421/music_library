@@ -15,7 +15,7 @@ defmodule MusicLibrary.Records.Record do
     field :cover_data, :binary
     field :cover_hash, :string
     field :musicbrainz_id, Ecto.UUID
-    field :musicbrainz_data, :map
+    field :musicbrainz_data, :map, default: %{}
     field :genres, {:array, :string}
     field :release, :string
     field :purchased_at, :utc_datetime
@@ -51,6 +51,26 @@ defmodule MusicLibrary.Records.Record do
     |> generate_cover_hash()
     |> validate_required([:type, :title, :musicbrainz_id, :release, :genres])
     |> unique_constraint(:musicbrainz_id, name: "records_musicbrainz_id_format_index")
+  end
+
+  def child_release_groups(record) do
+    record.musicbrainz_data
+    |> Map.get("relations", [])
+    |> Enum.filter(fn relation ->
+      relation["target-type"] == "release_group" and
+        relation["type"] == "included in" and
+        relation["direction"] == "backward"
+    end)
+  end
+
+  def child_release_groups_count(record) do
+    record.musicbrainz_data
+    |> Map.get("relations", [])
+    |> Enum.count(fn relation ->
+      relation["target-type"] == "release_group" and
+        relation["type"] == "included in" and
+        relation["direction"] == "backward"
+    end)
   end
 
   @doc false
