@@ -10,6 +10,8 @@ defmodule MusicBrainz.APIImpl do
 
   require Logger
 
+  alias MusicBrainz.ReleaseGroup
+
   @doc """
   Uses the [lookup](https://musicbrainz.org/doc/MusicBrainz_API#Lookups) endpoint with the release group id and include the
   artist credits.
@@ -399,19 +401,7 @@ defmodule MusicBrainz.APIImpl do
       "https://musicbrainz.org/ws/2/release-group?#{URI.encode_query(qs)}"
 
     with {:ok, result} <- json_get(url) do
-      {:ok,
-       Enum.map(result["release-groups"], fn rg ->
-         %{
-           id: rg["id"],
-           type: parse_subtype(rg["primary-type"]),
-           title: rg["title"],
-           artists:
-             rg["artist-credit"]
-             |> Enum.map(fn ac -> ac["artist"]["name"] end)
-             |> Enum.join(", "),
-           release: rg["first-release-date"]
-         }
-       end)}
+      {:ok, Enum.map(result["release-groups"], &ReleaseGroup.from_api_response/1)}
     end
   end
 
@@ -490,11 +480,4 @@ defmodule MusicBrainz.APIImpl do
         error
     end
   end
-
-  defp parse_subtype("Album"), do: :album
-  defp parse_subtype("EP"), do: :ep
-  defp parse_subtype("Live"), do: :live
-  defp parse_subtype("Compilation"), do: :compilation
-  defp parse_subtype("Single"), do: :single
-  defp parse_subtype(_), do: :other
 end
