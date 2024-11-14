@@ -3,12 +3,11 @@ defmodule MusicLibrary.Records.Batch do
 
   alias MusicLibrary.Records.Record
   alias MusicLibrary.Repo
+  import Ecto.Query
 
   def refresh_musicbrainz_data do
-    Record
-    |> Repo.all()
-    |> Enum.each(fn r ->
-      import_musicbrainz_data(r)
+    run_on_all_records(fn record ->
+      import_musicbrainz_data(record)
       Process.sleep(1000)
     end)
   end
@@ -22,15 +21,34 @@ defmodule MusicLibrary.Records.Batch do
   end
 
   def update_release_ids do
-    Record
-    |> Repo.all()
-    |> Enum.each(&update_release_ids/1)
+    run_on_all_records(&update_release_ids/1)
   end
 
   def update_release_ids(record) do
     record
     |> Record.update_release_ids()
-    |> Repo.update!()
+    |> Repo.update()
+  end
+
+  defp run_on_all_records(fun) do
+    q = from(r in Record)
+    stream = Repo.stream(q)
+
+    Repo.transaction(fn ->
+      Enum.reduce(stream, [], fn record, acc ->
+        case fun.(record) do
+          {:error, reason} ->
+            Logger.error("Failed to run function on record #{record.id} with #{inspect(reason)}")
+            [record.id | acc]
+
+          :ok ->
+            acc
+
+          {:ok, _record} ->
+            acc
+        end
+      end)
+    end)
   end
 
   defp musicbrainz do
