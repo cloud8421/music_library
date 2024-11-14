@@ -14,189 +14,191 @@ defmodule MusicBrainz.APIImpl do
   Uses the [lookup](https://musicbrainz.org/doc/MusicBrainz_API#Lookups) endpoint with the release group id and include the
   artist credits.
 
-  Example request: https://musicbrainz.org/ws/2/release-group/ae504fd6-8498-463e-8d96-14f9e11d1863?fmt=json&inc=artists+releases+genres
+  Example request: https://musicbrainz.org/ws/2/release-group/ae504fd6-8498-463e-8d96-14f9e11d1863?fmt=json&inc=artists+releases+genres+release-group-rels
+
 
         {
           "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
-          "disambiguation": "",
-          "secondary-type-ids": [],
+          "first-release-date": "2020-10-23",
+          "genres": [
+            {
+              "count": 3,
+              "name": "progressive rock",
+              "disambiguation": "",
+              "id": "ae9b8279-3959-48d8-8a88-741a7f6d4a48"
+            },
+            {
+              "count": 1,
+              "name": "rock",
+              "disambiguation": "",
+              "id": "0e3fc579-2d24-4f20-9dae-736e1ec78798"
+            },
+            {
+              "id": "f729e6f8-30dc-4b81-9ff4-f4e7de82225d",
+              "disambiguation": "",
+              "count": 1,
+              "name": "symphonic rock"
+            }
+          ],
           "primary-type": "Album",
+          "secondary-type-ids": [],
           "releases": [
             {
+              "id": "ad9e5d8f-b8ff-4e3e-98be-f26cb8e0682e",
+              "quality": "normal",
+              "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
+              "text-representation": {
+                "script": null,
+                "language": null
+              },
+              "date": "2020-10-23",
+              "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
               "country": "NO",
               "genres": [
                 {
                   "name": "progressive rock",
+                  "count": 1,
                   "id": "ae9b8279-3959-48d8-8a88-741a7f6d4a48",
-                  "disambiguation": "",
-                  "count": 1
+                  "disambiguation": ""
                 }
               ],
               "title": "Dwellers of the Deep",
-              "quality": "normal",
-              "text-representation": {
-                "language": null,
-                "script": null
-              },
-              "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
-              "disambiguation": "",
-              "status": "Official",
-              "date": "2020-10-23",
-              "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+              "packaging": "Jewel Case",
               "release-events": [
                 {
-                  "date": "2020-10-23",
                   "area": {
-                    "type-id": null,
-                    "id": "6743d351-6f37-3049-9724-5041161fff4d",
-                    "name": "Norway",
-                    "sort-name": "Norway",
-                    "disambiguation": "",
-                    "type": null,
                     "iso-3166-1-codes": [
                       "NO"
-                    ]
-                  }
+                    ],
+                    "type": null,
+                    "id": "6743d351-6f37-3049-9724-5041161fff4d",
+                    "sort-name": "Norway",
+                    "name": "Norway",
+                    "disambiguation": "",
+                    "type-id": null
+                  },
+                  "date": "2020-10-23"
                 }
               ],
-              "packaging": "Jewel Case",
-              "id": "ad9e5d8f-b8ff-4e3e-98be-f26cb8e0682e",
-              "barcode": "7090008316497"
+              "barcode": "7090008316497",
+              "disambiguation": "",
+              "status": "Official"
             },
             {
+              "packaging-id": "119eba76-b343-3e02-a292-f0f00644bb9b",
+              "quality": "normal",
+              "id": "db32822c-27f6-4d1f-8775-df9513c04a9a",
+              "date": "2020-10-23",
+              "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+              "text-representation": {
+                "script": "Latn",
+                "language": "eng"
+              },
               "genres": [
                 {
-                  "count": 2,
                   "disambiguation": "",
                   "id": "93244085-20e5-4f16-9067-1d19143b3810",
-                  "name": "classic rock"
+                  "name": "classic rock",
+                  "count": 2
                 },
                 {
                   "name": "progressive rock",
-                  "id": "ae9b8279-3959-48d8-8a88-741a7f6d4a48",
+                  "count": 2,
                   "disambiguation": "",
-                  "count": 2
+                  "id": "ae9b8279-3959-48d8-8a88-741a7f6d4a48"
                 },
                 {
-                  "disambiguation": "",
-                  "name": "rock",
                   "id": "0e3fc579-2d24-4f20-9dae-736e1ec78798",
-                  "count": 2
+                  "disambiguation": "",
+                  "count": 2,
+                  "name": "rock"
                 },
                 {
+                  "count": 2,
                   "name": "symphonic rock",
                   "id": "f729e6f8-30dc-4b81-9ff4-f4e7de82225d",
-                  "disambiguation": "",
-                  "count": 2
+                  "disambiguation": ""
                 }
               ],
-              "quality": "normal",
-              "title": "Dwellers of the Deep",
               "country": "XW",
+              "status": "Official",
               "release-events": [
                 {
-                  "date": "2020-10-23",
                   "area": {
+                    "disambiguation": "",
                     "type-id": null,
                     "name": "[Worldwide]",
-                    "id": "525d4e18-3d00-31b9-a58b-a146a916de8f",
                     "type": null,
-                    "disambiguation": "",
+                    "sort-name": "[Worldwide]",
+                    "id": "525d4e18-3d00-31b9-a58b-a146a916de8f",
                     "iso-3166-1-codes": [
                       "XW"
-                    ],
-                    "sort-name": "[Worldwide]"
-                  }
+                    ]
+                  },
+                  "date": "2020-10-23"
                 }
               ],
-              "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
-              "id": "db32822c-27f6-4d1f-8775-df9513c04a9a",
               "barcode": null,
-              "packaging": "None",
-              "packaging-id": "119eba76-b343-3e02-a292-f0f00644bb9b",
-              "text-representation": {
-                "language": "eng",
-                "script": "Latn"
-              },
-              "status": "Official",
-              "date": "2020-10-23",
-              "disambiguation": ""
+              "disambiguation": "",
+              "title": "Dwellers of the Deep",
+              "packaging": "None"
             },
             {
+              "id": "5715243e-9c60-49bb-a1cb-4263f065f07b",
+              "quality": "normal",
+              "packaging-id": "8f931351-d2e2-310f-afc6-37b89ddba246",
+              "text-representation": {
+                "script": "Latn",
+                "language": "eng"
+              },
+              "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+              "date": "2020-10-30",
               "country": null,
               "genres": [],
-              "title": "Dwellers of the Deep",
-              "quality": "normal",
-              "text-representation": {
-                "language": "eng",
-                "script": "Latn"
-              },
-              "packaging-id": "8f931351-d2e2-310f-afc6-37b89ddba246",
-              "disambiguation": "",
-              "date": "2020-10-30",
-              "status": "Official",
+              "barcode": "7090008311942",
               "release-events": [
                 {
                   "date": "2020-10-30",
                   "area": null
                 }
               ],
-              "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+              "disambiguation": "",
+              "title": "Dwellers of the Deep",
               "packaging": "Digipak",
-              "barcode": "7090008311942",
-              "id": "5715243e-9c60-49bb-a1cb-4263f065f07b"
+              "status": "Official"
             }
           ],
-          "genres": [
-            {
-              "id": "ae9b8279-3959-48d8-8a88-741a7f6d4a48",
-              "name": "progressive rock",
-              "disambiguation": "",
-              "count": 3
-            },
-            {
-              "count": 1,
-              "disambiguation": "",
-              "id": "0e3fc579-2d24-4f20-9dae-736e1ec78798",
-              "name": "rock"
-            },
-            {
-              "count": 1,
-              "disambiguation": "",
-              "id": "f729e6f8-30dc-4b81-9ff4-f4e7de82225d",
-              "name": "symphonic rock"
-            }
-          ],
-          "secondary-types": [],
-          "first-release-date": "2020-10-23",
-          "title": "Dwellers of the Deep",
           "id": "ae504fd6-8498-463e-8d96-14f9e11d1863",
+          "relations": [],
+          "secondary-types": [],
+          "title": "Dwellers of the Deep",
+          "disambiguation": "",
           "artist-credit": [
             {
-              "name": "Wobbler",
-              "joinphrase": "",
               "artist": {
-                "disambiguation": "symphonic prog, Norway",
-                "type": "Group",
-                "sort-name": "Wobbler",
-                "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b",
-                "id": "923b9160-251f-4ebe-8af2-ae670c425e55",
                 "name": "Wobbler",
+                "disambiguation": "symphonic prog, Norway",
+                "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b",
                 "genres": [
                   {
                     "count": 3,
                     "name": "progressive rock",
-                    "id": "ae9b8279-3959-48d8-8a88-741a7f6d4a48",
-                    "disambiguation": ""
+                    "disambiguation": "",
+                    "id": "ae9b8279-3959-48d8-8a88-741a7f6d4a48"
                   },
                   {
                     "name": "symphonic prog",
-                    "id": "166be36f-febb-4523-a005-1fb3603bd3f6",
+                    "count": 2,
                     "disambiguation": "",
-                    "count": 2
+                    "id": "166be36f-febb-4523-a005-1fb3603bd3f6"
                   }
-                ]
-              }
+                ],
+                "type": "Group",
+                "id": "923b9160-251f-4ebe-8af2-ae670c425e55",
+                "sort-name": "Wobbler"
+              },
+              "name": "Wobbler",
+              "joinphrase": ""
             }
           ]
         }
@@ -204,10 +206,8 @@ defmodule MusicBrainz.APIImpl do
 
   @impl true
   def get_release_group(id) do
-    # TODO: See adding 'release-group-rels' as in 'https://musicbrainz.org/ws/2/release-group/61077431-0057-4119-8f06-0df1098d21e5?fmt=json&inc=artists+genres+releases+release-group-rels'
-    # to account for records included in other compilations
     url =
-      "https://musicbrainz.org/ws/2/release-group/#{id}?fmt=json&inc=artists+genres+releases"
+      "https://musicbrainz.org/ws/2/release-group/#{id}?fmt=json&inc=artists+genres+releases+release-group-rels"
 
     json_get(url)
   end
