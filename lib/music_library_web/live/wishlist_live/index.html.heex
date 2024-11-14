@@ -65,6 +65,22 @@
             · <%= Records.Record.format_long_label(record.format) %> · <%= Records.Record.type_long_label(
               record.type
             ) %>
+            <span :if={Records.Record.child_release_groups_count(record) > 0}>
+              ·
+              <span class="sr-only">
+                <%= gettext("Number of included records") %>
+              </span>
+              <span class={[
+                "inline-flex items-center rounded-full",
+                "px-2 py-1 text-xs font-medium",
+                "ring-1 ring-inset",
+                "bg-gray-50 dark:bg-gray-400/10",
+                "text-gray-600 dark:text-gray-500",
+                "ring-gray-500/10 dark:ring-gray-400/20"
+              ]}>
+                <%= Records.Record.child_release_groups_count(record) %>
+              </span>
+            </span>
           </span>
         </p>
       </div>
@@ -75,6 +91,22 @@
           <%= Records.Record.format_long_label(record.format) %> · <%= Records.Record.type_long_label(
             record.type
           ) %>
+          <span :if={Records.Record.child_release_groups_count(record) > 0}>
+            ·
+            <span class="sr-only">
+              <%= gettext("Number of included records") %>
+            </span>
+            <span class={[
+              "inline-flex items-center rounded-full",
+              "px-2 py-1 text-xs font-medium",
+              "ring-1 ring-inset",
+              "bg-gray-50 dark:bg-gray-400/10",
+              "text-gray-600 dark:text-gray-500",
+              "ring-gray-500/10 dark:ring-gray-400/20"
+            ]}>
+              <%= Records.Record.child_release_groups_count(record) %>
+            </span>
+          </span>
         </p>
       </div>
       <div class="relative flex-none">
