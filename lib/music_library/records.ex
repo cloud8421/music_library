@@ -135,6 +135,14 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  def refresh_musicbrainz_data(record) do
+    with {:ok, data} <- musicbrainz().get_release_group(record.musicbrainz_id) do
+      record
+      |> Record.add_musicbrainz_data(data)
+      |> Repo.update()
+    end
+  end
+
   defp build_record_attrs(release_group, attrs) do
     release_group
     |> Record.attrs_from_release_group()
