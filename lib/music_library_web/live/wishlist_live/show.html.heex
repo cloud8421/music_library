@@ -4,6 +4,11 @@
       <%= gettext("Edit") %>
     </.button>
   </.link>
+  <.link phx-click={JS.push("refresh_musicbrainz_data", value: %{id: @record.id})}>
+    <.button>
+      <%= gettext("Refresh MB Data") %>
+    </.button>
+  </.link>
   <.link
     phx-click={JS.push("delete", value: %{id: @record.id})}
     data-confirm={gettext("Are you sure?")}

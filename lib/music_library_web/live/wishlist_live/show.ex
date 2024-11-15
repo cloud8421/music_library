@@ -41,6 +41,26 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
     {:noreply, push_navigate(socket, to: ~p"/wishlist")}
   end
 
+  def handle_event("refresh_musicbrainz_data", %{"id" => id}, socket) do
+    record = Records.get_record!(id)
+
+    case Records.refresh_musicbrainz_data(record) do
+      {:ok, updated_record} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, gettext("MusicBrainz data refreshed successfully"))
+         |> assign(:record, updated_record)}
+
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           gettext("Error refreshing MusicBrainz data") <> "," <> inspect(reason)
+         )}
+    end
+  end
+
   @impl true
   def handle_info({MusicLibraryWeb.RecordLive.FormComponent, {:saved, record}}, socket) do
     {:noreply, assign(socket, :record, record)}
