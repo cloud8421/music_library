@@ -43,6 +43,7 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
             options={Ecto.Enum.values(MusicLibrary.Records.Record, :format)}
           />
         </div>
+        <.input field={@form[:musicbrainz_id]} type="text" label={gettext("MusicBrainz ID")} />
         <.input field={@form[:release]} type="text" label={gettext("Release")} />
         <.input
           :if={@show_purchased_at}
