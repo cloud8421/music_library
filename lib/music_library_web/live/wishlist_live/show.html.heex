@@ -1,24 +1,3 @@
-<nav class="flex justify-end gap-x-4">
-  <.link patch={~p"/wishlist/#{@record}/show/edit"} phx-click={JS.push_focus()}>
-    <.button>
-      <%= gettext("Edit") %>
-    </.button>
-  </.link>
-  <.link phx-click={JS.push("refresh_musicbrainz_data", value: %{id: @record.id})}>
-    <.button>
-      <%= gettext("Refresh MB Data") %>
-    </.button>
-  </.link>
-  <.link
-    phx-click={JS.push("delete", value: %{id: @record.id})}
-    data-confirm={gettext("Are you sure?")}
-  >
-    <.button class="!bg-red-900 hover:!bg-red-700 dark:text-white">
-      <%= gettext("Delete") %>
-    </.button>
-  </.link>
-</nav>
-
 <div class="md:columns-2 mt-4 px-4">
   <div class="drop-shadow">
     <img
@@ -46,6 +25,30 @@
         @record.format
       ) %> · <%= Records.Record.type_long_label(@record.type) %>
     </p>
+
+    <nav class="mt-5 isolate inline-flex rounded-md shadow-sm">
+      <.link patch={~p"/wishlist/#{@record}/show/edit"} phx-click={JS.push_focus()}>
+        <.button type="button" class="relative inline-flex items-center rounded-r-none">
+          <%= gettext("Edit") %>
+        </.button>
+      </.link>
+      <.link phx-click={JS.push("refresh_musicbrainz_data", value: %{id: @record.id})}>
+        <.button type="button" class="relative -ml-px inline-flex items-center rounded-none">
+          <%= gettext("Refresh MB Data") %>
+        </.button>
+      </.link>
+      <.link
+        phx-click={JS.push("delete", value: %{id: @record.id})}
+        data-confirm={gettext("Are you sure?")}
+      >
+        <.button
+          type="button"
+          class="relative -ml-px inline-flex items-center rounded-l-none !text-red-600 hover:!text-red-500 dark:!text-red-700 hover:dark:!text-red-500"
+        >
+          <%= gettext("Delete") %>
+        </.button>
+      </.link>
+    </nav>
   </div>
 
   <div>

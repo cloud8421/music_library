@@ -242,7 +242,7 @@ defmodule MusicLibraryWeb.CoreComponents do
       class={[
         "phx-submit-loading:opacity-75 rounded-md py-2 px-3",
         "text-sm font-semibold leading-6 ",
-        "bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-400",
+        "bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200",
         "text-white active:text-white/80 dark:text-zinc-900 dark:active:text-zinc-900/80",
         "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600",
         @class
