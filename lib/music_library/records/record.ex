@@ -98,13 +98,25 @@ defmodule MusicLibrary.Records.Record do
   def add_musicbrainz_data(record, musicbrainz_data) do
     record
     |> change(musicbrainz_data: musicbrainz_data)
+    |> update_release_ids()
   end
 
-  def update_release_ids(record) do
-    release_ids = Enum.map(record.musicbrainz_data["releases"], fn r -> r["id"] end)
+  def update_release_ids(record = %__MODULE__{musicbrainz_data: musicbrainz_data}) do
+    release_ids = Enum.map(musicbrainz_data["releases"], fn r -> r["id"] end)
 
     record
     |> change(release_ids: release_ids)
+  end
+
+  def update_release_ids(changeset) do
+    case get_change(changeset, :musicbrainz_data) do
+      nil ->
+        changeset
+
+      musicbrainz_data ->
+        release_ids = Enum.map(musicbrainz_data["releases"], fn r -> r["id"] end)
+        put_change(changeset, :release_ids, release_ids)
+    end
   end
 
   def generate_cover_hash(record = %__MODULE__{cover_data: cover_data}) do
