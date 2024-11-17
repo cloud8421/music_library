@@ -17,6 +17,12 @@ defmodule LastFm.Refresh do
     GenServer.start_link(__MODULE__, config, name: __MODULE__)
   end
 
+  @spec refresh() :: :refresh
+  def refresh do
+    # Very barebones and naive - can be improved by building a state machine.
+    send(__MODULE__, :refresh)
+  end
+
   @impl true
   @spec init(config) :: {:ok, config, {:continue, :refresh}} | :ignore
   def init(config) do
