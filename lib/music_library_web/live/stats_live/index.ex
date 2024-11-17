@@ -77,6 +77,11 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     end
   end
 
+  def handle_event("refresh_lastfm_feed", _, socket) do
+    LastFm.Refresh.refresh()
+    {:noreply, socket}
+  end
+
   def handle_info(%{tracks: recent_tracks}, socket) do
     release_ids =
       recent_tracks
