@@ -20,6 +20,7 @@ defmodule MusicLibrary.Records.Record do
     field :release, :string
     field :purchased_at, :utc_datetime
     field :release_ids, {:array, :string}, default: []
+    field :included_release_group_ids, {:array, :string}, default: []
 
     embeds_many :artists, Artist do
       field :name, :string
@@ -43,6 +44,7 @@ defmodule MusicLibrary.Records.Record do
       :release,
       :genres,
       :release_ids,
+      :included_release_group_ids,
       :cover_url,
       :cover_data,
       :purchased_at
@@ -67,13 +69,7 @@ defmodule MusicLibrary.Records.Record do
   end
 
   def child_release_groups_count(record) do
-    record.musicbrainz_data
-    |> Map.get("relations", [])
-    |> Enum.count(fn relation ->
-      relation["target-type"] == "release_group" and
-        relation["type"] == "included in" and
-        relation["direction"] == "backward"
-    end)
+    Enum.count(record.included_release_group_ids)
   end
 
   @doc false
@@ -99,6 +95,7 @@ defmodule MusicLibrary.Records.Record do
     record
     |> change(musicbrainz_data: musicbrainz_data)
     |> update_release_ids()
+    |> update_included_release_group_ids()
   end
 
   def update_release_ids(record = %__MODULE__{musicbrainz_data: musicbrainz_data}) do
@@ -117,6 +114,36 @@ defmodule MusicLibrary.Records.Record do
         release_ids = Enum.map(musicbrainz_data["releases"], fn r -> r["id"] end)
         put_change(changeset, :release_ids, release_ids)
     end
+  end
+
+  def update_included_release_group_ids(record = %__MODULE__{musicbrainz_data: musicbrainz_data}) do
+    included_release_group_ids = extract_included_release_group_ids(musicbrainz_data)
+
+    record
+    |> change(included_release_group_ids: included_release_group_ids)
+  end
+
+  def update_included_release_group_ids(changeset) do
+    case get_change(changeset, :musicbrainz_data) do
+      nil ->
+        changeset
+
+      musicbrainz_data ->
+        included_release_group_ids = extract_included_release_group_ids(musicbrainz_data)
+
+        put_change(changeset, :included_release_group_ids, included_release_group_ids)
+    end
+  end
+
+  defp extract_included_release_group_ids(musicbrainz_data) do
+    musicbrainz_data
+    |> Map.get("relations", [])
+    |> Enum.filter(fn relation ->
+      relation["target-type"] == "release_group" and
+        relation["type"] == "included in" and
+        relation["direction"] == "backward"
+    end)
+    |> Enum.map(fn relation -> relation["release_group"]["id"] end)
   end
 
   def generate_cover_hash(record = %__MODULE__{cover_data: cover_data}) do

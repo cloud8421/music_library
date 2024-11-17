@@ -18,7 +18,7 @@ defmodule MusicLibrary.Records do
       :release,
       :genres,
       :musicbrainz_id,
-      :musicbrainz_data,
+      :included_release_group_ids,
       :cover_hash
     ]
   end

@@ -24,9 +24,19 @@ defmodule MusicLibrary.Records.Batch do
     run_on_all_records(&update_release_ids/1)
   end
 
+  def update_included_release_group_ids do
+    run_on_all_records(&update_included_release_group_ids/1)
+  end
+
   def update_release_ids(record) do
     record
     |> Record.update_release_ids()
+    |> Repo.update()
+  end
+
+  def update_included_release_group_ids(record) do
+    record
+    |> Record.update_included_release_group_ids()
     |> Repo.update()
   end
 
