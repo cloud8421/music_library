@@ -19,7 +19,7 @@ defmodule LastFm.Refresh do
 
   @spec refresh() :: :refresh
   def refresh do
-    # Very barebones and naive - can be improved by building a state machine.
+    # TODO: Very barebones and naive - can be improved by building a state machine.
     send(__MODULE__, :refresh)
   end
 
