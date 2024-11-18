@@ -30,6 +30,12 @@ defmodule MusicLibrary.ReleaseGroupsFixtures do
     |> Jason.decode!()
   end
 
+  def release_group_with_includes do
+    Path.join([@fixtures_folder, "release_group_with_includes.json"])
+    |> File.read!()
+    |> Jason.decode!()
+  end
+
   def release_id do
     release() |> Map.get("id")
   end

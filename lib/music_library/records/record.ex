@@ -51,6 +51,8 @@ defmodule MusicLibrary.Records.Record do
     ])
     |> cast_embed(:artists, with: &artist_changeset/2)
     |> generate_cover_hash()
+    |> update_release_ids()
+    |> update_included_release_group_ids()
     |> validate_required([:type, :title, :musicbrainz_id, :release, :genres])
     |> unique_constraint(:musicbrainz_id, name: "records_musicbrainz_id_format_index")
   end
