@@ -290,7 +290,7 @@ defmodule MusicLibrary.RecordsTest do
         {:ok, raven_cover_data}
       end)
 
-      updated_record = Records.refresh_cover(record)
+      assert {:ok, updated_record} = Records.refresh_cover(record)
 
       assert updated_record.cover_data !== record.cover_data
 

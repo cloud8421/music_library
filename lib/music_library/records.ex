@@ -131,7 +131,7 @@ defmodule MusicLibrary.Records do
 
       record
       |> Record.add_cover_data(thumb_data)
-      |> Repo.update!()
+      |> Repo.update()
     end
   end
 

@@ -32,6 +32,11 @@
           <%= gettext("Edit") %>
         </.button>
       </.link>
+      <.link phx-click={JS.push("refresh_cover", value: %{id: @record.id})}>
+        <.button type="button" class="relative -ml-px inline-flex items-center rounded-none">
+          <%= gettext("Refresh Cover") %>
+        </.button>
+      </.link>
       <.link phx-click={JS.push("refresh_musicbrainz_data", value: %{id: @record.id})}>
         <.button type="button" class="relative -ml-px inline-flex items-center rounded-none">
           <%= gettext("Refresh MB Data") %>
