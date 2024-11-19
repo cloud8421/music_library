@@ -178,7 +178,7 @@ msgid "No results"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/index.html.heex:121
-#: lib/music_library_web/live/stats_live/index.html.heex:164
+#: lib/music_library_web/live/stats_live/index.html.heex:161
 #: lib/music_library_web/live/wishlist_live/index.html.heex:121
 #, elixir-autogen, elixir-format
 msgid "Open options"
@@ -373,12 +373,12 @@ msgstr ""
 msgid "Choose which format to import"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:133
+#: lib/music_library_web/live/stats_live/index.html.heex:130
 #, elixir-autogen, elixir-format
 msgid "Collected"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:146
+#: lib/music_library_web/live/stats_live/index.html.heex:143
 #, elixir-autogen, elixir-format
 msgid "Wishlisted"
 msgstr ""
@@ -417,7 +417,7 @@ msgstr ""
 msgid "Refresh MB Data"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:77
+#: lib/music_library_web/live/stats_live/index.html.heex:74
 #, elixir-autogen, elixir-format
 msgid "Refresh LastFm Feed"
 msgstr ""
