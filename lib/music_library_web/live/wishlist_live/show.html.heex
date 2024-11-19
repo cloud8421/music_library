@@ -1,7 +1,7 @@
 <div class="md:columns-2 mt-4 px-4">
-  <div class="drop-shadow">
+  <div class="drop-shadow max-w-3xl">
     <img
-      class="w-full rounded-lg shadow"
+      class="w-full rounded-lg drop-shadow"
       src={~p"/covers/#{@record.id}?vsn=#{@record.cover_hash || ""}"}
       alt={@record.title}
     />
@@ -36,7 +36,6 @@
         <.button type="button" class="relative -ml-px inline-flex items-center rounded-none">
           <span class="sr-only"><%= gettext("Refresh") %></span>
           <.icon
-            id="refresh-lastfm-feed"
             name="hero-arrow-path"
             class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
             aria-hidden="true"
@@ -49,7 +48,6 @@
         <.button type="button" class="relative -ml-px inline-flex items-center rounded-none">
           <span class="sr-only"><%= gettext("Refresh") %></span>
           <.icon
-            id="refresh-lastfm-feed"
             name="hero-arrow-path"
             class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
             aria-hidden="true"
