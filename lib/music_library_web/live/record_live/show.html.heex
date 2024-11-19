@@ -34,12 +34,28 @@
       </.link>
       <.link phx-click={JS.push("refresh_cover", value: %{id: @record.id})}>
         <.button type="button" class="relative -ml-px inline-flex items-center rounded-none">
-          <%= gettext("Refresh Cover") %>
+          <span class="sr-only"><%= gettext("Refresh") %></span>
+          <.icon
+            id="refresh-lastfm-feed"
+            name="hero-arrow-path"
+            class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
+            aria-hidden="true"
+            data-slot="icon"
+          />
+          <%= gettext("Cover") %>
         </.button>
       </.link>
       <.link phx-click={JS.push("refresh_musicbrainz_data", value: %{id: @record.id})}>
         <.button type="button" class="relative -ml-px inline-flex items-center rounded-none">
-          <%= gettext("Refresh MB Data") %>
+          <span class="sr-only"><%= gettext("Refresh") %></span>
+          <.icon
+            id="refresh-lastfm-feed"
+            name="hero-arrow-path"
+            class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
+            aria-hidden="true"
+            data-slot="icon"
+          />
+          <%= gettext("MB Data") %>
         </.button>
       </.link>
       <.link
