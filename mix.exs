@@ -45,7 +45,7 @@ defmodule MusicLibrary.MixProject do
       # TODO bump on release to {:phoenix_live_view, "~> 1.0.0"},
       {:phoenix_live_view, "~> 1.0.0-rc.7", override: true},
       {:floki, ">= 0.30.0", only: :test},
-      {:mox, "~> 1.2"},
+      {:mox, "~> 1.2", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
