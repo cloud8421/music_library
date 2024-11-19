@@ -50,6 +50,30 @@ defmodule MusicLibrary.RecordsTest do
     end
   end
 
+  describe "refresh_musicbrainz_data/1" do
+    test "updates release_ids and included_release_group_ids" do
+      release_group_id = release_group_id()
+
+      record =
+        record_fixture(
+          musicbrainz_id: release_group_id,
+          musicbrainz_data: Map.put(release_group(), "releases", [])
+        )
+
+      assert record.release_ids == []
+      assert record.included_release_group_ids == []
+
+      expect(APIBehaviourMock, :get_release_group, fn ^release_group_id ->
+        {:ok, release_group_with_includes()}
+      end)
+
+      {:ok, updated_record} = Records.refresh_musicbrainz_data(record)
+
+      assert record.release_ids !== updated_record.release_ids
+      assert record.included_release_group_ids !== updated_record.included_release_group_ids
+    end
+  end
+
   describe "search_records/2" do
     setup [:create_records]
 
