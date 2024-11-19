@@ -126,7 +126,7 @@ defmodule MusicLibrary.Records do
 
   def refresh_cover(record) do
     with {:ok, cover_data} <- musicbrainz().get_cover_art({:url, record.cover_url}) do
-      {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(cover_data, 400)
+      {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(cover_data, 600)
       {:ok, thumb_data} = Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
 
       record

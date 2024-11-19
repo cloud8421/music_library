@@ -421,7 +421,7 @@ defmodule MusicBrainz.APIImpl do
 
   def get_cover_art({:url, url}) do
     with {:ok, cover_data} <- blob_get(url),
-         {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(cover_data, 400) do
+         {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(cover_data, 600) do
       Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
     else
       {:error, reason} ->
