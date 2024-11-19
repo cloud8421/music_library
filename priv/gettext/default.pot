@@ -19,7 +19,7 @@ msgstr ""
 #: lib/music_library_web/live/record_live/index.html.heex:185
 #: lib/music_library_web/live/record_live/show.html.heex:47
 #: lib/music_library_web/live/wishlist_live/index.html.heex:195
-#: lib/music_library_web/live/wishlist_live/show.html.heex:42
+#: lib/music_library_web/live/wishlist_live/show.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "Are you sure?"
 msgstr ""
@@ -34,7 +34,7 @@ msgstr ""
 msgid "Back to records"
 msgstr ""
 
-#: lib/music_library_web/live/wishlist_live/show.html.heex:128
+#: lib/music_library_web/live/wishlist_live/show.html.heex:133
 #, elixir-autogen, elixir-format
 msgid "Back to wishlist"
 msgstr ""
@@ -64,7 +64,7 @@ msgstr ""
 #: lib/music_library_web/live/record_live/index.html.heex:187
 #: lib/music_library_web/live/record_live/show.html.heex:53
 #: lib/music_library_web/live/wishlist_live/index.html.heex:197
-#: lib/music_library_web/live/wishlist_live/show.html.heex:48
+#: lib/music_library_web/live/wishlist_live/show.html.heex:53
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr ""
@@ -75,7 +75,7 @@ msgstr ""
 #: lib/music_library_web/live/record_live/show.html.heex:32
 #: lib/music_library_web/live/wishlist_live/index.ex:55
 #: lib/music_library_web/live/wishlist_live/index.html.heex:176
-#: lib/music_library_web/live/wishlist_live/show.ex:70
+#: lib/music_library_web/live/wishlist_live/show.ex:90
 #: lib/music_library_web/live/wishlist_live/show.html.heex:32
 #, elixir-autogen, elixir-format
 msgid "Edit"
@@ -106,7 +106,7 @@ msgid "Formats"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/show.html.heex:62
-#: lib/music_library_web/live/wishlist_live/show.html.heex:58
+#: lib/music_library_web/live/wishlist_live/show.html.heex:63
 #, elixir-autogen, elixir-format
 msgid "Genres"
 msgstr ""
@@ -129,7 +129,7 @@ msgid "Import from MusicBrainz"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/show.html.heex:115
-#: lib/music_library_web/live/wishlist_live/show.html.heex:103
+#: lib/music_library_web/live/wishlist_live/show.html.heex:108
 #, elixir-autogen, elixir-format
 msgid "Inserted at"
 msgstr ""
@@ -156,7 +156,7 @@ msgstr ""
 
 #: lib/music_library_web/live/record_live/form_component.ex:46
 #: lib/music_library_web/live/record_live/show.html.heex:70
-#: lib/music_library_web/live/wishlist_live/show.html.heex:66
+#: lib/music_library_web/live/wishlist_live/show.html.heex:71
 #, elixir-autogen, elixir-format
 msgid "MusicBrainz ID"
 msgstr ""
@@ -257,7 +257,7 @@ msgstr ""
 #: lib/music_library_web/live/record_live/index.html.heex:156
 #: lib/music_library_web/live/record_live/show.ex:91
 #: lib/music_library_web/live/wishlist_live/index.html.heex:156
-#: lib/music_library_web/live/wishlist_live/show.ex:69
+#: lib/music_library_web/live/wishlist_live/show.ex:89
 #, elixir-autogen, elixir-format
 msgid "Show"
 msgstr ""
@@ -313,7 +313,7 @@ msgid "Types"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/show.html.heex:123
-#: lib/music_library_web/live/wishlist_live/show.html.heex:111
+#: lib/music_library_web/live/wishlist_live/show.html.heex:116
 #, elixir-autogen, elixir-format
 msgid "Updated at"
 msgstr ""
@@ -352,13 +352,13 @@ msgid "close"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/show.html.heex:80
-#: lib/music_library_web/live/wishlist_live/show.html.heex:76
+#: lib/music_library_web/live/wishlist_live/show.html.heex:81
 #, elixir-autogen, elixir-format
 msgid "Copy MusicBrainz ID to clipboard"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/show.html.heex:134
-#: lib/music_library_web/live/wishlist_live/show.html.heex:122
+#: lib/music_library_web/live/wishlist_live/show.html.heex:127
 #, elixir-autogen, elixir-format
 msgid "MusicBrainz data"
 msgstr ""
@@ -392,7 +392,7 @@ msgid "Number of included records"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/show.html.heex:103
-#: lib/music_library_web/live/wishlist_live/show.html.heex:91
+#: lib/music_library_web/live/wishlist_live/show.html.heex:96
 #, elixir-autogen, elixir-format
 msgid "Includes"
 msgstr ""
@@ -400,6 +400,7 @@ msgstr ""
 #: lib/music_library_web/live/record_live/show.ex:61
 #: lib/music_library_web/live/record_live/show.ex:81
 #: lib/music_library_web/live/wishlist_live/show.ex:59
+#: lib/music_library_web/live/wishlist_live/show.ex:79
 #, elixir-autogen, elixir-format
 msgid "Error refreshing MusicBrainz data"
 msgstr ""
@@ -411,7 +412,7 @@ msgid "MusicBrainz data refreshed successfully"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/show.html.heex:42
-#: lib/music_library_web/live/wishlist_live/show.html.heex:37
+#: lib/music_library_web/live/wishlist_live/show.html.heex:42
 #, elixir-autogen, elixir-format
 msgid "Refresh MB Data"
 msgstr ""
@@ -422,11 +423,13 @@ msgid "Refresh LastFm Feed"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/show.ex:73
+#: lib/music_library_web/live/wishlist_live/show.ex:71
 #, elixir-autogen, elixir-format
 msgid "Cover refreshed successfully"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/show.html.heex:37
+#: lib/music_library_web/live/wishlist_live/show.html.heex:37
 #, elixir-autogen, elixir-format
 msgid "Refresh Cover"
 msgstr ""
