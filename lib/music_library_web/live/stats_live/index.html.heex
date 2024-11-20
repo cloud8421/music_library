@@ -8,7 +8,11 @@
       title={gettext("Latest purchase")}
       class="col-span-2 sm:col-span-3"
     />
-    <.counter title={gettext("Total collection")} count={@collection_count} path={~p"/records"} />
+    <.counter
+      title={gettext("Total collection")}
+      count={@collection_count}
+      path={~p"/collection"}
+    />
     <.counter title={gettext("Total wishlist")} count={@wishlist_count} path={~p"/wishlist"} />
   </dl>
 </div>
@@ -28,7 +32,7 @@
       <dd class="mt-1 text-center">
         <a
           class="text-xl lg:text-2xl font-semibold hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
-          href={~p"/records?query=format:#{format}"}
+          href={~p"/collection?query=format:#{format}"}
         >
           <%= count %>
         </a>
@@ -52,7 +56,7 @@
       <dd class="mt-1 text-center">
         <a
           class="text-xl lg:text-2xl font-semibold hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
-          href={~p"/records?query=type:#{type}"}
+          href={~p"/collection?query=type:#{type}"}
         >
           <%= count %>
         </a>

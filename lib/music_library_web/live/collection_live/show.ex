@@ -9,9 +9,9 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
       if connected?(socket) do
         socket
         |> get_connect_params()
-        |> Map.get("_live_referer", ~p"/records")
+        |> Map.get("_live_referer", ~p"/collection")
       else
-        ~p"/records"
+        ~p"/collection"
       end
 
     socket =
@@ -40,7 +40,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     record = Records.get_record!(id)
     {:ok, _} = Records.delete_record(record)
 
-    {:noreply, push_navigate(socket, to: ~p"/records")}
+    {:noreply, push_navigate(socket, to: ~p"/collection")}
   end
 
   def handle_event("refresh_musicbrainz_data", %{"id" => id}, socket) do

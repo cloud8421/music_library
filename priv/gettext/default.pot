@@ -100,7 +100,7 @@ msgstr ""
 msgid "Format"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:18
+#: lib/music_library_web/live/stats_live/index.html.heex:22
 #, elixir-autogen, elixir-format
 msgid "Formats"
 msgstr ""
@@ -178,7 +178,7 @@ msgid "No results"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/index.html.heex:121
-#: lib/music_library_web/live/stats_live/index.html.heex:155
+#: lib/music_library_web/live/stats_live/index.html.heex:159
 #: lib/music_library_web/live/wishlist_live/index.html.heex:121
 #, elixir-autogen, elixir-format
 msgid "Open options"
@@ -292,12 +292,12 @@ msgstr ""
 msgid "The application has been updated, please reload."
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:11
+#: lib/music_library_web/live/stats_live/index.html.heex:12
 #, elixir-autogen, elixir-format
 msgid "Total collection"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:12
+#: lib/music_library_web/live/stats_live/index.html.heex:16
 #, elixir-autogen, elixir-format
 msgid "Total wishlist"
 msgstr ""
@@ -307,7 +307,7 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:42
+#: lib/music_library_web/live/stats_live/index.html.heex:46
 #, elixir-autogen, elixir-format
 msgid "Types"
 msgstr ""
@@ -363,7 +363,7 @@ msgstr ""
 msgid "MusicBrainz data"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:67
+#: lib/music_library_web/live/stats_live/index.html.heex:71
 #, elixir-autogen, elixir-format
 msgid "Scrobble activity"
 msgstr ""
@@ -373,12 +373,12 @@ msgstr ""
 msgid "Choose which format to import"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:124
+#: lib/music_library_web/live/stats_live/index.html.heex:128
 #, elixir-autogen, elixir-format
 msgid "Collected"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:137
+#: lib/music_library_web/live/stats_live/index.html.heex:141
 #, elixir-autogen, elixir-format
 msgid "Wishlisted"
 msgstr ""
@@ -411,7 +411,7 @@ msgstr ""
 msgid "MusicBrainz data refreshed successfully"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:74
+#: lib/music_library_web/live/stats_live/index.html.heex:78
 #, elixir-autogen, elixir-format
 msgid "Refresh LastFm Feed"
 msgstr ""

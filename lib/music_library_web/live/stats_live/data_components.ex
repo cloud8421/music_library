@@ -12,7 +12,7 @@ defmodule MusicLibraryWeb.StatsLive.DataComponents do
         "relative overflow-hidden rounded-md bg-white dark:bg-zinc-800 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6 cursor-pointer",
         @class
       ]}
-      phx-click={JS.navigate(~p"/records/#{@record}")}
+      phx-click={JS.navigate(~p"/collection/#{@record}")}
     >
       <dt>
         <img
@@ -29,7 +29,7 @@ defmodule MusicLibraryWeb.StatsLive.DataComponents do
           <.link
             :for={artist <- @record.artists}
             class="text-sm md:text-base lg:text-2xl text-zinc-900 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
-            patch={~p"/records?query=mbid:#{artist.musicbrainz_id}"}
+            patch={~p"/collection?query=mbid:#{artist.musicbrainz_id}"}
           >
             <%= artist.name %>
           </.link>

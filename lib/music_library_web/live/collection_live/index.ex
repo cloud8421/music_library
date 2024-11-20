@@ -96,7 +96,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
       |> Map.put(:query, query)
       |> Map.take([:query, :page, :page_size])
 
-    {:noreply, push_patch(socket, to: ~p"/records?#{qs}")}
+    {:noreply, push_patch(socket, to: ~p"/collection?#{qs}")}
   end
 
   def handle_event("import", %{"id" => musicbrainz_id, "format" => format}, socket) do
@@ -110,7 +110,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
         {:noreply,
          socket
          |> put_flash(:info, gettext("Record imported successfully"))
-         |> push_navigate(to: ~p"/records/#{record.id}")}
+         |> push_navigate(to: ~p"/collection/#{record.id}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
@@ -119,7 +119,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
         {:noreply,
          socket
          |> put_flash(:error, gettext("Error importing record") <> "," <> inspect(reason))
-         |> push_patch(to: ~p"/records")}
+         |> push_patch(to: ~p"/collection")}
     end
   end
 
@@ -149,7 +149,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
       |> Map.take([:query, :page, :page_size])
       |> Enum.filter(fn {_, v} -> v not in ["", nil] end)
 
-    ~p"/records?#{qs}"
+    ~p"/collection?#{qs}"
   end
 
   defp musicbrainz_url(record) do

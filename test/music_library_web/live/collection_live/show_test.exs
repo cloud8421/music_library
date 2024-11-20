@@ -19,13 +19,13 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
     test "can navigate to the record edit form", %{conn: conn} do
       record = record_fixture()
 
-      {:ok, show_live, _html} = live(conn, ~p"/records/#{record.id}")
+      {:ok, show_live, _html} = live(conn, ~p"/collection/#{record.id}")
 
       assert show_live
              |> element("a", "Edit")
              |> render_click() =~ "Edit"
 
-      assert_patch(show_live, ~p"/records/#{record}/show/edit")
+      assert_patch(show_live, ~p"/collection/#{record}/show/edit")
     end
   end
 
@@ -33,7 +33,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
     test "it includes all needed information", %{conn: conn} do
       record = record_fixture()
 
-      {:ok, _show_live, html} = live(conn, ~p"/records/#{record.id}")
+      {:ok, _show_live, html} = live(conn, ~p"/collection/#{record.id}")
 
       assert html =~ escape(record.title)
       assert html =~ to_string(record.release)

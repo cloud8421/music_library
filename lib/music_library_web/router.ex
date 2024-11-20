@@ -32,12 +32,12 @@ defmodule MusicLibraryWeb.Router do
 
       live "/", StatsLive.Index, :index
 
-      live "/records", CollectionLive.Index, :index
-      live "/records/import", CollectionLive.Index, :import
-      live "/records/:id/edit", CollectionLive.Index, :edit
+      live "/collection", CollectionLive.Index, :index
+      live "/collection/import", CollectionLive.Index, :import
+      live "/collection/:id/edit", CollectionLive.Index, :edit
 
-      live "/records/:id", CollectionLive.Show, :show
-      live "/records/:id/show/edit", CollectionLive.Show, :edit
+      live "/collection/:id", CollectionLive.Show, :show
+      live "/collection/:id/show/edit", CollectionLive.Show, :edit
 
       live "/wishlist", WishlistLive.Index, :index
       live "/wishlist/import", WishlistLive.Index, :import

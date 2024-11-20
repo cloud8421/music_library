@@ -36,7 +36,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       conn: conn,
       wishlist: wishlist_records
     } do
-      {:ok, index_live, _html} = live(conn, ~p"/records")
+      {:ok, index_live, _html} = live(conn, ~p"/collection")
 
       for record <- wishlist_records do
         refute has_element?(index_live, "#records-#{record.id}")
@@ -44,7 +44,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     end
 
     test "shows purchased records", %{conn: conn, collection: records} do
-      {:ok, index_live, html} = live(conn, ~p"/records")
+      {:ok, index_live, html} = live(conn, ~p"/collection")
 
       assert html =~ "Collection"
 
@@ -81,7 +81,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     setup [:fill_collection]
 
     test "uses query string params", %{conn: conn, collection: records} do
-      {:ok, page_2_live, page_2_html} = live(conn, ~p"/records?page=2&page_size=25")
+      {:ok, page_2_live, page_2_html} = live(conn, ~p"/collection?page=2&page_size=25")
 
       {page_2_present, page_2_absent} =
         Enum.split_with(records, fn record ->
@@ -98,7 +98,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       assert has_element?(page_2_pagination, "a", "4")
       assert has_element?(page_2_pagination, "a", "5")
 
-      {:ok, page_3_live, page_3_html} = live(conn, ~p"/records?page=3&page_size=25")
+      {:ok, page_3_live, page_3_html} = live(conn, ~p"/collection?page=3&page_size=25")
 
       {page_3_present, page_3_absent} =
         Enum.split_with(records, fn record ->
@@ -128,7 +128,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     test "supports raw queries", %{conn: conn, collection: records} do
       [record | _rest] = records
       qs = [query: record.title]
-      {:ok, index_live, _html} = live(conn, ~p"/records?#{qs}")
+      {:ok, index_live, _html} = live(conn, ~p"/collection?#{qs}")
 
       record_row =
         index_live
@@ -168,7 +168,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         page_size: @default_records_page_size
       ]
 
-      {:ok, index_live, _html} = live(conn, ~p"/records?#{qs}")
+      {:ok, index_live, _html} = live(conn, ~p"/collection?#{qs}")
 
       for record <- present do
         record_row =
@@ -199,20 +199,20 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     test "can navigate to the record edit form", %{conn: conn} do
       record = record_fixture()
 
-      {:ok, index_live, _html} = live(conn, ~p"/records")
+      {:ok, index_live, _html} = live(conn, ~p"/collection")
 
       assert index_live
              |> element("#records-#{record.id} a", "Edit")
              |> render_click() =~ "Edit"
 
-      assert_patch(index_live, ~p"/records/#{record}/edit")
+      assert_patch(index_live, ~p"/collection/#{record}/edit")
 
       assert index_live |> render() =~ "Edit"
     end
 
     test "can change the record cover", %{conn: conn} do
       record = record_fixture(cover_data: File.read!(marbles_cover_fixture()))
-      {:ok, form_live, html} = live(conn, ~p"/records/#{record.id}/edit")
+      {:ok, form_live, html} = live(conn, ~p"/collection/#{record.id}/edit")
 
       assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
 
@@ -256,7 +256,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
   describe "Importing a new record" do
     test "it shows the import modal", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/records")
+      {:ok, index_live, _html} = live(conn, ~p"/collection")
 
       import_dialog =
         index_live
@@ -266,11 +266,11 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       assert import_dialog =~ "Search for a record on MusicBrainz"
       assert import_dialog =~ "No results"
 
-      assert_patch(index_live, ~p"/records/import")
+      assert_patch(index_live, ~p"/collection/import")
     end
 
     test "it imports a record when selected", %{conn: conn} do
-      {:ok, import_live, _html} = live(conn, ~p"/records/import")
+      {:ok, import_live, _html} = live(conn, ~p"/collection/import")
 
       mock_results = release_group_search_results()
 
@@ -348,7 +348,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
                musicbrainz_id: "1932f5b6-0b7b-4050-b1df-833ca89e5f44"
              } = marillion
 
-      assert_redirect(import_live, ~p"/records/#{record.id}")
+      assert_redirect(import_live, ~p"/collection/#{record.id}")
     end
   end
 end

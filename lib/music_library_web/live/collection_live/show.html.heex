@@ -12,7 +12,7 @@
       <.link
         :for={artist <- @record.artists}
         class="text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
-        patch={~p"/records?query=mbid:#{artist.musicbrainz_id}"}
+        patch={~p"/collection?query=mbid:#{artist.musicbrainz_id}"}
       >
         <%= artist.name %>
       </.link>
@@ -27,7 +27,7 @@
     </p>
 
     <nav class="mt-5 isolate inline-flex rounded-md shadow-sm">
-      <.link patch={~p"/records/#{@record}/show/edit"} phx-click={JS.push_focus()}>
+      <.link patch={~p"/collection/#{@record}/show/edit"} phx-click={JS.push_focus()}>
         <.button type="button" class="relative inline-flex items-center rounded-r-none">
           <%= gettext("Edit") %>
         </.button>
@@ -159,7 +159,7 @@
   :if={@live_action == :edit}
   id="record-modal"
   show
-  on_cancel={JS.patch(~p"/records/#{@record}")}
+  on_cancel={JS.patch(~p"/collection/#{@record}")}
 >
   <.live_component
     module={MusicLibraryWeb.RecordLive.FormComponent}
@@ -168,6 +168,6 @@
     action={@live_action}
     show_purchased_at={true}
     record={@record}
-    patch={~p"/records/#{@record}"}
+    patch={~p"/collection/#{@record}"}
   />
 </.modal>
