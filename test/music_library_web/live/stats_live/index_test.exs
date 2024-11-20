@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.StatsIndexTest do
+defmodule MusicLibraryWeb.StatsLive.IndexTest do
   use MusicLibraryWeb.ConnCase
 
   import Phoenix.LiveViewTest

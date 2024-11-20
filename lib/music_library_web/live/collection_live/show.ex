@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.RecordLive.Show do
+defmodule MusicLibraryWeb.CollectionLive.Show do
   use MusicLibraryWeb, :live_view
 
   alias MusicLibrary.Records

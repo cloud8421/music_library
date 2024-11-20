@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.RecordLive.Index do
+defmodule MusicLibraryWeb.CollectionLive.Index do
   use MusicLibraryWeb, :live_view
   import MusicLibraryWeb.Pagination
 
