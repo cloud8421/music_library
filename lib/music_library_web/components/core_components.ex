@@ -592,7 +592,7 @@ defmodule MusicLibraryWeb.CoreComponents do
 
   def back(assigns) do
     ~H"""
-    <div class="mt-4 md:mt-16">
+    <div class="mt-4 md:mt-8">
       <.link
         navigate={@navigate}
         class="text-sm font-semibold leading-6 text-zinc-900 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"
