@@ -137,9 +137,12 @@ defmodule MusicLibrary.Records.Record do
     end
   end
 
-  @fallback_cover_data :code.priv_dir(:music_library)
+  @fallback_cover_path :code.priv_dir(:music_library)
                        |> Path.join("/cover-not-found.jpg")
-                       |> File.read!()
+
+  @external_resource @fallback_cover_path
+
+  @fallback_cover_data File.read!(@fallback_cover_path)
 
   def fallback_cover_data, do: @fallback_cover_data
 
