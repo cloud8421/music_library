@@ -76,7 +76,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
          socket
          |> put_flash(
            :error,
-           gettext("Error refreshing MusicBrainz data") <> "," <> inspect(reason)
+           gettext("Error refreshing Cover") <> "," <> inspect(reason)
          )}
     end
   end

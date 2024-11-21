@@ -405,10 +405,6 @@ defmodule MusicBrainz.APIImpl do
     end
   end
 
-  @fallback_cover File.read!(
-                    (:code.priv_dir(:music_library) |> to_string()) <> "/cover-not-found.jpg"
-                  )
-
   @doc """
   Uses the [cover art](https://musicbrainz.org/doc/Cover_Art_Archive/API) endpoint with the release group id to get the cover image.
   """
@@ -427,7 +423,7 @@ defmodule MusicBrainz.APIImpl do
       {:error, reason} ->
         Logger.error("Failed to fetch cover art for #{url}, reason: #{inspect(reason)}")
 
-        {:ok, @fallback_cover}
+        {:error, :cover_not_available}
     end
   end
 

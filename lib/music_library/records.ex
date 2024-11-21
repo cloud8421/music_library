@@ -111,7 +111,7 @@ defmodule MusicLibrary.Records do
     with format = Keyword.get(opts, :format, "cd"),
          purchased_at = Keyword.get(opts, :purchased_at),
          {:ok, release_group} <- musicbrainz().get_release_group(musicbrainz_id),
-         {:ok, cover_data} <- musicbrainz().get_cover_art({:musicbrainz_id, musicbrainz_id}),
+         {:ok, cover_data} <- get_cover_art_or_default(musicbrainz_id),
          record_attrs =
            build_record_attrs(release_group, %{
              "cover_data" => cover_data,
@@ -121,6 +121,13 @@ defmodule MusicLibrary.Records do
       create_record(record_attrs)
     else
       error -> error
+    end
+  end
+
+  defp get_cover_art_or_default(musicbrainz_id) do
+    case musicbrainz().get_cover_art({:musicbrainz_id, musicbrainz_id}) do
+      {:error, :cover_not_available} -> {:ok, Record.fallback_cover_data()}
+      success -> success
     end
   end
 

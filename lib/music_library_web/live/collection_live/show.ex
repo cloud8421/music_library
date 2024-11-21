@@ -78,7 +78,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
          socket
          |> put_flash(
            :error,
-           gettext("Error refreshing MusicBrainz data") <> "," <> inspect(reason)
+           gettext("Error refreshing cover") <> "," <> inspect(reason)
          )}
     end
   end

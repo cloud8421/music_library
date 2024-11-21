@@ -398,9 +398,7 @@ msgid "Includes"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/show.ex:61
-#: lib/music_library_web/live/collection_live/show.ex:81
 #: lib/music_library_web/live/wishlist_live/show.ex:59
-#: lib/music_library_web/live/wishlist_live/show.ex:79
 #, elixir-autogen, elixir-format
 msgid "Error refreshing MusicBrainz data"
 msgstr ""
@@ -440,4 +438,14 @@ msgstr ""
 #: lib/music_library_web/live/wishlist_live/show.html.heex:49
 #, elixir-autogen, elixir-format
 msgid "Refresh"
+msgstr ""
+
+#: lib/music_library_web/live/wishlist_live/show.ex:79
+#, elixir-autogen, elixir-format
+msgid "Error refreshing Cover"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.ex:81
+#, elixir-autogen, elixir-format
+msgid "Error refreshing cover"
 msgstr ""
