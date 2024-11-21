@@ -3,6 +3,8 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
 
   import Phoenix.LiveViewTest
   import MusicLibrary.RecordsFixtures
+  alias MusicLibrary.Records
+  alias MusicLibrary.Repo
   alias MusicLibrary.Records.Record
 
   defp fill_collection(_) do
@@ -21,7 +23,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
     |> Phoenix.HTML.safe_to_string()
   end
 
-  describe "GET /" do
+  describe "Stats home page" do
     setup [:fill_collection, :fill_wishlist]
 
     test "it shows the collection counts (total, format, and type)", %{
@@ -65,6 +67,103 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
       {:ok, _stats_live, html} = live(conn, "/")
 
       assert html =~ wishlist |> length() |> Integer.to_string()
+    end
+
+    test "it shows the scrobble activity", %{conn: conn} do
+      # In test we don't run the LastFm.Refresh worker,
+      # so we need to interact directly with the LastFm.Feed to have some data
+      #
+      # We use three tracks from three different albums in order to test the three possible states for each track:
+      # collected, wishlisted or not tracked.
+
+      machinarium_soundtrack_track = %LastFm.Track{
+        musicbrainz_id: "190567f8-900e-44ce-a574-69adc10cf93a",
+        title: "Gameboy Tune",
+        artist: %LastFm.Artist{
+          musicbrainz_id: "35ac1700-84f1-4bd9-924b-3792b742e618",
+          name: "Tomáš Dvořák"
+        },
+        album: %LastFm.Album{
+          musicbrainz_id: "4bad26f6-1b27-4554-93bd-40b91ed7866c",
+          title: "Machinarium Soundtrack"
+        },
+        cover_url:
+          "https://lastfm.freetls.fastly.net/i/u/64s/b301ac9a72f14eb4ce3ddd785eb562b2.jpg",
+        scrobbled_at_uts: 1_730_678_348,
+        scrobbled_at_label: "03 Nov 2024, 23:59"
+      }
+
+      the_last_flight_track = %LastFm.Track{
+        musicbrainz_id: "",
+        title: "I Was Always Dreaming",
+        artist: %LastFm.Artist{
+          musicbrainz_id: "93834e82-3a0b-4ec2-a2e4-6eca0a497e6d",
+          name: "Public Service Broadcasting"
+        },
+        album: %LastFm.Album{
+          musicbrainz_id: "2157367e-bf73-48bb-8185-41023a54fa08",
+          title: "The Last Flight"
+        },
+        cover_url:
+          "https://lastfm.freetls.fastly.net/i/u/64s/7272b50a02fb3e35c59376d2f96cad97.jpg",
+        scrobbled_at_uts: 1_730_582_531,
+        scrobbled_at_label: "02 Nov 2024, 21:22"
+      }
+
+      the_mystery_of_time_track = %LastFm.Track{
+        musicbrainz_id: "276806b9-e525-449f-9ff5-4fbf89719e5b",
+        title: "Death Is Just a Feeling (Alt. Version)",
+        artist: %LastFm.Artist{
+          musicbrainz_id: "2ecbc483-dee4-442f-8ce7-f3ab31c73f87",
+          name: "Avantasia"
+        },
+        album: %LastFm.Album{
+          musicbrainz_id: "003d1505-b3ac-4acf-bed1-02e2c8134a26",
+          title: "The Mystery of Time: A Rock Epic"
+        },
+        cover_url:
+          "https://lastfm.freetls.fastly.net/i/u/64s/104b3f466df84b67cbbe8eadf503fba4.jpg",
+        scrobbled_at_uts: 1_732_103_695,
+        scrobbled_at_label: "20 Nov 2024, 11:54"
+      }
+
+      LastFm.Feed.update([
+        machinarium_soundtrack_track,
+        the_last_flight_track,
+        the_mystery_of_time_track
+      ])
+
+      # We add one album to the wishlist, and one to the collection.
+
+      machinarium_soundtrack =
+        record_fixture(purchased_at: nil)
+        |> Records.change_record(%{release_ids: ["4bad26f6-1b27-4554-93bd-40b91ed7866c"]})
+        |> Repo.update!()
+
+      the_last_flight =
+        record_fixture(purchased_at: DateTime.utc_now())
+        |> Records.change_record(%{release_ids: ["2157367e-bf73-48bb-8185-41023a54fa08"]})
+        |> Repo.update!()
+
+      {:ok, stats_live, html} = live(conn, "/")
+
+      assert has_element?(
+               stats_live,
+               "#track-#{machinarium_soundtrack_track.scrobbled_at_uts}",
+               "Wishlisted"
+             )
+
+      assert has_element?(
+               stats_live,
+               "#track-#{the_last_flight_track.scrobbled_at_uts}",
+               "Collected"
+             )
+
+      assert has_element?(
+               stats_live,
+               "#track-#{the_mystery_of_time_track.scrobbled_at_uts}",
+               "Choose which format to import"
+             )
     end
   end
 end
