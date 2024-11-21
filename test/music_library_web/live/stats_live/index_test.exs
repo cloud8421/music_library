@@ -135,17 +135,17 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
 
       # We add one album to the wishlist, and one to the collection.
 
-      machinarium_soundtrack =
+      _machinarium_soundtrack =
         record_fixture(purchased_at: nil)
         |> Records.change_record(%{release_ids: ["4bad26f6-1b27-4554-93bd-40b91ed7866c"]})
         |> Repo.update!()
 
-      the_last_flight =
+      _the_last_flight =
         record_fixture(purchased_at: DateTime.utc_now())
         |> Records.change_record(%{release_ids: ["2157367e-bf73-48bb-8185-41023a54fa08"]})
         |> Repo.update!()
 
-      {:ok, stats_live, html} = live(conn, "/")
+      {:ok, stats_live, _html} = live(conn, "/")
 
       assert has_element?(
                stats_live,
