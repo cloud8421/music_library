@@ -3,7 +3,7 @@ defmodule MusicLibrary.Collection do
 
   alias MusicLibrary.Repo
   alias MusicLibrary.Records
-  alias MusicLibrary.Records.Record
+  alias MusicLibrary.Records.{Record, SearchIndex}
 
   def search_records(query, opts \\ []) do
     limit = Keyword.get(opts, :limit, 20)
@@ -18,7 +18,8 @@ defmodule MusicLibrary.Collection do
 
   def count_records_by_format do
     q =
-      from r in base_search(),
+      from r in Record,
+        where: not is_nil(r.purchased_at),
         group_by: r.format,
         order_by: [desc: count(r.id)],
         select: {r.format, count(r.id)}
@@ -28,7 +29,8 @@ defmodule MusicLibrary.Collection do
 
   def count_records_by_type do
     q =
-      from r in base_search(),
+      from r in Record,
+        where: not is_nil(r.purchased_at),
         group_by: r.type,
         order_by: [desc: count(r.id)],
         select: {r.type, count(r.id)}
@@ -38,7 +40,8 @@ defmodule MusicLibrary.Collection do
 
   def get_latest_record! do
     q =
-      from r in base_search(),
+      from r in Record,
+        where: not is_nil(r.purchased_at),
         order_by: [desc: r.purchased_at],
         limit: 1,
         select: ^Records.essential_fields()
@@ -57,7 +60,7 @@ defmodule MusicLibrary.Collection do
   end
 
   defp base_search do
-    from r in Record,
+    from r in SearchIndex,
       where: not is_nil(r.purchased_at)
   end
 end

@@ -3,7 +3,7 @@ defmodule MusicLibrary.RecordsTest do
   use MusicLibrary.DataCase
 
   alias MusicLibrary.Records
-  alias MusicLibrary.Records.Record
+  alias MusicLibrary.Records.SearchIndex
   alias MusicBrainz.APIBehaviourMock
   import MusicLibrary.RecordsFixtures
   import MusicLibrary.ReleaseGroupsFixtures
@@ -26,7 +26,7 @@ defmodule MusicLibrary.RecordsTest do
   # when searching we do not return all record fields (e.g. cover data)
   # so we rely on record ids to compare results
   defp search(query, limit, offset) do
-    Record
+    SearchIndex
     |> Records.search_records(query, limit: limit, offset: offset)
     |> Enum.map(& &1.id)
   end
@@ -115,24 +115,24 @@ defmodule MusicLibrary.RecordsTest do
     setup [:create_records]
 
     test "untagged search" do
-      assert 2 == Records.search_records_count(Record, "brave")
+      assert 2 == Records.search_records_count(SearchIndex, "brave")
     end
 
     test "tagged search - album" do
-      assert 1 == Records.search_records_count(Record, ~s(album:"Brave \(Live\)"))
+      assert 1 == Records.search_records_count(SearchIndex, ~s(album:"Brave \(Live\)"))
     end
 
     test "tagged search - artist" do
-      assert 2 == Records.search_records_count(Record, "artist:airbag")
-      assert 1 == Records.search_records_count(Record, ~s(artist:"airbag \(AU\)"))
+      assert 2 == Records.search_records_count(SearchIndex, "artist:airbag")
+      assert 1 == Records.search_records_count(SearchIndex, ~s(artist:"airbag \(AU\)"))
     end
 
     test "tagged search - format" do
-      assert 1 == Records.search_records_count(Record, "brave format:cd")
+      assert 1 == Records.search_records_count(SearchIndex, "brave format:cd")
     end
 
     test "tagged search - type" do
-      assert 1 == Records.search_records_count(Record, "brave type:live")
+      assert 1 == Records.search_records_count(SearchIndex, "brave type:live")
     end
 
     test "tagged search - mbid", %{records: [_, _, _, greatest_show_on_earth, libertad]} do
@@ -140,9 +140,9 @@ defmodule MusicLibrary.RecordsTest do
       [airbag_au_mbid] = Enum.map(libertad.artists, fn a -> a.musicbrainz_id end)
 
       assert 1 ==
-               Records.search_records_count(Record, "mbid:#{airbag_mbid}")
+               Records.search_records_count(SearchIndex, "mbid:#{airbag_mbid}")
 
-      assert 1 == Records.search_records_count(Record, "mbid:#{airbag_au_mbid}")
+      assert 1 == Records.search_records_count(SearchIndex, "mbid:#{airbag_au_mbid}")
     end
   end
 

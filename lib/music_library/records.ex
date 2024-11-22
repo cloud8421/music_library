@@ -12,14 +12,15 @@ defmodule MusicLibrary.Records do
     [
       :id,
       :type,
-      :artists,
       :format,
       :title,
-      :release,
+      :artists,
       :genres,
       :musicbrainz_id,
+      :release_ids,
       :included_release_group_ids,
-      :cover_hash
+      :cover_hash,
+      :release
     ]
   end
 
@@ -56,13 +57,16 @@ defmodule MusicLibrary.Records do
 
     Enum.reduce(parsed_query, search_with_order, fn
       {:artist, artist}, search ->
-        search |> where([r], like(r.artists, ^"%#{artist}%"))
+        search
+        |> where(fragment("records_search_index match 'artists : ?*'", literal(^artist)))
 
       {:album, album}, search ->
-        search |> where([r], like(r.title, ^"%#{album}%"))
+        search
+        |> where(fragment("records_search_index match 'title : ?*'", literal(^album)))
 
       {:mbid, mbid}, search ->
-        search |> where([r], r.musicbrainz_id == ^mbid or like(r.artists, ^"%#{mbid}%"))
+        search
+        |> where(fragment("records_search_index = '?*'", literal(^mbid)))
 
       {:format, format}, search ->
         search |> where([r], r.format == ^format)
@@ -70,12 +74,12 @@ defmodule MusicLibrary.Records do
       {:type, type}, search ->
         search |> where([r], r.type == ^type)
 
+      {:query, ""}, search ->
+        search
+
       {:query, raw_query}, search ->
         search
-        |> where(
-          [r],
-          like(r.title, ^"%#{raw_query}%") or like(r.artists, ^"%#{raw_query}%")
-        )
+        |> where(fragment("records_search_index = '?*'", literal(^raw_query)))
     end)
   end
 

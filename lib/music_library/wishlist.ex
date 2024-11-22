@@ -3,7 +3,7 @@ defmodule MusicLibrary.Wishlist do
 
   alias MusicLibrary.Repo
   alias MusicLibrary.Records
-  alias MusicLibrary.Records.Record
+  alias MusicLibrary.Records.SearchIndex
 
   def search_records(query, opts \\ []) do
     limit = Keyword.get(opts, :limit, 20)
@@ -31,7 +31,7 @@ defmodule MusicLibrary.Wishlist do
   end
 
   defp base_search do
-    from r in Record,
+    from r in SearchIndex,
       where: is_nil(r.purchased_at)
   end
 end
