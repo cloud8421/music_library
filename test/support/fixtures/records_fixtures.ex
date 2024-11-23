@@ -25,7 +25,7 @@ defmodule MusicLibrary.RecordsFixtures do
     "The Dark Side of the Moon",
     "Wish You Were Here",
     "Selling England by the Pound",
-    "Larks' Tongues in Aspic",
+    "Larks Tongues in Aspic",
     "Red",
     "Foxtrot",
     "The Lamb Lies Down on Broadway",
