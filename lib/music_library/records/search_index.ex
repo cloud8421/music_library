@@ -1,11 +1,18 @@
 defmodule MusicLibrary.Records.SearchIndex do
+  @moduledoc """
+  The search index is backed by a virtual table that uses
+  the [FTS5](https://www.sqlite.org/fts5.html) extension.
+
+  Data in the table is automatically synced via a set of triggers defined in
+  `priv/repo/migrations/20241122094655_create_records_search_index.exs`.
+
+  Most of the `records` table columns are replicated for ease of use -
+  so that it's not necessary to fetch actual `records` after obtaining search results.
+  """
   use Ecto.Schema
 
   @formats [:cd, :vinyl, :blu_ray, :dvd, :multi]
   @types [:album, :ep, :live, :compilation, :single, :other]
-
-  # q = from s in MusicLibrary.Records.SearchIndex,
-  # where: fragment("records_index = 'lex*'"), select: s.id
 
   @primary_key {:id, :binary_id, autogenerate: false}
   schema "records_search_index" do
