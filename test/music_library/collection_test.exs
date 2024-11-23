@@ -37,7 +37,7 @@ defmodule MusicLibrary.CollectionTest do
     setup [:fill_collection]
 
     test "returns the count of matching records, excluding wishlisted records" do
-      assert 2 = Collection.search_records_count("brave")
+      assert 2 == Collection.search_records_count("brave")
     end
   end
 
@@ -45,7 +45,7 @@ defmodule MusicLibrary.CollectionTest do
     setup [:fill_collection]
 
     test "returns the count of records in the collection by format, excluding wishlisted records" do
-      assert [vinyl: 2, cd: 1] = Collection.count_records_by_format()
+      assert [vinyl: 2, cd: 1] == Collection.count_records_by_format()
     end
   end
 
@@ -53,7 +53,7 @@ defmodule MusicLibrary.CollectionTest do
     setup [:fill_collection]
 
     test "returns the count of records in the collection by type, excluding wishlisted records" do
-      assert [live: 1, ep: 1, album: 1] = Collection.count_records_by_type()
+      assert [album: 1, ep: 1, live: 1] == Collection.count_records_by_type()
     end
   end
 
