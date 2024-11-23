@@ -11,5 +11,8 @@ config :music_library, MusicLibraryWeb.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
+# We enable dev routes in production as they're protected behind auth
+config :music_library, dev_routes: true
+
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.

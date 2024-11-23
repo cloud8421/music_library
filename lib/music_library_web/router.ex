@@ -63,9 +63,11 @@ defmodule MusicLibraryWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
-      pipe_through :browser
+      pipe_through [:browser, :require_login]
 
-      live_dashboard "/dashboard", metrics: MusicLibraryWeb.Telemetry
+      live_dashboard "/dashboard",
+        metrics: MusicLibraryWeb.Telemetry,
+        ecto_repos: [MusicLibrary.Repo]
     end
   end
 end
