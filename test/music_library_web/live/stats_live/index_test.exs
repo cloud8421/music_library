@@ -127,10 +127,28 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         scrobbled_at_label: "20 Nov 2024, 11:54"
       }
 
+      in_murmuration_track = %LastFm.Track{
+        musicbrainz_id: "",
+        title: "Wait For Me",
+        artist: %LastFm.Artist{
+          musicbrainz_id: "298c6d13-4757-437d-a3a6-07d0b3255e5b",
+          name: "Von Hertzen Brothers"
+        },
+        album: %LastFm.Album{
+          musicbrainz_id: "",
+          title: "In Murmuration"
+        },
+        cover_url:
+          "https://lastfm.freetls.fastly.net/i/u/64s/f4923850113a5d365b1fd2d04cb4c1c3.jpg",
+        scrobbled_at_uts: 1_732_399_832,
+        scrobbled_at_label: "23 Nov 2024, 22:10"
+      }
+
       LastFm.Feed.update([
         machinarium_soundtrack_track,
         the_last_flight_track,
-        the_mystery_of_time_track
+        the_mystery_of_time_track,
+        in_murmuration_track
       ])
 
       # We add one album to the wishlist, and one to the collection.
@@ -163,6 +181,12 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
                stats_live,
                "#track-#{the_mystery_of_time_track.scrobbled_at_uts}",
                "Choose which format to import"
+             )
+
+      assert has_element?(
+               stats_live,
+               "#track-#{in_murmuration_track.scrobbled_at_uts}",
+               "No MusicBrainz ID"
              )
     end
   end

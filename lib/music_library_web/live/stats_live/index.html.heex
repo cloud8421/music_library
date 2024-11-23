@@ -115,6 +115,19 @@
           </div>
 
           <span
+            :if={track.album.musicbrainz_id == ""}
+            class={[
+              "inline-flex items-center rounded-md",
+              "px-2 py-1 text-xs font-medium",
+              "ring-1 ring-inset",
+              "bg-zinc-50 dark:bg-zinc-500/10",
+              "text-zinc-700 dark:text-zinc-400",
+              "ring-zinc-600/20 dark:ring-zinc-500/20"
+            ]}
+          >
+            <%= gettext("No MusicBrainz ID") %>
+          </span>
+          <span
             :if={track.album.musicbrainz_id in @collected_release_ids}
             class={[
               "inline-flex items-center rounded-md",
@@ -143,7 +156,8 @@
 
           <div
             :if={
-              track.album.musicbrainz_id not in @collected_release_ids and
+              track.album.musicbrainz_id !== "" and
+                track.album.musicbrainz_id not in @collected_release_ids and
                 track.album.musicbrainz_id not in @wishlisted_release_ids
             }
             class="relative flex-none"

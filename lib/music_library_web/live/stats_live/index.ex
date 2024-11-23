@@ -20,10 +20,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
     recent_tracks = LastFm.Feed.all()
 
-    release_ids =
-      recent_tracks
-      |> Enum.map(fn t -> t.album.musicbrainz_id end)
-      |> Enum.uniq()
+    release_ids = release_ids(recent_tracks)
 
     collected_release_ids = Collection.collected_release_ids(release_ids)
     wishlisted_release_ids = Wishlist.wishlisted_release_ids(release_ids)
@@ -83,10 +80,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   end
 
   def handle_info(%{tracks: recent_tracks}, socket) do
-    release_ids =
-      recent_tracks
-      |> Enum.map(fn t -> t.album.musicbrainz_id end)
-      |> Enum.uniq()
+    release_ids = release_ids(recent_tracks)
 
     collected_release_ids = Collection.collected_release_ids(release_ids)
     wishlisted_release_ids = Wishlist.wishlisted_release_ids(release_ids)
@@ -98,6 +92,13 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        wishlisted_release_ids: wishlisted_release_ids
      )
      |> stream(:recent_tracks, recent_tracks, reset: true)}
+  end
+
+  defp release_ids(recent_tracks) do
+    recent_tracks
+    |> Enum.map(fn t -> t.album.musicbrainz_id end)
+    |> Enum.uniq()
+    |> Enum.reject(fn musicbrainz_id -> musicbrainz_id == "" end)
   end
 
   # The Tailwind build step requires all needed classes to be explicitly referenced
