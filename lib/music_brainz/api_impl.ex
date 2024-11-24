@@ -14,7 +14,9 @@ defmodule MusicBrainz.APIImpl do
 
   @doc """
   Uses the [lookup](https://musicbrainz.org/doc/MusicBrainz_API#Lookups) endpoint with the release group id and include the
-  artist credits.
+  associated artists, genres, releases and release group relations. Note that the API limits each included resource to 25 items.
+
+  > Note that the number of linked entities returned is always limited to 25. If you need the remaining results, you will have to perform a browse request.
 
   Example request: https://musicbrainz.org/ws/2/release-group/ae504fd6-8498-463e-8d96-14f9e11d1863?fmt=json&inc=artists+releases+genres+release-group-rels
 
