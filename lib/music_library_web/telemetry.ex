@@ -75,48 +75,28 @@ defmodule MusicLibraryWeb.Telemetry do
           "The time the connection spent waiting before being checked out for the query"
       ),
 
-      # LastFm HTTP Metrics
+      # HTTP Metrics
       summary("finch.request.stop.duration",
         unit: {:native, :millisecond},
         tags: [:normalized_path],
-        tag_values: &add_normalized_path/1,
-        keep: &keep_last_fm/1,
+        tag_values: &add_tags/1,
+        drop: &drop_archive_requests/1,
         reporter_options: [
-          nav: "HTTP - Last.fm"
+          nav: "HTTP"
         ]
       ),
-      summary("finch.response.stop.duration",
+      summary("finch.request.stop.duration",
         unit: {:native, :millisecond},
-        tags: [:normalized_path],
-        tag_values: &add_normalized_path/1,
-        keep: &keep_last_fm/1,
+        tags: [:host],
+        tag_values: &add_tags/1,
+        drop: &drop_archive_requests/1,
         reporter_options: [
-          nav: "HTTP - Last.fm"
-        ]
-      ),
-
-      # MusicBrainz HTTP Metrics
-      summary("finch.request.start.duration",
-        unit: {:native, :millisecond},
-        tags: [:normalized_path],
-        tag_values: &add_normalized_path/1,
-        keep: &keep_musicbrainz/1,
-        reporter_options: [
-          nav: "HTTP - MusicBrainz"
-        ]
-      ),
-      summary("finch.response.stop.duration",
-        unit: {:native, :millisecond},
-        tags: [:normalized_path],
-        tag_values: &add_normalized_path/1,
-        keep: &keep_musicbrainz/1,
-        reporter_options: [
-          nav: "HTTP - MusicBrainz"
+          nav: "HTTP"
         ]
       ),
 
       # VM Metrics
-      summary("vm.memory.total", unit: {:byte, :kilobyte}),
+      summary("vm.memory.total", unit: {:byte, :megabyte}),
       summary("vm.total_run_queue_lengths.total"),
       summary("vm.total_run_queue_lengths.cpu"),
       summary("vm.total_run_queue_lengths.io")
@@ -131,15 +111,16 @@ defmodule MusicLibraryWeb.Telemetry do
     ]
   end
 
-  defp add_normalized_path(metadata) do
-    Map.put(metadata, :normalized_path, URI.parse(metadata.request.path).path)
+  defp add_tags(metadata) do
+    req = metadata.request
+
+    Map.merge(metadata, %{
+      host: req.host,
+      normalized_path: URI.parse(req.path).path
+    })
   end
 
-  defp keep_last_fm(metadata) do
-    metadata.request.host == "ws.audioscrobbler.com"
-  end
-
-  defp keep_musicbrainz(metadata) do
-    metadata.request.host == "musicbrainz.org"
+  defp drop_archive_requests(metadata) do
+    metadata.request.host =~ "archive.org"
   end
 end
