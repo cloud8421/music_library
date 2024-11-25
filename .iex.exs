@@ -6,6 +6,10 @@ defmodule Helpers do
   def info! do
     Logger.configure(level: :info)
   end
+
+  def warning! do
+    Logger.configure(level: :warning)
+  end
 end
 
 import Helpers
