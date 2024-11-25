@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 
-#: lib/music_library_web/components/core_components.ex:516
+#: lib/music_library_web/components/core_components.ex:512
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr ""
@@ -24,7 +24,7 @@ msgstr ""
 msgid "Are you sure?"
 msgstr ""
 
-#: lib/music_library_web/components/core_components.ex:169
+#: lib/music_library_web/components/core_components.ex:165
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr ""
@@ -90,7 +90,7 @@ msgstr ""
 msgid "Error importing record"
 msgstr ""
 
-#: lib/music_library_web/components/core_components.ex:160
+#: lib/music_library_web/components/core_components.ex:156
 #, elixir-autogen, elixir-format
 msgid "Error!"
 msgstr ""
@@ -111,7 +111,7 @@ msgstr ""
 msgid "Genres"
 msgstr ""
 
-#: lib/music_library_web/components/core_components.ex:181
+#: lib/music_library_web/components/core_components.ex:177
 #, elixir-autogen, elixir-format
 msgid "Hang in there while we get back on track"
 msgstr ""
@@ -267,7 +267,7 @@ msgstr ""
 msgid "Showing <b>%{visible}</b> of <b>%{total}</b> records"
 msgstr ""
 
-#: lib/music_library_web/components/core_components.ex:176
+#: lib/music_library_web/components/core_components.ex:172
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr ""
@@ -278,7 +278,7 @@ msgstr ""
 msgid "Stats"
 msgstr ""
 
-#: lib/music_library_web/components/core_components.ex:159
+#: lib/music_library_web/components/core_components.ex:155
 #, elixir-autogen, elixir-format
 msgid "Success!"
 msgstr ""
@@ -323,7 +323,7 @@ msgstr ""
 msgid "View on MusicBrainz"
 msgstr ""
 
-#: lib/music_library_web/components/core_components.ex:164
+#: lib/music_library_web/components/core_components.ex:160
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr ""
@@ -344,8 +344,8 @@ msgstr ""
 msgid "You must be logged in to access this page"
 msgstr ""
 
-#: lib/music_library_web/components/core_components.ex:85
-#: lib/music_library_web/components/core_components.ex:139
+#: lib/music_library_web/components/core_components.ex:81
+#: lib/music_library_web/components/core_components.ex:135
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr ""
