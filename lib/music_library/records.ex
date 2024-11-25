@@ -146,6 +146,15 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  def resize_cover(record) do
+    {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(record.cover_data, 600)
+    {:ok, thumb_data} = Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
+
+    record
+    |> Record.add_cover_data(thumb_data)
+    |> Repo.update()
+  end
+
   def refresh_musicbrainz_data(record) do
     with {:ok, data} <- musicbrainz().get_release_group(record.musicbrainz_id) do
       record
