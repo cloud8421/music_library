@@ -216,7 +216,7 @@ msgstr ""
 msgid "Record imported successfully"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/form_component.ex:118
+#: lib/music_library_web/live/record_live/form_component.ex:123
 #: lib/music_library_web/live/wishlist_live/index.ex:137
 #, elixir-autogen, elixir-format
 msgid "Record updated successfully"

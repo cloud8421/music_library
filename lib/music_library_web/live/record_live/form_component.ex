@@ -105,8 +105,13 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
   defp save_record(socket, record_params, uploaded_covers) do
     params =
       case uploaded_covers do
-        [] -> record_params
-        [cover_data] -> Map.put(record_params, "cover_data", cover_data)
+        [] ->
+          record_params
+
+        [cover_data] ->
+          {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(cover_data, 600)
+          {:ok, thumb_data} = Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
+          Map.put(record_params, "cover_data", thumb_data)
       end
 
     case Records.update_record(socket.assigns.record, params) do
