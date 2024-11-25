@@ -75,6 +75,46 @@ defmodule MusicLibraryWeb.Telemetry do
           "The time the connection spent waiting before being checked out for the query"
       ),
 
+      # LastFm HTTP Metrics
+      summary("finch.request.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:normalized_path],
+        tag_values: &add_normalized_path/1,
+        keep: &keep_last_fm/1,
+        reporter_options: [
+          nav: "HTTP - Last.fm"
+        ]
+      ),
+      summary("finch.response.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:normalized_path],
+        tag_values: &add_normalized_path/1,
+        keep: &keep_last_fm/1,
+        reporter_options: [
+          nav: "HTTP - Last.fm"
+        ]
+      ),
+
+      # MusicBrainz HTTP Metrics
+      summary("finch.request.start.duration",
+        unit: {:native, :millisecond},
+        tags: [:normalized_path],
+        tag_values: &add_normalized_path/1,
+        keep: &keep_musicbrainz/1,
+        reporter_options: [
+          nav: "HTTP - MusicBrainz"
+        ]
+      ),
+      summary("finch.response.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:normalized_path],
+        tag_values: &add_normalized_path/1,
+        keep: &keep_musicbrainz/1,
+        reporter_options: [
+          nav: "HTTP - MusicBrainz"
+        ]
+      ),
+
       # VM Metrics
       summary("vm.memory.total", unit: {:byte, :kilobyte}),
       summary("vm.total_run_queue_lengths.total"),
@@ -89,5 +129,17 @@ defmodule MusicLibraryWeb.Telemetry do
       # This function must call :telemetry.execute/3 and a metric must be added above.
       # {MusicLibraryWeb, :count_users, []}
     ]
+  end
+
+  defp add_normalized_path(metadata) do
+    Map.put(metadata, :normalized_path, URI.parse(metadata.request.path).path)
+  end
+
+  defp keep_last_fm(metadata) do
+    metadata.request.host == "ws.audioscrobbler.com"
+  end
+
+  defp keep_musicbrainz(metadata) do
+    metadata.request.host == "musicbrainz.org"
   end
 end
