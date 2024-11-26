@@ -5,7 +5,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   import MusicLibrary.RecordsFixtures
   import MusicLibrary.ReleaseGroupsFixtures
   import Mox
-  alias MusicLibrary.Records.Record
+  alias MusicLibrary.Records.{Cover, Record}
   alias MusicBrainz.APIBehaviourMock
 
   setup :verify_on_exit!
@@ -330,9 +330,11 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
              ]
 
       assert record.cover_hash ==
-               "599407DDF69907D4A60FE13CCAA824D25CF08DC124FD6AA3E8E7ECD98C885FFE"
+               "0ED79C93C5BECC7B28FE05CAA3E49B924A3377EA3219CA8FFAE3B2B0960F2AC8"
 
-      assert record.cover_data == cover_data
+      {:ok, resized_cover_data} = Cover.resize(cover_data)
+
+      assert record.cover_data == resized_cover_data
 
       assert record.inserted_at !== nil
       assert record.updated_at !== nil

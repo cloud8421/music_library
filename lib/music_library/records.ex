@@ -6,7 +6,7 @@ defmodule MusicLibrary.Records do
   import Ecto.Query, warn: false
   alias MusicLibrary.Repo
 
-  alias MusicLibrary.Records.{Record, SearchParser}
+  alias MusicLibrary.Records.{Cover, Record, SearchParser}
 
   def essential_fields do
     [
@@ -131,14 +131,13 @@ defmodule MusicLibrary.Records do
   defp get_cover_art_or_default(musicbrainz_id) do
     case musicbrainz().get_cover_art({:musicbrainz_id, musicbrainz_id}) do
       {:error, :cover_not_available} -> {:ok, Record.fallback_cover_data()}
-      success -> success
+      {:ok, cover_data} -> Cover.resize(cover_data)
     end
   end
 
   def refresh_cover(record) do
     with {:ok, cover_data} <- musicbrainz().get_cover_art({:url, record.cover_url}) do
-      {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(cover_data, 600)
-      {:ok, thumb_data} = Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
+      {:ok, thumb_data} = Cover.resize(cover_data)
 
       record
       |> Record.add_cover_data(thumb_data)
@@ -147,8 +146,7 @@ defmodule MusicLibrary.Records do
   end
 
   def resize_cover(record) do
-    {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(record.cover_data, 600)
-    {:ok, thumb_data} = Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
+    {:ok, thumb_data} = Cover.resize(record.cover_data)
 
     record
     |> Record.add_cover_data(thumb_data)

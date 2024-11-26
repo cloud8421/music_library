@@ -418,14 +418,14 @@ defmodule MusicBrainz.APIImpl do
   end
 
   def get_cover_art({:url, url}) do
-    with {:ok, cover_data} <- blob_get(url),
-         {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(cover_data, 600) do
-      Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
-    else
+    case blob_get(url) do
       {:error, reason} ->
         Logger.error("Failed to fetch cover art for #{url}, reason: #{inspect(reason)}")
 
         {:error, :cover_not_available}
+
+      success ->
+        success
     end
   end
 

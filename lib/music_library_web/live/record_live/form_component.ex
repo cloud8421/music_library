@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
   use MusicLibraryWeb, :live_component
 
   alias MusicLibrary.Records
+  alias MusicLibrary.Records.Cover
 
   @impl true
   def mount(socket) do
@@ -109,8 +110,7 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
           record_params
 
         [cover_data] ->
-          {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(cover_data, 600)
-          {:ok, thumb_data} = Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
+          {:ok, thumb_data} = Cover.resize(cover_data)
           Map.put(record_params, "cover_data", thumb_data)
       end
 
