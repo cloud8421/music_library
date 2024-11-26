@@ -64,6 +64,10 @@ defmodule MusicLibrary.Records do
         search
         |> where(fragment("records_search_index match 'title : ?*'", literal(^album)))
 
+      {:genre, genre}, search ->
+        search
+        |> where(fragment("records_search_index match 'genres : ?*'", literal(^genre)))
+
       {:mbid, mbid}, search ->
         search
         |> where(fragment("records_search_index = '?*'", literal(^mbid)))

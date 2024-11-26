@@ -28,6 +28,9 @@ defmodule MusicLibrary.Records.SearchParser do
   mbid_filter = ignore(string("mbid:"))
   mbid = concat(mbid_filter, query) |> tag(:mbid)
 
+  genre_filter = ignore(string("genre:"))
+  genre = concat(genre_filter, query) |> tag(:genre)
+
   format_filter = ignore(string("format:"))
 
   formats =
@@ -56,7 +59,7 @@ defmodule MusicLibrary.Records.SearchParser do
     choice([concat(type_filter, types), ignore(invalid_type)])
     |> tag(:type)
 
-  search = repeat(choice([artist, album, mbid, space, format, type, query]))
+  search = repeat(choice([artist, album, mbid, genre, space, format, type, query]))
 
   defparsecp(:search_parser, search)
 
@@ -75,6 +78,8 @@ defmodule MusicLibrary.Records.SearchParser do
     {:ok, %{artist: "the pineapple thief", query: "wilderness"}}
     iex> MusicLibrary.Records.SearchParser.parse(~s(artist:"the pineapple thief" format:cd))
     {:ok, %{artist: "the pineapple thief", format: :cd}}
+    iex> MusicLibrary.Records.SearchParser.parse(~s(genre:"psychedelic rock"))
+    {:ok, %{genre: "psychedelic rock"}}
     iex> MusicLibrary.Records.SearchParser.parse("format:vin")
     {:ok, %{query: ""}}
     iex> MusicLibrary.Records.SearchParser.parse("type:alb")
@@ -110,6 +115,9 @@ defmodule MusicLibrary.Records.SearchParser do
 
       {:mbid, [{:query, [value]}]}, acc ->
         Map.put(acc, :mbid, value)
+
+      {:genre, [{:query, [value]}]}, acc ->
+        Map.put(acc, :genre, value)
 
       {:format, [value]}, acc ->
         Map.put(acc, :format, value)
