@@ -4,6 +4,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
   alias MusicLibrary.Records
   alias MusicLibrary.Collection
+  alias MusicLibraryWeb.CollectionLive.Show
 
   @default_records_list_params %{
     query: "",
@@ -38,7 +39,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
       end
 
     socket
-    |> assign(:page_title, gettext("Import from MusicBrainz"))
+    |> assign(:page_title, gettext("Import from MusicBrainz · Collection"))
     |> assign(:record, nil)
   end
 
@@ -51,9 +52,11 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
         socket
       end
 
+    record = Records.get_record!(id)
+
     socket
-    |> assign(:page_title, gettext("Edit"))
-    |> assign(:record, Records.get_record!(id))
+    |> assign(:page_title, Show.page_title(socket.assigns.live_action, record))
+    |> assign(:record, record)
   end
 
   defp apply_action(socket, :index, params) do

@@ -26,11 +26,13 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
+    record = Records.get_record!(id)
+
     {:noreply,
      socket
      |> assign(:nav_section, :wishlist)
-     |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:record, Records.get_record!(id))}
+     |> assign(:page_title, page_title(socket.assigns.live_action, record))
+     |> assign(:record, record)}
   end
 
   @impl true
@@ -86,8 +88,25 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
     {:noreply, assign(socket, :record, record)}
   end
 
-  defp page_title(:show), do: gettext("Show")
-  defp page_title(:edit), do: gettext("Edit")
+  def page_title(action, record) do
+    artist_names = Enum.map(record.artists, & &1.name)
+
+    Enum.join(
+      [
+        Enum.join(artist_names, ", "),
+        "-",
+        record.title,
+        "·",
+        title_segment(action),
+        "·",
+        gettext("Wishlist")
+      ],
+      " "
+    )
+  end
+
+  defp title_segment(:show), do: gettext("Show")
+  defp title_segment(:edit), do: gettext("Edit")
 
   defp musicbrainz_url(record) do
     "https://musicbrainz.org/release-group/#{record.musicbrainz_id}"

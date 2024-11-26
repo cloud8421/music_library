@@ -31,7 +31,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     {:noreply,
      socket
      |> assign(:nav_section, :records)
-     |> assign(:page_title, page_title(socket.assigns.live_action))
+     |> assign(:page_title, page_title(socket.assigns.live_action, record))
      |> assign(:record, record)}
   end
 
@@ -88,8 +88,42 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     {:noreply, assign(socket, :record, record)}
   end
 
-  defp page_title(:show), do: gettext("Show")
-  defp page_title(:edit), do: gettext("Edit")
+  def page_title(:show, record) do
+    artist_names = Enum.map(record.artists, & &1.name)
+
+    Enum.join(
+      [
+        Enum.join(artist_names, ", "),
+        "-",
+        record.title,
+        "·",
+        gettext("Details"),
+        "·",
+        gettext("Collection")
+      ],
+      " "
+    )
+  end
+
+  def page_title(action, record) do
+    artist_names = Enum.map(record.artists, & &1.name)
+
+    Enum.join(
+      [
+        Enum.join(artist_names, ", "),
+        "-",
+        record.title,
+        "·",
+        title_segment(action),
+        "·",
+        gettext("Collection")
+      ],
+      " "
+    )
+  end
+
+  defp title_segment(:show), do: gettext("Show")
+  defp title_segment(:edit), do: gettext("Edit")
 
   defp musicbrainz_url(record) do
     "https://musicbrainz.org/release-group/#{record.musicbrainz_id}"
