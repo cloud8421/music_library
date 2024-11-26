@@ -452,5 +452,5 @@ msgstr ""
 
 #: lib/music_library_web/live/stats_live/index.html.heex:128
 #, elixir-autogen, elixir-format
-msgid "No MusicBrainz ID"
+msgid "No MB ID"
 msgstr ""

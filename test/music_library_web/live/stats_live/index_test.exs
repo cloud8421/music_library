@@ -186,7 +186,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
       assert has_element?(
                stats_live,
                "#track-#{in_murmuration_track.scrobbled_at_uts}",
-               "No MusicBrainz ID"
+               "No MB ID"
              )
     end
   end
