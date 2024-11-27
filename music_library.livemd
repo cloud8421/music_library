@@ -1,0 +1,61 @@
+# Music Library
+
+```elixir
+Mix.install([
+  {:kino_db, "~> 0.2.10"},
+  {:exqlite, "~> 0.23.0"}
+])
+```
+
+## Setup
+
+<!-- livebook:{"attrs":"eyJkYXRhYmFzZV9wYXRoIjoiL1VzZXJzL2Nsb3VkL2dpdGh1Yi5jb20vY2xvdWQ4NDIxL211c2ljX2xpYnJhcnkvZGF0YS9tdXNpY19saWJyYXJ5X2Rldi5kYiIsInR5cGUiOiJzcWxpdGUiLCJ2YXJpYWJsZSI6ImNvbm4ifQ","chunks":null,"kind":"Elixir.KinoDB.ConnectionCell","livebook_object":"smart_cell"} -->
+
+```elixir
+opts = [
+  database: "/Users/cloud/github.com/cloud8421/music_library/data/music_library_dev.db"
+]
+
+{:ok, conn} = Kino.start_child({Exqlite, opts})
+```
+
+## Aggregates
+
+### Count of records per artist
+
+<!-- livebook:{"attrs":"eyJjYWNoZV9xdWVyeSI6dHJ1ZSwiY29ubmVjdGlvbiI6eyJ0eXBlIjoic3FsaXRlIiwidmFyaWFibGUiOiJjb25uIn0sImRhdGFfZnJhbWVfYWxpYXMiOiJFbGl4aXIuRXhwbG9yZXIuRGF0YUZyYW1lIiwicXVlcnkiOiJzZWxlY3QganNvbl9leHRyYWN0KGFydGlzdC52YWx1ZSwgJyQubmFtZScpIGFzIG5hbWUsIGNvdW50KDEpIGFzIGNcbmZyb20gcmVjb3JkcywganNvbl9lYWNoKHJlY29yZHMuYXJ0aXN0cykgYXJ0aXN0XG5ncm91cCBieSBuYW1lXG5vcmRlciBieSBjIGRlc2NcbjsiLCJyZXN1bHRfdmFyaWFibGUiOiJyZXN1bHQiLCJ0aW1lb3V0IjpudWxsfQ","chunks":null,"kind":"Elixir.KinoDB.SQLCell","livebook_object":"smart_cell"} -->
+
+```elixir
+result =
+  Exqlite.query!(
+    conn,
+    ~S"""
+    select json_extract(artist.value, '$.name') as name, count(1) as c
+    from records, json_each(records.artists) artist
+    group by name
+    order by c desc
+    ;
+    """,
+    []
+  )
+```
+
+### Count of records by genre
+
+<!-- livebook:{"attrs":"eyJjYWNoZV9xdWVyeSI6dHJ1ZSwiY29ubmVjdGlvbiI6eyJ0eXBlIjoic3FsaXRlIiwidmFyaWFibGUiOiJjb25uIn0sImRhdGFfZnJhbWVfYWxpYXMiOiJFbGl4aXIuRXhwbG9yZXIuRGF0YUZyYW1lIiwicXVlcnkiOiJzZWxlY3QgZ2VucmUudmFsdWUsIGNvdW50KGdlbnJlLnZhbHVlKSBhcyBjXG5mcm9tIHJlY29yZHMsIGpzb25fZWFjaChyZWNvcmRzLmdlbnJlcykgZ2VucmVcbmdyb3VwIGJ5IGdlbnJlLnZhbHVlXG5vcmRlciBieSBjIGRlc2NcbjtcbiIsInJlc3VsdF92YXJpYWJsZSI6InJlc3VsdDIiLCJ0aW1lb3V0IjpudWxsfQ","chunks":null,"kind":"Elixir.KinoDB.SQLCell","livebook_object":"smart_cell"} -->
+
+```elixir
+result2 =
+  Exqlite.query!(
+    conn,
+    ~S"""
+    select genre.value, count(genre.value) as c
+    from records, json_each(records.genres) genre
+    group by genre.value
+    order by c desc
+    ;
+
+    """,
+    []
+  )
+```
