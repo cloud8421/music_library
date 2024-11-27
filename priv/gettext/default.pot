@@ -81,7 +81,8 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.ex:124
+#: lib/music_library_web/live/collection_live/index.ex:123
+#: lib/music_library_web/live/collection_live/index.ex:130
 #: lib/music_library_web/live/stats_live/index.ex:67
 #: lib/music_library_web/live/stats_live/index.ex:73
 #: lib/music_library_web/live/wishlist_live/index.ex:120

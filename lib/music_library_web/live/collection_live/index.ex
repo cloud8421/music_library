@@ -116,7 +116,13 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
          |> push_navigate(to: ~p"/collection/#{record.id}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           gettext("Error importing record") <> "," <> inspect(changeset.errors)
+         )
+         |> push_patch(to: ~p"/collection")}
 
       {:error, reason} ->
         {:noreply,
