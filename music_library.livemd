@@ -41,6 +41,16 @@ count_by_artist =
   )
 ```
 
+<!-- livebook:{"attrs":"eyJjaGFydF90aXRsZSI6IkNvdW50IGJ5IEFydGlzdCIsImhlaWdodCI6bnVsbCwibGF5ZXJzIjpbeyJhY3RpdmUiOnRydWUsImNoYXJ0X3R5cGUiOiJiYXIiLCJjb2xvcl9maWVsZCI6bnVsbCwiY29sb3JfZmllbGRfYWdncmVnYXRlIjpudWxsLCJjb2xvcl9maWVsZF9iaW4iOm51bGwsImNvbG9yX2ZpZWxkX3NjYWxlX3NjaGVtZSI6bnVsbCwiY29sb3JfZmllbGRfdHlwZSI6bnVsbCwiZGF0YV92YXJpYWJsZSI6ImNvdW50X2J5X2FydGlzdCIsImdlb2RhdGFfY29sb3IiOiJibHVlIiwibGF0aXR1ZGVfZmllbGQiOm51bGwsImxvbmdpdHVkZV9maWVsZCI6bnVsbCwieF9maWVsZCI6ImMiLCJ4X2ZpZWxkX2FnZ3JlZ2F0ZSI6bnVsbCwieF9maWVsZF9iaW4iOm51bGwsInhfZmllbGRfc2NhbGVfdHlwZSI6bnVsbCwieF9maWVsZF90eXBlIjoicXVhbnRpdGF0aXZlIiwieV9maWVsZCI6Im5hbWUiLCJ5X2ZpZWxkX2FnZ3JlZ2F0ZSI6bnVsbCwieV9maWVsZF9iaW4iOm51bGwsInlfZmllbGRfc2NhbGVfdHlwZSI6bnVsbCwieV9maWVsZF90eXBlIjoibm9taW5hbCJ9XSwidmxfYWxpYXMiOiJFbGl4aXIuVmVnYUxpdGUiLCJ3aWR0aCI6NjAwfQ","chunks":null,"kind":"Elixir.KinoVegaLite.ChartCell","livebook_object":"smart_cell"} -->
+
+```elixir
+VegaLite.new(width: 600, title: "Count by Artist")
+|> VegaLite.data_from_values(count_by_artist, only: ["c", "name"])
+|> VegaLite.mark(:bar)
+|> VegaLite.encode_field(:x, "c", type: :quantitative)
+|> VegaLite.encode_field(:y, "name", type: :nominal)
+```
+
 ### Count of records by genre
 
 <!-- livebook:{"attrs":"eyJjYWNoZV9xdWVyeSI6dHJ1ZSwiY29ubmVjdGlvbiI6eyJ0eXBlIjoic3FsaXRlIiwidmFyaWFibGUiOiJjb25uIn0sImRhdGFfZnJhbWVfYWxpYXMiOiJFbGl4aXIuRXhwbG9yZXIuRGF0YUZyYW1lIiwicXVlcnkiOiJzZWxlY3QgZ2VucmUudmFsdWUsIGNvdW50KGdlbnJlLnZhbHVlKSBhcyBjXG5mcm9tIHJlY29yZHMsIGpzb25fZWFjaChyZWNvcmRzLmdlbnJlcykgZ2VucmVcbmdyb3VwIGJ5IGdlbnJlLnZhbHVlXG5vcmRlciBieSBjIGRlc2NcbjtcbiIsInJlc3VsdF92YXJpYWJsZSI6ImNvdW50X2J5X2dlbnJlIiwidGltZW91dCI6bnVsbH0","chunks":null,"kind":"Elixir.KinoDB.SQLCell","livebook_object":"smart_cell"} -->
