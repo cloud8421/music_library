@@ -14,7 +14,7 @@ defmodule MusicLibraryWeb.Pagination do
     <div
       :if={@page_links.total_pages > 1}
       id={@id}
-      class="flex items-center justify-between bg-white dark:bg-zinc-800 px-4 py-6 mb-4"
+      class="flex items-center justify-between px-4 py-6 mb-4"
     >
       <%!-- Only on smallest viewport --%>
       <div class={[
