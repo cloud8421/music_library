@@ -1,7 +1,7 @@
 defmodule MusicLibrary.Records.Batch do
   require Logger
 
-  alias MusicLibrary.Records.Record
+  alias MusicLibrary.Records.{Cover, Record}
   alias MusicLibrary.Repo
   import Ecto.Query
 
@@ -17,6 +17,18 @@ defmodule MusicLibrary.Records.Batch do
       record
       |> Record.add_musicbrainz_data(data)
       |> Repo.update!()
+    end
+  end
+
+  def refresh_old_artwork do
+    run_on_all_records(&refresh_old_artwork/1)
+  end
+
+  def refresh_old_artwork(record) do
+    if Cover.correct_size?(record.cover_data) do
+      :ok
+    else
+      MusicLibrary.Records.refresh_cover(record)
     end
   end
 
@@ -44,21 +56,27 @@ defmodule MusicLibrary.Records.Batch do
     q = from(r in Record)
     stream = Repo.stream(q)
 
-    Repo.transaction(fn ->
-      Enum.reduce(stream, [], fn record, acc ->
-        case fun.(record) do
-          {:error, reason} ->
-            Logger.error("Failed to run function on record #{record.id} with #{inspect(reason)}")
-            [record.id | acc]
+    Repo.transaction(
+      fn ->
+        Enum.reduce(stream, [], fn record, acc ->
+          case fun.(record) do
+            {:error, reason} ->
+              Logger.error(
+                "Failed to run function on record #{record.id} with #{inspect(reason)}"
+              )
 
-          :ok ->
-            acc
+              [record.id | acc]
 
-          {:ok, _record} ->
-            acc
-        end
-      end)
-    end)
+            :ok ->
+              acc
+
+            {:ok, _record} ->
+              acc
+          end
+        end)
+      end,
+      timeout: :infinity
+    )
   end
 
   defp musicbrainz do
