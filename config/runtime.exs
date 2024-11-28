@@ -39,7 +39,7 @@ if config_env() == :prod do
   config :music_library, MusicLibrary.Repo,
     database: database_path,
     # 16MB * pool_size = base memory usage
-    cache_size: -16000,
+    cache_size: -8000,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
 
   # The secret key base is used to sign/encrypt cookies and other secrets.
