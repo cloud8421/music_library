@@ -466,5 +466,5 @@ msgstr ""
 
 #: lib/music_library_web/components/layouts/root.html.heex:58
 #, elixir-autogen, elixir-format
-msgid "Made by Claudio Ortolina"
+msgid "Made by"
 msgstr ""
