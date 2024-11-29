@@ -21,6 +21,9 @@
         </div>
       </div>
       <div class="flex space-x-8">
+        <a class={["max-sm:hidden" | nav_link_classes()]} } href={~p"/dev/dashboard"}>
+          <%= gettext("Dev dashboard") %>
+        </a>
         <a class={nav_link_classes()} } href={~p"/login"}>
           <%= gettext("Logout") %>
         </a>

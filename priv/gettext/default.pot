@@ -143,7 +143,7 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex:25
+#: lib/music_library_web/components/layouts/app.html.heex:28
 #, elixir-autogen, elixir-format
 msgid "Logout"
 msgstr ""
@@ -467,4 +467,9 @@ msgstr ""
 #: lib/music_library_web/components/layouts/root.html.heex:58
 #, elixir-autogen, elixir-format
 msgid "Made by"
+msgstr ""
+
+#: lib/music_library_web/components/layouts/app.html.heex:25
+#, elixir-autogen, elixir-format
+msgid "Dev dashboard"
 msgstr ""
