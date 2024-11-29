@@ -17,7 +17,7 @@ defmodule MusicLibraryWeb.CoverControllerTest do
       assert text_response(conn, 404) == "Not found"
     end
 
-    test "serves the cover when etag doesn't exist", %{conn: conn, record: record} do
+    test "serves the cover without etag", %{conn: conn, record: record} do
       conn = get(conn, ~p"/covers/#{record.id}")
 
       assert conn.status == 200
