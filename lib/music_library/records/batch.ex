@@ -54,7 +54,7 @@ defmodule MusicLibrary.Records.Batch do
 
   defp run_on_all_records(fun) do
     q = from(r in Record)
-    stream = Repo.stream(q)
+    stream = Repo.stream(q, max_rows: 50)
 
     Repo.transaction(
       fn ->
