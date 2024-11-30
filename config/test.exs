@@ -7,8 +7,7 @@ import Config
 # Run `mix help test` for more information.
 config :music_library, MusicLibrary.Repo,
   database: Path.expand("../data/music_library_test.db", __DIR__),
-  # Double the amount of concurrent tests
-  pool_size: 32,
+  pool_size: 10,
   pool: Ecto.Adapters.SQL.Sandbox
 
 # We don't run a server during test. If one is required,
