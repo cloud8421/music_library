@@ -7,6 +7,15 @@ defmodule LastFm.APIImpl do
 
   @base_url "http://ws.audioscrobbler.com/2.0/"
 
+  # Experimental: metrics show some long running requests
+  # that end up hitting timeouts (at default values),
+  # so we make them shorter to leverage retries
+  @request_opts [
+    pool_timeout: 1000,
+    receive_timeout: 3000,
+    request_timeout: 4500
+  ]
+
   @impl true
   def get_recent_tracks(user, api_key) do
     options = [
@@ -41,7 +50,7 @@ defmodule LastFm.APIImpl do
         {"User-Agent", "MusicLibrary/0.1.0 ( cloud8421@gmail.com )"}
       ])
 
-    case Finch.request(req, LastFm.Finch) do
+    case Finch.request(req, LastFm.Finch, @request_opts) do
       {:ok, response} when response.status == 200 ->
         Jason.decode(response.body)
 
