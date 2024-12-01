@@ -186,6 +186,10 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  def get_artist(musicbrainz_id) do
+    last_fm().get_artist_info(musicbrainz_id, last_fm_api_key())
+  end
+
   defp build_record_attrs(release_group, attrs) do
     release_group
     |> Record.attrs_from_release_group()
@@ -214,5 +218,14 @@ defmodule MusicLibrary.Records do
 
   defp musicbrainz do
     Application.get_env(:music_library, :musicbrainz, MusicBrainz.APIImpl)
+  end
+
+  defp last_fm do
+    Application.get_env(:music_library, :last_fm, LastFm.APIImpl)
+  end
+
+  defp last_fm_api_key do
+    Application.get_env(:music_library, LastFm)
+      |> Keyword.fetch!(:api_key)
   end
 end

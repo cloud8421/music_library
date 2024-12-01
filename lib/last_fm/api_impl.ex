@@ -3,7 +3,7 @@ defmodule LastFm.APIImpl do
 
   require Logger
 
-  alias LastFm.Track
+  alias LastFm.{Artist, Track}
 
   @base_url "http://ws.audioscrobbler.com/2.0/"
 
@@ -36,6 +36,34 @@ defmodule LastFm.APIImpl do
          response
          |> get_in(["recenttracks", "track"])
          |> Track.from_api_response()}
+
+      other ->
+        msg = "Failed to fetch data from #{sanitize_url(url, api_key)}, reason: #{inspect(other)}"
+        Logger.error(msg)
+        {:error, msg}
+    end
+  end
+
+  @impl true
+  def get_artist_info(artist_mbid, api_key) do
+    options = [
+      method: "artist.getInfo",
+      api_key: api_key,
+      mbid: artist_mbid,
+      format: "json",
+      limit: 50
+    ]
+
+    url = @base_url <> "?" <> URI.encode_query(options)
+
+    Logger.debug("Fetching data from #{sanitize_url(url, api_key)}")
+
+    case json_get(url) do
+      {:ok, response} ->
+        {:ok,
+         response
+         |> Map.get("artist")
+         |> Artist.from_api_response()}
 
       other ->
         msg = "Failed to fetch data from #{sanitize_url(url, api_key)}, reason: #{inspect(other)}"
