@@ -1,0 +1,8 @@
+<div class="mt-4 px-4">
+  <h1 class="mt-1 flex font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+    <%= @artist.name %>
+  </h1>
+  <p class="mt-2 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
+    <%= raw(@artist.bio) || gettext("Biography not available") %>
+  </p>
+</div>
