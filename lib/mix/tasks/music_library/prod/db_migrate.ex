@@ -7,10 +7,12 @@ defmodule Mix.Tasks.MusicLibrary.Prod.DbMigrate do
   Requires the `flyctl` CLI to be installed and authenticated.
   """
 
+  import Mix.Tasks.MusicLibrary.Prod.Helpers
+
   @impl Mix.Task
   def run(_args) do
     IO.puts("Running migrations on production database")
 
-    System.cmd("flyctl", ["ssh", "console", "--command", "bin/migrate"], into: IO.stream())
+    fly_ssh("bin/migrate")
   end
 end

@@ -8,12 +8,14 @@ defmodule Mix.Tasks.MusicLibrary.Prod.DbVacuum do
   Requires the `flyctl` CLI to be installed and authenticated.
   """
 
+  import Mix.Tasks.MusicLibrary.Prod.Helpers
+
   @impl Mix.Task
   def run(_args) do
     IO.puts("Running VACUUM on the production database")
 
     command = ~s(bin/music_library rpc 'MusicLibrary.Repo.query\("VACUUM"\)')
 
-    System.cmd("flyctl", ["ssh", "console", "--command", command], into: IO.stream())
+    fly_ssh(command)
   end
 end

@@ -6,6 +6,7 @@ defmodule Mix.Tasks.MusicLibrary.Prod.DbPull do
 
   Requires the `flyctl` CLI to be installed and authenticated.
   """
+  import Mix.Tasks.MusicLibrary.Prod.Helpers
 
   @impl Mix.Task
   def run(_args) do
@@ -15,7 +16,7 @@ defmodule Mix.Tasks.MusicLibrary.Prod.DbPull do
     remote_db = "/mnt/music_library/music_library_prod.db"
     local_db = "data/music_library_prod_#{DateTime.to_unix(current_time)}.db"
 
-    case System.cmd("flyctl", ["ssh", "sftp", "get", remote_db, local_db], into: IO.stream()) do
+    case fly_sftp_get(remote_db, local_db) do
       {_stream, 1} ->
         IO.puts("Failed to pull the database")
         System.halt(1)
