@@ -1,1 +1,238 @@
-{"primary-type-id":"f529b476-6e62-324f-b0aa-1f3e33d313fc","first-release-date":"2022-05-20","genres":[{"name":"electronic","count":1,"id":"89255676-1f14-4dd8-bbad-fca839d6aff4","disambiguation":""}],"primary-type":"Album","secondary-type-ids":["dd2a21e1-0c00-3729-a7a0-de60b84eb5d1"],"releases":[{"id":"77e746fc-566f-445b-a62b-cc014280fac9","quality":"normal","packaging-id":"d60b6157-79fe-3913-ab8b-23b32de8690d","text-representation":{"script":"Latn","language":"eng"},"status-id":"4e304316-386d-3409-af2e-78857eec5cfe","date":"2022-05-20","genres":[],"country":"GB","barcode":null,"release-events":[{"area":{"type":null,"id":"8a754a16-0027-3a29-b6d7-2b40ea0481ed","sort-name":"United Kingdom","iso-3166-1-codes":["GB"],"disambiguation":"","type-id":null,"name":"United Kingdom"},"date":"2022-05-20"}],"disambiguation":"","packaging":"Book","title":"Lockdown Trilogy","status":"Official"}],"id":"5db72bc0-6ce3-4beb-bd51-86b58ed8cf71","relations":[{"source-credit":"","attributes":[],"attribute-values":{},"end":null,"begin":null,"target-credit":"","attribute-ids":{},"type":"included in","ended":false,"release_group":{"secondary-types":[],"title":"Claustrophobic Universe","disambiguation":"","artist-credit":[{"joinphrase":"","name":"Mariusz Duda","artist":{"id":"641716a3-ae21-4c5f-bdef-dfca90df27f3","sort-name":"Duda, Mariusz","type":null,"name":"Mariusz Duda","disambiguation":"","type-id":null}}],"releases":[],"secondary-type-ids":[],"id":"749c07b5-4900-404b-bea9-bb6b16fa991e","primary-type-id":null,"first-release-date":"2021-04-23","primary-type":null},"direction":"backward","target-type":"release_group","type-id":"589447ea-be2c-46cc-b9e9-469e1d06e18a"},{"type":"included in","attribute-ids":{},"type-id":"589447ea-be2c-46cc-b9e9-469e1d06e18a","ended":false,"release_group":{"artist-credit":[{"name":"Mariusz Duda","joinphrase":"","artist":{"id":"641716a3-ae21-4c5f-bdef-dfca90df27f3","sort-name":"Duda, Mariusz","type":null,"name":"Mariusz Duda","type-id":null,"disambiguation":""}}],"disambiguation":"","title":"Interior Drawings","secondary-types":[],"id":"61077431-0057-4119-8f06-0df1098d21e5","releases":[],"secondary-type-ids":[],"primary-type":null,"first-release-date":"2021-12-10","primary-type-id":null},"direction":"backward","target-type":"release_group","attributes":[],"attribute-values":{},"source-credit":"","begin":null,"target-credit":"","end":null},{"begin":null,"target-credit":"","end":null,"attributes":[],"attribute-values":{},"source-credit":"","type-id":"589447ea-be2c-46cc-b9e9-469e1d06e18a","ended":false,"release_group":{"title":"Let’s Meet Outside","secondary-types":[],"artist-credit":[{"joinphrase":"","name":"Mariusz Duda","artist":{"name":"Mariusz Duda","disambiguation":"","type-id":null,"sort-name":"Duda, Mariusz","id":"641716a3-ae21-4c5f-bdef-dfca90df27f3","type":null}}],"disambiguation":"","first-release-date":"2022-05-20","primary-type-id":null,"primary-type":null,"releases":[],"secondary-type-ids":[],"id":"c36123e3-8899-48a5-8196-9dbb72421d69"},"direction":"backward","target-type":"release_group","type":"included in","attribute-ids":{}},{"attribute-ids":{},"type":"included in","release_group":{"secondary-type-ids":[],"releases":[],"id":"d463f2b1-d254-4baf-a957-fb78c6e5b956","first-release-date":"2020-06-26","primary-type-id":null,"primary-type":null,"secondary-types":[],"title":"Lockdown Spaces","artist-credit":[{"artist":{"type":null,"id":"641716a3-ae21-4c5f-bdef-dfca90df27f3","sort-name":"Duda, Mariusz","type-id":null,"disambiguation":"","name":"Mariusz Duda"},"joinphrase":"","name":"Mariusz Duda"}],"disambiguation":""},"target-type":"release_group","direction":"backward","ended":false,"type-id":"589447ea-be2c-46cc-b9e9-469e1d06e18a","source-credit":"","attribute-values":{},"attributes":[],"end":null,"target-credit":"","begin":null}],"title":"Lockdown Trilogy","secondary-types":["Compilation"],"disambiguation":"","artist-credit":[{"joinphrase":"","name":"Mariusz Duda","artist":{"id":"641716a3-ae21-4c5f-bdef-dfca90df27f3","sort-name":"Duda, Mariusz","type":"Person","genres":[{"count":1,"name":"rock","disambiguation":"","id":"0e3fc579-2d24-4f20-9dae-736e1ec78798"}],"disambiguation":"","type-id":"b6e035f4-3ce9-331c-97df-83397230b0df","name":"Mariusz Duda"}}]}
+{
+  "artist-credit": [
+    {
+      "artist": {
+        "disambiguation": "",
+        "genres": [
+          {
+            "count": 1,
+            "disambiguation": "",
+            "id": "0e3fc579-2d24-4f20-9dae-736e1ec78798",
+            "name": "rock"
+          }
+        ],
+        "id": "641716a3-ae21-4c5f-bdef-dfca90df27f3",
+        "name": "Mariusz Duda",
+        "sort-name": "Duda, Mariusz",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "joinphrase": "",
+      "name": "Mariusz Duda"
+    }
+  ],
+  "disambiguation": "",
+  "first-release-date": "2022-05-20",
+  "genres": [
+    {
+      "count": 1,
+      "disambiguation": "",
+      "id": "89255676-1f14-4dd8-bbad-fca839d6aff4",
+      "name": "electronic"
+    }
+  ],
+  "id": "5db72bc0-6ce3-4beb-bd51-86b58ed8cf71",
+  "primary-type": "Album",
+  "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+  "relations": [
+    {
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "release_group": {
+        "artist-credit": [
+          {
+            "artist": {
+              "disambiguation": "",
+              "id": "641716a3-ae21-4c5f-bdef-dfca90df27f3",
+              "name": "Mariusz Duda",
+              "sort-name": "Duda, Mariusz",
+              "type": null,
+              "type-id": null
+            },
+            "joinphrase": "",
+            "name": "Mariusz Duda"
+          }
+        ],
+        "disambiguation": "",
+        "first-release-date": "2021-04-23",
+        "id": "749c07b5-4900-404b-bea9-bb6b16fa991e",
+        "primary-type": null,
+        "primary-type-id": null,
+        "releases": [],
+        "secondary-type-ids": [],
+        "secondary-types": [],
+        "title": "Claustrophobic Universe"
+      },
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "release_group",
+      "type": "included in",
+      "type-id": "589447ea-be2c-46cc-b9e9-469e1d06e18a"
+    },
+    {
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "release_group": {
+        "artist-credit": [
+          {
+            "artist": {
+              "disambiguation": "",
+              "id": "641716a3-ae21-4c5f-bdef-dfca90df27f3",
+              "name": "Mariusz Duda",
+              "sort-name": "Duda, Mariusz",
+              "type": null,
+              "type-id": null
+            },
+            "joinphrase": "",
+            "name": "Mariusz Duda"
+          }
+        ],
+        "disambiguation": "",
+        "first-release-date": "2021-12-10",
+        "id": "61077431-0057-4119-8f06-0df1098d21e5",
+        "primary-type": null,
+        "primary-type-id": null,
+        "releases": [],
+        "secondary-type-ids": [],
+        "secondary-types": [],
+        "title": "Interior Drawings"
+      },
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "release_group",
+      "type": "included in",
+      "type-id": "589447ea-be2c-46cc-b9e9-469e1d06e18a"
+    },
+    {
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "release_group": {
+        "artist-credit": [
+          {
+            "artist": {
+              "disambiguation": "",
+              "id": "641716a3-ae21-4c5f-bdef-dfca90df27f3",
+              "name": "Mariusz Duda",
+              "sort-name": "Duda, Mariusz",
+              "type": null,
+              "type-id": null
+            },
+            "joinphrase": "",
+            "name": "Mariusz Duda"
+          }
+        ],
+        "disambiguation": "",
+        "first-release-date": "2022-05-20",
+        "id": "c36123e3-8899-48a5-8196-9dbb72421d69",
+        "primary-type": null,
+        "primary-type-id": null,
+        "releases": [],
+        "secondary-type-ids": [],
+        "secondary-types": [],
+        "title": "Let’s Meet Outside"
+      },
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "release_group",
+      "type": "included in",
+      "type-id": "589447ea-be2c-46cc-b9e9-469e1d06e18a"
+    },
+    {
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "release_group": {
+        "artist-credit": [
+          {
+            "artist": {
+              "disambiguation": "",
+              "id": "641716a3-ae21-4c5f-bdef-dfca90df27f3",
+              "name": "Mariusz Duda",
+              "sort-name": "Duda, Mariusz",
+              "type": null,
+              "type-id": null
+            },
+            "joinphrase": "",
+            "name": "Mariusz Duda"
+          }
+        ],
+        "disambiguation": "",
+        "first-release-date": "2020-06-26",
+        "id": "d463f2b1-d254-4baf-a957-fb78c6e5b956",
+        "primary-type": null,
+        "primary-type-id": null,
+        "releases": [],
+        "secondary-type-ids": [],
+        "secondary-types": [],
+        "title": "Lockdown Spaces"
+      },
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "release_group",
+      "type": "included in",
+      "type-id": "589447ea-be2c-46cc-b9e9-469e1d06e18a"
+    }
+  ],
+  "releases": [
+    {
+      "barcode": null,
+      "country": "GB",
+      "date": "2022-05-20",
+      "disambiguation": "",
+      "genres": [],
+      "id": "77e746fc-566f-445b-a62b-cc014280fac9",
+      "packaging": "Book",
+      "packaging-id": "d60b6157-79fe-3913-ab8b-23b32de8690d",
+      "quality": "normal",
+      "release-events": [
+        {
+          "area": {
+            "disambiguation": "",
+            "id": "8a754a16-0027-3a29-b6d7-2b40ea0481ed",
+            "iso-3166-1-codes": [
+              "GB"
+            ],
+            "name": "United Kingdom",
+            "sort-name": "United Kingdom",
+            "type": null,
+            "type-id": null
+          },
+          "date": "2022-05-20"
+        }
+      ],
+      "status": "Official",
+      "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+      "text-representation": {
+        "language": "eng",
+        "script": "Latn"
+      },
+      "title": "Lockdown Trilogy"
+    }
+  ],
+  "secondary-type-ids": [
+    "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1"
+  ],
+  "secondary-types": [
+    "Compilation"
+  ],
+  "title": "Lockdown Trilogy"
+}
