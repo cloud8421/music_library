@@ -3,7 +3,7 @@ defmodule Mix.Tasks.MusicLibrary.Prod.Helpers do
     if flyctl_installed?() do
       System.cmd("flyctl", ["ssh", "console", "--command", command], into: IO.stream())
     else
-      IO.puts("Please install flyctl first")
+      Mix.Shell.IO.error("Please install flyctl first")
       System.halt(1)
     end
   end
@@ -12,7 +12,7 @@ defmodule Mix.Tasks.MusicLibrary.Prod.Helpers do
     if flyctl_installed?() do
       System.cmd("flyctl", ["ssh", "sftp", "get", remote_path, local_path], into: IO.stream())
     else
-      IO.puts("Please install flyctl first")
+      Mix.Shell.IO.error("Please install flyctl first")
       System.halt(1)
     end
   end

@@ -10,7 +10,7 @@ defmodule Mix.Tasks.MusicLibrary.Prod.DbPull do
 
   @impl Mix.Task
   def run(_args) do
-    IO.puts("Pulling the latest database from the production server")
+    Mix.Shell.IO.info("Pulling the latest database from the production server")
 
     current_time = DateTime.utc_now()
     remote_db = "/mnt/music_library/music_library_prod.db"
@@ -18,13 +18,13 @@ defmodule Mix.Tasks.MusicLibrary.Prod.DbPull do
 
     case fly_sftp_get(remote_db, local_db) do
       {_stream, 1} ->
-        IO.puts("Failed to pull the database")
+        Mix.Shell.IO.error("Failed to pull the database")
         System.halt(1)
 
       {_stream, 0} ->
-        IO.puts("Database pulled successfully")
+        Mix.Shell.IO.info("Database pulled successfully")
 
-        IO.puts("Restoring as local dev database")
+        Mix.Shell.IO.info("Restoring as local dev database")
 
         Path.wildcard("data/music_library_dev.db*")
         |> Enum.each(&File.rm!/1)
