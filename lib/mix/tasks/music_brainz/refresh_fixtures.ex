@@ -27,7 +27,10 @@ defmodule Mix.Tasks.MusicBrainz.RefreshFixtures do
     Enum.each(@fixture_files, fn {filename, url} ->
       case get(url) do
         {:ok, body} ->
-          File.write!(Path.join(@fixtures_folder, filename), body)
+          # store the fixture pretty printed
+          dest = Path.join(@fixtures_folder, filename)
+          content = body |> Jason.decode!() |> Jason.encode!(pretty: true)
+          File.write!(dest, content)
 
         {:error, msg} ->
           Logger.error(msg)
