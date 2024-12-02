@@ -11,13 +11,22 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
   @impl true
   def handle_params(%{"musicbrainz_id" => musicbrainz_id}, _, socket) do
     artist = Records.get_artist!(musicbrainz_id)
-    {:ok, artist_info}  = Records.get_artist_info(musicbrainz_id)
+
+    grouped_artist_records =
+      musicbrainz_id
+      |> Records.get_artist_records()
+      |> group_and_sort()
 
     {:noreply,
      socket
      |> assign(:nav_section, :artists)
      |> assign(:artist, artist)
-     |> assign(:artist_info, artist_info)
+     |> assign(:artist_records, grouped_artist_records)
+     |> assign_async(:artist_info, fn ->
+       with {:ok, artist_info} <- Records.get_artist_info(musicbrainz_id) do
+         {:ok, %{artist_info: artist_info}}
+       end
+     end)
      |> assign(:page_title, page_title(socket.assigns.live_action, artist))}
   end
 
@@ -30,5 +39,14 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
       ],
       " "
     )
+  end
+
+  defp group_and_sort(records) do
+    {collection, wishlist} = Enum.split_with(records, fn r -> r.purchased_at end)
+
+    %{
+      collection: Enum.sort_by(collection, fn r -> r.release end, :desc),
+      wishlist: Enum.sort_by(wishlist, fn r -> r.release end, :desc)
+    }
   end
 end
