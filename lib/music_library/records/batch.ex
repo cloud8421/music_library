@@ -55,7 +55,9 @@ defmodule MusicLibrary.Records.Batch do
   def remove_artists_ids! do
     # Shotgun approach: remove the first 4 artists IDs from each record.
     # This is not a general solution, but it works as a quick fix because the record with the most artists has 3.
-    q = "update records set artists = json_remove(artists, '$[0].id', '$[1].id', '$[2].id', '$[3].id');"
+    q =
+      "update records set artists = json_remove(artists, '$[0].id', '$[1].id', '$[2].id', '$[3].id');"
+
     Repo.query(q)
   end
 
