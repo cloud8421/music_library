@@ -2,6 +2,8 @@ defmodule MusicLibrary.Records.Record do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias MusicLibrary.Records.Artist
+
   @formats [:cd, :vinyl, :blu_ray, :dvd, :multi]
   @types [:album, :ep, :live, :compilation, :single, :other]
 
@@ -22,11 +24,7 @@ defmodule MusicLibrary.Records.Record do
     field :release_ids, {:array, :string}, default: []
     field :included_release_group_ids, {:array, :string}, default: []
 
-    embeds_many :artists, Artist, primary_key: {:musicbrainz_id, :binary_id, autogenerate: false} do
-      field :name, :string
-      field :sort_name, :string
-      field :disambiguation, :string
-    end
+    embeds_many :artists, Artist
 
     timestamps(type: :utc_datetime)
   end
