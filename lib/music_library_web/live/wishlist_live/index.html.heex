@@ -14,17 +14,17 @@
         />
       </form>
       <.link patch={~p"/wishlist/import"}>
-        <.button><%= gettext("Import") %></.button>
+        <.button>{gettext("Import")}</.button>
       </.link>
     </div>
   </header>
 
   <p class="text-right text-sm max-sm:text-xs mt-8 text-zinc-900 dark:text-zinc-400">
-    <%= gettext(
+    {gettext(
       "Showing <b>%{visible}</b> of <b>%{total}</b> records",
       %{visible: Enum.count(@streams.records), total: @record_list_params.total_entries}
     )
-    |> raw() %>
+    |> raw()}
   </p>
 </div>
 
@@ -53,22 +53,22 @@
             class="text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
             patch={~p"/artists/#{artist.musicbrainz_id}"}
           >
-            <%= artist.name %>
+            {artist.name}
           </.link>
         </h1>
         <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
-          <%= record.title %>
+          {record.title}
         </h2>
         <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-          <%= Records.Record.format_release(record.release) %>
+          {Records.Record.format_release(record.release)}
           <span class="sm:hidden">
-            · <%= Records.Record.format_long_label(record.format) %> · <%= Records.Record.type_long_label(
+            · {Records.Record.format_long_label(record.format)} · {Records.Record.type_long_label(
               record.type
-            ) %>
+            )}
             <span :if={Records.Record.child_release_groups_count(record) > 0}>
               ·
               <span class="sr-only">
-                <%= gettext("Number of included records") %>
+                {gettext("Number of included records")}
               </span>
               <span class={[
                 "inline-flex items-center rounded-full",
@@ -78,7 +78,7 @@
                 "text-gray-600 dark:text-gray-500",
                 "ring-gray-500/10 dark:ring-gray-400/20"
               ]}>
-                <%= Records.Record.child_release_groups_count(record) %>
+                {Records.Record.child_release_groups_count(record)}
               </span>
             </span>
           </span>
@@ -88,13 +88,13 @@
     <div class="flex shrink-0 items-center gap-x-6">
       <div class="hidden sm:flex sm:flex-col sm:items-end">
         <p class="text-xs leading-6 text-zinc-900 dark:text-zinc-300">
-          <%= Records.Record.format_long_label(record.format) %> · <%= Records.Record.type_long_label(
+          {Records.Record.format_long_label(record.format)} · {Records.Record.type_long_label(
             record.type
-          ) %>
+          )}
           <span :if={Records.Record.child_release_groups_count(record) > 0}>
             ·
             <span class="sr-only">
-              <%= gettext("Number of included records") %>
+              {gettext("Number of included records")}
             </span>
             <span class={[
               "inline-flex items-center rounded-full",
@@ -104,7 +104,7 @@
               "text-gray-600 dark:text-gray-500",
               "ring-gray-500/10 dark:ring-gray-400/20"
             ]}>
-              <%= Records.Record.child_release_groups_count(record) %>
+              {Records.Record.child_release_groups_count(record)}
             </span>
           </span>
         </p>
@@ -118,7 +118,7 @@
           phx-click={toggle_actions_menu(record.id)}
           phx-click-away={close_actions_menu(record.id)}
         >
-          <span class="sr-only"><%= gettext("Open options") %></span>
+          <span class="sr-only">{gettext("Open options")}</span>
           <.icon
             name="hero-ellipsis-vertical"
             class="-mt-1 h-5 w-5"
@@ -153,7 +153,7 @@
             id={"actions-#{record.id}-show"}
             navigate={~p"/wishlist/#{record}"}
           >
-            <%= gettext("Show") %>
+            {gettext("Show")}
           </.link>
           <a
             href={musicbrainz_url(record)}
@@ -163,7 +163,7 @@
             tabindex="-1"
             id={"actions-#{record.id}-musicbrainz"}
           >
-            <%= gettext("View on MusicBrainz") %>
+            {gettext("View on MusicBrainz")}
           </a>
 
           <.link
@@ -173,7 +173,7 @@
             id={"actions-#{record.id}-edit"}
             patch={~p"/wishlist/#{record}/edit"}
           >
-            <%= gettext("Edit") %>
+            {gettext("Edit")}
           </.link>
 
           <.link
@@ -183,7 +183,7 @@
             id={"actions-#{record.id}-purchase"}
             phx-click={JS.push("purchase", value: %{id: record.id})}
           >
-            <%= gettext("Purchase") %>
+            {gettext("Purchase")}
           </.link>
 
           <.link
@@ -194,7 +194,7 @@
             phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
             data-confirm={gettext("Are you sure?")}
           >
-            <%= gettext("Delete") %>
+            {gettext("Delete")}
           </.link>
         </.focus_wrap>
       </div>

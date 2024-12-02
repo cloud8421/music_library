@@ -1,6 +1,6 @@
 <div>
   <h1 class="mt-5 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
-    <%= gettext("Basics") %>
+    {gettext("Basics")}
   </h1>
   <dl class="mt-5 grid grid-cols-2 gap-5 sm:grid-cols-5">
     <.album_preview
@@ -19,7 +19,7 @@
 
 <div>
   <h1 class="mt-5 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
-    <%= gettext("Formats") %>
+    {gettext("Formats")}
   </h1>
   <dl class={[
     "mt-5 grid divide-zinc-200 dark:divide-slate-300/50 overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow divide-x",
@@ -27,14 +27,14 @@
   ]}>
     <div :for={{format, count} <- @collection_count_by_format} class="px-2 py-5 sm:px-4">
       <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center max-sm:text-xs break-keep">
-        <%= Record.format_long_label(format) %>
+        {Record.format_long_label(format)}
       </dt>
       <dd class="mt-1 text-center">
         <a
           class="text-xl lg:text-2xl font-semibold hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
           href={~p"/collection?query=format:#{format}"}
         >
-          <%= count %>
+          {count}
         </a>
       </dd>
     </div>
@@ -43,7 +43,7 @@
 
 <div>
   <h1 class="mt-5 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
-    <%= gettext("Types") %>
+    {gettext("Types")}
   </h1>
   <dl class={[
     "mt-5 grid divide-zinc-200 dark:divide-slate-300/50 overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow divide-x",
@@ -51,14 +51,14 @@
   ]}>
     <div :for={{type, count} <- @collection_count_by_type} class="px-2 py-5 sm:px-4">
       <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center max-sm:text-xs break-keep">
-        <%= Record.type_long_label(type) %>
+        {Record.type_long_label(type)}
       </dt>
       <dd class="mt-1 text-center">
         <a
           class="text-xl lg:text-2xl font-semibold hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
           href={~p"/collection?query=type:#{type}"}
         >
-          <%= count %>
+          {count}
         </a>
       </dd>
     </div>
@@ -68,14 +68,14 @@
 <div class="flow-root">
   <div class="mt-5 flex justify-between items-center">
     <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
-      <%= gettext("Scrobble activity") %>
+      {gettext("Scrobble activity")}
     </h1>
     <button
       type="button"
       class="phx-click-loading:animate-spin text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-300"
       phx-click={JS.push("refresh_lastfm_feed")}
     >
-      <span class="sr-only"><%= gettext("Refresh LastFm Feed") %></span>
+      <span class="sr-only">{gettext("Refresh LastFm Feed")}</span>
       <.icon name="hero-arrow-path" class="-mt-1 h-5 w-5" aria-hidden="true" data-slot="icon" />
     </button>
   </div>
@@ -97,19 +97,19 @@
             <img class="h-12 w-12 rounded-md shadow" src={track.cover_url} alt={track.title} />
             <div>
               <p class="font-semibold text-sm block text-zinc-500 dark:text-zinc-400">
-                <%= track.artist.name %>
+                {track.artist.name}
               </p>
               <p class="font-semibold text-sm md:text-base text-zinc-700 dark:text-zinc-300">
-                <%= track.title %>
+                {track.title}
               </p>
               <p class="font-semibold text-sm text-zinc-500 dark:text-zinc-400">
-                <%= track.album.title %>
+                {track.album.title}
               </p>
               <time
                 datetime={format_scrobbled_at_uts(track.scrobbled_at_uts)}
                 class="whitespace-nowrap text-right text-xs sm:text-sm text-zinc-500 dark:text-zinc-400"
               >
-                <%= track.scrobbled_at_label %>
+                {track.scrobbled_at_label}
               </time>
             </div>
           </div>
@@ -125,7 +125,7 @@
               "ring-zinc-600/20 dark:ring-zinc-500/20"
             ]}
           >
-            <%= gettext("No MB ID") %>
+            {gettext("No MB ID")}
           </span>
           <span
             :if={track.album.musicbrainz_id in @collected_release_ids}
@@ -138,7 +138,7 @@
               "ring-green-600/20 dark:ring-green-500/20"
             ]}
           >
-            <%= gettext("Collected") %>
+            {gettext("Collected")}
           </span>
           <span
             :if={track.album.musicbrainz_id in @wishlisted_release_ids}
@@ -151,7 +151,7 @@
               "ring-yellow-600/20 dark:ring-yellow-400/20"
             ]}
           >
-            <%= gettext("Wishlisted") %>
+            {gettext("Wishlisted")}
           </span>
 
           <div
@@ -170,7 +170,7 @@
               phx-click={toggle_actions_menu(track.scrobbled_at_uts)}
               phx-click-away={close_actions_menu(track.scrobbled_at_uts)}
             >
-              <span class="sr-only"><%= gettext("Choose which format to import") %></span>
+              <span class="sr-only">{gettext("Choose which format to import")}</span>
               <.icon name="hero-star" class="-mt-1 h-5 w-5" aria-hidden="true" data-slot="icon" />
             </button>
             <!--
@@ -206,7 +206,7 @@
                   )
                 }
               >
-                <%= Records.Record.format_long_label(format) %>
+                {Records.Record.format_long_label(format)}
               </.link>
             </.focus_wrap>
           </div>

@@ -42,7 +42,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
         :if={@release_groups == []}
         class="flex items-center justify-center h-32 text-md text-zinc-500"
       >
-        <%= gettext("No results") %>
+        {gettext("No results")}
       </div>
     </div>
     """
@@ -57,15 +57,15 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
       <div class="shrink-0 flex items-center justify-between w-full px-4">
         <div class="min-w-0 flex-auto">
           <h1 class="text-sm leading-6 text-zinc-700 dark:text-zinc-400">
-            <%= @release_group.artists %>
+            {@release_group.artists}
           </h1>
           <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
-            <%= @release_group.title %>
+            {@release_group.title}
           </h2>
           <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-            <%= Records.Record.format_release(@release_group.release) %> · <%= Records.Record.type_long_label(
+            {Records.Record.format_release(@release_group.release)} · {Records.Record.type_long_label(
               @release_group.type
-            ) %>
+            )}
           </p>
         </div>
         <div class="relative flex-none">
@@ -77,7 +77,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
             phx-click={toggle_actions_menu(@release_group.id)}
             phx-click-away={close_actions_menu(@release_group.id)}
           >
-            <span class="sr-only"><%= gettext("Choose which format to import") %></span>
+            <span class="sr-only">{gettext("Choose which format to import")}</span>
             <.icon name={@icon_name} class="-mt-1 h-5 w-5" aria-hidden="true" data-slot="icon" />
           </button>
           <!--
@@ -110,7 +110,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
                 JS.push("import", value: %{id: @release_group.id, format: format}, page_loading: true)
               }
             >
-              <%= Records.Record.format_long_label(format) %>
+              {Records.Record.format_long_label(format)}
             </.link>
           </.focus_wrap>
         </div>
@@ -124,7 +124,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
   defp type_badge(assigns) do
     ~H"""
     <span class="inline-flex items-center rounded-md bg-zinc-50 px-2 py-1 text-xs font-medium text-zinc-600 ring-1 ring-inset ring-zinc-500/10">
-      <%= @type %>
+      {@type}
     </span>
     """
   end

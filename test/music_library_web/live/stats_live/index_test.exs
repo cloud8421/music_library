@@ -30,22 +30,22 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
       conn: conn,
       collection: collection
     } do
-      {:ok, _stats_live, html} = live(conn, "/")
+      {:ok, stats_live, html} = live(conn, "/")
 
       assert html =~ collection |> length() |> Integer.to_string()
 
       collection
       |> Enum.frequencies_by(& &1.format)
       |> Enum.each(fn {format, count} ->
-        assert html =~ "\n#{count}\n"
-        assert html =~ "\n#{Record.format_long_label(format)}\n"
+        assert has_element?(stats_live, "a", to_string(count))
+        assert has_element?(stats_live, "dt", Record.format_long_label(format))
       end)
 
       collection
       |> Enum.frequencies_by(& &1.type)
       |> Enum.each(fn {type, count} ->
-        assert html =~ "\n#{count}\n"
-        assert html =~ "\n#{Record.type_long_label(type)}\n"
+        assert has_element?(stats_live, "a", to_string(count))
+        assert has_element?(stats_live, "dt", Record.type_long_label(type))
       end)
     end
 

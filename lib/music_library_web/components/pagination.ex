@@ -32,7 +32,7 @@ defmodule MusicLibraryWeb.Pagination do
             "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
           ]}
         >
-          <%= gettext("Previous") %>
+          {gettext("Previous")}
         </.link>
         <.link
           :if={@page_links.next_page}
@@ -45,7 +45,7 @@ defmodule MusicLibraryWeb.Pagination do
             "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
           ]}
         >
-          <%= gettext("Next") %>
+          {gettext("Next")}
         </.link>
       </div>
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-items-center sm:justify-center">
@@ -108,7 +108,7 @@ defmodule MusicLibraryWeb.Pagination do
       ]}
       patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query)}
     >
-      <span class="sr-only"><%= gettext("Next") %></span>
+      <span class="sr-only">{gettext("Next")}</span>
       <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path
           fill-rule="evenodd"
@@ -130,7 +130,7 @@ defmodule MusicLibraryWeb.Pagination do
       class="relative inline-flex items-center rounded-l-md px-2 py-2 text-zinc-400 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 focus:z-20 focus:outline-offset-0"
       patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query)}
     >
-      <span class="sr-only"><%= gettext("Previous") %></span>
+      <span class="sr-only">{gettext("Previous")}</span>
       <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path
           fill-rule="evenodd"
@@ -158,7 +158,7 @@ defmodule MusicLibraryWeb.Pagination do
   defp numbered_link(assigns) when assigns.active do
     ~H"""
     <span class="relative z-10 inline-flex items-center first:rounded-l-md last:rounded-r-md bg-zinc-600 dark:bg-zinc-300 px-4 py-2 text-sm font-semibold text-white dark:text-zinc-700 focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600">
-      <%= @page_number %>
+      {@page_number}
     </span>
     """
   end
@@ -169,7 +169,7 @@ defmodule MusicLibraryWeb.Pagination do
       class="relative hidden items-center first:rounded-l-md last:rounded-r-md px-4 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-400 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-300 hover:text-zinc-500 focus:z-20 focus:outline-offset-0 md:inline-flex"
       patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query)}
     >
-      <%= @page_number %>
+      {@page_number}
     </.link>
     """
   end

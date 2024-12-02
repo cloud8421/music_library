@@ -21,7 +21,7 @@ defmodule MusicLibraryWeb.StatsLive.DataComponents do
           alt={@record.title}
         />
         <p class="ml-24 truncate text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400">
-          <%= @title %>
+          {@title}
         </p>
       </dt>
       <dd class="ml-24 flex items-baseline pb-6 sm:pb-7">
@@ -31,10 +31,10 @@ defmodule MusicLibraryWeb.StatsLive.DataComponents do
             class="text-sm md:text-base lg:text-2xl text-zinc-900 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
             patch={~p"/artists/#{artist.musicbrainz_id}"}
           >
-            <%= artist.name %>
+            {artist.name}
           </.link>
           <span class="text-sm md:text-base block text-zinc-600 dark:text-zinc-200">
-            <%= @record.title %>
+            {@record.title}
           </span>
         </p>
       </dd>
@@ -51,7 +51,7 @@ defmodule MusicLibraryWeb.StatsLive.DataComponents do
     <div class="overflow-hidden rounded-md bg-white dark:bg-zinc-800 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6">
       <dt>
         <p class="truncate text-sm font-medium text-zinc-500 dark:text-zinc-400">
-          <%= @title %>
+          {@title}
         </p>
       </dt>
       <dd class="flex items-baseline mt-1 pb-6 sm:pb-7">
@@ -59,7 +59,7 @@ defmodule MusicLibraryWeb.StatsLive.DataComponents do
           href={@path}
           class="text-2xl font-semibold text-zinc-900 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
         >
-          <%= @count %>
+          {@count}
         </a>
       </dd>
     </div>

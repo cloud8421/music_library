@@ -17,7 +17,7 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
     <div>
       <header>
         <h1 class="text-base font-medium leading-6 text-zinc-700 dark:text-zinc-400">
-          <%= @title %>
+          {@title}
         </h1>
       </header>
 
@@ -54,16 +54,16 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
         />
         <div phx-drop-target={@uploads.cover_data.ref}>
           <.label for={@uploads.cover_data.ref}>
-            <%= gettext("Cover art") %>
+            {gettext("Cover art")}
           </.label>
           <span
             :if={@uploads.cover_data.entries == []}
             class="float-right text-zinc-700 dark:text-zinc-400"
           >
-            <%= gettext("No cover selected") %>
+            {gettext("No cover selected")}
           </span>
           <%= for entry <- @uploads.cover_data.entries do %>
-            <span class="float-right text-zinc-700 dark:text-zinc-400"><%= entry.progress %>%</span>
+            <span class="float-right text-zinc-700 dark:text-zinc-400">{entry.progress}%</span>
           <% end %>
           <.live_file_input
             class="mt-2 block w-full rounded-lg text-zinc-900 dark:text-zinc-200 focus:ring-0 sm:text-sm sm:leading-6"
@@ -71,7 +71,7 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
           />
         </div>
         <:actions>
-          <.button phx-disable-with={gettext("Saving...")}><%= gettext("Save") %></.button>
+          <.button phx-disable-with={gettext("Saving...")}>{gettext("Save")}</.button>
         </:actions>
       </.simple_form>
     </div>
