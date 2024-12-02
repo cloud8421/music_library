@@ -22,11 +22,10 @@ defmodule MusicLibrary.Records.Record do
     field :release_ids, {:array, :string}, default: []
     field :included_release_group_ids, {:array, :string}, default: []
 
-    embeds_many :artists, Artist do
+    embeds_many :artists, Artist, primary_key: {:musicbrainz_id, :binary_id, autogenerate: false} do
       field :name, :string
       field :sort_name, :string
       field :disambiguation, :string
-      field :musicbrainz_id, Ecto.UUID
     end
 
     timestamps(type: :utc_datetime)

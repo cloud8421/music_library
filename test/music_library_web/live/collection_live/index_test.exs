@@ -343,7 +343,6 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       [marillion] = record.artists
 
       assert %MusicLibrary.Records.Record.Artist{
-               id: _,
                name: "Marillion",
                sort_name: "Marillion",
                disambiguation: "British progressive rock band",
