@@ -29,7 +29,7 @@ defmodule MusicLibraryWeb.StatsLive.DataComponents do
           <.link
             :for={artist <- @record.artists}
             class="text-sm md:text-base lg:text-2xl text-zinc-900 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
-            patch={~p"/collection?query=mbid:#{artist.musicbrainz_id}"}
+            patch={~p"/artists/#{artist.musicbrainz_id}"}
           >
             <%= artist.name %>
           </.link>
