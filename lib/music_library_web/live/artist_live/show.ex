@@ -10,12 +10,14 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
 
   @impl true
   def handle_params(%{"musicbrainz_id" => musicbrainz_id}, _, socket) do
-    {:ok, artist} = Records.get_artist(musicbrainz_id)
+    artist = Records.get_artist!(musicbrainz_id)
+    {:ok, artist_info}  = Records.get_artist_info(musicbrainz_id)
 
     {:noreply,
      socket
      |> assign(:nav_section, :artists)
      |> assign(:artist, artist)
+     |> assign(:artist_info, artist_info)
      |> assign(:page_title, page_title(socket.assigns.live_action, artist))}
   end
 

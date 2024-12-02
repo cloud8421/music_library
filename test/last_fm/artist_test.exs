@@ -1,4 +1,4 @@
-defmodule LastFm.TrackTest do
+defmodule LastFm.ArtistTest do
   use ExUnit.Case, async: true
 
   @api_response_path Path.expand("../support/fixtures/artist.getinfo.json", __DIR__)

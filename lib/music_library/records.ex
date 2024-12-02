@@ -90,14 +90,14 @@ defmodule MusicLibrary.Records do
 
   def get_record!(id), do: Repo.get!(Record, id)
 
-  def get_artist(musicbrainz_id) do
+  def get_artist!(musicbrainz_id) do
     q =
       from ar in ArtistRecord,
         where: ar.musicbrainz_id == ^musicbrainz_id,
         limit: 1,
         select: ar.artist
 
-    Repo.one(q)
+    Repo.one!(q)
   end
 
   def get_artist_records(musicbrainz_id) do
@@ -108,6 +108,10 @@ defmodule MusicLibrary.Records do
         select: ^essential_fields()
 
     Repo.all(q)
+  end
+
+  def get_artist_info(musicbrainz_id) do
+    last_fm().get_artist_info(musicbrainz_id, last_fm_api_key())
   end
 
   def get_cover(id) do
@@ -186,10 +190,6 @@ defmodule MusicLibrary.Records do
     end
   end
 
-  def get_artist(musicbrainz_id) do
-    last_fm().get_artist_info(musicbrainz_id, last_fm_api_key())
-  end
-
   defp build_record_attrs(release_group, attrs) do
     release_group
     |> Record.attrs_from_release_group()
@@ -226,6 +226,6 @@ defmodule MusicLibrary.Records do
 
   defp last_fm_api_key do
     Application.get_env(:music_library, LastFm)
-      |> Keyword.fetch!(:api_key)
+    |> Keyword.fetch!(:api_key)
   end
 end

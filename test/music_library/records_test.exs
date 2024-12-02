@@ -171,9 +171,9 @@ defmodule MusicLibrary.RecordsTest do
   describe "get_artist/1" do
     test "it returns records with essential data" do
       record = record_fixture()
-      expected = record.artists |> hd()
+      [expected] = record.artists
 
-      artist = Records.get_artist(expected.musicbrainz_id)
+      artist = Records.get_artist!(expected.musicbrainz_id)
 
       assert expected == artist
     end
