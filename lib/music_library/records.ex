@@ -6,7 +6,7 @@ defmodule MusicLibrary.Records do
   import Ecto.Query, warn: false
   alias MusicLibrary.Repo
 
-  alias MusicLibrary.Records.{Cover, Record, SearchParser}
+  alias MusicLibrary.Records.{ArtistRecord, Cover, Record, SearchParser}
 
   def essential_fields do
     [
@@ -17,6 +17,7 @@ defmodule MusicLibrary.Records do
       :artists,
       :genres,
       :musicbrainz_id,
+      :purchased_at,
       :release_ids,
       :included_release_group_ids,
       :cover_hash,
@@ -88,6 +89,26 @@ defmodule MusicLibrary.Records do
   end
 
   def get_record!(id), do: Repo.get!(Record, id)
+
+  def get_artist(musicbrainz_id) do
+    q =
+      from ar in ArtistRecord,
+        where: ar.musicbrainz_id == ^musicbrainz_id,
+        limit: 1,
+        select: ar.artist
+
+    Repo.one(q)
+  end
+
+  def get_artist_records(musicbrainz_id) do
+    q =
+      from r in Record,
+        join: ar in ArtistRecord,
+        on: r.id == ar.record_id and ar.musicbrainz_id == ^musicbrainz_id,
+        select: ^essential_fields()
+
+    Repo.all(q)
+  end
 
   def get_cover(id) do
     q =

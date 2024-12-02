@@ -156,6 +156,29 @@ defmodule MusicLibrary.RecordsTest do
     end
   end
 
+  describe "get_artists_records/1" do
+    test "it returns records with essential data" do
+      expected = record_fixture()
+
+      artist_musicbrainz_id = expected.artists |> hd() |> Map.get(:musicbrainz_id)
+
+      [artist_record] = Records.get_artist_records(artist_musicbrainz_id)
+
+      assert expected.id == artist_record.id
+    end
+  end
+
+  describe "get_artist/1" do
+    test "it returns records with essential data" do
+      record = record_fixture()
+      expected = record.artists |> hd()
+
+      artist = Records.get_artist(expected.musicbrainz_id)
+
+      assert expected == artist
+    end
+  end
+
   describe "get_cover/1" do
     test "it returns the record cover by id" do
       # while this test may seem redundant, it implicitely checks that ALL record fields are returned,
