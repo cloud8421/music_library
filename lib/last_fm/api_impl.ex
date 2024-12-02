@@ -81,6 +81,7 @@ defmodule LastFm.APIImpl do
     case Finch.request(req, LastFm.Finch, @request_opts) do
       {:ok, response} when response.status == 200 ->
         Jason.decode(response.body)
+        |> identify_body()
 
       other ->
         other
@@ -90,4 +91,10 @@ defmodule LastFm.APIImpl do
   defp sanitize_url(url, api_key) do
     String.replace(url, api_key, "<redacted_api_key>")
   end
+
+  defp identify_body({:ok, %{"error" => error_number, "message" => message}}) do
+    {:error, "Error #{error_number}: #{message}"}
+  end
+
+  defp identify_body(other), do: other
 end
