@@ -477,7 +477,7 @@ msgstr ""
 msgid "Dev dashboard"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex:9
+#: lib/music_library_web/live/artist_live/show.ex:53
 #, elixir-autogen, elixir-format
 msgid "Biography not available"
 msgstr ""

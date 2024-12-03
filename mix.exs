@@ -45,6 +45,7 @@ defmodule MusicLibrary.MixProject do
       {:nimble_parsec, "~> 1.4"},
       # TODO bump on release to {:phoenix_live_view, "~> 1.0.0"},
       {:phoenix_live_view, "~> 1.0.0-rc.8", override: true},
+      {:phoenix_html_helpers, "~> 1.0"},
       {:floki, ">= 0.30.0", only: :test},
       {:mox, "~> 1.2", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.3"},
