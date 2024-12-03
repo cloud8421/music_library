@@ -13,7 +13,7 @@ defmodule LastFm.Artist do
     %__MODULE__{
       musicbrainz_id: api_response["mbid"],
       name: api_response["name"],
-      bio: api_response["bio"]["content"],
+      bio: api_response["bio"]["content"] || "",
       image: get_image(api_response),
       play_count: get_play_count(api_response)
     }

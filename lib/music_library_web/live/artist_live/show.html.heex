@@ -1,7 +1,7 @@
 <div class="mt-4 px-4 sm:px-6 lg:px-8">
   <h1 class="flex items-end mt-1 font-semibold text-2xl leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
     {@artist.name}
-    <span :if={@artist_info.ok? && @artist_info.result && @artist_info.result.play_count > 0}>
+    <span :if={played?(@artist_info)}>
       <span class="sr-only">
         {gettext("Number of scrobbles")}
       </span>
@@ -18,13 +18,16 @@
     </span>
   </h1>
   <details
-    :if={artist_info = @artist_info.ok? && @artist_info.result}
+    :if={bio_available?(@artist_info)}
     class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400"
   >
     <summary class="text-sm mb-4">{gettext("Biography")}</summary>
-    {render_bio(artist_info.bio)}
+    {render_bio(@artist_info.result.bio)}
   </details>
-  <div :if={!@artist_info.ok?} class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
+  <div
+    :if={!bio_available?(@artist_info)}
+    class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400"
+  >
     {gettext("Biography not available")}
   </div>
 
