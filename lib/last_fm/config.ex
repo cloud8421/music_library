@@ -3,18 +3,15 @@ defmodule LastFm.Config do
           api: module(),
           api_key: String.t(),
           user: String.t(),
+          auto_refresh: boolean(),
           refresh_interval: pos_integer()
         }
 
   defstruct api: LastFm.Api,
             api_key: "",
             user: "",
+            auto_refresh: true,
             refresh_interval: 60_000
-
-  @spec enabled?(t) :: boolean()
-  def enabled?(config) do
-    config.api && config.user !== "" && config.api_key !== ""
-  end
 
   @spec resolve(atom) :: t
   def resolve(otp_app) do

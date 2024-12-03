@@ -20,7 +20,7 @@ defmodule LastFm.Refresh do
   @impl true
   @spec init(config) :: {:ok, config, {:continue, :refresh}} | :ignore
   def init(config) do
-    if Config.enabled?(config) do
+    if config.auto_refresh do
       {:ok, config, {:continue, :refresh}}
     else
       :ignore
