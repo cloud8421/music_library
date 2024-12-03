@@ -52,10 +52,32 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
 
   defp render_bio(nil), do: gettext("Biography not available")
 
+  # Bios start with text, then a link to read more on Last.fm, followed by a license text.
+  # We split the bio at the read more link in order to render the license separately.
+  @last_fm_link_regex ~r/<a.*Read more on Last\.fm<\/a>\.\s*/
   defp render_bio(bio) do
-    PhoenixHTMLHelpers.Format.text_to_html(bio,
-      escape: false,
-      attributes: [class: "mt-4 text-sm/7"]
-    )
+    case String.split(bio, @last_fm_link_regex, include_captures: true) do
+      [text, link, license] ->
+        reformatted_bio =
+          Enum.join(
+            [
+              text,
+              link,
+              ~s(<span class="license">#{license}</span>)
+            ],
+            ""
+          )
+
+        PhoenixHTMLHelpers.Format.text_to_html(reformatted_bio,
+          escape: false,
+          attributes: [class: "mt-2 text-sm/7"]
+        )
+
+      other ->
+        PhoenixHTMLHelpers.Format.text_to_html(other,
+          escape: false,
+          attributes: [class: "mt-2 text-sm/7"]
+        )
+    end
   end
 end
