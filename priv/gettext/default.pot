@@ -51,7 +51,7 @@ msgid "Choose a value"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:13
-#: lib/music_library_web/live/artist_live/show.html.heex:14
+#: lib/music_library_web/live/artist_live/show.html.heex:29
 #: lib/music_library_web/live/collection_live/index.ex:77
 #: lib/music_library_web/live/collection_live/show.ex:102
 #: lib/music_library_web/live/collection_live/show.ex:119
@@ -328,7 +328,7 @@ msgid "Welcome to your Music Library"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:19
-#: lib/music_library_web/live/artist_live/show.html.heex:52
+#: lib/music_library_web/live/artist_live/show.html.heex:67
 #: lib/music_library_web/live/wishlist_live/index.ex:75
 #: lib/music_library_web/live/wishlist_live/show.ex:102
 #, elixir-autogen, elixir-format
@@ -482,8 +482,13 @@ msgstr ""
 msgid "Biography not available"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex:32
-#: lib/music_library_web/live/artist_live/show.html.heex:70
+#: lib/music_library_web/live/artist_live/show.html.heex:47
+#: lib/music_library_web/live/artist_live/show.html.heex:85
 #, elixir-autogen, elixir-format
 msgid "View details"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.html.heex:6
+#, elixir-autogen, elixir-format
+msgid "Number of scrobbles"
 msgstr ""

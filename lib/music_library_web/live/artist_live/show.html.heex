@@ -1,6 +1,21 @@
 <div class="mt-4 px-4 sm:px-6 lg:px-8">
-  <h1 class="mt-1 flex font-semibold text-base lg:text-2xl leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+  <h1 class="mt-1 font-semibold text-base lg:text-2xl leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
     {@artist.name}
+    <span :if={@artist_info.ok? && @artist_info.result && @artist_info.result.play_count > 0}>
+      <span class="sr-only">
+        {gettext("Number of scrobbles")}
+      </span>
+      <span class={[
+        "rounded-full",
+        "px-2 py-1 text-xs font-medium",
+        "ring-1 ring-inset",
+        "bg-gray-50 dark:bg-gray-400/10",
+        "text-gray-600 dark:text-gray-500",
+        "ring-gray-500/10 dark:ring-gray-400/20"
+      ]}>
+        {@artist_info.result.play_count}
+      </span>
+    </span>
   </h1>
   <div
     :if={artist_info = @artist_info.ok? && @artist_info.result}
