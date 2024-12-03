@@ -80,6 +80,7 @@ defmodule LastFm.APIImpl do
   defp json_get(url) do
     req =
       Finch.build(:get, url, [
+        # TODO: move user agent to config
         {"User-Agent", "MusicLibrary/0.1.0 ( cloud8421@gmail.com )"}
       ])
 
