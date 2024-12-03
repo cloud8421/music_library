@@ -50,15 +50,6 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     }
   end
 
-  defp bio_available?(artist_info_result) do
-    artist_info_result.ok? && artist_info_result.result && artist_info_result.result.bio !== ""
-  end
-
-  defp played?(artist_info_result) do
-    artist_info_result.ok? && artist_info_result.result &&
-      artist_info_result.result.play_count > 0
-  end
-
   # Bios start with text, then a link to read more on Last.fm, followed by a license text.
   # We split the bio at the read more link in order to render the license separately.
   @last_fm_link_regex ~r/<a.*Read more on Last\.fm<\/a>\.\s*/

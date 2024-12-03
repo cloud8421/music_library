@@ -51,7 +51,7 @@ msgid "Choose a value"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:13
-#: lib/music_library_web/live/artist_live/show.html.heex:36
+#: lib/music_library_web/live/artist_live/show.html.heex:61
 #: lib/music_library_web/live/collection_live/index.ex:77
 #: lib/music_library_web/live/collection_live/show.ex:102
 #: lib/music_library_web/live/collection_live/show.ex:119
@@ -328,7 +328,7 @@ msgid "Welcome to your Music Library"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:19
-#: lib/music_library_web/live/artist_live/show.html.heex:74
+#: lib/music_library_web/live/artist_live/show.html.heex:99
 #: lib/music_library_web/live/wishlist_live/index.ex:75
 #: lib/music_library_web/live/wishlist_live/show.ex:102
 #, elixir-autogen, elixir-format
@@ -477,23 +477,38 @@ msgstr ""
 msgid "Dev dashboard"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex:31
-#, elixir-autogen, elixir-format
-msgid "Biography not available"
-msgstr ""
-
-#: lib/music_library_web/live/artist_live/show.html.heex:54
-#: lib/music_library_web/live/artist_live/show.html.heex:92
+#: lib/music_library_web/live/artist_live/show.html.heex:79
+#: lib/music_library_web/live/artist_live/show.html.heex:117
 #, elixir-autogen, elixir-format
 msgid "View details"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex:6
+#: lib/music_library_web/live/artist_live/show.html.heex:23
 #, elixir-autogen, elixir-format
 msgid "Number of scrobbles"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex:24
+#: lib/music_library_web/live/artist_live/show.html.heex:54
 #, elixir-autogen, elixir-format
 msgid "Biography"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.html.heex:42
+#, elixir-autogen, elixir-format
+msgid "Loading biography"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.html.heex:7
+#, elixir-autogen, elixir-format
+msgid "Loading play count"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.html.heex:47
+#, elixir-autogen, elixir-format
+msgid "There was an error loading the biography"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.html.heex:18
+#, elixir-autogen, elixir-format
+msgid "There was an error loading the play count"
 msgstr ""
