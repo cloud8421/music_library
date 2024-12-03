@@ -15,7 +15,7 @@ defmodule MusicLibrary.Application do
       {DNSCluster, query: Application.get_env(:music_library, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: MusicLibrary.PubSub},
       MusicBrainz.Supervisor,
-      {LastFm.Supervisor, last_fm_config()},
+      {LastFm.Supervisor, LastFm.Config.resolve(:music_library)},
       # Start a worker by calling: MusicLibrary.Worker.start_link(arg)
       # {MusicLibrary.Worker, arg},
       # Start to serve requests, typically the last entry
@@ -39,10 +39,5 @@ defmodule MusicLibrary.Application do
   defp skip_migrations?() do
     # By default, sqlite migrations are run when using a release
     System.get_env("RELEASE_NAME") != nil
-  end
-
-  defp last_fm_config do
-    Application.get_env(:music_library, LastFm)
-    |> LastFm.Config.new()
   end
 end

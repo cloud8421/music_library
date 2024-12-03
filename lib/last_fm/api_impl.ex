@@ -17,18 +17,18 @@ defmodule LastFm.APIImpl do
   ]
 
   @impl true
-  def get_recent_tracks(user, api_key) do
+  def get_recent_tracks(config) do
     options = [
       method: "user.getrecenttracks",
-      user: user,
-      api_key: api_key,
+      user: config.user,
+      api_key: config.api_key,
       format: "json",
       limit: 50
     ]
 
     url = @base_url <> "?" <> URI.encode_query(options)
 
-    Logger.debug("Fetching data from #{sanitize_url(url, api_key)}")
+    Logger.debug("Fetching data from #{sanitize_url(url, config.api_key)}")
 
     case json_get(url) do
       {:ok, response} ->
@@ -38,17 +38,19 @@ defmodule LastFm.APIImpl do
          |> Track.from_api_response()}
 
       other ->
-        msg = "Failed to fetch data from #{sanitize_url(url, api_key)}, reason: #{inspect(other)}"
+        msg =
+          "Failed to fetch data from #{sanitize_url(url, config.api_key)}, reason: #{inspect(other)}"
+
         Logger.error(msg)
         {:error, msg}
     end
   end
 
   @impl true
-  def get_artist_info(artist_mbid, api_key) do
+  def get_artist_info(artist_mbid, config) do
     options = [
       method: "artist.getInfo",
-      api_key: api_key,
+      api_key: config.api_key,
       mbid: artist_mbid,
       format: "json",
       limit: 50
@@ -56,7 +58,7 @@ defmodule LastFm.APIImpl do
 
     url = @base_url <> "?" <> URI.encode_query(options)
 
-    Logger.debug("Fetching data from #{sanitize_url(url, api_key)}")
+    Logger.debug("Fetching data from #{sanitize_url(url, config.api_key)}")
 
     case json_get(url) do
       {:ok, response} ->
@@ -66,7 +68,9 @@ defmodule LastFm.APIImpl do
          |> Artist.from_api_response()}
 
       other ->
-        msg = "Failed to fetch data from #{sanitize_url(url, api_key)}, reason: #{inspect(other)}"
+        msg =
+          "Failed to fetch data from #{sanitize_url(url, config.api_key)}, reason: #{inspect(other)}"
+
         Logger.error(msg)
         {:error, msg}
     end

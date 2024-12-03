@@ -111,7 +111,7 @@ defmodule MusicLibrary.Records do
   end
 
   def get_artist_info(musicbrainz_id) do
-    last_fm().get_artist_info(musicbrainz_id, last_fm_api_key())
+    last_fm().get_artist_info(musicbrainz_id, last_fm_config())
   end
 
   def get_cover(id) do
@@ -224,8 +224,5 @@ defmodule MusicLibrary.Records do
     Application.get_env(:music_library, :last_fm, LastFm.APIImpl)
   end
 
-  defp last_fm_api_key do
-    Application.get_env(:music_library, LastFm)
-    |> Keyword.fetch!(:api_key)
-  end
+  defp last_fm_config, do: LastFm.Config.resolve(:music_library)
 end

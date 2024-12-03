@@ -3,9 +3,9 @@ defmodule LastFm.Refresh do
 
   require Logger
 
-  alias LastFm.Feed
+  alias LastFm.{Config, Feed}
 
-  @type config :: LastFm.Config.t()
+  @type config :: Config.t()
 
   @spec start_link(config) :: GenServer.on_start()
   def start_link(config) do
@@ -20,7 +20,7 @@ defmodule LastFm.Refresh do
   @impl true
   @spec init(config) :: {:ok, config, {:continue, :refresh}} | :ignore
   def init(config) do
-    if enabled?(config) do
+    if Config.enabled?(config) do
       {:ok, config, {:continue, :refresh}}
     else
       :ignore
@@ -31,7 +31,7 @@ defmodule LastFm.Refresh do
   @spec handle_call(:refresh, GenServer.from(), config) ::
           {:reply, :ok | {:error, term()}, config, pos_integer()}
   def handle_call(:refresh, _from, config) do
-    case config.api.get_recent_tracks(config.user, config.api_key) do
+    case config.api.get_recent_tracks(config) do
       {:ok, tracks} ->
         Feed.update(tracks)
         {:reply, :ok, config, config.refresh_interval}
@@ -53,7 +53,7 @@ defmodule LastFm.Refresh do
   def handle_info(:timeout, config), do: refresh(config)
 
   defp refresh(config) do
-    case config.api.get_recent_tracks(config.user, config.api_key) do
+    case config.api.get_recent_tracks(config) do
       {:ok, tracks} ->
         Feed.update(tracks)
         {:noreply, config, config.refresh_interval}
@@ -62,9 +62,5 @@ defmodule LastFm.Refresh do
         # TODO: think about failure scenario - error is logged at the API level
         {:noreply, config, config.refresh_interval}
     end
-  end
-
-  defp enabled?(config) do
-    config.api && config.api_key
   end
 end
