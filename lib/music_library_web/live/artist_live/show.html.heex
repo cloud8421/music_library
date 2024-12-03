@@ -17,13 +17,14 @@
       </span>
     </span>
   </h1>
-  <div
+  <details
     :if={artist_info = @artist_info.ok? && @artist_info.result}
     class="bio mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400"
   >
+    <summary class="text-sm mb-4">{gettext("Biography")}</summary>
     {render_bio(artist_info.bio)}
-  </div>
-  <div :if={!@artist_info.ok?} class="bio mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
+  </details>
+  <div :if={!@artist_info.ok?} class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
     {gettext("Biography not available")}
   </div>
 
