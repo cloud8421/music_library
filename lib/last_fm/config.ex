@@ -11,19 +11,17 @@ defmodule LastFm.Config do
             user: "",
             refresh_interval: 60_000
 
-  @spec new(Enumerable.t()) :: t()
-  def new(opts) do
-    struct(__MODULE__, opts)
-  end
-
   @spec enabled?(t) :: boolean()
   def enabled?(config) do
     config.api && config.user !== "" && config.api_key !== ""
   end
 
+  @spec resolve(atom) :: t
   def resolve(otp_app) do
-    otp_app
-    |> Application.get_env(LastFm)
-    |> new()
+    app_config =
+      otp_app
+      |> Application.get_env(LastFm)
+
+    struct(__MODULE__, app_config)
   end
 end
