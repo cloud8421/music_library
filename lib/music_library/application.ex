@@ -43,5 +43,6 @@ defmodule MusicLibrary.Application do
 
   defp last_fm_config do
     Application.get_env(:music_library, LastFm)
+    |> LastFm.Config.new()
   end
 end

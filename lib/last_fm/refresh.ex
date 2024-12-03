@@ -5,12 +5,7 @@ defmodule LastFm.Refresh do
 
   alias LastFm.Feed
 
-  @type config :: %{
-          api: module(),
-          api_key: String.t(),
-          user: String.t(),
-          refresh_interval: pos_integer()
-        }
+  @type config :: LastFm.Config.t()
 
   @spec start_link(config) :: GenServer.on_start()
   def start_link(config) do
@@ -25,8 +20,6 @@ defmodule LastFm.Refresh do
   @impl true
   @spec init(config) :: {:ok, config, {:continue, :refresh}} | :ignore
   def init(config) do
-    config = Map.new(config)
-
     if enabled?(config) do
       {:ok, config, {:continue, :refresh}}
     else
