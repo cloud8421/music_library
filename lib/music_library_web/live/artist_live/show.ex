@@ -62,8 +62,8 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
           Enum.join(
             [
               text,
-              link,
-              ~s(<span class="license">#{license}</span>)
+              ~s(<p class="mt-4 font-semibold text-zinc-700 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200">#{link}</p>),
+              ~s(<p class="mt-4 italic block">#{license}</p>)
             ],
             ""
           )
