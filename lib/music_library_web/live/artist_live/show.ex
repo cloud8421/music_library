@@ -53,6 +53,9 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
   defp render_bio(nil), do: gettext("Biography not available")
 
   defp render_bio(bio) do
-    PhoenixHTMLHelpers.Format.text_to_html(bio, escape: false)
+    PhoenixHTMLHelpers.Format.text_to_html(bio,
+      escape: false,
+      attributes: [class: "mt-4 text-sm/7"]
+    )
   end
 end
