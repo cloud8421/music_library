@@ -51,6 +51,7 @@ defmodule LastFm.APIImpl do
     options = [
       method: "artist.getInfo",
       api_key: config.api_key,
+      user: config.user,
       mbid: artist_mbid,
       format: "json",
       limit: 50
