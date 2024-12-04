@@ -11,6 +11,7 @@ defmodule MusicLibraryWeb.Pagination do
     assigns = assign(assigns, :page_links, page_links)
 
     ~H"""
+    <%!-- TODO: replace with OSS version --%>
     <div
       :if={@page_links.total_pages > 1}
       id={@id}
