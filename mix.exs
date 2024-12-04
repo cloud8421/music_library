@@ -43,6 +43,7 @@ defmodule MusicLibrary.MixProject do
       {:finch, "~> 0.19.0"},
       {:vix, "~> 0.31.1"},
       {:nimble_parsec, "~> 1.4"},
+      {:nimble_options, "~> 1.1"},
       {:phoenix_live_view, "~> 1.0.0"},
       {:phoenix_html_helpers, "~> 1.0"},
       {:floki, ">= 0.30.0", only: :test},
