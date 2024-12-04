@@ -30,7 +30,7 @@ defmodule LastFm.APIImpl do
 
     Logger.debug("Fetching data from #{sanitize_url(url, config.api_key)}")
 
-    case json_get(url) do
+    case json_get(url, config.user_agent) do
       {:ok, response} ->
         {:ok,
          response
@@ -61,7 +61,7 @@ defmodule LastFm.APIImpl do
 
     Logger.debug("Fetching data from #{sanitize_url(url, config.api_key)}")
 
-    case json_get(url) do
+    case json_get(url, config.user_agent) do
       {:ok, response} ->
         {:ok,
          response
@@ -77,11 +77,10 @@ defmodule LastFm.APIImpl do
     end
   end
 
-  defp json_get(url) do
+  defp json_get(url, user_agent) do
     req =
       Finch.build(:get, url, [
-        # TODO: move user agent to config
-        {"User-Agent", "MusicLibrary/0.1.0 ( cloud8421@gmail.com )"}
+        {"User-Agent", user_agent}
       ])
 
     case Finch.request(req, LastFm.Finch, @request_opts) do

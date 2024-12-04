@@ -4,14 +4,16 @@ defmodule LastFm.Config do
           api_key: String.t(),
           user: String.t(),
           auto_refresh: boolean(),
-          refresh_interval: pos_integer()
+          refresh_interval: pos_integer(),
+          user_agent: String.t()
         }
 
   defstruct api: LastFm.Api,
             api_key: "",
             user: "",
             auto_refresh: true,
-            refresh_interval: 60_000
+            refresh_interval: 60_000,
+            user_agent: "change me"
 
   @spec resolve(atom) :: t
   def resolve(otp_app) do

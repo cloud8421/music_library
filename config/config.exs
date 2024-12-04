@@ -24,12 +24,15 @@ config :music_library, MusicLibraryWeb.Endpoint,
   pubsub_server: MusicLibrary.PubSub,
   live_view: [signing_salt: "g/qw4SNo"]
 
+user_agent = "MusicLibrary/0.1.0 ( cloud8421@gmail.com )"
+
 config :music_library, LastFm,
   user: "username",
   api: LastFm.APIImpl,
   auto_refresh: true,
   refresh_interval: System.convert_time_unit(60, :second, :millisecond),
-  api_key: "change me"
+  api_key: "change me",
+  user_agent: user_agent
 
 # Configure esbuild (the version is required)
 config :esbuild,
