@@ -23,7 +23,8 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       [artist] = collection_record.artists
       artist_musicbrainz_id = artist.musicbrainz_id
 
-      expect(APIBehaviourMock, :get_artist_info, fn ^artist_musicbrainz_id, _config ->
+      expect(APIBehaviourMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id},
+                                                    _config ->
         {:ok,
          artist_get_info()
          |> Map.get("artist")

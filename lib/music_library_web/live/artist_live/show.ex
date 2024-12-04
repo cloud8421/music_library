@@ -23,7 +23,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
      |> assign(:artist, artist)
      |> assign(:artist_records, grouped_artist_records)
      |> assign_async(:artist_info, fn ->
-       with {:ok, artist_info} <- Records.get_artist_info(musicbrainz_id) do
+       with {:ok, artist_info} <- Records.get_artist_info(artist) do
          {:ok, %{artist_info: artist_info}}
        end
      end)

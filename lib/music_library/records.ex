@@ -110,9 +110,24 @@ defmodule MusicLibrary.Records do
     Repo.all(q)
   end
 
-  def get_artist_info(musicbrainz_id) do
+  def get_artist_info(artist) do
     last_fm_config = last_fm_config()
-    last_fm_config.api.get_artist_info(musicbrainz_id, last_fm_config)
+    # Sometimes the artist info cannot be identified with the MusicBrainz ID,
+    # because Last.fm doesn't have that information. In that case, we try again with the artist name.
+    case last_fm_config.api.get_artist_info(
+           {:musicbrainz_id, artist.musicbrainz_id},
+           last_fm_config
+         ) do
+      {:ok, info} ->
+        {:ok, info}
+
+      # TODO: remap error codes
+      {:error, %{"error" => 6}} ->
+        last_fm_config.api.get_artist_info({:name, artist.name}, last_fm_config)
+
+      error ->
+        error
+    end
   end
 
   def get_cover(id) do

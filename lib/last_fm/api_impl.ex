@@ -47,15 +47,24 @@ defmodule LastFm.APIImpl do
   end
 
   @impl true
-  def get_artist_info(artist_mbid, config) do
-    options = [
+  def get_artist_info({:musicbrainz_id, artist_mbid}, config) do
+    do_get_artist_info([mbid: artist_mbid], config)
+  end
+
+  def get_artist_info({:name, artist_name}, config) do
+    do_get_artist_info([artist: artist_name], config)
+  end
+
+  def do_get_artist_info(options, config) do
+    base_options = [
       method: "artist.getInfo",
       api_key: config.api_key,
       user: config.user,
-      mbid: artist_mbid,
       format: "json",
       limit: 50
     ]
+
+    options = Keyword.merge(base_options, options)
 
     url = @base_url <> "?" <> URI.encode_query(options)
 
@@ -68,12 +77,12 @@ defmodule LastFm.APIImpl do
          |> Map.get("artist")
          |> Artist.from_api_response()}
 
-      other ->
+      error ->
         msg =
-          "Failed to fetch data from #{sanitize_url(url, config.api_key)}, reason: #{inspect(other)}"
+          "Failed to fetch data from #{sanitize_url(url, config.api_key)}, reason: #{inspect(error)}"
 
         Logger.error(msg)
-        {:error, msg}
+        error
     end
   end
 
@@ -97,8 +106,8 @@ defmodule LastFm.APIImpl do
     String.replace(url, api_key, "<redacted_api_key>")
   end
 
-  defp identify_body({:ok, %{"error" => error_number, "message" => message}}) do
-    {:error, "Error #{error_number}: #{message}"}
+  defp identify_body({:ok, error = %{"error" => _error_number, "message" => _message}}) do
+    {:error, error}
   end
 
   defp identify_body(other), do: other
