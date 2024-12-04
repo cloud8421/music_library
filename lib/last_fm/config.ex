@@ -15,9 +15,7 @@ defmodule LastFm.Config do
 
   @spec resolve(atom) :: t
   def resolve(otp_app) do
-    app_config =
-      otp_app
-      |> Application.get_env(LastFm)
+    app_config = Application.get_env(otp_app, LastFm)
 
     struct(__MODULE__, app_config)
   end
