@@ -275,8 +275,8 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       mock_results = release_group_search_results()
 
       expect(APIBehaviourMock, :search_release_group, fn "Marillion Marbles",
-                                                         limit: 10,
-                                                         offset: 0 ->
+                                                         [limit: 10, offset: 0],
+                                                         _config ->
         {:ok, mock_results}
       end)
 
@@ -297,13 +297,13 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
       release_group = release_group()
 
-      expect(APIBehaviourMock, :get_release_group, fn ^first_result_id ->
+      expect(APIBehaviourMock, :get_release_group, fn ^first_result_id, _config ->
         {:ok, release_group}
       end)
 
       cover_data = File.read!(marbles_cover_fixture())
 
-      expect(APIBehaviourMock, :get_cover_art, fn {:musicbrainz_id, ^first_result_id} ->
+      expect(APIBehaviourMock, :get_cover_art, fn {:musicbrainz_id, ^first_result_id}, _config ->
         {:ok, cover_data}
       end)
 

@@ -209,11 +209,11 @@ defmodule MusicBrainz.APIImpl do
   """
 
   @impl true
-  def get_release_group(id) do
+  def get_release_group(id, config) do
     url =
       "https://musicbrainz.org/ws/2/release-group/#{id}?fmt=json&inc=artists+genres+releases+release-group-rels"
 
-    json_get(url)
+    json_get(url, config)
   end
 
   @doc """
@@ -280,11 +280,11 @@ defmodule MusicBrainz.APIImpl do
       }
   """
   @impl true
-  def get_release(id) do
+  def get_release(id, config) do
     url =
       "https://musicbrainz.org/ws/2/release/#{id}?fmt=json&inc=release-groups"
 
-    json_get(url)
+    json_get(url, config)
   end
 
   @doc """
@@ -388,7 +388,7 @@ defmodule MusicBrainz.APIImpl do
       }
   """
   @impl true
-  def search_release_group(query, opts) do
+  def search_release_group(query, opts, config) do
     limit = Keyword.fetch!(opts, :limit)
     offset = Keyword.fetch!(opts, :offset)
 
@@ -402,7 +402,7 @@ defmodule MusicBrainz.APIImpl do
     url =
       "https://musicbrainz.org/ws/2/release-group?#{URI.encode_query(qs)}"
 
-    with {:ok, result} <- json_get(url) do
+    with {:ok, result} <- json_get(url, config) do
       {:ok, Enum.map(result["release-groups"], &ReleaseGroup.from_api_response/1)}
     end
   end
@@ -411,14 +411,14 @@ defmodule MusicBrainz.APIImpl do
   Uses the [cover art](https://musicbrainz.org/doc/Cover_Art_Archive/API) endpoint with the release group id to get the cover image.
   """
   @impl true
-  def get_cover_art({:musicbrainz_id, musicbrainz_id}) do
+  def get_cover_art({:musicbrainz_id, musicbrainz_id}, config) do
     url = "https://coverartarchive.org/release-group/#{musicbrainz_id}/front"
 
-    get_cover_art({:url, url})
+    get_cover_art({:url, url}, config)
   end
 
-  def get_cover_art({:url, url}) do
-    case blob_get(url) do
+  def get_cover_art({:url, url}, config) do
+    case blob_get(url, config) do
       {:error, reason} ->
         Logger.error("Failed to fetch cover art for #{url}, reason: #{inspect(reason)}")
 
@@ -429,10 +429,10 @@ defmodule MusicBrainz.APIImpl do
     end
   end
 
-  defp json_get(url) do
+  defp json_get(url, config) do
     req =
       Finch.build(:get, url, [
-        {"User-Agent", "MusicLibrary/0.1.0 ( cloud8421@gmail.com )"}
+        {"User-Agent", config.user_agent}
       ])
 
     Logger.debug("Fetching data from #{url}")
@@ -444,7 +444,7 @@ defmodule MusicBrainz.APIImpl do
       {:ok, response} when response.status in 301..308 ->
         location = :proplists.get_value("location", response.headers)
         Logger.debug("Following redirect to #{location}")
-        json_get(location)
+        json_get(location, config)
 
       other ->
         msg = "Failed to fetch data from #{url}, reason: #{inspect(other)}"
@@ -453,10 +453,10 @@ defmodule MusicBrainz.APIImpl do
     end
   end
 
-  defp blob_get(url) do
+  defp blob_get(url, config) do
     req =
       Finch.build(:get, url, [
-        {"User-Agent", "MusicLibrary/0.1.0 ( cloud8421@gmail.com )"}
+        {"User-Agent", config.user_agent}
       ])
 
     Logger.debug("Fetching data from #{url}")
@@ -468,7 +468,7 @@ defmodule MusicBrainz.APIImpl do
       {:ok, response} when response.status in 301..308 ->
         location = :proplists.get_value("location", response.headers)
         Logger.debug("Following redirect to #{location}")
-        blob_get(location)
+        blob_get(location, config)
 
       # all non-success responses can be treated as errors
       {:ok, response} ->

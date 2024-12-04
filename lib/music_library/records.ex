@@ -127,11 +127,16 @@ defmodule MusicLibrary.Records do
   def search_release_group(query, opts \\ []) do
     limit = Keyword.get(opts, :limit, 20)
     offset = Keyword.get(opts, :offset, 0)
-    music_brainz_config().api.search_release_group(query, limit: limit, offset: offset)
+
+    music_brainz_config().api.search_release_group(
+      query,
+      [limit: limit, offset: offset],
+      music_brainz_config()
+    )
   end
 
   def import_from_musicbrainz_release(musicbrainz_id, opts \\ []) do
-    case music_brainz_config().api.get_release(musicbrainz_id) do
+    case music_brainz_config().api.get_release(musicbrainz_id, music_brainz_config()) do
       {:ok, release} ->
         release_group_id = release["release-group"]["id"]
         import_from_musicbrainz_release_group(release_group_id, opts)
@@ -144,7 +149,8 @@ defmodule MusicLibrary.Records do
   def import_from_musicbrainz_release_group(musicbrainz_id, opts \\ []) do
     with format = Keyword.get(opts, :format, "cd"),
          purchased_at = Keyword.get(opts, :purchased_at),
-         {:ok, release_group} <- music_brainz_config().api.get_release_group(musicbrainz_id),
+         {:ok, release_group} <-
+           music_brainz_config().api.get_release_group(musicbrainz_id, music_brainz_config()),
          {:ok, cover_data} <- get_cover_art_or_default(musicbrainz_id),
          record_attrs =
            build_record_attrs(release_group, %{
@@ -159,14 +165,21 @@ defmodule MusicLibrary.Records do
   end
 
   defp get_cover_art_or_default(musicbrainz_id) do
-    case music_brainz_config().api.get_cover_art({:musicbrainz_id, musicbrainz_id}) do
+    case music_brainz_config().api.get_cover_art(
+           {:musicbrainz_id, musicbrainz_id},
+           music_brainz_config()
+         ) do
       {:error, :cover_not_available} -> {:ok, Record.fallback_cover_data()}
       {:ok, cover_data} -> Cover.resize(cover_data)
     end
   end
 
   def refresh_cover(record) do
-    with {:ok, cover_data} <- music_brainz_config().api.get_cover_art({:url, record.cover_url}) do
+    with {:ok, cover_data} <-
+           music_brainz_config().api.get_cover_art(
+             {:url, record.cover_url},
+             music_brainz_config()
+           ) do
       {:ok, thumb_data} = Cover.resize(cover_data)
 
       record
@@ -184,7 +197,11 @@ defmodule MusicLibrary.Records do
   end
 
   def refresh_musicbrainz_data(record) do
-    with {:ok, data} <- music_brainz_config().api.get_release_group(record.musicbrainz_id) do
+    with {:ok, data} <-
+           music_brainz_config().api.get_release_group(
+             record.musicbrainz_id,
+             music_brainz_config()
+           ) do
       record
       |> Record.add_musicbrainz_data(data)
       |> Repo.update()
