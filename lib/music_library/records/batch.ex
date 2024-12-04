@@ -13,7 +13,7 @@ defmodule MusicLibrary.Records.Batch do
   end
 
   def import_musicbrainz_data(record) do
-    with {:ok, data} <- musicbrainz().get_release_group(record.musicbrainz_id) do
+    with {:ok, data} <- music_brainz_config().api.get_release_group(record.musicbrainz_id) do
       record
       |> Record.add_musicbrainz_data(data)
       |> Repo.update!()
@@ -88,7 +88,5 @@ defmodule MusicLibrary.Records.Batch do
     )
   end
 
-  defp musicbrainz do
-    Application.get_env(:music_library, :musicbrainz, MusicBrainz.APIImpl)
-  end
+  defp music_brainz_config, do: MusicBrainz.Config.resolve(:music_library)
 end
