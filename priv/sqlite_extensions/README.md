@@ -1,3 +1,3 @@
 # SQLite extensions
 
-Lifted from <https://github.com/mindreframer/ex_sqlean>, original files under MIT license.
+Lifted from <https://github.com/nalgeon/sqlean>, original files under MIT license.
