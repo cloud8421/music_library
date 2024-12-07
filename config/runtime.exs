@@ -28,6 +28,11 @@ if user = System.get_env("LAST_FM_USER") do
   config :music_library, LastFm, user: user
 end
 
+config :music_library, MusicLibrary.Repo,
+  load_extensions: [
+    MusicLibrary.Repo.extension_path("unicode")
+  ]
+
 if config_env() == :prod do
   database_path =
     System.get_env("DATABASE_PATH") ||

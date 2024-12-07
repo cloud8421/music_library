@@ -3,13 +3,6 @@ defmodule MusicLibrary.Repo do
     otp_app: :music_library,
     adapter: Ecto.Adapters.SQLite3
 
-  def init(_context, config) do
-    {:ok,
-     Keyword.put(config, :load_extensions, [
-       extension_path("unicode")
-     ])}
-  end
-
   def extension_path(name) do
     [arch | _rest] =
       :erlang.system_info(:system_architecture)

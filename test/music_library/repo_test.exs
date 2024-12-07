@@ -1,5 +1,4 @@
 defmodule MusicLibrary.RepoTest do
-  alias MusicLibrary.ReleaseGroupsFixtures
   use MusicLibrary.DataCase
 
   describe "correctly loads the unicode extension" do
