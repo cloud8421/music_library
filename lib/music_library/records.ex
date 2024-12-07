@@ -52,7 +52,7 @@ defmodule MusicLibrary.Records do
       initial_search
       |> order_by(
         fragment(
-          "json_extract(artists, '$[0].sort_name') COLLATE NOCASE ASC, title COLLATE NOCASE ASC"
+          "unaccent(json_extract(artists, '$[0].sort_name')) COLLATE NOCASE ASC, unaccent(title) COLLATE NOCASE ASC"
         )
       )
 
