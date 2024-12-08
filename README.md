@@ -1,6 +1,12 @@
 # Music Library
 
-Music Library is an application to manage a collection of music records in different physical formats.
+<!--toc:start-->
+- [Music Library](#music-library)
+  - [Features](#features)
+  - [Setup](#setup)
+  - [CI](#ci)
+  - [Favicons](#favicons)
+<!--toc:end-->
 
 ## Features
 
@@ -24,9 +30,9 @@ To start your Phoenix server:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser. The default password for development is `change me`.
 
-The application is setup for deployment on Fly.io.
+The application is setup for deployment on Fly.io - just make sure you edit `fly.toml` to match your app name, domain, etc.
 
-### CI
+## CI
 
 See the `.github` folder.
 
