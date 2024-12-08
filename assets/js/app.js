@@ -40,6 +40,9 @@ window.addEventListener("music_library:clipcopy", (event) => {
     alert("Sorry, your browser does not support clipboard copy.");
   }
 });
+window.addEventListener("music_library:scroll_top", (event) => {
+  window.scrollTo(0, 0);
+});
 
 // connect if there are any LiveViews on the page
 liveSocket.connect()

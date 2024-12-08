@@ -156,8 +156,8 @@ msgstr ""
 msgid "MusicBrainz ID"
 msgstr ""
 
-#: lib/music_library_web/components/pagination.ex:49
-#: lib/music_library_web/components/pagination.ex:112
+#: lib/music_library_web/components/pagination.ex:50
+#: lib/music_library_web/components/pagination.ex:114
 #, elixir-autogen, elixir-format
 msgid "Next"
 msgstr ""
@@ -183,8 +183,8 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: lib/music_library_web/components/pagination.ex:36
-#: lib/music_library_web/components/pagination.ex:134
+#: lib/music_library_web/components/pagination.ex:37
+#: lib/music_library_web/components/pagination.ex:137
 #, elixir-autogen, elixir-format
 msgid "Previous"
 msgstr ""

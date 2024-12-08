@@ -1,7 +1,8 @@
 defmodule MusicLibraryWeb.Pagination do
   use Phoenix.Component
-
   use Gettext, backend: MusicLibraryWeb.Gettext
+
+  alias Phoenix.LiveView.JS
 
   attr :pagination_params, :map, required: true
   attr :id, :atom, required: true
@@ -107,6 +108,7 @@ defmodule MusicLibraryWeb.Pagination do
         "relative inline-flex items-center rounded-r-md px-2 py-2",
         "text-zinc-400 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 focus:z-20 focus:outline-offset-0"
       ]}
+      phx-click={JS.dispatch("music_library:scroll_top")}
       patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query)}
     >
       <span class="sr-only">{gettext("Next")}</span>
@@ -129,6 +131,7 @@ defmodule MusicLibraryWeb.Pagination do
     ~H"""
     <.link
       class="relative inline-flex items-center rounded-l-md px-2 py-2 text-zinc-400 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 focus:z-20 focus:outline-offset-0"
+      phx-click={JS.dispatch("music_library:scroll_top")}
       patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query)}
     >
       <span class="sr-only">{gettext("Previous")}</span>
@@ -168,6 +171,7 @@ defmodule MusicLibraryWeb.Pagination do
     ~H"""
     <.link
       class="relative hidden items-center first:rounded-l-md last:rounded-r-md px-4 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-400 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-300 hover:text-zinc-500 focus:z-20 focus:outline-offset-0 md:inline-flex"
+      phx-click={JS.dispatch("music_library:scroll_top")}
       patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query)}
     >
       {@page_number}
