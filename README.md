@@ -4,6 +4,9 @@
 - [Music Library](#music-library)
   - [Features](#features)
   - [Setup](#setup)
+  - [Environment configuration](#environment-configuration)
+  - [Running the application](#running-the-application)
+  - [Deployment](#deployment)
   - [CI](#ci)
   - [Favicons](#favicons)
 <!--toc:end-->
@@ -19,16 +22,28 @@
 
 ## Setup
 
-To start your Phoenix server:
+Run `mix setup` to install and setup dependencies.
 
-- Run `mix setup` to install and setup dependencies
-- Setup necessary environment variables:
-  - `LAST_FM_USER`: the Last.fm username used to populate the Scrobble Activity
-  - `LAST_FM_API_KEY`: the Last.fm API key used to fetch the Scrobble Activity
-  If using `direnv`, one can create a `.envrc.local` file for configuration variables, and a `.secrets` file for secrets. Both are automatically sourced via the `.envrc` file in the repo.
-- Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+## Environment configuration
+
+The application requires two environment variables:
+
+- `LAST_FM_USER`: the Last.fm username used to populate the Scrobble Activity
+- `LAST_FM_API_KEY` (secret): the Last.fm API key used to fetch the Scrobble Activity
+
+The application is setup to use [direnv](https://direnv.net/). The z
+
+The `.envrc` file loads two other files: `.envrc.local` file for configuration variables, and a `.secrets` file for secrets.
+
+You can create them and populate them with the necessary environment variables.
+
+## Running the application
+
+- Start the Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser. The default password for development is `change me`.
+
+## Deployment
 
 The application is setup for deployment on Fly.io - just make sure you edit `fly.toml` to match your app name, domain, etc.
 
