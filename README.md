@@ -31,7 +31,7 @@ The application requires two environment variables:
 - `LAST_FM_USER`: the Last.fm username used to populate the Scrobble Activity
 - `LAST_FM_API_KEY` (secret): the Last.fm API key used to fetch the Scrobble Activity
 
-The application is setup to use [direnv](https://direnv.net/). The z
+The application is setup to use [direnv](https://direnv.net/).
 
 The `.envrc` file loads two other files: `.envrc.local` file for configuration variables, and a `.secrets` file for secrets.
 
