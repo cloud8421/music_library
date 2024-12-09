@@ -14,8 +14,10 @@
 ## Features
 
 - Import records from MusicBrainz, with optional override of specific pieces of data
-- Manage a collection and a wishlist of records, with ways to quickly search and filter based on records' metadata
-- Integration with Last.fm (display latest scrobbles, and where possible connect them with records in the collection or wishlist)
+- Manage a collection and a wishlist of records, with ways to quickly search
+  and filter based on records' metadata
+- Integration with Last.fm (display latest scrobbles, and where possible
+  connect them with records in the collection or wishlist)
 - Some basic stats
 - All data stored in a single SQLite database for portability and ease of backup/restore
 - Ideal for deployment on a server with limited resources (1CPU, 512MB RAM)
@@ -33,19 +35,23 @@ The application requires two environment variables:
 
 The application is setup to use [direnv](https://direnv.net/).
 
-The `.envrc` file loads two other files: `.envrc.local` file for configuration variables, and a `.secrets` file for secrets.
+The `.envrc` file loads two other files: `.envrc.local` file for configuration
+variables, and a `.secrets` file for secrets.
 
 You can create them and populate them with the necessary environment variables.
 
 ## Running the application
 
-- Start the Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+Start the Phoenix endpoint with `mix phx.server` or inside IEx with
+`iex -S mix phx.server`.
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser. The default password for development is `change me`.
+Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+The default password for development is `change me`.
 
 ## Deployment
 
-The application is setup for deployment on Fly.io - just make sure you edit `fly.toml` to match your app name, domain, etc.
+The application is setup for deployment on Fly.io - just make sure you edit
+`fly.toml` to match your app name, domain, etc.
 
 ## CI
 
