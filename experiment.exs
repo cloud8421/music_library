@@ -32,9 +32,9 @@ defmodule OpenAI do
 
     Req.post!("https://api.openai.com/v1/chat/completions",
       json: %{
-        # Pick your model here
         model: "gpt-4o-mini",
         messages: [%{role: "user", content: prompt}],
+        response_format: %{type: "json_object"},
         stream: true
       },
       auth: {:bearer, System.fetch_env!("OPENAI_KEY")},
@@ -52,7 +52,7 @@ end
 prompt = """
 Please provide a list of music genres applicable to the album "Stupid Things that Mean the World" by Tim Bowness.
 
-Return the genres as a CSV list, and only the raw value without any introduction.
+Return the genres as a valid JSON list.
 """
 
 OpenAI.gpt_stream(prompt, fn data ->
@@ -62,4 +62,4 @@ OpenAI.gpt_stream(prompt, fn data ->
   end
 end)
 
-Agent.get(collector, & &1) |> IO.inspect()
+Agent.get(collector, & &1) |> Jason.decode!() |> IO.inspect()
