@@ -103,7 +103,7 @@ defmodule MusicLibrary.Records do
   def get_all_artist_ids do
     q = from ar in ArtistRecord, distinct: true, select: ar.musicbrainz_id
 
-    Repo.all(q)
+    q |> Repo.all() |> MapSet.new()
   end
 
   def get_artist_records(musicbrainz_id) do

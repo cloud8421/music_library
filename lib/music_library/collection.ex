@@ -56,7 +56,7 @@ defmodule MusicLibrary.Collection do
         where: fragment("records.purchased_at IS NOT NULL"),
         select: r.value
 
-    Repo.all(q)
+    q |> Repo.all() |> MapSet.new()
   end
 
   defp base_search do

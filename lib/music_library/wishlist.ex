@@ -27,7 +27,7 @@ defmodule MusicLibrary.Wishlist do
         where: fragment("records.purchased_at IS NULL"),
         select: r.value
 
-    Repo.all(q)
+    q |> Repo.all() |> MapSet.new()
   end
 
   defp base_search do
