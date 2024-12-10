@@ -18,7 +18,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
     latest_record = Collection.get_latest_record!()
 
-    recent_tracks = LastFm.Feed.all()
+    recent_tracks = LastFm.Feed.all_tracks()
 
     release_ids = release_ids(recent_tracks)
 

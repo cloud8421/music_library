@@ -23,8 +23,8 @@ defmodule LastFm.Feed do
     Phoenix.PubSub.broadcast(LastFm.PubSub, "feed:update", %{tracks: tracks})
   end
 
-  @spec all() :: [LastFm.Track.t()]
-  def all do
+  @spec all_tracks() :: [LastFm.Track.t()]
+  def all_tracks do
     m = [
       {
         {:_, :_},
