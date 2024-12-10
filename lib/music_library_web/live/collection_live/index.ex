@@ -170,7 +170,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
     |> JS.toggle_class("pointer-events-none", to: "#records > li")
   end
 
-  def close_actions_menu(record_id) do
+  defp close_actions_menu(record_id) do
     JS.hide(to: "#actions-#{record_id}")
     |> JS.remove_class("pointer-events-none", to: "#records > li")
   end

@@ -110,7 +110,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     |> JS.toggle_class("pointer-events-none", to: "#scrobble-activity > li")
   end
 
-  def close_actions_menu(track_id) do
+  defp close_actions_menu(track_id) do
     JS.hide(to: "#actions-#{track_id}")
     |> JS.remove_class("pointer-events-none", to: "#scrobble-activity > li")
   end
