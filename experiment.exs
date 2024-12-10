@@ -35,7 +35,8 @@ defmodule OpenAI do
         model: "gpt-4o-mini",
         messages: [%{role: "user", content: prompt}],
         response_format: %{type: "json_object"},
-        stream: true
+        stream: true,
+        temperature: 0.2
       },
       auth: {:bearer, System.fetch_env!("OPENAI_KEY")},
       finch_request: fun
@@ -50,9 +51,11 @@ end
 {:ok, collector} = Agent.start_link(fn -> "" end)
 
 prompt = """
-Please provide a list of music genres applicable to the album "Stupid Things that Mean the World" by Tim Bowness.
+Provide a list of music genres applicable to the album "Stupid Things that Mean the World" by Tim Bowness.
 
-Return the genres as a valid JSON list.
+Limit the list to 5 genres, ordered by decreasing specificity, all lowercase.
+
+Return a valid JSON list.
 """
 
 OpenAI.gpt_stream(prompt, fn data ->
