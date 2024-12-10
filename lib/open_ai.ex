@@ -14,6 +14,7 @@ defmodule OpenAI do
     {:ok, result}
   end
 
+  # Lifted from https://fly.io/phoenix-files/streaming-openai-responses/
   defp gpt_stream(prompt, cb) do
     fun = fn request, finch_request, finch_name, finch_options ->
       fun = fn
