@@ -84,6 +84,10 @@ defmodule MusicLibrary.Records.Record do
     |> put_embed(:artists, artists_attrs)
   end
 
+  def add_genres(record, genres) do
+    change(record, genres: genres)
+  end
+
   def add_cover_data(record, cover_data) do
     record
     |> change(cover_data: cover_data)

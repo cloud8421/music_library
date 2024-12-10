@@ -185,6 +185,27 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  def populate_genres(record) do
+    artists =
+      record.artists
+      |> Enum.map(fn a -> a.name end)
+      |> Enum.join(",")
+
+    prompt = """
+    Provide a list of music genres applicable to the album "#{record.title}" by #{artists}.
+
+    Limit the list to 5 genres, ordered by decreasing specificity, all lowercase.
+
+    Return a valid JSON list.
+    """
+
+    {:ok, response} = OpenAI.gpt(prompt)
+
+    record
+    |> Record.add_genres(response["genres"])
+    |> Repo.update()
+  end
+
   defp get_cover_art_or_default(musicbrainz_id) do
     case music_brainz_config().api.get_cover_art(
            {:musicbrainz_id, musicbrainz_id},

@@ -63,6 +63,26 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     end
   end
 
+  def handle_event("populate_genres", %{"id" => id}, socket) do
+    record = Records.get_record!(id)
+
+    case Records.populate_genres(record) do
+      {:ok, updated_record} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, gettext("Genres populated successfully"))
+         |> assign(:record, updated_record)}
+
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           gettext("Error populating genres") <> "," <> inspect(reason)
+         )}
+    end
+  end
+
   def handle_event("refresh_cover", %{"id" => id}, socket) do
     record = Records.get_record!(id)
 

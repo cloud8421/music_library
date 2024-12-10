@@ -56,6 +56,18 @@
           {gettext("MB Data")}
         </.button>
       </.link>
+      <.link phx-click={JS.push("populate_genres", value: %{id: @record.id})}>
+        <.button type="button" class="relative -ml-px inline-flex items-center rounded-none">
+          <span class="sr-only">{gettext("Populate")}</span>
+          <.icon
+            name="hero-sparkles"
+            class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
+            aria-hidden="true"
+            data-slot="icon"
+          />
+          {gettext("Genres")}
+        </.button>
+      </.link>
       <.link
         phx-click={JS.push("delete", value: %{id: @record.id})}
         data-confirm={gettext("Are you sure?")}

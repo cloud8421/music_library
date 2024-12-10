@@ -1,5 +1,20 @@
 defmodule OpenAI do
-  def gpt_stream(prompt, cb) do
+  def gpt(prompt) do
+    {:ok, collector} = Agent.start_link(fn -> "" end)
+
+    gpt_stream(prompt, fn data ->
+      case get_in(data, ["choices", Access.at(0), "delta", "content"]) do
+        nil -> :ok
+        data -> Agent.update(collector, fn current -> current <> data end)
+      end
+    end)
+
+    result = Agent.get(collector, & &1) |> Jason.decode!()
+    Agent.stop(collector)
+    {:ok, result}
+  end
+
+  defp gpt_stream(prompt, cb) do
     fun = fn request, finch_request, finch_name, finch_options ->
       fun = fn
         {:status, status}, response ->
@@ -47,22 +62,3 @@ defmodule OpenAI do
   defp decode_body("[DONE]", _), do: :ok
   defp decode_body(json, cb), do: cb.(Jason.decode!(json))
 end
-
-{:ok, collector} = Agent.start_link(fn -> "" end)
-
-prompt = """
-Provide a list of music genres applicable to the album "Stupid Things that Mean the World" by Tim Bowness.
-
-Limit the list to 5 genres, ordered by decreasing specificity, all lowercase.
-
-Return a valid JSON list.
-"""
-
-OpenAI.gpt_stream(prompt, fn data ->
-  case get_in(data, ["choices", Access.at(0), "delta", "content"]) do
-    nil -> :ok
-    data -> Agent.update(collector, fn current -> current <> data end)
-  end
-end)
-
-Agent.get(collector, & &1) |> Jason.decode!() |> IO.inspect()
