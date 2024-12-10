@@ -28,6 +28,10 @@ if user = System.get_env("LAST_FM_USER") do
   config :music_library, LastFm, user: user
 end
 
+if openai_key = System.get_env("OPENAI_KEY") do
+  config :music_library, OpenAI, api_key: openai_key
+end
+
 config :music_library, MusicLibrary.Repo,
   load_extensions: [
     MusicLibrary.Repo.extension_path("unicode")

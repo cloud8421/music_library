@@ -53,7 +53,7 @@ defmodule OpenAI do
         stream: true,
         temperature: 0.2
       },
-      auth: {:bearer, System.fetch_env!("OPENAI_KEY")},
+      auth: {:bearer, api_key()},
       finch_request: fun
     )
   end
@@ -61,4 +61,9 @@ defmodule OpenAI do
   defp decode_body("", _), do: :ok
   defp decode_body("[DONE]", _), do: :ok
   defp decode_body(json, cb), do: cb.(Jason.decode!(json))
+
+  defp api_key do
+    Application.get_env(:music_library, OpenAI)
+    |> Keyword.fetch!(:api_key)
+  end
 end
