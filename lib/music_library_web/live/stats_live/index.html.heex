@@ -100,9 +100,19 @@
           <div class="flex min-w-0 justify-between space-x-4 items-center">
             <img class="h-12 w-12 rounded-md shadow" src={track.cover_url} alt={track.title} />
             <div>
-              <p class="font-semibold text-sm block text-zinc-500 dark:text-zinc-400">
+              <p
+                :if={track.artist.musicbrainz_id not in @artist_ids}
+                class="font-semibold text-sm block text-zinc-500 dark:text-zinc-400"
+              >
                 {track.artist.name}
               </p>
+              <.link
+                :if={track.artist.musicbrainz_id in @artist_ids}
+                class="font-semibold text-sm block text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
+                navigate={~p"/artists/#{track.artist.musicbrainz_id}"}
+              >
+                {track.artist.name}
+              </.link>
               <p class="font-semibold text-sm md:text-base text-zinc-700 dark:text-zinc-300">
                 {track.title}
               </p>

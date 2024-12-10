@@ -267,7 +267,7 @@ msgid "Something went wrong!"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:8
-#: lib/music_library_web/live/stats_live/index.ex:39
+#: lib/music_library_web/live/stats_live/index.ex:41
 #, elixir-autogen, elixir-format
 msgid "Stats"
 msgstr ""
@@ -364,17 +364,17 @@ msgid "Scrobble activity"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/import_component.ex:80
-#: lib/music_library_web/live/stats_live/index.html.heex:177
+#: lib/music_library_web/live/stats_live/index.html.heex:187
 #, elixir-autogen, elixir-format
 msgid "Choose which format to import"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:145
+#: lib/music_library_web/live/stats_live/index.html.heex:155
 #, elixir-autogen, elixir-format
 msgid "Collected"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:158
+#: lib/music_library_web/live/stats_live/index.html.heex:168
 #, elixir-autogen, elixir-format
 msgid "Wishlisted"
 msgstr ""
@@ -446,7 +446,7 @@ msgstr ""
 msgid "Error refreshing cover"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:132
+#: lib/music_library_web/live/stats_live/index.html.heex:142
 #, elixir-autogen, elixir-format
 msgid "No MB ID"
 msgstr ""

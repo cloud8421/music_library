@@ -25,6 +25,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     collected_release_ids = Collection.collected_release_ids(release_ids)
     wishlisted_release_ids = Wishlist.wishlisted_release_ids(release_ids)
 
+    artist_ids = Records.get_all_artist_ids()
+
     if connected?(socket) do
       LastFm.Feed.subscribe()
     end
@@ -44,6 +46,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        latest_record: latest_record,
        collected_release_ids: collected_release_ids,
        wishlisted_release_ids: wishlisted_release_ids,
+       artist_ids: artist_ids,
        nav_section: :stats
      )}
   end
@@ -59,11 +62,14 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     collected_release_ids = Collection.collected_release_ids(release_ids)
     wishlisted_release_ids = Wishlist.wishlisted_release_ids(release_ids)
 
+    artist_ids = Records.get_all_artist_ids()
+
     {:noreply,
      socket
      |> assign(
        collected_release_ids: collected_release_ids,
-       wishlisted_release_ids: wishlisted_release_ids
+       wishlisted_release_ids: wishlisted_release_ids,
+       artist_ids: artist_ids
      )
      |> stream(:recent_tracks, recent_tracks, reset: true)}
   end

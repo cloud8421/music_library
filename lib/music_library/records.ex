@@ -100,6 +100,12 @@ defmodule MusicLibrary.Records do
     Repo.one!(q)
   end
 
+  def get_all_artist_ids do
+    q = from ar in ArtistRecord, distinct: true, select: ar.musicbrainz_id
+
+    Repo.all(q)
+  end
+
   def get_artist_records(musicbrainz_id) do
     q =
       from r in Record,
