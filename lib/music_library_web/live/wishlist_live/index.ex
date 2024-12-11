@@ -1,6 +1,7 @@
 defmodule MusicLibraryWeb.WishlistLive.Index do
   use MusicLibraryWeb, :live_view
   import MusicLibraryWeb.Pagination
+  import MusicLibraryWeb.RecordComponents
 
   alias MusicLibrary.Wishlist
   alias MusicLibrary.Records
@@ -172,19 +173,5 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
       |> Enum.filter(fn {_, v} -> v not in ["", nil] end)
 
     ~p"/wishlist?#{qs}"
-  end
-
-  defp musicbrainz_url(record) do
-    "https://musicbrainz.org/release-group/#{record.musicbrainz_id}"
-  end
-
-  defp toggle_actions_menu(record_id) do
-    JS.toggle(to: "#actions-#{record_id}")
-    |> JS.toggle_class("pointer-events-none", to: "#records > li")
-  end
-
-  defp close_actions_menu(record_id) do
-    JS.hide(to: "#actions-#{record_id}")
-    |> JS.remove_class("pointer-events-none", to: "#records > li")
   end
 end
