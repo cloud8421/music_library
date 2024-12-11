@@ -139,7 +139,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                 {gettext("Show")}
               </.link>
               <a
-                href={musicbrainz_url(record)}
+                href={MusicBrainz.ReleaseGroup.url(record.musicbrainz_id)}
                 target=".blank"
                 class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
                 role="menuitem"
@@ -186,10 +186,6 @@ defmodule MusicLibraryWeb.RecordComponents do
       </li>
     </ul>
     """
-  end
-
-  defp musicbrainz_url(record) do
-    "https://musicbrainz.org/release-group/#{record.musicbrainz_id}"
   end
 
   defp toggle_actions_menu(record_id) do

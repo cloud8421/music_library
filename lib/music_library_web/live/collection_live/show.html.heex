@@ -103,7 +103,7 @@
           {gettext("MusicBrainz ID")}
         </dt>
         <dd class="mt-1 text-sm flex justify-between leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
-          <a href={musicbrainz_url(@record)}>
+          <a href={MusicBrainz.ReleaseGroup.url(@record.musicbrainz_id)}>
             <code id={"mb-#{@record.musicbrainz_id}"}>{@record.musicbrainz_id}</code>
           </a>
           <button phx-click={

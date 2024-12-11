@@ -128,10 +128,6 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
   defp title_segment(:show), do: gettext("Show")
   defp title_segment(:edit), do: gettext("Edit")
 
-  defp musicbrainz_url(record) do
-    "https://musicbrainz.org/release-group/#{record.musicbrainz_id}"
-  end
-
   defp human_datetime(dt) do
     "#{dt.day}/#{dt.month}/#{dt.year}"
   end
