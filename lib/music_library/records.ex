@@ -191,15 +191,17 @@ defmodule MusicLibrary.Records do
       |> Enum.map(fn a -> a.name end)
       |> Enum.join(",")
 
-    prompt = """
-    Provide a list of music genres applicable to the album "#{record.title}" by #{artists}.
+    completion = %OpenAI.Completion{
+      content: """
+      Provide a list of music genres applicable to the album "#{record.title}" by #{artists}.
 
-    Limit the list to 5 genres, ordered by decreasing specificity, all lowercase.
+      Limit the list to 5 genres, ordered by decreasing specificity, all lowercase.
 
-    Return a valid JSON list.
-    """
+      Return a valid JSON list.
+      """
+    }
 
-    {:ok, response} = OpenAI.gpt(prompt)
+    {:ok, response} = OpenAI.gpt(completion)
 
     record
     |> Record.add_genres(response["genres"])

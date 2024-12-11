@@ -1,8 +1,8 @@
 defmodule OpenAI do
-  def gpt(prompt) do
+  def gpt(completion) do
     {:ok, collector} = Agent.start_link(fn -> "" end)
 
-    gpt_stream(prompt, fn data ->
+    gpt_stream(completion, fn data ->
       case get_in(data, ["choices", Access.at(0), "delta", "content"]) do
         nil -> :ok
         data -> Agent.update(collector, fn current -> current <> data end)
@@ -15,7 +15,7 @@ defmodule OpenAI do
   end
 
   # Lifted from https://fly.io/phoenix-files/streaming-openai-responses/
-  defp gpt_stream(prompt, cb) do
+  defp gpt_stream(completion, cb) do
     fun = fn request, finch_request, finch_name, finch_options ->
       fun = fn
         {:status, status}, response ->
@@ -49,10 +49,10 @@ defmodule OpenAI do
     Req.post!("https://api.openai.com/v1/chat/completions",
       json: %{
         model: "gpt-4o-mini",
-        messages: [%{role: "user", content: prompt}],
+        messages: [Map.take(completion, [:content, :role])],
         response_format: %{type: "json_object"},
         stream: true,
-        temperature: 0.2
+        temperature: completion.temperature
       },
       auth: {:bearer, api_key()},
       finch_request: fun
