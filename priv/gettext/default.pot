@@ -445,7 +445,7 @@ msgstr ""
 msgid "No MB ID"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.ex:38
+#: lib/music_library_web/live/artist_live/show.ex:39
 #: lib/music_library_web/live/collection_live/show.ex:120
 #, elixir-autogen, elixir-format
 msgid "Details"
