@@ -1,6 +1,8 @@
 defmodule MusicLibraryWeb.CollectionLive.Show do
   use MusicLibraryWeb, :live_view
 
+  alias Phoenix.LiveView.JS
+
   alias MusicLibrary.Records
 
   @impl true
@@ -147,5 +149,15 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
   defp human_datetime(dt) do
     "#{dt.day}/#{dt.month}/#{dt.year}"
+  end
+
+  defp toggle_actions_menu(record_id) do
+    JS.toggle(to: "#actions-#{record_id}")
+    |> JS.toggle_class("pointer-events-none", to: "#records > li")
+  end
+
+  defp close_actions_menu(record_id) do
+    JS.hide(to: "#actions-#{record_id}")
+    |> JS.remove_class("pointer-events-none", to: "#records > li")
   end
 end
