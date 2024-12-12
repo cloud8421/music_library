@@ -103,6 +103,22 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
     end
   end
 
+  def handle_event("purchase", %{"id" => id}, socket) do
+    record = Records.get_record!(id)
+    current_time = DateTime.utc_now()
+
+    case Records.update_record(record, %{"purchased_at" => current_time}) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, gettext("Record updated successfully"))
+         |> push_navigate(to: ~p"/wishlist")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, form: to_form(changeset))}
+    end
+  end
+
   @impl true
   def handle_info({MusicLibraryWeb.RecordLive.FormComponent, {:saved, record}}, socket) do
     {:noreply, assign(socket, :record, record)}
@@ -130,5 +146,15 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
   defp human_datetime(dt) do
     "#{dt.day}/#{dt.month}/#{dt.year}"
+  end
+
+  defp toggle_actions_menu(record_id) do
+    JS.toggle(to: "#actions-#{record_id}")
+    |> JS.toggle_class("pointer-events-none", to: "#records > li")
+  end
+
+  defp close_actions_menu(record_id) do
+    JS.hide(to: "#actions-#{record_id}")
+    |> JS.remove_class("pointer-events-none", to: "#records > li")
   end
 end

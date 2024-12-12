@@ -119,17 +119,6 @@
         </.link>
 
         <.link
-          :if={!@record.purchased_at}
-          class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-          role="menuitem"
-          tabindex="-1"
-          id={"actions-#{@record.id}-purchase"}
-          phx-click={JS.push("purchase", value: %{id: @record.id})}
-        >
-          {gettext("Purchase")}
-        </.link>
-
-        <.link
           class="block px-3 py-1 text-sm leading-6 text-red-900 hover:bg-red-50 dark:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-600"
           role="menuitem"
           tabindex="-1"
