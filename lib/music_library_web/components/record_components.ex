@@ -188,6 +188,25 @@ defmodule MusicLibraryWeb.RecordComponents do
     """
   end
 
+  attr :query, :string, required: true
+
+  def search_form(assigns) do
+    ~H"""
+    <form class="w-2/3" for={@query} phx-submit="search" phx-change="search">
+      <.input
+        type="search"
+        id={:query}
+        name={:query}
+        value={@query}
+        placeholder={gettext("Search")}
+        phx-debounce="500"
+        autocorrect="off"
+        autocapitalize="none"
+      />
+    </form>
+    """
+  end
+
   defp toggle_actions_menu(record_id) do
     JS.toggle(to: "#actions-#{record_id}")
     |> JS.toggle_class("pointer-events-none", to: "#records > li")

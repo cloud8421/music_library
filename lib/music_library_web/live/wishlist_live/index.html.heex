@@ -1,18 +1,7 @@
 <div>
   <header class="gap-6 mb-2">
     <div class="flex items-center justify-between gap-6 mb-2 mt-2">
-      <form class="w-2/3" for={@record_list_params.query} phx-submit="search" phx-change="search">
-        <.input
-          type="search"
-          id={:query}
-          name={:query}
-          value={@record_list_params.query}
-          placeholder={gettext("Search")}
-          phx-debounce="500"
-          autocorrect="off"
-          autocapitalize="none"
-        />
-      </form>
+      <.search_form query={@record_list_params.query} />
       <.link patch={~p"/wishlist/import"}>
         <.button>{gettext("Import")}</.button>
       </.link>

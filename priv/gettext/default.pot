@@ -113,8 +113,8 @@ msgstr ""
 msgid "Hang in there while we get back on track"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex:17
-#: lib/music_library_web/live/wishlist_live/index.html.heex:17
+#: lib/music_library_web/live/collection_live/index.html.heex:6
+#: lib/music_library_web/live/wishlist_live/index.html.heex:6
 #, elixir-autogen, elixir-format
 msgid "Import"
 msgstr ""
@@ -231,8 +231,7 @@ msgstr ""
 msgid "Saving..."
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex:10
-#: lib/music_library_web/live/wishlist_live/index.html.heex:10
+#: lib/music_library_web/components/record_components.ex:201
 #, elixir-autogen, elixir-format
 msgid "Search"
 msgstr ""
@@ -254,8 +253,8 @@ msgstr ""
 msgid "Show"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex:23
-#: lib/music_library_web/live/wishlist_live/index.html.heex:23
+#: lib/music_library_web/live/collection_live/index.html.heex:12
+#: lib/music_library_web/live/wishlist_live/index.html.heex:12
 #, elixir-autogen, elixir-format
 msgid "Showing <b>%{visible}</b> of <b>%{total}</b> records"
 msgstr ""
