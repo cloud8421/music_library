@@ -49,15 +49,15 @@ defmodule MusicLibraryWeb.StatsLive.DataComponents do
   def counter(assigns) do
     ~H"""
     <div class="overflow-hidden rounded-md bg-white dark:bg-zinc-800 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6">
-      <dt>
-        <p class="truncate text-sm font-medium text-zinc-500 dark:text-zinc-400">
+      <dt class="sm:mt-3">
+        <p class="truncate text-sm font-medium text-center text-zinc-500 dark:text-zinc-400">
           {@title}
         </p>
       </dt>
-      <dd class="flex items-baseline mt-1 pb-6 sm:pb-7">
+      <dd class="mt-1">
         <a
           href={@path}
-          class="text-2xl font-semibold text-zinc-900 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
+          class="block text-2xl sm:text-3xl font-semibold text-center text-zinc-900 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
         >
           {@count}
         </a>
