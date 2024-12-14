@@ -25,13 +25,16 @@ defmodule MusicLibrary.ReleaseGroupsFixtures do
   end
 
   def release_group do
-    Path.join([@fixtures_folder, "release_group.json"])
+    Path.join([@fixtures_folder, "release_group - marillion - marbles.json"])
     |> File.read!()
     |> Jason.decode!()
   end
 
   def release_group_with_includes do
-    Path.join([@fixtures_folder, "release_group_with_includes.json"])
+    Path.join([
+      @fixtures_folder,
+      "release_group_with_includes - mariusz duda - lockdown trilogy.json"
+    ])
     |> File.read!()
     |> Jason.decode!()
   end
@@ -41,7 +44,7 @@ defmodule MusicLibrary.ReleaseGroupsFixtures do
   end
 
   def release do
-    Path.join([@fixtures_folder, "release.json"])
+    Path.join([@fixtures_folder, "release - marillion - marbles.json"])
     |> File.read!()
     |> Jason.decode!()
   end
