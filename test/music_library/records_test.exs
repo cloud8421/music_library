@@ -34,7 +34,7 @@ defmodule MusicLibrary.RecordsTest do
   describe "create_record/1" do
     test "populates computed values" do
       record =
-        record_fixture(musicbrainz_data: ReleaseGroupsFixtures.release_group_with_includes())
+        record_fixture(musicbrainz_data: ReleaseGroupsFixtures.release_group(:lockdown_trilogy))
 
       assert record.release_ids == ["77e746fc-566f-445b-a62b-cc014280fac9"]
 
@@ -52,19 +52,19 @@ defmodule MusicLibrary.RecordsTest do
 
   describe "refresh_musicbrainz_data/1" do
     test "updates release_ids and included_release_group_ids" do
-      release_group_id = release_group_id()
+      release_group_id = release_group_id(:marbles)
 
       record =
         record_fixture(
           musicbrainz_id: release_group_id,
-          musicbrainz_data: Map.put(release_group(), "releases", [])
+          musicbrainz_data: Map.put(release_group(:marbles), "releases", [])
         )
 
       assert record.release_ids == []
       assert record.included_release_group_ids == []
 
       expect(APIBehaviourMock, :get_release_group, fn ^release_group_id, _config ->
-        {:ok, release_group_with_includes()}
+        {:ok, release_group(:lockdown_trilogy)}
       end)
 
       {:ok, updated_record} = Records.refresh_musicbrainz_data(record)
@@ -208,8 +208,8 @@ defmodule MusicLibrary.RecordsTest do
     test "it saves a record with its cover art" do
       current_time = DateTime.utc_now()
 
-      release_group = release_group()
-      release_group_id = release_group_id()
+      release_group = release_group(:marbles)
+      release_group_id = release_group_id(:marbles)
 
       expect(APIBehaviourMock, :get_release_group, fn ^release_group_id, _config ->
         {:ok, release_group}
@@ -254,11 +254,11 @@ defmodule MusicLibrary.RecordsTest do
     test "it saves a record with its cover art" do
       current_time = DateTime.utc_now()
 
-      release = release()
-      release_id = release_id()
+      release = release(:marbles)
+      release_id = release_id(:marbles)
 
-      release_group = release_group()
-      release_group_id = release_group_id()
+      release_group = release_group(:marbles)
+      release_group_id = release_group_id(:marbles)
 
       expect(APIBehaviourMock, :get_release, fn ^release_id, _config ->
         {:ok, release}

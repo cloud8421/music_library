@@ -60,7 +60,7 @@ defmodule MusicLibrary.RecordsFixtures do
         cover_url: "https://coverartarchive.org/release-group/#{record_musicbrainz_id}/front",
         cover_data: File.read!(@marbles_cover_data_path),
         musicbrainz_id: record_musicbrainz_id,
-        musicbrainz_data: ReleaseGroupsFixtures.release_group(),
+        musicbrainz_data: ReleaseGroupsFixtures.release_group(:marbles),
         title: Enum.random(@titles),
         type: :album,
         format: Record.formats() |> Enum.random(),

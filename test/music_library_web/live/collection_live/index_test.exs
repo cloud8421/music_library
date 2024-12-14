@@ -295,7 +295,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       first_result = hd(mock_results)
       first_result_id = first_result.id
 
-      release_group = release_group()
+      release_group = release_group(:marbles)
 
       expect(APIBehaviourMock, :get_release_group, fn ^first_result_id, _config ->
         {:ok, release_group}
