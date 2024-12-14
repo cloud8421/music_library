@@ -1,0 +1,51 @@
+{
+  "asin": null,
+  "barcode": "727361300722",
+  "country": "DE",
+  "cover-art-archive": {
+    "artwork": true,
+    "back": true,
+    "count": 2,
+    "darkened": false,
+    "front": true
+  },
+  "date": "2013-03-30",
+  "disambiguation": "",
+  "id": "003d1505-b3ac-4acf-bed1-02e2c8134a26",
+  "packaging": "Jewel Case",
+  "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
+  "quality": "normal",
+  "release-events": [
+    {
+      "area": {
+        "disambiguation": "",
+        "id": "85752fda-13c4-31a3-bee5-0e5cb1f51dad",
+        "iso-3166-1-codes": [
+          "DE"
+        ],
+        "name": "Germany",
+        "sort-name": "Germany",
+        "type": null,
+        "type-id": null
+      },
+      "date": "2013-03-30"
+    }
+  ],
+  "release-group": {
+    "disambiguation": "",
+    "first-release-date": "2013-03-27",
+    "id": "a40fdacb-2f29-4385-8177-e6b72c93a442",
+    "primary-type": "Album",
+    "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+    "secondary-type-ids": [],
+    "secondary-types": [],
+    "title": "The Mystery of Time: A Rock Epic"
+  },
+  "status": "Official",
+  "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+  "text-representation": {
+    "language": "eng",
+    "script": "Latn"
+  },
+  "title": "The Mystery of Time: A Rock Epic"
+}

@@ -13,10 +13,14 @@ defmodule Mix.Tasks.MusicBrainz.RefreshFixtures do
   @fixture_files %{
     "release_group - marillion - marbles.json" =>
       "https://musicbrainz.org/ws/2/release-group/20790e26-98e4-3ad3-a67f-b674758b942d?fmt=json&inc=artists+genres+releases+release-group-rels",
+    "release_group - avantasia - the mystery of time.json" =>
+      "https://musicbrainz.org/ws/2/release-group/a40fdacb-2f29-4385-8177-e6b72c93a442?fmt=json&inc=artists+genres+releases+release-group-rels",
     "release_group_with_includes - mariusz duda - lockdown trilogy.json" =>
       "https://musicbrainz.org/ws/2/release-group/5db72bc0-6ce3-4beb-bd51-86b58ed8cf71?fmt=json&inc=artists+genres+releases+release-group-rels",
     "release - marillion - marbles.json" =>
-      "https://musicbrainz.org/ws/2/release/0e290154-5375-4f4f-a658-4a92bf02faa5?fmt=json&inc=release-groups"
+      "https://musicbrainz.org/ws/2/release/0e290154-5375-4f4f-a658-4a92bf02faa5?fmt=json&inc=release-groups",
+    "release - avantasia - the mystery of time.json" =>
+      "https://musicbrainz.org/ws/2/release/003d1505-b3ac-4acf-bed1-02e2c8134a26?fmt=json&inc=release-groups"
   }
 
   @impl Mix.Task
