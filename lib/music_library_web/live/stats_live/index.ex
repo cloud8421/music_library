@@ -56,6 +56,32 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     {:noreply, socket}
   end
 
+  def handle_event("import", %{"id" => musicbrainz_id, "format" => format}, socket) do
+    case Records.import_from_musicbrainz_release(musicbrainz_id,
+           format: format,
+           purchased_at: nil
+         ) do
+      {:ok, record} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, gettext("Record imported successfully"))
+         |> push_navigate(to: ~p"/wishlist/#{record.id}")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           gettext("Error importing record") <> "," <> inspect(changeset.errors)
+         )}
+
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, gettext("Error importing record") <> "," <> inspect(reason))}
+    end
+  end
+
   def handle_info(%{tracks: recent_tracks}, socket) do
     release_ids = release_ids(recent_tracks)
 
