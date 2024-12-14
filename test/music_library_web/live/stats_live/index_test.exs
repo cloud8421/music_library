@@ -1,11 +1,15 @@
 defmodule MusicLibraryWeb.StatsLive.IndexTest do
   use MusicLibraryWeb.ConnCase
 
+  alias MusicLibrary.{Records, Repo, Wishlist}
+  alias MusicLibrary.Records.Record
+  alias MusicBrainz.APIBehaviourMock
   import Phoenix.LiveViewTest
   import MusicLibrary.RecordsFixtures
-  alias MusicLibrary.Records
-  alias MusicLibrary.Repo
-  alias MusicLibrary.Records.Record
+  import MusicLibrary.ReleaseGroupsFixtures
+  import Mox
+
+  setup :verify_on_exit!
 
   defp fill_collection(_) do
     records = Enum.map(1..99, fn _ -> record_fixture() end)
@@ -188,6 +192,40 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
                "#track-#{in_murmuration_track.scrobbled_at_uts}",
                "No MB ID"
              )
+
+      # We now try to import The Mystery of Time
+
+      release = release(:mystery_of_time)
+      release_id = release_id(:mystery_of_time)
+
+      release_group = release_group(:mystery_of_time)
+      release_group_id = release_group_id(:mystery_of_time)
+
+      expect(APIBehaviourMock, :get_release, fn ^release_id, _config ->
+        {:ok, release}
+      end)
+
+      expect(APIBehaviourMock, :get_release_group, fn ^release_group_id, _config ->
+        {:ok, release_group}
+      end)
+
+      # Doesn't matter if we use a different cover
+      cover_data = File.read!(marbles_cover_fixture())
+
+      expect(APIBehaviourMock, :get_cover_art, fn {:musicbrainz_id, ^release_group_id}, _config ->
+        {:ok, cover_data}
+      end)
+
+      stats_live
+      |> element(
+        "#track-#{the_mystery_of_time_track.scrobbled_at_uts} a",
+        "CD"
+      )
+      |> render_click()
+
+      assert [wishlisted_record] = Wishlist.search_records("mbid:#{release_group_id}")
+
+      assert_redirected(stats_live, ~p"/wishlist/#{wishlisted_record.id}")
     end
   end
 end

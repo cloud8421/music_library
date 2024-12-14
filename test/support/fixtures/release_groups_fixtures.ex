@@ -20,6 +20,26 @@ defmodule MusicLibrary.ReleaseGroupsFixtures do
     ]
   end
 
+  def release_group(:mystery_of_time) do
+    Path.join([@fixtures_folder, "release_group - avantasia - the mystery of time.json"])
+    |> File.read!()
+    |> Jason.decode!()
+  end
+
+  def release(:mystery_of_time) do
+    Path.join([@fixtures_folder, "release - avantasia - the mystery of time.json"])
+    |> File.read!()
+    |> Jason.decode!()
+  end
+
+  def release_group_id(name) do
+    release_group(name) |> Map.get("id")
+  end
+
+  def release_id(name) do
+    release(name) |> Map.get("id")
+  end
+
   def release_group_id do
     release_group() |> Map.get("id")
   end
