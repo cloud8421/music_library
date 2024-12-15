@@ -13,11 +13,16 @@ defmodule MusicLibraryWeb.CoverController do
       %{cover_data: cover_data, cover_hash: etag} ->
         case get_req_header(conn, "if-none-match") do
           [^etag] ->
-            send_resp(conn, 304, "")
+            conn
+            # 24 hours
+            |> put_resp_header("cache-control", "public, max-age=86400")
+            |> send_resp(304, "")
 
           _ ->
             conn
             |> put_resp_content_type("image/jpeg", "utf-8")
+            # 24 hours
+            |> put_resp_header("cache-control", "public, max-age=86400")
             |> put_resp_header("etag", etag)
             |> send_resp(200, cover_data)
         end
