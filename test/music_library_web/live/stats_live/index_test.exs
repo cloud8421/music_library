@@ -12,12 +12,12 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
   setup :verify_on_exit!
 
   defp fill_collection(_) do
-    records = Enum.map(1..99, fn _ -> record_fixture() end)
+    records = Enum.map(1..19, fn _ -> record_fixture() end)
     %{collection: records}
   end
 
   defp fill_wishlist(_) do
-    records = Enum.map(1..101, fn _ -> record_fixture(%{purchased_at: nil}) end)
+    records = Enum.map(1..21, fn _ -> record_fixture(%{purchased_at: nil}) end)
     %{wishlist: records}
   end
 
