@@ -14,7 +14,7 @@ DATABASE_PATH = '/mnt/music_library/music_library_prod.db'
 PHX_HOST = 'music-library.claudio-ortolina.org'
 PORT = '8080'
 LAST_FM_USER = 'cloud8421'
-POOL_SIZE = '10'
+POOL_SIZE = '20'
 
 [[mounts]]
 source = 'music_library'

@@ -10,7 +10,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
   setup :verify_on_exit!
 
-  @default_records_page_size 100
+  @default_records_page_size 20
   @total_records @default_records_page_size + 10
 
   defp fill_collection(_) do
@@ -81,39 +81,35 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     setup [:fill_collection]
 
     test "uses query string params", %{conn: conn, collection: records} do
-      {:ok, page_2_live, page_2_html} = live(conn, ~p"/collection?page=2&page_size=25")
+      {:ok, page_2_live, page_2_html} = live(conn, ~p"/collection?page=2&page_size=10")
 
       {page_2_present, page_2_absent} =
         Enum.split_with(records, fn record ->
           page_2_html =~ record.id
         end)
 
-      assert length(page_2_present) == 25
-      assert length(page_2_absent) == @total_records - 25
+      assert length(page_2_present) == 10
+      assert length(page_2_absent) == @total_records - 10
 
       page_2_pagination = page_2_live |> with_target("#pagination")
       refute has_element?(page_2_pagination, "a", "2")
       assert has_element?(page_2_pagination, "a", "1")
       assert has_element?(page_2_pagination, "a", "3")
-      assert has_element?(page_2_pagination, "a", "4")
-      assert has_element?(page_2_pagination, "a", "5")
 
-      {:ok, page_3_live, page_3_html} = live(conn, ~p"/collection?page=3&page_size=25")
+      {:ok, page_3_live, page_3_html} = live(conn, ~p"/collection?page=3&page_size=10")
 
       {page_3_present, page_3_absent} =
         Enum.split_with(records, fn record ->
           page_3_html =~ record.id
         end)
 
-      assert length(page_3_present) == 25
-      assert length(page_3_absent) == @total_records - 25
+      assert length(page_3_present) == 10
+      assert length(page_3_absent) == @total_records - 10
 
       page_3_pagination = page_3_live |> with_target("#pagination")
       refute has_element?(page_3_pagination, "a", "3")
       assert has_element?(page_3_pagination, "a", "1")
       assert has_element?(page_3_pagination, "a", "2")
-      assert has_element?(page_3_pagination, "a", "4")
-      assert has_element?(page_3_pagination, "a", "5")
 
       # All records in page 3 were not present in page 2
       assert page_3_present -- page_2_absent == []
