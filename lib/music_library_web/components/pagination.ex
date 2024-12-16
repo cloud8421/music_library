@@ -26,6 +26,7 @@ defmodule MusicLibraryWeb.Pagination do
         <.link
           :if={@page_links.prev_page}
           patch={"?" <> encode_query(page: @page_links.prev_page, page_size: @pagination_params.page_size, query: @pagination_params.query)}
+          phx-click={JS.dispatch("music_library:scroll_top")}
           class={[
             "relative inline-flex items-center rounded-md border",
             "px-3 py-2 text-sm font-medium",
@@ -39,6 +40,7 @@ defmodule MusicLibraryWeb.Pagination do
         <.link
           :if={@page_links.next_page}
           patch={"?" <> encode_query(page: @page_links.next_page, page_size: @pagination_params.page_size, query: @pagination_params.query)}
+          phx-click={JS.dispatch("music_library:scroll_top")}
           class={[
             "relative ml-3 inline-flex items-center rounded-md border",
             "px-3 py-2 text-sm font-medium",
