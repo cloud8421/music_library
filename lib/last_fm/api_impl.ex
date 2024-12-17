@@ -55,7 +55,7 @@ defmodule LastFm.APIImpl do
     do_get_artist_info([artist: artist_name], config)
   end
 
-  def do_get_artist_info(options, config) do
+  defp do_get_artist_info(options, config) do
     base_options = [
       method: "artist.getInfo",
       api_key: config.api_key,
@@ -76,6 +76,45 @@ defmodule LastFm.APIImpl do
          response
          |> Map.get("artist")
          |> Artist.from_api_response()}
+
+      error ->
+        msg =
+          "Failed to fetch data from #{sanitize_url(url, config.api_key)}, reason: #{inspect(error)}"
+
+        Logger.error(msg)
+        error
+    end
+  end
+
+  @impl true
+  def get_similar_artists({:name, artist_name}, config) do
+    do_get_similar_artists([artist: artist_name], config)
+  end
+
+  def get_similar_artists({:musicbrainz_id, artist_mbid}, config) do
+    do_get_similar_artists([mbid: artist_mbid], config)
+  end
+
+  defp do_get_similar_artists(options, config) do
+    base_options = [
+      method: "artist.getSimilar",
+      api_key: config.api_key,
+      format: "json",
+      limit: 50
+    ]
+
+    options = Keyword.merge(base_options, options)
+
+    url = @base_url <> "?" <> URI.encode_query(options)
+
+    Logger.debug("Fetching data from #{sanitize_url(url, config.api_key)}")
+
+    case json_get(url, config.user_agent) do
+      {:ok, response} ->
+        {:ok,
+         response
+         |> get_in(["similarartists", "artist"])
+         |> Enum.map(&Artist.from_api_response/1)}
 
       error ->
         msg =

@@ -7,4 +7,6 @@ defmodule LastFm.APIBehaviour do
   @callback get_recent_tracks(config) :: {:ok, [Track.t()]} | {:error, String.t()}
   @callback get_artist_info({:musicbrainz_id, musicbrainz_id} | {:name, name}, config) ::
               {:ok, Artist.t()} | {:error, String.t()}
+  @callback get_similar_artists({:musicbrainz_id, musicbrainz_id} | {:name, name}, config) ::
+              {:ok, [Artist.t()]} | {:error, String.t()}
 end
