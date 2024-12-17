@@ -36,7 +36,8 @@ config :music_library, MusicLibrary.Repo,
   auto_vacuum: :incremental,
   temp_store: :memory,
   load_extensions: [
-    MusicLibrary.Repo.extension_path("unicode")
+    MusicLibrary.Repo.extension_path("unicode"),
+    MusicLibrary.Repo.extension_path("vec0")
   ]
 
 cloak_encryption_key =
