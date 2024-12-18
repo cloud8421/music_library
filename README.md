@@ -28,10 +28,11 @@ Run `mix setup` to install and setup dependencies.
 
 ## Environment configuration
 
-The application requires two environment variables:
+The application requires the following environment variables:
 
 - `LAST_FM_USER`: the Last.fm username used to populate the Scrobble Activity
 - `LAST_FM_API_KEY` (secret): the Last.fm API key used to fetch the Scrobble Activity
+- `OPENAI_KEY` (secret): the OpenAI API key used for specific features like populating genres, etc.
 
 The application is setup to use [direnv](https://direnv.net/).
 
