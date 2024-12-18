@@ -57,8 +57,23 @@
   </.async_result>
 
   <div :if={@artist_records.collection !== []} class="mt-4">
-    <h2 class="font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300">
+    <h2 class="flex items-end font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300">
       {gettext("Collection")}
+      <span>
+        <span class="sr-only">
+          {gettext("Number of albums")}
+        </span>
+        <span class={[
+          "rounded-full ml-2",
+          "px-2 py-1 text-xs font-medium",
+          "ring-1 ring-inset",
+          "bg-gray-50 dark:bg-gray-400/10",
+          "text-gray-600 dark:text-gray-500",
+          "ring-gray-500/10 dark:ring-gray-400/20"
+        ]}>
+          {Enum.count(@artist_records.collection)}
+        </span>
+      </span>
     </h2>
     <%!-- TODO: replace with OSS version --%>
     <ul
@@ -99,6 +114,21 @@
   <div :if={@artist_records.wishlist !== []} class="mt-4">
     <h2 class="font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300">
       {gettext("Wishlist")}
+      <span>
+        <span class="sr-only">
+          {gettext("Number of albums")}
+        </span>
+        <span class={[
+          "rounded-full ml-2",
+          "px-2 py-1 text-xs font-medium",
+          "ring-1 ring-inset",
+          "bg-gray-50 dark:bg-gray-400/10",
+          "text-gray-600 dark:text-gray-500",
+          "ring-gray-500/10 dark:ring-gray-400/20"
+        ]}>
+          {Enum.count(@artist_records.wishlist)}
+        </span>
+      </span>
     </h2>
     <%!-- TODO: replace with OSS version --%>
     <ul

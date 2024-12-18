@@ -328,7 +328,7 @@ msgid "Welcome to your Music Library"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:20
-#: lib/music_library_web/live/artist_live/show.html.heex:101
+#: lib/music_library_web/live/artist_live/show.html.heex:116
 #: lib/music_library_web/live/wishlist_live/index.ex:76
 #: lib/music_library_web/live/wishlist_live/show.ex:138
 #, elixir-autogen, elixir-format
@@ -455,8 +455,8 @@ msgstr ""
 msgid "Dev dashboard"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex:81
-#: lib/music_library_web/live/artist_live/show.html.heex:121
+#: lib/music_library_web/live/artist_live/show.html.heex:96
+#: lib/music_library_web/live/artist_live/show.html.heex:151
 #, elixir-autogen, elixir-format
 msgid "View details"
 msgstr ""
@@ -519,4 +519,10 @@ msgstr ""
 #: lib/music_library_web/live/wishlist_live/show.html.heex:86
 #, elixir-autogen, elixir-format
 msgid "Refresh cover"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.html.heex:64
+#: lib/music_library_web/live/artist_live/show.html.heex:119
+#, elixir-autogen, elixir-format
+msgid "Number of albums"
 msgstr ""
