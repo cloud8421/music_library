@@ -1,7 +1,7 @@
 defmodule MusicLibraryWeb.ArtistLive.Show do
   use MusicLibraryWeb, :live_view
 
-  alias MusicLibrary.Records
+  alias MusicLibrary.{Artists, Records}
 
   @impl true
   def mount(_params, _session, socket) do
@@ -10,7 +10,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
 
   @impl true
   def handle_params(%{"musicbrainz_id" => musicbrainz_id}, _, socket) do
-    artist = Records.get_artist!(musicbrainz_id)
+    artist = Artists.get_artist!(musicbrainz_id)
 
     grouped_artist_records =
       musicbrainz_id
@@ -24,7 +24,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
      # TODO: make it a stream
      |> assign(:artist_records, grouped_artist_records)
      |> assign_async(:artist_info, fn ->
-       with {:ok, artist_info} <- Records.get_artist_info(artist) do
+       with {:ok, artist_info} <- Artists.get_artist_info(artist) do
          {:ok, %{artist_info: artist_info}}
        end
      end)

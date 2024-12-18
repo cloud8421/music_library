@@ -3,7 +3,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
   import MusicLibraryWeb.StatsLive.DataComponents
 
-  alias MusicLibrary.{Collection, Records, Wishlist}
+  alias MusicLibrary.{Artists, Collection, Records, Wishlist}
   alias Records.Record
 
   def mount(_params, _session, socket) do
@@ -25,7 +25,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     collected_release_ids = Collection.collected_release_ids(release_ids)
     wishlisted_release_ids = Wishlist.wishlisted_release_ids(release_ids)
 
-    artist_ids = Records.get_all_artist_ids()
+    artist_ids = Artists.get_all_artist_ids()
 
     if connected?(socket) do
       LastFm.Feed.subscribe()
@@ -88,7 +88,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     collected_release_ids = Collection.collected_release_ids(release_ids)
     wishlisted_release_ids = Wishlist.wishlisted_release_ids(release_ids)
 
-    artist_ids = Records.get_all_artist_ids()
+    artist_ids = Artists.get_all_artist_ids()
 
     {:noreply,
      socket

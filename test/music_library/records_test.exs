@@ -168,17 +168,6 @@ defmodule MusicLibrary.RecordsTest do
     end
   end
 
-  describe "get_artist/1" do
-    test "it returns records with essential data" do
-      record = record_fixture()
-      [expected] = record.artists
-
-      artist = Records.get_artist!(expected.musicbrainz_id)
-
-      assert expected == artist
-    end
-  end
-
   describe "get_cover/1" do
     test "it returns the record cover by id" do
       # while this test may seem redundant, it implicitely checks that ALL record fields are returned,
