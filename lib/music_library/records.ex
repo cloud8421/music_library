@@ -161,7 +161,7 @@ defmodule MusicLibrary.Records do
 
       Limit the list to 5 genres, ordered by decreasing specificity, all lowercase.
 
-      Return a valid JSON list.
+      Return a response in JSON format, without any code block or formatting around it.
       """
     }
 
