@@ -33,7 +33,7 @@ defmodule Mix.Tasks.MusicBrainz.RefreshFixtures do
         {:ok, body} ->
           # store the fixture pretty printed
           dest = Path.join(@fixtures_folder, filename)
-          content = body |> Jason.decode!() |> Jason.encode!(pretty: true)
+          content = body |> JSON.decode!() |> Jason.encode!(pretty: true)
           File.write!(dest, content)
 
         {:error, msg} ->

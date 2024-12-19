@@ -133,7 +133,7 @@ defmodule LastFm.APIImpl do
 
     case Finch.request(req, LastFm.Finch, @request_opts) do
       {:ok, response} when response.status == 200 ->
-        Jason.decode(response.body)
+        JSON.decode(response.body)
         |> identify_body()
 
       other ->

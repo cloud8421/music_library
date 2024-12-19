@@ -23,13 +23,13 @@ defmodule MusicLibrary.ReleaseGroupsFixtures do
   def release_group(:mystery_of_time) do
     Path.join([@fixtures_folder, "release_group - avantasia - the mystery of time.json"])
     |> File.read!()
-    |> Jason.decode!()
+    |> JSON.decode!()
   end
 
   def release_group(:marbles) do
     Path.join([@fixtures_folder, "release_group - marillion - marbles.json"])
     |> File.read!()
-    |> Jason.decode!()
+    |> JSON.decode!()
   end
 
   def release_group(:lockdown_trilogy) do
@@ -38,19 +38,19 @@ defmodule MusicLibrary.ReleaseGroupsFixtures do
       "release_group_with_includes - mariusz duda - lockdown trilogy.json"
     ])
     |> File.read!()
-    |> Jason.decode!()
+    |> JSON.decode!()
   end
 
   def release(:mystery_of_time) do
     Path.join([@fixtures_folder, "release - avantasia - the mystery of time.json"])
     |> File.read!()
-    |> Jason.decode!()
+    |> JSON.decode!()
   end
 
   def release(:marbles) do
     Path.join([@fixtures_folder, "release - marillion - marbles.json"])
     |> File.read!()
-    |> Jason.decode!()
+    |> JSON.decode!()
   end
 
   def release_group_id(name) do

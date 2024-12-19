@@ -64,7 +64,7 @@ defmodule OpenAI.API do
 
   defp decode_body("", _), do: :ok
   defp decode_body("[DONE]", _), do: :ok
-  defp decode_body(json, cb), do: cb.(Jason.decode!(json))
+  defp decode_body(json, cb), do: cb.(JSON.decode!(json))
 
   defp api_key do
     Application.get_env(:music_library, OpenAI)

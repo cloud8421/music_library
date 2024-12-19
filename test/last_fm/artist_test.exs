@@ -8,7 +8,7 @@ defmodule LastFm.ArtistTest do
       api_response =
         @api_response_path
         |> File.read!()
-        |> Jason.decode!()
+        |> JSON.decode!()
         |> Map.get("artist")
 
       assert %LastFm.Artist{

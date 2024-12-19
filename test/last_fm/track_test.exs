@@ -8,7 +8,7 @@ defmodule LastFm.TrackTest do
       api_response =
         @api_response_path
         |> File.read!()
-        |> Jason.decode!()
+        |> JSON.decode!()
         |> get_in(["recenttracks", "track"])
 
       assert [

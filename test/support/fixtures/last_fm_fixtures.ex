@@ -4,6 +4,6 @@ defmodule LastFm.Fixtures do
   def artist_get_info do
     Path.join([@fixtures_folder, "artist.getinfo.json"])
     |> File.read!()
-    |> Jason.decode!()
+    |> JSON.decode!()
   end
 end

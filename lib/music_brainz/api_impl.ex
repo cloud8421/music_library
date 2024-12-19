@@ -439,7 +439,7 @@ defmodule MusicBrainz.APIImpl do
 
     case Finch.request(req, MusicBrainz.Finch) do
       {:ok, response} when response.status == 200 ->
-        {:ok, Jason.decode!(response.body)}
+        {:ok, JSON.decode!(response.body)}
 
       {:ok, response} when response.status in 301..308 ->
         location = :proplists.get_value("location", response.headers)

@@ -11,7 +11,7 @@ defmodule OpenAI do
       end
     end)
 
-    result = Agent.get(collector, & &1) |> Jason.decode!()
+    result = Agent.get(collector, & &1) |> JSON.decode!()
     Agent.stop(collector)
     {:ok, result}
   end
