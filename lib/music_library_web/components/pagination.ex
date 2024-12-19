@@ -212,7 +212,12 @@ defmodule MusicLibraryWeb.Pagination do
     } = pagination_params
 
     total_pages = total_pages(total_entries, page_size)
-    all_pages = Enum.to_list(1..total_pages)
+
+    all_pages =
+      case total_pages do
+        0 -> []
+        other -> Enum.to_list(1..other)
+      end
 
     {left_pages, middle_pages, right_pages} =
       Enum.reduce(all_pages, {[], [], []}, fn p, {left_p, middle_p, right_p} ->
