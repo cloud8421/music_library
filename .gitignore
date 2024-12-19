@@ -42,3 +42,6 @@ npm-debug.log
 # Environment secrets
 /.secrets
 /.envrc.local
+
+# LSP Servers
+/.lexical
