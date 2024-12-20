@@ -51,6 +51,7 @@ jobs:
           mix clean
         shell: sh
       - run: mix deps.get
+      - run: mix deps.unlock --check-unused
       - run: mix gettext.extract --check-up-to-date
       - run: mix format --check-formatted
       - run: mix test
