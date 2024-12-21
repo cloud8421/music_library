@@ -64,9 +64,9 @@ if config_env() == :prod do
       """
 
   login_password =
-    System.get_env("AUTH_PASSWORD") ||
+    System.get_env("LOGIN_PASSWORD") ||
       raise """
-      environment variable AUTH_PASSWORD is missing.
+      environment variable LOGIN_PASSWORD is missing.
       """
 
   host = System.get_env("PHX_HOST") || "example.com"
