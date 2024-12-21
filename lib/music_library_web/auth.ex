@@ -5,6 +5,6 @@ defmodule MusicLibraryWeb.Auth do
 
   defp correct_login_password do
     Application.get_env(:music_library, MusicLibraryWeb)
-    |> Keyword.fetch!(:auth_password)
+    |> Keyword.fetch!(:login_password)
   end
 end
