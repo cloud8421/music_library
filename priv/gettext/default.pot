@@ -127,7 +127,7 @@ msgstr ""
 msgid "Inserted at"
 msgstr ""
 
-#: lib/music_library_web/controllers/session_controller.ex:23
+#: lib/music_library_web/controllers/session_controller.ex:25
 #, elixir-autogen, elixir-format
 msgid "Invalid password"
 msgstr ""
@@ -137,7 +137,7 @@ msgstr ""
 msgid "Latest purchase"
 msgstr ""
 
-#: lib/music_library_web/controllers/session_controller.ex:10
+#: lib/music_library_web/controllers/session_controller.ex:12
 #: lib/music_library_web/controllers/session_html/new.html.heex:44
 #, elixir-autogen, elixir-format
 msgid "Login"
