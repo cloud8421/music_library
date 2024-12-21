@@ -50,6 +50,12 @@ defmodule MusicLibraryWeb.Router do
     end
   end
 
+  scope "/api", MusicLibraryWeb do
+    pipe_through :api
+
+    get "/collection/latest", CollectionController, :latest
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", MusicLibraryWeb do
   #   pipe_through :api
