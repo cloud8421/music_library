@@ -1,6 +1,8 @@
 defmodule MusicLibraryWeb.SessionController do
   use MusicLibraryWeb, :controller
 
+  alias MusicLibraryWeb.Auth
+
   @empty_form %{"password" => ""}
 
   def new(conn, _params) do
@@ -14,7 +16,7 @@ defmodule MusicLibraryWeb.SessionController do
   end
 
   def create(conn, %{"password" => request_password}) do
-    if Plug.Crypto.secure_compare(password(), request_password) do
+    if Auth.correct_login_password?(request_password) do
       conn
       |> put_session(:logged_in, true)
       |> redirect(to: ~p"/")
@@ -23,10 +25,5 @@ defmodule MusicLibraryWeb.SessionController do
       |> put_flash(:error, gettext("Invalid password"))
       |> redirect(to: ~p"/login")
     end
-  end
-
-  def password do
-    Application.get_env(:music_library, MusicLibraryWeb)
-    |> Keyword.fetch!(:auth_password)
   end
 end
