@@ -4,10 +4,10 @@ defmodule MusicLibraryWeb.Auth do
   import Phoenix.Controller, only: [put_flash: 3, redirect: 2]
 
   def correct_login_password?(password) do
-    Plug.Crypto.secure_compare(correct_login_password(), password)
+    Plug.Crypto.secure_compare(login_password(), password)
   end
 
-  defp correct_login_password do
+  defp login_password do
     Application.get_env(:music_library, MusicLibraryWeb)
     |> Keyword.fetch!(:login_password)
   end
