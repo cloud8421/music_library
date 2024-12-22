@@ -1,6 +1,8 @@
 defmodule MusicLibraryWeb.Router do
   use MusicLibraryWeb, :router
 
+  import MusicLibraryWeb.Auth, only: [require_logged_in: 2]
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -14,8 +16,8 @@ defmodule MusicLibraryWeb.Router do
     plug :accepts, ["json"]
   end
 
-  pipeline :require_login do
-    plug MusicLibraryWeb.Plug.RequireLogin
+  pipeline :logged_in do
+    plug :require_logged_in
   end
 
   scope "/", MusicLibraryWeb do
@@ -26,7 +28,7 @@ defmodule MusicLibraryWeb.Router do
     post "/sessions/create", SessionController, :create
 
     scope "/" do
-      pipe_through :require_login
+      pipe_through :logged_in
 
       get "/covers/:record_id", CoverController, :show
 
@@ -56,11 +58,6 @@ defmodule MusicLibraryWeb.Router do
     get "/collection/latest", CollectionController, :latest
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", MusicLibraryWeb do
-  #   pipe_through :api
-  # end
-
   # Enable LiveDashboard in development
   if Application.compile_env(:music_library, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
@@ -71,7 +68,7 @@ defmodule MusicLibraryWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
-      pipe_through [:browser, :require_login]
+      pipe_through [:browser, :logged_in]
 
       live_dashboard "/dashboard",
         metrics: MusicLibraryWeb.Telemetry,

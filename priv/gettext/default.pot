@@ -335,7 +335,7 @@ msgstr ""
 msgid "Wishlist"
 msgstr ""
 
-#: lib/music_library_web/plug/require_login.ex:17
+#: lib/music_library_web/auth.ex:20
 #, elixir-autogen, elixir-format
 msgid "You must be logged in to access this page"
 msgstr ""

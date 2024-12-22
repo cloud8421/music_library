@@ -1,28 +1,23 @@
-defmodule MusicLibraryWeb.Plug.RequireLoginTest do
+defmodule MusicLibraryWeb.AuthTest do
   use ExUnit.Case, async: true
   use Plug.Test
 
-  alias MusicLibraryWeb.Plug.RequireLogin
+  alias MusicLibraryWeb.Auth
 
-  defp setup_conn(config) do
-    Map.put(
-      config,
-      :conn,
+  defp setup_conn(_config) do
+    conn =
       conn(:get, "/any-path")
       |> Phoenix.ConnTest.init_test_session(%{})
       |> Phoenix.ConnTest.fetch_flash()
-    )
+
+    %{conn: conn}
   end
 
-  defp authenticate(%{conn: conn} = config) do
-    Map.put(config, :conn, Phoenix.ConnTest.init_test_session(conn, %{logged_in: true}))
-  end
-
-  describe "when logged out" do
+  describe "require_logged_in/2" do
     setup [:setup_conn]
 
-    test "it redirects to /login", %{conn: conn} do
-      conn = RequireLogin.call(conn, [])
+    test "when logged out, it redirects to /login", %{conn: conn} do
+      conn = Auth.require_logged_in(conn, [])
 
       {"location", location} =
         conn.resp_headers
@@ -34,13 +29,12 @@ defmodule MusicLibraryWeb.Plug.RequireLoginTest do
       assert location == "/login"
       assert conn.assigns.flash == %{"error" => "You must be logged in to access this page"}
     end
-  end
 
-  describe "when logged in" do
-    setup [:setup_conn, :authenticate]
-
-    test "it passes through", %{conn: conn} do
-      conn = RequireLogin.call(conn, [])
+    test "when logged in, it passes through", %{conn: conn} do
+      conn =
+        conn
+        |> Phoenix.ConnTest.init_test_session(%{logged_in: true})
+        |> Auth.require_logged_in([])
 
       assert conn.status == nil
       assert conn.state == :unset
