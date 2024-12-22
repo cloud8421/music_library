@@ -30,7 +30,8 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
       assert json_response(conn, 200) == %{
                "artists" => ["Steven Wilson"],
                "title" => record.title,
-               "cover_url" => "http://localhost:4002/covers/#{record.id}?vsn=#{record.cover_hash}"
+               "cover_url" =>
+                 "http://localhost:4002/api/covers/#{record.id}?vsn=#{record.cover_hash}"
              }
     end
   end

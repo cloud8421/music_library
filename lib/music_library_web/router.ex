@@ -57,6 +57,7 @@ defmodule MusicLibraryWeb.Router do
     pipe_through :api
 
     get "/collection/latest", CollectionController, :latest
+    get "/covers/:record_id", CoverController, :show
   end
 
   # Enable LiveDashboard in development
