@@ -1,5 +1,11 @@
 defmodule MusicLibraryWeb.CollectionJSON do
+  use MusicLibraryWeb, :json
+
   def show(%{record: record}) do
-    Map.take(record, [:title])
+    %{
+      artists: Enum.map(record.artists, & &1.name),
+      title: record.title,
+      cover_url: url(~p"/covers/#{record.id}?#{[vsn: record.cover_hash]}")
+    }
   end
 end

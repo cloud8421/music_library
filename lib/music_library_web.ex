@@ -50,6 +50,12 @@ defmodule MusicLibraryWeb do
     end
   end
 
+  def json do
+    quote do
+      unquote(verified_routes())
+    end
+  end
+
   def live_view do
     quote do
       use Phoenix.LiveView,

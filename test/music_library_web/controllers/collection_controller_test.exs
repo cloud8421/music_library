@@ -4,7 +4,7 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
   import MusicLibrary.RecordsFixtures
 
   defp create_record(_) do
-    %{record: record_fixture()}
+    %{record: record_fixture_with_artist("Steven Wilson")}
   end
 
   describe "GET /api/collection/latest" do
@@ -12,7 +12,12 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
 
     test "it returns the latest record", %{conn: conn, record: record} do
       conn = get(conn, ~p"/api/collection/latest")
-      assert json_response(conn, 200) == %{"title" => record.title}
+
+      assert json_response(conn, 200) == %{
+               "artists" => ["Steven Wilson"],
+               "title" => record.title,
+               "cover_url" => "http://localhost:4002/covers/#{record.id}?vsn=#{record.cover_hash}"
+             }
     end
   end
 end
