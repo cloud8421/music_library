@@ -69,3 +69,17 @@ jobs:
       - run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+  verify:
+    name: Verify
+    needs: deploy
+    runs-on: ubuntu-24.04
+    environment: production
+    if: github.ref == 'refs/heads/main'
+    concurrency: deploy-group    # optional: ensure only one action runs at a time
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gacts/install-hurl@v1
+      - run: hurl test/prod.hurl
+        env:
+          HURL_api_token: ${{ secrets.API_TOKEN }}
