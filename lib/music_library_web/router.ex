@@ -1,7 +1,7 @@
 defmodule MusicLibraryWeb.Router do
   use MusicLibraryWeb, :router
 
-  import MusicLibraryWeb.Auth, only: [require_logged_in: 2]
+  import MusicLibraryWeb.Auth, only: [require_logged_in: 2, require_api_token: 2]
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -14,6 +14,7 @@ defmodule MusicLibraryWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :require_api_token
   end
 
   pipeline :logged_in do

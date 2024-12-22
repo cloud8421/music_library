@@ -11,7 +11,7 @@ config :music_library,
   ecto_repos: [MusicLibrary.Repo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 
-config :music_library, MusicLibraryWeb, login_password: "change me"
+config :music_library, MusicLibraryWeb, login_password: "change me", api_token: "change me"
 
 # Configures the endpoint
 config :music_library, MusicLibraryWeb.Endpoint,
