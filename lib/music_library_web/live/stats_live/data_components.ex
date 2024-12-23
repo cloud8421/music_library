@@ -17,7 +17,7 @@ defmodule MusicLibraryWeb.StatsLive.DataComponents do
       <dt>
         <img
           class="absolute w-20 rounded-md shadow"
-          src={~p"/covers/#{@record.id}"}
+          src={~p"/covers/#{@record.id}?vsn=#{@record.cover_hash}"}
           alt={@record.title}
         />
         <p class="ml-24 truncate text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400">
