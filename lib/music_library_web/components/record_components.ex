@@ -26,7 +26,7 @@ defmodule MusicLibraryWeb.RecordComponents do
           <img
             class="w-20 flex-none rounded-lg"
             alt={record.title}
-            src={~p"/covers/#{record.id}?vsn=#{record.cover_hash || ""}"}
+            src={~p"/covers/#{record.id}?vsn=#{record.cover_hash}"}
           />
           <div class="min-w-0 flex-auto">
             <h1 class="text-sm leading-6 text-zinc-700">
