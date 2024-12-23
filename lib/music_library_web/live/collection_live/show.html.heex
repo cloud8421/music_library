@@ -224,12 +224,6 @@
   <pre><code class="text-xs sm:text-sm"><%= Jason.encode!(@record.musicbrainz_data, pretty: true) %></code></pre>
 </details>
 
-<div class="mt-4">
-  <.back navigate={@back_url}>
-    {gettext("Back to records")}
-  </.back>
-</div>
-
 <.modal
   :if={@live_action == :edit}
   id="record-modal"

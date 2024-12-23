@@ -7,15 +7,6 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    back_url =
-      if connected?(socket) do
-        socket
-        |> get_connect_params()
-        |> Map.get("_live_referer", ~p"/collection")
-      else
-        ~p"/collection"
-      end
-
     socket =
       if static_changed?(socket) do
         put_flash(socket, :warning, gettext("The application has been updated, please reload."))
@@ -23,7 +14,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
         socket
       end
 
-    {:ok, assign(socket, :back_url, back_url)}
+    {:ok, socket}
   end
 
   @impl true
