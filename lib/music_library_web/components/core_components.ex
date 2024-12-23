@@ -319,7 +319,7 @@ defmodule MusicLibraryWeb.CoreComponents do
 
     ~H"""
     <div>
-      <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
+      <label class="flex items-center gap-4 text-xs sm:text-sm leading-6 text-zinc-600">
         <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
         <input
           type="checkbox"
@@ -350,7 +350,7 @@ defmodule MusicLibraryWeb.CoreComponents do
           "bg-white shadow-sm dark:bg-zinc-800",
           "ring-1 ring-inset focus:z-10 focus:ring-2 focus:ring-inset",
           "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:ring-zinc-300 focus:ring-0",
-          "sm:text-sm",
+          "text-xs sm:text-sm",
           "text-zinc-900 dark:text-zinc-200",
           "ring-zinc-200 dark:ring-zinc-400",
           "placeholder:text-zinc-400 dark:placeholder:text-zinc-400"
@@ -374,7 +374,7 @@ defmodule MusicLibraryWeb.CoreComponents do
         id={@id}
         name={@name}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6 min-h-[6rem]",
+          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 text-xs sm:text-sm sm:leading-6 min-h-[6rem]",
           @errors == [] && "border-zinc-300 focus:border-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
@@ -401,7 +401,7 @@ defmodule MusicLibraryWeb.CoreComponents do
           "bg-white shadow-sm dark:bg-zinc-800",
           "ring-1 ring-inset focus:z-10 focus:ring-2 focus:ring-inset",
           "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:ring-zinc-300 focus:ring-0",
-          "sm:text-sm",
+          "text-xs sm:text-sm",
           "text-zinc-900 dark:text-zinc-200",
           "ring-zinc-200 dark:ring-zinc-400",
           "placeholder:text-zinc-400 dark:placeholder:text-zinc-400",

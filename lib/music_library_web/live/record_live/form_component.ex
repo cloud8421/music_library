@@ -58,7 +58,7 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
           </.label>
           <span
             :if={@uploads.cover_data.entries == []}
-            class="float-right text-zinc-700 dark:text-zinc-400"
+            class="text-xs sm:text-sm float-right text-zinc-700 dark:text-zinc-400"
           >
             {gettext("No cover selected")}
           </span>
@@ -66,7 +66,7 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
             <span class="float-right text-zinc-700 dark:text-zinc-400">{entry.progress}%</span>
           <% end %>
           <.live_file_input
-            class="mt-2 block w-full rounded-lg text-zinc-900 dark:text-zinc-200 focus:ring-0 sm:text-sm sm:leading-6"
+            class="mt-2 block w-full rounded-lg text-zinc-900 dark:text-zinc-200 focus:ring-0 text-xs sm:text-sm sm:leading-6"
             upload={@uploads.cover_data}
           />
         </div>
