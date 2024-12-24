@@ -3,7 +3,7 @@ defmodule MusicLibraryWeb.StatsLive.DataComponents do
 
   attr :record, MusicLibrary.Records.Record, required: true
   attr :title, :string, required: true
-  attr :class, :string, default: ""
+  attr :class, :string
 
   def album_preview(assigns) do
     ~H"""
