@@ -55,12 +55,12 @@ defmodule MusicLibraryWeb.StatsLive.DataComponents do
         </p>
       </dt>
       <dd class="mt-1">
-        <a
-          href={@path}
+        <.link
+          navigate={@path}
           class="block text-2xl sm:text-3xl font-semibold text-center text-zinc-900 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
         >
           {@count}
-        </a>
+        </.link>
       </dd>
     </div>
     """
