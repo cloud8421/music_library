@@ -1,11 +1,11 @@
 # API requires a valid token
 
 # GET latest record
-GET {{host}}/api/collection/latest
+GET https://music-library.claudio-ortolina.org/api/collection/latest
 Content-Type: application/json
 HTTP 401
 
-GET {{host}}/api/collection/latest
+GET https://music-library.claudio-ortolina.org/api/collection/latest
 Content-Type: application/json
 Authorization: Bearer {{api_token}}
 HTTP 200
