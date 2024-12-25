@@ -82,4 +82,5 @@ jobs:
       - uses: gacts/install-hurl@v1
       - run: hurl --test test/prod.hurl
         env:
+          HURL_host: https://music-library.claudio-ortolina.org
           HURL_api_token: ${{ secrets.API_TOKEN }}
