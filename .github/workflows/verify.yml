@@ -1,0 +1,14 @@
+name: Verify
+on: workflow_dispatch
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-24.04
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gacts/install-hurl@v1
+      - run: hurl --test test/prod.hurl
+        env:
+          HURL_api_token: ${{ secrets.API_TOKEN }}
