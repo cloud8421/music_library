@@ -20,12 +20,14 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
     recent_tracks = LastFm.Feed.all_tracks()
 
-    release_ids = release_ids(recent_tracks)
+    recent_release_ids = recent_release_ids(recent_tracks)
 
-    collected_release_ids = Collection.collected_release_ids(release_ids)
-    wishlisted_release_ids = Wishlist.wishlisted_release_ids(release_ids)
+    collected_release_ids = Collection.collected_release_ids(recent_release_ids)
+    wishlisted_release_ids = Wishlist.wishlisted_release_ids(recent_release_ids)
 
-    artist_ids = Artists.get_all_artist_ids()
+    all_artist_ids = Artists.get_all_artist_ids()
+    recent_artist_ids = recent_artist_ids(recent_tracks)
+    artist_ids = MapSet.intersection(all_artist_ids, recent_artist_ids)
 
     if connected?(socket) do
       LastFm.Feed.subscribe()
@@ -83,12 +85,14 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   end
 
   def handle_info(%{tracks: recent_tracks}, socket) do
-    release_ids = release_ids(recent_tracks)
+    recent_release_ids = recent_release_ids(recent_tracks)
 
-    collected_release_ids = Collection.collected_release_ids(release_ids)
-    wishlisted_release_ids = Wishlist.wishlisted_release_ids(release_ids)
+    collected_release_ids = Collection.collected_release_ids(recent_release_ids)
+    wishlisted_release_ids = Wishlist.wishlisted_release_ids(recent_release_ids)
 
-    artist_ids = Artists.get_all_artist_ids()
+    all_artist_ids = Artists.get_all_artist_ids()
+    recent_artist_ids = recent_artist_ids(recent_tracks)
+    artist_ids = MapSet.intersection(all_artist_ids, recent_artist_ids)
 
     {:noreply,
      socket
@@ -100,11 +104,19 @@ defmodule MusicLibraryWeb.StatsLive.Index do
      |> stream(:recent_tracks, recent_tracks, reset: true)}
   end
 
-  defp release_ids(recent_tracks) do
+  defp recent_release_ids(recent_tracks) do
     recent_tracks
     |> Enum.map(fn t -> t.album.musicbrainz_id end)
     |> Enum.uniq()
     |> Enum.reject(fn musicbrainz_id -> musicbrainz_id == "" end)
+  end
+
+  def recent_artist_ids(recent_tracks) do
+    recent_tracks
+    |> Enum.map(fn t -> t.artist.musicbrainz_id end)
+    |> Enum.uniq()
+    |> Enum.reject(fn musicbrainz_id -> musicbrainz_id == "" end)
+    |> MapSet.new()
   end
 
   # The Tailwind build step requires all needed classes to be explicitly referenced

@@ -61,8 +61,8 @@ msgstr ""
 
 #: lib/music_library_web/live/collection_live/index.ex:124
 #: lib/music_library_web/live/collection_live/index.ex:131
-#: lib/music_library_web/live/stats_live/index.ex:75
-#: lib/music_library_web/live/stats_live/index.ex:81
+#: lib/music_library_web/live/stats_live/index.ex:77
+#: lib/music_library_web/live/stats_live/index.ex:83
 #: lib/music_library_web/live/wishlist_live/index.ex:121
 #: lib/music_library_web/live/wishlist_live/index.ex:128
 #, elixir-autogen, elixir-format
@@ -186,7 +186,7 @@ msgid "Purchased on"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/index.ex:116
-#: lib/music_library_web/live/stats_live/index.ex:67
+#: lib/music_library_web/live/stats_live/index.ex:69
 #: lib/music_library_web/live/wishlist_live/index.ex:113
 #, elixir-autogen, elixir-format
 msgid "Record imported successfully"
@@ -248,7 +248,7 @@ msgid "Something went wrong!"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:8
-#: lib/music_library_web/live/stats_live/index.ex:41
+#: lib/music_library_web/live/stats_live/index.ex:43
 #, elixir-autogen, elixir-format
 msgid "Stats"
 msgstr ""
