@@ -7,27 +7,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   alias Records.Record
 
   def mount(_params, _session, socket) do
-    collection_count_by_format = Collection.count_records_by_format()
-
-    collection_count_by_type = Collection.count_records_by_type()
-
-    collection_count =
-      Enum.reduce(collection_count_by_format, 0, fn {_, count}, acc -> acc + count end)
-
-    wishlist_count = Wishlist.count()
-
     latest_record = Collection.get_latest_record!()
-
     recent_tracks = LastFm.Feed.all_tracks()
-
-    recent_release_ids = recent_release_ids(recent_tracks)
-
-    collected_release_ids = Collection.collected_release_ids(recent_release_ids)
-    wishlisted_release_ids = Wishlist.wishlisted_release_ids(recent_release_ids)
-
-    all_artist_ids = Artists.get_all_artist_ids()
-    recent_artist_ids = recent_artist_ids(recent_tracks)
-    artist_ids = MapSet.intersection(all_artist_ids, recent_artist_ids)
 
     if connected?(socket) do
       LastFm.Feed.subscribe()
@@ -39,16 +20,11 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        dom_id: fn track -> "track-#{track.scrobbled_at_uts}" end
      )
      |> stream(:recent_tracks, recent_tracks)
+     |> assign_counts()
+     |> assign_scrobble_activity(recent_tracks)
      |> assign(
-       page_title: gettext("Stats"),
-       collection_count_by_format: collection_count_by_format,
-       collection_count_by_type: collection_count_by_type,
-       collection_count: collection_count,
-       wishlist_count: wishlist_count,
        latest_record: latest_record,
-       collected_release_ids: collected_release_ids,
-       wishlisted_release_ids: wishlisted_release_ids,
-       artist_ids: artist_ids,
+       page_title: gettext("Stats"),
        nav_section: :stats
      )}
   end
@@ -85,6 +61,31 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   end
 
   def handle_info(%{tracks: recent_tracks}, socket) do
+    {:noreply,
+     socket
+     |> assign_scrobble_activity(recent_tracks)
+     |> stream(:recent_tracks, recent_tracks, reset: true)}
+  end
+
+  defp assign_counts(socket) do
+    collection_count_by_format = Collection.count_records_by_format()
+
+    collection_count_by_type = Collection.count_records_by_type()
+
+    collection_count =
+      Enum.reduce(collection_count_by_format, 0, fn {_, count}, acc -> acc + count end)
+
+    wishlist_count = Wishlist.count()
+
+    assign(socket,
+      collection_count_by_format: collection_count_by_format,
+      collection_count_by_type: collection_count_by_type,
+      collection_count: collection_count,
+      wishlist_count: wishlist_count
+    )
+  end
+
+  defp assign_scrobble_activity(socket, recent_tracks) do
     recent_release_ids = recent_release_ids(recent_tracks)
 
     collected_release_ids = Collection.collected_release_ids(recent_release_ids)
@@ -94,14 +95,11 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     recent_artist_ids = recent_artist_ids(recent_tracks)
     artist_ids = MapSet.intersection(all_artist_ids, recent_artist_ids)
 
-    {:noreply,
-     socket
-     |> assign(
-       collected_release_ids: collected_release_ids,
-       wishlisted_release_ids: wishlisted_release_ids,
-       artist_ids: artist_ids
-     )
-     |> stream(:recent_tracks, recent_tracks, reset: true)}
+    assign(socket,
+      collected_release_ids: collected_release_ids,
+      wishlisted_release_ids: wishlisted_release_ids,
+      artist_ids: artist_ids
+    )
   end
 
   defp recent_release_ids(recent_tracks) do
