@@ -50,6 +50,7 @@ defmodule MusicLibrary.MixProject do
       {:floki, ">= 0.30.0", only: :test},
       {:mox, "~> 1.2", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.3"},
+      {:recon, "~> 2.5"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
       {:heroicons,
