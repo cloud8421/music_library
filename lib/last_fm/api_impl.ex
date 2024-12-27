@@ -145,9 +145,24 @@ defmodule LastFm.APIImpl do
     String.replace(url, api_key, "<redacted_api_key>")
   end
 
-  defp identify_body({:ok, error = %{"error" => _error_number, "message" => _message}}) do
-    {:error, error}
+  defp identify_body({:ok, %{"error" => error_number, "message" => _message}}) do
+    {:error, map_error(error_number)}
   end
 
   defp identify_body(other), do: other
+
+  defp map_error(2), do: :invalid_service
+  defp map_error(3), do: :invalid_method
+  defp map_error(4), do: :authentication_failed
+  defp map_error(5), do: :invalid_format
+  defp map_error(6), do: :invalid_parameters
+  defp map_error(7), do: :invalid_resource
+  defp map_error(8), do: :operation_failed
+  defp map_error(9), do: :invalid_session_key
+  defp map_error(10), do: :invalid_api_key
+  defp map_error(11), do: :service_offline
+  defp map_error(13), do: :invalid_method_signature
+  defp map_error(16), do: :transient_error
+  defp map_error(26), do: :suspended_api_key
+  defp map_error(29), do: :rate_limit_exceeded
 end
