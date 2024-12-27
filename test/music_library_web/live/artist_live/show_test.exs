@@ -70,10 +70,10 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
 
       # play count
       refute has_element?(show_live, "span", "123")
-      assert has_element?(show_live, "div", "There was an error loading the play count")
+      assert has_element?(show_live, "div", "Error loading play count")
 
       refute has_element?(show_live, "summary", "Biography")
-      assert has_element?(show_live, "div", "There was an error loading the biography")
+      assert has_element?(show_live, "div", "Error loading biography")
     end
 
     test "it shows records from the collection and the wishlist", %{
