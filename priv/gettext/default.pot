@@ -23,11 +23,6 @@ msgstr ""
 msgid "Are you sure?"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:3
-#, elixir-autogen, elixir-format
-msgid "Basics"
-msgstr ""
-
 #: lib/music_library_web/live/record_live/form_component.ex:36
 #: lib/music_library_web/live/record_live/form_component.ex:43
 #, elixir-autogen, elixir-format
@@ -505,4 +500,9 @@ msgstr ""
 #: lib/music_library_web/live/artist_live/show.html.heex:119
 #, elixir-autogen, elixir-format
 msgid "Number of albums"
+msgstr ""
+
+#: lib/music_library_web/live/stats_live/index.html.heex:3
+#, elixir-autogen, elixir-format
+msgid "Records"
 msgstr ""
