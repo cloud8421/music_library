@@ -73,7 +73,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     collection_count_by_type = Collection.count_records_by_type()
 
     collection_count =
-      Enum.reduce(collection_count_by_format, 0, fn {_, count}, acc -> acc + count end)
+      Enum.sum_by(collection_count_by_format, fn {_, count} -> count end)
 
     wishlist_count = Wishlist.count()
 
