@@ -123,7 +123,8 @@ defmodule MusicLibraryWeb.CoreComponents do
         "fixed top-2 right-2 mr-2 w-80 sm:w-96 z-50 rounded-md shadow-md p-3 ring-1 ring-zinc-400 border-l-2",
         @kind == :info &&
           "border-l-emerald-500 bg-white dark:bg-zinc-700 text-emerald-700 dark:text-emerald-300",
-        @kind == :error && "border-l-red-500 bg-white text-rose-900"
+        @kind == :error &&
+          "border-l-red-500 bg-white dark:bg-zinc-700 text-red-900 dark:text-red-300"
       ]}
       {@rest}
     >
