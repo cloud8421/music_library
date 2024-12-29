@@ -31,7 +31,7 @@ msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:14
 #: lib/music_library_web/live/artist_live/show.html.heex:73
-#: lib/music_library_web/live/collection_live/index.ex:78
+#: lib/music_library_web/live/collection_live/index.ex:79
 #: lib/music_library_web/live/collection_live/show.ex:115
 #: lib/music_library_web/live/collection_live/show.ex:132
 #, elixir-autogen, elixir-format
@@ -59,8 +59,8 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.ex:124
-#: lib/music_library_web/live/collection_live/index.ex:131
+#: lib/music_library_web/live/collection_live/index.ex:125
+#: lib/music_library_web/live/collection_live/index.ex:132
 #: lib/music_library_web/live/stats_live/index.ex:53
 #: lib/music_library_web/live/stats_live/index.ex:59
 #: lib/music_library_web/live/wishlist_live/index.ex:121
@@ -170,6 +170,7 @@ msgid "Previous"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex:170
+#: lib/music_library_web/live/collection_live/index.html.heex:36
 #: lib/music_library_web/live/wishlist_live/show.html.heex:135
 #, elixir-autogen, elixir-format
 msgid "Purchase"
@@ -185,7 +186,7 @@ msgstr ""
 msgid "Purchased on"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.ex:116
+#: lib/music_library_web/live/collection_live/index.ex:117
 #: lib/music_library_web/live/stats_live/index.ex:45
 #: lib/music_library_web/live/wishlist_live/index.ex:113
 #, elixir-autogen, elixir-format
@@ -236,7 +237,7 @@ msgstr ""
 msgid "Show"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex:12
+#: lib/music_library_web/live/collection_live/index.html.heex:41
 #: lib/music_library_web/live/wishlist_live/index.html.heex:12
 #, elixir-autogen, elixir-format
 msgid "Showing <b>%{visible}</b> of <b>%{total}</b> records"
@@ -258,7 +259,7 @@ msgstr ""
 msgid "Success!"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.ex:20
+#: lib/music_library_web/live/collection_live/index.ex:21
 #: lib/music_library_web/live/collection_live/show.ex:12
 #: lib/music_library_web/live/wishlist_live/index.ex:20
 #: lib/music_library_web/live/wishlist_live/show.ex:10
@@ -410,7 +411,7 @@ msgstr ""
 msgid "Details"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.ex:43
+#: lib/music_library_web/live/collection_live/index.ex:44
 #, elixir-autogen, elixir-format
 msgid "Import from MusicBrainz · Collection"
 msgstr ""
@@ -505,4 +506,9 @@ msgstr ""
 #: lib/music_library_web/live/artist_live/show.html.heex:24
 #, elixir-autogen, elixir-format
 msgid "Error loading play count"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/index.html.heex:21
+#, elixir-autogen, elixir-format
+msgid "A->Z"
 msgstr ""
