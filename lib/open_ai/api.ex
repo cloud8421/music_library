@@ -33,7 +33,7 @@ defmodule OpenAI.API do
 
     Req.post!("https://api.openai.com/v1/chat/completions",
       json: %{
-        model: "gpt-4o-mini",
+        model: completion.model,
         messages: [Map.take(completion, [:content, :role])],
         response_format: %{type: "json_object"},
         stream: true,
