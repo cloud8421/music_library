@@ -10,8 +10,8 @@
 
   <div class="flex items-center justify-between gap-6 mt-8">
     <span class="isolate inline-flex rounded-md shadow-sm">
-      <button
-        type="button"
+      <.link
+        patch={order_path(@record_list_params, :alphabetical)}
         class={[
           "relative inline-flex items-center rounded-l-md bg-white px-3 py-2 text-xs sm:text-sm text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10",
           @record_list_params.order == :alphabetical && "font-bold"
@@ -19,9 +19,9 @@
       >
         <.icon name="hero-user-solid" class="mr-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
         {gettext("A->Z")}
-      </button>
-      <button
-        type="button"
+      </.link>
+      <.link
+        patch={order_path(@record_list_params, :purchase)}
         class={[
           "relative -ml-px inline-flex items-center rounded-r-md bg-white px-3 py-2 text-xs sm:text-sm text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10",
           @record_list_params.order == :purchase && "font-bold"
@@ -34,7 +34,7 @@
           data-slot="icon"
         />
         {gettext("Purchase")}
-      </button>
+      </.link>
     </span>
 
     <p class="text-right text-sm max-sm:text-xs text-zinc-900 dark:text-zinc-400">
