@@ -27,7 +27,7 @@ defmodule MusicLibrary.RecordsTest do
   # so we rely on record ids to compare results
   defp search(query, limit, offset) do
     SearchIndex
-    |> Records.search_records(query, limit: limit, offset: offset)
+    |> Records.search_records(query, limit: limit, offset: offset, order: :alphabetical)
     |> Enum.map(& &1.id)
   end
 

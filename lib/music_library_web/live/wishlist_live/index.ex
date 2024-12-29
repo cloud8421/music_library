@@ -10,7 +10,8 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
   @default_records_list_params %{
     query: "",
     page: 1,
-    page_size: 20
+    page_size: 20,
+    order: :alphabetical
   }
 
   @impl true
@@ -70,7 +71,13 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
       |> merge_pagination(params, total_records)
 
     offset = page_to_offset(record_list_params.page, record_list_params.page_size)
-    records = Wishlist.search_records(query, limit: record_list_params.page_size, offset: offset)
+
+    records =
+      Wishlist.search_records(query,
+        limit: record_list_params.page_size,
+        offset: offset,
+        order: record_list_params.order
+      )
 
     socket
     |> assign(:page_title, gettext("Wishlist"))

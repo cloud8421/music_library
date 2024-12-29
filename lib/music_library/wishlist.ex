@@ -8,8 +8,9 @@ defmodule MusicLibrary.Wishlist do
   def search_records(query, opts \\ []) do
     limit = Keyword.get(opts, :limit, 20)
     offset = Keyword.get(opts, :offset, 0)
+    order = Keyword.get(opts, :order, :alphabetical)
 
-    Records.search_records(base_search(), query, limit: limit, offset: offset)
+    Records.search_records(base_search(), query, limit: limit, offset: offset, order: order)
   end
 
   def search_records_count(query) do

@@ -28,10 +28,11 @@ defmodule MusicLibrary.Records do
   def search_records(initial_search, query, opts) do
     limit = Keyword.fetch!(opts, :limit)
     offset = Keyword.fetch!(opts, :offset)
+    order = Keyword.fetch!(opts, :order)
 
     search =
       initial_search
-      |> build_search(query)
+      |> build_search(query, order)
       |> limit(^limit)
       |> offset(^offset)
       |> select(^essential_fields())
@@ -45,16 +46,23 @@ defmodule MusicLibrary.Records do
     Repo.aggregate(search, :count)
   end
 
-  defp build_search(initial_search, query) do
+  defp build_search(initial_search, query, order \\ :alphabetical) do
     {:ok, parsed_query} = SearchParser.parse(query)
 
     search_with_order =
-      initial_search
-      |> order_by(
-        fragment(
-          "unaccent(json_extract(artists, '$[0].sort_name')) COLLATE NOCASE ASC, unaccent(title) COLLATE NOCASE ASC"
-        )
-      )
+      case order do
+        :alphabetical ->
+          initial_search
+          |> order_by(
+            fragment(
+              "unaccent(json_extract(artists, '$[0].sort_name')) COLLATE NOCASE ASC, unaccent(title) COLLATE NOCASE ASC"
+            )
+          )
+
+        :purchase ->
+          initial_search
+          |> order_by([r], {:desc, r.purchased_at})
+      end
 
     Enum.reduce(parsed_query, search_with_order, fn
       {:artist, artist}, search ->

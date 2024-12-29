@@ -25,7 +25,7 @@ defmodule MusicLibraryWeb.Pagination do
       ]}>
         <.link
           :if={@page_links.prev_page}
-          patch={"?" <> encode_query(page: @page_links.prev_page, page_size: @pagination_params.page_size, query: @pagination_params.query)}
+          patch={"?" <> encode_query(page: @page_links.prev_page, page_size: @pagination_params.page_size, query: @pagination_params.query, order: @pagination_params.order)}
           phx-click={JS.dispatch("music_library:scroll_top")}
           class={[
             "relative inline-flex items-center rounded-md border",
@@ -39,7 +39,7 @@ defmodule MusicLibraryWeb.Pagination do
         </.link>
         <.link
           :if={@page_links.next_page}
-          patch={"?" <> encode_query(page: @page_links.next_page, page_size: @pagination_params.page_size, query: @pagination_params.query)}
+          patch={"?" <> encode_query(page: @page_links.next_page, page_size: @pagination_params.page_size, query: @pagination_params.query, order: @pagination_params.order)}
           phx-click={JS.dispatch("music_library:scroll_top")}
           class={[
             "relative ml-3 inline-flex items-center rounded-md border",
@@ -60,12 +60,14 @@ defmodule MusicLibraryWeb.Pagination do
               page_number={@page_links.prev_page}
               page_size={@pagination_params.page_size}
               query={@pagination_params.query}
+              order={@pagination_params.order}
             />
             <.numbered_link
               :for={page_number <- @page_links.visible_left_pages}
               page_number={page_number}
               page_size={@pagination_params.page_size}
               query={@pagination_params.query}
+              order={@pagination_params.order}
             />
             <.separator :if={@page_links.left_separator} />
             <.numbered_link
@@ -74,6 +76,7 @@ defmodule MusicLibraryWeb.Pagination do
               active={page_number == @pagination_params.page}
               page_size={@pagination_params.page_size}
               query={@pagination_params.query}
+              order={@pagination_params.order}
             />
             <.separator :if={@page_links.right_separator} />
             <.numbered_link
@@ -81,12 +84,14 @@ defmodule MusicLibraryWeb.Pagination do
               page_number={page_number}
               page_size={@pagination_params.page_size}
               query={@pagination_params.query}
+              order={@pagination_params.order}
             />
             <.next_link
               :if={@page_links.next_page}
               page_number={@page_links.next_page}
               page_size={@pagination_params.page_size}
               query={@pagination_params.query}
+              order={@pagination_params.order}
             />
           </nav>
         </div>
@@ -102,6 +107,7 @@ defmodule MusicLibraryWeb.Pagination do
   attr :page_number, :integer, required: true
   attr :page_size, :integer, required: true
   attr :query, :string, required: true
+  attr :order, :atom, required: true
 
   defp next_link(assigns) do
     ~H"""
@@ -111,7 +117,7 @@ defmodule MusicLibraryWeb.Pagination do
         "text-zinc-400 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 focus:z-20 focus:outline-offset-0"
       ]}
       phx-click={JS.dispatch("music_library:scroll_top")}
-      patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query)}
+      patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query, order: @order)}
     >
       <span class="sr-only">{gettext("Next")}</span>
       <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -128,13 +134,14 @@ defmodule MusicLibraryWeb.Pagination do
   attr :page_number, :integer, required: true
   attr :page_size, :integer, required: true
   attr :query, :string, required: true
+  attr :order, :atom, required: true
 
   defp prev_link(assigns) do
     ~H"""
     <.link
       class="relative inline-flex items-center rounded-l-md px-2 py-2 text-zinc-400 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 focus:z-20 focus:outline-offset-0"
       phx-click={JS.dispatch("music_library:scroll_top")}
-      patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query)}
+      patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query, order: @order)}
     >
       <span class="sr-only">{gettext("Previous")}</span>
       <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -160,6 +167,7 @@ defmodule MusicLibraryWeb.Pagination do
   attr :page_size, :integer, required: true
   attr :active, :boolean, default: false
   attr :query, :string, required: true
+  attr :order, :atom, required: true
 
   defp numbered_link(assigns) when assigns.active do
     ~H"""
@@ -174,7 +182,7 @@ defmodule MusicLibraryWeb.Pagination do
     <.link
       class="relative hidden items-center first:rounded-l-md last:rounded-r-md px-4 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-400 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-300 hover:text-zinc-500 focus:z-20 focus:outline-offset-0 md:inline-flex"
       phx-click={JS.dispatch("music_library:scroll_top")}
-      patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query)}
+      patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query, order: @order)}
     >
       {@page_number}
     </.link>

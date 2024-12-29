@@ -74,8 +74,10 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
     offset = page_to_offset(record_list_params.page, record_list_params.page_size)
 
+    opts = [limit: record_list_params.page_size, offset: offset, order: parse_order(order)]
+
     records =
-      Collection.search_records(query, limit: record_list_params.page_size, offset: offset)
+      Collection.search_records(query, opts)
 
     socket
     |> assign(:page_title, gettext("Collection"))
@@ -166,7 +168,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
   defp order_path(record_list_params, order) do
     qs =
       record_list_params
-      |> Map.take([:query, :page, :page_size])
+      |> Map.take([:query])
       |> Map.put(:order, order)
       |> Enum.filter(fn {_, v} -> v not in ["", nil] end)
 
