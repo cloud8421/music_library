@@ -90,7 +90,15 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       other_collection_record =
         record_fixture_with_artist("Porcupine Tree", %{purchased_at: DateTime.utc_now()})
 
+      # for this test, we don't care about the artist info, but we mock it to avoid false test failures
+      expect(APIBehaviourMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id},
+                                                    _config ->
+        {:error, :timeout}
+      end)
+
       {:ok, show_live, _html} = live(conn, ~p"/artists/#{artist_musicbrainz_id}")
+
+      render_async(show_live)
 
       # collection records
       assert has_element?(show_live, "#collection p", escape(collection_record.title))
