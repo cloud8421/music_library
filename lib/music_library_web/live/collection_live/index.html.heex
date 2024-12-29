@@ -13,8 +13,11 @@
       <.link
         patch={order_path(@record_list_params, :alphabetical)}
         class={[
-          "relative inline-flex items-center rounded-l-md bg-white px-3 py-2 text-xs sm:text-sm text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10",
-          @record_list_params.order == :alphabetical && "font-bold"
+          "relative inline-flex items-center rounded-l-md",
+          "px-3 py-2 text-xs sm:text-sm font-semibold",
+          "ring-1 ring-inset focus:z-10",
+          "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 ring-zinc-300",
+          @record_list_params.order == :alphabetical && "!bg-zinc-100 dark:!bg-zinc-700"
         ]}
       >
         <.icon name="hero-user-solid" class="mr-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
@@ -23,8 +26,11 @@
       <.link
         patch={order_path(@record_list_params, :purchase)}
         class={[
-          "relative -ml-px inline-flex items-center rounded-r-md bg-white px-3 py-2 text-xs sm:text-sm text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10",
-          @record_list_params.order == :purchase && "font-bold"
+          "relative -ml-px inline-flex items-center rounded-r-md",
+          "px-3 py-2 text-xs sm:text-sm font-semibold",
+          "ring-1 ring-inset focus:z-10",
+          "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 ring-zinc-300",
+          @record_list_params.order == :purchase && "!bg-zinc-100 dark:!bg-zinc-700"
         ]}
       >
         <.icon

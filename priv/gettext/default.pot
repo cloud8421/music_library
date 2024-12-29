@@ -170,7 +170,7 @@ msgid "Previous"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex:170
-#: lib/music_library_web/live/collection_live/index.html.heex:36
+#: lib/music_library_web/live/collection_live/index.html.heex:42
 #: lib/music_library_web/live/wishlist_live/show.html.heex:135
 #, elixir-autogen, elixir-format
 msgid "Purchase"
@@ -237,7 +237,7 @@ msgstr ""
 msgid "Show"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex:41
+#: lib/music_library_web/live/collection_live/index.html.heex:47
 #: lib/music_library_web/live/wishlist_live/index.html.heex:12
 #, elixir-autogen, elixir-format
 msgid "Showing <b>%{visible}</b> of <b>%{total}</b> records"
@@ -508,7 +508,7 @@ msgstr ""
 msgid "Error loading play count"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex:21
+#: lib/music_library_web/live/collection_live/index.html.heex:24
 #, elixir-autogen, elixir-format
 msgid "A->Z"
 msgstr ""
