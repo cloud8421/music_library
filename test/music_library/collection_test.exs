@@ -5,11 +5,31 @@ defmodule MusicLibrary.CollectionTest do
   import MusicLibrary.RecordsFixtures
 
   defp fill_collection(_) do
+    # Purchased dates are in ascending order
     records = [
-      record_fixture(%{title: "Brave", format: :cd, type: :album}),
-      record_fixture(%{title: "Brave", format: :vinyl, type: :live}),
-      record_fixture(%{format: :vinyl, type: :ep}),
-      record_fixture(%{title: "Brave", format: :dvd, purchased_at: nil, type: :live})
+      record_fixture_with_artist("Marillion", %{
+        title: "Brave",
+        format: :cd,
+        type: :album,
+        purchased_at: ~U[2024-12-27 16:50:57Z]
+      }),
+      record_fixture_with_artist("Marillion", %{
+        title: "Brave (Remastered)",
+        format: :vinyl,
+        type: :live,
+        purchased_at: ~U[2024-12-28 16:50:57Z]
+      }),
+      record_fixture_with_artist("Marillion", %{
+        format: :vinyl,
+        type: :ep,
+        purchased_at: ~U[2024-12-29 16:50:57Z]
+      }),
+      record_fixture_with_artist("Marillion", %{
+        title: "Brave",
+        format: :dvd,
+        purchased_at: nil,
+        type: :live
+      })
     ]
 
     %{collection: records}
@@ -19,7 +39,8 @@ defmodule MusicLibrary.CollectionTest do
     setup [:fill_collection]
 
     test "returns matching records, excluding wishlisted records" do
-      assert [%{title: "Brave"}, %{title: "Brave"}] = Collection.search_records("brave")
+      assert [%{title: "Brave"}, %{title: "Brave (Remastered)"}] =
+               Collection.search_records("brave")
     end
 
     test "it respects limit" do
@@ -30,6 +51,14 @@ defmodule MusicLibrary.CollectionTest do
       [first_match] = Collection.search_records("brave", limit: 1)
       [second_match] = Collection.search_records("brave", limit: 1, offset: 1)
       assert first_match !== second_match
+    end
+
+    test "it respects order" do
+      assert [%{title: "Brave (Remastered)"}, %{title: "Brave"}] =
+               Collection.search_records("brave", order: :purchase)
+
+      assert [%{title: "Brave"}, %{title: "Brave (Remastered)"}] =
+               Collection.search_records("brave", order: :alphabetical)
     end
   end
 
