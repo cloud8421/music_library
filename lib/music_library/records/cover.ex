@@ -6,6 +6,10 @@ defmodule MusicLibrary.Records.Cover do
     Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
   end
 
+  def hash(cover_data) do
+    :crypto.hash(:sha256, cover_data) |> Base.encode16()
+  end
+
   def correct_size?(cover_data) do
     {:ok, image} = Vix.Vips.Image.new_from_buffer(cover_data)
 

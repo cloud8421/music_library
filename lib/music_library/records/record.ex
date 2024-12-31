@@ -2,7 +2,7 @@ defmodule MusicLibrary.Records.Record do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias MusicLibrary.Records.Artist
+  alias MusicLibrary.Records.{Artist, Cover}
 
   @formats [:cd, :vinyl, :blu_ray, :dvd, :multi]
   @types [:album, :ep, :live, :compilation, :single, :other]
@@ -159,11 +159,9 @@ defmodule MusicLibrary.Records.Record do
   end
 
   def generate_cover_hash(record = %__MODULE__{cover_data: cover_data}) do
-    hash = :crypto.hash(:sha256, cover_data) |> Base.encode16()
-
     record
     |> change()
-    |> put_change(:cover_hash, hash)
+    |> put_change(:cover_hash, Cover.hash(cover_data))
   end
 
   def generate_cover_hash(changeset) do
@@ -172,8 +170,7 @@ defmodule MusicLibrary.Records.Record do
         changeset
 
       cover_data ->
-        hash = :crypto.hash(:sha256, cover_data) |> Base.encode16()
-        put_change(changeset, :cover_hash, hash)
+        put_change(changeset, :cover_hash, Cover.hash(cover_data))
     end
   end
 
