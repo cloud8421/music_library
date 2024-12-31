@@ -1,8 +1,8 @@
 defmodule MusicLibrary.Records.Cover do
   @size 600
 
-  def resize(cover_data) do
-    {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(cover_data, @size)
+  def resize(cover_data, size \\ @size) do
+    {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(cover_data, size)
     Vix.Vips.Image.write_to_buffer(thumb, ".jpg")
   end
 

@@ -43,9 +43,11 @@ defmodule MusicLibrary.RecordsFixtures do
   ]
   # While it would be great to have this random, it's ok to use one single image
   @marbles_cover_data_path "#{__DIR__}/marillion-marbles.jpg"
+  @marbles_thumb_data_path "#{__DIR__}/marillion-marbles-thumb.jpg"
   @raven_cover_data_path "#{__DIR__}/steven-wilson-raven.jpg"
 
   def marbles_cover_fixture, do: @marbles_cover_data_path
+  def marbles_thumb_fixture, do: @marbles_thumb_data_path
   def raven_cover_fixture, do: @raven_cover_data_path
 
   def record_fixture(attrs \\ %{}) do
