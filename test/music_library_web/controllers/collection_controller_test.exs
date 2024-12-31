@@ -31,7 +31,9 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
                "artists" => ["Steven Wilson"],
                "title" => record.title,
                "cover_url" =>
-                 "http://localhost:4002/api/covers/#{record.id}?vsn=#{record.cover_hash}"
+                 "http://localhost:4002/api/covers/#{record.id}?vsn=#{record.cover_hash}",
+               "thumb_url" =>
+                 "http://localhost:4002/api/covers/#{record.id}?vsn=#{record.cover_hash}&size=480"
              }
     end
   end
