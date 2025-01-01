@@ -96,4 +96,15 @@ defmodule MusicLibrary.CollectionTest do
       assert expected_record.id == most_recent_purchase.id
     end
   end
+
+  describe "get_random_record!/0" do
+    setup [:fill_collection]
+
+    test "returns a random record", %{collection: collection} do
+      random_record = Collection.get_latest_record!()
+      collection_ids = Enum.map(collection, & &1.id)
+
+      assert random_record.id in collection_ids
+    end
+  end
 end
