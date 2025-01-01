@@ -1,5 +1,6 @@
 defmodule MusicLibraryWeb.Router do
   use MusicLibraryWeb, :router
+  use ErrorTracker.Web, :router
 
   import MusicLibraryWeb.Auth, only: [require_logged_in: 2, require_api_token: 2]
 
@@ -71,6 +72,8 @@ defmodule MusicLibraryWeb.Router do
 
     scope "/dev" do
       pipe_through [:browser, :logged_in]
+
+      error_tracker_dashboard("/errors")
 
       live_dashboard "/dashboard",
         metrics: MusicLibraryWeb.Telemetry,

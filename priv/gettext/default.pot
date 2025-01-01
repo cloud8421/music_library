@@ -123,7 +123,7 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex:29
+#: lib/music_library_web/components/layouts/app.html.heex:32
 #, elixir-autogen, elixir-format
 msgid "Logout"
 msgstr ""
@@ -513,4 +513,9 @@ msgstr ""
 #: lib/music_library_web/live/collection_live/index.html.heex:24
 #, elixir-autogen, elixir-format
 msgid "A->Z"
+msgstr ""
+
+#: lib/music_library_web/components/layouts/app.html.heex:29
+#, elixir-autogen, elixir-format
+msgid "Errors"
 msgstr ""
