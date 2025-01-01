@@ -43,39 +43,39 @@ defmodule MusicLibraryWeb.RecordComponents do
             </h2>
             <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
               {Records.Record.format_release(record.release)}
-              <span class="sm:hidden">
-                · {Records.Record.format_long_label(record.format)} · {Records.Record.type_long_label(
-                  record.type
-                )}
-                <span :if={Records.Record.child_release_groups_count(record) > 0}>
-                  ·
-                  <span class="sr-only">
-                    {gettext("Number of included records")}
-                  </span>
-                  <span class={[
-                    "inline-flex items-center rounded-full",
-                    "px-2 py-1 text-xs font-medium",
-                    "ring-1 ring-inset",
-                    "bg-gray-50 dark:bg-gray-400/10",
-                    "text-gray-600 dark:text-gray-500",
-                    "ring-gray-500/10 dark:ring-gray-400/20"
-                  ]}>
-                    {Records.Record.child_release_groups_count(record)}
-                  </span>
+            </p>
+            <p class="sm:hidden mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+              {Records.Record.format_long_label(record.format)} · {Records.Record.type_long_label(
+                record.type
+              )}
+              <span :if={Records.Record.child_release_groups_count(record) > 0}>
+                ·
+                <span class="sr-only">
+                  {gettext("Number of included records")}
                 </span>
-                <span :if={record.purchased_at}>
-                  ·
-                  <span class="sr-only">
-                    {gettext("Purchased on")}
-                  </span>
-                  <.icon
-                    name="hero-banknotes"
-                    class="-mt-1 h-4 w-4"
-                    aria-hidden="true"
-                    data-slot="icon"
-                  />
-                  {Records.Record.format_purchased_at(record.purchased_at)}
+                <span class={[
+                  "inline-flex items-center rounded-full",
+                  "px-2 py-1 text-xs font-medium",
+                  "ring-1 ring-inset",
+                  "bg-gray-50 dark:bg-gray-400/10",
+                  "text-gray-600 dark:text-gray-500",
+                  "ring-gray-500/10 dark:ring-gray-400/20"
+                ]}>
+                  {Records.Record.child_release_groups_count(record)}
                 </span>
+              </span>
+              <span :if={record.purchased_at}>
+                ·
+                <span class="sr-only">
+                  {gettext("Purchased on")}
+                </span>
+                <.icon
+                  name="hero-banknotes"
+                  class="-mt-1 h-4 w-4"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+                {Records.Record.format_purchased_at(record.purchased_at)}
               </span>
             </p>
           </div>

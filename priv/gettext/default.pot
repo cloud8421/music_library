@@ -181,7 +181,7 @@ msgstr ""
 msgid "Purchased at"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:69
+#: lib/music_library_web/components/record_components.ex:70
 #: lib/music_library_web/components/record_components.ex:108
 #: lib/music_library_web/live/collection_live/show.html.heex:181
 #, elixir-autogen, elixir-format
@@ -357,7 +357,7 @@ msgstr ""
 msgid "Wishlisted"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:53
+#: lib/music_library_web/components/record_components.ex:54
 #: lib/music_library_web/components/record_components.ex:92
 #, elixir-autogen, elixir-format
 msgid "Number of included records"
