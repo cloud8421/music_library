@@ -50,14 +50,14 @@ defmodule MusicLibrary.Collection do
     Repo.one!(q)
   end
 
-  def collected_release_ids(release_ids) do
+  def collected_releases(release_ids) do
     q =
       from r in fragment("records, json_each(records.release_ids)"),
         where: r.value in ^release_ids,
         where: fragment("records.purchased_at IS NOT NULL"),
-        select: r.value
+        select: %{record_id: fragment("records.id"), release_id: r.value}
 
-    q |> Repo.all() |> MapSet.new()
+    q |> Repo.all()
   end
 
   defp base_search do

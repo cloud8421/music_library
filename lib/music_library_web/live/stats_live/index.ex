@@ -88,7 +88,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   defp assign_scrobble_activity(socket, recent_tracks) do
     recent_release_ids = recent_release_ids(recent_tracks)
 
-    collected_release_ids = Collection.collected_release_ids(recent_release_ids)
+    collected_releases = Collection.collected_releases(recent_release_ids)
     wishlisted_release_ids = Wishlist.wishlisted_release_ids(recent_release_ids)
 
     all_artist_ids = Artists.get_all_artist_ids()
@@ -96,7 +96,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     artist_ids = MapSet.intersection(all_artist_ids, recent_artist_ids)
 
     assign(socket,
-      collected_release_ids: collected_release_ids,
+      collected_releases: collected_releases,
       wishlisted_release_ids: wishlisted_release_ids,
       artist_ids: artist_ids
     )
@@ -115,6 +115,12 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     |> Enum.uniq()
     |> Enum.reject(fn musicbrainz_id -> musicbrainz_id == "" end)
     |> MapSet.new()
+  end
+
+  defp collected_record?(collected_releases, r_id) do
+    Enum.find_value(collected_releases, fn %{record_id: record_id, release_id: release_id} ->
+      if release_id == r_id, do: record_id
+    end)
   end
 
   # The Tailwind build step requires all needed classes to be explicitly referenced
