@@ -30,3 +30,13 @@ HTTP 401
 GET {{cover-url}}
 Authorization: Bearer {{api_token}}
 HTTP 200
+
+# Dev routes are behind authentication
+
+# Live Dashboard
+GET https://music-library.claudio-ortolina.org/dev/dashboard
+HTTP 302
+
+# Error Tracker
+GET https://music-library.claudio-ortolina.org/dev/errors
+HTTP 302
