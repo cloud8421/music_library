@@ -50,6 +50,17 @@ defmodule MusicLibrary.Collection do
     Repo.one!(q)
   end
 
+  def get_random_record! do
+    q =
+      from r in Record,
+        where: not is_nil(r.purchased_at),
+        order_by: fragment("RANDOM()"),
+        limit: 1,
+        select: ^Records.essential_fields()
+
+    Repo.one!(q)
+  end
+
   def collected_releases(release_ids) do
     q =
       from r in fragment("records, json_each(records.release_ids)"),

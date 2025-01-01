@@ -58,6 +58,7 @@ defmodule MusicLibraryWeb.Router do
     pipe_through :api
 
     get "/collection/latest", CollectionController, :latest
+    get "/collection/random", CollectionController, :random
     get "/covers/:record_id", CoverController, :show
   end
 

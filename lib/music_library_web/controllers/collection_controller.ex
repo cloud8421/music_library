@@ -8,4 +8,10 @@ defmodule MusicLibraryWeb.CollectionController do
 
     render(conn, :show, record: latest_record)
   end
+
+  def random(conn, _params) do
+    random_record = Collection.get_random_record!()
+
+    render(conn, :show, record: random_record)
+  end
 end
