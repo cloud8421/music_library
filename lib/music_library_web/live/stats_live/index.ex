@@ -89,7 +89,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     recent_release_ids = recent_release_ids(recent_tracks)
 
     collected_releases = Collection.collected_releases(recent_release_ids)
-    wishlisted_release_ids = Wishlist.wishlisted_release_ids(recent_release_ids)
+    wishlisted_releases = Wishlist.wishlisted_releases(recent_release_ids)
 
     all_artist_ids = Artists.get_all_artist_ids()
     recent_artist_ids = recent_artist_ids(recent_tracks)
@@ -97,7 +97,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
     assign(socket,
       collected_releases: collected_releases,
-      wishlisted_release_ids: wishlisted_release_ids,
+      wishlisted_releases: wishlisted_releases,
       artist_ids: artist_ids
     )
   end
@@ -117,8 +117,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     |> MapSet.new()
   end
 
-  defp collected_record?(collected_releases, r_id) do
-    Enum.find_value(collected_releases, fn %{record_id: record_id, release_id: release_id} ->
+  defp tracked_record?(releases, r_id) do
+    Enum.find_value(releases, fn %{record_id: record_id, release_id: release_id} ->
       if release_id == r_id, do: record_id
     end)
   end

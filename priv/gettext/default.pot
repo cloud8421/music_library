@@ -340,7 +340,7 @@ msgid "Scrobble activity"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/import_component.ex:80
-#: lib/music_library_web/live/stats_live/index.html.heex:191
+#: lib/music_library_web/live/stats_live/index.html.heex:193
 #, elixir-autogen, elixir-format
 msgid "Choose which format to import"
 msgstr ""
@@ -350,7 +350,7 @@ msgstr ""
 msgid "Collected"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:171
+#: lib/music_library_web/live/stats_live/index.html.heex:172
 #, elixir-autogen, elixir-format
 msgid "Wishlisted"
 msgstr ""
