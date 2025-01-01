@@ -63,6 +63,19 @@ defmodule MusicLibraryWeb.RecordComponents do
                     {Records.Record.child_release_groups_count(record)}
                   </span>
                 </span>
+                <span :if={record.purchased_at}>
+                  ·
+                  <span class="sr-only">
+                    {gettext("Purchased on")}
+                  </span>
+                  <.icon
+                    name="hero-banknotes"
+                    class="-mt-1 h-4 w-4"
+                    aria-hidden="true"
+                    data-slot="icon"
+                  />
+                  {Records.Record.format_purchased_at(record.purchased_at)}
+                </span>
               </span>
             </p>
           </div>
@@ -89,6 +102,13 @@ defmodule MusicLibraryWeb.RecordComponents do
                   {Records.Record.child_release_groups_count(record)}
                 </span>
               </span>
+            </p>
+            <p :if={record.purchased_at} class="text-xs leading-6 text-zinc-900 dark:text-zinc-300">
+              <span class="sr-only">
+                {gettext("Purchased on")}
+              </span>
+              <.icon name="hero-banknotes" class="-mt-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
+              {Records.Record.format_purchased_at(record.purchased_at)}
             </p>
           </div>
           <%!-- TODO: replace with OSS version --%>

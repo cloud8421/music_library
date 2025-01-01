@@ -69,6 +69,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         assert record_row_html =~ Record.type_long_label(record.type)
         assert record_row_html =~ record.release
         assert record_row_html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+        assert record_row_html =~ Record.format_purchased_at(record.purchased_at)
 
         for artist <- record.artists do
           assert record_row_html =~ escape(artist.name)
