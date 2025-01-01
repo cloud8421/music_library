@@ -4,6 +4,7 @@ defmodule MusicLibraryWeb.CoverController do
   alias MusicLibrary.Records
   alias MusicLibrary.Records.Cover
 
+  # 24 hours in seconds
   @cache_duration 60 * 60 * 24
 
   def show(conn, %{"record_id" => record_id, "size" => size}) do
@@ -42,14 +43,12 @@ defmodule MusicLibraryWeb.CoverController do
     |> text("Not found")
   end
 
-  # 24 hours
   defp extend_cache(conn) do
     conn
     |> put_resp_header("cache-control", "public, max-age=#{@cache_duration}")
     |> send_resp(304, "")
   end
 
-  # 24 hours
   defp respond_with_cache(conn, cover_data, etag) do
     conn
     |> put_resp_content_type("image/jpeg", "utf-8")
