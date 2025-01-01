@@ -53,16 +53,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                 <span class="sr-only">
                   {gettext("Number of included records")}
                 </span>
-                <span class={[
-                  "inline-flex items-center rounded-full",
-                  "px-2 py-1 text-xs font-medium",
-                  "ring-1 ring-inset",
-                  "bg-gray-50 dark:bg-gray-400/10",
-                  "text-gray-600 dark:text-gray-500",
-                  "ring-gray-500/10 dark:ring-gray-400/20"
-                ]}>
-                  {Records.Record.child_release_groups_count(record)}
-                </span>
+                <.round_badge text={Records.Record.child_release_groups_count(record)} />
               </span>
               <span :if={record.purchased_at}>
                 ·
@@ -91,16 +82,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                 <span class="sr-only">
                   {gettext("Number of included records")}
                 </span>
-                <span class={[
-                  "inline-flex items-center rounded-full",
-                  "px-2 py-1 text-xs font-medium",
-                  "ring-1 ring-inset",
-                  "bg-gray-50 dark:bg-gray-400/10",
-                  "text-gray-600 dark:text-gray-500",
-                  "ring-gray-500/10 dark:ring-gray-400/20"
-                ]}>
-                  {Records.Record.child_release_groups_count(record)}
-                </span>
+                <.round_badge text={Records.Record.child_release_groups_count(record)} />
               </span>
             </p>
             <p :if={record.purchased_at} class="text-xs leading-6 text-zinc-900 dark:text-zinc-300">

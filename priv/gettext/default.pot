@@ -16,7 +16,7 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:199
+#: lib/music_library_web/components/record_components.ex:181
 #: lib/music_library_web/live/collection_live/show.html.heex:127
 #: lib/music_library_web/live/wishlist_live/show.html.heex:144
 #, elixir-autogen, elixir-format
@@ -43,14 +43,14 @@ msgstr ""
 msgid "Cover art"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:201
+#: lib/music_library_web/components/record_components.ex:183
 #: lib/music_library_web/live/collection_live/show.html.heex:135
 #: lib/music_library_web/live/wishlist_live/show.html.heex:152
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:179
+#: lib/music_library_web/components/record_components.ex:161
 #: lib/music_library_web/live/collection_live/show.ex:139
 #: lib/music_library_web/live/collection_live/show.html.heex:70
 #: lib/music_library_web/live/wishlist_live/show.ex:136
@@ -151,7 +151,7 @@ msgstr ""
 msgid "No results"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:124
+#: lib/music_library_web/components/record_components.ex:106
 #: lib/music_library_web/live/collection_live/show.html.heex:38
 #: lib/music_library_web/live/wishlist_live/show.html.heex:38
 #, elixir-autogen, elixir-format
@@ -169,7 +169,7 @@ msgstr ""
 msgid "Previous"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:190
+#: lib/music_library_web/components/record_components.ex:172
 #: lib/music_library_web/live/collection_live/index.html.heex:42
 #: lib/music_library_web/live/wishlist_live/show.html.heex:135
 #, elixir-autogen, elixir-format
@@ -181,8 +181,8 @@ msgstr ""
 msgid "Purchased at"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:70
-#: lib/music_library_web/components/record_components.ex:108
+#: lib/music_library_web/components/record_components.ex:61
+#: lib/music_library_web/components/record_components.ex:90
 #: lib/music_library_web/live/collection_live/show.html.heex:181
 #, elixir-autogen, elixir-format
 msgid "Purchased on"
@@ -217,7 +217,7 @@ msgstr ""
 msgid "Saving..."
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:221
+#: lib/music_library_web/components/record_components.ex:203
 #, elixir-autogen, elixir-format
 msgid "Search"
 msgstr ""
@@ -232,7 +232,7 @@ msgstr ""
 msgid "Search for records"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:159
+#: lib/music_library_web/components/record_components.ex:141
 #: lib/music_library_web/live/collection_live/show.ex:138
 #: lib/music_library_web/live/wishlist_live/show.ex:135
 #, elixir-autogen, elixir-format
@@ -295,7 +295,7 @@ msgstr ""
 msgid "Updated at"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:169
+#: lib/music_library_web/components/record_components.ex:151
 #, elixir-autogen, elixir-format
 msgid "View on MusicBrainz"
 msgstr ""
@@ -358,7 +358,7 @@ msgid "Wishlisted"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex:54
-#: lib/music_library_web/components/record_components.ex:92
+#: lib/music_library_web/components/record_components.ex:83
 #, elixir-autogen, elixir-format
 msgid "Number of included records"
 msgstr ""

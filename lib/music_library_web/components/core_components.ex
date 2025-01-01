@@ -621,6 +621,26 @@ defmodule MusicLibraryWeb.CoreComponents do
     """
   end
 
+  @doc """
+  Renders a round badge.
+  """
+  attr :text, :string, required: true
+
+  def round_badge(assigns) do
+    ~H"""
+    <span class={[
+      "inline-flex items-center rounded-full",
+      "px-2 py-1 text-xs font-medium",
+      "ring-1 ring-inset",
+      "bg-gray-50 dark:bg-gray-400/10",
+      "text-gray-600 dark:text-gray-500",
+      "ring-gray-500/10 dark:ring-gray-400/20"
+    ]}>
+      {assigns.text}
+    </span>
+    """
+  end
+
   ## JS Commands
 
   def show(js \\ %JS{}, selector) do
