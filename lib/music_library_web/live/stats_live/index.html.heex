@@ -151,8 +151,10 @@
           <div
             :if={
               track.album.musicbrainz_id !== "" and
-                !tracked_record?(@collected_releases, track.album.musicbrainz_id) and
-                !tracked_record?(@wishlisted_releases, track.album.musicbrainz_id)
+                !tracked_record?(
+                  @collected_releases ++ @wishlisted_releases,
+                  track.album.musicbrainz_id
+                )
             }
             class="relative flex-none"
           >
