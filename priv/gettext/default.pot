@@ -30,7 +30,7 @@ msgid "Choose a value"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:14
-#: lib/music_library_web/live/artist_live/show.html.heex:73
+#: lib/music_library_web/live/artist_live/show.html.heex:64
 #: lib/music_library_web/live/collection_live/index.ex:83
 #: lib/music_library_web/live/collection_live/show.ex:115
 #: lib/music_library_web/live/collection_live/show.ex:132
@@ -306,7 +306,7 @@ msgid "Welcome to your Music Library"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:20
-#: lib/music_library_web/live/artist_live/show.html.heex:128
+#: lib/music_library_web/live/artist_live/show.html.heex:110
 #: lib/music_library_web/live/wishlist_live/index.ex:83
 #: lib/music_library_web/live/wishlist_live/show.ex:129
 #, elixir-autogen, elixir-format
@@ -433,8 +433,8 @@ msgstr ""
 msgid "Dev dashboard"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex:108
-#: lib/music_library_web/live/artist_live/show.html.heex:163
+#: lib/music_library_web/live/artist_live/show.html.heex:90
+#: lib/music_library_web/live/artist_live/show.html.heex:136
 #, elixir-autogen, elixir-format
 msgid "View details"
 msgstr ""
@@ -444,12 +444,12 @@ msgstr ""
 msgid "Number of scrobbles"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex:66
+#: lib/music_library_web/live/artist_live/show.html.heex:57
 #, elixir-autogen, elixir-format
 msgid "Biography"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex:48
+#: lib/music_library_web/live/artist_live/show.html.heex:39
 #, elixir-autogen, elixir-format
 msgid "Loading biography"
 msgstr ""
@@ -489,8 +489,8 @@ msgstr ""
 msgid "Refresh cover"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex:76
-#: lib/music_library_web/live/artist_live/show.html.heex:131
+#: lib/music_library_web/live/artist_live/show.html.heex:67
+#: lib/music_library_web/live/artist_live/show.html.heex:113
 #, elixir-autogen, elixir-format
 msgid "Number of albums"
 msgstr ""
@@ -500,7 +500,7 @@ msgstr ""
 msgid "Records"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex:59
+#: lib/music_library_web/live/artist_live/show.html.heex:50
 #, elixir-autogen, elixir-format
 msgid "Error loading biography"
 msgstr ""

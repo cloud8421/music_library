@@ -24,20 +24,11 @@
           {gettext("Error loading play count")}
         </div>
       </:failed>
-      <span :if={artist_info.play_count > 0}>
+      <span :if={artist_info.play_count > 0} class="ml-2">
         <span class="sr-only">
           {gettext("Number of scrobbles")}
         </span>
-        <span class={[
-          "rounded-full ml-2",
-          "px-2 py-1 text-xs font-medium",
-          "ring-1 ring-inset",
-          "bg-gray-50 dark:bg-gray-400/10",
-          "text-gray-600 dark:text-gray-500",
-          "ring-gray-500/10 dark:ring-gray-400/20"
-        ]}>
-          {artist_info.play_count}
-        </span>
+        <.round_badge text={artist_info.play_count} />
       </span>
     </.async_result>
   </h1>
@@ -71,20 +62,11 @@
   <div :if={@artist_records.collection !== []} class="mt-4">
     <h2 class="flex items-end font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300">
       {gettext("Collection")}
-      <span>
+      <span class="ml-2">
         <span class="sr-only">
           {gettext("Number of albums")}
         </span>
-        <span class={[
-          "rounded-full ml-2",
-          "px-2 py-1 text-xs font-medium",
-          "ring-1 ring-inset",
-          "bg-gray-50 dark:bg-gray-400/10",
-          "text-gray-600 dark:text-gray-500",
-          "ring-gray-500/10 dark:ring-gray-400/20"
-        ]}>
-          {Enum.count(@artist_records.collection)}
-        </span>
+        <.round_badge text={Enum.count(@artist_records.collection)} />
       </span>
     </h2>
     <%!-- TODO: replace with OSS version --%>
@@ -130,16 +112,7 @@
         <span class="sr-only">
           {gettext("Number of albums")}
         </span>
-        <span class={[
-          "rounded-full ml-2",
-          "px-2 py-1 text-xs font-medium",
-          "ring-1 ring-inset",
-          "bg-gray-50 dark:bg-gray-400/10",
-          "text-gray-600 dark:text-gray-500",
-          "ring-gray-500/10 dark:ring-gray-400/20"
-        ]}>
-          {Enum.count(@artist_records.wishlist)}
-        </span>
+        <.round_badge text={Enum.count(@artist_records.wishlist)} />
       </span>
     </h2>
     <%!-- TODO: replace with OSS version --%>
