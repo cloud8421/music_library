@@ -632,9 +632,9 @@ defmodule MusicLibraryWeb.CoreComponents do
       "inline-flex items-center rounded-full",
       "px-2 py-1 text-xs font-medium",
       "ring-1 ring-inset",
-      "bg-gray-50 dark:bg-gray-400/10",
-      "text-gray-600 dark:text-gray-500",
-      "ring-gray-500/10 dark:ring-gray-400/20"
+      "bg-zinc-50 dark:bg-zinc-500/10",
+      "text-zinc-700 dark:text-zinc-400",
+      "ring-zinc-600/20 dark:ring-zinc-500/20"
     ]}>
       {assigns.text}
     </span>
