@@ -117,9 +117,9 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     |> MapSet.new()
   end
 
-  defp tracked_record?(releases, r_id) do
-    Enum.find_value(releases, fn %{record_id: record_id, release_id: release_id} ->
-      if release_id == r_id, do: record_id
+  defp tracked_record?(tracked_releases, release_id) do
+    Enum.find_value(tracked_releases, fn tracked_release ->
+      if tracked_release.release_id == release_id, do: tracked_release.record_id
     end)
   end
 
