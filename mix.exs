@@ -42,7 +42,7 @@ defmodule MusicLibrary.MixProject do
       {:yaml_elixir, "~> 2.11"},
       {:finch, "~> 0.19.0"},
       {:req, "~> 0.5.8"},
-      {:vix, "~> 0.31.1"},
+      {:vix, "~> 0.32.0"},
       {:nimble_parsec, "~> 1.4"},
       {:nimble_options, "~> 1.1"},
       {:phoenix_live_view, "~> 1.0.0"},
