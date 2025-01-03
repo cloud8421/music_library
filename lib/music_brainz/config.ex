@@ -1,5 +1,5 @@
 defmodule MusicBrainz.Config do
-  @type t :: %{
+  @type t :: %__MODULE__{
           api: module(),
           user_agent: String.t()
         }

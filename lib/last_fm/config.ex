@@ -1,5 +1,5 @@
 defmodule LastFm.Config do
-  @type t :: %{
+  @type t :: %__MODULE__{
           api: module(),
           api_key: String.t(),
           user: String.t(),
