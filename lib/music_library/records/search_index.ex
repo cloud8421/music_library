@@ -11,7 +11,7 @@ defmodule MusicLibrary.Records.SearchIndex do
   """
   use Ecto.Schema
 
-  @formats [:cd, :vinyl, :blu_ray, :dvd, :multi]
+  @formats [:cd, :backup, :vinyl, :blu_ray, :dvd, :multi]
   @types [:album, :ep, :live, :compilation, :single, :other]
 
   @primary_key {:id, :binary_id, autogenerate: false}

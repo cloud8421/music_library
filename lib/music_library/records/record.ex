@@ -4,7 +4,7 @@ defmodule MusicLibrary.Records.Record do
 
   alias MusicLibrary.Records.{Artist, Cover}
 
-  @formats [:cd, :vinyl, :blu_ray, :dvd, :multi]
+  @formats [:cd, :backup, :vinyl, :blu_ray, :dvd, :multi]
   @types [:album, :ep, :live, :compilation, :single, :other]
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -205,6 +205,7 @@ defmodule MusicLibrary.Records.Record do
   def formats, do: @formats
 
   def format_long_label(:cd), do: "CD"
+  def format_long_label(:backup), do: "Backup"
   def format_long_label(:vinyl), do: "Vinyl"
   def format_long_label(:blu_ray), do: "Blu-ray"
   def format_long_label(:dvd), do: "DVD"
