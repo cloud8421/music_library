@@ -1,7 +1,6 @@
 defmodule MusicLibraryWeb.WishlistLive.IndexTest do
   use MusicLibraryWeb.ConnCase
 
-  import Phoenix.LiveViewTest
   import MusicLibrary.RecordsFixtures
 
   defp fill_wishlist(_) do
@@ -16,13 +15,12 @@ defmodule MusicLibraryWeb.WishlistLive.IndexTest do
       conn: conn,
       wishlist: wishlist_records
     } do
-      {:ok, index_live, _html} = live(conn, ~p"/wishlist")
-
       record = Enum.random(wishlist_records)
 
-      index_live
-      |> element("#records-#{record.id} a", "Purchase")
-      |> render_click() =~ "Record updated successfully"
+      conn
+      |> visit(~p"/wishlist")
+      |> click_link("#records-#{record.id} a", "Purchase")
+      |> assert_has("p", text: "Record updated successfully")
 
       purchased_record = MusicLibrary.Records.get_record!(record.id)
 

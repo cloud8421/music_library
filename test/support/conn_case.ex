@@ -28,6 +28,7 @@ defmodule MusicLibraryWeb.ConnCase do
       import Plug.Conn
       import Phoenix.ConnTest
       import MusicLibraryWeb.ConnCase
+      import PhoenixTest
     end
   end
 

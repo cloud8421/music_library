@@ -29,6 +29,10 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     |> Phoenix.HTML.safe_to_string()
   end
 
+  defp human_datetime(dt) do
+    "#{dt.day}/#{dt.month}/#{dt.year}"
+  end
+
   describe "Collection" do
     setup [:fill_collection, :fill_wishlist]
 
@@ -36,44 +40,48 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       conn: conn,
       wishlist: wishlist_records
     } do
-      {:ok, index_live, _html} = live(conn, ~p"/collection")
+      session = visit(conn, ~p"/collection")
 
       for record <- wishlist_records do
-        refute has_element?(index_live, "#records-#{record.id}")
+        refute_has(session, "#records-#{record.id}")
       end
     end
 
-    test "shows purchased records", %{conn: conn, collection: records} do
-      {:ok, index_live, html} = live(conn, ~p"/collection")
+    test "shows purchased records (first page only)", %{conn: conn} do
+      # We fetch collection records to maintain consistent order
+      records = MusicLibrary.Collection.search_records("")
 
-      assert html =~ "Collection"
+      {expected_present, expected_absent} = Enum.split(records, @default_records_page_size)
 
-      {present, absent} =
-        Enum.split_with(records, fn record ->
-          html =~ record.id
-        end)
+      session = visit(conn, ~p"/collection")
 
-      assert length(present) == @default_records_page_size
-      assert length(absent) == @total_records - @default_records_page_size
-
-      for record <- present do
-        record_row =
-          index_live
-          |> with_target("#records-#{record.id}")
-
-        record_row_html = record_row |> render()
-
-        assert record_row_html =~ escape(record.title)
-        assert record_row_html =~ to_string(record.release)
-        assert record_row_html =~ Record.format_long_label(record.format)
-        assert record_row_html =~ Record.type_long_label(record.type)
-        assert record_row_html =~ record.release
-        assert record_row_html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
-        assert record_row_html =~ Record.format_purchased_at(record.purchased_at)
+      for record <- expected_present do
+        session
+        |> assert_has("#records-#{record.id}")
+        |> assert_has("#records-#{record.id} h2", text: escape(record.title))
+        |> assert_has("#records-#{record.id} p", text: record.release)
+        |> assert_has("#records-#{record.id} p", text: Record.format_long_label(record.format))
+        |> assert_has("#records-#{record.id} p", text: Record.type_long_label(record.type))
+        |> assert_has("#records-#{record.id} span", text: human_datetime(record.purchased_at))
 
         for artist <- record.artists do
-          assert record_row_html =~ escape(artist.name)
+          assert_has(session, "#records-#{record.id} a", text: escape(artist.name))
         end
+      end
+
+      session
+      |> unwrap(fn collection_view ->
+        html = render(collection_view)
+
+        for record <- expected_present do
+          assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+        end
+
+        html
+      end)
+
+      for record <- expected_absent do
+        refute_has(session, "#records-#{record.id}")
       end
     end
   end
@@ -81,41 +89,51 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   describe "Search and pagination" do
     setup [:fill_collection]
 
-    test "uses query string params", %{conn: conn, collection: records} do
-      {:ok, page_2_live, page_2_html} = live(conn, ~p"/collection?page=2&page_size=10")
+    test "uses query string params", %{conn: conn} do
+      # We fetch collection records to maintain consistent order
+      records = MusicLibrary.Collection.search_records("")
+      page_size = 10
 
-      {page_2_present, page_2_absent} =
-        Enum.split_with(records, fn record ->
-          page_2_html =~ record.id
-        end)
+      {page_1_records, rest_of_records} = Enum.split(records, page_size)
+      {page_2_records, rest_of_records} = Enum.split(rest_of_records, page_size)
 
-      assert length(page_2_present) == 10
-      assert length(page_2_absent) == @total_records - 10
+      page_2_session =
+        visit(conn, ~p"/collection?page=2&page_size=#{page_size}")
 
-      page_2_pagination = page_2_live |> with_target("#pagination")
-      refute has_element?(page_2_pagination, "a", "2")
-      assert has_element?(page_2_pagination, "a", "1")
-      assert has_element?(page_2_pagination, "a", "3")
+      for record <- page_1_records do
+        refute_has(page_2_session, "#records-#{record.id}")
+      end
 
-      {:ok, page_3_live, page_3_html} = live(conn, ~p"/collection?page=3&page_size=10")
+      for record <- page_2_records do
+        assert_has(page_2_session, "#records-#{record.id}")
+      end
 
-      {page_3_present, page_3_absent} =
-        Enum.split_with(records, fn record ->
-          page_3_html =~ record.id
-        end)
+      for record <- rest_of_records do
+        refute_has(page_2_session, "#records-#{record.id}")
+      end
 
-      assert length(page_3_present) == 10
-      assert length(page_3_absent) == @total_records - 10
+      page_2_session
+      |> assert_has("#bottom_pagination a", text: "1")
+      |> refute_has("#bottom_pagination a", text: "2")
+      |> assert_has("#bottom_pagination a", text: "3")
 
-      page_3_pagination = page_3_live |> with_target("#pagination")
-      refute has_element?(page_3_pagination, "a", "3")
-      assert has_element?(page_3_pagination, "a", "1")
-      assert has_element?(page_3_pagination, "a", "2")
+      {page_3_records, rest_of_records} = Enum.split(rest_of_records, page_size)
 
-      # All records in page 3 were not present in page 2
-      assert page_3_present -- page_2_absent == []
-      # All records in page 2 are not present in page 3
-      assert page_2_present -- page_3_absent == []
+      page_3_session =
+        visit(conn, ~p"/collection?page=3&page_size=#{page_size}")
+
+      for record <- page_3_records do
+        assert_has(page_3_session, "#records-#{record.id}")
+      end
+
+      for record <- rest_of_records do
+        refute_has(page_3_session, "#records-#{record.id}")
+      end
+
+      page_3_session
+      |> assert_has("#bottom_pagination a", text: "1")
+      |> assert_has("#bottom_pagination a", text: "2")
+      |> refute_has("#bottom_pagination a", text: "3")
     end
   end
 
@@ -125,23 +143,25 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     test "supports raw queries", %{conn: conn, collection: records} do
       [record | _rest] = records
       qs = [query: record.title]
-      {:ok, index_live, _html} = live(conn, ~p"/collection?#{qs}")
 
-      record_row =
-        index_live
-        |> with_target("#records-#{record.id}")
+      session =
+        visit(conn, ~p"/collection?#{qs}")
 
-      record_row_html = record_row |> render()
-
-      assert record_row_html =~ escape(record.title)
-      assert record_row_html =~ to_string(record.release)
-      assert record_row_html =~ Record.format_long_label(record.format)
-      assert record_row_html =~ Record.type_long_label(record.type)
-      assert record_row_html =~ record.release
-      assert record_row_html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+      session
+      |> assert_has("#records-#{record.id}")
+      |> assert_has("#records-#{record.id} h2", text: escape(record.title))
+      |> assert_has("#records-#{record.id} p", text: record.release)
+      |> assert_has("#records-#{record.id} p", text: Record.format_long_label(record.format))
+      |> assert_has("#records-#{record.id} p", text: Record.type_long_label(record.type))
+      |> assert_has("#records-#{record.id} span", text: human_datetime(record.purchased_at))
+      |> unwrap(fn collection_view ->
+        html = render(collection_view)
+        assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+        html
+      end)
 
       for artist <- record.artists do
-        assert record_row_html =~ escape(artist.name)
+        assert_has(session, "#records-#{record.id} a", text: escape(artist.name))
       end
     end
 
@@ -165,29 +185,30 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         page_size: @default_records_page_size
       ]
 
-      {:ok, index_live, _html} = live(conn, ~p"/collection?#{qs}")
+      session =
+        visit(conn, ~p"/collection?#{qs}")
 
       for record <- present do
-        record_row =
-          index_live
-          |> with_target("#records-#{record.id}")
-
-        record_row_html = record_row |> render()
-
-        assert record_row_html =~ escape(record.title)
-        assert record_row_html =~ to_string(record.release)
-        assert record_row_html =~ Record.format_long_label(record.format)
-        assert record_row_html =~ Record.type_long_label(record.type)
-        assert record_row_html =~ record.release
-        assert record_row_html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+        session
+        |> assert_has("#records-#{record.id}")
+        |> assert_has("#records-#{record.id} h2", text: escape(record.title))
+        |> assert_has("#records-#{record.id} p", text: record.release)
+        |> assert_has("#records-#{record.id} p", text: Record.format_long_label(record.format))
+        |> assert_has("#records-#{record.id} p", text: Record.type_long_label(record.type))
+        |> assert_has("#records-#{record.id} span", text: human_datetime(record.purchased_at))
+        |> unwrap(fn collection_view ->
+          html = render(collection_view)
+          assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+          html
+        end)
 
         for artist <- record.artists do
-          assert record_row_html =~ escape(artist.name)
+          assert_has(session, "#records-#{record.id} a", text: escape(artist.name))
         end
       end
 
       for record <- absent do
-        refute has_element?(index_live, "#records-#{record.id}")
+        refute_has(session, "#records-#{record.id}")
       end
     end
   end
@@ -196,79 +217,55 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     test "can navigate to the record edit form", %{conn: conn} do
       record = record_fixture()
 
-      {:ok, index_live, _html} = live(conn, ~p"/collection")
-
-      assert index_live
-             |> element("#records-#{record.id} a", "Edit")
-             |> render_click() =~ "Edit"
-
-      assert_patch(index_live, ~p"/collection/#{record}/edit")
-
-      assert index_live |> render() =~ "Edit"
+      conn
+      |> visit(~p"/collection")
+      |> click_link("#records-#{record.id} a", "Edit")
+      |> assert_has("h1", text: "Edit")
+      |> assert_path(~p"/collection/#{record}/edit")
     end
 
     test "can change the record cover", %{conn: conn} do
       record = record_fixture(cover_data: File.read!(marbles_cover_fixture()))
-      {:ok, form_live, html} = live(conn, ~p"/collection/#{record.id}/edit")
+      session = visit(conn, ~p"/collection/#{record.id}/edit")
 
-      assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+      session
+      |> unwrap(fn edit_view ->
+        html = render(edit_view)
+        assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+        html
+      end)
 
-      cover_metadata = cover_metadata(raven_cover_fixture())
+      session =
+        session
+        |> upload("Cover art", raven_cover_fixture())
+        |> click_button("Save")
+        |> assert_has("p", text: "Record updated successfully")
 
-      cover_input = file_input(form_live, "#record-form", :cover_data, [cover_metadata])
-
-      assert render_upload(cover_input, cover_metadata.name) =~ "100%"
-
-      list_html = form_live |> element("#record-form") |> render_submit()
-
-      assert list_html =~ "Record updated successfully"
+      updated_cover = MusicLibrary.Records.get_cover(record.id)
+      assert updated_cover.cover_hash !== record.cover_hash
 
       # We trigger another render to force the list view to update
       # and display the new cover
-      list_html = form_live |> render()
-
-      updated_cover = MusicLibrary.Records.get_cover(record.id)
-
-      assert updated_cover.cover_hash !== record.cover_hash
-
-      assert list_html =~ ~p"/covers/#{record.id}?vsn=#{updated_cover.cover_hash}"
-    end
-
-    defp cover_metadata(path) do
-      stat = File.stat!(path)
-
-      %{
-        last_modified:
-          stat.mtime
-          |> NaiveDateTime.from_erl!()
-          |> DateTime.from_naive!("Etc/UTC")
-          |> DateTime.to_unix(),
-        name: Path.basename(path),
-        content: File.read!(path),
-        size: stat.size,
-        type: "image/jpeg"
-      }
+      session
+      |> unwrap(fn collection_view ->
+        html = render(collection_view)
+        assert html =~ ~p"/covers/#{record.id}?vsn=#{updated_cover.cover_hash}"
+        html
+      end)
     end
   end
 
   describe "Importing a new record" do
     test "it shows the import modal", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/collection")
-
-      import_dialog =
-        index_live
-        |> element("a", "Import")
-        |> render_click()
-
-      assert import_dialog =~ "Search for a record on MusicBrainz"
-      assert import_dialog =~ "No results"
-
-      assert_patch(index_live, ~p"/collection/import")
+      conn
+      |> visit(~p"/collection")
+      |> click_link("Import")
+      |> assert_has("label", text: "Search for a record on MusicBrainz")
+      |> assert_has("div", text: "No results")
+      |> assert_path(~p"/collection/import")
     end
 
     test "it imports a record when selected", %{conn: conn} do
-      {:ok, import_live, _html} = live(conn, ~p"/collection/import")
-
       mock_results = release_group_search_results()
 
       expect(APIBehaviourMock, :search_release_group, fn "Marillion Marbles",
@@ -277,16 +274,16 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         {:ok, mock_results}
       end)
 
-      assert import_live
-             |> element("#import_form")
-             |> render_change(%{mb_query: "Marillion Marbles"})
-
-      updated_list = import_live |> render()
+      session =
+        conn
+        |> visit(~p"/collection/import")
+        |> fill_in("Search for a record on MusicBrainz", with: "Marillion Marbles")
 
       for result <- mock_results do
-        assert updated_list =~ result.title
-        assert updated_list =~ Record.format_release(result.release)
-        assert updated_list =~ result.artists
+        session
+        |> assert_has("h1", text: result.artists)
+        |> assert_has("h2", text: result.title)
+        |> assert_has("p", text: Record.format_release(result.release))
       end
 
       first_result = hd(mock_results)
@@ -304,9 +301,9 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         {:ok, cover_data}
       end)
 
-      import_live
-      |> element("#musicbrainz_#{first_result_id} a", "CD")
-      |> render_click()
+      session =
+        session
+        |> click_link("#musicbrainz_#{first_result_id} a", "CD")
 
       [record] = MusicLibrary.Repo.all(MusicLibrary.Records.Record)
 
@@ -346,7 +343,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
                musicbrainz_id: "1932f5b6-0b7b-4050-b1df-833ca89e5f44"
              } = marillion
 
-      assert_redirect(import_live, ~p"/collection/#{record.id}")
+      assert_path(session, ~p"/collection/#{record.id}")
     end
   end
 end

@@ -19,13 +19,11 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
     test "can navigate to the record edit form", %{conn: conn} do
       record = record_fixture()
 
-      {:ok, show_live, _html} = live(conn, ~p"/collection/#{record.id}")
-
-      assert show_live
-             |> element("a", "Edit")
-             |> render_click() =~ "Edit"
-
-      assert_patch(show_live, ~p"/collection/#{record}/show/edit")
+      conn
+      |> visit(~p"/collection/#{record.id}")
+      |> assert_has("a", text: "Edit")
+      |> click_link("Edit")
+      |> assert_path(~p"/collection/#{record}/show/edit")
     end
   end
 
@@ -33,19 +31,24 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
     test "it includes all needed information", %{conn: conn} do
       record = record_fixture()
 
-      {:ok, _show_live, html} = live(conn, ~p"/collection/#{record.id}")
-
-      assert html =~ escape(record.title)
-      assert html =~ to_string(record.release)
-      assert html =~ Record.format_long_label(record.format)
-      assert html =~ record.release
-      assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
-      assert html =~ human_datetime(record.purchased_at)
-      assert html =~ human_datetime(record.inserted_at)
-      assert html =~ human_datetime(record.updated_at)
+      session =
+        conn
+        |> visit(~p"/collection/#{record.id}")
+        |> assert_has("h2", text: escape(record.title))
+        |> assert_has("p", text: record.release)
+        |> assert_has("p", text: Record.format_long_label(record.format))
+        |> assert_has("p", text: Record.type_long_label(record.type))
+        |> assert_has("dd", text: human_datetime(record.purchased_at))
+        |> assert_has("dd", text: human_datetime(record.inserted_at))
+        |> assert_has("dd", text: human_datetime(record.updated_at))
+        |> unwrap(fn show_view ->
+          html = render(show_view)
+          assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+          html
+        end)
 
       for artist <- record.artists do
-        assert html =~ escape(artist.name)
+        assert_has(session, "a", text: escape(artist.name))
       end
     end
   end

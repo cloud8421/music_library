@@ -80,6 +80,9 @@ defmodule MusicLibrary.MixProject do
 
       # Data validation
       {:nimble_options, "~> 1.1"},
+
+      # Test tooling
+      {:phoenix_test, "~> 0.5.1", only: :test},
       {:floki, ">= 0.30.0", only: :test},
       {:mox, "~> 1.2", only: :test},
 

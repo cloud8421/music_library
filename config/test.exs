@@ -31,3 +31,5 @@ config :phoenix_live_view,
 config :music_library, dev_routes: true
 
 config :music_library, LastFm, auto_refresh: false
+
+config :phoenix_test, :endpoint, MusicLibraryWeb.Endpoint

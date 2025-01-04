@@ -43,16 +43,12 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
          |> Artist.from_api_response()}
       end)
 
-      {:ok, show_live, _html} = live(conn, ~p"/artists/#{artist_musicbrainz_id}")
-
-      render_async(show_live)
-
-      # play count
-      assert has_element?(show_live, "span", "123")
-
-      assert has_element?(show_live, "summary", "Biography")
-
-      assert element(show_live, "details")
+      conn
+      |> visit(~p"/artists/#{artist_musicbrainz_id}")
+      |> unwrap(&render_async/1)
+      |> assert_has("span", text: "123")
+      |> assert_has("summary", text: "Biography")
+      |> assert_has("details")
     end
 
     test "it gracefully handles errors in fetching bio and play count", %{
@@ -64,16 +60,13 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
         {:error, :timeout}
       end)
 
-      {:ok, show_live, _html} = live(conn, ~p"/artists/#{artist_musicbrainz_id}")
-
-      render_async(show_live)
-
-      # play count
-      refute has_element?(show_live, "span", "123")
-      assert has_element?(show_live, "div", "Error loading play count")
-
-      refute has_element?(show_live, "summary", "Biography")
-      assert has_element?(show_live, "div", "Error loading biography")
+      conn
+      |> visit(~p"/artists/#{artist_musicbrainz_id}")
+      |> unwrap(&render_async/1)
+      |> refute_has("span", text: "123")
+      |> refute_has("summary", text: "Biography")
+      |> assert_has("div", text: "Error loading play count")
+      |> assert_has("div", text: "Error loading biography")
     end
 
     test "it shows records from the collection and the wishlist", %{
@@ -96,19 +89,13 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
         {:error, :timeout}
       end)
 
-      {:ok, show_live, _html} = live(conn, ~p"/artists/#{artist_musicbrainz_id}")
-
-      render_async(show_live)
-
-      # collection records
-      assert has_element?(show_live, "#collection p", escape(collection_record.title))
-
-      # wishlist records
-      assert has_element?(show_live, "#wishlist p", escape(wishlist_record.title))
-
-      # other records
-      refute has_element?(show_live, "#collection p", escape(other_collection_record.title))
-      refute has_element?(show_live, "#wishlist p", escape(other_collection_record.title))
+      conn
+      |> visit(~p"/artists/#{artist_musicbrainz_id}")
+      |> unwrap(&render_async/1)
+      |> assert_has("#collection p", text: escape(collection_record.title))
+      |> assert_has("#wishlist p", text: escape(wishlist_record.title))
+      |> refute_has("#collection p", text: escape(other_collection_record.title))
+      |> refute_has("#wishlist p", text: escape(other_collection_record.title))
     end
   end
 end

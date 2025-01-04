@@ -4,7 +4,6 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
   alias MusicLibrary.{Records, Repo, Wishlist}
   alias MusicLibrary.Records.Record
   alias MusicBrainz.APIBehaviourMock
-  import Phoenix.LiveViewTest
   import MusicLibrary.RecordsFixtures
   import MusicLibrary.ReleaseGroupsFixtures
   import Mox
@@ -34,43 +33,45 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
       conn: conn,
       collection: collection
     } do
-      {:ok, stats_live, html} = live(conn, "/")
-
-      assert html =~ collection |> length() |> Integer.to_string()
+      session =
+        conn
+        |> visit("/")
+        |> assert_has("dd", text: collection |> length() |> Integer.to_string())
 
       collection
       |> Enum.frequencies_by(& &1.format)
       |> Enum.each(fn {format, count} ->
-        assert has_element?(stats_live, "a", to_string(count))
-        assert has_element?(stats_live, "dt", Record.format_long_label(format))
+        assert_has(session, "a", text: to_string(count))
+        assert_has(session, "dt", text: Record.format_long_label(format))
       end)
 
       collection
       |> Enum.frequencies_by(& &1.type)
       |> Enum.each(fn {type, count} ->
-        assert has_element?(stats_live, "a", to_string(count))
-        assert has_element?(stats_live, "dt", Record.type_long_label(type))
+        assert_has(session, "a", text: to_string(count))
+        assert_has(session, "dt", text: Record.type_long_label(type))
       end)
     end
 
     test "it shows the latest purchase", %{conn: conn, collection: collection} do
       # purchased_at has second precision, so finding the latest purchased using then
-      # highest purchsed_at value doesn't work, as it picks the wrong value.
+      # highest purchased_at value doesn't work, as it picks the wrong value.
       latest_record = List.last(collection)
 
-      {:ok, _stats_live, html} = live(conn, "/")
-
-      assert html =~ escape(latest_record.title)
+      session =
+        conn
+        |> visit("/")
+        |> assert_has("span", text: escape(latest_record.title))
 
       for artist <- latest_record.artists do
-        assert html =~ escape(artist.name)
+        assert_has(session, "a", text: escape(artist.name))
       end
     end
 
     test "it shows the wishlist total count", %{conn: conn, wishlist: wishlist} do
-      {:ok, _stats_live, html} = live(conn, "/")
-
-      assert html =~ wishlist |> length() |> Integer.to_string()
+      conn
+      |> visit("/")
+      |> assert_has("dd", text: wishlist |> length() |> Integer.to_string())
     end
 
     test "it shows the scrobble activity", %{conn: conn} do
@@ -155,7 +156,8 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         in_murmuration_track
       ])
 
-      # We add one album to the wishlist, and one to the collection.
+      # We add one album to the wishlist, and one to the collection so that
+      # their status in the scrobble activity changes.
 
       _machinarium_soundtrack =
         record_fixture(purchased_at: nil)
@@ -167,33 +169,21 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         |> Records.change_record(%{release_ids: ["2157367e-bf73-48bb-8185-41023a54fa08"]})
         |> Repo.update!()
 
-      {:ok, stats_live, _html} = live(conn, "/")
+      session =
+        conn
+        |> visit("/")
+        |> assert_has("#track-#{machinarium_soundtrack_track.scrobbled_at_uts}",
+          text: "Wishlisted"
+        )
+        |> assert_has("#track-#{the_last_flight_track.scrobbled_at_uts}", text: "Collected")
+        |> assert_has("#track-#{the_mystery_of_time_track.scrobbled_at_uts}",
+          text: "Choose which format to import"
+        )
+        |> assert_has("#track-#{in_murmuration_track.scrobbled_at_uts}",
+          text: "No MB ID"
+        )
 
-      assert has_element?(
-               stats_live,
-               "#track-#{machinarium_soundtrack_track.scrobbled_at_uts}",
-               "Wishlisted"
-             )
-
-      assert has_element?(
-               stats_live,
-               "#track-#{the_last_flight_track.scrobbled_at_uts}",
-               "Collected"
-             )
-
-      assert has_element?(
-               stats_live,
-               "#track-#{the_mystery_of_time_track.scrobbled_at_uts}",
-               "Choose which format to import"
-             )
-
-      assert has_element?(
-               stats_live,
-               "#track-#{in_murmuration_track.scrobbled_at_uts}",
-               "No MB ID"
-             )
-
-      # We now try to import The Mystery of Time
+      # We now try to import The Mystery of Time.
 
       release = release(:mystery_of_time)
       release_id = release_id(:mystery_of_time)
@@ -216,16 +206,17 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         {:ok, cover_data}
       end)
 
-      stats_live
-      |> element(
-        "#track-#{the_mystery_of_time_track.scrobbled_at_uts} a",
-        "CD"
-      )
-      |> render_click()
+      assert [] == Wishlist.search_records("mbid:#{release_group_id}")
+
+      session =
+        session
+        |> click_link(
+          "#track-#{the_mystery_of_time_track.scrobbled_at_uts} a",
+          "CD"
+        )
 
       assert [wishlisted_record] = Wishlist.search_records("mbid:#{release_group_id}")
-
-      assert_redirected(stats_live, ~p"/wishlist/#{wishlisted_record.id}")
+      assert_path(session, ~p"/wishlist/#{wishlisted_record.id}")
     end
   end
 end
