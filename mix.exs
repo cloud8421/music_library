@@ -32,28 +32,28 @@ defmodule MusicLibrary.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      # Low-level tooling
+      {:jason, "~> 1.2"},
+      {:circular_buffer, "~> 0.4.1"},
+
+      # Translations
+      {:gettext, "~> 0.20"},
+
+      # Web Server
+      {:dns_cluster, "~> 0.1.1"},
+      {:bandit, "~> 1.5"},
       {:phoenix, "~> 1.7.14"},
+
+      # Database
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
       {:ecto_sqlite3, ">= 0.0.0"},
       {:ecto_sqlite3_extras, "~> 1.2.2"},
+
+      # UI
       {:phoenix_html, "~> 4.2"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:yaml_elixir, "~> 2.11"},
-      {:finch, "~> 0.19.0"},
-      {:req, "~> 0.5.8"},
-      {:vix, "~> 0.32.0"},
-      {:nimble_parsec, "~> 1.4"},
-      {:nimble_options, "~> 1.1"},
       {:phoenix_live_view, "~> 1.0.0"},
       {:phoenix_html_helpers, "~> 1.0"},
-      {:floki, ">= 0.30.0", only: :test},
-      {:mox, "~> 1.2", only: :test},
-      {:phoenix_live_dashboard, "~> 0.8.3"},
-      {:error_tracker, "~> 0.5.1"},
-      {:recon, "~> 2.5"},
-      {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
-      {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
       {:heroicons,
        github: "tailwindlabs/heroicons",
        tag: "v2.1.5",
@@ -61,13 +61,34 @@ defmodule MusicLibrary.MixProject do
        app: false,
        compile: false,
        depth: 1},
+
+      # Dev tooling
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
+
+      # HTTP Clients
+      {:finch, "~> 0.19.0"},
+      {:req, "~> 0.5.8"},
+
+      # Parsing
+      {:yaml_elixir, "~> 2.11"},
+      {:nimble_parsec, "~> 1.4"},
+
+      # Image manipulation
+      {:vix, "~> 0.32.0"},
+
+      # Data validation
+      {:nimble_options, "~> 1.1"},
+      {:floki, ">= 0.30.0", only: :test},
+      {:mox, "~> 1.2", only: :test},
+
+      # Prod error/perf tooling
+      {:phoenix_live_dashboard, "~> 0.8.3"},
+      {:error_tracker, "~> 0.5.1"},
+      {:recon, "~> 2.5"},
       {:telemetry_metrics, "~> 1.0"},
-      {:telemetry_poller, "~> 1.0"},
-      {:circular_buffer, "~> 0.4.1"},
-      {:gettext, "~> 0.20"},
-      {:jason, "~> 1.2"},
-      {:dns_cluster, "~> 0.1.1"},
-      {:bandit, "~> 1.5"}
+      {:telemetry_poller, "~> 1.0"}
     ]
   end
 
