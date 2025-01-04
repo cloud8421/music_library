@@ -38,6 +38,7 @@ defmodule MusicLibraryWeb.SessionControllerTest do
       refute session["logged_in"]
     end
 
+    @tag :logged_out
     test "it accepts a valid password", %{conn: conn} do
       valid_password =
         Application.get_env(:music_library, MusicLibraryWeb)
