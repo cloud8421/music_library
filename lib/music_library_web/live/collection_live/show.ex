@@ -138,10 +138,6 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   defp title_segment(:show), do: gettext("Show")
   defp title_segment(:edit), do: gettext("Edit")
 
-  defp human_datetime(dt) do
-    "#{dt.day}/#{dt.month}/#{dt.year}"
-  end
-
   defp toggle_actions_menu(record_id) do
     JS.toggle(to: "#actions-#{record_id}")
     |> JS.toggle_class("pointer-events-none", to: "#records > li")

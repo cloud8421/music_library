@@ -66,7 +66,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                   aria-hidden="true"
                   data-slot="icon"
                 />
-                {Records.Record.format_purchased_at(record.purchased_at)}
+                {Records.Record.format_as_date(record.purchased_at)}
               </span>
             </p>
           </div>
@@ -90,7 +90,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                 {gettext("Purchased on")}
               </span>
               <.icon name="hero-banknotes" class="-mt-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
-              {Records.Record.format_purchased_at(record.purchased_at)}
+              {Records.Record.format_as_date(record.purchased_at)}
             </p>
           </div>
           <%!-- TODO: replace with OSS version --%>

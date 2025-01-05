@@ -28,10 +28,6 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     |> Phoenix.HTML.safe_to_string()
   end
 
-  defp human_datetime(dt) do
-    "#{dt.day}/#{dt.month}/#{dt.year}"
-  end
-
   describe "Collection" do
     setup [:fill_collection, :fill_wishlist]
 
@@ -61,7 +57,9 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         |> assert_has("#records-#{record.id} p", text: record.release)
         |> assert_has("#records-#{record.id} p", text: Record.format_long_label(record.format))
         |> assert_has("#records-#{record.id} p", text: Record.type_long_label(record.type))
-        |> assert_has("#records-#{record.id} span", text: human_datetime(record.purchased_at))
+        |> assert_has("#records-#{record.id} span",
+          text: Record.format_as_date(record.purchased_at)
+        )
 
         for artist <- record.artists do
           assert_has(session, "#records-#{record.id} a", text: escape(artist.name))
@@ -152,7 +150,9 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       |> assert_has("#records-#{record.id} p", text: record.release)
       |> assert_has("#records-#{record.id} p", text: Record.format_long_label(record.format))
       |> assert_has("#records-#{record.id} p", text: Record.type_long_label(record.type))
-      |> assert_has("#records-#{record.id} span", text: human_datetime(record.purchased_at))
+      |> assert_has("#records-#{record.id} span",
+        text: Record.format_as_date(record.purchased_at)
+      )
       |> unwrap(fn collection_view ->
         html = render(collection_view)
         assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
@@ -194,7 +194,9 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         |> assert_has("#records-#{record.id} p", text: record.release)
         |> assert_has("#records-#{record.id} p", text: Record.format_long_label(record.format))
         |> assert_has("#records-#{record.id} p", text: Record.type_long_label(record.type))
-        |> assert_has("#records-#{record.id} span", text: human_datetime(record.purchased_at))
+        |> assert_has("#records-#{record.id} span",
+          text: Record.format_as_date(record.purchased_at)
+        )
         |> unwrap(fn collection_view ->
           html = render(collection_view)
           assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"

@@ -229,7 +229,7 @@ defmodule MusicLibrary.Records.Record do
     end
   end
 
-  def format_purchased_at(purchased_at) do
+  def format_as_date(purchased_at) do
     "#{purchased_at.day}/#{purchased_at.month}/#{purchased_at.year}"
   end
 
