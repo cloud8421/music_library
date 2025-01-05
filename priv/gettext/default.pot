@@ -53,7 +53,7 @@ msgstr ""
 #: lib/music_library_web/components/record_components.ex:161
 #: lib/music_library_web/live/collection_live/show.ex:139
 #: lib/music_library_web/live/collection_live/show.html.heex:70
-#: lib/music_library_web/live/wishlist_live/show.ex:136
+#: lib/music_library_web/live/wishlist_live/show.ex:137
 #: lib/music_library_web/live/wishlist_live/show.html.heex:70
 #, elixir-autogen, elixir-format
 msgid "Edit"
@@ -146,7 +146,7 @@ msgstr ""
 msgid "No cover selected"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/import_component.ex:45
+#: lib/music_library_web/live/record_live/import_component.ex:46
 #, elixir-autogen, elixir-format
 msgid "No results"
 msgstr ""
@@ -197,7 +197,7 @@ msgstr ""
 
 #: lib/music_library_web/live/record_live/form_component.ex:123
 #: lib/music_library_web/live/wishlist_live/index.ex:148
-#: lib/music_library_web/live/wishlist_live/show.ex:105
+#: lib/music_library_web/live/wishlist_live/show.ex:106
 #, elixir-autogen, elixir-format
 msgid "Record updated successfully"
 msgstr ""
@@ -222,19 +222,19 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/import_component.ex:23
+#: lib/music_library_web/live/record_live/import_component.ex:24
 #, elixir-autogen, elixir-format
 msgid "Search for a record on MusicBrainz"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/import_component.ex:24
+#: lib/music_library_web/live/record_live/import_component.ex:25
 #, elixir-autogen, elixir-format
 msgid "Search for records"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex:141
 #: lib/music_library_web/live/collection_live/show.ex:138
-#: lib/music_library_web/live/wishlist_live/show.ex:135
+#: lib/music_library_web/live/wishlist_live/show.ex:136
 #, elixir-autogen, elixir-format
 msgid "Show"
 msgstr ""
@@ -264,7 +264,7 @@ msgstr ""
 #: lib/music_library_web/live/collection_live/index.ex:21
 #: lib/music_library_web/live/collection_live/show.ex:12
 #: lib/music_library_web/live/wishlist_live/index.ex:21
-#: lib/music_library_web/live/wishlist_live/show.ex:10
+#: lib/music_library_web/live/wishlist_live/show.ex:11
 #, elixir-autogen, elixir-format
 msgid "The application has been updated, please reload."
 msgstr ""
@@ -308,7 +308,7 @@ msgstr ""
 #: lib/music_library_web/components/layouts/app.html.heex:20
 #: lib/music_library_web/live/artist_live/show.html.heex:72
 #: lib/music_library_web/live/wishlist_live/index.ex:83
-#: lib/music_library_web/live/wishlist_live/show.ex:129
+#: lib/music_library_web/live/wishlist_live/show.ex:130
 #, elixir-autogen, elixir-format
 msgid "Wishlist"
 msgstr ""
@@ -341,7 +341,7 @@ msgstr ""
 msgid "Scrobble activity"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/import_component.ex:80
+#: lib/music_library_web/live/record_live/import_component.ex:81
 #: lib/music_library_web/live/stats_live/index.html.heex:169
 #, elixir-autogen, elixir-format
 msgid "Choose which format to import"
@@ -370,13 +370,13 @@ msgid "Includes"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/show.ex:54
-#: lib/music_library_web/live/wishlist_live/show.ex:52
+#: lib/music_library_web/live/wishlist_live/show.ex:53
 #, elixir-autogen, elixir-format
 msgid "Error refreshing MusicBrainz data"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/show.ex:46
-#: lib/music_library_web/live/wishlist_live/show.ex:44
+#: lib/music_library_web/live/wishlist_live/show.ex:45
 #, elixir-autogen, elixir-format
 msgid "MusicBrainz data refreshed successfully"
 msgstr ""
@@ -387,12 +387,12 @@ msgid "Refresh LastFm Feed"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/show.ex:86
-#: lib/music_library_web/live/wishlist_live/show.ex:64
+#: lib/music_library_web/live/wishlist_live/show.ex:65
 #, elixir-autogen, elixir-format
 msgid "Cover refreshed successfully"
 msgstr ""
 
-#: lib/music_library_web/live/wishlist_live/show.ex:72
+#: lib/music_library_web/live/wishlist_live/show.ex:73
 #, elixir-autogen, elixir-format
 msgid "Error refreshing Cover"
 msgstr ""
@@ -459,13 +459,13 @@ msgid "Loading play count"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/show.ex:74
-#: lib/music_library_web/live/wishlist_live/show.ex:92
+#: lib/music_library_web/live/wishlist_live/show.ex:93
 #, elixir-autogen, elixir-format
 msgid "Error populating genres"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/show.ex:66
-#: lib/music_library_web/live/wishlist_live/show.ex:84
+#: lib/music_library_web/live/wishlist_live/show.ex:85
 #, elixir-autogen, elixir-format
 msgid "Genres populated successfully"
 msgstr ""

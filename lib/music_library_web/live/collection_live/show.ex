@@ -1,8 +1,8 @@
 defmodule MusicLibraryWeb.CollectionLive.Show do
   use MusicLibraryWeb, :live_view
 
+  import MusicLibraryWeb.RecordComponents, only: [toggle_actions_menu: 1, close_actions_menu: 1]
   alias Phoenix.LiveView.JS
-
   alias MusicLibrary.Records
 
   @impl true
@@ -137,14 +137,4 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
   defp title_segment(:show), do: gettext("Show")
   defp title_segment(:edit), do: gettext("Edit")
-
-  defp toggle_actions_menu(record_id) do
-    JS.toggle(to: "#actions-#{record_id}")
-    |> JS.toggle_class("pointer-events-none", to: "#records > li")
-  end
-
-  defp close_actions_menu(record_id) do
-    JS.hide(to: "#actions-#{record_id}")
-    |> JS.remove_class("pointer-events-none", to: "#records > li")
-  end
 end

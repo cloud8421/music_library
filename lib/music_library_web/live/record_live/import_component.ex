@@ -1,6 +1,7 @@
 defmodule MusicLibraryWeb.RecordLive.ImportComponent do
   use MusicLibraryWeb, :live_component
 
+  import MusicLibraryWeb.RecordComponents, only: [toggle_actions_menu: 1, close_actions_menu: 1]
   alias MusicLibrary.Records
 
   @impl true
@@ -151,15 +152,5 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
 
   defp search(mb_query) do
     Records.search_release_group(mb_query, limit: 10)
-  end
-
-  defp toggle_actions_menu(record_id) do
-    JS.toggle(to: "#actions-#{record_id}")
-    |> JS.toggle_class("pointer-events-none", to: "#records > li")
-  end
-
-  defp close_actions_menu(record_id) do
-    JS.hide(to: "#actions-#{record_id}")
-    |> JS.remove_class("pointer-events-none", to: "#records > li")
   end
 end

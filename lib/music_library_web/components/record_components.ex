@@ -209,12 +209,12 @@ defmodule MusicLibraryWeb.RecordComponents do
     """
   end
 
-  defp toggle_actions_menu(record_id) do
+  def toggle_actions_menu(record_id) do
     JS.toggle(to: "#actions-#{record_id}")
     |> JS.toggle_class("pointer-events-none", to: "#records > li")
   end
 
-  defp close_actions_menu(record_id) do
+  def close_actions_menu(record_id) do
     JS.hide(to: "#actions-#{record_id}")
     |> JS.remove_class("pointer-events-none", to: "#records > li")
   end
