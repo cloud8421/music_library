@@ -1,7 +1,6 @@
 defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   use MusicLibraryWeb.ConnCase
 
-  import Phoenix.LiveViewTest
   import MusicLibrary.RecordsFixtures
   import MusicLibrary.ReleaseGroupsFixtures
   import Mox

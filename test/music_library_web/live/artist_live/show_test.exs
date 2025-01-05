@@ -1,7 +1,6 @@
 defmodule MusicLibraryWeb.ArtistLive.ShowTest do
   use MusicLibraryWeb.ConnCase
 
-  import Phoenix.LiveViewTest
   import MusicLibrary.RecordsFixtures
   import LastFm.Fixtures
   import Mox

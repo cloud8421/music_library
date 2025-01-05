@@ -1,7 +1,6 @@
 defmodule MusicLibraryWeb.CollectionLive.ShowTest do
   use MusicLibraryWeb.ConnCase
 
-  import Phoenix.LiveViewTest
   import MusicLibrary.RecordsFixtures
   alias MusicLibrary.Records.Record
 
