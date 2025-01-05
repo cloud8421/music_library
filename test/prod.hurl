@@ -36,7 +36,9 @@ HTTP 200
 # Live Dashboard
 GET https://music-library.claudio-ortolina.org/dev/dashboard
 HTTP 302
+Location: /login
 
 # Error Tracker
 GET https://music-library.claudio-ortolina.org/dev/errors
 HTTP 302
+Location: /login
