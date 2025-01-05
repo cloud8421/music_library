@@ -2,7 +2,7 @@ defmodule Obsidian.Parser do
   alias Obsidian.Entry
 
   def from_file_contents(file_contents) do
-    with {:ok, [meta]} <- parse_frontmatter(file_contents) do
+    with {:ok, meta} <- parse_frontmatter(file_contents) do
       {:ok,
        %Entry{
          type: parse_subtype(meta["subType"]),
@@ -15,23 +15,18 @@ defmodule Obsidian.Parser do
     end
   end
 
-  defp parse_frontmatter(file_contents) do
-    case file_contents do
-      "---\n" <> rest ->
-        case String.split(rest, "\n---\n") do
-          [frontmatter, _] ->
-            case YamlElixir.read_all_from_string(frontmatter) do
-              {:ok, meta} -> {:ok, meta}
-              {:error, _} -> {:error, "Invalid frontmatter"}
-            end
-
-          _ ->
-            {:error, "Invalid frontmatter"}
-        end
-
+  defp parse_frontmatter("---\n" <> rest) do
+    with [frontmatter, _] <- String.split(rest, "\n---\n"),
+         {:ok, [meta]} <- YamlElixir.read_all_from_string(frontmatter) do
+      {:ok, meta}
+    else
       _ ->
         {:error, "Invalid frontmatter"}
     end
+  end
+
+  defp parse_frontmatter(_file_contents) do
+    {:error, "Invalid frontmatter"}
   end
 
   defp parse_subtype("Album"), do: :album
