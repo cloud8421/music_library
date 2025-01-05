@@ -306,7 +306,7 @@ msgid "Welcome to your Music Library"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:20
-#: lib/music_library_web/live/artist_live/show.html.heex:72
+#: lib/music_library_web/live/artist_live/show.html.heex:73
 #: lib/music_library_web/live/wishlist_live/index.ex:83
 #: lib/music_library_web/live/wishlist_live/show.ex:130
 #, elixir-autogen, elixir-format
@@ -407,7 +407,7 @@ msgstr ""
 msgid "No MB ID"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.ex:40
+#: lib/music_library_web/live/artist_live/show.ex:42
 #: lib/music_library_web/live/collection_live/show.ex:113
 #, elixir-autogen, elixir-format
 msgid "Details"
@@ -433,7 +433,7 @@ msgstr ""
 msgid "Dev dashboard"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/record_components.ex:41
+#: lib/music_library_web/live/artist_live/record_components.ex:43
 #, elixir-autogen, elixir-format
 msgid "View details"
 msgstr ""
@@ -513,7 +513,7 @@ msgstr ""
 msgid "Errors"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/record_components.ex:18
+#: lib/music_library_web/live/artist_live/record_components.ex:19
 #, elixir-autogen, elixir-format
 msgid "Number of records"
 msgstr ""

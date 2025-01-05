@@ -22,8 +22,10 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
      socket
      |> assign(:nav_section, :artists)
      |> assign(:artist, artist)
-     # TODO: make it a stream
-     |> assign(:artist_records, grouped_artist_records)
+     |> stream(:collection_records, grouped_artist_records.collection)
+     |> stream(:wishlist_records, grouped_artist_records.wishlist)
+     |> assign(:collection_records_count, Enum.count(grouped_artist_records.collection))
+     |> assign(:wishlist_records_count, Enum.count(grouped_artist_records.wishlist))
      |> assign_async(:artist_info, fn ->
        with {:ok, artist_info} <- Artists.get_artist_info(artist) do
          {:ok, %{artist_info: artist_info}}

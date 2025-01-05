@@ -60,18 +60,20 @@
   </.async_result>
 
   <.grid
-    :if={Enum.any?(@artist_records.collection)}
+    :if={@collection_records_count > 0}
     title={gettext("Collection")}
     id="collection"
-    records={@artist_records.collection}
+    records={@streams.collection_records}
+    records_count={@collection_records_count}
     record_path={fn record -> ~p"/collection/#{record}" end}
   />
 
   <.grid
-    :if={Enum.any?(@artist_records.wishlist)}
+    :if={@wishlist_records_count > 0}
     title={gettext("Wishlist")}
     id="wishlist"
-    records={@artist_records.wishlist}
+    records={@streams.wishlist_records}
+    records_count={@wishlist_records_count}
     record_path={fn record -> ~p"/wishlist/#{record}" end}
   />
 </div>
