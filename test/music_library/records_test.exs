@@ -1,5 +1,4 @@
 defmodule MusicLibrary.RecordsTest do
-  alias MusicLibrary.ReleaseGroupsFixtures
   use MusicLibrary.DataCase
 
   alias MusicLibrary.Records
@@ -34,7 +33,7 @@ defmodule MusicLibrary.RecordsTest do
   describe "create_record/1" do
     test "populates computed values" do
       record =
-        record_fixture(musicbrainz_data: ReleaseGroupsFixtures.release_group(:lockdown_trilogy))
+        record_fixture(musicbrainz_data: release_group(:lockdown_trilogy))
 
       assert record.release_ids == ["77e746fc-566f-445b-a62b-cc014280fac9"]
 
