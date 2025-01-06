@@ -13,12 +13,12 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   @total_records @default_records_page_size + 10
 
   defp fill_collection(_) do
-    records = Enum.map(1..@total_records, fn _ -> record_fixture() end)
+    records = Enum.map(1..@total_records, fn _ -> record() end)
     %{collection: records}
   end
 
   defp fill_wishlist(_) do
-    records = Enum.map(1..@total_records, fn _ -> record_fixture(%{purchased_at: nil}) end)
+    records = Enum.map(1..@total_records, fn _ -> record(%{purchased_at: nil}) end)
     %{wishlist: records}
   end
 
@@ -216,7 +216,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
   describe "Updating record metadata" do
     test "can navigate to the record edit form", %{conn: conn} do
-      record = record_fixture()
+      record = record()
 
       conn
       |> visit(~p"/collection")
@@ -226,7 +226,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     end
 
     test "can change the record cover", %{conn: conn} do
-      record = record_fixture(cover_data: File.read!(marbles_cover_fixture()))
+      record = record(cover_data: File.read!(marbles_cover_fixture()))
       session = visit(conn, ~p"/collection/#{record.id}/edit")
 
       session

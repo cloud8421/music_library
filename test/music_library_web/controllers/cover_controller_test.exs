@@ -5,7 +5,7 @@ defmodule MusicLibraryWeb.CoverControllerTest do
   alias MusicLibrary.Records.Cover
 
   defp create_record(_) do
-    %{record: record_fixture()}
+    %{record: record()}
   end
 
   describe "GET /covers/:record_id" do

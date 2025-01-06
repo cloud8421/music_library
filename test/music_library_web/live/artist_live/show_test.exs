@@ -17,7 +17,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
 
   defp fill_collection(_config) do
     collection_record =
-      record_fixture_with_artist("Steven Wilson", %{
+      record_with_artist("Steven Wilson", %{
         title: "The Raven that refused to sing",
         purchased_at: DateTime.utc_now()
       })
@@ -74,13 +74,13 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       artist_musicbrainz_id: artist_musicbrainz_id
     } do
       wishlist_record =
-        record_fixture_with_artist("Steven Wilson", %{
+        record_with_artist("Steven Wilson", %{
           title: "Grace for drowning",
           purchased_at: nil
         })
 
       other_collection_record =
-        record_fixture_with_artist("Porcupine Tree", %{purchased_at: DateTime.utc_now()})
+        record_with_artist("Porcupine Tree", %{purchased_at: DateTime.utc_now()})
 
       # for this test, we don't care about the artist info, but we mock it to avoid false test failures
       expect(APIBehaviourMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id},

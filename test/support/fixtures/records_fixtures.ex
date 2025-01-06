@@ -50,7 +50,7 @@ defmodule MusicLibrary.RecordsFixtures do
   def marbles_thumb_fixture, do: @marbles_thumb_data_path
   def raven_cover_fixture, do: @raven_cover_data_path
 
-  def record_fixture(attrs \\ %{}) do
+  def record(attrs \\ %{}) do
     record_musicbrainz_id = Ecto.UUID.generate()
     artist_name = Enum.random(@artists)
     current_time = DateTime.utc_now()
@@ -75,10 +75,10 @@ defmodule MusicLibrary.RecordsFixtures do
     record
   end
 
-  def record_fixture_with_artist(artist_name, record_attrs \\ %{}) do
+  def record_with_artist(artist_name, record_attrs \\ %{}) do
     record_attrs
     |> Map.put(:artists, [artist_attrs(artist_name)])
-    |> record_fixture()
+    |> record()
   end
 
   defp artist_attrs(name) do

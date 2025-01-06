@@ -11,12 +11,12 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
   setup :verify_on_exit!
 
   defp fill_collection(_) do
-    records = Enum.map(1..19, fn _ -> record_fixture() end)
+    records = Enum.map(1..19, fn _ -> record() end)
     %{collection: records}
   end
 
   defp fill_wishlist(_) do
-    records = Enum.map(1..21, fn _ -> record_fixture(%{purchased_at: nil}) end)
+    records = Enum.map(1..21, fn _ -> record(%{purchased_at: nil}) end)
     %{wishlist: records}
   end
 
@@ -160,12 +160,12 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
       # their status in the scrobble activity changes.
 
       _machinarium_soundtrack =
-        record_fixture(purchased_at: nil)
+        record(purchased_at: nil)
         |> Records.change_record(%{release_ids: ["4bad26f6-1b27-4554-93bd-40b91ed7866c"]})
         |> Repo.update!()
 
       _the_last_flight =
-        record_fixture(purchased_at: DateTime.utc_now())
+        record(purchased_at: DateTime.utc_now())
         |> Records.change_record(%{release_ids: ["2157367e-bf73-48bb-8185-41023a54fa08"]})
         |> Repo.update!()
 

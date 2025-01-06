@@ -6,7 +6,7 @@ defmodule MusicLibrary.ArtistsTest do
 
   describe "get_artist/1" do
     test "it returns records with essential data" do
-      record = record_fixture()
+      record = record()
       [expected] = record.artists
 
       artist = Artists.get_artist!(expected.musicbrainz_id)

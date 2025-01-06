@@ -12,11 +12,11 @@ defmodule MusicLibrary.RecordsTest do
 
   defp create_records(_) do
     records = [
-      record_fixture_with_artist("Marillion", %{title: "Brave", format: :vinyl}),
-      record_fixture_with_artist("Marillion", %{title: "Brave (Live)", format: :cd, type: :live}),
-      record_fixture_with_artist("Marillion", %{title: "Afraid of Sunlight"}),
-      record_fixture_with_artist("Airbag", %{title: "The Greatest Show on Earth"}),
-      record_fixture_with_artist("Airbag (AU)", %{title: "Libertad"})
+      record_with_artist("Marillion", %{title: "Brave", format: :vinyl}),
+      record_with_artist("Marillion", %{title: "Brave (Live)", format: :cd, type: :live}),
+      record_with_artist("Marillion", %{title: "Afraid of Sunlight"}),
+      record_with_artist("Airbag", %{title: "The Greatest Show on Earth"}),
+      record_with_artist("Airbag (AU)", %{title: "Libertad"})
     ]
 
     %{records: records}
@@ -33,7 +33,7 @@ defmodule MusicLibrary.RecordsTest do
   describe "create_record/1" do
     test "populates computed values" do
       record =
-        record_fixture(musicbrainz_data: release_group(:lockdown_trilogy))
+        record(musicbrainz_data: release_group(:lockdown_trilogy))
 
       assert record.release_ids == ["77e746fc-566f-445b-a62b-cc014280fac9"]
 
@@ -54,7 +54,7 @@ defmodule MusicLibrary.RecordsTest do
       release_group_id = release_group_id(:marbles)
 
       record =
-        record_fixture(
+        record(
           musicbrainz_id: release_group_id,
           musicbrainz_data: Map.put(release_group(:marbles), "releases", [])
         )
@@ -149,7 +149,7 @@ defmodule MusicLibrary.RecordsTest do
     test "it fetches the record by id" do
       # while this test may seem redundant, it implicitely checks that ALL record fields are returned,
       # as opposed to other code paths where we only return essential ones.
-      expected = record_fixture()
+      expected = record()
 
       assert expected == Records.get_record!(expected.id)
     end
@@ -157,7 +157,7 @@ defmodule MusicLibrary.RecordsTest do
 
   describe "get_artists_records/1" do
     test "it returns records with essential data" do
-      expected = record_fixture()
+      expected = record()
 
       artist_musicbrainz_id = expected.artists |> hd() |> Map.get(:musicbrainz_id)
 
@@ -171,7 +171,7 @@ defmodule MusicLibrary.RecordsTest do
     test "it returns the record cover by id" do
       # while this test may seem redundant, it implicitely checks that ALL record fields are returned,
       # as opposed to other code paths where we only return essential ones.
-      expected = record_fixture()
+      expected = record()
 
       assert Map.take(expected, [:cover_hash, :cover_data]) == Records.get_cover(expected.id)
     end
@@ -293,7 +293,7 @@ defmodule MusicLibrary.RecordsTest do
 
   describe "refresh cover/1" do
     test "it fetches and stores the updated cover" do
-      record = record_fixture(cover_data: File.read!(marbles_cover_fixture()))
+      record = record(cover_data: File.read!(marbles_cover_fixture()))
 
       raven_cover_data = File.read!(raven_cover_fixture())
 

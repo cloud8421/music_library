@@ -12,7 +12,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
 
   describe "Edit record from show page" do
     test "can navigate to the record edit form", %{conn: conn} do
-      record = record_fixture()
+      record = record()
 
       conn
       |> visit(~p"/collection/#{record.id}")
@@ -24,7 +24,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
 
   describe "Show record" do
     test "it includes all needed information", %{conn: conn} do
-      record = record_fixture()
+      record = record()
 
       session =
         conn

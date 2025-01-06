@@ -6,10 +6,10 @@ defmodule MusicLibrary.WishlistTest do
 
   defp fill_wishlist(_) do
     records = [
-      record_fixture(%{purchased_at: nil, title: "Brave"}),
-      record_fixture(%{purchased_at: nil, title: "Brave"}),
-      record_fixture(%{purchased_at: nil}),
-      record_fixture(%{title: "Brave"})
+      record(%{purchased_at: nil, title: "Brave"}),
+      record(%{purchased_at: nil, title: "Brave"}),
+      record(%{purchased_at: nil}),
+      record(%{title: "Brave"})
     ]
 
     %{wishlist: records}

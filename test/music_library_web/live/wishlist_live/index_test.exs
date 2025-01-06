@@ -4,7 +4,7 @@ defmodule MusicLibraryWeb.WishlistLive.IndexTest do
   import MusicLibrary.RecordsFixtures
 
   defp fill_wishlist(_) do
-    records = Enum.map(1..5, fn _ -> record_fixture(%{purchased_at: nil}) end)
+    records = Enum.map(1..5, fn _ -> record(%{purchased_at: nil}) end)
     %{wishlist: records}
   end
 

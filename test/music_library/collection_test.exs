@@ -7,24 +7,24 @@ defmodule MusicLibrary.CollectionTest do
   defp fill_collection(_) do
     # Purchased dates are in ascending order
     records = [
-      record_fixture_with_artist("Marillion", %{
+      record_with_artist("Marillion", %{
         title: "Brave",
         format: :cd,
         type: :album,
         purchased_at: ~U[2024-12-27 16:50:57Z]
       }),
-      record_fixture_with_artist("Marillion", %{
+      record_with_artist("Marillion", %{
         title: "Brave (Remastered)",
         format: :vinyl,
         type: :live,
         purchased_at: ~U[2024-12-28 16:50:57Z]
       }),
-      record_fixture_with_artist("Marillion", %{
+      record_with_artist("Marillion", %{
         format: :vinyl,
         type: :ep,
         purchased_at: ~U[2024-12-29 16:50:57Z]
       }),
-      record_fixture_with_artist("Marillion", %{
+      record_with_artist("Marillion", %{
         title: "Brave",
         format: :dvd,
         purchased_at: nil,
@@ -90,7 +90,7 @@ defmodule MusicLibrary.CollectionTest do
     setup [:fill_collection]
 
     test "returns the most recently purchased record" do
-      expected_record = record_fixture(%{purchased_at: DateTime.utc_now()})
+      expected_record = record(%{purchased_at: DateTime.utc_now()})
       most_recent_purchase = Collection.get_latest_record!()
 
       assert expected_record.id == most_recent_purchase.id

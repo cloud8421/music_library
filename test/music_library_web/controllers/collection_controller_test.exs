@@ -4,7 +4,7 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
   import MusicLibrary.RecordsFixtures
 
   defp create_record(_) do
-    %{record: record_fixture_with_artist("Steven Wilson")}
+    %{record: record_with_artist("Steven Wilson")}
   end
 
   defp api_token do
