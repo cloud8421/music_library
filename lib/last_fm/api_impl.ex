@@ -5,7 +5,7 @@ defmodule LastFm.APIImpl do
 
   alias LastFm.{Artist, Track}
 
-  @base_url "http://ws.audioscrobbler.com/2.0/"
+  @base_url "https://ws.audioscrobbler.com/2.0/"
 
   # Experimental: metrics show some long running requests
   # that end up hitting timeouts (at default values),
