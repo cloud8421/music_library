@@ -76,7 +76,7 @@ defmodule MusicLibrary.MixProject do
       {:nimble_parsec, "~> 1.4"},
 
       # Image manipulation
-      {:vix, "~> 0.32.0"},
+      {:vix, "~> 0.33.0"},
 
       # Data validation
       {:nimble_options, "~> 1.1"},
