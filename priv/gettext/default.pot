@@ -141,7 +141,7 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/form_component.ex:63
+#: lib/music_library_web/live/record_live/form_component.ex:64
 #, elixir-autogen, elixir-format
 msgid "No cover selected"
 msgstr ""
@@ -195,7 +195,7 @@ msgstr ""
 msgid "Record imported successfully"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/form_component.ex:123
+#: lib/music_library_web/live/record_live/form_component.ex:124
 #: lib/music_library_web/live/wishlist_live/index.ex:148
 #: lib/music_library_web/live/wishlist_live/show.ex:106
 #, elixir-autogen, elixir-format
@@ -207,12 +207,12 @@ msgstr ""
 msgid "Release"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/form_component.ex:74
+#: lib/music_library_web/live/record_live/form_component.ex:75
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/form_component.ex:74
+#: lib/music_library_web/live/record_live/form_component.ex:75
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr ""

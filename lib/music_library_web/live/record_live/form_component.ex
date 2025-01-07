@@ -56,6 +56,7 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
           <.label for={@uploads.cover_data.ref}>
             {gettext("Cover art")}
           </.label>
+          <.error :for={{_index, msg} <- @uploads.cover_data.errors}>{msg}</.error>
           <span
             :if={@uploads.cover_data.entries == []}
             class="text-xs sm:text-sm float-right text-zinc-700 dark:text-zinc-400"
