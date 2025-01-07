@@ -51,6 +51,8 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       session = visit(conn, ~p"/collection")
 
       for record <- expected_present do
+        cover_url = ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+
         session
         |> assert_has("#records-#{record.id}")
         |> assert_has("#records-#{record.id} h2", text: escape(record.title))
@@ -60,22 +62,12 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         |> assert_has("#records-#{record.id} span",
           text: Record.format_as_date(record.purchased_at)
         )
+        |> assert_has("img[src='#{cover_url}']")
 
         for artist <- record.artists do
           assert_has(session, "#records-#{record.id} a", text: escape(artist.name))
         end
       end
-
-      session
-      |> unwrap(fn collection_view ->
-        html = render(collection_view)
-
-        for record <- expected_present do
-          assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
-        end
-
-        html
-      end)
 
       for record <- expected_absent do
         refute_has(session, "#records-#{record.id}")
@@ -144,6 +136,8 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       session =
         visit(conn, ~p"/collection?#{qs}")
 
+      cover_url = ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+
       session
       |> assert_has("#records-#{record.id}")
       |> assert_has("#records-#{record.id} h2", text: escape(record.title))
@@ -153,11 +147,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       |> assert_has("#records-#{record.id} span",
         text: Record.format_as_date(record.purchased_at)
       )
-      |> unwrap(fn collection_view ->
-        html = render(collection_view)
-        assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
-        html
-      end)
+      |> assert_has("img[src='#{cover_url}']")
 
       for artist <- record.artists do
         assert_has(session, "#records-#{record.id} a", text: escape(artist.name))
@@ -188,6 +178,8 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         visit(conn, ~p"/collection?#{qs}")
 
       for record <- present do
+        cover_url = ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+
         session
         |> assert_has("#records-#{record.id}")
         |> assert_has("#records-#{record.id} h2", text: escape(record.title))
@@ -197,11 +189,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         |> assert_has("#records-#{record.id} span",
           text: Record.format_as_date(record.purchased_at)
         )
-        |> unwrap(fn collection_view ->
-          html = render(collection_view)
-          assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
-          html
-        end)
+        |> assert_has("img[src='#{cover_url}']")
 
         for artist <- record.artists do
           assert_has(session, "#records-#{record.id} a", text: escape(artist.name))
@@ -227,14 +215,12 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
     test "can change the record cover", %{conn: conn} do
       record = record(cover_data: File.read!(marbles_cover_fixture()))
-      session = visit(conn, ~p"/collection/#{record.id}/edit")
+      cover_url = ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
 
-      session
-      |> unwrap(fn edit_view ->
-        html = render(edit_view)
-        assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
-        html
-      end)
+      session =
+        conn
+        |> visit(~p"/collection/#{record.id}/edit")
+        |> assert_has("img[src='#{cover_url}']")
 
       session =
         session
@@ -243,16 +229,10 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         |> assert_has("p", text: "Record updated successfully")
 
       updated_cover = MusicLibrary.Records.get_cover(record.id)
-      assert updated_cover.cover_hash !== record.cover_hash
+      updated_cover_url = ~p"/covers/#{record.id}?vsn=#{updated_cover.cover_hash}"
 
-      # We trigger another render to force the list view to update
-      # and display the new cover
-      session
-      |> unwrap(fn collection_view ->
-        html = render(collection_view)
-        assert html =~ ~p"/covers/#{record.id}?vsn=#{updated_cover.cover_hash}"
-        html
-      end)
+      assert updated_cover.cover_hash !== record.cover_hash
+      assert_has(session, "img[src='#{updated_cover_url}']")
     end
   end
 

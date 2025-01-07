@@ -25,6 +25,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
   describe "Show record" do
     test "it includes all needed information", %{conn: conn} do
       record = record()
+      cover_url = ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
 
       session =
         conn
@@ -36,11 +37,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
         |> assert_has("dd", text: Record.format_as_date(record.purchased_at))
         |> assert_has("dd", text: Record.format_as_date(record.inserted_at))
         |> assert_has("dd", text: Record.format_as_date(record.updated_at))
-        |> unwrap(fn show_view ->
-          html = render(show_view)
-          assert html =~ ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
-          html
-        end)
+        |> assert_has("img[src='#{cover_url}']")
 
       for artist <- record.artists do
         assert_has(session, "a", text: escape(artist.name))
