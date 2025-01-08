@@ -3,6 +3,7 @@
 <!--toc:start-->
 - [Music Library](#music-library)
   - [Features](#features)
+  - [Screenshots](#screenshots)
   - [Setup](#setup)
   - [Environment configuration](#environment-configuration)
   - [Running the application](#running-the-application)
@@ -21,6 +22,14 @@
 - Some basic stats
 - All data stored in a single SQLite database for portability and ease of backup/restore
 - Ideal for deployment on a server with limited resources (1CPU, 512MB RAM)
+
+## Screenshots
+
+![Stats](.github/screenshots/stats.png)
+![Collection](.github/screenshots/collection.png)
+![Edit a record in the collection](.github/screenshots/collection-edit-record.png)
+![View a record's details in the collection](.github/screenshots/collection-record-details.png)
+![Importing a record in the wishlist](.github/screenshots/wishlist-import-record.png)
 
 ## Setup
 
