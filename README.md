@@ -4,6 +4,11 @@
 - [Music Library](#music-library)
   - [Features](#features)
   - [Screenshots](#screenshots)
+    - [Stats](#stats)
+    - [Collection](#collection)
+    - [Edit a record in the collection](#edit-a-record-in-the-collection)
+    - [View a record's details in the collection](#view-a-records-details-in-the-collection)
+    - [Importing a record in the wishlist](#importing-a-record-in-the-wishlist)
   - [Setup](#setup)
   - [Environment configuration](#environment-configuration)
   - [Running the application](#running-the-application)
@@ -25,10 +30,24 @@
 
 ## Screenshots
 
+### Stats
+
 ![Stats](.github/screenshots/stats.png)
+
+### Collection
+
 ![Collection](.github/screenshots/collection.png)
+
+### Edit a record in the collection
+
 ![Edit a record in the collection](.github/screenshots/collection-edit-record.png)
+
+### View a record's details in the collection
+
 ![View a record's details in the collection](.github/screenshots/collection-record-details.png)
+
+### Importing a record in the wishlist
+
 ![Importing a record in the wishlist](.github/screenshots/wishlist-import-record.png)
 
 ## Setup
