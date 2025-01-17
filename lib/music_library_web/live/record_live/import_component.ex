@@ -26,6 +26,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
           phx-debounce="500"
           autocorrect="off"
           autocapitalize="none"
+          autofocus
         />
       </.simple_form>
       <ul
