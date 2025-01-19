@@ -4,12 +4,6 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
   import MusicLibrary.RecordsFixtures
   alias MusicLibrary.Records.Record
 
-  defp escape(string) do
-    string
-    |> Phoenix.HTML.html_escape()
-    |> Phoenix.HTML.safe_to_string()
-  end
-
   describe "Edit record from show page" do
     test "can navigate to the record edit form", %{conn: conn} do
       record = record()

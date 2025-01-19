@@ -9,12 +9,6 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
 
   setup :verify_on_exit!
 
-  defp escape(string) do
-    string
-    |> Phoenix.HTML.html_escape()
-    |> Phoenix.HTML.safe_to_string()
-  end
-
   defp fill_collection(_config) do
     collection_record =
       record_with_artist("Steven Wilson", %{

@@ -22,12 +22,6 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     %{wishlist: records}
   end
 
-  defp escape(string) do
-    string
-    |> Phoenix.HTML.html_escape()
-    |> Phoenix.HTML.safe_to_string()
-  end
-
   describe "Collection" do
     setup [:fill_collection, :fill_wishlist]
 
