@@ -1,0 +1,7 @@
+version: 2
+updates:
+  - package-ecosystem: "mix" # See documentation for possible values
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "Update dependencies"
