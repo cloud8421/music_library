@@ -30,32 +30,35 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
         />
       </.simple_form>
       <ul
-        :if={@release_groups !== []}
+        id="release-groups"
+        phx-update="stream"
         role="list"
         class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5"
       >
+        <li
+          id="release-groups-empty"
+          class="only:flex hidden items-center justify-center h-32 text-md text-zinc-500"
+        >
+          {gettext("No results")}
+        </li>
         <.result
-          :for={release_group <- @release_groups}
+          :for={{id, release_group} <- @streams.release_groups}
+          id={id}
           release_group={release_group}
           icon_name={@icon_name}
         />
       </ul>
-      <div
-        :if={@release_groups == []}
-        class="flex items-center justify-center h-32 text-md text-zinc-500"
-      >
-        {gettext("No results")}
-      </div>
     </div>
     """
   end
 
+  attr :id, :string, required: true
+  attr :icon_name, :string, required: true
+  attr :release_group, MusicBrainz.ReleaseGroup, required: true
+
   defp result(assigns) do
     ~H"""
-    <li
-      id={"musicbrainz_" <> @release_group.id}
-      class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700"
-    >
+    <li id={@id} class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700">
       <div class="shrink-0 flex items-center justify-between w-full px-4">
         <div class="min-w-0 flex-auto">
           <h1 class="text-sm leading-6 text-zinc-700 dark:text-zinc-400">
@@ -135,7 +138,10 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
   def mount(socket) do
     {:ok,
      socket
-     |> assign(:release_groups, [])
+     |> stream_configure(:release_groups,
+       dom_id: fn rg -> "musicbrainz_#{rg.id}" end
+     )
+     |> stream(:release_groups, [])
      |> assign(:form, to_form(%{"mb_query" => ""}))}
   end
 
@@ -145,7 +151,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
 
     {:noreply,
      socket
-     |> assign(:release_groups, release_groups)
+     |> stream(:release_groups, release_groups, reset: true)
      |> assign(:form, to_form(%{"mb_query" => mb_query}))}
   end
 
