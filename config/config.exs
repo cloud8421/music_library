@@ -8,7 +8,7 @@
 import Config
 
 config :music_library,
-  ecto_repos: [MusicLibrary.Repo],
+  ecto_repos: [MusicLibrary.Repo, MusicLibrary.ErrorRepo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 
 config :music_library, MusicLibraryWeb, login_password: "change me", api_token: "change me"
@@ -69,9 +69,11 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 config :error_tracker,
-  repo: MusicLibrary.Repo,
+  repo: MusicLibrary.ErrorRepo,
   otp_app: :music_library,
   enabled: true
+
+config :music_library, MusicLibrary.ErrorRepo, priv: "priv/error_repo"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

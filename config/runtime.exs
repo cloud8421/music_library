@@ -51,6 +51,19 @@ if config_env() == :prod do
     cache_size: -8000,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
 
+  error_database_path =
+    System.get_env("ERROR_DATABASE_PATH") ||
+      raise """
+      environment variable ERROR_DATABASE_PATH is missing.
+      For example: /etc/music_library/music_library_errors.db
+      """
+
+  config :music_library, MusicLibrary.ErrorRepo,
+    database: error_database_path,
+    # 16MB * pool_size = base memory usage
+    cache_size: -8000,
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
+
   # The secret key base is used to sign/encrypt cookies and other secrets.
   # A default value is used in config/dev.exs and config/test.exs but you
   # want to use a different value for prod and you most likely don't want
