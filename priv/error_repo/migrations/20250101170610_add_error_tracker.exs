@@ -1,4 +1,4 @@
-defmodule MusicLibrary.Repo.Migrations.AddErrorTracker do
+defmodule MusicLibrary.ErrorRepo.Migrations.AddErrorTracker do
   use Ecto.Migration
   def up, do: ErrorTracker.Migration.up(version: 4)
 
