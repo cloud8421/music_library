@@ -79,7 +79,7 @@ defmodule MusicLibraryWeb.Router do
       live_dashboard "/dashboard",
         metrics: MusicLibraryWeb.Telemetry,
         metrics_history: {MusicLibraryWeb.Telemetry.Storage, :metrics_history, []},
-        ecto_repos: [MusicLibrary.Repo]
+        ecto_repos: [MusicLibrary.Repo, MusicLibrary.ErrorRepo]
     end
   end
 end
