@@ -2,7 +2,12 @@ defmodule MusicLibrary.ArtistsTest do
   use MusicLibrary.DataCase
 
   alias MusicLibrary.Artists
+  alias LastFm.{Artist, APIBehaviourMock}
   import MusicLibrary.RecordsFixtures
+  import LastFm.Fixtures
+  import Mox
+
+  setup :verify_on_exit!
 
   describe "get_artist/1" do
     test "it returns records with essential data" do
@@ -27,6 +32,31 @@ defmodule MusicLibrary.ArtistsTest do
       expected = MapSet.new([marillion.musicbrainz_id, steven_wilson.musicbrainz_id])
 
       assert expected == Artists.get_all_artist_ids()
+    end
+  end
+
+  describe "get_artist_info/1" do
+    test "it returns the artist info" do
+      collection_record =
+        record_with_artist("Steven Wilson", %{
+          title: "The Raven that refused to sing",
+          purchased_at: DateTime.utc_now()
+        })
+
+      [artist] = collection_record.artists
+      artist_musicbrainz_id = artist.musicbrainz_id
+
+      expected_info =
+        artist_get_info()
+        |> Map.get("artist")
+        |> Artist.from_api_response()
+
+      expect(APIBehaviourMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id},
+                                                    _config ->
+        {:ok, expected_info}
+      end)
+
+      assert {:ok, expected_info} == Artists.get_artist_info(artist)
     end
   end
 end
