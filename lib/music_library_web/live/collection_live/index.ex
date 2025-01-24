@@ -63,7 +63,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
   defp apply_action(socket, :index, params) do
     query = params["query"] || ""
-    order = params["order"] || "alphabetical"
+    order = parse_order(params["order"] || "alphabetical")
     total_records = Collection.search_records_count(query)
 
     record_list_params =
@@ -72,27 +72,12 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
       |> merge_order(order)
       |> merge_pagination(params, total_records)
 
-    offset = page_to_offset(record_list_params.page, record_list_params.page_size)
-
-    opts = [limit: record_list_params.page_size, offset: offset, order: parse_order(order)]
-
-    records =
-      Collection.search_records(query, opts)
-
-    socket
-    |> assign(:page_title, gettext("Collection"))
-    |> assign(:record, nil)
-    |> assign(:record_list_params, record_list_params)
-    |> stream(:records, records, reset: true)
+    load_and_assign_records(socket, record_list_params)
   end
 
   @impl true
-  def handle_info({MusicLibraryWeb.RecordLive.FormComponent, {:saved, record}}, socket) do
-    # TODO: when a record is updated, there's no guarantee that 1) it will end
-    # up in the same position and 2) it would still be visible given current
-    # filters. Instead of inserting into the stream, we should reload the
-    # collection with the same params.
-    {:noreply, stream_insert(socket, :records, record)}
+  def handle_info({MusicLibraryWeb.RecordLive.FormComponent, {:saved, _record}}, socket) do
+    {:noreply, load_and_assign_records(socket, socket.assigns.record_list_params)}
   end
 
   @impl true
@@ -142,12 +127,31 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
     end
   end
 
+  defp load_and_assign_records(socket, record_list_params) do
+    offset = page_to_offset(record_list_params.page, record_list_params.page_size)
+
+    opts = [
+      limit: record_list_params.page_size,
+      offset: offset,
+      order: record_list_params.order
+    ]
+
+    records =
+      Collection.search_records(record_list_params.query, opts)
+
+    socket
+    |> assign(:page_title, gettext("Collection"))
+    |> assign(:record, nil)
+    |> assign(:record_list_params, record_list_params)
+    |> stream(:records, records, reset: true)
+  end
+
   defp merge_query(record_list_params, query) do
     Map.put(record_list_params, :query, query)
   end
 
   defp merge_order(record_list_params, order) do
-    Map.put(record_list_params, :order, parse_order(order))
+    Map.put(record_list_params, :order, order)
   end
 
   defp merge_pagination(record_list_params, params, total_records) do

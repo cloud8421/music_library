@@ -70,29 +70,12 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
       |> merge_query(query)
       |> merge_pagination(params, total_records)
 
-    offset = page_to_offset(record_list_params.page, record_list_params.page_size)
-
-    records =
-      Wishlist.search_records(query,
-        limit: record_list_params.page_size,
-        offset: offset,
-        order: record_list_params.order
-      )
-
-    socket
-    |> assign(:page_title, gettext("Wishlist"))
-    |> assign(:record, nil)
-    |> assign(:record_list_params, record_list_params)
-    |> stream(:records, records, reset: true)
+    load_and_assign_records(socket, record_list_params)
   end
 
   @impl true
-  def handle_info({MusicLibraryWeb.RecordLive.FormComponent, {:saved, record}}, socket) do
-    # TODO: when a record is updated, there's no guarantee that 1) it will end
-    # up in the same position and 2) it would still be visible given current
-    # filters. Instead of inserting into the stream, we should reload the
-    # wishlist with the same params.
-    {:noreply, stream_insert(socket, :records, record)}
+  def handle_info({MusicLibraryWeb.RecordLive.FormComponent, {:saved, _record}}, socket) do
+    {:noreply, load_and_assign_records(socket, socket.assigns.record_list_params)}
   end
 
   @impl true
@@ -155,6 +138,23 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
     end
+  end
+
+  defp load_and_assign_records(socket, record_list_params) do
+    offset = page_to_offset(record_list_params.page, record_list_params.page_size)
+
+    records =
+      Wishlist.search_records(record_list_params.query,
+        limit: record_list_params.page_size,
+        offset: offset,
+        order: record_list_params.order
+      )
+
+    socket
+    |> assign(:page_title, gettext("Wishlist"))
+    |> assign(:record, nil)
+    |> assign(:record_list_params, record_list_params)
+    |> stream(:records, records, reset: true)
   end
 
   defp merge_query(record_list_params, query) do
