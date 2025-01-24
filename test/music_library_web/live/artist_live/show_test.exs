@@ -5,7 +5,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
   import LastFm.Fixtures
   import Mox
 
-  alias LastFm.{Artist, APIBehaviourMock}
+  alias LastFm.APIBehaviourMock
 
   setup :verify_on_exit!
 
@@ -30,10 +30,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
     } do
       expect(APIBehaviourMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id},
                                                     _config ->
-        {:ok,
-         artist_get_info()
-         |> Map.get("artist")
-         |> Artist.from_api_response()}
+        {:ok, artist_get_info()}
       end)
 
       conn
