@@ -11,7 +11,7 @@ defmodule MusicLibraryWeb.RecordComponents do
   def record_list(assigns) do
     ~H"""
     <ul
-      class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5"
+      class="divide-y divide-zinc-100 dark:divide-zinc-300/20 mt-5"
       role="list"
       id="records"
       phx-update="stream"
