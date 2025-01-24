@@ -71,13 +71,6 @@ defmodule MusicLibrary.Records.Record do
     Enum.count(record.included_release_group_ids)
   end
 
-  @doc false
-  def artist_changeset(artist, attrs) do
-    artist
-    |> cast(attrs, [:name, :sort_name, :disambiguation, :musicbrainz_id])
-    |> validate_required([:name, :sort_name, :musicbrainz_id])
-  end
-
   def add_artists(record, artists_attrs) do
     record
     |> change()
