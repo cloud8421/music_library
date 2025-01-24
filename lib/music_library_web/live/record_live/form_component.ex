@@ -34,14 +34,14 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
             type="select"
             label={gettext("Type")}
             prompt={gettext("Choose a value")}
-            options={Ecto.Enum.values(MusicLibrary.Records.Record, :type)}
+            options={Records.Record.types_with_labels()}
           />
           <.input
             field={@form[:format]}
             type="select"
             label={gettext("Format")}
             prompt={gettext("Choose a value")}
-            options={Ecto.Enum.values(MusicLibrary.Records.Record, :format)}
+            options={Records.Record.formats_with_labels()}
           />
         </div>
         <.input field={@form[:musicbrainz_id]} type="text" label={gettext("MusicBrainz ID")} />

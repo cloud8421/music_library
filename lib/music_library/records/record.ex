@@ -203,6 +203,15 @@ defmodule MusicLibrary.Records.Record do
   end
 
   def formats, do: @formats
+  def types, do: @types
+
+  def formats_with_labels do
+    Enum.map(@formats, fn f -> {format_long_label(f), f} end)
+  end
+
+  def types_with_labels do
+    Enum.map(@types, fn t -> {type_long_label(t), t} end)
+  end
 
   def format_long_label(:cd), do: "CD"
   def format_long_label(:backup), do: "Backup"
