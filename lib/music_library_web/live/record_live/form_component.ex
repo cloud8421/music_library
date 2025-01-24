@@ -16,9 +16,12 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
     ~H"""
     <div>
       <header>
-        <h1 class="text-base font-medium leading-6 text-zinc-700 dark:text-zinc-400">
-          {@title}
+        <h1 class="text-sm font-medium leading-6 text-zinc-700 dark:text-zinc-400">
+          {Enum.map(@record.artists, & &1.name) |> Enum.join(", ")}
         </h1>
+        <h2 class="text-base font-medium leading-6 text-zinc-700 dark:text-zinc-400">
+          {@record.title}
+        </h2>
       </header>
 
       <.simple_form

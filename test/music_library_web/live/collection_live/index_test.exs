@@ -203,7 +203,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       conn
       |> visit(~p"/collection")
       |> click_link("#records-#{record.id} a", "Edit")
-      |> assert_has("h1", text: "Edit")
+      |> assert_has("h2", text: escape(record.title))
       |> assert_path(~p"/collection/#{record}/edit")
     end
 
