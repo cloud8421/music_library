@@ -29,7 +29,6 @@ defmodule MusicLibrary.Records.Record do
     timestamps(type: :utc_datetime)
   end
 
-  @doc false
   def changeset(record, attrs) do
     record
     |> cast(attrs, [
@@ -46,12 +45,12 @@ defmodule MusicLibrary.Records.Record do
       :cover_data,
       :purchased_at
     ])
-    |> cast_embed(:artists, with: &artist_changeset/2)
+    |> cast_embed(:artists)
+    |> validate_required([:type, :title, :musicbrainz_id, :release, :genres])
+    |> unique_constraint(:musicbrainz_id, name: "records_musicbrainz_id_format_index")
     |> generate_cover_hash()
     |> update_release_ids()
     |> update_included_release_group_ids()
-    |> validate_required([:type, :title, :musicbrainz_id, :release, :genres])
-    |> unique_constraint(:musicbrainz_id, name: "records_musicbrainz_id_format_index")
   end
 
   def child_release_groups(record) do
