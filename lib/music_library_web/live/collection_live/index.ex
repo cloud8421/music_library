@@ -88,6 +88,10 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
   @impl true
   def handle_info({MusicLibraryWeb.RecordLive.FormComponent, {:saved, record}}, socket) do
+    # TODO: when a record is updated, there's no guarantee that 1) it will end
+    # up in the same position and 2) it would still be visible given current
+    # filters. Instead of inserting into the stream, we should reload the
+    # collection with the same params.
     {:noreply, stream_insert(socket, :records, record)}
   end
 
