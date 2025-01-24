@@ -8,6 +8,7 @@ defmodule LastFm.Config do
           user_agent: String.t()
         }
 
+  @enforce_keys [:api, :api_key, :user]
   defstruct api: LastFm.Api,
             api_key: "",
             user: "",

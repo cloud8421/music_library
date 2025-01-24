@@ -1,4 +1,5 @@
 defmodule LastFm.Artist do
+  @enforce_keys [:musicbrainz_id, :name]
   defstruct [:musicbrainz_id, :name, :bio, :image, :play_count]
 
   @type t :: %__MODULE__{

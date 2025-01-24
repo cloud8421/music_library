@@ -1,4 +1,5 @@
 defmodule MusicBrainz.ReleaseGroup do
+  @enforce_keys [:id, :type, :title, :artists, :release]
   defstruct [:id, :type, :title, :artists, :release]
 
   def from_api_response(rg) do

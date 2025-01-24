@@ -4,6 +4,7 @@ defmodule MusicBrainz.Config do
           user_agent: String.t()
         }
 
+  @enforce_keys [:api, :user_agent]
   defstruct api: MusicBrainz.APIImpl,
             user_agent: "change me"
 

@@ -7,6 +7,15 @@ defmodule LastFm.Track do
 
   alias LastFm.{Album, Artist}
 
+  @enforce_keys [
+    :musicbrainz_id,
+    :title,
+    :artist,
+    :album,
+    :cover_url,
+    :scrobbled_at_uts,
+    :scrobbled_at_label
+  ]
   defstruct [
     :musicbrainz_id,
     :title,
