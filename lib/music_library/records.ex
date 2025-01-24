@@ -185,7 +185,7 @@ defmodule MusicLibrary.Records do
            {:musicbrainz_id, musicbrainz_id},
            music_brainz_config()
          ) do
-      {:error, :cover_not_available} -> {:ok, Record.fallback_cover_data()}
+      {:error, :cover_not_available} -> {:ok, Cover.fallback_data()}
       {:ok, cover_data} -> Cover.resize(cover_data)
     end
   end

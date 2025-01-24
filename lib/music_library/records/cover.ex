@@ -1,6 +1,15 @@
 defmodule MusicLibrary.Records.Cover do
   @size 600
 
+  @fallback_path :code.priv_dir(:music_library)
+                 |> Path.join("/cover-not-found.jpg")
+
+  @external_resource @fallback_path
+
+  @fallback_data File.read!(@fallback_path)
+
+  def fallback_data, do: @fallback_data
+
   def resize(cover_data, size \\ @size) do
     {:ok, thumb} = Vix.Vips.Operation.thumbnail_buffer(cover_data, size)
     Vix.Vips.Image.write_to_buffer(thumb, ".jpg")

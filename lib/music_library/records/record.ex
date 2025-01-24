@@ -138,15 +138,6 @@ defmodule MusicLibrary.Records.Record do
     end
   end
 
-  @fallback_cover_path :code.priv_dir(:music_library)
-                       |> Path.join("/cover-not-found.jpg")
-
-  @external_resource @fallback_cover_path
-
-  @fallback_cover_data File.read!(@fallback_cover_path)
-
-  def fallback_cover_data, do: @fallback_cover_data
-
   defp extract_included_release_group_ids(musicbrainz_data) do
     musicbrainz_data
     |> Map.get("relations", [])
