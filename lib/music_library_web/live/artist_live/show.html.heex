@@ -1,6 +1,8 @@
 <div class="mt-4 px-4 sm:px-6 lg:px-8">
-  <h1 class="flex items-end mt-1 font-semibold text-2xl leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
-    {@artist.name}
+  <header class="flex mt-1 gap-1">
+    <h1 class="font-semibold text-2xl leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+      {@artist.name}
+    </h1>
     <.async_result :let={artist_info} assign={@artist_info}>
       <:loading>
         <div class="ml-2">
@@ -24,15 +26,15 @@
           {gettext("Error loading play count")}
         </div>
       </:failed>
-      <span :if={artist_info.play_count > 0} class="ml-2">
-        <span class="sr-only">
-          {gettext("Number of scrobbles")}
-        </span>
-        <.round_badge :if={artist_info.on_tour} text={gettext("On Tour")} />
-        <.round_badge text={artist_info.play_count} />
+      <.round_badge :if={artist_info.on_tour} text={gettext("On Tour")} />
+      <span
+        :if={artist_info.play_count > 0}
+        class="ml-2 text-sm font-normal text-zinc-700 dark:text-zinc-300 grow text-right"
+      >
+        {ngettext("1 scrobble", "%{count} scrobbles", artist_info.play_count)}
       </span>
     </.async_result>
-  </h1>
+  </header>
 
   <.async_result :let={artist_info} assign={@artist_info}>
     <:loading>

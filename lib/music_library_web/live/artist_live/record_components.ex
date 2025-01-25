@@ -12,15 +12,14 @@ defmodule MusicLibraryWeb.ArtistLive.RecordComponents do
   def grid(assigns) do
     ~H"""
     <div class="mt-4">
-      <h2 class="flex items-end font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300">
-        {@title}
-        <span class="ml-2">
-          <span class="sr-only">
-            {gettext("Number of records")}
-          </span>
-          <.round_badge text={@records_count} />
+      <header class="flex items-center justify-between">
+        <h2 class="font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300">
+          {@title}
+        </h2>
+        <span class="ml-2 text-sm font-normal text-zinc-700 dark:text-zinc-300">
+          {ngettext("1 record", "%{count} records", @records_count)}
         </span>
-      </h2>
+      </header>
       <%!-- TODO: replace with OSS version --%>
       <ul
         id={@id}
