@@ -5,3 +5,5 @@ updates:
       interval: "daily"
     commit-message:
       prefix: "Update dependencies"
+    assignees:
+      - cloud8421
