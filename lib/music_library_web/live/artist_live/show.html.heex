@@ -28,6 +28,7 @@
         <span class="sr-only">
           {gettext("Number of scrobbles")}
         </span>
+        <.round_badge :if={artist_info.on_tour} text={gettext("On Tour")} />
         <.round_badge text={artist_info.play_count} />
       </span>
     </.async_result>

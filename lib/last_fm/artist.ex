@@ -1,13 +1,14 @@
 defmodule LastFm.Artist do
   @enforce_keys [:musicbrainz_id, :name]
-  defstruct [:musicbrainz_id, :name, :bio, :image, :play_count]
+  defstruct [:musicbrainz_id, :name, :bio, :image, :play_count, :on_tour]
 
   @type t :: %__MODULE__{
           musicbrainz_id: String.t(),
           name: String.t(),
           bio: String.t(),
           image: String.t(),
-          play_count: non_neg_integer()
+          play_count: non_neg_integer(),
+          on_tour: boolean()
         }
 
   def from_api_response(api_response) do
@@ -16,7 +17,8 @@ defmodule LastFm.Artist do
       name: api_response["name"],
       bio: api_response["bio"]["content"] || "",
       image: get_image(api_response),
-      play_count: get_play_count(api_response)
+      play_count: get_play_count(api_response),
+      on_tour: api_response["ontour"] == "1"
     }
   end
 
