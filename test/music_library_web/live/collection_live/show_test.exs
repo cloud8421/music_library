@@ -30,12 +30,17 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
         |> assert_has("p", text: Record.type_long_label(record.type))
         |> assert_has("dd", text: Record.format_as_date(record.purchased_at))
         |> assert_has("dd", text: record.id)
+        |> assert_has("a", text: record.musicbrainz_id)
         |> assert_has("dd", text: Record.format_as_date(record.inserted_at))
         |> assert_has("dd", text: Record.format_as_date(record.updated_at))
         |> assert_has("img[src='#{cover_url}']")
 
       for artist <- record.artists do
         assert_has(session, "a", text: escape(artist.name))
+      end
+
+      for genre <- record.genres do
+        assert_has(session, "a", text: genre)
       end
     end
   end
