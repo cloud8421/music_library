@@ -29,6 +29,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
         |> assert_has("p", text: Record.format_long_label(record.format))
         |> assert_has("p", text: Record.type_long_label(record.type))
         |> assert_has("dd", text: Record.format_as_date(record.purchased_at))
+        |> assert_has("dd", text: record.id)
         |> assert_has("dd", text: Record.format_as_date(record.inserted_at))
         |> assert_has("dd", text: Record.format_as_date(record.updated_at))
         |> assert_has("img[src='#{cover_url}']")

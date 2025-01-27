@@ -142,6 +142,26 @@
     <dl class="divide-y divide-zinc-100 dark:divide-slate-300/30">
       <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
         <dt class="text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+          {gettext("ID")}
+        </dt>
+        <dd class="mt-1 text-sm flex justify-between leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+          <code id={"record-#{@record.id}"}>{@record.id}</code>
+          <button phx-click={
+            JS.dispatch("music_library:clipcopy", to: "#record-" <> @record.id)
+            |> JS.transition("animate-shake")
+          }>
+            <span class="sr-only">{gettext("Copy record ID to clipboard")}</span>
+            <.icon
+              name="hero-clipboard-document"
+              class="-mt-1 h-5 w-5"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+          </button>
+        </dd>
+      </div>
+      <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
           {gettext("Genres")}
         </dt>
         <dd class="mt-1 text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
