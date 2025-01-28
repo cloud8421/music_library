@@ -1,6 +1,5 @@
 defmodule MusicLibraryWeb.Router do
   use MusicLibraryWeb, :router
-  use ErrorTracker.Web, :router
 
   import MusicLibraryWeb.Auth, only: [require_logged_in: 2, require_api_token: 2]
 
@@ -62,13 +61,8 @@ defmodule MusicLibraryWeb.Router do
     get "/covers/:record_id", CoverController, :show
   end
 
-  # Enable LiveDashboard in development
-  if Application.compile_env(:music_library, :dev_routes) do
-    # If you want to use the LiveDashboard in production, you should put
-    # it behind authentication and allow only admins to access it.
-    # If your application does not have an admins-only section yet,
-    # you can use Plug.BasicAuth to set up some basic authentication
-    # as long as you are also using SSL (which you should anyway).
+  if Application.compile_env(:music_library, :monitoring_routes) do
+    use ErrorTracker.Web, :router
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do

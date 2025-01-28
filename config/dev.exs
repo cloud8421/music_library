@@ -67,7 +67,7 @@ config :music_library, MusicLibraryWeb.Endpoint,
   ]
 
 # Enable dev routes for dashboard and mailbox
-config :music_library, dev_routes: true
+config :music_library, monitoring_routes: true
 
 config :music_library, LastFm,
   refresh_interval: System.convert_time_unit(500, :second, :millisecond)
