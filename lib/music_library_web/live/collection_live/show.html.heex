@@ -137,14 +137,14 @@
       </.focus_wrap>
     </div>
   </div>
-  <div>
+  <div class="mt-4">
     <%!-- TODO: replace with OSS version --%>
     <dl class="divide-y divide-zinc-100 dark:divide-slate-300/30">
       <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-        <dt class="text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+        <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
           {gettext("ID")}
         </dt>
-        <dd class="mt-1 text-sm flex justify-between leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+        <dd class="mt-1 text-xs md:text-sm flex justify-between leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
           <code id={"record-#{@record.id}"}>{@record.id}</code>
           <button phx-click={
             JS.dispatch("music_library:clipcopy", to: "#record-" <> @record.id)
@@ -161,10 +161,10 @@
         </dd>
       </div>
       <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-        <dt class="text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+        <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
           {gettext("Genres")}
         </dt>
-        <dd class="mt-1 text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+        <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
           <.link
             :for={genre <- @record.genres}
             class="mr-2 text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
@@ -175,10 +175,10 @@
         </dd>
       </div>
       <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-        <dt class="text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+        <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
           {gettext("MusicBrainz ID")}
         </dt>
-        <dd class="mt-1 text-sm flex justify-between leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+        <dd class="mt-1 text-xs md:text-sm flex justify-between leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
           <a href={MusicBrainz.ReleaseGroup.url(@record.musicbrainz_id)}>
             <code id={"mb-#{@record.musicbrainz_id}"}>{@record.musicbrainz_id}</code>
           </a>
@@ -197,10 +197,10 @@
         </dd>
       </div>
       <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-        <dt class="text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+        <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
           {gettext("Purchased on")}
         </dt>
-        <dd class="mt-1 text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+        <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
           {Records.Record.format_as_date(@record.purchased_at)}
         </dd>
       </div>
@@ -208,10 +208,10 @@
         :if={Records.Record.child_release_groups_count(@record) > 0}
         class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
       >
-        <dt class="text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+        <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
           {gettext("Includes")}
         </dt>
-        <dd class="mt-1 text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+        <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
           <ul>
             <li :for={child_release_group <- Records.Record.child_release_groups(@record)}>
               {child_release_group.artists} - {child_release_group.title}
@@ -220,18 +220,18 @@
         </dd>
       </div>
       <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-        <dt class="text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+        <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
           {gettext("Inserted at")}
         </dt>
-        <dd class="mt-1 text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+        <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
           {Records.Record.format_as_date(@record.inserted_at)}
         </dd>
       </div>
       <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-        <dt class="text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+        <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
           {gettext("Updated at")}
         </dt>
-        <dd class="mt-1 text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+        <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
           {Records.Record.format_as_date(@record.updated_at)}
         </dd>
       </div>
