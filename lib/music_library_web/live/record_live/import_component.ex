@@ -1,7 +1,9 @@
 defmodule MusicLibraryWeb.RecordLive.ImportComponent do
   use MusicLibraryWeb, :live_component
 
-  import MusicLibraryWeb.RecordComponents, only: [toggle_actions_menu: 1, close_actions_menu: 1]
+  import MusicLibraryWeb.RecordComponents,
+    only: [toggle_actions_menu: 1, close_actions_menu: 1, format_label: 1, type_label: 1]
+
   alias MusicLibrary.Records
 
   @impl true
@@ -68,9 +70,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
             {@release_group.title}
           </h2>
           <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-            {Records.Record.format_release(@release_group.release)} · {Records.Record.type_long_label(
-              @release_group.type
-            )}
+            {Records.Record.format_release(@release_group.release)} · {type_label(@release_group.type)}
           </p>
         </div>
         <div class="relative flex-none">
@@ -115,7 +115,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
                 JS.push("import", value: %{id: @release_group.id, format: format}, page_loading: true)
               }
             >
-              {Records.Record.format_long_label(format)}
+              {format_label(format)}
             </.link>
           </.focus_wrap>
         </div>

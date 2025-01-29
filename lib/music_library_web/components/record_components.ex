@@ -49,9 +49,7 @@ defmodule MusicLibraryWeb.RecordComponents do
               </span>
             </p>
             <p class="sm:hidden mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-              {Records.Record.format_long_label(record.format)} · {Records.Record.type_long_label(
-                record.type
-              )}
+              {format_label(record.format)} · {type_label(record.type)}
               <span :if={Records.Record.child_release_groups_count(record) > 0}>
                 ·
                 <span class="sr-only">
@@ -78,9 +76,7 @@ defmodule MusicLibraryWeb.RecordComponents do
         <div class="flex shrink-0 items-center gap-x-6">
           <div class="hidden sm:flex sm:flex-col sm:items-end">
             <p class="text-xs leading-6 text-zinc-900 dark:text-zinc-300">
-              {Records.Record.format_long_label(record.format)} · {Records.Record.type_long_label(
-                record.type
-              )}
+              {format_label(record.format)} · {type_label(record.type)}
               <span :if={Records.Record.child_release_groups_count(record) > 0}>
                 ·
                 <span class="sr-only">
@@ -212,6 +208,20 @@ defmodule MusicLibraryWeb.RecordComponents do
     </form>
     """
   end
+
+  def format_label(:cd), do: gettext("CD")
+  def format_label(:backup), do: gettext("Backup")
+  def format_label(:vinyl), do: gettext("Vinyl")
+  def format_label(:blu_ray), do: gettext("Blu-ray")
+  def format_label(:dvd), do: gettext("DVD")
+  def format_label(:multi), do: gettext("Multi")
+
+  def type_label(:album), do: gettext("Album")
+  def type_label(:ep), do: gettext("EP")
+  def type_label(:live), do: gettext("Live")
+  def type_label(:compilation), do: gettext("Comp")
+  def type_label(:single), do: gettext("Single")
+  def type_label(:other), do: gettext("Other")
 
   def toggle_actions_menu(record_id) do
     JS.toggle(to: "#actions-#{record_id}")

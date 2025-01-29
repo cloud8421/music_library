@@ -3,6 +3,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
   import MusicLibrary.RecordsFixtures
   import MusicLibrary.ReleaseGroupsFixtures
+  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
   import Mox
   alias MusicLibrary.Records.{Cover, Record}
   alias MusicBrainz.APIBehaviourMock
@@ -51,8 +52,8 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         |> assert_has("#records-#{record.id}")
         |> assert_has("#records-#{record.id} h2", text: escape(record.title))
         |> assert_has("#records-#{record.id} p", text: record.release)
-        |> assert_has("#records-#{record.id} p", text: Record.format_long_label(record.format))
-        |> assert_has("#records-#{record.id} p", text: Record.type_long_label(record.type))
+        |> assert_has("#records-#{record.id} p", text: format_label(record.format))
+        |> assert_has("#records-#{record.id} p", text: type_label(record.type))
         |> assert_has("#records-#{record.id} span",
           text: Record.format_as_date(record.purchased_at)
         )
@@ -136,8 +137,8 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       |> assert_has("#records-#{record.id}")
       |> assert_has("#records-#{record.id} h2", text: escape(record.title))
       |> assert_has("#records-#{record.id} p", text: record.release)
-      |> assert_has("#records-#{record.id} p", text: Record.format_long_label(record.format))
-      |> assert_has("#records-#{record.id} p", text: Record.type_long_label(record.type))
+      |> assert_has("#records-#{record.id} p", text: format_label(record.format))
+      |> assert_has("#records-#{record.id} p", text: type_label(record.type))
       |> assert_has("#records-#{record.id} span",
         text: Record.format_as_date(record.purchased_at)
       )
@@ -178,8 +179,8 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         |> assert_has("#records-#{record.id}")
         |> assert_has("#records-#{record.id} h2", text: escape(record.title))
         |> assert_has("#records-#{record.id} p", text: record.release)
-        |> assert_has("#records-#{record.id} p", text: Record.format_long_label(record.format))
-        |> assert_has("#records-#{record.id} p", text: Record.type_long_label(record.type))
+        |> assert_has("#records-#{record.id} p", text: format_label(record.format))
+        |> assert_has("#records-#{record.id} p", text: type_label(record.type))
         |> assert_has("#records-#{record.id} span",
           text: Record.format_as_date(record.purchased_at)
         )

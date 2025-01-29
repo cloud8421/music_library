@@ -2,9 +2,9 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   use MusicLibraryWeb, :live_view
 
   import MusicLibraryWeb.StatsLive.DataComponents
+  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
 
   alias MusicLibrary.{Artists, Collection, Records, Wishlist}
-  alias Records.Record
 
   def mount(_params, _session, socket) do
     latest_record = Collection.get_latest_record!()

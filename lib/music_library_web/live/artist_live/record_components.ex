@@ -1,6 +1,7 @@
 defmodule MusicLibraryWeb.ArtistLive.RecordComponents do
   use MusicLibraryWeb, :live_component
 
+  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
   alias MusicLibrary.Records
 
   attr :records, :list, required: true
@@ -46,9 +47,7 @@ defmodule MusicLibraryWeb.ArtistLive.RecordComponents do
             {record.title}
           </p>
           <p class="pointer-events-none block text-sm font-medium text-zinc-500">
-            {Records.Record.format_long_label(record.format)} · {Records.Record.type_long_label(
-              record.type
-            )}
+            {format_label(record.format)} · {type_label(record.type)}
           </p>
           <p class="pointer-events-none block text-sm font-medium text-zinc-500">
             {Records.Record.format_release(record.release)}

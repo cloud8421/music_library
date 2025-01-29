@@ -2,8 +2,8 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
   use MusicLibraryWeb.ConnCase
 
   alias MusicLibrary.{Records, Repo, Wishlist}
-  alias MusicLibrary.Records.Record
   alias MusicBrainz.APIBehaviourMock
+  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
   import MusicLibrary.RecordsFixtures
   import MusicLibrary.ReleaseGroupsFixtures
   import Mox
@@ -36,14 +36,14 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
       |> Enum.frequencies_by(& &1.format)
       |> Enum.each(fn {format, count} ->
         assert_has(session, "a", text: to_string(count))
-        assert_has(session, "dt", text: Record.format_long_label(format))
+        assert_has(session, "dt", text: format_label(format))
       end)
 
       collection
       |> Enum.frequencies_by(& &1.type)
       |> Enum.each(fn {type, count} ->
         assert_has(session, "a", text: to_string(count))
-        assert_has(session, "dt", text: Record.type_long_label(type))
+        assert_has(session, "dt", text: type_label(type))
       end)
     end
 

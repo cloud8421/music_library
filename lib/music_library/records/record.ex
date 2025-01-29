@@ -188,28 +188,6 @@ defmodule MusicLibrary.Records.Record do
   def formats, do: @formats
   def types, do: @types
 
-  def formats_with_labels do
-    Enum.map(@formats, fn f -> {format_long_label(f), f} end)
-  end
-
-  def types_with_labels do
-    Enum.map(@types, fn t -> {type_long_label(t), t} end)
-  end
-
-  def format_long_label(:cd), do: "CD"
-  def format_long_label(:backup), do: "Backup"
-  def format_long_label(:vinyl), do: "Vinyl"
-  def format_long_label(:blu_ray), do: "Blu-ray"
-  def format_long_label(:dvd), do: "DVD"
-  def format_long_label(:multi), do: "Multi"
-
-  def type_long_label(:album), do: "Album"
-  def type_long_label(:ep), do: "EP"
-  def type_long_label(:live), do: "Live"
-  def type_long_label(:compilation), do: "Comp"
-  def type_long_label(:single), do: "Single"
-  def type_long_label(:other), do: "Other"
-
   def format_release(nil), do: "N/A"
 
   def format_release(release) do

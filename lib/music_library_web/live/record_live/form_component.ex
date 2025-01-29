@@ -1,6 +1,7 @@
 defmodule MusicLibraryWeb.RecordLive.FormComponent do
   use MusicLibraryWeb, :live_component
 
+  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
   alias MusicLibrary.Records
   alias MusicLibrary.Records.Cover
 
@@ -37,14 +38,14 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
             type="select"
             label={gettext("Type")}
             prompt={gettext("Choose a value")}
-            options={Records.Record.types_with_labels()}
+            options={types_with_labels()}
           />
           <.input
             field={@form[:format]}
             type="select"
             label={gettext("Format")}
             prompt={gettext("Choose a value")}
-            options={Records.Record.formats_with_labels()}
+            options={formats_with_labels()}
           />
         </div>
         <.input field={@form[:musicbrainz_id]} type="text" label={gettext("MusicBrainz ID")} />
@@ -130,6 +131,14 @@ defmodule MusicLibraryWeb.RecordLive.FormComponent do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
     end
+  end
+
+  def formats_with_labels do
+    Enum.map(Records.Record.formats(), fn f -> {format_label(f), f} end)
+  end
+
+  def types_with_labels do
+    Enum.map(Records.Record.types(), fn t -> {type_label(t), t} end)
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})

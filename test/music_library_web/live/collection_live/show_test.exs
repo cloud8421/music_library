@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
   use MusicLibraryWeb.ConnCase
 
   import MusicLibrary.RecordsFixtures
+  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
   alias MusicLibrary.Records.Record
 
   describe "Edit record from show page" do
@@ -26,8 +27,8 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
         |> visit(~p"/collection/#{record.id}")
         |> assert_has("h2", text: escape(record.title))
         |> assert_has("p", text: record.release)
-        |> assert_has("p", text: Record.format_long_label(record.format))
-        |> assert_has("p", text: Record.type_long_label(record.type))
+        |> assert_has("p", text: format_label(record.format))
+        |> assert_has("p", text: type_label(record.type))
         |> assert_has("dd", text: Record.format_as_date(record.purchased_at))
         |> assert_has("dd", text: record.id)
         |> assert_has("a", text: record.musicbrainz_id)

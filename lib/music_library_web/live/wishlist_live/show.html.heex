@@ -26,9 +26,7 @@
         <span :if={@current_date && !Records.Record.released?(@record, @current_date)}>
           ({gettext("Unreleased")})
         </span>
-        · {Records.Record.format_long_label(@record.format)} · {Records.Record.type_long_label(
-          @record.type
-        )}
+        · {format_label(@record.format)} · {type_label(@record.type)}
       </p>
     </div>
     <div class="relative flex-none">
