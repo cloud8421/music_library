@@ -11,7 +11,7 @@ defmodule MusicLibrary.Records.SearchIndex do
   """
   use Ecto.Schema
 
-  alias MusicLibrary.Records.Record
+  alias MusicLibrary.Records.{Artist, Record}
 
   @primary_key {:id, :binary_id, autogenerate: false}
   schema "records_search_index" do
@@ -26,11 +26,6 @@ defmodule MusicLibrary.Records.SearchIndex do
     field :release_ids, {:array, :string}, default: []
     field :included_release_group_ids, {:array, :string}, default: []
 
-    embeds_many :artists, Artist do
-      field :name, :string
-      field :sort_name, :string
-      field :disambiguation, :string
-      field :musicbrainz_id, Ecto.UUID
-    end
+    embeds_many :artists, Artist
   end
 end
