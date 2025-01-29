@@ -11,13 +11,12 @@ defmodule MusicLibrary.Records.SearchIndex do
   """
   use Ecto.Schema
 
-  @formats [:cd, :backup, :vinyl, :blu_ray, :dvd, :multi]
-  @types [:album, :ep, :live, :compilation, :single, :other]
+  alias MusicLibrary.Records.Record
 
   @primary_key {:id, :binary_id, autogenerate: false}
   schema "records_search_index" do
-    field :type, Ecto.Enum, values: @types
-    field :format, Ecto.Enum, values: @formats
+    field :type, Ecto.Enum, values: Record.types()
+    field :format, Ecto.Enum, values: Record.formats()
     field :title, :string
     field :musicbrainz_id, Ecto.UUID
     field :genres, {:array, :string}
