@@ -227,7 +227,10 @@ defmodule MusicLibrary.Records.Record do
         Date.compare(current_day, release_date) != :lt
 
       _error ->
-        false
+        # When a release date cannot be parsed it's normally because the record
+        # is old and information is not specific, so we can err on the side of assuming
+        # it's been released.
+        true
     end
   end
 

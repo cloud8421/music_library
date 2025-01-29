@@ -27,11 +27,11 @@ defmodule MusicLibrary.Records.RecordTest do
       assert MusicLibrary.Records.Record.released?(record, current_date)
     end
 
-    test "it returns false if the release date is not precise enough", %{
+    test "it returns true if the release date is not precise enough", %{
       current_date: current_date
     } do
       record = %MusicLibrary.Records.Record{release: "2019"}
-      refute MusicLibrary.Records.Record.released?(record, current_date)
+      assert MusicLibrary.Records.Record.released?(record, current_date)
     end
   end
 end
