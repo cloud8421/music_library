@@ -106,12 +106,12 @@ defmodule MusicLibrary.MixProject do
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-
-      # When running the migrate task WITHOUT setting the log level, Ecto
-      # defaults to debug. As it's a singleton setting, it causes the SQLite
-      # connections to log extension loading despite the general log level set
-      # to warning. By explicitly asking Ecto to migrate at warning level, we
-      # silence the output.
+      # When running the migrate task WITHOUT setting the log_level option,
+      # Ecto defaults to debug IRRESPECTIVELY of the log level set in
+      # config/test.exs. The debug log level persists while the first 2-3
+      # database connections are being opened before being reset to warning,
+      # causing a few spurious log statements to appear. By forcing the log
+      # level to warning at the task level, we avoid this issue.
       test: ["ecto.create --quiet", "ecto.migrate --quiet --log-level=warning", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind music_library", "esbuild music_library"],
