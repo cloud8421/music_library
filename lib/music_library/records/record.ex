@@ -221,6 +221,16 @@ defmodule MusicLibrary.Records.Record do
     end
   end
 
+  def released?(record, current_day) do
+    case Date.from_iso8601(record.release) do
+      {:ok, release_date} ->
+        Date.compare(current_day, release_date) != :lt
+
+      _error ->
+        false
+    end
+  end
+
   def format_as_date(purchased_at) do
     "#{purchased_at.day}/#{purchased_at.month}/#{purchased_at.year}"
   end

@@ -7,6 +7,7 @@ defmodule MusicLibraryWeb.RecordComponents do
   attr :record_show_path, :any, required: true
   attr :record_edit_path, :any, required: true
   attr :records, :list, required: true
+  attr :current_date, Date, required: false, default: nil
 
   def record_list(assigns) do
     ~H"""
@@ -43,6 +44,9 @@ defmodule MusicLibraryWeb.RecordComponents do
             </h2>
             <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
               {Records.Record.format_release(record.release)}
+              <span :if={@current_date && !Records.Record.released?(record, @current_date)}>
+                ({gettext("Unreleased")})
+              </span>
             </p>
             <p class="sm:hidden mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
               {Records.Record.format_long_label(record.format)} · {Records.Record.type_long_label(

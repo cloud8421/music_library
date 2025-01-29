@@ -23,7 +23,12 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
         socket
       end
 
-    {:ok, assign(socket, :nav_section, :wishlist)}
+    current_date = DateTime.utc_now() |> DateTime.to_date()
+
+    {:ok,
+     socket
+     |> assign(nav_section: :wishlist)
+     |> assign(:current_date, current_date)}
   end
 
   @impl true
