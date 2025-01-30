@@ -123,7 +123,7 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex:32
+#: lib/music_library_web/components/layouts/app.html.heex:38
 #, elixir-autogen, elixir-format
 msgid "Logout"
 msgstr ""

@@ -3,7 +3,7 @@
   <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
     <div class="flex h-16 justify-between">
       <div class="flex">
-        <div class="flex space-x-4 md:space-x-8">
+        <div class="flex space-x-2 md:space-x-8">
           <.link navigate={~p"/"} class={section_link_classes(assigns[:nav_section], :stats)}>
             {gettext("Stats")}
           </.link>
@@ -21,7 +21,7 @@
           </.link>
         </div>
       </div>
-      <div class="flex space-x-8">
+      <div class="flex space-x-2 md:space-x-8">
         <a class={["max-sm:hidden" | nav_link_classes()]} } href={~p"/dev/dashboard"}>
           {gettext("Dev dashboard")}
         </a>
@@ -29,6 +29,12 @@
           {gettext("Errors")}
         </a>
         <a class={nav_link_classes()} } href={~p"/login"}>
+          <.icon
+            name="hero-arrow-left-start-on-rectangle"
+            class="h-4 w-4 mr-2"
+            aria-hidden="true"
+            data-slot="icon"
+          />
           {gettext("Logout")}
         </a>
       </div>
