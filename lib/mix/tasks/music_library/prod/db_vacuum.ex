@@ -14,7 +14,7 @@ defmodule Mix.Tasks.MusicLibrary.Prod.DbVacuum do
   def run(_args) do
     Mix.Shell.IO.info("Running VACUUM on the production database")
 
-    command = ~s(bin/music_library rpc 'MusicLibrary.Repo.query\("VACUUM"\)')
+    command = ~s(bin/music_library rpc 'MusicLibrary.Repo.vacuum\(\)')
 
     fly_ssh(command)
   end

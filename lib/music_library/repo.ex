@@ -32,4 +32,6 @@ defmodule MusicLibrary.Repo do
       "#{name}.#{extension}"
     ])
   end
+
+  def vacuum, do: query("VACUUM")
 end
