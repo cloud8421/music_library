@@ -31,6 +31,8 @@ defmodule MusicLibraryWeb.Router do
     scope "/" do
       pipe_through :logged_in
 
+      get "/backup", ArchiveController, :backup
+
       get "/covers/:record_id", CoverController, :show
 
       live "/", StatsLive.Index, :index
