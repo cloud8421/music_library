@@ -23,7 +23,7 @@ defmodule MusicLibraryWeb.CoverControllerTest do
 
       assert conn.status == 200
       assert get_resp_header(conn, "content-type") == ["image/jpeg; charset=utf-8"]
-      assert get_resp_header(conn, "cache-control") == ["public, max-age=86400"]
+      assert get_resp_header(conn, "cache-control") == ["public, max-age=31536000"]
       assert get_resp_header(conn, "etag") == [record.cover_hash]
 
       assert conn.resp_body == record.cover_data
@@ -37,7 +37,7 @@ defmodule MusicLibraryWeb.CoverControllerTest do
 
       assert conn.status == 200
       assert get_resp_header(conn, "content-type") == ["image/jpeg; charset=utf-8"]
-      assert get_resp_header(conn, "cache-control") == ["public, max-age=86400"]
+      assert get_resp_header(conn, "cache-control") == ["public, max-age=31536000"]
       assert get_resp_header(conn, "etag") == [record.cover_hash]
 
       assert conn.resp_body == record.cover_data
@@ -51,7 +51,7 @@ defmodule MusicLibraryWeb.CoverControllerTest do
 
       assert conn.status == 304
       assert get_resp_header(conn, "content-type") == []
-      assert get_resp_header(conn, "cache-control") == ["public, max-age=86400"]
+      assert get_resp_header(conn, "cache-control") == ["public, max-age=31536000"]
       assert get_resp_header(conn, "etag") == []
 
       assert conn.resp_body == <<>>
@@ -65,7 +65,7 @@ defmodule MusicLibraryWeb.CoverControllerTest do
 
       assert conn.status == 200
       assert get_resp_header(conn, "content-type") == ["image/jpeg; charset=utf-8"]
-      assert get_resp_header(conn, "cache-control") == ["public, max-age=86400"]
+      assert get_resp_header(conn, "cache-control") == ["public, max-age=31536000"]
       assert get_resp_header(conn, "etag") == [hash]
 
       assert conn.resp_body == thumb

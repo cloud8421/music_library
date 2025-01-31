@@ -4,8 +4,8 @@ defmodule MusicLibraryWeb.CoverController do
   alias MusicLibrary.Records
   alias MusicLibrary.Records.Cover
 
-  # 24 hours in seconds
-  @cache_duration 60 * 60 * 24
+  # 1 year in seconds
+  @cache_duration 60 * 60 * 24 * 365
 
   def show(conn, %{"record_id" => record_id, "size" => size}) do
     case Records.get_cover(record_id) do
