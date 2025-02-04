@@ -126,7 +126,7 @@
           role="menuitem"
           tabindex="-1"
           id={"actions-#{@record.id}-purchase"}
-          phx-click={JS.push("purchase", value: %{id: @record.id})}
+          phx-click={JS.push("add-to-collection", value: %{id: @record.id})}
         >
           <.icon
             name="hero-banknotes"
@@ -134,7 +134,7 @@
             aria-hidden="true"
             data-slot="icon"
           />
-          {gettext("Purchase")}
+          {gettext("Purchased")}
         </.link>
 
         <.link

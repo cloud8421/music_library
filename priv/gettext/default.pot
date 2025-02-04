@@ -169,9 +169,7 @@ msgstr ""
 msgid "Previous"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:172
 #: lib/music_library_web/live/collection_live/index.html.heex:42
-#: lib/music_library_web/live/wishlist_live/show.html.heex:137
 #, elixir-autogen, elixir-format
 msgid "Purchase"
 msgstr ""
@@ -196,8 +194,6 @@ msgid "Record imported successfully"
 msgstr ""
 
 #: lib/music_library_web/live/record_live/form_component.ex:128
-#: lib/music_library_web/live/wishlist_live/index.ex:140
-#: lib/music_library_web/live/wishlist_live/show.ex:113
 #, elixir-autogen, elixir-format
 msgid "Record updated successfully"
 msgstr ""
@@ -604,4 +600,16 @@ msgstr ""
 #: lib/music_library_web/components/record_components.ex:214
 #, elixir-autogen, elixir-format
 msgid "Vinyl"
+msgstr ""
+
+#: lib/music_library_web/components/record_components.ex:172
+#: lib/music_library_web/live/wishlist_live/show.html.heex:137
+#, elixir-autogen, elixir-format
+msgid "Purchased"
+msgstr ""
+
+#: lib/music_library_web/live/wishlist_live/index.ex:140
+#: lib/music_library_web/live/wishlist_live/show.ex:113
+#, elixir-autogen, elixir-format
+msgid "Record added to the collection"
 msgstr ""

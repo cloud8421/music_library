@@ -19,8 +19,8 @@ defmodule MusicLibraryWeb.WishlistLive.IndexTest do
 
       conn
       |> visit(~p"/wishlist")
-      |> click_link("#records-#{record.id} a", "Purchase")
-      |> assert_has("p", text: "Record updated successfully")
+      |> click_link("#records-#{record.id} a", "Purchased")
+      |> assert_has("p", text: "Record added to the collection")
 
       purchased_record = MusicLibrary.Records.get_record!(record.id)
 

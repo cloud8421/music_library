@@ -129,7 +129,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
     end
   end
 
-  def handle_event("purchase", %{"id" => id}, socket) do
+  def handle_event("add-to-collection", %{"id" => id}, socket) do
     record = Records.get_record!(id)
     current_time = DateTime.utc_now()
 
@@ -137,7 +137,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
       {:ok, _} ->
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Record updated successfully"))
+         |> put_flash(:info, gettext("Record added to the collection"))
          |> push_patch(to: ~p"/wishlist")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
