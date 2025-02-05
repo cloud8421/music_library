@@ -144,9 +144,10 @@ defmodule MusicLibrary.Records do
          purchased_at = Keyword.get(opts, :purchased_at),
          {:ok, release_group} <-
            music_brainz_config().api.get_release_group(musicbrainz_id, music_brainz_config()),
+         {:ok, release_group_with_releases} <- merge_releases(musicbrainz_id, release_group),
          {:ok, cover_data} <- get_cover_art_or_default(musicbrainz_id),
          record_attrs =
-           build_record_attrs(release_group, %{
+           build_record_attrs(release_group_with_releases, %{
              "cover_data" => cover_data,
              "format" => format,
              "purchased_at" => purchased_at
@@ -217,10 +218,22 @@ defmodule MusicLibrary.Records do
            music_brainz_config().api.get_release_group(
              record.musicbrainz_id,
              music_brainz_config()
-           ) do
+           ),
+         {:ok, data_with_releases} <- merge_releases(record.musicbrainz_id, data) do
       record
-      |> Record.add_musicbrainz_data(data)
+      |> Record.add_musicbrainz_data(data_with_releases)
       |> Repo.update()
+    end
+  end
+
+  # TODO: paginate and merge as needed
+  defp merge_releases(musicbrainz_id, musicbrainz_data) do
+    with {:ok, data} <-
+           music_brainz_config().api.get_releases(
+             musicbrainz_id,
+             music_brainz_config()
+           ) do
+      {:ok, Map.put(musicbrainz_data, "releases", data["releases"])}
     end
   end
 

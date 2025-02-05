@@ -4,6 +4,8 @@ defmodule MusicBrainz.APIBehaviour do
 
   @callback get_release_group(musicbrainz_id, config) :: {:ok, map()} | {:error, String.t()}
 
+  @callback get_releases(musicbrainz_id, config) :: {:ok, map()} | {:error, String.t()}
+
   @callback get_release(musicbrainz_id, config) :: {:ok, map()} | {:error, String.t()}
 
   @callback search_release_group(String.t(), Keyword.t(), config) ::

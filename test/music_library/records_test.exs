@@ -66,6 +66,10 @@ defmodule MusicLibrary.RecordsTest do
         {:ok, release_group(:lockdown_trilogy)}
       end)
 
+      expect(APIBehaviourMock, :get_releases, fn ^release_group_id, _config ->
+        {:ok, %{"releases" => release_group(:lockdown_trilogy)["releases"]}}
+      end)
+
       {:ok, updated_record} = Records.refresh_musicbrainz_data(record)
 
       assert record.release_ids !== updated_record.release_ids
@@ -203,6 +207,10 @@ defmodule MusicLibrary.RecordsTest do
         {:ok, release_group}
       end)
 
+      expect(APIBehaviourMock, :get_releases, fn ^release_group_id, _config ->
+        {:ok, %{"releases" => release_group["releases"]}}
+      end)
+
       cover_data = File.read!(marbles_cover_fixture())
 
       expect(APIBehaviourMock, :get_cover_art, fn {:musicbrainz_id, ^release_group_id}, _config ->
@@ -254,6 +262,10 @@ defmodule MusicLibrary.RecordsTest do
 
       expect(APIBehaviourMock, :get_release_group, fn ^release_group_id, _config ->
         {:ok, release_group}
+      end)
+
+      expect(APIBehaviourMock, :get_releases, fn ^release_group_id, _config ->
+        {:ok, %{"releases" => release_group["releases"]}}
       end)
 
       cover_data = File.read!(marbles_cover_fixture())

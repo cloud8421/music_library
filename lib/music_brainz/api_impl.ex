@@ -287,6 +287,14 @@ defmodule MusicBrainz.APIImpl do
     json_get(url, config)
   end
 
+  @impl true
+  def get_releases(release_group_id, config) do
+    url =
+      "https://musicbrainz.org/ws/2/release?fmt=json&limit=100&release-group=#{release_group_id}"
+
+    json_get(url, config)
+  end
+
   @doc """
   Uses the [search](https://musicbrainz.org/doc/MusicBrainz_API/Search#Release_Group) endpoint with a search query string.
 

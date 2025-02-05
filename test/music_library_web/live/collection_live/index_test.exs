@@ -271,6 +271,10 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         {:ok, release_group}
       end)
 
+      expect(APIBehaviourMock, :get_releases, fn ^first_result_id, _config ->
+        {:ok, %{"releases" => release_group["releases"]}}
+      end)
+
       cover_data = File.read!(marbles_cover_fixture())
 
       expect(APIBehaviourMock, :get_cover_art, fn {:musicbrainz_id, ^first_result_id}, _config ->

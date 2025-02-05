@@ -193,6 +193,10 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         {:ok, release_group}
       end)
 
+      expect(APIBehaviourMock, :get_releases, fn ^release_group_id, _config ->
+        {:ok, %{"releases" => release_group["releases"]}}
+      end)
+
       # Doesn't matter if we use a different cover
       cover_data = File.read!(marbles_cover_fixture())
 
