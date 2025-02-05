@@ -193,7 +193,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         {:ok, release_group}
       end)
 
-      expect(APIBehaviourMock, :get_releases, fn ^release_group_id, _config ->
+      expect(APIBehaviourMock, :get_releases, fn ^release_group_id, _opts, _config ->
         {:ok, %{"releases" => release_group["releases"]}}
       end)
 

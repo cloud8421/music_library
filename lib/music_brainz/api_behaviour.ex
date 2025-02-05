@@ -1,10 +1,11 @@
 defmodule MusicBrainz.APIBehaviour do
   @type musicbrainz_id :: String.t()
   @type config :: MusicBrainz.Config.t()
+  @type limit :: pos_integer()
 
   @callback get_release_group(musicbrainz_id, config) :: {:ok, map()} | {:error, String.t()}
 
-  @callback get_releases(musicbrainz_id, config) :: {:ok, map()} | {:error, String.t()}
+  @callback get_releases(musicbrainz_id, limit, config) :: {:ok, map()} | {:error, String.t()}
 
   @callback get_release(musicbrainz_id, config) :: {:ok, map()} | {:error, String.t()}
 

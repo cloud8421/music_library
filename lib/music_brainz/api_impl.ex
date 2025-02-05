@@ -7,6 +7,7 @@ defmodule MusicBrainz.APIImpl do
   """
 
   @behaviour MusicBrainz.APIBehaviour
+  @base_url "https://musicbrainz.org/ws/2"
 
   require Logger
 
@@ -288,9 +289,17 @@ defmodule MusicBrainz.APIImpl do
   end
 
   @impl true
-  def get_releases(release_group_id, config) do
+  def get_releases(release_group_id, opts, config) do
+    Keyword.validate!(opts, [:limit, :offset])
+
+    opts =
+      Keyword.merge(opts,
+        fmt: "json",
+        "release-group": release_group_id
+      )
+
     url =
-      "https://musicbrainz.org/ws/2/release?fmt=json&limit=100&release-group=#{release_group_id}"
+      @base_url <> "/release?" <> URI.encode_query(opts)
 
     json_get(url, config)
   end

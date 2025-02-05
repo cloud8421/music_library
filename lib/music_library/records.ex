@@ -226,14 +226,29 @@ defmodule MusicLibrary.Records do
     end
   end
 
-  # TODO: paginate and merge as needed
   defp merge_releases(musicbrainz_id, musicbrainz_data) do
-    with {:ok, data} <-
-           music_brainz_config().api.get_releases(
-             musicbrainz_id,
-             music_brainz_config()
-           ) do
-      {:ok, Map.put(musicbrainz_data, "releases", data["releases"])}
+    with {:ok, releases} <- stream_releases(musicbrainz_id) do
+      {:ok, Map.put(musicbrainz_data, "releases", releases)}
+    end
+  end
+
+  defp stream_releases(musicbrainz_id) do
+    do_stream_releases(musicbrainz_id, [], 0)
+  end
+
+  defp do_stream_releases(musicbrainz_id, releases, offset) do
+    limit = 100
+    opts = [limit: limit, offset: offset]
+
+    case music_brainz_config().api.get_releases(musicbrainz_id, opts, music_brainz_config()) do
+      {:ok, data} ->
+        %{"releases" => new_releases} = data
+
+        if Enum.count(new_releases) < limit do
+          {:ok, releases ++ new_releases}
+        else
+          do_stream_releases(musicbrainz_id, releases ++ new_releases, offset + 100)
+        end
     end
   end
 
