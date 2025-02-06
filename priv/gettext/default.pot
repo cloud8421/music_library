@@ -101,8 +101,8 @@ msgstr ""
 msgid "Import"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex:224
-#: lib/music_library_web/live/wishlist_live/show.html.heex:236
+#: lib/music_library_web/live/collection_live/show.html.heex:232
+#: lib/music_library_web/live/wishlist_live/show.html.heex:244
 #, elixir-autogen, elixir-format
 msgid "Inserted at"
 msgstr ""
@@ -285,8 +285,8 @@ msgstr ""
 msgid "Types"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex:232
-#: lib/music_library_web/live/wishlist_live/show.html.heex:244
+#: lib/music_library_web/live/collection_live/show.html.heex:240
+#: lib/music_library_web/live/wishlist_live/show.html.heex:252
 #, elixir-autogen, elixir-format
 msgid "Updated at"
 msgstr ""
@@ -326,8 +326,8 @@ msgstr ""
 msgid "Copy MusicBrainz ID to clipboard"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex:243
-#: lib/music_library_web/live/wishlist_live/show.html.heex:255
+#: lib/music_library_web/live/collection_live/show.html.heex:251
+#: lib/music_library_web/live/wishlist_live/show.html.heex:263
 #, elixir-autogen, elixir-format
 msgid "MusicBrainz data"
 msgstr ""
@@ -359,8 +359,8 @@ msgstr ""
 msgid "Number of included records"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex:212
-#: lib/music_library_web/live/wishlist_live/show.html.heex:224
+#: lib/music_library_web/live/collection_live/show.html.heex:220
+#: lib/music_library_web/live/wishlist_live/show.html.heex:232
 #, elixir-autogen, elixir-format
 msgid "Includes"
 msgstr ""
@@ -612,4 +612,10 @@ msgstr ""
 #: lib/music_library_web/live/wishlist_live/show.ex:113
 #, elixir-autogen, elixir-format
 msgid "Record added to the collection"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.html.heex:209
+#: lib/music_library_web/live/wishlist_live/show.html.heex:221
+#, elixir-autogen, elixir-format
+msgid "Published releases"
 msgstr ""

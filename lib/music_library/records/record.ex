@@ -70,6 +70,10 @@ defmodule MusicLibrary.Records.Record do
     Enum.count(record.included_release_group_ids)
   end
 
+  def release_count(record) do
+    Enum.count(record.release_ids)
+  end
+
   def add_artists(record, artists_attrs) do
     record
     |> change()
