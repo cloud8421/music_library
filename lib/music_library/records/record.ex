@@ -57,9 +57,7 @@ defmodule MusicLibrary.Records.Record do
     record.musicbrainz_data
     |> Map.get("relations", [])
     |> Enum.filter(fn relation ->
-      relation["target-type"] == "release_group" and
-        relation["type"] == "included in" and
-        relation["direction"] == "backward"
+      relation["release_group"]["id"] in record.included_release_group_ids
     end)
     |> Enum.map(fn relation ->
       MusicBrainz.ReleaseGroup.from_api_response(relation["release_group"])
