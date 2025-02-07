@@ -92,4 +92,26 @@ defmodule MusicLibrary.Records.RecordTest do
       assert Record.child_release_groups_count(record) == 4
     end
   end
+
+  describe "add_musicbrainz_data/2" do
+    test "it updates release_ids and included_release_group_ids" do
+      record = %Record{}
+      assert record.release_ids == []
+      assert record.included_release_group_ids == []
+
+      updated_record =
+        record
+        |> Record.add_musicbrainz_data(release_group(:lockdown_trilogy))
+        |> Ecto.Changeset.apply_changes()
+
+      assert updated_record.release_ids == ["77e746fc-566f-445b-a62b-cc014280fac9"]
+
+      assert updated_record.included_release_group_ids == [
+               "749c07b5-4900-404b-bea9-bb6b16fa991e",
+               "61077431-0057-4119-8f06-0df1098d21e5",
+               "c36123e3-8899-48a5-8196-9dbb72421d69",
+               "d463f2b1-d254-4baf-a957-fb78c6e5b956"
+             ]
+    end
+  end
 end
