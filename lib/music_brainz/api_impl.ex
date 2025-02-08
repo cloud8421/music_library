@@ -212,7 +212,7 @@ defmodule MusicBrainz.APIImpl do
   @impl true
   def get_release_group(id, config) do
     url =
-      "https://musicbrainz.org/ws/2/release-group/#{id}?fmt=json&inc=artists+genres+releases+release-group-rels"
+      @base_url <> "/release-group/#{id}?fmt=json&inc=artists+genres+releases+release-group-rels"
 
     json_get(url, config)
   end
@@ -283,7 +283,7 @@ defmodule MusicBrainz.APIImpl do
   @impl true
   def get_release(id, config) do
     url =
-      "https://musicbrainz.org/ws/2/release/#{id}?fmt=json&inc=release-groups"
+      @base_url <> "/release/#{id}?fmt=json&inc=release-groups"
 
     json_get(url, config)
   end
@@ -417,7 +417,7 @@ defmodule MusicBrainz.APIImpl do
     ]
 
     url =
-      "https://musicbrainz.org/ws/2/release-group?#{URI.encode_query(qs)}"
+      @base_url <> "/release-group?#{URI.encode_query(qs)}"
 
     with {:ok, result} <- json_get(url, config) do
       {:ok, Enum.map(result["release-groups"], &ReleaseGroup.from_api_response/1)}
