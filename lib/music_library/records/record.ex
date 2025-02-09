@@ -29,6 +29,41 @@ defmodule MusicLibrary.Records.Record do
     timestamps(type: :utc_datetime)
   end
 
+  def formats, do: @formats
+  def types, do: @types
+
+  def child_release_groups(record) do
+    record.musicbrainz_data
+    |> Map.get("relations", [])
+    |> Enum.filter(fn relation ->
+      relation["release_group"]["id"] in record.included_release_group_ids
+    end)
+    |> Enum.map(fn relation ->
+      MusicBrainz.ReleaseGroup.from_api_response(relation["release_group"])
+    end)
+  end
+
+  def child_release_groups_count(record) do
+    Enum.count(record.included_release_group_ids)
+  end
+
+  def release_count(record) do
+    Enum.count(record.release_ids)
+  end
+
+  def released?(record, current_day) do
+    case Date.from_iso8601(record.release) do
+      {:ok, release_date} ->
+        Date.compare(current_day, release_date) != :lt
+
+      _error ->
+        # When a release date cannot be parsed it's normally because the record
+        # is old and information is not specific, so we can err on the side of assuming
+        # it's been released.
+        true
+    end
+  end
+
   def changeset(record, attrs) do
     record
     |> cast(attrs, [
@@ -53,25 +88,6 @@ defmodule MusicLibrary.Records.Record do
     |> update_included_release_group_ids()
   end
 
-  def child_release_groups(record) do
-    record.musicbrainz_data
-    |> Map.get("relations", [])
-    |> Enum.filter(fn relation ->
-      relation["release_group"]["id"] in record.included_release_group_ids
-    end)
-    |> Enum.map(fn relation ->
-      MusicBrainz.ReleaseGroup.from_api_response(relation["release_group"])
-    end)
-  end
-
-  def child_release_groups_count(record) do
-    Enum.count(record.included_release_group_ids)
-  end
-
-  def release_count(record) do
-    Enum.count(record.release_ids)
-  end
-
   def add_genres(record, genres) do
     change(record, genres: genres)
   end
@@ -87,6 +103,20 @@ defmodule MusicLibrary.Records.Record do
     |> change(musicbrainz_data: musicbrainz_data)
     |> update_release_ids()
     |> update_included_release_group_ids()
+  end
+
+  def generate_cover_hash(record = %__MODULE__{cover_data: cover_data}) do
+    change(record, cover_hash: Cover.hash(cover_data))
+  end
+
+  def generate_cover_hash(changeset) do
+    case get_change(changeset, :cover_data) do
+      nil ->
+        changeset
+
+      cover_data ->
+        put_change(changeset, :cover_hash, Cover.hash(cover_data))
+    end
   end
 
   defp update_release_ids(changeset) do
@@ -125,20 +155,6 @@ defmodule MusicLibrary.Records.Record do
     |> Enum.map(fn relation -> relation["release_group"]["id"] end)
   end
 
-  def generate_cover_hash(record = %__MODULE__{cover_data: cover_data}) do
-    change(record, cover_hash: Cover.hash(cover_data))
-  end
-
-  def generate_cover_hash(changeset) do
-    case get_change(changeset, :cover_data) do
-      nil ->
-        changeset
-
-      cover_data ->
-        put_change(changeset, :cover_hash, Cover.hash(cover_data))
-    end
-  end
-
   def attrs_from_release_group(release_group) do
     musicbrainz_id = release_group["id"]
 
@@ -167,8 +183,12 @@ defmodule MusicLibrary.Records.Record do
     }
   end
 
-  def formats, do: @formats
-  def types, do: @types
+  defp parse_subtype("Album"), do: :album
+  defp parse_subtype("EP"), do: :ep
+  defp parse_subtype("Live"), do: :live
+  defp parse_subtype("Compilation"), do: :compilation
+  defp parse_subtype("Single"), do: :single
+  defp parse_subtype(_), do: :other
 
   def format_release(nil), do: "N/A"
 
@@ -181,27 +201,7 @@ defmodule MusicLibrary.Records.Record do
     end
   end
 
-  def released?(record, current_day) do
-    case Date.from_iso8601(record.release) do
-      {:ok, release_date} ->
-        Date.compare(current_day, release_date) != :lt
-
-      _error ->
-        # When a release date cannot be parsed it's normally because the record
-        # is old and information is not specific, so we can err on the side of assuming
-        # it's been released.
-        true
-    end
-  end
-
   def format_as_date(purchased_at) do
     "#{purchased_at.day}/#{purchased_at.month}/#{purchased_at.year}"
   end
-
-  defp parse_subtype("Album"), do: :album
-  defp parse_subtype("EP"), do: :ep
-  defp parse_subtype("Live"), do: :live
-  defp parse_subtype("Compilation"), do: :compilation
-  defp parse_subtype("Single"), do: :single
-  defp parse_subtype(_), do: :other
 end
