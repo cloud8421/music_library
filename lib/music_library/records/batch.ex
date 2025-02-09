@@ -32,35 +32,6 @@ defmodule MusicLibrary.Records.Batch do
     end
   end
 
-  def update_release_ids do
-    run_on_all_records(&update_release_ids/1)
-  end
-
-  def update_included_release_group_ids do
-    run_on_all_records(&update_included_release_group_ids/1)
-  end
-
-  def update_release_ids(record) do
-    record
-    |> Record.update_release_ids()
-    |> Repo.update()
-  end
-
-  def update_included_release_group_ids(record) do
-    record
-    |> Record.update_included_release_group_ids()
-    |> Repo.update()
-  end
-
-  def remove_artists_ids! do
-    # Shotgun approach: remove the first 4 artists IDs from each record.
-    # This is not a general solution, but it works as a quick fix because the record with the most artists has 3.
-    q =
-      "update records set artists = json_remove(artists, '$[0].id', '$[1].id', '$[2].id', '$[3].id');"
-
-    Repo.query(q)
-  end
-
   defp run_on_all_records(fun) do
     q = from(r in Record)
     stream = Repo.stream(q, max_rows: 50)

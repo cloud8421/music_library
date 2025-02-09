@@ -72,12 +72,6 @@ defmodule MusicLibrary.Records.Record do
     Enum.count(record.release_ids)
   end
 
-  def add_artists(record, artists_attrs) do
-    record
-    |> change()
-    |> put_embed(:artists, artists_attrs)
-  end
-
   def add_genres(record, genres) do
     change(record, genres: genres)
   end
@@ -95,13 +89,7 @@ defmodule MusicLibrary.Records.Record do
     |> update_included_release_group_ids()
   end
 
-  def update_release_ids(record = %__MODULE__{musicbrainz_data: musicbrainz_data}) do
-    release_ids = Enum.map(musicbrainz_data["releases"], fn r -> r["id"] end)
-
-    change(record, release_ids: release_ids)
-  end
-
-  def update_release_ids(changeset) do
+  defp update_release_ids(changeset) do
     case get_change(changeset, :musicbrainz_data) do
       nil ->
         changeset
@@ -112,13 +100,7 @@ defmodule MusicLibrary.Records.Record do
     end
   end
 
-  def update_included_release_group_ids(record = %__MODULE__{musicbrainz_data: musicbrainz_data}) do
-    change(record,
-      included_release_group_ids: extract_included_release_group_ids(musicbrainz_data)
-    )
-  end
-
-  def update_included_release_group_ids(changeset) do
+  defp update_included_release_group_ids(changeset) do
     case get_change(changeset, :musicbrainz_data) do
       nil ->
         changeset

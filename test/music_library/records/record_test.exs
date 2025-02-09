@@ -43,8 +43,8 @@ defmodule MusicLibrary.Records.RecordTest do
       release_group = release_group(:lockdown_trilogy)
 
       record =
-        %Record{musicbrainz_data: release_group}
-        |> Record.update_included_release_group_ids()
+        %Record{}
+        |> Record.add_musicbrainz_data(release_group)
         |> Ecto.Changeset.apply_changes()
 
       assert Record.child_release_groups(record) == [
@@ -85,8 +85,8 @@ defmodule MusicLibrary.Records.RecordTest do
       release_group = release_group(:lockdown_trilogy)
 
       record =
-        %Record{musicbrainz_data: release_group}
-        |> Record.update_included_release_group_ids()
+        %Record{}
+        |> Record.add_musicbrainz_data(release_group)
         |> Ecto.Changeset.apply_changes()
 
       assert Record.child_release_groups_count(record) == 4
