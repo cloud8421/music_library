@@ -98,8 +98,7 @@ defmodule MusicLibrary.Records.Record do
   def update_release_ids(record = %__MODULE__{musicbrainz_data: musicbrainz_data}) do
     release_ids = Enum.map(musicbrainz_data["releases"], fn r -> r["id"] end)
 
-    record
-    |> change(release_ids: release_ids)
+    change(record, release_ids: release_ids)
   end
 
   def update_release_ids(changeset) do
@@ -114,10 +113,9 @@ defmodule MusicLibrary.Records.Record do
   end
 
   def update_included_release_group_ids(record = %__MODULE__{musicbrainz_data: musicbrainz_data}) do
-    included_release_group_ids = extract_included_release_group_ids(musicbrainz_data)
-
-    record
-    |> change(included_release_group_ids: included_release_group_ids)
+    change(record,
+      included_release_group_ids: extract_included_release_group_ids(musicbrainz_data)
+    )
   end
 
   def update_included_release_group_ids(changeset) do
@@ -126,9 +124,11 @@ defmodule MusicLibrary.Records.Record do
         changeset
 
       musicbrainz_data ->
-        included_release_group_ids = extract_included_release_group_ids(musicbrainz_data)
-
-        put_change(changeset, :included_release_group_ids, included_release_group_ids)
+        put_change(
+          changeset,
+          :included_release_group_ids,
+          extract_included_release_group_ids(musicbrainz_data)
+        )
     end
   end
 
@@ -144,9 +144,7 @@ defmodule MusicLibrary.Records.Record do
   end
 
   def generate_cover_hash(record = %__MODULE__{cover_data: cover_data}) do
-    record
-    |> change()
-    |> put_change(:cover_hash, Cover.hash(cover_data))
+    change(record, cover_hash: Cover.hash(cover_data))
   end
 
   def generate_cover_hash(changeset) do
