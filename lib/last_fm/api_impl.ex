@@ -12,8 +12,8 @@ defmodule LastFm.APIImpl do
   # so we make them shorter to leverage retries
   @request_opts [
     pool_timeout: 1000,
-    receive_timeout: 3000,
-    request_timeout: 4500
+    receive_timeout: 1000,
+    request_timeout: 2500
   ]
 
   @impl true
