@@ -340,7 +340,7 @@ defmodule MusicLibraryWeb.CoreComponents do
         class={[
           "mt-2 block w-full rounded-md",
           "border-0 border-zinc-300",
-          "bg-white shadow-sm dark:bg-zinc-800",
+          "bg-white dark:bg-zinc-800",
           "ring-1 ring-inset focus:z-10 focus:ring-2 focus:ring-inset",
           "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:ring-zinc-300 focus:ring-0",
           "text-xs sm:text-sm",
@@ -391,7 +391,7 @@ defmodule MusicLibraryWeb.CoreComponents do
         class={[
           "mt-2 block w-full rounded-md",
           "border-0 border-zinc-300",
-          "bg-white shadow-sm dark:bg-zinc-800",
+          "bg-white dark:bg-zinc-800",
           "ring-1 ring-inset focus:z-10 focus:ring-2 focus:ring-inset",
           "focus:border-zinc-400 focus:ring-zinc-400 dark:focus:ring-zinc-300 focus:ring-0",
           "text-xs sm:text-sm",
