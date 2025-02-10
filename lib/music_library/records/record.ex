@@ -33,10 +33,9 @@ defmodule MusicLibrary.Records.Record do
   def types, do: @types
 
   def included_release_groups(record) do
-    MusicbrainzData.included_release_groups(
-      record.musicbrainz_data,
-      record.included_release_group_ids
-    )
+    record.musicbrainz_data
+    |> MusicbrainzData.included_release_groups()
+    |> Enum.filter(fn rg -> rg.id in record.included_release_group_ids end)
   end
 
   def included_release_groups_count(record) do
