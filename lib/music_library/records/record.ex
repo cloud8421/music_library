@@ -2,7 +2,8 @@ defmodule MusicLibrary.Records.Record do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias MusicLibrary.Records.{Artist, Cover, MusicbrainzData}
+  alias MusicLibrary.Records.{Artist, Cover}
+  alias MusicBrainz.ReleaseGroup
 
   @formats [:cd, :backup, :vinyl, :blu_ray, :dvd, :multi]
   @types [:album, :ep, :live, :compilation, :single, :other]
@@ -34,7 +35,7 @@ defmodule MusicLibrary.Records.Record do
 
   def included_release_groups(record) do
     record.musicbrainz_data
-    |> MusicbrainzData.included_release_groups()
+    |> ReleaseGroup.included_release_groups()
     |> Enum.filter(fn rg -> rg.id in record.included_release_group_ids end)
   end
 
@@ -120,7 +121,7 @@ defmodule MusicLibrary.Records.Record do
         changeset
 
       musicbrainz_data ->
-        put_change(changeset, :release_ids, MusicbrainzData.release_ids(musicbrainz_data))
+        put_change(changeset, :release_ids, ReleaseGroup.release_ids(musicbrainz_data))
     end
   end
 
@@ -133,7 +134,7 @@ defmodule MusicLibrary.Records.Record do
         put_change(
           changeset,
           :included_release_group_ids,
-          MusicbrainzData.included_release_group_ids(musicbrainz_data)
+          ReleaseGroup.included_release_group_ids(musicbrainz_data)
         )
     end
   end

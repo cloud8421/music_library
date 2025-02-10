@@ -1,26 +1,28 @@
-defmodule MusicLibrary.Records.MusicbrainzData do
-  def included_release_groups(musicbrainz_data) do
-    musicbrainz_data
+defmodule MusicBrainz.ReleaseGroup do
+  alias MusicBrainz.ReleaseGroupSearchResult
+
+  def included_release_groups(release_group) do
+    release_group
     |> get_release_groups()
     |> Enum.map(fn relation ->
-      MusicBrainz.ReleaseGroupSearchResult.from_api_response(relation["release_group"])
+      ReleaseGroupSearchResult.from_api_response(relation["release_group"])
     end)
   end
 
-  def release_ids(musicbrainz_data) do
-    musicbrainz_data
+  def release_ids(release_group) do
+    release_group
     |> Map.get("releases", [])
     |> Enum.map(fn release -> release["id"] end)
   end
 
-  def included_release_group_ids(musicbrainz_data) do
-    musicbrainz_data
+  def included_release_group_ids(release_group) do
+    release_group
     |> included_release_groups()
     |> Enum.map(fn rg -> rg.id end)
   end
 
-  defp get_release_groups(musicbrainz_data) do
-    musicbrainz_data
+  defp get_release_groups(release_group) do
+    release_group
     |> Map.get("relations", [])
     |> Enum.filter(fn relation ->
       relation["target-type"] == "release_group" and
