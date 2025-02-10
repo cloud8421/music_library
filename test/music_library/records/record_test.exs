@@ -40,7 +40,7 @@ defmodule MusicLibrary.Records.RecordTest do
     end
   end
 
-  describe "child_release_groups/1" do
+  describe "included_release_groups/1" do
     test "returns the release groups of children releases" do
       release_group = release_group(:lockdown_trilogy)
 
@@ -49,7 +49,7 @@ defmodule MusicLibrary.Records.RecordTest do
         |> Record.add_musicbrainz_data(release_group)
         |> Ecto.Changeset.apply_changes()
 
-      assert Record.child_release_groups(record) == [
+      assert Record.included_release_groups(record) == [
                %MusicBrainz.ReleaseGroup{
                  id: "749c07b5-4900-404b-bea9-bb6b16fa991e",
                  type: :other,
@@ -82,7 +82,7 @@ defmodule MusicLibrary.Records.RecordTest do
     end
   end
 
-  describe "child_release_groups_count/1" do
+  describe "included_release_groups_count/1" do
     test "returns the release groups count of children releases" do
       release_group = release_group(:lockdown_trilogy)
 
@@ -91,7 +91,7 @@ defmodule MusicLibrary.Records.RecordTest do
         |> Record.add_musicbrainz_data(release_group)
         |> Ecto.Changeset.apply_changes()
 
-      assert Record.child_release_groups_count(record) == 4
+      assert Record.included_release_groups_count(record) == 4
     end
   end
 

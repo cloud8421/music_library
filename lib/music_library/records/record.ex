@@ -2,7 +2,7 @@ defmodule MusicLibrary.Records.Record do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias MusicLibrary.Records.{Artist, Cover}
+  alias MusicLibrary.Records.{Artist, Cover, MusicbrainzData}
 
   @formats [:cd, :backup, :vinyl, :blu_ray, :dvd, :multi]
   @types [:album, :ep, :live, :compilation, :single, :other]
@@ -32,18 +32,14 @@ defmodule MusicLibrary.Records.Record do
   def formats, do: @formats
   def types, do: @types
 
-  def child_release_groups(record) do
-    record.musicbrainz_data
-    |> Map.get("relations", [])
-    |> Enum.filter(fn relation ->
-      relation["release_group"]["id"] in record.included_release_group_ids
-    end)
-    |> Enum.map(fn relation ->
-      MusicBrainz.ReleaseGroup.from_api_response(relation["release_group"])
-    end)
+  def included_release_groups(record) do
+    MusicbrainzData.included_release_groups(
+      record.musicbrainz_data,
+      record.included_release_group_ids
+    )
   end
 
-  def child_release_groups_count(record) do
+  def included_release_groups_count(record) do
     Enum.count(record.included_release_group_ids)
   end
 
@@ -125,8 +121,7 @@ defmodule MusicLibrary.Records.Record do
         changeset
 
       musicbrainz_data ->
-        release_ids = Enum.map(musicbrainz_data["releases"], fn r -> r["id"] end)
-        put_change(changeset, :release_ids, release_ids)
+        put_change(changeset, :release_ids, MusicbrainzData.release_ids(musicbrainz_data))
     end
   end
 
@@ -139,20 +134,9 @@ defmodule MusicLibrary.Records.Record do
         put_change(
           changeset,
           :included_release_group_ids,
-          extract_included_release_group_ids(musicbrainz_data)
+          MusicbrainzData.included_release_group_ids(musicbrainz_data)
         )
     end
-  end
-
-  defp extract_included_release_group_ids(musicbrainz_data) do
-    musicbrainz_data
-    |> Map.get("relations", [])
-    |> Enum.filter(fn relation ->
-      relation["target-type"] == "release_group" and
-        relation["type"] == "included in" and
-        relation["direction"] == "backward"
-    end)
-    |> Enum.map(fn relation -> relation["release_group"]["id"] end)
   end
 
   def attrs_from_release_group(release_group) do

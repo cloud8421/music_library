@@ -50,12 +50,12 @@ defmodule MusicLibraryWeb.RecordComponents do
             </p>
             <p class="sm:hidden mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
               {format_label(record.format)} · {type_label(record.type)}
-              <span :if={Records.Record.child_release_groups_count(record) > 0}>
+              <span :if={Records.Record.included_release_groups_count(record) > 0}>
                 ·
                 <span class="sr-only">
                   {gettext("Number of included records")}
                 </span>
-                <.round_badge text={Records.Record.child_release_groups_count(record)} />
+                <.round_badge text={Records.Record.included_release_groups_count(record)} />
               </span>
               <span :if={record.purchased_at}>
                 ·
@@ -77,12 +77,12 @@ defmodule MusicLibraryWeb.RecordComponents do
           <div class="hidden sm:flex sm:flex-col sm:items-end">
             <p class="text-xs leading-6 text-zinc-900 dark:text-zinc-300">
               {format_label(record.format)} · {type_label(record.type)}
-              <span :if={Records.Record.child_release_groups_count(record) > 0}>
+              <span :if={Records.Record.included_release_groups_count(record) > 0}>
                 ·
                 <span class="sr-only">
                   {gettext("Number of included records")}
                 </span>
-                <.round_badge text={Records.Record.child_release_groups_count(record)} />
+                <.round_badge text={Records.Record.included_release_groups_count(record)} />
               </span>
             </p>
             <p :if={record.purchased_at} class="text-xs leading-6 text-zinc-900 dark:text-zinc-300">
