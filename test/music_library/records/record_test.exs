@@ -4,6 +4,8 @@ defmodule MusicLibrary.Records.RecordTest do
   import MusicLibrary.ReleaseGroupsFixtures
   alias MusicLibrary.Records.Record
 
+  doctest Record
+
   defp get_current_date(_) do
     %{current_date: ~D[2025-01-01]}
   end

@@ -190,10 +190,29 @@ defmodule MusicLibrary.Records.Record do
   defp parse_subtype("Single"), do: :single
   defp parse_subtype(_), do: :other
 
+  @doc """
+  Format a release date in a conventional format.
+
+  Release dates as returned by MusicBrainz have different levels of precision,
+  and can be nil or empty string.
+
+      iex> alias MusicLibrary.Records.Record
+      iex> Record.format_release(nil)
+      "N/A"
+      iex> Record.format_release("")
+      "N/A"
+      iex> Record.format_release("2021")
+      "2021"
+      iex> Record.format_release("2021-12")
+      "12/2021"
+      iex> Record.format_release("2021-12-23")
+      "23/12/2021"
+  """
+  @spec format_release(String.t() | nil) :: String.t()
   def format_release(nil), do: "N/A"
 
   def format_release(release) do
-    case String.split(release, "-") do
+    case String.split(release, "-", trim: true) do
       [] -> "N/A"
       [year] -> year
       [year, month] -> "#{month}/#{year}"
