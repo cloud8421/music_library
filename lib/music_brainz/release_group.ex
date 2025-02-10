@@ -21,6 +21,10 @@ defmodule MusicBrainz.ReleaseGroup do
     |> Enum.map(fn rg -> rg.id end)
   end
 
+  def url(id) do
+    "https://musicbrainz.org/release-group/#{id}"
+  end
+
   defp get_release_groups(release_group) do
     release_group
     |> Map.get("relations", [])

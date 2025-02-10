@@ -15,10 +15,6 @@ defmodule MusicBrainz.ReleaseGroupSearchResult do
     }
   end
 
-  def url(id) do
-    "https://musicbrainz.org/release-group/#{id}"
-  end
-
   defp parse_subtype("Album"), do: :album
   defp parse_subtype("EP"), do: :ep
   defp parse_subtype("Live"), do: :live
