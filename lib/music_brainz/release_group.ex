@@ -25,6 +25,13 @@ defmodule MusicBrainz.ReleaseGroup do
     "https://musicbrainz.org/release-group/#{id}"
   end
 
+  def parse_subtype("Album"), do: :album
+  def parse_subtype("EP"), do: :ep
+  def parse_subtype("Live"), do: :live
+  def parse_subtype("Compilation"), do: :compilation
+  def parse_subtype("Single"), do: :single
+  def parse_subtype(_), do: :other
+
   defp get_release_groups(release_group) do
     release_group
     |> Map.get("relations", [])
