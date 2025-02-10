@@ -56,7 +56,7 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
 
   attr :id, :string, required: true
   attr :icon_name, :string, required: true
-  attr :release_group, MusicBrainz.ReleaseGroup, required: true
+  attr :release_group, MusicBrainz.ReleaseGroupSearchResult, required: true
 
   defp result(assigns) do
     ~H"""

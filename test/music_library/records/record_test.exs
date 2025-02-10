@@ -50,28 +50,28 @@ defmodule MusicLibrary.Records.RecordTest do
         |> Ecto.Changeset.apply_changes()
 
       assert Record.included_release_groups(record) == [
-               %MusicBrainz.ReleaseGroup{
+               %MusicBrainz.ReleaseGroupSearchResult{
                  id: "749c07b5-4900-404b-bea9-bb6b16fa991e",
                  type: :other,
                  title: "Claustrophobic Universe",
                  release: "2021-04-23",
                  artists: "Mariusz Duda"
                },
-               %MusicBrainz.ReleaseGroup{
+               %MusicBrainz.ReleaseGroupSearchResult{
                  id: "61077431-0057-4119-8f06-0df1098d21e5",
                  type: :other,
                  title: "Interior Drawings",
                  release: "2021-12-10",
                  artists: "Mariusz Duda"
                },
-               %MusicBrainz.ReleaseGroup{
+               %MusicBrainz.ReleaseGroupSearchResult{
                  id: "c36123e3-8899-48a5-8196-9dbb72421d69",
                  type: :other,
                  title: "Let’s Meet Outside",
                  release: "2022-05-20",
                  artists: "Mariusz Duda"
                },
-               %MusicBrainz.ReleaseGroup{
+               %MusicBrainz.ReleaseGroupSearchResult{
                  id: "d463f2b1-d254-4baf-a957-fb78c6e5b956",
                  type: :other,
                  title: "Lockdown Spaces",

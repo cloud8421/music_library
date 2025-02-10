@@ -141,7 +141,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                 {gettext("Show")}
               </.link>
               <a
-                href={MusicBrainz.ReleaseGroup.url(record.musicbrainz_id)}
+                href={MusicBrainz.ReleaseGroupSearchResult.url(record.musicbrainz_id)}
                 target=".blank"
                 class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
                 role="menuitem"

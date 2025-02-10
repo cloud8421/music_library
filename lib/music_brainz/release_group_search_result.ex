@@ -1,4 +1,4 @@
-defmodule MusicBrainz.ReleaseGroup do
+defmodule MusicBrainz.ReleaseGroupSearchResult do
   @enforce_keys [:id, :type, :title, :artists, :release]
   defstruct [:id, :type, :title, :artists, :release]
 

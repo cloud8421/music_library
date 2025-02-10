@@ -1,18 +1,18 @@
 defmodule MusicLibrary.ReleaseGroupsFixtures do
   @fixtures_folder Path.join([File.cwd!(), "test/support/fixtures"])
 
-  alias MusicBrainz.ReleaseGroup
+  alias MusicBrainz.ReleaseGroupSearchResult
 
   def release_group_search_results do
     [
-      %ReleaseGroup{
+      %ReleaseGroupSearchResult{
         id: "20790e26-98e4-3ad3-a67f-b674758b942d",
         type: :album,
         title: "Marbles",
         artists: "Marillion",
         release: "2004-05-03"
       },
-      %ReleaseGroup{
+      %ReleaseGroupSearchResult{
         id: "bf20ac32-a793-3bb4-beff-f7b9bffaca38",
         type: :album,
         title: "Marbles Live",

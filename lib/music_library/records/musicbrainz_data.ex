@@ -3,7 +3,7 @@ defmodule MusicLibrary.Records.MusicbrainzData do
     musicbrainz_data
     |> get_release_groups()
     |> Enum.map(fn relation ->
-      MusicBrainz.ReleaseGroup.from_api_response(relation["release_group"])
+      MusicBrainz.ReleaseGroupSearchResult.from_api_response(relation["release_group"])
     end)
   end
 
