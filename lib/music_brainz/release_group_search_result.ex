@@ -7,7 +7,7 @@ defmodule MusicBrainz.ReleaseGroupSearchResult do
   def from_api_response(rg) do
     %__MODULE__{
       id: rg["id"],
-      type: ReleaseGroup.parse_subtype(rg["primary-type"]),
+      type: ReleaseGroup.parse_type(rg["primary-type"]),
       title: rg["title"],
       artists:
         rg["artist-credit"]
