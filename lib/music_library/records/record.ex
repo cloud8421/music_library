@@ -47,6 +47,8 @@ defmodule MusicLibrary.Records.Record do
     Enum.count(record.release_ids)
   end
 
+  def released?(%{release: nil}, _current_day), do: true
+
   def released?(record, current_day) do
     case Date.from_iso8601(record.release) do
       {:ok, release_date} ->
