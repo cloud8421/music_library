@@ -77,7 +77,7 @@ defmodule MusicLibrary.Records.Record do
       :purchased_at
     ])
     |> cast_embed(:artists)
-    |> validate_required([:type, :title, :musicbrainz_id, :release, :genres])
+    |> validate_required([:type, :title, :musicbrainz_id, :genres])
     |> unique_constraint(:musicbrainz_id, name: "records_musicbrainz_id_format_index")
     |> generate_cover_hash()
     |> update_release_ids()
