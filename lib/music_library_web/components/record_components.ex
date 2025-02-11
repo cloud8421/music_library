@@ -129,12 +129,11 @@ defmodule MusicLibraryWeb.RecordComponents do
               role="menu"
               aria-orientation="vertical"
               aria-labelledby="options-menu-0-button"
-              tabindex="-1"
             >
               <.link
                 class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
                 role="menuitem"
-                tabindex="-1"
+                tabindex="0"
                 id={"actions-#{record.id}-show"}
                 navigate={@record_show_path.(record)}
               >
@@ -145,7 +144,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                 target=".blank"
                 class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
                 role="menuitem"
-                tabindex="-1"
+                tabindex="0"
                 id={"actions-#{record.id}-musicbrainz"}
               >
                 {gettext("View on MusicBrainz")}
@@ -154,7 +153,7 @@ defmodule MusicLibraryWeb.RecordComponents do
               <.link
                 class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
                 role="menuitem"
-                tabindex="-1"
+                tabindex="0"
                 id={"actions-#{record.id}-edit"}
                 patch={@record_edit_path.(record)}
               >
@@ -165,7 +164,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                 :if={!record.purchased_at}
                 class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
                 role="menuitem"
-                tabindex="-1"
+                tabindex="0"
                 id={"actions-#{record.id}-purchase"}
                 phx-click={JS.push("add-to-collection", value: %{id: record.id})}
               >
@@ -175,7 +174,7 @@ defmodule MusicLibraryWeb.RecordComponents do
               <.link
                 class="block px-3 py-1 text-sm leading-6 text-red-900 hover:bg-red-50 dark:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-600"
                 role="menuitem"
-                tabindex="-1"
+                tabindex="0"
                 id={"actions-#{record.id}-delete"}
                 phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
                 data-confirm={gettext("Are you sure?")}

@@ -51,13 +51,12 @@
         role="menu"
         aria-orientation="vertical"
         aria-labelledby="options-menu-0-button"
-        tabindex="-1"
         phx-click-away={close_actions_menu(@record.id)}
       >
         <.link
           class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
           role="menuitem"
-          tabindex="-1"
+          tabindex="0"
           id={"actions-#{@record.id}-edit"}
           patch={~p"/collection/#{@record}/show/edit"}
         >
@@ -73,7 +72,7 @@
         <.link
           class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
           role="menuitem"
-          tabindex="-1"
+          tabindex="0"
           id={"actions-#{@record.id}-refresh-cover"}
           phx-click={JS.push("refresh_cover", value: %{id: @record.id})}
         >
@@ -89,7 +88,7 @@
         <.link
           class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
           role="menuitem"
-          tabindex="-1"
+          tabindex="0"
           id={"actions-#{@record.id}-refresh-mb-data"}
           phx-click={JS.push("refresh_musicbrainz_data", value: %{id: @record.id})}
         >
@@ -105,7 +104,7 @@
         <.link
           class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
           role="menuitem"
-          tabindex="-1"
+          tabindex="0"
           id={"actions-#{@record.id}-populate-genres"}
           phx-click={JS.push("populate_genres", value: %{id: @record.id})}
         >
@@ -121,7 +120,7 @@
         <.link
           class="block px-3 py-1 text-sm leading-6 text-red-900 hover:bg-red-50 dark:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-600"
           role="menuitem"
-          tabindex="-1"
+          tabindex="0"
           id={"actions-#{@record.id}-delete"}
           phx-click={JS.push("delete", value: %{id: @record.id})}
           data-confirm={gettext("Are you sure?")}

@@ -103,13 +103,12 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="options-menu-0-button"
-            tabindex="-1"
           >
             <.link
               :for={format <- Records.Record.formats()}
               class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
               role="menuitem"
-              tabindex="-1"
+              tabindex="0"
               id={"actions-#{@release_group.id}-#{format}-import"}
               phx-click={
                 JS.push("import", value: %{id: @release_group.id, format: format}, page_loading: true)
