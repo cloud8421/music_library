@@ -2,7 +2,7 @@
   "artist-credit": [
     {
       "artist": {
-        "disambiguation": "",
+        "disambiguation": "Tobias Sammet’s Avantasia",
         "genres": [
           {
             "count": 7,
@@ -65,7 +65,7 @@
         "artist-credit": [
           {
             "artist": {
-              "disambiguation": "",
+              "disambiguation": "Tobias Sammet’s Avantasia",
               "id": "2ecbc483-dee4-442f-8ce7-f3ab31c73f87",
               "name": "Avantasia",
               "sort-name": "Avantasia",

@@ -507,6 +507,40 @@
       "title": "Marbles"
     },
     {
+      "barcode": "636551722223",
+      "country": "XE",
+      "date": "2017-08",
+      "disambiguation": "",
+      "genres": [],
+      "id": "3f89357a-eeb3-4040-af34-a27b7c2aea2b",
+      "packaging": "Digipak",
+      "packaging-id": "8f931351-d2e2-310f-afc6-37b89ddba246",
+      "quality": "normal",
+      "release-events": [
+        {
+          "area": {
+            "disambiguation": "",
+            "id": "89a675c2-3e37-3518-b83c-418bad59a85a",
+            "iso-3166-1-codes": [
+              "XE"
+            ],
+            "name": "Europe",
+            "sort-name": "Europe",
+            "type": null,
+            "type-id": null
+          },
+          "date": "2017-08"
+        }
+      ],
+      "status": "Official",
+      "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+      "text-representation": {
+        "language": "eng",
+        "script": "Latn"
+      },
+      "title": "Marbles"
+    },
+    {
       "barcode": "636551808613",
       "country": "XE",
       "date": "2017",

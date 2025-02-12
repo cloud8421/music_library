@@ -240,6 +240,7 @@ defmodule MusicLibrary.RecordsTest do
                  "ab151aa6-7538-4e93-be60-eded52b5b7b7",
                  "b94bbd1f-ae5d-4e7b-98ff-28bfe135f20c",
                  "4b9fe13b-4837-4c02-9368-e97ba6f5a086",
+                 "3f89357a-eeb3-4040-af34-a27b7c2aea2b",
                  "a4b02377-0b5e-448e-9cd6-5500c0378523",
                  "f3937bc5-b99f-443a-9609-a404201f21ca"
                ]
@@ -297,6 +298,7 @@ defmodule MusicLibrary.RecordsTest do
                  "ab151aa6-7538-4e93-be60-eded52b5b7b7",
                  "b94bbd1f-ae5d-4e7b-98ff-28bfe135f20c",
                  "4b9fe13b-4837-4c02-9368-e97ba6f5a086",
+                 "3f89357a-eeb3-4040-af34-a27b7c2aea2b",
                  "a4b02377-0b5e-448e-9cd6-5500c0378523",
                  "f3937bc5-b99f-443a-9609-a404201f21ca"
                ]
