@@ -1,23 +1,16 @@
 defmodule MusicLibrary.Records.Batch do
   require Logger
 
+  alias MusicLibrary.Records
   alias MusicLibrary.Records.{Cover, Record}
   alias MusicLibrary.Repo
   import Ecto.Query
 
   def refresh_musicbrainz_data do
     run_on_all_records(fn record ->
-      import_musicbrainz_data(record)
+      Records.refresh_musicbrainz_data(record)
       Process.sleep(1000)
     end)
-  end
-
-  def import_musicbrainz_data(record) do
-    with {:ok, data} <- music_brainz_config().api.get_release_group(record.musicbrainz_id) do
-      record
-      |> Record.add_musicbrainz_data(data)
-      |> Repo.update!()
-    end
   end
 
   def refresh_old_artwork do
@@ -58,6 +51,4 @@ defmodule MusicLibrary.Records.Batch do
       timeout: :infinity
     )
   end
-
-  defp music_brainz_config, do: MusicBrainz.Config.resolve(:music_library)
 end
