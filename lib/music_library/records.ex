@@ -240,15 +240,15 @@ defmodule MusicLibrary.Records do
     limit = 100
     opts = [limit: limit, offset: offset]
 
-    case music_brainz_config().api.get_releases(musicbrainz_id, opts, music_brainz_config()) do
-      {:ok, data} ->
-        %{"releases" => new_releases} = data
+    with {:ok, data} <-
+           music_brainz_config().api.get_releases(musicbrainz_id, opts, music_brainz_config()) do
+      %{"releases" => new_releases} = data
 
-        if Enum.count(new_releases) < limit do
-          {:ok, releases ++ new_releases}
-        else
-          do_stream_releases(musicbrainz_id, releases ++ new_releases, offset + 100)
-        end
+      if Enum.count(new_releases) < limit do
+        {:ok, releases ++ new_releases}
+      else
+        do_stream_releases(musicbrainz_id, releases ++ new_releases, offset + 100)
+      end
     end
   end
 
