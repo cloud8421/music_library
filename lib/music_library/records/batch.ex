@@ -6,10 +6,11 @@ defmodule MusicLibrary.Records.Batch do
   alias MusicLibrary.Repo
   import Ecto.Query
 
-  def refresh_musicbrainz_data do
+  def refresh_musicbrainz_data(opts \\ []) do
     run_on_all_records(fn record ->
+      sleep = Keyword.get(opts, :sleep, 2000)
       Records.refresh_musicbrainz_data(record)
-      Process.sleep(1000)
+      Process.sleep(sleep)
     end)
   end
 
