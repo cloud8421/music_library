@@ -295,7 +295,8 @@ defmodule MusicBrainz.APIImpl do
     opts =
       Keyword.merge(opts,
         fmt: "json",
-        "release-group": release_group_id
+        "release-group": release_group_id,
+        inc: "media"
       )
 
     url =
