@@ -19,6 +19,29 @@ const barcodeTest = async function () {
 
 export default {
   mounted() {
-    console.log(this.el);
+    const video = this.el;
+    const constraints = {
+      audio: false,
+      video: { width: 800, height: 600 },
+    };
+
+    navigator.mediaDevices
+      .getUserMedia(constraints)
+      .then((mediaStream) => {
+        console.debug("Camera access allowed")
+        this.pushEventTo(video, "camera:allowed", {});
+        console.log(mediaStream);
+        video.srcObject = mediaStream;
+        video.onloadedmetadata = () => {
+          video.play();
+        };
+      })
+      .catch((err) => {
+        console.error(`${err.name}: ${err.message}`);
+        this.pushEventTo(video, "camera:denied", {});
+      });
+  },
+  destroyed() {
+    this.el.srcObject.getTracks().forEach(track => track.stop());
   }
 }

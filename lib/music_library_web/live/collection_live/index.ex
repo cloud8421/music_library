@@ -45,6 +45,20 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
     |> assign(:record, nil)
   end
 
+  defp apply_action(socket, :barcode_scan, params) do
+    socket =
+      if get_in(socket.assigns, [:streams, :records]) == nil do
+        socket
+        |> apply_action(:index, params)
+      else
+        socket
+      end
+
+    socket
+    |> assign(:page_title, gettext("Scan barcodes · Collection"))
+    |> assign(:record, nil)
+  end
+
   defp apply_action(socket, :edit, params = %{"id" => id}) do
     socket =
       if get_in(socket.assigns, [:streams, :records]) == nil do
