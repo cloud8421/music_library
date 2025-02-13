@@ -139,6 +139,16 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  def search_release_by_barcode(barcode) do
+    case music_brainz_config().api.search_release_by_barcode(barcode, music_brainz_config()) do
+      {:ok, releases} ->
+        {:ok, releases}
+
+      error ->
+        error
+    end
+  end
+
   def import_from_musicbrainz_release_group(musicbrainz_id, opts \\ []) do
     with format = Keyword.get(opts, :format, "cd"),
          purchased_at = Keyword.get(opts, :purchased_at),

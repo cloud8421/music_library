@@ -1,14 +1,32 @@
 defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
   use MusicLibraryWeb, :live_component
 
+  alias MusicLibrary.Records
+
   require Logger
+
+  @impl true
+  def mount(socket) do
+    {:ok,
+     socket
+     |> assign(:camera, :pending)
+     |> assign(:barcodes, MapSet.new())
+     |> assign(:releases, [])}
+  end
 
   @impl true
   def render(assigns) do
     ~H"""
     <div>
       <h1>Barcode Scan</h1>
-      <video id="barcode-scan" phx-hook="BarcodeScanner"></video>
+      <video id="camera-view" phx-hook="BarcodeScanner"></video>
+      <ul>
+        <li :for={release <- assigns.releases}>
+          <span>{release["id"]}</span>
+          <span>{release["barcode"]}</span>
+          <span>{release["title"]}</span>
+        </li>
+      </ul>
     </div>
     """
   end
@@ -22,5 +40,19 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
   def handle_event("camera:denied", _params, socket) do
     Logger.debug(fn -> "Camera access denied" end)
     {:noreply, assign(socket, camera: :denied)}
+  end
+
+  def handle_event("barcode:scanned", %{"number" => number}, socket) do
+    Logger.debug(fn -> "Scanned barcode #{number}" end)
+
+    {:ok, releases} =
+      Records.search_release_by_barcode(number)
+
+    socket =
+      socket
+      |> assign(barcodes: MapSet.put(socket.assigns.barcodes, number))
+      |> assign(:releases, releases ++ socket.assigns.releases)
+
+    {:noreply, socket}
   end
 end

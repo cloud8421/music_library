@@ -1,28 +1,26 @@
 import { BarcodeDetector } from "barcode-detector/ponyfill";
 
-const barcodeTest = async function () {
-  // check supported formats
+const barcodeReaderSetup = async function () {
   const supportedFormats = await BarcodeDetector.getSupportedFormats();
-  console.log(supportedFormats);
 
-  const barcodeDetector = new BarcodeDetector({
+  return new BarcodeDetector({
     // make sure the formats are supported
-    formats: ["qr_code"],
+    formats: supportedFormats,
   });
-
-  const imageFile = await fetch(
-    "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Hello%20world!",
-  ).then((resp) => resp.blob());
-
-  barcodeDetector.detect(imageFile).then(console.log);
 }
 
 export default {
-  mounted() {
+  async mounted() {
+    const detectedBarcodes = new Set([]);
+    const barcodeDetector = await barcodeReaderSetup();
     const video = this.el;
     const constraints = {
       audio: false,
-      video: { width: 800, height: 600 },
+      video: {
+        width: 800, height: 600, facingMode: {
+          ideal: "environment"
+        }
+      },
     };
 
     navigator.mediaDevices
@@ -30,10 +28,20 @@ export default {
       .then((mediaStream) => {
         console.debug("Camera access allowed")
         this.pushEventTo(video, "camera:allowed", {});
-        console.log(mediaStream);
         video.srcObject = mediaStream;
         video.onloadedmetadata = () => {
           video.play();
+          this.scanInterval = window.setInterval(async () => {
+            const barcodes = await barcodeDetector.detect(video);
+            if (barcodes.length <= 0) return;
+
+            barcodes.forEach(barcode => {
+              if (!detectedBarcodes.has(barcode.rawValue)) {
+                this.pushEventTo(video, "barcode:scanned", { number: barcode.rawValue });
+                detectedBarcodes.add(barcode.rawValue);
+              };
+            });
+          }, 500)
         };
       })
       .catch((err) => {
@@ -43,5 +51,6 @@ export default {
   },
   destroyed() {
     this.el.srcObject.getTracks().forEach(track => track.stop());
+    window.clearInterval(this.scanInterval);
   }
 }
