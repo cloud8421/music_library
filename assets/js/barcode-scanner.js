@@ -1,6 +1,6 @@
 import { BarcodeDetector } from "barcode-detector/ponyfill";
 
-const run = async function () {
+const barcodeTest = async function () {
   // check supported formats
   const supportedFormats = await BarcodeDetector.getSupportedFormats();
   console.log(supportedFormats);
@@ -17,4 +17,8 @@ const run = async function () {
   barcodeDetector.detect(imageFile).then(console.log);
 }
 
-run();
+export default {
+  mounted() {
+    console.log(this.el);
+  }
+}
