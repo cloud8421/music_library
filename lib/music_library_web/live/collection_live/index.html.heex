@@ -2,9 +2,14 @@
   <header class="gap-6 mb-2">
     <div class="flex items-center justify-between gap-6 mb-2 mt-2">
       <.search_form query={@record_list_params.query} />
-      <.link patch={~p"/collection/import"}>
-        <.button>{gettext("Import")}</.button>
-      </.link>
+      <nav>
+        <.link patch={~p"/collection/import"}>
+          <.button>{gettext("Import")}</.button>
+        </.link>
+        <.link patch={~p"/collection/scan"}>
+          <.button>{gettext("Scan")}</.button>
+        </.link>
+      </nav>
     </div>
   </header>
 
@@ -90,6 +95,21 @@
     patch={back_path(@record_list_params)}
     initial_query=""
     icon_name="hero-plus"
+  />
+</.modal>
+
+<.modal
+  :if={@live_action == :barcode_scan}
+  id="barcode-scanner-modal"
+  show
+  on_cancel={JS.patch(back_path(@record_list_params))}
+>
+  <.live_component
+    module={MusicLibraryWeb.RecordLive.BarcodeScannerComponent}
+    id={:barcode_scanner}
+    title={@page_title}
+    action={@live_action}
+    patch={back_path(@record_list_params)}
   />
 </.modal>
 

@@ -39,6 +39,7 @@ defmodule MusicLibraryWeb.Router do
 
       live "/collection", CollectionLive.Index, :index
       live "/collection/import", CollectionLive.Index, :import
+      live "/collection/scan", CollectionLive.Index, :barcode_scan
       live "/collection/:id/edit", CollectionLive.Index, :edit
 
       live "/collection/:id", CollectionLive.Show, :show
