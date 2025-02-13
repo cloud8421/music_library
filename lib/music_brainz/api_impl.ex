@@ -305,6 +305,15 @@ defmodule MusicBrainz.APIImpl do
     json_get(url, config)
   end
 
+  def search_release_by_barcode(barcode, config) do
+    url =
+      @base_url <> "/release?query=barcode:#{barcode}&fmt=json"
+
+    with {:ok, result} <- json_get(url, config) do
+      {:ok, result["releases"]}
+    end
+  end
+
   @doc """
   Uses the [search](https://musicbrainz.org/doc/MusicBrainz_API/Search#Release_Group) endpoint with a search query string.
 
