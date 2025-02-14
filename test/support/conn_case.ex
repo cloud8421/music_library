@@ -29,7 +29,10 @@ defmodule MusicLibraryWeb.ConnCase do
       import Phoenix.ConnTest
       import MusicLibraryWeb.ConnCase
       import PhoenixTest
-      import Phoenix.LiveViewTest, only: [render: 1, render_async: 1]
+
+      import Phoenix.LiveViewTest,
+        only: [render: 1, render_async: 1, render_hook: 2, render_hook: 3, element: 2, element: 3]
+
       import MusicLibraryWeb.LiveTestHelpers
     end
   end
