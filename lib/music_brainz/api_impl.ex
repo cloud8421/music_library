@@ -305,6 +305,7 @@ defmodule MusicBrainz.APIImpl do
     json_get(url, config)
   end
 
+  @impl true
   def search_release_by_barcode(barcode, config) do
     url =
       @base_url <> "/release?query=barcode:#{barcode}&fmt=json"
