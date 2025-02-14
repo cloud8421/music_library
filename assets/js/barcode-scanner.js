@@ -27,7 +27,7 @@ export default {
         .getUserMedia(constraints)
         .then((mediaStream) => {
           console.debug("Camera access allowed")
-          this.pushEventTo(this.cameraPreview, "camera_allowed", {});
+          this.pushEventTo(this.el, "camera_allowed", {});
           this.cameraPreview.srcObject = mediaStream;
           this.cameraPreview.onloadedmetadata = () => {
             this.cameraPreview.play();
@@ -37,7 +37,7 @@ export default {
 
               barcodes.forEach(barcode => {
                 if (!detectedBarcodes.has(barcode.rawValue)) {
-                  this.pushEventTo(this.cameraPreview, "barcode_scanned", { number: barcode.rawValue });
+                  this.pushEventTo(this.el, "barcode_scanned", { number: barcode.rawValue });
                   detectedBarcodes.add(barcode.rawValue);
                 };
               });
@@ -46,13 +46,15 @@ export default {
         })
         .catch((err) => {
           console.error(`${err.name}: ${err.message}`);
-          this.pushEventTo(this.cameraPreview, "camera_denied", {});
+          this.pushEventTo(this.el, "camera_denied", {});
         });
     })
 
   },
   destroyed() {
-    this.cameraPreview.srcObject.getTracks().forEach(track => track.stop());
-    window.clearInterval(this.scanInterval);
+    if (this.cameraPreview.srcObject) {
+      this.cameraPreview.srcObject.getTracks().forEach(track => track.stop());
+      window.clearInterval(this.scanInterval);
+    }
   }
 }
