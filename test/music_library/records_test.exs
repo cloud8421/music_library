@@ -6,6 +6,7 @@ defmodule MusicLibrary.RecordsTest do
   alias MusicBrainz.APIBehaviourMock
   import MusicLibrary.RecordsFixtures
   import MusicLibrary.ReleaseGroupsFixtures
+  import MusicBrainz.Fixtures.Release
   import Mox
 
   setup :verify_on_exit!
@@ -323,6 +324,24 @@ defmodule MusicLibrary.RecordsTest do
 
       assert updated_record.cover_hash ==
                "14A033C9315419E0903B4D74EA6A95D4DC58CC7FE82F6F03BDA5750E7D3A590C"
+    end
+  end
+
+  describe "search_release_by_barcode/1" do
+    test "it returns releases belonging to the same release group" do
+      barcode = "5052205070023"
+      releases = releases(:queen_greatest_hits)
+
+      expect(APIBehaviourMock, :search_release_by_barcode, fn ^barcode, _config ->
+        {:ok, releases}
+      end)
+
+      assert {:ok, results} = Records.search_release_by_barcode(barcode)
+
+      assert Enum.all?(results, fn result ->
+               result.release_group.id == "69ce61c8-127f-3809-95d8-62fdf3ae1347" &&
+                 result.release_group.title == "Greatest Hits"
+             end)
     end
   end
 end

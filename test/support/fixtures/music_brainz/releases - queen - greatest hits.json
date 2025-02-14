@@ -1,0 +1,679 @@
+{
+  "created": "2025-02-13T18:57:53.874Z",
+  "count": 9,
+  "offset": 0,
+  "releases": [
+    {
+      "id": "6d1830ce-2ac6-46a3-b3be-f56b8eb14a98",
+      "score": 100,
+      "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+      "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
+      "count": 1,
+      "title": "Greatest Hits",
+      "status": "Official",
+      "disambiguation": "made in Italy",
+      "packaging": "Jewel Case",
+      "text-representation": {
+        "language": "eng",
+        "script": "Latn"
+      },
+      "artist-credit": [
+        {
+          "name": "Queen",
+          "artist": {
+            "id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+            "name": "Queen",
+            "sort-name": "Queen",
+            "disambiguation": "UK rock group"
+          }
+        }
+      ],
+      "release-group": {
+        "id": "69ce61c8-127f-3809-95d8-62fdf3ae1347",
+        "type-id": "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1",
+        "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+        "title": "Greatest Hits",
+        "primary-type": "Album",
+        "secondary-types": [
+          "Compilation"
+        ],
+        "secondary-type-ids": [
+          "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1"
+        ]
+      },
+      "date": "1994",
+      "country": "XE",
+      "release-events": [
+        {
+          "date": "1994",
+          "area": {
+            "id": "89a675c2-3e37-3518-b83c-418bad59a85a",
+            "name": "Europe",
+            "sort-name": "Europe",
+            "iso-3166-1-codes": [
+              "XE"
+            ]
+          }
+        }
+      ],
+      "barcode": "077778950424",
+      "label-info": [
+        {
+          "catalog-number": "0777 7 89504 2 4",
+          "label": {
+            "id": "df7d1c7f-ef95-425f-8eef-445b3d7bcbd9",
+            "name": "Parlophone"
+          }
+        }
+      ],
+      "track-count": 17,
+      "media": [
+        {
+          "format": "CD",
+          "disc-count": 0,
+          "track-count": 17
+        }
+      ]
+    },
+    {
+      "id": "5bf3eba2-f12f-409e-856f-14c0608d96bb",
+      "score": 100,
+      "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+      "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
+      "count": 1,
+      "title": "Greatest Hits",
+      "status": "Official",
+      "packaging": "Jewel Case",
+      "text-representation": {
+        "language": "eng",
+        "script": "Latn"
+      },
+      "artist-credit": [
+        {
+          "name": "Queen",
+          "artist": {
+            "id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+            "name": "Queen",
+            "sort-name": "Queen",
+            "disambiguation": "UK rock group"
+          }
+        }
+      ],
+      "release-group": {
+        "id": "69ce61c8-127f-3809-95d8-62fdf3ae1347",
+        "type-id": "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1",
+        "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+        "title": "Greatest Hits",
+        "primary-type": "Album",
+        "secondary-types": [
+          "Compilation"
+        ],
+        "secondary-type-ids": [
+          "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1"
+        ]
+      },
+      "date": "1994",
+      "country": "ZA",
+      "release-events": [
+        {
+          "date": "1994",
+          "area": {
+            "id": "50cc7852-862e-30ae-aa82-385fe7135b7f",
+            "name": "South Africa",
+            "sort-name": "South Africa",
+            "iso-3166-1-codes": [
+              "ZA"
+            ]
+          }
+        }
+      ],
+      "barcode": "077778950424",
+      "label-info": [
+        {
+          "catalog-number": "CDEMCJ (WF) 5543",
+          "label": {
+            "id": "ee80e50f-a604-465f-bf41-4a46af342beb",
+            "name": "EMI Music South Africa"
+          }
+        }
+      ],
+      "track-count": 17,
+      "media": [
+        {
+          "format": "CD",
+          "disc-count": 1,
+          "track-count": 17
+        }
+      ],
+      "tags": [
+        {
+          "count": 1,
+          "name": "rock"
+        },
+        {
+          "count": 1,
+          "name": "british"
+        },
+        {
+          "count": 1,
+          "name": "hard rock"
+        },
+        {
+          "count": 1,
+          "name": "glam rock"
+        },
+        {
+          "count": 1,
+          "name": "art rock"
+        },
+        {
+          "count": 1,
+          "name": "pop rock"
+        }
+      ]
+    },
+    {
+      "id": "a23332b3-c5e9-4785-85a6-0e3e12e21404",
+      "score": 100,
+      "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+      "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
+      "count": 1,
+      "title": "Greatest Hits",
+      "status": "Official",
+      "packaging": "Jewel Case",
+      "text-representation": {
+        "language": "eng",
+        "script": "Latn"
+      },
+      "artist-credit": [
+        {
+          "name": "Queen",
+          "artist": {
+            "id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+            "name": "Queen",
+            "sort-name": "Queen",
+            "disambiguation": "UK rock group"
+          }
+        }
+      ],
+      "release-group": {
+        "id": "69ce61c8-127f-3809-95d8-62fdf3ae1347",
+        "type-id": "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1",
+        "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+        "title": "Greatest Hits",
+        "primary-type": "Album",
+        "secondary-types": [
+          "Compilation"
+        ],
+        "secondary-type-ids": [
+          "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1"
+        ]
+      },
+      "date": "1994-05-01",
+      "country": "GB",
+      "release-events": [
+        {
+          "date": "1994-05-01",
+          "area": {
+            "id": "8a754a16-0027-3a29-b6d7-2b40ea0481ed",
+            "name": "United Kingdom",
+            "sort-name": "United Kingdom",
+            "iso-3166-1-codes": [
+              "GB"
+            ]
+          }
+        }
+      ],
+      "barcode": "077778950424",
+      "asin": "B000024A70",
+      "label-info": [
+        {
+          "catalog-number": "CDPCSD 141",
+          "label": {
+            "id": "df7d1c7f-ef95-425f-8eef-445b3d7bcbd9",
+            "name": "Parlophone"
+          }
+        }
+      ],
+      "track-count": 17,
+      "media": [
+        {
+          "format": "CD",
+          "disc-count": 2,
+          "track-count": 17
+        }
+      ]
+    },
+    {
+      "id": "84213105-f89d-4243-9b71-c27f1d17598c",
+      "score": 100,
+      "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+      "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
+      "count": 1,
+      "title": "Greatest Hits",
+      "status": "Official",
+      "disambiguation": "made in Holland",
+      "packaging": "Jewel Case",
+      "text-representation": {
+        "language": "eng",
+        "script": "Latn"
+      },
+      "artist-credit": [
+        {
+          "name": "Queen",
+          "artist": {
+            "id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+            "name": "Queen",
+            "sort-name": "Queen",
+            "disambiguation": "UK rock group"
+          }
+        }
+      ],
+      "release-group": {
+        "id": "69ce61c8-127f-3809-95d8-62fdf3ae1347",
+        "type-id": "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1",
+        "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+        "title": "Greatest Hits",
+        "primary-type": "Album",
+        "secondary-types": [
+          "Compilation"
+        ],
+        "secondary-type-ids": [
+          "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1"
+        ]
+      },
+      "date": "1994",
+      "country": "XE",
+      "release-events": [
+        {
+          "date": "1994",
+          "area": {
+            "id": "89a675c2-3e37-3518-b83c-418bad59a85a",
+            "name": "Europe",
+            "sort-name": "Europe",
+            "iso-3166-1-codes": [
+              "XE"
+            ]
+          }
+        }
+      ],
+      "barcode": "077778950424",
+      "asin": "B000024A70",
+      "label-info": [
+        {
+          "catalog-number": "0777 7 89504 2 4",
+          "label": {
+            "id": "df7d1c7f-ef95-425f-8eef-445b3d7bcbd9",
+            "name": "Parlophone"
+          }
+        }
+      ],
+      "track-count": 17,
+      "media": [
+        {
+          "format": "CD",
+          "disc-count": 19,
+          "track-count": 17
+        }
+      ]
+    },
+    {
+      "id": "2ba90d62-2ebe-447a-8b0c-8d79827b4972",
+      "score": 100,
+      "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+      "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
+      "count": 1,
+      "title": "Greatest Hits",
+      "status": "Official",
+      "disambiguation": "made in Italy",
+      "packaging": "Jewel Case",
+      "text-representation": {
+        "language": "eng",
+        "script": "Latn"
+      },
+      "artist-credit": [
+        {
+          "name": "Queen",
+          "artist": {
+            "id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+            "name": "Queen",
+            "sort-name": "Queen",
+            "disambiguation": "UK rock group"
+          }
+        }
+      ],
+      "release-group": {
+        "id": "69ce61c8-127f-3809-95d8-62fdf3ae1347",
+        "type-id": "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1",
+        "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+        "title": "Greatest Hits",
+        "primary-type": "Album",
+        "secondary-types": [
+          "Compilation"
+        ],
+        "secondary-type-ids": [
+          "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1"
+        ]
+      },
+      "date": "1994",
+      "country": "XE",
+      "release-events": [
+        {
+          "date": "1994",
+          "area": {
+            "id": "89a675c2-3e37-3518-b83c-418bad59a85a",
+            "name": "Europe",
+            "sort-name": "Europe",
+            "iso-3166-1-codes": [
+              "XE"
+            ]
+          }
+        }
+      ],
+      "barcode": "077778950424",
+      "label-info": [
+        {
+          "catalog-number": "0777 7 89504 2 4",
+          "label": {
+            "id": "df7d1c7f-ef95-425f-8eef-445b3d7bcbd9",
+            "name": "Parlophone"
+          }
+        }
+      ],
+      "track-count": 17,
+      "media": [
+        {
+          "format": "CD",
+          "disc-count": 1,
+          "track-count": 17
+        }
+      ]
+    },
+    {
+      "id": "aba1cf59-e390-4279-b4a4-ad7bd1f7ab28",
+      "score": 100,
+      "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+      "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
+      "count": 1,
+      "title": "Greatest Hits",
+      "status": "Official",
+      "disambiguation": "D.A.T.A. Pressing",
+      "packaging": "Jewel Case",
+      "text-representation": {
+        "language": "eng",
+        "script": "Latn"
+      },
+      "artist-credit": [
+        {
+          "name": "Queen",
+          "artist": {
+            "id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+            "name": "Queen",
+            "sort-name": "Queen",
+            "disambiguation": "UK rock group"
+          }
+        }
+      ],
+      "release-group": {
+        "id": "69ce61c8-127f-3809-95d8-62fdf3ae1347",
+        "type-id": "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1",
+        "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+        "title": "Greatest Hits",
+        "primary-type": "Album",
+        "secondary-types": [
+          "Compilation"
+        ],
+        "secondary-type-ids": [
+          "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1"
+        ]
+      },
+      "date": "1994",
+      "country": "AU",
+      "release-events": [
+        {
+          "date": "1994",
+          "area": {
+            "id": "106e0bec-b638-3b37-b731-f53d507dc00e",
+            "name": "Australia",
+            "sort-name": "Australia",
+            "iso-3166-1-codes": [
+              "AU"
+            ]
+          }
+        }
+      ],
+      "barcode": "077778950424",
+      "label-info": [
+        {
+          "catalog-number": "0777 7 89504 2 4",
+          "label": {
+            "id": "df7d1c7f-ef95-425f-8eef-445b3d7bcbd9",
+            "name": "Parlophone"
+          }
+        }
+      ],
+      "track-count": 17,
+      "media": [
+        {
+          "format": "CD",
+          "disc-count": 1,
+          "track-count": 17
+        }
+      ]
+    },
+    {
+      "id": "87f214f5-39bf-3341-848a-547697d02474",
+      "score": 100,
+      "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+      "count": 1,
+      "title": "Greatest Hits",
+      "status": "Official",
+      "text-representation": {
+        "language": "eng",
+        "script": "Latn"
+      },
+      "artist-credit": [
+        {
+          "name": "Queen",
+          "artist": {
+            "id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+            "name": "Queen",
+            "sort-name": "Queen",
+            "disambiguation": "UK rock group"
+          }
+        }
+      ],
+      "release-group": {
+        "id": "69ce61c8-127f-3809-95d8-62fdf3ae1347",
+        "type-id": "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1",
+        "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+        "title": "Greatest Hits",
+        "primary-type": "Album",
+        "secondary-types": [
+          "Compilation"
+        ],
+        "secondary-type-ids": [
+          "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1"
+        ]
+      },
+      "date": "1994",
+      "country": "MX",
+      "release-events": [
+        {
+          "date": "1994",
+          "area": {
+            "id": "3e08b2cd-69f3-317c-b1e4-e71be581839e",
+            "name": "Mexico",
+            "sort-name": "Mexico",
+            "iso-3166-1-codes": [
+              "MX"
+            ]
+          }
+        }
+      ],
+      "barcode": "077778950424",
+      "asin": "B000024A70",
+      "label-info": [
+        {
+          "catalog-number": "0777 7 89504 2 4",
+          "label": {
+            "id": "df7d1c7f-ef95-425f-8eef-445b3d7bcbd9",
+            "name": "Parlophone"
+          }
+        }
+      ],
+      "track-count": 17,
+      "media": [
+        {
+          "format": "CD",
+          "disc-count": 19,
+          "track-count": 17
+        }
+      ]
+    },
+    {
+      "id": "92ff5ffc-2bb6-4eff-afa6-4d2d819fd10e",
+      "score": 100,
+      "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+      "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
+      "count": 1,
+      "title": "Greatest Hits",
+      "status": "Official",
+      "disambiguation": "Regency Media pressing IFPI 6Z08",
+      "packaging": "Jewel Case",
+      "text-representation": {
+        "language": "eng",
+        "script": "Latn"
+      },
+      "artist-credit": [
+        {
+          "name": "Queen",
+          "artist": {
+            "id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+            "name": "Queen",
+            "sort-name": "Queen",
+            "disambiguation": "UK rock group"
+          }
+        }
+      ],
+      "release-group": {
+        "id": "69ce61c8-127f-3809-95d8-62fdf3ae1347",
+        "type-id": "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1",
+        "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+        "title": "Greatest Hits",
+        "primary-type": "Album",
+        "secondary-types": [
+          "Compilation"
+        ],
+        "secondary-type-ids": [
+          "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1"
+        ]
+      },
+      "date": "2008",
+      "country": "AU",
+      "release-events": [
+        {
+          "date": "2008",
+          "area": {
+            "id": "106e0bec-b638-3b37-b731-f53d507dc00e",
+            "name": "Australia",
+            "sort-name": "Australia",
+            "iso-3166-1-codes": [
+              "AU"
+            ]
+          }
+        }
+      ],
+      "barcode": "077778950424",
+      "label-info": [
+        {
+          "catalog-number": "0777 7 89504 2 4",
+          "label": {
+            "id": "df7d1c7f-ef95-425f-8eef-445b3d7bcbd9",
+            "name": "Parlophone"
+          }
+        }
+      ],
+      "track-count": 17,
+      "media": [
+        {
+          "format": "CD",
+          "disc-count": 1,
+          "track-count": 17
+        }
+      ]
+    },
+    {
+      "id": "f67a1e58-693b-4c64-8acd-93aaefb1345f",
+      "score": 100,
+      "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+      "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
+      "count": 1,
+      "title": "Greatest Hits",
+      "status": "Official",
+      "disambiguation": "SM Pressing",
+      "packaging": "Jewel Case",
+      "text-representation": {
+        "language": "eng",
+        "script": "Latn"
+      },
+      "artist-credit": [
+        {
+          "name": "Queen",
+          "artist": {
+            "id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+            "name": "Queen",
+            "sort-name": "Queen",
+            "disambiguation": "UK rock group"
+          }
+        }
+      ],
+      "release-group": {
+        "id": "69ce61c8-127f-3809-95d8-62fdf3ae1347",
+        "type-id": "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1",
+        "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+        "title": "Greatest Hits",
+        "primary-type": "Album",
+        "secondary-types": [
+          "Compilation"
+        ],
+        "secondary-type-ids": [
+          "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1"
+        ]
+      },
+      "date": "1994",
+      "country": "AU",
+      "release-events": [
+        {
+          "date": "1994",
+          "area": {
+            "id": "106e0bec-b638-3b37-b731-f53d507dc00e",
+            "name": "Australia",
+            "sort-name": "Australia",
+            "iso-3166-1-codes": [
+              "AU"
+            ]
+          }
+        }
+      ],
+      "barcode": "077778950424",
+      "label-info": [
+        {
+          "catalog-number": "0777 7 89504 2 4",
+          "label": {
+            "id": "df7d1c7f-ef95-425f-8eef-445b3d7bcbd9",
+            "name": "Parlophone"
+          }
+        }
+      ],
+      "track-count": 17,
+      "media": [
+        {
+          "format": "CD",
+          "disc-count": 1,
+          "track-count": 17
+        }
+      ]
+    }
+  ]
+}

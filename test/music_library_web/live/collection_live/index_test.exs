@@ -326,4 +326,22 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       assert_path(session, ~p"/collection/#{record.id}")
     end
   end
+
+  describe "Add via barcode scan" do
+    test "it tracks the camera status", %{conn: conn} do
+      session =
+        conn
+        |> visit(~p"/collection/scan")
+        |> assert_has("h1", text: "Scan one or more barcodes")
+        |> assert_has("p", text: "pending")
+
+      session
+      |> unwrap(fn view ->
+        view
+        |> element("#barcode-scanner")
+        |> render_hook("camera_denied")
+      end)
+      |> assert_has("p", text: "denied")
+    end
+  end
 end

@@ -142,7 +142,8 @@ defmodule MusicLibrary.Records do
   def search_release_by_barcode(barcode) do
     case music_brainz_config().api.search_release_by_barcode(barcode, music_brainz_config()) do
       {:ok, releases} ->
-        {:ok, releases}
+        {:ok,
+         Enum.map(releases, fn r -> MusicBrainz.ReleaseSearchResult.from_api_response(r) end)}
 
       error ->
         error
