@@ -11,7 +11,21 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
      socket
      |> assign(:camera, :pending)
      |> assign(:barcodes, MapSet.new())
-     |> assign(:releases, [])}
+     |> assign(:releases, [
+       %MusicBrainz.ReleaseSearchResult{
+         id: "dc393148-be34-4056-be66-b2b95905c5c1",
+         title: "Equally Cursed and Blessed",
+         release_group: %{
+           id: "c35fc446-65cc-3645-939b-1b3782e60639",
+           type: :album,
+           title: "Equally Cursed and Blessed"
+         },
+         artists: "Catatonia",
+         date: "1999-04-12",
+         barcode: "639842709422",
+         media: [%{format: "CD", disc_count: 5, track_count: 11}]
+       }
+     ])}
   end
 
   @impl true
@@ -26,10 +40,15 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
       <div>
         <p>{@camera}</p>
         <button
-          :if={@camera == :pending}
+          :if={!(@camera == :allowed)}
+          id="camera-button"
           type="button"
-          phx-click={JS.dispatch("camera_request", to: "#barcode-scanner")}
-          class="relative block w-full rounded-lg border-2 border-dashed border-zinc-300 p-12 text-center hover:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          phx-click={
+            JS.show(to: "#camera-preview")
+            |> JS.dispatch("camera_request", to: "#barcode-scanner")
+            |> JS.hide(to: "#camera-button")
+          }
+          class="relative block w-full h-96 rounded-lg border-2 border-dashed border-zinc-300 p-12 text-center hover:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
           <svg
             class="mx-auto size-12 text-zinc-400"
@@ -46,7 +65,7 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
           </svg>
           <span class="mt-2 block text-sm font-semibold text-zinc-900">{gettext("Open camera")}</span>
         </button>
-        <video class="w-full" id="camera-preview"></video>
+        <video :if={!(@camera == :denied)} class="w-full hidden" id="camera-preview"></video>
       </div>
       <ul class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5">
         <.result :for={release <- assigns.releases} id={release.id} release={release} />
