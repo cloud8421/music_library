@@ -48,14 +48,33 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
         </button>
         <video class="w-full" id="camera-preview"></video>
       </div>
-      <ul>
-        <li :for={release <- assigns.releases}>
-          <span>{release.id}</span>
-          <span>{release.barcode}</span>
-          <span>{release.title}</span>
-        </li>
+      <ul class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5">
+        <.result :for={release <- assigns.releases} id={release.id} release={release} />
       </ul>
     </div>
+    """
+  end
+
+  attr :id, :string, required: true
+  attr :release, MusicBrainz.ReleaseSearchResult, required: true
+
+  defp result(assigns) do
+    ~H"""
+    <li id={@id} class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700">
+      <div class="shrink-0 flex items-center justify-between w-full px-4">
+        <div class="min-w-0 flex-auto">
+          <h1 class="text-sm leading-6 text-zinc-700 dark:text-zinc-400">
+            {@release.artists}
+          </h1>
+          <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+            {@release.title}
+          </h2>
+          <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+            {Records.Record.format_release(@release.date)} · {@release.barcode}
+          </p>
+        </div>
+      </div>
+    </li>
     """
   end
 
