@@ -11,21 +11,7 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
     {:ok,
      socket
      |> assign(:camera, :pending)
-     |> assign(:releases, %{
-       "639842709422" => %MusicBrainz.ReleaseSearchResult{
-         id: "dc393148-be34-4056-be66-b2b95905c5c1",
-         title: "Equally Cursed and Blessed",
-         release_group: %{
-           id: "c35fc446-65cc-3645-939b-1b3782e60639",
-           type: :album,
-           title: "Equally Cursed and Blessed"
-         },
-         artists: "Catatonia",
-         date: "1999-04-12",
-         barcode: "639842709422",
-         media: [%{format: "CD", disc_count: 5, track_count: 11}]
-       }
-     })}
+     |> assign(:releases, %{})}
   end
 
   @impl true
@@ -68,7 +54,10 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
       </div>
 
       <div :if={map_size(@releases) > 0} class="mt-4 flex justify-center">
-        <.button phx-click={JS.push("import_releases", target: "#barcode-scanner")}>
+        <.button
+          phx-disable-with={gettext("Importing...")}
+          phx-click={JS.push("import_releases", target: "#barcode-scanner")}
+        >
           {gettext("Import releases")}
         </.button>
       </div>
@@ -121,7 +110,6 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
     socket =
       case Records.search_release_by_barcode(number) do
         {:ok, [best_match_release | _other_releases]} ->
-          best_match_release |> IO.inspect()
           assign(socket, :releases, Map.put(socket.assigns.releases, number, best_match_release))
 
         {:ok, []} ->
@@ -140,6 +128,27 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
       end
 
     {:noreply, socket}
+  end
+
+  def handle_event("import_releases", _params, socket) do
+    current_time = DateTime.utc_now()
+    # TODO: error handling when a release fails to import
+    :ok =
+      socket.assigns.releases
+      |> Map.values()
+      |> Enum.each(fn release ->
+        Records.import_from_musicbrainz_release(release.id,
+          format: MusicBrainz.ReleaseSearchResult.format(release),
+          purchased_at: current_time
+        )
+      end)
+
+    qs = %{order: :purchase}
+
+    {:noreply,
+     socket
+     |> put_flash(:info, gettext("Records imported successfully"))
+     |> push_patch(to: ~p"/collection?#{qs}")}
   end
 
   defp release_format_label(release) do
