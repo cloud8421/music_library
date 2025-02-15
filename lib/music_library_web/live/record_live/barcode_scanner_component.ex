@@ -37,7 +37,7 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
           {gettext("Scan one or more barcodes")}
         </h1>
       </header>
-      <div>
+      <div class="mt-4">
         <button
           :if={!(@camera == :allowed)}
           id="camera-button"
@@ -66,8 +66,14 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
         </button>
         <video :if={!(@camera == :denied)} class="w-full hidden" id="camera-preview"></video>
       </div>
+
+      <div :if={length(@releases) > 0} class="mt-4 flex justify-center">
+        <.button phx-click={JS.push("import_releases", target: "#barcode-scanner")}>
+          {gettext("Import releases")}
+        </.button>
+      </div>
       <ul class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5">
-        <.result :for={release <- assigns.releases} id={release.id} release={release} />
+        <.result :for={release <- @releases} id={release.id} release={release} />
       </ul>
     </div>
     """

@@ -635,7 +635,12 @@ msgstr ""
 msgid "Scan one or more barcodes"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:66
+#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:65
 #, elixir-autogen, elixir-format
 msgid "Open camera"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:72
+#, elixir-autogen, elixir-format
+msgid "Import releases"
 msgstr ""
