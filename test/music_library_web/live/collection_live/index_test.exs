@@ -333,7 +333,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         conn
         |> visit(~p"/collection/scan")
         |> assert_has("h1", text: "Scan one or more barcodes")
-        |> assert_has("p", text: "pending")
+        |> assert_has("button#camera-button")
 
       session
       |> unwrap(fn view ->
@@ -341,7 +341,17 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         |> element("#barcode-scanner")
         |> render_hook("camera_denied")
       end)
-      |> assert_has("p", text: "denied")
+      |> assert_has("button#camera-button")
+      |> refute_has("video#camera-preview")
+
+      session
+      |> unwrap(fn view ->
+        view
+        |> element("#barcode-scanner")
+        |> render_hook("camera_allowed")
+      end)
+      |> refute_has("button#camera-button")
+      |> assert_has("video#camera-preview")
     end
   end
 end
