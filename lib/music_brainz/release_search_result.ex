@@ -19,6 +19,18 @@ defmodule MusicBrainz.ReleaseSearchResult do
     }
   end
 
+  def format(release_search_result) do
+    sorted_frequencies =
+      release_search_result.media
+      |> Enum.frequencies_by(& &1.format)
+      |> Enum.sort_by(fn {_, count} -> count end)
+
+    case sorted_frequencies do
+      [{format, _}] -> parse_format(format)
+      _ -> :multi
+    end
+  end
+
   defp parse_release_group(rg) do
     %{
       id: rg["id"],
@@ -35,5 +47,18 @@ defmodule MusicBrainz.ReleaseSearchResult do
         disc_count: m["disc-count"]
       }
     end)
+  end
+
+  defp parse_format("CD"), do: :cd
+  defp parse_format("DVD-Audio"), do: :dvd
+  defp parse_format("DVD-Video"), do: :dvd
+  defp parse_format("Blu-ray"), do: :blu_ray
+
+  defp parse_format(maybe_vinyl) do
+    if String.contains?(maybe_vinyl, "Vinyl") do
+      :vinyl
+    else
+      :unknown
+    end
   end
 end

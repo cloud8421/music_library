@@ -644,3 +644,13 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Import releases"
 msgstr ""
+
+#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:138
+#, elixir-autogen, elixir-format
+msgid "Failed to search release for barcode %{number}"
+msgstr ""
+
+#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:131
+#, elixir-autogen, elixir-format
+msgid "No release found for barcode %{number}"
+msgstr ""

@@ -1,6 +1,7 @@
 defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
   use MusicLibraryWeb, :live_component
 
+  alias MusicLibraryWeb.RecordComponents
   alias MusicLibrary.Records
 
   require Logger
@@ -10,9 +11,8 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
     {:ok,
      socket
      |> assign(:camera, :pending)
-     |> assign(:barcodes, MapSet.new())
-     |> assign(:releases, [
-       %MusicBrainz.ReleaseSearchResult{
+     |> assign(:releases, %{
+       "639842709422" => %MusicBrainz.ReleaseSearchResult{
          id: "dc393148-be34-4056-be66-b2b95905c5c1",
          title: "Equally Cursed and Blessed",
          release_group: %{
@@ -25,7 +25,7 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
          barcode: "639842709422",
          media: [%{format: "CD", disc_count: 5, track_count: 11}]
        }
-     ])}
+     })}
   end
 
   @impl true
@@ -67,13 +67,13 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
         <video :if={!(@camera == :denied)} class="w-full hidden" id="camera-preview"></video>
       </div>
 
-      <div :if={length(@releases) > 0} class="mt-4 flex justify-center">
+      <div :if={map_size(@releases) > 0} class="mt-4 flex justify-center">
         <.button phx-click={JS.push("import_releases", target: "#barcode-scanner")}>
           {gettext("Import releases")}
         </.button>
       </div>
       <ul class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5">
-        <.result :for={release <- @releases} id={release.id} release={release} />
+        <.result :for={{_barcode, release} <- @releases} id={release.id} release={release} />
       </ul>
     </div>
     """
@@ -85,7 +85,7 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
   defp result(assigns) do
     ~H"""
     <li id={@id} class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700">
-      <div class="shrink-0 flex items-center justify-between w-full px-4">
+      <div class="flex items-center justify-between w-full px-4">
         <div class="min-w-0 flex-auto">
           <h1 class="text-sm leading-6 text-zinc-700 dark:text-zinc-400">
             {@release.artists}
@@ -94,7 +94,9 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
             {@release.title}
           </h2>
           <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-            {Records.Record.format_release(@release.date)} · {@release.barcode}
+            {release_format_label(@release)} · {Records.Record.format_release(@release.date)} · {RecordComponents.type_label(
+              @release.release_group.type
+            )}
           </p>
         </div>
       </div>
@@ -116,14 +118,33 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
   def handle_event("barcode_scanned", %{"number" => number}, socket) do
     Logger.debug(fn -> "Scanned barcode #{number}" end)
 
-    {:ok, releases} =
-      Records.search_release_by_barcode(number)
-
     socket =
-      socket
-      |> assign(barcodes: MapSet.put(socket.assigns.barcodes, number))
-      |> assign(:releases, releases ++ socket.assigns.releases)
+      case Records.search_release_by_barcode(number) do
+        {:ok, [best_match_release | _other_releases]} ->
+          best_match_release |> IO.inspect()
+          assign(socket, :releases, Map.put(socket.assigns.releases, number, best_match_release))
+
+        {:ok, []} ->
+          put_flash(
+            socket,
+            :error,
+            gettext("No release found for barcode %{number}", number: number)
+          )
+
+        {:error, _reason} ->
+          put_flash(
+            socket,
+            :error,
+            gettext("Failed to search release for barcode %{number}", number: number)
+          )
+      end
 
     {:noreply, socket}
+  end
+
+  defp release_format_label(release) do
+    release
+    |> MusicBrainz.ReleaseSearchResult.format()
+    |> RecordComponents.format_label()
   end
 end
