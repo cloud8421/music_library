@@ -107,6 +107,7 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
   def handle_event("barcode_scanned", %{"number" => number}, socket) do
     Logger.debug(fn -> "Scanned barcode #{number}" end)
 
+    # TODO: inform when record is already in collection
     socket =
       case Records.search_release_by_barcode(number) do
         {:ok, [best_match_release | _other_releases]} ->
