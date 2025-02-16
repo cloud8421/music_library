@@ -11,7 +11,7 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
     {:ok,
      socket
      |> assign(:camera, :pending)
-     |> assign(:releases, %{})}
+     |> assign(:releases, [])}
   end
 
   @impl true
@@ -53,7 +53,7 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
         <video :if={!(@camera == :denied)} class="w-full hidden" id="camera-preview" playsinline />
       </div>
 
-      <div :if={map_size(@releases) > 0} class="mt-4 flex justify-center">
+      <div :if={length(@releases) > 0} class="mt-4 flex justify-center">
         <.button
           phx-disable-with={gettext("Importing...")}
           phx-click={JS.push("import_releases", target: "#barcode-scanner")}
@@ -62,7 +62,7 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
         </.button>
       </div>
       <ul class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5">
-        <.result :for={{_barcode, release} <- @releases} id={release.id} release={release} />
+        <.result :for={release <- @releases} id={release.id} release={release} />
       </ul>
     </div>
     """
@@ -110,7 +110,7 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
     socket =
       case Records.search_release_by_barcode(number) do
         {:ok, [best_match_release | _other_releases]} ->
-          assign(socket, :releases, Map.put(socket.assigns.releases, number, best_match_release))
+          assign(socket, :releases, [best_match_release | socket.assigns.releases])
 
         {:ok, []} ->
           put_flash(
@@ -134,9 +134,7 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
     current_time = DateTime.utc_now()
     # TODO: error handling when a release fails to import
     :ok =
-      socket.assigns.releases
-      |> Map.values()
-      |> Enum.each(fn release ->
+      Enum.each(socket.assigns.releases, fn release ->
         Records.import_from_musicbrainz_release(release.id,
           format: MusicBrainz.ReleaseSearchResult.format(release),
           purchased_at: current_time
@@ -147,6 +145,7 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
 
     {:noreply,
      socket
+     |> assign(:releases, [])
      |> put_flash(:info, gettext("Records imported successfully"))
      |> push_patch(to: ~p"/collection?#{qs}")}
   end

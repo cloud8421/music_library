@@ -660,7 +660,7 @@ msgstr ""
 msgid "Importing..."
 msgstr ""
 
-#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:150
+#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:149
 #, elixir-autogen, elixir-format
 msgid "Records imported successfully"
 msgstr ""
