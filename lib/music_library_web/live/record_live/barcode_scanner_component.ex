@@ -53,17 +53,19 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
         <video :if={!(@camera == :denied)} class="w-full hidden h-96" id="camera-preview" playsinline />
       </div>
 
-      <div :if={length(@releases) > 0} class="mt-4 flex justify-center">
+      <ul class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5">
+        <.result :for={release <- @releases} id={release.id} release={release} />
+      </ul>
+
+      <div class="mt-4 flex justify-center">
         <.button
+          disabled={length(@releases) == 0}
           phx-disable-with={gettext("Importing...")}
           phx-click={JS.push("import_releases", target: "#barcode-scanner")}
         >
           {gettext("Import releases")}
         </.button>
       </div>
-      <ul class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5">
-        <.result :for={release <- @releases} id={release.id} release={release} />
-      </ul>
     </div>
     """
   end
@@ -73,7 +75,16 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
 
   defp result(assigns) do
     ~H"""
-    <li id={@id} class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700">
+    <li
+      id={@id}
+      class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700"
+      phx-mounted={
+        JS.transition(
+          {"first:ease-in duration-300", "first:opacity-0 first:p-0 first:h-0", "first:opacity-100"},
+          time: 300
+        )
+      }
+    >
       <div class="flex items-center justify-between w-full px-4">
         <div class="min-w-0 flex-auto">
           <h1 class="text-sm leading-6 text-zinc-700 dark:text-zinc-400">
