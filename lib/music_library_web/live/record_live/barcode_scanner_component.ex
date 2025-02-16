@@ -50,7 +50,7 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
           </svg>
           <span class="mt-2 block text-sm font-semibold text-zinc-900">{gettext("Open camera")}</span>
         </button>
-        <video :if={!(@camera == :denied)} class="w-full hidden" id="camera-preview" playsinline />
+        <video :if={!(@camera == :denied)} class="w-full hidden h-96" id="camera-preview" playsinline />
       </div>
 
       <div :if={length(@releases) > 0} class="mt-4 flex justify-center">
