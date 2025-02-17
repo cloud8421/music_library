@@ -2,7 +2,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
   use MusicLibraryWeb.ConnCase
 
   alias MusicLibrary.{Records, Repo, Wishlist}
-  alias MusicBrainz.APIBehaviourMock
+  alias MusicBrainz.APIMock
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
   import MusicLibrary.Fixtures.Records
   import MusicLibrary.Fixtures.ReleaseGroup
@@ -186,22 +186,22 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
       release_group = release_group(:mystery_of_time)
       release_group_id = release_group_id(:mystery_of_time)
 
-      expect(APIBehaviourMock, :get_release, fn ^release_id, _config ->
+      expect(APIMock, :get_release, fn ^release_id, _config ->
         {:ok, release}
       end)
 
-      expect(APIBehaviourMock, :get_release_group, fn ^release_group_id, _config ->
+      expect(APIMock, :get_release_group, fn ^release_group_id, _config ->
         {:ok, release_group}
       end)
 
-      expect(APIBehaviourMock, :get_releases, fn ^release_group_id, _opts, _config ->
+      expect(APIMock, :get_releases, fn ^release_group_id, _opts, _config ->
         {:ok, %{"releases" => release_group["releases"]}}
       end)
 
       # Doesn't matter if we use a different cover
       cover_data = File.read!(marbles_cover_fixture())
 
-      expect(APIBehaviourMock, :get_cover_art, fn {:musicbrainz_id, ^release_group_id}, _config ->
+      expect(APIMock, :get_cover_art, fn {:musicbrainz_id, ^release_group_id}, _config ->
         {:ok, cover_data}
       end)
 

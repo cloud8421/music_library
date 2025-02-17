@@ -3,7 +3,7 @@ defmodule MusicLibrary.RecordsTest do
 
   alias MusicLibrary.Records
   alias MusicLibrary.Records.SearchIndex
-  alias MusicBrainz.APIBehaviourMock
+  alias MusicBrainz.APIMock
   import MusicLibrary.Fixtures.Records
   import MusicLibrary.Fixtures.ReleaseGroup
   import MusicBrainz.Fixtures.Release
@@ -63,11 +63,11 @@ defmodule MusicLibrary.RecordsTest do
       assert record.release_ids == []
       assert record.included_release_group_ids == []
 
-      expect(APIBehaviourMock, :get_release_group, fn ^release_group_id, _config ->
+      expect(APIMock, :get_release_group, fn ^release_group_id, _config ->
         {:ok, release_group(:lockdown_trilogy)}
       end)
 
-      expect(APIBehaviourMock, :get_releases, fn ^release_group_id, _opts, _config ->
+      expect(APIMock, :get_releases, fn ^release_group_id, _opts, _config ->
         {:ok, %{"releases" => release_group(:lockdown_trilogy)["releases"]}}
       end)
 
@@ -189,17 +189,17 @@ defmodule MusicLibrary.RecordsTest do
       release_group = release_group(:marbles)
       release_group_id = release_group_id(:marbles)
 
-      expect(APIBehaviourMock, :get_release_group, fn ^release_group_id, _config ->
+      expect(APIMock, :get_release_group, fn ^release_group_id, _config ->
         {:ok, release_group}
       end)
 
-      expect(APIBehaviourMock, :get_releases, fn ^release_group_id, _opts, _config ->
+      expect(APIMock, :get_releases, fn ^release_group_id, _opts, _config ->
         {:ok, %{"releases" => release_group["releases"]}}
       end)
 
       cover_data = File.read!(marbles_cover_fixture())
 
-      expect(APIBehaviourMock, :get_cover_art, fn {:musicbrainz_id, ^release_group_id}, _config ->
+      expect(APIMock, :get_cover_art, fn {:musicbrainz_id, ^release_group_id}, _config ->
         {:ok, cover_data}
       end)
 
@@ -243,21 +243,21 @@ defmodule MusicLibrary.RecordsTest do
       release_group = release_group(:marbles)
       release_group_id = release_group_id(:marbles)
 
-      expect(APIBehaviourMock, :get_release, fn ^release_id, _config ->
+      expect(APIMock, :get_release, fn ^release_id, _config ->
         {:ok, release}
       end)
 
-      expect(APIBehaviourMock, :get_release_group, fn ^release_group_id, _config ->
+      expect(APIMock, :get_release_group, fn ^release_group_id, _config ->
         {:ok, release_group}
       end)
 
-      expect(APIBehaviourMock, :get_releases, fn ^release_group_id, _opts, _config ->
+      expect(APIMock, :get_releases, fn ^release_group_id, _opts, _config ->
         {:ok, %{"releases" => release_group["releases"]}}
       end)
 
       cover_data = File.read!(marbles_cover_fixture())
 
-      expect(APIBehaviourMock, :get_cover_art, fn {:musicbrainz_id, ^release_group_id}, _config ->
+      expect(APIMock, :get_cover_art, fn {:musicbrainz_id, ^release_group_id}, _config ->
         {:ok, cover_data}
       end)
 
@@ -299,7 +299,7 @@ defmodule MusicLibrary.RecordsTest do
 
       cover_url = record.cover_url
 
-      expect(APIBehaviourMock, :get_cover_art, fn {:url, ^cover_url}, _config ->
+      expect(APIMock, :get_cover_art, fn {:url, ^cover_url}, _config ->
         {:ok, raven_cover_data}
       end)
 
@@ -317,7 +317,7 @@ defmodule MusicLibrary.RecordsTest do
       barcode = "5052205070023"
       releases = releases(:queen_greatest_hits)
 
-      expect(APIBehaviourMock, :search_release_by_barcode, fn ^barcode, _config ->
+      expect(APIMock, :search_release_by_barcode, fn ^barcode, _config ->
         {:ok, releases}
       end)
 

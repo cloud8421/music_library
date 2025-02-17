@@ -1,7 +1,7 @@
 defmodule MusicBrainzTest do
   use ExUnit.Case, async: true
 
-  alias MusicBrainz.APIBehaviourMock
+  alias MusicBrainz.APIMock
   import MusicLibrary.Fixtures.ReleaseGroup
   import Mox
 
@@ -11,9 +11,7 @@ defmodule MusicBrainzTest do
     test "it returns results with correct limit and offset" do
       mock_results = release_group_search_results()
 
-      expect(APIBehaviourMock, :search_release_group, fn "Marillion",
-                                                         [limit: 20, offset: 10],
-                                                         _config ->
+      expect(APIMock, :search_release_group, fn "Marillion", [limit: 20, offset: 10], _config ->
         {:ok, mock_results}
       end)
 

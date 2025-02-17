@@ -6,7 +6,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
   import Mox
   alias MusicLibrary.Records.{Cover, Record}
-  alias MusicBrainz.APIBehaviourMock
+  alias MusicBrainz.APIMock
 
   setup :verify_on_exit!
 
@@ -244,9 +244,9 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     test "it imports a record when selected", %{conn: conn} do
       mock_results = release_group_search_results()
 
-      expect(APIBehaviourMock, :search_release_group, fn "Marillion Marbles",
-                                                         [limit: 10, offset: 0],
-                                                         _config ->
+      expect(APIMock, :search_release_group, fn "Marillion Marbles",
+                                                [limit: 10, offset: 0],
+                                                _config ->
         {:ok, mock_results}
       end)
 
@@ -267,17 +267,17 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
       release_group = release_group(:marbles)
 
-      expect(APIBehaviourMock, :get_release_group, fn ^first_result_id, _config ->
+      expect(APIMock, :get_release_group, fn ^first_result_id, _config ->
         {:ok, release_group}
       end)
 
-      expect(APIBehaviourMock, :get_releases, fn ^first_result_id, _opts, _config ->
+      expect(APIMock, :get_releases, fn ^first_result_id, _opts, _config ->
         {:ok, %{"releases" => release_group["releases"]}}
       end)
 
       cover_data = File.read!(marbles_cover_fixture())
 
-      expect(APIBehaviourMock, :get_cover_art, fn {:musicbrainz_id, ^first_result_id}, _config ->
+      expect(APIMock, :get_cover_art, fn {:musicbrainz_id, ^first_result_id}, _config ->
         {:ok, cover_data}
       end)
 

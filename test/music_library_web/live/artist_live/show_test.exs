@@ -5,7 +5,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
   import LastFm.Fixtures.Artist
   import Mox
 
-  alias LastFm.APIBehaviourMock
+  alias LastFm.APIMock
 
   setup :verify_on_exit!
 
@@ -28,8 +28,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       conn: conn,
       artist_musicbrainz_id: artist_musicbrainz_id
     } do
-      expect(APIBehaviourMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id},
-                                                    _config ->
+      expect(APIMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id}, _config ->
         {:ok, get_info()}
       end)
 
@@ -45,8 +44,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       conn: conn,
       artist_musicbrainz_id: artist_musicbrainz_id
     } do
-      expect(APIBehaviourMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id},
-                                                    _config ->
+      expect(APIMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id}, _config ->
         {:error, :timeout}
       end)
 
@@ -74,8 +72,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
         record_with_artist("Porcupine Tree", %{purchased_at: DateTime.utc_now()})
 
       # for this test, we don't care about the artist info, but we mock it to avoid false test failures
-      expect(APIBehaviourMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id},
-                                                    _config ->
+      expect(APIMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id}, _config ->
         {:error, :timeout}
       end)
 

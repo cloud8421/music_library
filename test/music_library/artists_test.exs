@@ -2,7 +2,7 @@ defmodule MusicLibrary.ArtistsTest do
   use MusicLibrary.DataCase
 
   alias MusicLibrary.Artists
-  alias LastFm.APIBehaviourMock
+  alias LastFm.APIMock
   import MusicLibrary.Fixtures.Records
   import LastFm.Fixtures.Artist
   import Mox
@@ -48,8 +48,7 @@ defmodule MusicLibrary.ArtistsTest do
 
       expected_info = get_info()
 
-      expect(APIBehaviourMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id},
-                                                    _config ->
+      expect(APIMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id}, _config ->
         {:ok, expected_info}
       end)
 
