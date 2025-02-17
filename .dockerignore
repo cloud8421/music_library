@@ -46,3 +46,7 @@ erl_crash.dump
 
 # Dev databases
 /data/*.db*
+
+# Dev tooling and environment
+/mise.toml
+/mise.local.toml

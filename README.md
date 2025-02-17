@@ -66,12 +66,7 @@ In production, the application also requires:
 
 - `LOGIN_PASSWORD` (secret): the password used for accessing the application.
 
-The application is setup to use [direnv](https://direnv.net/).
-
-The `.envrc` file loads two other files: `.envrc.local` file for configuration
-variables, and a `.secrets` file for secrets.
-
-You can create them and populate them with the necessary environment variables.
+If you're using [mise-en-place](https://mise.jdx.dev), you can create a `mise.local.toml` with the required variables.
 
 ## Running the application
 

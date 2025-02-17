@@ -40,8 +40,6 @@ npm-debug.log
 /data/*.db-*
 
 # Environment variables
-/.secrets
-/.envrc.local
 /mise.local.toml
 
 # LSP Servers
