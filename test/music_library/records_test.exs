@@ -5,7 +5,7 @@ defmodule MusicLibrary.RecordsTest do
   alias MusicLibrary.Records.SearchIndex
   alias MusicBrainz.APIBehaviourMock
   import MusicLibrary.RecordsFixtures
-  import MusicLibrary.ReleaseGroupsFixtures
+  import MusicLibrary.Fixtures.ReleaseGroup
   import MusicBrainz.Fixtures.Release
   import Mox
 

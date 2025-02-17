@@ -1,5 +1,5 @@
-defmodule MusicLibrary.ReleaseGroupsFixtures do
-  @fixtures_folder Path.join([File.cwd!(), "test/support/fixtures"])
+defmodule MusicLibrary.Fixtures.ReleaseGroup do
+  @fixtures_folder Path.join([File.cwd!(), "test/support/fixtures/music_brainz"])
 
   alias MusicBrainz.ReleaseGroupSearchResult
 
@@ -43,23 +43,7 @@ defmodule MusicLibrary.ReleaseGroupsFixtures do
     |> JSON.decode!()
   end
 
-  def release(:mystery_of_time) do
-    Path.join([@fixtures_folder, "release - avantasia - the mystery of time.json"])
-    |> File.read!()
-    |> JSON.decode!()
-  end
-
-  def release(:marbles) do
-    Path.join([@fixtures_folder, "release - marillion - marbles.json"])
-    |> File.read!()
-    |> JSON.decode!()
-  end
-
   def release_group_id(name) do
     release_group(name) |> Map.get("id")
-  end
-
-  def release_id(name) do
-    release(name) |> Map.get("id")
   end
 end

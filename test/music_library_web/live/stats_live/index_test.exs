@@ -5,7 +5,8 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
   alias MusicBrainz.APIBehaviourMock
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
   import MusicLibrary.RecordsFixtures
-  import MusicLibrary.ReleaseGroupsFixtures
+  import MusicLibrary.Fixtures.ReleaseGroup
+  import MusicBrainz.Fixtures.Release
   import Mox
 
   setup :verify_on_exit!
