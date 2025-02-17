@@ -104,7 +104,7 @@ defmodule MusicLibrary.MixProject do
   defp aliases do
     [
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
-      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      "ecto.setup": ["ecto.create", "ecto.migrate"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       # When running the migrate task WITHOUT setting the log_level option,
       # Ecto defaults to debug IRRESPECTIVELY of the log level set in
