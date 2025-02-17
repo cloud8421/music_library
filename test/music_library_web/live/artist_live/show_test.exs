@@ -2,7 +2,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
   use MusicLibraryWeb.ConnCase
 
   import MusicLibrary.RecordsFixtures
-  import LastFm.Fixtures
+  import LastFm.Fixtures.Artist
   import Mox
 
   alias LastFm.APIBehaviourMock
@@ -30,7 +30,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
     } do
       expect(APIBehaviourMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id},
                                                     _config ->
-        {:ok, artist_get_info()}
+        {:ok, get_info()}
       end)
 
       conn

@@ -4,7 +4,7 @@ defmodule MusicLibrary.ArtistsTest do
   alias MusicLibrary.Artists
   alias LastFm.APIBehaviourMock
   import MusicLibrary.RecordsFixtures
-  import LastFm.Fixtures
+  import LastFm.Fixtures.Artist
   import Mox
 
   setup :verify_on_exit!
@@ -46,7 +46,7 @@ defmodule MusicLibrary.ArtistsTest do
       [artist] = collection_record.artists
       artist_musicbrainz_id = artist.musicbrainz_id
 
-      expected_info = artist_get_info()
+      expected_info = get_info()
 
       expect(APIBehaviourMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id},
                                                     _config ->
