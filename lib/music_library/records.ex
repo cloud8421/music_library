@@ -128,17 +128,6 @@ defmodule MusicLibrary.Records do
     end
   end
 
-  def search_release_by_barcode(barcode) do
-    case MusicBrainz.search_release_by_barcode(barcode) do
-      {:ok, releases} ->
-        {:ok,
-         Enum.map(releases, fn r -> MusicBrainz.ReleaseSearchResult.from_api_response(r) end)}
-
-      error ->
-        error
-    end
-  end
-
   def import_from_musicbrainz_release_group(musicbrainz_id, opts \\ []) do
     with format = Keyword.get(opts, :format, "cd"),
          purchased_at = Keyword.get(opts, :purchased_at),

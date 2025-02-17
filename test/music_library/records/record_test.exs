@@ -1,7 +1,7 @@
 defmodule MusicLibrary.Records.RecordTest do
   use ExUnit.Case, async: true
 
-  import MusicLibrary.Fixtures.ReleaseGroup
+  import MusicBrainz.Fixtures.ReleaseGroup
   alias MusicLibrary.Records.Record
 
   doctest Record

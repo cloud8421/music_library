@@ -120,7 +120,7 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
 
     # TODO: inform when record is already in collection
     socket =
-      case Records.search_release_by_barcode(number) do
+      case MusicBrainz.search_release_by_barcode(number) do
         {:ok, [best_match_release | _other_releases]} ->
           assign(socket, :releases, [best_match_release | socket.assigns.releases])
 

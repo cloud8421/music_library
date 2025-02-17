@@ -1,4 +1,4 @@
-defmodule MusicLibrary.Fixtures.ReleaseGroup do
+defmodule MusicBrainz.Fixtures.ReleaseGroup do
   @fixtures_folder Path.join([File.cwd!(), "test/support/fixtures/music_brainz"])
 
   alias MusicBrainz.ReleaseGroupSearchResult

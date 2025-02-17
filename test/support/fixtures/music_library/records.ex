@@ -5,7 +5,7 @@ defmodule MusicLibrary.Fixtures.Records do
   """
 
   alias MusicLibrary.Records.Record
-  alias MusicLibrary.Fixtures.ReleaseGroup
+  alias MusicBrainz.Fixtures.ReleaseGroup
 
   @genres [
     "progressive rock",

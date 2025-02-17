@@ -11,7 +11,7 @@ defmodule MusicBrainz.APIImpl do
 
   require Logger
 
-  alias MusicBrainz.ReleaseGroupSearchResult
+  alias MusicBrainz.{ReleaseGroupSearchResult, ReleaseSearchResult}
 
   @doc """
   Uses the [lookup](https://musicbrainz.org/doc/MusicBrainz_API#Lookups) endpoint with the release group id and include the
@@ -311,7 +311,7 @@ defmodule MusicBrainz.APIImpl do
       @base_url <> "/release?query=barcode:#{barcode}&fmt=json"
 
     with {:ok, result} <- json_get(url, config) do
-      {:ok, result["releases"]}
+      {:ok, Enum.map(result["releases"], &ReleaseSearchResult.from_api_response/1)}
     end
   end
 

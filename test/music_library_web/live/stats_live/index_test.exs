@@ -5,7 +5,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
   alias MusicBrainz.APIMock
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
   import MusicLibrary.Fixtures.Records
-  import MusicLibrary.Fixtures.ReleaseGroup
+  import MusicBrainz.Fixtures.ReleaseGroup
   import MusicBrainz.Fixtures.Release
   import Mox
 
