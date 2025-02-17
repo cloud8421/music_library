@@ -2,7 +2,7 @@ defmodule MusicLibrary.CollectionTest do
   use MusicLibrary.DataCase
 
   alias MusicLibrary.Collection
-  import MusicLibrary.RecordsFixtures
+  import MusicLibrary.Fixtures.Records
 
   defp fill_collection(_) do
     # Purchased dates are in ascending order

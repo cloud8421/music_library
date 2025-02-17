@@ -1,7 +1,7 @@
 defmodule MusicLibraryWeb.CollectionControllerTest do
   use MusicLibraryWeb.ConnCase
 
-  import MusicLibrary.RecordsFixtures
+  import MusicLibrary.Fixtures.Records
 
   defp create_record(_) do
     %{record: record_with_artist("Steven Wilson")}

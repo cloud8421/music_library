@@ -1,7 +1,7 @@
 defmodule MusicLibraryWeb.WishlistLive.IndexTest do
   use MusicLibraryWeb.ConnCase
 
-  import MusicLibrary.RecordsFixtures
+  import MusicLibrary.Fixtures.Records
 
   defp fill_wishlist(_) do
     records = Enum.map(1..5, fn _ -> record(%{purchased_at: nil}) end)

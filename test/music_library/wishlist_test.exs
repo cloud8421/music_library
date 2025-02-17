@@ -2,7 +2,7 @@ defmodule MusicLibrary.WishlistTest do
   use MusicLibrary.DataCase
 
   alias MusicLibrary.Wishlist
-  import MusicLibrary.RecordsFixtures
+  import MusicLibrary.Fixtures.Records
 
   defp fill_wishlist(_) do
     records = [

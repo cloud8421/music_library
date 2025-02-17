@@ -3,7 +3,7 @@ defmodule MusicLibrary.ArtistsTest do
 
   alias MusicLibrary.Artists
   alias LastFm.APIBehaviourMock
-  import MusicLibrary.RecordsFixtures
+  import MusicLibrary.Fixtures.Records
   import LastFm.Fixtures.Artist
   import Mox
 

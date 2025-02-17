@@ -1,7 +1,7 @@
 defmodule MusicLibrary.Records.CoverTest do
   use ExUnit.Case, async: true
 
-  import MusicLibrary.RecordsFixtures
+  import MusicLibrary.Fixtures.Records
 
   describe "resize/1" do
     test "it resizes to the desired size" do

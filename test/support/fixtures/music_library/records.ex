@@ -1,4 +1,4 @@
-defmodule MusicLibrary.RecordsFixtures do
+defmodule MusicLibrary.Fixtures.Records do
   @moduledoc """
   This module defines test helpers for creating
   entities via the `MusicLibrary.Records` context.
