@@ -2,8 +2,8 @@ defmodule Obsidian.ParserTest do
   use ExUnit.Case, async: true
   alias Obsidian.{Entry, Parser}
 
-  @marbles_entry_path Path.expand("../support/fixtures/marillion-marbles.md", __DIR__)
-  @guardians_entry_path Path.expand("../support/fixtures/guardians.md", __DIR__)
+  @marbles_entry_path Path.expand("../support/fixtures/obsidian/marillion-marbles.md", __DIR__)
+  @guardians_entry_path Path.expand("../support/fixtures/obsidian/guardians.md", __DIR__)
 
   test "parses the content of the Obsidian album entry" do
     entry_contents = File.read!(@marbles_entry_path)
