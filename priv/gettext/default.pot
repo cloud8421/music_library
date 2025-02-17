@@ -95,7 +95,7 @@ msgstr ""
 msgid "Hang in there while we get back on track"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex:7
+#: lib/music_library_web/live/collection_live/index.html.heex:17
 #: lib/music_library_web/live/wishlist_live/index.html.heex:6
 #, elixir-autogen, elixir-format
 msgid "Import"
@@ -169,7 +169,7 @@ msgstr ""
 msgid "Previous"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex:47
+#: lib/music_library_web/live/collection_live/index.html.heex:67
 #, elixir-autogen, elixir-format
 msgid "Purchase"
 msgstr ""
@@ -235,7 +235,7 @@ msgstr ""
 msgid "Show"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex:52
+#: lib/music_library_web/live/collection_live/index.html.heex:72
 #: lib/music_library_web/live/wishlist_live/index.html.heex:12
 #, elixir-autogen, elixir-format
 msgid "Showing <b>%{visible}</b> of <b>%{total}</b> records"
@@ -494,7 +494,7 @@ msgstr ""
 msgid "Error loading play count"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex:29
+#: lib/music_library_web/live/collection_live/index.html.heex:49
 #, elixir-autogen, elixir-format
 msgid "A->Z"
 msgstr ""
@@ -620,7 +620,7 @@ msgstr ""
 msgid "Published releases"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex:10
+#: lib/music_library_web/live/collection_live/index.html.heex:30
 #, elixir-autogen, elixir-format
 msgid "Scan"
 msgstr ""
