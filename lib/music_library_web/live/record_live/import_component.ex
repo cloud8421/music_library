@@ -157,6 +157,6 @@ defmodule MusicLibraryWeb.RecordLive.ImportComponent do
   defp search(""), do: {:ok, []}
 
   defp search(mb_query) do
-    Records.search_release_group(mb_query, limit: 10)
+    MusicBrainz.search_release_group(mb_query, limit: 10)
   end
 end

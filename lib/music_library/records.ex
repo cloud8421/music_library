@@ -117,21 +117,8 @@ defmodule MusicLibrary.Records do
     Repo.one(q)
   end
 
-  # TODO: muve to music_brainz context
-  def search_release_group(query, opts \\ []) do
-    limit = Keyword.get(opts, :limit, 20)
-    offset = Keyword.get(opts, :offset, 0)
-
-    music_brainz_config().api.search_release_group(
-      query,
-      [limit: limit, offset: offset],
-      music_brainz_config()
-    )
-  end
-
-  # TODO: muve to music_brainz context
   def import_from_musicbrainz_release(musicbrainz_id, opts \\ []) do
-    case music_brainz_config().api.get_release(musicbrainz_id, music_brainz_config()) do
+    case MusicBrainz.get_release(musicbrainz_id) do
       {:ok, release} ->
         release_group_id = release["release-group"]["id"]
         import_from_musicbrainz_release_group(release_group_id, opts)
@@ -141,9 +128,8 @@ defmodule MusicLibrary.Records do
     end
   end
 
-  # TODO: muve to music_brainz context
   def search_release_by_barcode(barcode) do
-    case music_brainz_config().api.search_release_by_barcode(barcode, music_brainz_config()) do
+    case MusicBrainz.search_release_by_barcode(barcode) do
       {:ok, releases} ->
         {:ok,
          Enum.map(releases, fn r -> MusicBrainz.ReleaseSearchResult.from_api_response(r) end)}
@@ -153,12 +139,10 @@ defmodule MusicLibrary.Records do
     end
   end
 
-  # TODO: muve to music_brainz context
   def import_from_musicbrainz_release_group(musicbrainz_id, opts \\ []) do
     with format = Keyword.get(opts, :format, "cd"),
          purchased_at = Keyword.get(opts, :purchased_at),
-         {:ok, release_group} <-
-           music_brainz_config().api.get_release_group(musicbrainz_id, music_brainz_config()),
+         {:ok, release_group} <- MusicBrainz.get_release_group(musicbrainz_id),
          {:ok, release_group_with_releases} <- merge_releases(musicbrainz_id, release_group),
          {:ok, cover_data} <- get_cover_art_or_default(musicbrainz_id),
          record_attrs =
@@ -196,24 +180,15 @@ defmodule MusicLibrary.Records do
     |> Repo.update()
   end
 
-  # TODO: muve to music_brainz context
   defp get_cover_art_or_default(musicbrainz_id) do
-    case music_brainz_config().api.get_cover_art(
-           {:musicbrainz_id, musicbrainz_id},
-           music_brainz_config()
-         ) do
+    case MusicBrainz.get_cover_art({:musicbrainz_id, musicbrainz_id}) do
       {:error, :cover_not_available} -> {:ok, Cover.fallback_data()}
       {:ok, cover_data} -> Cover.resize(cover_data)
     end
   end
 
-  # TODO: muve to music_brainz context
   def refresh_cover(record) do
-    with {:ok, cover_data} <-
-           music_brainz_config().api.get_cover_art(
-             {:url, record.cover_url},
-             music_brainz_config()
-           ) do
+    with {:ok, cover_data} <- MusicBrainz.get_cover_art({:url, record.cover_url}) do
       {:ok, thumb_data} = Cover.resize(cover_data)
 
       record
@@ -230,13 +205,8 @@ defmodule MusicLibrary.Records do
     |> Repo.update()
   end
 
-  # TODO: muve to music_brainz context
   def refresh_musicbrainz_data(record) do
-    with {:ok, data} <-
-           music_brainz_config().api.get_release_group(
-             record.musicbrainz_id,
-             music_brainz_config()
-           ),
+    with {:ok, data} <- MusicBrainz.get_release_group(record.musicbrainz_id),
          {:ok, data_with_releases} <- merge_releases(record.musicbrainz_id, data) do
       record
       |> Record.add_musicbrainz_data(data_with_releases)
@@ -254,13 +224,11 @@ defmodule MusicLibrary.Records do
     do_stream_releases(musicbrainz_id, [], 0)
   end
 
-  # TODO: muve to music_brainz context
   defp do_stream_releases(musicbrainz_id, releases, offset) do
     limit = 100
     opts = [limit: limit, offset: offset]
 
-    with {:ok, data} <-
-           music_brainz_config().api.get_releases(musicbrainz_id, opts, music_brainz_config()) do
+    with {:ok, data} <- MusicBrainz.get_releases(musicbrainz_id, opts) do
       %{"releases" => new_releases} = data
 
       if Enum.count(new_releases) < limit do
@@ -296,6 +264,4 @@ defmodule MusicLibrary.Records do
   def change_record(%Record{} = record, attrs \\ %{}) do
     Record.changeset(record, attrs)
   end
-
-  defp music_brainz_config, do: MusicBrainz.Config.resolve(:music_library)
 end

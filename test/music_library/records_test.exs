@@ -182,21 +182,6 @@ defmodule MusicLibrary.RecordsTest do
     end
   end
 
-  describe "search_release_group/2" do
-    test "it returns results with correct limit and offset" do
-      mock_results = release_group_search_results()
-
-      expect(APIBehaviourMock, :search_release_group, fn "Marillion",
-                                                         [limit: 20, offset: 10],
-                                                         _config ->
-        {:ok, mock_results}
-      end)
-
-      assert {:ok, mock_results} ==
-               Records.search_release_group("Marillion", limit: 20, offset: 10)
-    end
-  end
-
   describe "import_from_musicbrainz_release_group/2" do
     test "it saves a record with its cover art" do
       current_time = DateTime.utc_now()
