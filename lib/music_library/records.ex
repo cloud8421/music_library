@@ -117,6 +117,7 @@ defmodule MusicLibrary.Records do
     Repo.one(q)
   end
 
+  # TODO: muve to music_brainz context
   def search_release_group(query, opts \\ []) do
     limit = Keyword.get(opts, :limit, 20)
     offset = Keyword.get(opts, :offset, 0)
@@ -128,6 +129,7 @@ defmodule MusicLibrary.Records do
     )
   end
 
+  # TODO: muve to music_brainz context
   def import_from_musicbrainz_release(musicbrainz_id, opts \\ []) do
     case music_brainz_config().api.get_release(musicbrainz_id, music_brainz_config()) do
       {:ok, release} ->
@@ -139,6 +141,7 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  # TODO: muve to music_brainz context
   def search_release_by_barcode(barcode) do
     case music_brainz_config().api.search_release_by_barcode(barcode, music_brainz_config()) do
       {:ok, releases} ->
@@ -150,6 +153,7 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  # TODO: muve to music_brainz context
   def import_from_musicbrainz_release_group(musicbrainz_id, opts \\ []) do
     with format = Keyword.get(opts, :format, "cd"),
          purchased_at = Keyword.get(opts, :purchased_at),
@@ -192,6 +196,7 @@ defmodule MusicLibrary.Records do
     |> Repo.update()
   end
 
+  # TODO: muve to music_brainz context
   defp get_cover_art_or_default(musicbrainz_id) do
     case music_brainz_config().api.get_cover_art(
            {:musicbrainz_id, musicbrainz_id},
@@ -202,6 +207,7 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  # TODO: muve to music_brainz context
   def refresh_cover(record) do
     with {:ok, cover_data} <-
            music_brainz_config().api.get_cover_art(
@@ -224,6 +230,7 @@ defmodule MusicLibrary.Records do
     |> Repo.update()
   end
 
+  # TODO: muve to music_brainz context
   def refresh_musicbrainz_data(record) do
     with {:ok, data} <-
            music_brainz_config().api.get_release_group(
@@ -247,6 +254,7 @@ defmodule MusicLibrary.Records do
     do_stream_releases(musicbrainz_id, [], 0)
   end
 
+  # TODO: muve to music_brainz context
   defp do_stream_releases(musicbrainz_id, releases, offset) do
     limit = 100
     opts = [limit: limit, offset: offset]
