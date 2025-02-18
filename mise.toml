@@ -3,6 +3,9 @@ LAST_FM_USER = 'change-me'
 LAST_FM_API_KEY = 'change-me'
 OPENAI_KEY = 'change-me'
 
+[tools]
+hurl = 'latest'
+
 [tasks.npm-install]
 run = 'npm install'
 hide = true
