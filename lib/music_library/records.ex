@@ -147,10 +147,7 @@ defmodule MusicLibrary.Records do
   end
 
   def populate_genres(record) do
-    artists =
-      record.artists
-      |> Enum.map(fn a -> a.name end)
-      |> Enum.join(",")
+    artists = Enum.map_join(record.artists, ",", fn a -> a.name end)
 
     completion = %OpenAI.Completion{
       content: """

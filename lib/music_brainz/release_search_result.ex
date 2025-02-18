@@ -9,10 +9,7 @@ defmodule MusicBrainz.ReleaseSearchResult do
       id: r["id"],
       title: r["title"],
       release_group: parse_release_group(r["release-group"]),
-      artists:
-        r["artist-credit"]
-        |> Enum.map(fn ac -> ac["artist"]["name"] end)
-        |> Enum.join(", "),
+      artists: Enum.map_join(r["artist-credit"], ", ", fn ac -> ac["artist"]["name"] end),
       date: r["date"],
       barcode: r["barcode"],
       media: parse_media(r["media"])
