@@ -8,7 +8,7 @@ defmodule Mix.Tasks.MusicBrainz.RefreshFixtures do
 
   require Logger
 
-  @fixtures_folder Path.join([File.cwd!(), "test/support/fixtures"])
+  @fixtures_folder Path.join([File.cwd!(), "test/support/fixtures/music_brainz"])
 
   @fixture_files %{
     "release_group - marillion - marbles.json" =>
@@ -18,7 +18,7 @@ defmodule Mix.Tasks.MusicBrainz.RefreshFixtures do
     "release_group_with_includes - mariusz duda - lockdown trilogy.json" =>
       "https://musicbrainz.org/ws/2/release-group/5db72bc0-6ce3-4beb-bd51-86b58ed8cf71?fmt=json&inc=artists+genres+releases+release-group-rels",
     "release - marillion - marbles.json" =>
-      "https://musicbrainz.org/ws/2/release/0e290154-5375-4f4f-a658-4a92bf02faa5?fmt=json&inc=release-groups",
+      "https://musicbrainz.org/ws/2/release/d3f9b9e2-73f5-4b47-a2a7-2c2199aad608?fmt=json&inc=release-groups",
     "release - avantasia - the mystery of time.json" =>
       "https://musicbrainz.org/ws/2/release/003d1505-b3ac-4acf-bed1-02e2c8134a26?fmt=json&inc=release-groups"
   }
