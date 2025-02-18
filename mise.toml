@@ -8,7 +8,31 @@ run = 'npm install'
 hide = true
 dir = 'assets'
 
+[tasks.npm-update]
+run = 'npm update'
+hide = true
+dir = 'assets'
+
+[tasks.npm-outdated]
+run = 'npm outdated'
+hide = true
+dir = 'assets'
+
 [tasks.setup]
 depends = ['npm-install']
 description = 'Install dependencies and setup the database'
 run = ['mix setup']
+
+[tasks.deps-update]
+depends = ['npm-update']
+description = 'Update dependencies'
+run = ['mix deps.update --all']
+
+[tasks.deps-outdated]
+depends = ['npm-outdated']
+description = 'Show outdated dependencies'
+run = ['mix hex.outdated --all']
+
+[tasks.prod-console]
+description = 'Open an ssh console to the production env'
+run = 'fly ssh console'
