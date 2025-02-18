@@ -1,17 +1,17 @@
 {
-  "asin": null,
-  "barcode": "",
-  "country": "XE",
+  "asin": "B0002Y4TM4",
+  "barcode": "5037300650128",
+  "country": "GB",
   "cover-art-archive": {
-    "artwork": false,
-    "back": false,
-    "count": 0,
+    "artwork": true,
+    "back": true,
+    "count": 14,
     "darkened": false,
-    "front": false
+    "front": true
   },
   "date": "2004-05-03",
-  "disambiguation": "non‐deluxe double CD with o‐card",
-  "id": "0e290154-5375-4f4f-a658-4a92bf02faa5",
+  "disambiguation": "",
+  "id": "d3f9b9e2-73f5-4b47-a2a7-2c2199aad608",
   "packaging": "Jewel Case",
   "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
   "quality": "normal",
@@ -19,12 +19,12 @@
     {
       "area": {
         "disambiguation": "",
-        "id": "89a675c2-3e37-3518-b83c-418bad59a85a",
+        "id": "8a754a16-0027-3a29-b6d7-2b40ea0481ed",
         "iso-3166-1-codes": [
-          "XE"
+          "GB"
         ],
-        "name": "Europe",
-        "sort-name": "Europe",
+        "name": "United Kingdom",
+        "sort-name": "United Kingdom",
         "type": null,
         "type-id": null
       },
