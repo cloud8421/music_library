@@ -129,18 +129,19 @@ defmodule MusicLibrary.Records do
   end
 
   def import_from_musicbrainz_release_group(musicbrainz_id, opts \\ []) do
-    with format = Keyword.get(opts, :format, "cd"),
-         purchased_at = Keyword.get(opts, :purchased_at),
-         {:ok, release_group} <- MusicBrainz.get_release_group(musicbrainz_id),
+    format = Keyword.get(opts, :format, "cd")
+    purchased_at = Keyword.get(opts, :purchased_at)
+
+    with {:ok, release_group} <- MusicBrainz.get_release_group(musicbrainz_id),
          {:ok, release_group_with_releases} <- merge_releases(musicbrainz_id, release_group),
-         {:ok, cover_data} <- get_cover_art_or_default(musicbrainz_id),
-         record_attrs =
-           build_record_attrs(release_group_with_releases, %{
-             "cover_data" => cover_data,
-             "format" => format,
-             "purchased_at" => purchased_at
-           }) do
-      create_record(record_attrs)
+         {:ok, cover_data} <- get_cover_art_or_default(musicbrainz_id) do
+      release_group_with_releases
+      |> build_record_attrs(%{
+        "cover_data" => cover_data,
+        "format" => format,
+        "purchased_at" => purchased_at
+      })
+      |> create_record()
     else
       error -> error
     end
