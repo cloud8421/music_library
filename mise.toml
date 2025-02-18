@@ -39,3 +39,7 @@ run = ['mix hex.outdated --all']
 [tasks.prod-console]
 description = 'Open an ssh console to the production env'
 run = 'fly ssh console'
+
+[tasks.static-checks]
+description = 'Run static checks for code formatting, translations, quality'
+run = 'mix do format, credo, gettext.extract'
