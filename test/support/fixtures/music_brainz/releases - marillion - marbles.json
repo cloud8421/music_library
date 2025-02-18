@@ -1,0 +1,73 @@
+{
+  "created": "2025-02-18T19:48:53.894Z",
+  "count": 1,
+  "offset": 0,
+  "releases": [
+    {
+      "id": "d3f9b9e2-73f5-4b47-a2a7-2c2199aad608",
+      "score": 100,
+      "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+      "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
+      "count": 1,
+      "title": "Marbles",
+      "status": "Official",
+      "packaging": "Jewel Case",
+      "text-representation": {
+        "language": "eng",
+        "script": "Latn"
+      },
+      "artist-credit": [
+        {
+          "name": "Marillion",
+          "artist": {
+            "id": "1932f5b6-0b7b-4050-b1df-833ca89e5f44",
+            "name": "Marillion",
+            "sort-name": "Marillion",
+            "disambiguation": "British progressive rock band"
+          }
+        }
+      ],
+      "release-group": {
+        "id": "20790e26-98e4-3ad3-a67f-b674758b942d",
+        "type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+        "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+        "title": "Marbles",
+        "primary-type": "Album"
+      },
+      "date": "2004-05-03",
+      "country": "GB",
+      "release-events": [
+        {
+          "date": "2004-05-03",
+          "area": {
+            "id": "8a754a16-0027-3a29-b6d7-2b40ea0481ed",
+            "name": "United Kingdom",
+            "sort-name": "United Kingdom",
+            "iso-3166-1-codes": [
+              "GB"
+            ]
+          }
+        }
+      ],
+      "barcode": "5037300650128",
+      "asin": "B0002Y4TM4",
+      "label-info": [
+        {
+          "catalog-number": "INTACTCD1",
+          "label": {
+            "id": "983e8198-6c5a-4353-8ac1-3d41a9336481",
+            "name": "Intact Records"
+          }
+        }
+      ],
+      "track-count": 12,
+      "media": [
+        {
+          "format": "CD",
+          "disc-count": 2,
+          "track-count": 12
+        }
+      ]
+    }
+  ]
+}

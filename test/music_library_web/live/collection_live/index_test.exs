@@ -3,10 +3,11 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
   import MusicLibrary.Fixtures.Records
   import MusicBrainz.Fixtures.ReleaseGroup
+  import MusicBrainz.Fixtures.Release
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
   import Mox
+  alias MusicBrainz.{APIMock, ReleaseSearchResult}
   alias MusicLibrary.Records.{Cover, Record}
-  alias MusicBrainz.APIMock
 
   setup :verify_on_exit!
 
@@ -353,5 +354,86 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       |> refute_has("button#camera-button")
       |> assert_has("video#camera-preview")
     end
+  end
+
+  test "it adds a record after scanning", %{conn: conn} do
+    barcode = "5037300650128"
+    releases = releases(:marbles)
+
+    expect(APIMock, :search_release_by_barcode, fn ^barcode, _config ->
+      {:ok, Enum.map(releases, &ReleaseSearchResult.from_api_response/1)}
+    end)
+
+    release = release(:marbles)
+    release_id = release_id(:marbles)
+
+    expect(APIMock, :get_release, fn ^release_id, _config ->
+      {:ok, release}
+    end)
+
+    release_group = release_group(:marbles)
+    release_group_id = release_group["id"]
+
+    expect(APIMock, :get_release_group, fn ^release_group_id, _config ->
+      {:ok, release_group}
+    end)
+
+    expect(APIMock, :get_releases, fn ^release_group_id, _opts, _config ->
+      {:ok, %{"releases" => release_group["releases"]}}
+    end)
+
+    cover_data = File.read!(marbles_cover_fixture())
+
+    expect(APIMock, :get_cover_art, fn {:musicbrainz_id, ^release_group_id}, _config ->
+      {:ok, cover_data}
+    end)
+
+    conn
+    |> visit(~p"/collection/scan")
+    |> unwrap(fn view ->
+      view
+      |> element("#barcode-scanner")
+      |> render_hook("barcode_scanned", %{"number" => barcode})
+    end)
+    |> assert_has("h2", text: "Marbles")
+    |> click_button("Import releases")
+
+    [record] = MusicLibrary.Repo.all(MusicLibrary.Records.Record)
+
+    assert record.musicbrainz_id == release_group_id
+    assert record.title == "Marbles"
+    assert record.release == "2004-05-03"
+    assert record.format == :cd
+    assert record.musicbrainz_data == release_group
+
+    assert record.genres == [
+             "alternative rock",
+             "art rock",
+             "baroque pop",
+             "pop rock",
+             "progressive rock",
+             "psychedelic pop",
+             "rock"
+           ]
+
+    assert record.cover_hash ==
+             "0ED79C93C5BECC7B28FE05CAA3E49B924A3377EA3219CA8FFAE3B2B0960F2AC8"
+
+    {:ok, resized_cover_data} = Cover.resize(cover_data)
+
+    assert record.cover_data == resized_cover_data
+
+    assert record.inserted_at !== nil
+    assert record.updated_at !== nil
+    assert record.purchased_at !== nil
+
+    [marillion] = record.artists
+
+    assert %MusicLibrary.Records.Artist{
+             name: "Marillion",
+             sort_name: "Marillion",
+             disambiguation: "British progressive rock band",
+             musicbrainz_id: "1932f5b6-0b7b-4050-b1df-833ca89e5f44"
+           } = marillion
   end
 end
