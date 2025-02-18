@@ -59,7 +59,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
     |> assign(:record, nil)
   end
 
-  defp apply_action(socket, :edit, params = %{"id" => id}) do
+  defp apply_action(socket, :edit, %{"id" => id} = params) do
     socket =
       if get_in(socket.assigns, [:streams, :records]) == nil do
         socket

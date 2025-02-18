@@ -103,7 +103,7 @@ defmodule MusicLibrary.Records.Record do
     |> update_included_release_group_ids()
   end
 
-  def generate_cover_hash(record = %__MODULE__{cover_data: cover_data}) do
+  def generate_cover_hash(%__MODULE__{cover_data: cover_data} = record) do
     change(record, cover_hash: Cover.hash(cover_data))
   end
 
