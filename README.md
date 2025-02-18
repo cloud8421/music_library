@@ -52,7 +52,10 @@
 
 ## Setup
 
-Run `mix setup` to install and setup dependencies.
+The project is managed and configured via [mise-en-place](https://mise.jdx.dev):
+
+- `mise install` will pull the correct Erlang, Elixir and Node.js versions
+- `mise run setup` will setup dependencies and database structure
 
 ## Environment configuration
 
@@ -60,13 +63,14 @@ The application requires the following environment variables:
 
 - `LAST_FM_USER`: the Last.fm username used to populate the Scrobble Activity
 - `LAST_FM_API_KEY` (secret): the Last.fm API key used to fetch the Scrobble Activity
-- `OPENAI_KEY` (secret): the OpenAI API key used for specific features like populating genres, etc.
+- `OPENAI_KEY` (secret): the OpenAI API key used to populating genres
 
 In production, the application also requires:
 
 - `LOGIN_PASSWORD` (secret): the password used for accessing the application.
 
-If you're using [mise-en-place](https://mise.jdx.dev), you can create a `mise.local.toml` with the required variables.
+You can create a `mise.local.toml` with the required variables (sample values
+are included at the top of `mise.toml`).
 
 ## Running the application
 
