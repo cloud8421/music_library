@@ -343,13 +343,13 @@ msgstr ""
 msgid "Choose which format to import"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:116
+#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:118
 #: lib/music_library_web/live/stats_live/index.html.heex:141
 #, elixir-autogen, elixir-format
 msgid "Collected"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:115
+#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:117
 #: lib/music_library_web/live/stats_live/index.html.heex:147
 #, elixir-autogen, elixir-format
 msgid "Wishlisted"
@@ -637,7 +637,7 @@ msgstr ""
 msgid "Scan one or more barcodes"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:89
+#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:90
 #, elixir-autogen, elixir-format
 msgid "Open camera"
 msgstr ""
@@ -647,12 +647,12 @@ msgstr ""
 msgid "Import releases"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:156
+#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:158
 #, elixir-autogen, elixir-format
 msgid "Failed to search release for barcode %{number}"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:147
+#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:149
 #, elixir-autogen, elixir-format
 msgid "No release found for barcode %{number}"
 msgstr ""
@@ -662,12 +662,12 @@ msgstr ""
 msgid "Importing..."
 msgstr ""
 
-#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:186
+#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:188
 #, elixir-autogen, elixir-format
 msgid "Records imported successfully"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:114
+#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:116
 #, elixir-autogen, elixir-format
 msgid "New"
 msgstr ""
