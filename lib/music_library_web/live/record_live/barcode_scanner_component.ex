@@ -30,7 +30,7 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
 
       <ul class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5">
         <li
-          :for={{status, release} <- @releases}
+          :for={{status, record_id, release} <- @releases}
           id={release.id}
           class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700"
           phx-mounted={
@@ -41,7 +41,7 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
             )
           }
         >
-          <.release status={status} release={release} />
+          <.release status={status} record_id={record_id} release={release} />
         </li>
       </ul>
 
@@ -92,6 +92,7 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
   end
 
   attr :release, MusicBrainz.ReleaseSearchResult, required: true
+  attr :record_id, :string
   attr :status, :atom, required: true, values: [:collected, :wishlisted, :new]
 
   defp release(assigns) do
@@ -163,12 +164,17 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
     current_time = DateTime.utc_now()
     # TODO: error handling when a release fails to import
     :ok =
-      Enum.each(socket.assigns.releases, fn {status, release} ->
+      Enum.each(socket.assigns.releases, fn {status, record_id, release} ->
         if status == :new do
           Records.import_from_musicbrainz_release(release.id,
             format: MusicBrainz.ReleaseSearchResult.format(release),
             purchased_at: current_time
           )
+        end
+
+        if status == :wishlisted do
+          record = Records.get_record!(record_id)
+          Records.update_record(record, %{"purchased_at" => current_time})
         end
       end)
 
@@ -187,13 +193,13 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
     release_with_status =
       case Records.get_release_status(release.id, format) do
         nil ->
-          {:new, release}
+          {:new, nil, release}
 
-        %{record_id: _, purchased_at: nil} ->
-          {:wishlisted, release}
+        %{record_id: record_id, purchased_at: nil} ->
+          {:wishlisted, record_id, release}
 
-        _collected ->
-          {:collected, release}
+        %{record_id: record_id} ->
+          {:collected, record_id, release}
       end
 
     assign(socket, :releases, [release_with_status | socket.assigns.releases])
