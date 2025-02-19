@@ -134,9 +134,12 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
     socket =
       case MusicBrainz.search_release_by_barcode(number) do
         {:ok, [best_match_release | _other_releases]} ->
+          Logger.debug(fn -> "Found release #{best_match_release.id}" end)
           assign_release_with_status(best_match_release, socket)
 
         {:ok, []} ->
+          Logger.debug(fn -> "No release found for barcode #{number}" end)
+
           put_flash(
             socket,
             :error,
@@ -144,6 +147,8 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
           )
 
         {:error, _reason} ->
+          Logger.error(fn -> "Failed to search release for barcode #{number}" end)
+
           put_flash(
             socket,
             :error,

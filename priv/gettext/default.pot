@@ -647,12 +647,12 @@ msgstr ""
 msgid "Import releases"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:150
+#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:155
 #, elixir-autogen, elixir-format
 msgid "Failed to search release for barcode %{number}"
 msgstr ""
 
-#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:143
+#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:146
 #, elixir-autogen, elixir-format
 msgid "No release found for barcode %{number}"
 msgstr ""
@@ -662,7 +662,7 @@ msgstr ""
 msgid "Importing..."
 msgstr ""
 
-#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:175
+#: lib/music_library_web/live/record_live/barcode_scanner_component.ex:180
 #, elixir-autogen, elixir-format
 msgid "Records imported successfully"
 msgstr ""
