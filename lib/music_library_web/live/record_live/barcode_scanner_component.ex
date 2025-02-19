@@ -1,8 +1,8 @@
 defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
   use MusicLibraryWeb, :live_component
 
-  alias MusicLibraryWeb.RecordComponents
   alias MusicLibrary.Records
+  alias MusicLibraryWeb.RecordComponents
 
   require Logger
 
@@ -24,37 +24,25 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
         </h1>
       </header>
       <div class="mt-4">
-        <button
-          :if={!(@camera == :allowed)}
-          id="camera-button"
-          type="button"
-          phx-click={
-            JS.show(to: "#camera-preview")
-            |> JS.dispatch("camera_request", to: "#barcode-scanner")
-            |> JS.hide(to: "#camera-button")
-          }
-          class="relative block w-full h-96 rounded-lg border-2 border-dashed border-zinc-300 p-12 text-center hover:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2"
-        >
-          <svg
-            class="mx-auto size-12 text-zinc-400"
-            stroke="currentColor"
-            fill="none"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
-            />
-          </svg>
-          <span class="mt-2 block text-sm font-semibold text-zinc-900">{gettext("Open camera")}</span>
-        </button>
+        <.camera_button camera={@camera} />
         <video :if={!(@camera == :denied)} class="w-full hidden h-96" id="camera-preview" playsinline />
       </div>
 
       <ul class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5">
-        <.result :for={release <- @releases} id={release.id} release={release} />
+        <li
+          :for={{status, release} <- @releases}
+          id={release.id}
+          class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700"
+          phx-mounted={
+            JS.transition(
+              {"first:ease-in duration-300", "first:opacity-0 first:p-0 first:h-0",
+               "first:opacity-100"},
+              time: 300
+            )
+          }
+        >
+          <.release status={status} release={release} />
+        </li>
       </ul>
 
       <div class="mt-4 flex justify-center">
@@ -70,37 +58,62 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
     """
   end
 
-  attr :id, :string, required: true
-  attr :release, MusicBrainz.ReleaseSearchResult, required: true
+  attr :camera, :atom, required: true, values: [:pending, :allowed, :denied]
 
-  defp result(assigns) do
+  def camera_button(assigns) do
     ~H"""
-    <li
-      id={@id}
-      class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700"
-      phx-mounted={
-        JS.transition(
-          {"first:ease-in duration-300", "first:opacity-0 first:p-0 first:h-0", "first:opacity-100"},
-          time: 300
-        )
+    <button
+      :if={!(@camera == :allowed)}
+      id="camera-button"
+      type="button"
+      phx-click={
+        JS.show(to: "#camera-preview")
+        |> JS.dispatch("camera_request", to: "#barcode-scanner")
+        |> JS.hide(to: "#camera-button")
       }
+      class="relative block w-full h-96 rounded-lg border-2 border-dashed border-zinc-300 p-12 text-center hover:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2"
     >
-      <div class="flex items-center justify-between w-full px-4">
-        <div class="min-w-0 flex-auto">
-          <h1 class="text-sm leading-6 text-zinc-700 dark:text-zinc-400">
-            {@release.artists}
-          </h1>
-          <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
-            {@release.title}
-          </h2>
-          <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-            {release_format_label(@release)} · {Records.Record.format_release(@release.date)} · {RecordComponents.type_label(
-              @release.release_group.type
-            )}
-          </p>
-        </div>
+      <svg
+        class="mx-auto size-12 text-zinc-400"
+        stroke="currentColor"
+        fill="none"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
+        />
+      </svg>
+      <span class="mt-2 block text-sm font-semibold text-zinc-900">{gettext("Open camera")}</span>
+    </button>
+    """
+  end
+
+  attr :release, MusicBrainz.ReleaseSearchResult, required: true
+  attr :status, :atom, required: true, values: [:collected, :wishlisted, :new]
+
+  defp release(assigns) do
+    ~H"""
+    <div class="flex items-center justify-between w-full px-4">
+      <div class="min-w-0 flex-auto">
+        <h1 class="text-sm leading-6 text-zinc-700 dark:text-zinc-400">
+          {@release.artists}
+        </h1>
+        <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+          {@release.title}
+        </h2>
+        <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+          {release_format_label(@release)} · {Records.Record.format_release(@release.date)} · {RecordComponents.type_label(
+            @release.release_group.type
+          )}
+        </p>
       </div>
-    </li>
+      <.badge :if={@status == :new} color={:gray} text={gettext("New")} />
+      <.badge :if={@status == :wishlisted} color={:yellow} text={gettext("Wishlisted")} />
+      <.badge :if={@status == :collected} color={:green} text={gettext("Collected")} />
+    </div>
     """
   end
 
@@ -118,11 +131,10 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
   def handle_event("barcode_scanned", %{"number" => number}, socket) do
     Logger.debug(fn -> "Scanned barcode #{number}" end)
 
-    # TODO: inform when record is already in collection
     socket =
       case MusicBrainz.search_release_by_barcode(number) do
         {:ok, [best_match_release | _other_releases]} ->
-          assign(socket, :releases, [best_match_release | socket.assigns.releases])
+          assign_release_with_status(best_match_release, socket)
 
         {:ok, []} ->
           put_flash(
@@ -146,11 +158,13 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
     current_time = DateTime.utc_now()
     # TODO: error handling when a release fails to import
     :ok =
-      Enum.each(socket.assigns.releases, fn release ->
-        Records.import_from_musicbrainz_release(release.id,
-          format: MusicBrainz.ReleaseSearchResult.format(release),
-          purchased_at: current_time
-        )
+      Enum.each(socket.assigns.releases, fn {status, release} ->
+        if status == :new do
+          Records.import_from_musicbrainz_release(release.id,
+            format: MusicBrainz.ReleaseSearchResult.format(release),
+            purchased_at: current_time
+          )
+        end
       end)
 
     qs = %{order: :purchase}
@@ -160,6 +174,24 @@ defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
      |> assign(:releases, [])
      |> put_flash(:info, gettext("Records imported successfully"))
      |> push_patch(to: ~p"/collection?#{qs}")}
+  end
+
+  defp assign_release_with_status(release, socket) do
+    format = MusicBrainz.ReleaseSearchResult.format(release)
+
+    release_with_status =
+      case Records.get_release_status(release.id, format) do
+        nil ->
+          {:new, release}
+
+        %{record_id: _, purchased_at: nil} ->
+          {:wishlisted, release}
+
+        _collected ->
+          {:collected, release}
+      end
+
+    assign(socket, :releases, [release_with_status | socket.assigns.releases])
   end
 
   defp release_format_label(release) do

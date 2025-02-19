@@ -98,6 +98,18 @@ defmodule MusicLibrary.Records do
 
   def get_record!(id), do: Repo.get!(Record, id)
 
+  def get_release_status(release_id, format) do
+    q =
+      from r in fragment("records, json_each(records.release_ids)"),
+        where: fragment("records.format = ?", ^format) and r.value == ^release_id,
+        select: %{
+          record_id: fragment("records.id"),
+          purchased_at: fragment("records.purchased_at")
+        }
+
+    Repo.one(q)
+  end
+
   def get_artist_records(musicbrainz_id) do
     q =
       from r in Record,
