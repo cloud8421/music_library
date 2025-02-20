@@ -91,7 +91,7 @@
   on_cancel={JS.patch(back_path(@record_list_params))}
 >
   <.live_component
-    module={MusicLibraryWeb.RecordLive.FormComponent}
+    module={MusicLibraryWeb.FormComponent}
     id={@record.id}
     action={@live_action}
     show_purchased_at={true}
@@ -107,7 +107,7 @@
   on_cancel={JS.patch(back_path(@record_list_params))}
 >
   <.live_component
-    module={MusicLibraryWeb.RecordLive.ImportComponent}
+    module={MusicLibraryWeb.ImportComponent}
     id={:search}
     title={@page_title}
     action={@live_action}
@@ -125,7 +125,7 @@
   on_cancel={JS.patch(back_path(@record_list_params))}
 >
   <.live_component
-    module={MusicLibraryWeb.RecordLive.BarcodeScannerComponent}
+    module={MusicLibraryWeb.BarcodeScannerComponent}
     id={:barcode_scanner}
     title={@page_title}
     action={@live_action}

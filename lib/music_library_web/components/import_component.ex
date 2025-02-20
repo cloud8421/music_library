@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.RecordLive.ImportComponent do
+defmodule MusicLibraryWeb.ImportComponent do
   use MusicLibraryWeb, :live_component
 
   import MusicLibraryWeb.RecordComponents,

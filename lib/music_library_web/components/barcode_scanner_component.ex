@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.RecordLive.BarcodeScannerComponent do
+defmodule MusicLibraryWeb.BarcodeScannerComponent do
   use MusicLibraryWeb, :live_component
 
   alias MusicLibrary.Records
