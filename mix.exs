@@ -122,6 +122,7 @@ defmodule MusicLibrary.MixProject do
         "phx.digest"
       ],
       "music_library.prod.db_backup": [
+        "music_library.prod.ping",
         "music_library.prod.db_vacuum",
         "music_library.prod.db_pull"
       ]
