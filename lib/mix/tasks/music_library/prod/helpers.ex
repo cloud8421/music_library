@@ -17,7 +17,7 @@ defmodule Mix.Tasks.MusicLibrary.Prod.Helpers do
     end
   end
 
-  defp flyctl_installed?() do
+  defp flyctl_installed? do
     System.find_executable("flyctl")
   end
 end
