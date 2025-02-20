@@ -54,6 +54,7 @@ jobs:
       - run: mix deps.unlock --check-unused
       - run: mix gettext.extract --check-up-to-date
       - run: mix format --check-formatted
+      - run: mix credo --strict
       - run: mix test
 
   deploy:
