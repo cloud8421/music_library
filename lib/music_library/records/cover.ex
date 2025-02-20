@@ -1,8 +1,7 @@
 defmodule MusicLibrary.Records.Cover do
   @size 600
 
-  @fallback_path :code.priv_dir(:music_library)
-                 |> Path.join("/cover-not-found.jpg")
+  @fallback_path Application.app_dir(:music_library, ["priv", "cover-not-found.jpg"])
 
   @external_resource @fallback_path
 

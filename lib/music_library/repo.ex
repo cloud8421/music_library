@@ -25,8 +25,8 @@ defmodule MusicLibrary.Repo do
         :linux -> "so"
       end
 
-    Path.join([
-      :code.priv_dir(:music_library),
+    Application.app_dir(:music_library, [
+      "priv",
       "sqlite_extensions",
       platform,
       "#{name}.#{extension}"
