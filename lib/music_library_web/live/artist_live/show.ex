@@ -1,8 +1,8 @@
 defmodule MusicLibraryWeb.ArtistLive.Show do
   use MusicLibraryWeb, :live_view
-  import MusicLibraryWeb.ArtistLive.RecordComponents
 
   alias MusicLibrary.{Artists, Records}
+  import MusicLibraryWeb.RecordComponents, only: [record_grid: 1]
 
   @impl true
   def mount(_params, _session, socket) do

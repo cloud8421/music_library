@@ -62,7 +62,7 @@
     </details>
   </.async_result>
 
-  <.grid
+  <.record_grid
     :if={@collection_records_count > 0}
     title={gettext("Collection")}
     id="collection"
@@ -71,7 +71,7 @@
     record_path={fn record -> ~p"/collection/#{record}" end}
   />
 
-  <.grid
+  <.record_grid
     :if={@wishlist_records_count > 0}
     title={gettext("Wishlist")}
     id="wishlist"
