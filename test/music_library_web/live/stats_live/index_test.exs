@@ -1,8 +1,8 @@
 defmodule MusicLibraryWeb.StatsLive.IndexTest do
   use MusicLibraryWeb.ConnCase
 
-  alias MusicLibrary.{Records, Repo, Wishlist}
   alias MusicBrainz.APIMock
+  alias MusicLibrary.{Records, Repo, Wishlist}
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
   import MusicLibrary.Fixtures.Records
   import MusicBrainz.Fixtures.ReleaseGroup

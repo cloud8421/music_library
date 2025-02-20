@@ -1,9 +1,9 @@
 defmodule MusicLibrary.RecordsTest do
   use MusicLibrary.DataCase
 
+  alias MusicBrainz.APIMock
   alias MusicLibrary.Records
   alias MusicLibrary.Records.SearchIndex
-  alias MusicBrainz.APIMock
   import MusicLibrary.Fixtures.Records
   import MusicBrainz.Fixtures.ReleaseGroup
   import MusicBrainz.Fixtures.Release

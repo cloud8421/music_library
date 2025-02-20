@@ -3,8 +3,8 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
   import MusicLibraryWeb.Pagination
   import MusicLibraryWeb.RecordComponents
 
-  alias MusicLibrary.Wishlist
   alias MusicLibrary.Records
+  alias MusicLibrary.Wishlist
   alias MusicLibraryWeb.WishlistLive.Show
 
   @default_records_list_params %{

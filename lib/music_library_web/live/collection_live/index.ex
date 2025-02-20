@@ -3,8 +3,8 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
   import MusicLibraryWeb.Pagination
   import MusicLibraryWeb.RecordComponents
 
-  alias MusicLibrary.Records
   alias MusicLibrary.Collection
+  alias MusicLibrary.Records
   alias MusicLibraryWeb.CollectionLive.Show
 
   @default_records_list_params %{

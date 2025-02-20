@@ -1,9 +1,9 @@
 defmodule MusicLibrary.Wishlist do
   import Ecto.Query, warn: false
 
-  alias MusicLibrary.Repo
   alias MusicLibrary.Records
   alias MusicLibrary.Records.SearchIndex
+  alias MusicLibrary.Repo
 
   def search_records(query, opts \\ []) do
     limit = Keyword.get(opts, :limit, 20)

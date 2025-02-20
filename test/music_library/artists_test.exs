@@ -1,8 +1,8 @@
 defmodule MusicLibrary.ArtistsTest do
   use MusicLibrary.DataCase
 
-  alias MusicLibrary.Artists
   alias LastFm.APIMock
+  alias MusicLibrary.Artists
   import MusicLibrary.Fixtures.Records
   import LastFm.Fixtures.Artist
   import Mox

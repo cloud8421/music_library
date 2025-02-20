@@ -4,8 +4,8 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   import MusicLibraryWeb.RecordComponents,
     only: [toggle_actions_menu: 1, close_actions_menu: 1, format_label: 1, type_label: 1]
 
-  alias Phoenix.LiveView.JS
   alias MusicLibrary.Records
+  alias Phoenix.LiveView.JS
 
   @impl true
   def mount(_params, _session, socket) do

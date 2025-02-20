@@ -4,8 +4,8 @@ defmodule MusicLibrary.Fixtures.Records do
   entities via the `MusicLibrary.Records` context.
   """
 
-  alias MusicLibrary.Records.Record
   alias MusicBrainz.Fixtures.ReleaseGroup
+  alias MusicLibrary.Records.Record
 
   @genres [
     "progressive rock",

@@ -4,9 +4,9 @@ defmodule MusicLibrary.Records do
   """
 
   import Ecto.Query, warn: false
-  alias MusicLibrary.Repo
 
   alias MusicLibrary.Records.{ArtistRecord, Cover, Record, SearchParser}
+  alias MusicLibrary.Repo
 
   def essential_fields do
     [
