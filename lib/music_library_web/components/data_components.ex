@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.StatsLive.DataComponents do
+defmodule MusicLibraryWeb.DataComponents do
   use MusicLibraryWeb, :live_component
 
   attr :record, MusicLibrary.Records.Record, required: true

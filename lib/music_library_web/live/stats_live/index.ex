@@ -1,7 +1,7 @@
 defmodule MusicLibraryWeb.StatsLive.Index do
   use MusicLibraryWeb, :live_view
 
-  import MusicLibraryWeb.StatsLive.DataComponents
+  import MusicLibraryWeb.DataComponents
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
 
   alias MusicLibrary.{Artists, Collection, Records, Wishlist}
