@@ -47,3 +47,11 @@ run = 'mix do format, credo, gettext.extract'
 [tasks.static-checks-hook]
 description = 'Pre-commit task to ensure code conforms to static checks policies'
 run = 'mix do format --check-formatted, credo --strict, gettext.extract --check-up-to-date'
+
+[tasks.test]
+description = 'Run project tests'
+run = 'mix test'
+
+[tasks.console]
+description = 'Run the application attached to an IEx console'
+run = 'iex -S mix phx.server'
