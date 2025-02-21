@@ -43,3 +43,7 @@ run = 'fly ssh console'
 [tasks.static-checks]
 description = 'Run static checks for code formatting, translations, quality'
 run = 'mix do format, credo, gettext.extract'
+
+[tasks.static-checks-hook]
+description = 'Pre-commit task to ensure code conforms to static checks policies'
+run = 'mix do format --check-formatted, credo --strict, gettext.extract --check-up-to-date'
