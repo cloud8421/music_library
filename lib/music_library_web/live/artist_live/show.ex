@@ -27,7 +27,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
      |> assign(:collection_records_count, Enum.count(grouped_artist_records.collection))
      |> assign(:wishlist_records_count, Enum.count(grouped_artist_records.wishlist))
      |> assign_async(:artist_info, fn ->
-       with {:ok, artist_info} <- Artists.get_artist_info(artist) do
+       with {:ok, artist_info} <- LastFm.get_artist_info(artist.musicbrainz_id, artist.name) do
          {:ok, %{artist_info: artist_info}}
        end
      end)
