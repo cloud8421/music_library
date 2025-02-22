@@ -71,6 +71,16 @@ defmodule MusicLibrary.Collection do
     q |> Repo.all()
   end
 
+  def count_records_by_genre do
+    q =
+      from r in fragment("records, json_each(records.genres)"),
+        group_by: r.value,
+        order_by: [desc: count(r.value)],
+        select: %{genre: r.value, count: count(r.value)}
+
+    q |> Repo.all()
+  end
+
   defp base_search do
     from r in SearchIndex,
       where: not is_nil(r.purchased_at)
