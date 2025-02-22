@@ -41,6 +41,10 @@ run = ['mix hex.outdated --all']
 description = 'Open an ssh console to the production env'
 run = 'fly ssh console'
 
+[tasks.prod-backup]
+description = 'Backup the production database to the local development env'
+run = 'mix music_library.prod.db_backup'
+
 [tasks.static-checks]
 description = 'Run static checks for code formatting, translations, quality'
 run = 'mix do format, credo, gettext.extract'
