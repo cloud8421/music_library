@@ -47,6 +47,7 @@ run = 'mix do format, credo, gettext.extract'
 [tasks.static-checks-hook]
 description = 'Pre-commit task to ensure code conforms to static checks policies'
 run = 'mix do format --check-formatted, credo --strict, gettext.extract --check-up-to-date'
+hide = true
 
 [tasks.test]
 description = 'Run project tests'
