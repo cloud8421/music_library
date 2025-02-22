@@ -343,13 +343,13 @@ msgstr ""
 msgid "Choose which format to import"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:118
+#: lib/music_library_web/components/barcode_scanner_component.ex:121
 #: lib/music_library_web/live/stats_live/index.html.heex:141
 #, elixir-autogen, elixir-format
 msgid "Collected"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:117
+#: lib/music_library_web/components/barcode_scanner_component.ex:118
 #: lib/music_library_web/live/stats_live/index.html.heex:147
 #, elixir-autogen, elixir-format
 msgid "Wishlisted"
@@ -647,12 +647,12 @@ msgstr ""
 msgid "Import releases"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:158
+#: lib/music_library_web/components/barcode_scanner_component.ex:162
 #, elixir-autogen, elixir-format
 msgid "Failed to search release for barcode %{number}"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:149
+#: lib/music_library_web/components/barcode_scanner_component.ex:153
 #, elixir-autogen, elixir-format
 msgid "No release found for barcode %{number}"
 msgstr ""
@@ -662,7 +662,7 @@ msgstr ""
 msgid "Importing..."
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:188
+#: lib/music_library_web/components/barcode_scanner_component.ex:192
 #, elixir-autogen, elixir-format
 msgid "Records imported successfully"
 msgstr ""
