@@ -32,7 +32,7 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
         <li
           :for={{status, record_id, release} <- @releases}
           id={release.id}
-          class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700"
+          class="flex justify-between gap-x-6 py-5"
           phx-mounted={
             JS.transition(
               {"first:ease-in duration-300", "first:opacity-0 first:p-0 first:h-0",
