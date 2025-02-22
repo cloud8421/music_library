@@ -5,6 +5,7 @@ OPENAI_KEY = 'change-me'
 
 [tools]
 hurl = 'latest'
+flyctl = 'latest'
 
 [tasks.npm-install]
 run = 'npm install'
