@@ -100,7 +100,7 @@ defmodule LastFm.APIImpl do
       method: "artist.getSimilar",
       api_key: config.api_key,
       format: "json",
-      limit: 50
+      limit: 100
     ]
 
     options = Keyword.merge(base_options, options)

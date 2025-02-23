@@ -32,6 +32,11 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
         {:ok, get_info()}
       end)
 
+      expect(APIMock, :get_similar_artists, fn {:musicbrainz_id, ^artist_musicbrainz_id},
+                                               _config ->
+        {:ok, []}
+      end)
+
       conn
       |> visit(~p"/artists/#{artist_musicbrainz_id}")
       |> unwrap(&render_async/1)
@@ -46,6 +51,11 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
     } do
       expect(APIMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id}, _config ->
         {:error, :timeout}
+      end)
+
+      expect(APIMock, :get_similar_artists, fn {:musicbrainz_id, ^artist_musicbrainz_id},
+                                               _config ->
+        {:ok, []}
       end)
 
       conn
@@ -74,6 +84,11 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       # for this test, we don't care about the artist info, but we mock it to avoid false test failures
       expect(APIMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id}, _config ->
         {:error, :timeout}
+      end)
+
+      expect(APIMock, :get_similar_artists, fn {:musicbrainz_id, ^artist_musicbrainz_id},
+                                               _config ->
+        {:ok, []}
       end)
 
       conn

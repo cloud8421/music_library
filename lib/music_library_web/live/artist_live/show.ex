@@ -31,6 +31,11 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
          {:ok, %{artist_info: artist_info}}
        end
      end)
+     |> assign_async(:similar_artists, fn ->
+       with {:ok, similar_artists} <- Artists.get_similar_artists(artist) do
+         {:ok, %{similar_artists: similar_artists}}
+       end
+     end)
      |> assign(:page_title, page_title(socket.assigns.live_action, artist))}
   end
 

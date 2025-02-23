@@ -14,6 +14,21 @@ defmodule MusicLibrary.Artists do
     Repo.one!(q)
   end
 
+  def get_similar_artists(artist) do
+    case LastFm.get_similar_artists(artist.musicbrainz_id, artist.name) do
+      {:ok, artists} ->
+        all_artist_ids = get_all_artist_ids()
+
+        {:ok,
+         Enum.filter(artists, fn a ->
+           MapSet.member?(all_artist_ids, a.musicbrainz_id)
+         end)}
+
+      error ->
+        error
+    end
+  end
+
   def get_all_artist_ids do
     q = from ar in ArtistRecord, distinct: true, select: ar.musicbrainz_id
 

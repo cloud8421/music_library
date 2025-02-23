@@ -30,7 +30,7 @@ msgid "Choose a value"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:14
-#: lib/music_library_web/live/artist_live/show.html.heex:67
+#: lib/music_library_web/live/artist_live/show.html.heex:101
 #: lib/music_library_web/live/collection_live/index.ex:157
 #: lib/music_library_web/live/collection_live/show.ex:117
 #: lib/music_library_web/live/collection_live/show.ex:134
@@ -302,7 +302,7 @@ msgid "Welcome to your Music Library"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:20
-#: lib/music_library_web/live/artist_live/show.html.heex:76
+#: lib/music_library_web/live/artist_live/show.html.heex:110
 #: lib/music_library_web/live/wishlist_live/index.ex:159
 #: lib/music_library_web/live/wishlist_live/show.ex:137
 #, elixir-autogen, elixir-format
@@ -405,7 +405,7 @@ msgstr ""
 msgid "No MB ID"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.ex:42
+#: lib/music_library_web/live/artist_live/show.ex:47
 #: lib/music_library_web/live/collection_live/show.ex:115
 #, elixir-autogen, elixir-format
 msgid "Details"
@@ -436,12 +436,12 @@ msgstr ""
 msgid "View details"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex:60
+#: lib/music_library_web/live/artist_live/show.html.heex:61
 #, elixir-autogen, elixir-format
 msgid "Biography"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex:42
+#: lib/music_library_web/live/artist_live/show.html.heex:43
 #, elixir-autogen, elixir-format
 msgid "Loading biography"
 msgstr ""
@@ -486,7 +486,7 @@ msgstr ""
 msgid "Records"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex:53
+#: lib/music_library_web/live/artist_live/show.html.heex:54
 #, elixir-autogen, elixir-format
 msgid "Error loading biography"
 msgstr ""
@@ -670,4 +670,19 @@ msgstr ""
 #: lib/music_library_web/components/barcode_scanner_component.ex:116
 #, elixir-autogen, elixir-format
 msgid "New"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.html.heex:80
+#, elixir-autogen, elixir-format
+msgid "Error loading similar artists"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.html.heex:69
+#, elixir-autogen, elixir-format
+msgid "Loading similar artists"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.html.heex:87
+#, elixir-autogen, elixir-format
+msgid "Similar artists"
 msgstr ""
