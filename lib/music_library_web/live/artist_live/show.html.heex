@@ -36,81 +36,87 @@
     </.async_result>
   </header>
 
-  <div class="columns-2 mt-4">
-    <.async_result :let={artist_info} assign={@artist_info}>
-      <:loading>
-        <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
-          {gettext("Loading biography")}
-        </div>
-      </:loading>
-      <:failed :let={_failure}>
-        <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
-          <.icon
-            name="hero-exclamation-triangle"
-            class="-mt-1 mr-1 h-5 w-5"
-            aria-hidden="true"
-            data-slot="icon"
-          />
-          {gettext("Error loading biography")}
-        </div>
-      </:failed>
-      <details
-        :if={artist_info.bio !== ""}
-        class="text-sm leading-5 text-zinc-500 dark:text-zinc-400"
-      >
-        <summary class="text-sm mb-4">{gettext("Biography")}</summary>
-        {render_bio(@artist_info.result.bio)}
-      </details>
-    </.async_result>
-
-    <.async_result :let={similar_artists} assign={@similar_artists}>
-      <:loading>
-        <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
-          {gettext("Loading similar artists")}
-        </div>
-      </:loading>
-      <:failed :let={_failure}>
-        <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
-          <.icon
-            name="hero-exclamation-triangle"
-            class="-mt-1 mr-1 h-5 w-5"
-            aria-hidden="true"
-            data-slot="icon"
-          />
-          {gettext("Error loading similar artists")}
-        </div>
-      </:failed>
-      <details
-        :if={similar_artists !== []}
-        class="text-sm leading-5 text-zinc-500 dark:text-zinc-400"
-      >
-        <summary class="text-sm mb-4">{gettext("Similar artists")}</summary>
-        <.link
-          :for={artist <- similar_artists}
-          class="text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
-          patch={~p"/artists/#{artist.musicbrainz_id}"}
+  <div class="mt-4 md:grid md:grid-cols-5 md:gap-2">
+    <div class="col-span-1 mt-4">
+      <.async_result :let={artist_info} assign={@artist_info}>
+        <:loading>
+          <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
+            {gettext("Loading biography")}
+          </div>
+        </:loading>
+        <:failed :let={_failure}>
+          <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
+            <.icon
+              name="hero-exclamation-triangle"
+              class="-mt-1 mr-1 h-5 w-5"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+            {gettext("Error loading biography")}
+          </div>
+        </:failed>
+        <details
+          :if={artist_info.bio !== ""}
+          class="text-sm leading-5 text-zinc-500 dark:text-zinc-400"
         >
-          {artist.name}
-        </.link>
-      </details>
-    </.async_result>
+          <summary class="text-sm mb-4">{gettext("Biography")}</summary>
+          {render_bio(@artist_info.result.summary)}
+        </details>
+      </.async_result>
+
+      <.async_result :let={similar_artists} assign={@similar_artists}>
+        <:loading>
+          <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
+            {gettext("Loading similar artists")}
+          </div>
+        </:loading>
+        <:failed :let={_failure}>
+          <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
+            <.icon
+              name="hero-exclamation-triangle"
+              class="-mt-1 mr-1 h-5 w-5"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+            {gettext("Error loading similar artists")}
+          </div>
+        </:failed>
+        <details
+          :if={similar_artists !== []}
+          class="text-sm leading-5 text-zinc-500 dark:text-zinc-400"
+        >
+          <summary class="text-sm mb-4">{gettext("Similar artists")}</summary>
+          <ul>
+            <li :for={artist <- similar_artists}>
+              <.link
+                class="text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
+                patch={~p"/artists/#{artist.musicbrainz_id}"}
+              >
+                {artist.name}
+              </.link>
+            </li>
+          </ul>
+        </details>
+      </.async_result>
+    </div>
+    <div class="col-span-4">
+      <.record_grid
+        :if={@collection_records_count > 0}
+        title={gettext("Collection")}
+        id="collection"
+        records={@streams.collection_records}
+        records_count={@collection_records_count}
+        record_path={fn record -> ~p"/collection/#{record}" end}
+      />
+
+      <.record_grid
+        :if={@wishlist_records_count > 0}
+        title={gettext("Wishlist")}
+        id="wishlist"
+        records={@streams.wishlist_records}
+        records_count={@wishlist_records_count}
+        record_path={fn record -> ~p"/wishlist/#{record}" end}
+      />
+    </div>
   </div>
-
-  <.record_grid
-    :if={@collection_records_count > 0}
-    title={gettext("Collection")}
-    id="collection"
-    records={@streams.collection_records}
-    records_count={@collection_records_count}
-    record_path={fn record -> ~p"/collection/#{record}" end}
-  />
-
-  <.record_grid
-    :if={@wishlist_records_count > 0}
-    title={gettext("Wishlist")}
-    id="wishlist"
-    records={@streams.wishlist_records}
-    records_count={@wishlist_records_count}
-    record_path={fn record -> ~p"/wishlist/#{record}" end}
-  />
 </div>
