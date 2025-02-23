@@ -1,10 +1,11 @@
 defmodule LastFm.Artist do
   @enforce_keys [:musicbrainz_id, :name]
-  defstruct [:musicbrainz_id, :name, :bio, :image, :play_count, :on_tour]
+  defstruct [:musicbrainz_id, :name, :summary, :bio, :image, :play_count, :on_tour]
 
   @type t :: %__MODULE__{
           musicbrainz_id: String.t(),
           name: String.t(),
+          summary: String.t(),
           bio: String.t(),
           image: String.t(),
           play_count: non_neg_integer(),
@@ -15,6 +16,7 @@ defmodule LastFm.Artist do
     %__MODULE__{
       musicbrainz_id: api_response["mbid"],
       name: api_response["name"],
+      summary: api_response["bio"]["summary"] || "",
       bio: api_response["bio"]["content"] || "",
       image: get_image(api_response),
       play_count: get_play_count(api_response),
