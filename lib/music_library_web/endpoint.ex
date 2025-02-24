@@ -8,7 +8,9 @@ defmodule MusicLibraryWeb.Endpoint do
     store: :cookie,
     key: "_music_library_key",
     signing_salt: "esP44C0z",
-    same_site: "Lax"
+    same_site: "Strict",
+    # one week
+    max_age: 60 * 60 * 24 * 7
   ]
 
   socket "/live", Phoenix.LiveView.Socket,
