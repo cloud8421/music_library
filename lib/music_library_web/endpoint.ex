@@ -10,7 +10,9 @@ defmodule MusicLibraryWeb.Endpoint do
     signing_salt: "esP44C0z",
     same_site: "Strict",
     # one week
-    max_age: 60 * 60 * 24 * 7
+    max_age: 60 * 60 * 24 * 7,
+    sign: true,
+    encrypt: true
   ]
 
   socket "/live", Phoenix.LiveView.Socket,
