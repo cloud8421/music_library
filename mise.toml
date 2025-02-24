@@ -6,6 +6,7 @@ OPENAI_KEY = 'change-me'
 [tools]
 hurl = 'latest'
 flyctl = 'latest'
+sqlite = 'latest'
 
 [tasks.npm-install]
 run = 'npm install'
