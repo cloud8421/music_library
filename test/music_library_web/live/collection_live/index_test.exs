@@ -337,20 +337,12 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         |> assert_has("button#camera-button")
 
       session
-      |> unwrap(fn view ->
-        view
-        |> element("#barcode-scanner")
-        |> render_hook("camera_denied")
-      end)
+      |> trigger_hook("#barcode-scanner", "camera_denied")
       |> assert_has("button#camera-button")
       |> refute_has("video#camera-preview")
 
       session
-      |> unwrap(fn view ->
-        view
-        |> element("#barcode-scanner")
-        |> render_hook("camera_allowed")
-      end)
+      |> trigger_hook("#barcode-scanner", "camera_allowed")
       |> refute_has("button#camera-button")
       |> assert_has("video#camera-preview")
     end
@@ -390,11 +382,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
     conn
     |> visit(~p"/collection/scan")
-    |> unwrap(fn view ->
-      view
-      |> element("#barcode-scanner")
-      |> render_hook("barcode_scanned", %{"number" => barcode})
-    end)
+    |> trigger_hook("#barcode-scanner", "barcode_scanned", %{"number" => barcode})
     |> assert_has("h2", text: "Marbles")
     |> click_button("Import releases")
 
