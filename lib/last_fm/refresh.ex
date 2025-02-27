@@ -3,7 +3,7 @@ defmodule LastFm.Refresh do
 
   require Logger
 
-  alias LastFm.{Config, Feed}
+  alias LastFm.{API, Config, Feed}
 
   @type config :: Config.t()
 
@@ -31,7 +31,7 @@ defmodule LastFm.Refresh do
   @spec handle_call(:refresh, GenServer.from(), config) ::
           {:reply, :ok | {:error, term()}, config, pos_integer()}
   def handle_call(:refresh, _from, config) do
-    case config.api.get_recent_tracks(config) do
+    case API.get_recent_tracks(config) do
       {:ok, tracks} ->
         Feed.update(tracks)
         {:reply, :ok, config, config.refresh_interval}
@@ -53,7 +53,7 @@ defmodule LastFm.Refresh do
   def handle_info(:timeout, config), do: refresh(config)
 
   defp refresh(config) do
-    case config.api.get_recent_tracks(config) do
+    case API.get_recent_tracks(config) do
       {:ok, tracks} ->
         Feed.update(tracks)
         {:noreply, config, config.refresh_interval}

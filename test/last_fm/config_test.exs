@@ -4,7 +4,6 @@ defmodule LastFm.ConfigTest do
   describe "resolve/1" do
     test "reads data from application configuration" do
       assert %LastFm.Config{
-               api: LastFm.APIImpl,
                api_key: api_key,
                user: user,
                auto_refresh: false,

@@ -1,6 +1,4 @@
-defmodule LastFm.APIImpl do
-  @behaviour LastFm.APIBehaviour
-
+defmodule LastFm.API do
   require Logger
 
   alias LastFm.{Artist, Track}
@@ -28,7 +26,6 @@ defmodule LastFm.APIImpl do
     defp map_error(29), do: :rate_limit_exceeded
   end
 
-  @impl true
   def get_recent_tracks(config) do
     params =
       config
@@ -42,7 +39,6 @@ defmodule LastFm.APIImpl do
     |> get_request()
   end
 
-  @impl true
   def get_artist_info(id_or_name_option, config) do
     params =
       config
@@ -57,7 +53,6 @@ defmodule LastFm.APIImpl do
     |> get_request()
   end
 
-  @impl true
   def get_similar_artists(id_or_name_option, config) do
     params =
       config

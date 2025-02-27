@@ -1,8 +1,10 @@
 defmodule LastFm do
+  alias LastFm.API
+
   def get_artist_info(musicbrainz_id, name) do
     last_fm_config = last_fm_config()
 
-    case LastFm.APIImpl.get_artist_info(
+    case API.get_artist_info(
            {:musicbrainz_id, musicbrainz_id},
            last_fm_config
          ) do
@@ -12,7 +14,7 @@ defmodule LastFm do
       {:error, :invalid_parameters} ->
         # Sometimes the artist info cannot be identified with the MusicBrainz ID,
         # because Last.fm doesn't have that information. In that case, we try again with the artist name.
-        LastFm.APIImpl.get_artist_info({:name, name}, last_fm_config)
+        API.get_artist_info({:name, name}, last_fm_config)
 
       error ->
         error
@@ -22,7 +24,7 @@ defmodule LastFm do
   def get_similar_artists(musicbrainz_id, name) do
     last_fm_config = last_fm_config()
 
-    case LastFm.APIImpl.get_similar_artists(
+    case API.get_similar_artists(
            {:musicbrainz_id, musicbrainz_id},
            last_fm_config
          ) do
@@ -32,7 +34,7 @@ defmodule LastFm do
       {:error, :invalid_parameters} ->
         # Sometimes the artist info cannot be identified with the MusicBrainz ID,
         # because Last.fm doesn't have that information. In that case, we try again with the artist name.
-        LastFm.APIImpl.get_similar_artists({:name, name}, last_fm_config)
+        API.get_similar_artists({:name, name}, last_fm_config)
 
       error ->
         error

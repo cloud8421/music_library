@@ -28,7 +28,6 @@ user_agent = "MusicLibrary/0.1.0 ( cloud8421@gmail.com )"
 
 config :music_library, LastFm,
   user: "username",
-  api: LastFm.APIImpl,
   auto_refresh: true,
   refresh_interval: System.convert_time_unit(60, :second, :millisecond),
   api_key: "change me",

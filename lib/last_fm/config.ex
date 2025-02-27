@@ -1,6 +1,5 @@
 defmodule LastFm.Config do
   @type t :: %__MODULE__{
-          api: module(),
           api_key: String.t(),
           user: String.t(),
           auto_refresh: boolean(),
@@ -9,9 +8,8 @@ defmodule LastFm.Config do
           req_options: Keyword.t()
         }
 
-  @enforce_keys [:api, :api_key, :user]
-  defstruct api: LastFm.Api,
-            api_key: "",
+  @enforce_keys [:api_key, :user]
+  defstruct api_key: "",
             user: "",
             auto_refresh: true,
             refresh_interval: 60_000,
@@ -19,10 +17,6 @@ defmodule LastFm.Config do
             req_options: []
 
   @schema NimbleOptions.new!(
-            api: [
-              type: :atom,
-              required: true
-            ],
             api_key: [
               type: :string,
               required: true
