@@ -13,7 +13,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
   def handle_params(%{"musicbrainz_id" => musicbrainz_id}, _, socket) do
     artist = Artists.get_artist!(musicbrainz_id)
 
-    grouped_artist_records =
+    %{collection: collection_records, wishlist: wishlist_records} =
       musicbrainz_id
       |> Records.get_artist_records()
       |> group_and_sort()
@@ -22,10 +22,10 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
      socket
      |> assign(:nav_section, :artists)
      |> assign(:artist, artist)
-     |> stream(:collection_records, grouped_artist_records.collection, reset: true)
-     |> stream(:wishlist_records, grouped_artist_records.wishlist, reset: true)
-     |> assign(:collection_records_count, Enum.count(grouped_artist_records.collection))
-     |> assign(:wishlist_records_count, Enum.count(grouped_artist_records.wishlist))
+     |> stream(:collection_records, collection_records, reset: true)
+     |> stream(:wishlist_records, wishlist_records, reset: true)
+     |> assign(:collection_records_count, Enum.count(collection_records))
+     |> assign(:wishlist_records_count, Enum.count(wishlist_records))
      |> assign_async(:artist_info, fn ->
        with {:ok, artist_info} <- LastFm.get_artist_info(artist.musicbrainz_id, artist.name) do
          {:ok, %{artist_info: artist_info}}
