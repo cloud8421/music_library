@@ -35,6 +35,11 @@ config :phoenix_live_view,
 
 config :music_library, monitoring_routes: true
 
-config :music_library, LastFm, auto_refresh: false
+config :music_library, LastFm,
+  auto_refresh: false,
+  req_options: [
+    plug: {Req.Test, LastFm.API},
+    max_retries: 0
+  ]
 
 config :phoenix_test, :endpoint, MusicLibraryWeb.Endpoint

@@ -102,6 +102,7 @@ defmodule LastFm.APIImpl do
       ],
       user_agent: config.user_agent
     )
+    |> Req.Request.merge_options(config.req_options)
     |> Req.Request.put_private(:api_key, config.api_key)
     |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
     |> Req.Request.append_response_steps(parse_error: &parse_error/1)
@@ -114,6 +115,9 @@ defmodule LastFm.APIImpl do
 
       {:ok, response} ->
         {:ok, response.body}
+
+      error ->
+        error
     end
   end
 

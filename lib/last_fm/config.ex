@@ -5,7 +5,8 @@ defmodule LastFm.Config do
           user: String.t(),
           auto_refresh: boolean(),
           refresh_interval: pos_integer(),
-          user_agent: String.t()
+          user_agent: String.t(),
+          req_options: Keyword.t()
         }
 
   @enforce_keys [:api, :api_key, :user]
@@ -14,7 +15,8 @@ defmodule LastFm.Config do
             user: "",
             auto_refresh: true,
             refresh_interval: 60_000,
-            user_agent: "change me"
+            user_agent: "change me",
+            req_options: []
 
   @schema NimbleOptions.new!(
             api: [
@@ -43,6 +45,11 @@ defmodule LastFm.Config do
               type: :string,
               required: false,
               default: "change me"
+            ],
+            req_options: [
+              type: :keyword_list,
+              required: false,
+              default: []
             ]
           )
 

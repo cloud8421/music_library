@@ -2,12 +2,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
   use MusicLibraryWeb.ConnCase
 
   import MusicLibrary.Fixtures.Records
-  import LastFm.Fixtures.Artist
-  import Mox
-
-  alias LastFm.APIMock
-
-  setup :verify_on_exit!
+  alias LastFm.Fixtures
 
   defp fill_collection(_config) do
     collection_record =
@@ -28,13 +23,14 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       conn: conn,
       artist_musicbrainz_id: artist_musicbrainz_id
     } do
-      expect(APIMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id}, _config ->
-        {:ok, get_info()}
-      end)
+      Req.Test.stub(LastFm.API, fn conn ->
+        case Map.get(conn.params, "method") do
+          "artist.getInfo" ->
+            Req.Test.json(conn, Fixtures.Artist.get_info())
 
-      expect(APIMock, :get_similar_artists, fn {:musicbrainz_id, ^artist_musicbrainz_id},
-                                               _config ->
-        {:ok, []}
+          "artist.getSimilar" ->
+            Req.Test.json(conn, Fixtures.Artist.get_similar_artists())
+        end
       end)
 
       conn
@@ -49,13 +45,14 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       conn: conn,
       artist_musicbrainz_id: artist_musicbrainz_id
     } do
-      expect(APIMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id}, _config ->
-        {:error, :timeout}
-      end)
+      Req.Test.stub(LastFm.API, fn conn ->
+        case Map.get(conn.params, "method") do
+          "artist.getInfo" ->
+            Req.Test.transport_error(conn, :timeout)
 
-      expect(APIMock, :get_similar_artists, fn {:musicbrainz_id, ^artist_musicbrainz_id},
-                                               _config ->
-        {:ok, []}
+          "artist.getSimilar" ->
+            Req.Test.json(conn, Fixtures.Artist.get_similar_artists())
+        end
       end)
 
       conn
@@ -81,14 +78,14 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       other_collection_record =
         record_with_artist("Porcupine Tree", %{purchased_at: DateTime.utc_now()})
 
-      # for this test, we don't care about the artist info, but we mock it to avoid false test failures
-      expect(APIMock, :get_artist_info, fn {:musicbrainz_id, ^artist_musicbrainz_id}, _config ->
-        {:error, :timeout}
-      end)
+      Req.Test.stub(LastFm.API, fn conn ->
+        case Map.get(conn.params, "method") do
+          "artist.getInfo" ->
+            Req.Test.json(conn, Fixtures.Artist.get_info())
 
-      expect(APIMock, :get_similar_artists, fn {:musicbrainz_id, ^artist_musicbrainz_id},
-                                               _config ->
-        {:ok, []}
+          "artist.getSimilar" ->
+            Req.Test.json(conn, Fixtures.Artist.get_similar_artists())
+        end
       end)
 
       conn
