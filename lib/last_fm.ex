@@ -4,10 +4,7 @@ defmodule LastFm do
   def get_artist_info(musicbrainz_id, name) do
     last_fm_config = last_fm_config()
 
-    case API.get_artist_info(
-           {:musicbrainz_id, musicbrainz_id},
-           last_fm_config
-         ) do
+    case API.get_artist_info({:musicbrainz_id, musicbrainz_id}, last_fm_config) do
       {:ok, info} ->
         {:ok, info}
 
@@ -24,10 +21,7 @@ defmodule LastFm do
   def get_similar_artists(musicbrainz_id, name) do
     last_fm_config = last_fm_config()
 
-    case API.get_similar_artists(
-           {:musicbrainz_id, musicbrainz_id},
-           last_fm_config
-         ) do
+    case API.get_similar_artists({:musicbrainz_id, musicbrainz_id}, last_fm_config) do
       {:ok, info} ->
         {:ok, info}
 
