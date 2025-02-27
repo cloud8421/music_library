@@ -14,7 +14,7 @@ defmodule LastFm.Refresh do
 
   @spec refresh() :: :ok
   def refresh do
-    GenServer.call(__MODULE__, :refresh)
+    GenServer.call(__MODULE__, :refresh, 10_000)
   end
 
   @impl true
