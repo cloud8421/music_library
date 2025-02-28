@@ -7,7 +7,6 @@ defmodule MusicBrainz.APIImpl do
   """
 
   @behaviour MusicBrainz.APIBehaviour
-  @base_url "https://musicbrainz.org/ws/2"
 
   require Logger
 
@@ -116,7 +115,7 @@ defmodule MusicBrainz.APIImpl do
                   "id": "0e3fc579-2d24-4f20-9dae-736e1ec78798",
                   "disambiguation": "",
                   "count": 2,
-                  "name": "rock"
+  "name": "rock"
                 },
                 {
                   "count": 2,
@@ -211,10 +210,16 @@ defmodule MusicBrainz.APIImpl do
 
   @impl true
   def get_release_group(id, config) do
-    url =
-      @base_url <> "/release-group/#{id}?fmt=json&inc=artists+genres+releases+release-group-rels"
-
-    json_get(url, config)
+    config
+    |> new_request()
+    |> Req.merge(
+      url: "/release-group/#{id}",
+      params: [
+        fmt: "json",
+        inc: "artists+genres+releases+release-group-rels"
+      ]
+    )
+    |> get_request()
   end
 
   @doc """
@@ -282,37 +287,53 @@ defmodule MusicBrainz.APIImpl do
   """
   @impl true
   def get_release(id, config) do
-    url =
-      @base_url <> "/release/#{id}?fmt=json&inc=release-groups"
-
-    json_get(url, config)
+    config
+    |> new_request()
+    |> Req.merge(
+      url: "/release/#{id}",
+      params: [
+        fmt: "json",
+        inc: "release-groups"
+      ]
+    )
+    |> get_request()
   end
 
   @impl true
   def get_releases(release_group_id, opts, config) do
     Keyword.validate!(opts, [:limit, :offset])
 
-    opts =
+    params =
       Keyword.merge(opts,
         fmt: "json",
         "release-group": release_group_id,
         inc: "media"
       )
 
-    url =
-      @base_url <> "/release?" <> URI.encode_query(opts)
-
-    json_get(url, config)
+    config
+    |> new_request()
+    |> Req.merge(
+      url: "/release",
+      params: params
+    )
+    |> get_request()
   end
 
   @impl true
   def search_release_by_barcode(barcode, config) do
-    url =
-      @base_url <> "/release?query=barcode:#{barcode}&fmt=json"
-
-    with {:ok, result} <- json_get(url, config) do
-      {:ok, Enum.map(result["releases"], &ReleaseSearchResult.from_api_response/1)}
-    end
+    config
+    |> new_request()
+    |> Req.merge(
+      url: "/release",
+      params: [
+        fmt: "json",
+        query: "barcode:#{barcode}"
+      ]
+    )
+    |> Req.Request.append_response_steps(
+      parse_release_search_results: &parse_release_search_results/1
+    )
+    |> get_request()
   end
 
   @doc """
@@ -417,22 +438,24 @@ defmodule MusicBrainz.APIImpl do
   """
   @impl true
   def search_release_group(query, opts, config) do
-    limit = Keyword.fetch!(opts, :limit)
-    offset = Keyword.fetch!(opts, :offset)
+    Keyword.validate!(opts, [:limit, :offset])
 
-    qs = [
-      query: query,
-      limit: limit,
-      offset: offset,
-      fmt: "json"
-    ]
+    params =
+      Keyword.merge(opts,
+        query: query,
+        fmt: "json"
+      )
 
-    url =
-      @base_url <> "/release-group?#{URI.encode_query(qs)}"
-
-    with {:ok, result} <- json_get(url, config) do
-      {:ok, Enum.map(result["release-groups"], &ReleaseGroupSearchResult.from_api_response/1)}
-    end
+    config
+    |> new_request()
+    |> Req.merge(
+      url: "/release-group",
+      params: params
+    )
+    |> Req.Request.append_response_steps(
+      parse_release_group_search_results: &parse_release_group_search_results/1
+    )
+    |> get_request()
   end
 
   @doc """
@@ -446,64 +469,66 @@ defmodule MusicBrainz.APIImpl do
   end
 
   def get_cover_art({:url, url}, config) do
-    case blob_get(url, config) do
-      {:error, reason} ->
-        Logger.error("Failed to fetch cover art for #{url}, reason: #{inspect(reason)}")
-
-        {:error, :cover_not_available}
-
-      success ->
-        success
+    case Req.new(url: url, max_retries: 1, user_agent: config.user_agent)
+         |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
+         |> Req.Request.append_response_steps(log_error: &log_error/1)
+         |> get_request() do
+      {:ok, data} -> {:ok, data}
+      {:error, _reason} -> {:error, :cover_not_available}
     end
   end
 
-  defp json_get(url, config) do
-    req =
-      Finch.build(:get, url, [
-        {"User-Agent", config.user_agent}
-      ])
-
-    Logger.debug("Fetching data from #{url}")
-
-    case Finch.request(req, MusicBrainz.Finch) do
-      {:ok, response} when response.status == 200 ->
-        {:ok, JSON.decode!(response.body)}
-
-      {:ok, response} when response.status in 301..308 ->
-        location = :proplists.get_value("location", response.headers)
-        Logger.debug("Following redirect to #{location}")
-        json_get(location, config)
-
-      other ->
-        msg = "Failed to fetch data from #{url}, reason: #{inspect(other)}"
-        Logger.error(msg)
-        {:error, msg}
-    end
+  defp new_request(config) do
+    Req.new(
+      base_url: "https://musicbrainz.org/ws/2",
+      max_retries: 1,
+      user_agent: config.user_agent
+    )
+    |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
   end
 
-  defp blob_get(url, config) do
-    req =
-      Finch.build(:get, url, [
-        {"User-Agent", config.user_agent}
-      ])
-
-    Logger.debug("Fetching data from #{url}")
-
-    case Finch.request(req, MusicBrainz.Finch) do
+  defp get_request(request) do
+    case Req.get(request) do
       {:ok, response} when response.status == 200 ->
         {:ok, response.body}
 
-      {:ok, response} when response.status in 301..308 ->
-        location = :proplists.get_value("location", response.headers)
-        Logger.debug("Following redirect to #{location}")
-        blob_get(location, config)
-
       # all non-success responses can be treated as errors
       {:ok, response} ->
-        {:error, response}
+        {:error, response.body}
 
       error ->
         error
     end
+  end
+
+  defp log_attempt(request) do
+    url = URI.to_string(request.url)
+    Logger.debug("Fetching data from #{url}")
+    request
+  end
+
+  defp log_error({request, response}) do
+    if response.status in 400..499 or response.status in 500..599 do
+      Logger.error(fn ->
+        url = URI.to_string(request.url)
+        "Failed to fetch data from #{url}, reason: #{inspect(response.body)}"
+      end)
+    end
+
+    {request, response}
+  end
+
+  defp parse_release_search_results({request, response}) do
+    releases =
+      Enum.map(response.body["releases"], &ReleaseSearchResult.from_api_response/1)
+
+    {request, Map.put(response, :body, releases)}
+  end
+
+  defp parse_release_group_search_results({request, response}) do
+    releases =
+      Enum.map(response.body["release-groups"], &ReleaseGroupSearchResult.from_api_response/1)
+
+    {request, Map.put(response, :body, releases)}
   end
 end
