@@ -1,15 +1,11 @@
 defmodule MusicLibraryWeb.StatsLive.IndexTest do
   use MusicLibraryWeb.ConnCase
 
-  alias MusicBrainz.APIMock
   alias MusicLibrary.{Records, Repo, Wishlist}
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
   import MusicLibrary.Fixtures.Records
   import MusicBrainz.Fixtures.ReleaseGroup
   import MusicBrainz.Fixtures.Release
-  import Mox
-
-  setup :verify_on_exit!
 
   defp fill_collection(_) do
     records = Enum.map(1..19, fn _ -> record() end)
@@ -186,23 +182,22 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
       release_group = release_group(:mystery_of_time)
       release_group_id = release_group_id(:mystery_of_time)
 
-      expect(APIMock, :get_release, fn ^release_id, _config ->
-        {:ok, release}
-      end)
-
-      expect(APIMock, :get_release_group, fn ^release_group_id, _config ->
-        {:ok, release_group}
-      end)
-
-      expect(APIMock, :get_releases, fn ^release_group_id, _opts, _config ->
-        {:ok, %{"releases" => release_group["releases"]}}
-      end)
-
-      # Doesn't matter if we use a different cover
       cover_data = File.read!(marbles_cover_fixture())
 
-      expect(APIMock, :get_cover_art, fn {:musicbrainz_id, ^release_group_id}, _config ->
-        {:ok, cover_data}
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        case conn.path_info do
+          [_ws, _version, "release-group", ^release_group_id] ->
+            Req.Test.json(conn, release_group)
+
+          [_ws, _version, "release", ^release_id] ->
+            Req.Test.json(conn, release)
+
+          [_ws, _version, "release"] ->
+            Req.Test.json(conn, %{"releases" => release_group["releases"]})
+
+          [_release_group, ^release_group_id, "front"] ->
+            Plug.Conn.send_resp(conn, 200, cover_data)
+        end
       end)
 
       assert [] == Wishlist.search_records("mbid:#{release_group_id}")

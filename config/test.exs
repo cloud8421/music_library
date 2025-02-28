@@ -42,4 +42,10 @@ config :music_library, LastFm,
     max_retries: 0
   ]
 
+config :music_library, MusicBrainz,
+  req_options: [
+    plug: {Req.Test, MusicBrainz.API},
+    max_retries: 0
+  ]
+
 config :phoenix_test, :endpoint, MusicLibraryWeb.Endpoint

@@ -1,12 +1,10 @@
-defmodule MusicBrainz.APIImpl do
+defmodule MusicBrainz.API do
   @moduledoc """
   The original data from Obsidian maps records to MusicBrainz release groups, so we can leverage the MusicBrainz API to:
 
   - Import new records
   - Extend the metadata associated with existing records
   """
-
-  @behaviour MusicBrainz.APIBehaviour
 
   require Logger
 
@@ -208,7 +206,6 @@ defmodule MusicBrainz.APIImpl do
         }
   """
 
-  @impl true
   def get_release_group(id, config) do
     config
     |> new_request()
@@ -285,7 +282,6 @@ defmodule MusicBrainz.APIImpl do
         "title": "Clark (Soundtrack From the Netflix Series)"
       }
   """
-  @impl true
   def get_release(id, config) do
     config
     |> new_request()
@@ -299,7 +295,6 @@ defmodule MusicBrainz.APIImpl do
     |> get_request()
   end
 
-  @impl true
   def get_releases(release_group_id, opts, config) do
     Keyword.validate!(opts, [:limit, :offset])
 
@@ -319,7 +314,6 @@ defmodule MusicBrainz.APIImpl do
     |> get_request()
   end
 
-  @impl true
   def search_release_by_barcode(barcode, config) do
     config
     |> new_request()
@@ -436,7 +430,6 @@ defmodule MusicBrainz.APIImpl do
         ]
       }
   """
-  @impl true
   def search_release_group(query, opts, config) do
     Keyword.validate!(opts, [:limit, :offset])
 
@@ -461,7 +454,6 @@ defmodule MusicBrainz.APIImpl do
   @doc """
   Uses the [cover art](https://musicbrainz.org/doc/Cover_Art_Archive/API) endpoint with the release group id to get the cover image.
   """
-  @impl true
   def get_cover_art({:musicbrainz_id, musicbrainz_id}, config) do
     url = "https://coverartarchive.org/release-group/#{musicbrainz_id}/front"
 
@@ -470,6 +462,7 @@ defmodule MusicBrainz.APIImpl do
 
   def get_cover_art({:url, url}, config) do
     case Req.new(url: url, max_retries: 1, user_agent: config.user_agent)
+         |> Req.Request.merge_options(config.req_options)
          |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
          |> Req.Request.append_response_steps(log_error: &log_error/1)
          |> get_request() do
@@ -484,6 +477,7 @@ defmodule MusicBrainz.APIImpl do
       max_retries: 1,
       user_agent: config.user_agent
     )
+    |> Req.Request.merge_options(config.req_options)
     |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
   end
 

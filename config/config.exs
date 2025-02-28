@@ -33,9 +33,7 @@ config :music_library, LastFm,
   api_key: "change me",
   user_agent: user_agent
 
-config :music_library, MusicBrainz,
-  api: MusicBrainz.APIImpl,
-  user_agent: user_agent
+config :music_library, MusicBrainz, user_agent: user_agent
 
 # Configure esbuild (the version is required)
 config :esbuild,

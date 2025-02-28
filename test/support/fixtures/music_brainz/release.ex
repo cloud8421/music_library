@@ -5,14 +5,12 @@ defmodule MusicBrainz.Fixtures.Release do
     Path.join([@fixtures_folder, "releases - queen - greatest hits.json"])
     |> File.read!()
     |> Jason.decode!()
-    |> Map.get("releases")
   end
 
   def releases(:marbles) do
     Path.join([@fixtures_folder, "releases - marillion - marbles.json"])
     |> File.read!()
     |> Jason.decode!()
-    |> Map.get("releases")
   end
 
   def release(:mystery_of_time) do

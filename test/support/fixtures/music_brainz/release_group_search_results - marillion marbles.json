@@ -1,0 +1,702 @@
+{
+  "created": "2025-02-28T11:35:03.807Z",
+  "count": 437,
+  "offset": 0,
+  "release-groups": [
+    {
+      "id": "20790e26-98e4-3ad3-a67f-b674758b942d",
+      "type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+      "score": 100,
+      "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+      "count": 10,
+      "title": "Marbles",
+      "first-release-date": "2004-05-03",
+      "primary-type": "Album",
+      "artist-credit": [
+        {
+          "name": "Marillion",
+          "artist": {
+            "id": "1932f5b6-0b7b-4050-b1df-833ca89e5f44",
+            "name": "Marillion",
+            "sort-name": "Marillion",
+            "disambiguation": "British progressive rock band",
+            "aliases": [
+              {
+                "sort-name": "Trios Marillos, Los",
+                "name": "Los Trios Marillos",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              },
+              {
+                "sort-name": "Skyline Drifters",
+                "name": "Skyline Drifters",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              },
+              {
+                "sort-name": "Low Fat Yoghurts",
+                "name": "Low Fat Yoghurts",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              }
+            ]
+          }
+        }
+      ],
+      "releases": [
+        {
+          "id": "3f89357a-eeb3-4040-af34-a27b7c2aea2b",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles",
+          "status": "Official"
+        },
+        {
+          "id": "0e290154-5375-4f4f-a658-4a92bf02faa5",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles",
+          "status": "Official"
+        },
+        {
+          "id": "f3937bc5-b99f-443a-9609-a404201f21ca",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles",
+          "status": "Official"
+        },
+        {
+          "id": "d3f9b9e2-73f5-4b47-a2a7-2c2199aad608",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles",
+          "status": "Official"
+        },
+        {
+          "id": "4b9fe13b-4837-4c02-9368-e97ba6f5a086",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles",
+          "status": "Official"
+        },
+        {
+          "id": "3f1cc80f-4507-48a9-899c-c1bda83280c2",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles",
+          "status": "Official"
+        },
+        {
+          "id": "a4b02377-0b5e-448e-9cd6-5500c0378523",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles",
+          "status": "Official"
+        },
+        {
+          "id": "ab151aa6-7538-4e93-be60-eded52b5b7b7",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles",
+          "status": "Official"
+        },
+        {
+          "id": "b94bbd1f-ae5d-4e7b-98ff-28bfe135f20c",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles",
+          "status": "Official"
+        },
+        {
+          "id": "2c4ecd84-7a84-4f42-a600-2f00ed8978c9",
+          "status-id": "1156806e-d06a-38bd-83f0-cf2284a808b9",
+          "title": "Marbles",
+          "status": "Bootleg"
+        }
+      ],
+      "tags": [
+        {
+          "count": 2,
+          "name": "rock"
+        },
+        {
+          "count": 1,
+          "name": "alternative rock"
+        },
+        {
+          "count": 2,
+          "name": "progressive rock"
+        },
+        {
+          "count": 1,
+          "name": "art rock"
+        },
+        {
+          "count": 1,
+          "name": "baroque pop"
+        },
+        {
+          "count": 1,
+          "name": "psychedelic pop"
+        },
+        {
+          "count": 1,
+          "name": "pop rock"
+        }
+      ]
+    },
+    {
+      "id": "bf20ac32-a793-3bb4-beff-f7b9bffaca38",
+      "type-id": "6fd474e2-6b58-3102-9d17-d6f7eb7da0a0",
+      "score": 90,
+      "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+      "count": 1,
+      "title": "Marbles Live",
+      "first-release-date": "2005-10-24",
+      "primary-type": "Album",
+      "secondary-types": [
+        "Live"
+      ],
+      "secondary-type-ids": [
+        "6fd474e2-6b58-3102-9d17-d6f7eb7da0a0"
+      ],
+      "artist-credit": [
+        {
+          "name": "Marillion",
+          "artist": {
+            "id": "1932f5b6-0b7b-4050-b1df-833ca89e5f44",
+            "name": "Marillion",
+            "sort-name": "Marillion",
+            "disambiguation": "British progressive rock band",
+            "aliases": [
+              {
+                "sort-name": "Skyline Drifters",
+                "name": "Skyline Drifters",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              },
+              {
+                "sort-name": "Low Fat Yoghurts",
+                "name": "Low Fat Yoghurts",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              },
+              {
+                "sort-name": "Trios Marillos, Los",
+                "name": "Los Trios Marillos",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              }
+            ]
+          }
+        }
+      ],
+      "releases": [
+        {
+          "id": "bdc6ee20-edd8-4a74-8666-f6f90a67a36a",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles Live",
+          "status": "Official"
+        }
+      ],
+      "tags": [
+        {
+          "count": 1,
+          "name": "rock"
+        }
+      ]
+    },
+    {
+      "id": "ea42b213-0502-391b-bb51-e2ef6315b300",
+      "type-id": "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1",
+      "score": 77,
+      "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+      "count": 1,
+      "title": "A Handful of Marbles",
+      "first-release-date": "2005-06",
+      "primary-type": "Album",
+      "secondary-types": [
+        "Compilation"
+      ],
+      "secondary-type-ids": [
+        "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1"
+      ],
+      "artist-credit": [
+        {
+          "name": "Marillion",
+          "artist": {
+            "id": "1932f5b6-0b7b-4050-b1df-833ca89e5f44",
+            "name": "Marillion",
+            "sort-name": "Marillion",
+            "disambiguation": "British progressive rock band",
+            "aliases": [
+              {
+                "sort-name": "Low Fat Yoghurts",
+                "name": "Low Fat Yoghurts",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              },
+              {
+                "sort-name": "Skyline Drifters",
+                "name": "Skyline Drifters",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              },
+              {
+                "sort-name": "Trios Marillos, Los",
+                "name": "Los Trios Marillos",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              }
+            ]
+          }
+        }
+      ],
+      "releases": [
+        {
+          "id": "09bbc223-0c47-4074-ac8e-a619407d1ab2",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "A Handful of Marbles",
+          "status": "Official"
+        }
+      ],
+      "tags": [
+        {
+          "count": 1,
+          "name": "rock"
+        },
+        {
+          "count": 1,
+          "name": "alternative rock"
+        }
+      ]
+    },
+    {
+      "id": "134154a8-4c48-4185-b515-831b01164a68",
+      "type-id": "6fd474e2-6b58-3102-9d17-d6f7eb7da0a0",
+      "score": 77,
+      "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+      "count": 2,
+      "title": "Marbles on the Road",
+      "first-release-date": "2004",
+      "primary-type": "Album",
+      "secondary-types": [
+        "Live"
+      ],
+      "secondary-type-ids": [
+        "6fd474e2-6b58-3102-9d17-d6f7eb7da0a0"
+      ],
+      "artist-credit": [
+        {
+          "name": "Marillion",
+          "artist": {
+            "id": "1932f5b6-0b7b-4050-b1df-833ca89e5f44",
+            "name": "Marillion",
+            "sort-name": "Marillion",
+            "disambiguation": "British progressive rock band",
+            "aliases": [
+              {
+                "sort-name": "Trios Marillos, Los",
+                "name": "Los Trios Marillos",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              },
+              {
+                "sort-name": "Skyline Drifters",
+                "name": "Skyline Drifters",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              },
+              {
+                "sort-name": "Low Fat Yoghurts",
+                "name": "Low Fat Yoghurts",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              }
+            ]
+          }
+        }
+      ],
+      "releases": [
+        {
+          "id": "f23430e9-cc04-42e0-a697-92f0b802c9c1",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles on the Road",
+          "status": "Official"
+        },
+        {
+          "id": "480ec2f0-d567-4814-aee2-c2f9a2367da8",
+          "status-id": "1156806e-d06a-38bd-83f0-cf2284a808b9",
+          "title": "Marbles on the Road",
+          "status": "Bootleg"
+        }
+      ]
+    },
+    {
+      "id": "5fb9fdb0-cd94-412c-b4d1-f0354128e4c2",
+      "type-id": "6fd474e2-6b58-3102-9d17-d6f7eb7da0a0",
+      "score": 77,
+      "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+      "count": 4,
+      "title": "Marbles in the Park",
+      "first-release-date": "2016-11-06",
+      "primary-type": "Album",
+      "secondary-types": [
+        "Live"
+      ],
+      "secondary-type-ids": [
+        "6fd474e2-6b58-3102-9d17-d6f7eb7da0a0"
+      ],
+      "artist-credit": [
+        {
+          "name": "Marillion",
+          "artist": {
+            "id": "1932f5b6-0b7b-4050-b1df-833ca89e5f44",
+            "name": "Marillion",
+            "sort-name": "Marillion",
+            "disambiguation": "British progressive rock band",
+            "aliases": [
+              {
+                "sort-name": "Trios Marillos, Los",
+                "name": "Los Trios Marillos",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              },
+              {
+                "sort-name": "Skyline Drifters",
+                "name": "Skyline Drifters",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              },
+              {
+                "sort-name": "Low Fat Yoghurts",
+                "name": "Low Fat Yoghurts",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              }
+            ]
+          }
+        }
+      ],
+      "releases": [
+        {
+          "id": "f5db4db0-1b60-492a-a4c1-b286dda4e03a",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles in the Park",
+          "status": "Official"
+        },
+        {
+          "id": "a8a70e02-828f-46a3-ba0e-7e97ee5b9d02",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles in the Park",
+          "status": "Official"
+        },
+        {
+          "id": "53a08c1a-a9a1-48f2-b5ae-7ac8a75f3f21",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles in the Park",
+          "status": "Official"
+        },
+        {
+          "id": "f7151d70-64d9-4520-97a0-0d2747b514fc",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles in the Park",
+          "status": "Official"
+        }
+      ],
+      "tags": [
+        {
+          "count": 1,
+          "name": "rock"
+        },
+        {
+          "count": 1,
+          "name": "pop"
+        },
+        {
+          "count": 1,
+          "name": "art rock"
+        }
+      ]
+    },
+    {
+      "id": "84ad8315-f7fe-3988-962f-440307682dd6",
+      "type-id": "6fd474e2-6b58-3102-9d17-d6f7eb7da0a0",
+      "score": 77,
+      "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+      "count": 2,
+      "title": "Marbles by the Sea",
+      "first-release-date": "2005-10",
+      "primary-type": "Album",
+      "secondary-types": [
+        "Live"
+      ],
+      "secondary-type-ids": [
+        "6fd474e2-6b58-3102-9d17-d6f7eb7da0a0"
+      ],
+      "artist-credit": [
+        {
+          "name": "Marillion",
+          "artist": {
+            "id": "1932f5b6-0b7b-4050-b1df-833ca89e5f44",
+            "name": "Marillion",
+            "sort-name": "Marillion",
+            "disambiguation": "British progressive rock band",
+            "aliases": [
+              {
+                "sort-name": "Trios Marillos, Los",
+                "name": "Los Trios Marillos",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              },
+              {
+                "sort-name": "Skyline Drifters",
+                "name": "Skyline Drifters",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              },
+              {
+                "sort-name": "Low Fat Yoghurts",
+                "name": "Low Fat Yoghurts",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              }
+            ]
+          }
+        }
+      ],
+      "releases": [
+        {
+          "id": "2a4dd3a3-e63f-4f6d-8035-34da48670593",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles by the Sea",
+          "status": "Official"
+        },
+        {
+          "id": "0c724b38-216e-4a33-931e-f23c7f175792",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles by the Sea",
+          "status": "Official"
+        }
+      ],
+      "tags": [
+        {
+          "count": 1,
+          "name": "rock"
+        }
+      ]
+    },
+    {
+      "id": "56286106-d546-4a3a-9304-242ca7715453",
+      "type-id": "4fc3be2b-de1e-396b-a933-beb8f1607a22",
+      "score": 69,
+      "primary-type-id": "4fc3be2b-de1e-396b-a933-beb8f1607a22",
+      "count": 2,
+      "title": "Glass Half Full: Making of Marbles",
+      "first-release-date": "2015",
+      "primary-type": "Other",
+      "artist-credit": [
+        {
+          "name": "Marillion",
+          "artist": {
+            "id": "1932f5b6-0b7b-4050-b1df-833ca89e5f44",
+            "name": "Marillion",
+            "sort-name": "Marillion",
+            "disambiguation": "British progressive rock band",
+            "aliases": [
+              {
+                "sort-name": "Trios Marillos, Los",
+                "name": "Los Trios Marillos",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              },
+              {
+                "sort-name": "Skyline Drifters",
+                "name": "Skyline Drifters",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              },
+              {
+                "sort-name": "Low Fat Yoghurts",
+                "name": "Low Fat Yoghurts",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              }
+            ]
+          }
+        }
+      ],
+      "releases": [
+        {
+          "id": "a2459015-e3e6-4f1c-b765-2d8ec3a0564f",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Glass Half Full – The Making of Marbles",
+          "status": "Official"
+        },
+        {
+          "id": "68351699-e4d8-4650-850f-d40460c76b7b",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Glass Half Full: Making of Marbles",
+          "status": "Official"
+        }
+      ],
+      "tags": [
+        {
+          "count": 1,
+          "name": "rock"
+        }
+      ]
+    },
+    {
+      "id": "9006f9e9-207e-4741-8c99-562f94c87fe1",
+      "type-id": "6d0c5bf6-7a33-3420-a519-44fc63eedebf",
+      "score": 68,
+      "primary-type-id": "6d0c5bf6-7a33-3420-a519-44fc63eedebf",
+      "count": 1,
+      "title": "MARBLES",
+      "first-release-date": "2024-03-13",
+      "primary-type": "EP",
+      "artist-credit": [
+        {
+          "name": "THE ORAL CIGARETTES",
+          "artist": {
+            "id": "7974fd3f-b3e7-4607-a1ad-9d85c07ac3b9",
+            "name": "THE ORAL CIGARETTES",
+            "sort-name": "ORAL CIGARETTES, THE"
+          }
+        }
+      ],
+      "releases": [
+        {
+          "id": "7495379e-fa66-411a-9092-a1bf634352d3",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "MARBLES",
+          "status": "Official"
+        }
+      ]
+    },
+    {
+      "id": "765278d7-1c6d-4f02-8642-d3d4120ad765",
+      "score": 68,
+      "count": 1,
+      "title": "Marbles",
+      "first-release-date": "2021-02-22",
+      "artist-credit": [
+        {
+          "name": "slowbomb",
+          "artist": {
+            "id": "1dc4d526-7896-4309-9814-1399d5451fb9",
+            "name": "slowbomb",
+            "sort-name": "slowbomb"
+          }
+        }
+      ],
+      "releases": [
+        {
+          "id": "b45fec65-b17b-4c74-87d2-11a62d9ee456",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles",
+          "status": "Official"
+        }
+      ]
+    },
+    {
+      "id": "fdfdbd61-6b9b-360e-96a3-efd2f95d2169",
+      "type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+      "score": 68,
+      "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+      "count": 2,
+      "title": "Marbles",
+      "first-release-date": "1993",
+      "primary-type": "Album",
+      "artist-credit": [
+        {
+          "name": "King Apparatus",
+          "artist": {
+            "id": "cc97c476-5587-42cc-814b-7ccb4005fd4e",
+            "name": "King Apparatus",
+            "sort-name": "King Apparatus"
+          }
+        }
+      ],
+      "releases": [
+        {
+          "id": "04548253-77bc-4d92-abe7-c8f8f0640f3b",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles",
+          "status": "Official"
+        },
+        {
+          "id": "dc7bc259-7e05-4ae4-a126-98ec0599b1e6",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "title": "Marbles",
+          "status": "Official"
+        }
+      ],
+      "tags": [
+        {
+          "count": 1,
+          "name": "rock"
+        },
+        {
+          "count": 1,
+          "name": "ska"
+        }
+      ]
+    }
+  ]
+}

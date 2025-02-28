@@ -1,22 +1,23 @@
 defmodule MusicBrainz.Config do
   @type t :: %__MODULE__{
-          api: module(),
-          user_agent: String.t()
+          user_agent: String.t(),
+          req_options: Keyword.t()
         }
 
-  @enforce_keys [:api, :user_agent]
-  defstruct api: MusicBrainz.APIImpl,
-            user_agent: "change me"
+  @enforce_keys [:user_agent]
+  defstruct user_agent: "change me",
+            req_options: []
 
   @schema NimbleOptions.new!(
-            api: [
-              type: :atom,
-              required: true
-            ],
             user_agent: [
               type: :string,
               required: false,
               default: "change me"
+            ],
+            req_options: [
+              type: :keyword_list,
+              required: false,
+              default: []
             ]
           )
 

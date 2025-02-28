@@ -1,15 +1,11 @@
 defmodule MusicLibrary.RecordsTest do
   use MusicLibrary.DataCase
 
-  alias MusicBrainz.APIMock
   alias MusicLibrary.Records
   alias MusicLibrary.Records.SearchIndex
   import MusicLibrary.Fixtures.Records
   import MusicBrainz.Fixtures.ReleaseGroup
   import MusicBrainz.Fixtures.Release
-  import Mox
-
-  setup :verify_on_exit!
 
   defp create_records(_) do
     records = [
@@ -63,12 +59,14 @@ defmodule MusicLibrary.RecordsTest do
       assert record.release_ids == []
       assert record.included_release_group_ids == []
 
-      expect(APIMock, :get_release_group, fn ^release_group_id, _config ->
-        {:ok, release_group(:lockdown_trilogy)}
-      end)
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        case conn.path_info do
+          [_ws, _version, "release-group", ^release_group_id] ->
+            Req.Test.json(conn, release_group(:lockdown_trilogy))
 
-      expect(APIMock, :get_releases, fn ^release_group_id, _opts, _config ->
-        {:ok, %{"releases" => release_group(:lockdown_trilogy)["releases"]}}
+          [_ws, _version, "release"] ->
+            Req.Test.json(conn, %{"releases" => release_group(:lockdown_trilogy)["releases"]})
+        end
       end)
 
       {:ok, updated_record} = Records.refresh_musicbrainz_data(record)
@@ -189,18 +187,19 @@ defmodule MusicLibrary.RecordsTest do
       release_group = release_group(:marbles)
       release_group_id = release_group_id(:marbles)
 
-      expect(APIMock, :get_release_group, fn ^release_group_id, _config ->
-        {:ok, release_group}
-      end)
-
-      expect(APIMock, :get_releases, fn ^release_group_id, _opts, _config ->
-        {:ok, %{"releases" => release_group["releases"]}}
-      end)
-
       cover_data = File.read!(marbles_cover_fixture())
 
-      expect(APIMock, :get_cover_art, fn {:musicbrainz_id, ^release_group_id}, _config ->
-        {:ok, cover_data}
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        case conn.path_info do
+          [_ws, _version, "release-group", ^release_group_id] ->
+            Req.Test.json(conn, release_group)
+
+          [_ws, _version, "release"] ->
+            Req.Test.json(conn, %{"releases" => release_group["releases"]})
+
+          [_release_group, ^release_group_id, "front"] ->
+            Plug.Conn.send_resp(conn, 200, cover_data)
+        end
       end)
 
       assert {:ok, record} =
@@ -243,22 +242,22 @@ defmodule MusicLibrary.RecordsTest do
       release_group = release_group(:marbles)
       release_group_id = release_group_id(:marbles)
 
-      expect(APIMock, :get_release, fn ^release_id, _config ->
-        {:ok, release}
-      end)
-
-      expect(APIMock, :get_release_group, fn ^release_group_id, _config ->
-        {:ok, release_group}
-      end)
-
-      expect(APIMock, :get_releases, fn ^release_group_id, _opts, _config ->
-        {:ok, %{"releases" => release_group["releases"]}}
-      end)
-
       cover_data = File.read!(marbles_cover_fixture())
 
-      expect(APIMock, :get_cover_art, fn {:musicbrainz_id, ^release_group_id}, _config ->
-        {:ok, cover_data}
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        case conn.path_info do
+          [_ws, _version, "release-group", ^release_group_id] ->
+            Req.Test.json(conn, release_group)
+
+          [_ws, _version, "release", ^release_id] ->
+            Req.Test.json(conn, release)
+
+          [_ws, _version, "release"] ->
+            Req.Test.json(conn, %{"releases" => release_group["releases"]})
+
+          [_release_group, ^release_group_id, "front"] ->
+            Plug.Conn.send_resp(conn, 200, cover_data)
+        end
       end)
 
       assert {:ok, record} =
@@ -297,10 +296,8 @@ defmodule MusicLibrary.RecordsTest do
 
       raven_cover_data = File.read!(raven_cover_fixture())
 
-      cover_url = record.cover_url
-
-      expect(APIMock, :get_cover_art, fn {:url, ^cover_url}, _config ->
-        {:ok, raven_cover_data}
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        Plug.Conn.send_resp(conn, 200, raven_cover_data)
       end)
 
       assert {:ok, updated_record} = Records.refresh_cover(record)

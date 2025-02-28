@@ -5,11 +5,8 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   import MusicBrainz.Fixtures.ReleaseGroup
   import MusicBrainz.Fixtures.Release
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
-  import Mox
-  alias MusicBrainz.{APIMock, ReleaseSearchResult}
+  alias MusicBrainz.ReleaseGroupSearchResult
   alias MusicLibrary.Records.{Cover, Record}
-
-  setup :verify_on_exit!
 
   @default_records_page_size 20
   @total_records @default_records_page_size + 10
@@ -243,12 +240,29 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     end
 
     test "it imports a record when selected", %{conn: conn} do
-      mock_results = release_group_search_results()
+      release_group_search_results = Map.get(release_group_search_results(), "release-groups")
 
-      expect(APIMock, :search_release_group, fn "Marillion Marbles",
-                                                [limit: 10, offset: 0],
-                                                _config ->
-        {:ok, mock_results}
+      first_release_group_search_result = hd(release_group_search_results)
+      first_release_group_search_result_id = first_release_group_search_result["id"]
+
+      release_group = release_group(:marbles)
+
+      cover_data = File.read!(marbles_cover_fixture())
+
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        case conn.path_info do
+          [_ws, _version, "release-group", ^first_release_group_search_result_id] ->
+            Req.Test.json(conn, release_group)
+
+          [_ws, _version, "release-group"] ->
+            Req.Test.json(conn, release_group_search_results())
+
+          [_ws, _version, "release"] ->
+            Req.Test.json(conn, %{"releases" => release_group["releases"]})
+
+          [_release_group, ^first_release_group_search_result_id, "front"] ->
+            Plug.Conn.send_resp(conn, 200, cover_data)
+        end
       end)
 
       session =
@@ -256,39 +270,22 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         |> visit(~p"/collection/import")
         |> fill_in("Search for a record on MusicBrainz", with: "Marillion Marbles")
 
-      for result <- mock_results do
+      for release_group_search_result <- release_group_search_results do
+        result = ReleaseGroupSearchResult.from_api_response(release_group_search_result)
+
         session
         |> assert_has("h1", text: result.artists)
         |> assert_has("h2", text: result.title)
         |> assert_has("p", text: Record.format_release(result.release))
       end
 
-      first_result = hd(mock_results)
-      first_result_id = first_result.id
-
-      release_group = release_group(:marbles)
-
-      expect(APIMock, :get_release_group, fn ^first_result_id, _config ->
-        {:ok, release_group}
-      end)
-
-      expect(APIMock, :get_releases, fn ^first_result_id, _opts, _config ->
-        {:ok, %{"releases" => release_group["releases"]}}
-      end)
-
-      cover_data = File.read!(marbles_cover_fixture())
-
-      expect(APIMock, :get_cover_art, fn {:musicbrainz_id, ^first_result_id}, _config ->
-        {:ok, cover_data}
-      end)
-
       session =
         session
-        |> click_link("#musicbrainz_#{first_result_id} a", "CD")
+        |> click_link("#musicbrainz_#{first_release_group_search_result_id} a", "CD")
 
       [record] = MusicLibrary.Repo.all(MusicLibrary.Records.Record)
 
-      assert record.musicbrainz_id == first_result_id
+      assert record.musicbrainz_id == first_release_group_search_result_id
       assert record.title == "Marbles"
       assert record.release == "2004-05-03"
       assert record.format == :cd
@@ -352,32 +349,34 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     barcode = "5037300650128"
     releases = releases(:marbles)
 
-    expect(APIMock, :search_release_by_barcode, fn ^barcode, _config ->
-      {:ok, Enum.map(releases, &ReleaseSearchResult.from_api_response/1)}
-    end)
-
     release = release(:marbles)
     release_id = release_id(:marbles)
-
-    expect(APIMock, :get_release, fn ^release_id, _config ->
-      {:ok, release}
-    end)
 
     release_group = release_group(:marbles)
     release_group_id = release_group["id"]
 
-    expect(APIMock, :get_release_group, fn ^release_group_id, _config ->
-      {:ok, release_group}
-    end)
-
-    expect(APIMock, :get_releases, fn ^release_group_id, _opts, _config ->
-      {:ok, %{"releases" => release_group["releases"]}}
-    end)
-
     cover_data = File.read!(marbles_cover_fixture())
 
-    expect(APIMock, :get_cover_art, fn {:musicbrainz_id, ^release_group_id}, _config ->
-      {:ok, cover_data}
+    Req.Test.stub(MusicBrainz.API, fn conn ->
+      case conn.path_info do
+        [_ws, _version, "release-group", ^release_group_id] ->
+          Req.Test.json(conn, release_group)
+
+        [_ws, _version, "release", ^release_id] ->
+          Req.Test.json(conn, release)
+
+        [_ws, _version, "release"] ->
+          if conn.params["query"] do
+            # barcode scan
+            Req.Test.json(conn, releases)
+          else
+            # Search by release group ID
+            Req.Test.json(conn, %{"releases" => release_group["releases"]})
+          end
+
+        [_release_group, ^release_group_id, "front"] ->
+          Plug.Conn.send_resp(conn, 200, cover_data)
+      end
     end)
 
     conn
