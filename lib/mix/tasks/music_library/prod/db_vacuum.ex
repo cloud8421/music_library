@@ -12,7 +12,7 @@ defmodule Mix.Tasks.MusicLibrary.Prod.DbVacuum do
 
   @impl Mix.Task
   def run(_args) do
-    Mix.Shell.IO.info("Running VACUUM on the production database")
+    Mix.Shell.IO.info("==> Running VACUUM on the production database")
 
     command = ~s(bin/music_library rpc 'MusicLibrary.Repo.vacuum\(\)')
 

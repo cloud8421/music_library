@@ -11,7 +11,7 @@ defmodule Mix.Tasks.MusicLibrary.Prod.DbMigrate do
 
   @impl Mix.Task
   def run(_args) do
-    Mix.Shell.IO.info("Running migrations on production database")
+    Mix.Shell.IO.info("==> Running migrations on production database")
 
     fly_ssh("bin/migrate")
   end

@@ -8,7 +8,7 @@ defmodule Mix.Tasks.MusicLibrary.Prod.Ping do
   @impl Mix.Task
   def run(_args) do
     Application.ensure_all_started(:req)
-    Mix.Shell.IO.info("Pinging the production instance")
+    Mix.Shell.IO.info("==> Pinging the production instance")
 
     Req.get!("https://music-library.claudio-ortolina.org/api")
   end

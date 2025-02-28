@@ -10,7 +10,7 @@ defmodule Mix.Tasks.MusicLibrary.Prod.DbPull do
 
   @impl Mix.Task
   def run(_args) do
-    Mix.Shell.IO.info("Pulling the latest database from the production server")
+    Mix.Shell.IO.info("==> Pulling the latest database from the production server")
 
     current_time = DateTime.utc_now()
     remote_db = "/mnt/music_library/music_library_prod.db"
@@ -22,9 +22,9 @@ defmodule Mix.Tasks.MusicLibrary.Prod.DbPull do
         System.halt(1)
 
       {_stream, 0} ->
-        Mix.Shell.IO.info("Database pulled successfully")
+        Mix.Shell.IO.info("==> Database pulled successfully")
 
-        Mix.Shell.IO.info("Restoring as local dev database")
+        Mix.Shell.IO.info("==> Restoring as local dev database")
 
         Path.wildcard("data/music_library_dev.db*")
         |> Enum.each(&File.rm!/1)
