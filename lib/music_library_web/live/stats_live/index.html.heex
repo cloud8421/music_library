@@ -24,7 +24,7 @@
   </h1>
   <%!-- TODO: replace with OSS version --%>
   <dl class={[
-    "mt-5 grid divide-zinc-200 dark:divide-zinc-900 overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow divide-x-2",
+    "mt-5 grid divide-zinc-200 dark:divide-zinc-900 overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow-sm divide-x-2",
     stats_class(@collection_count_by_format)
   ]}>
     <div :for={{format, count} <- @collection_count_by_format} class="px-2 py-5 sm:px-4">
@@ -49,7 +49,7 @@
   </h1>
   <%!-- TODO: replace with OSS version --%>
   <dl class={[
-    "mt-5 grid divide-zinc-200 dark:divide-zinc-900 overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow divide-x-2",
+    "mt-5 grid divide-zinc-200 dark:divide-zinc-900 overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow-sm divide-x-2",
     stats_class(@collection_count_by_type)
   ]}>
     <div :for={{type, count} <- @collection_count_by_type} class="px-2 py-5 sm:px-4">
@@ -86,7 +86,7 @@
   <ul
     id="scrobble-activity"
     role="list"
-    class="mt-5 rounded-md px-4 py-5 shadow"
+    class="mt-5 rounded-md px-4 py-5 shadow-sm"
     phx-update="stream"
   >
     <li :for={{id, track} <- @streams.recent_tracks} id={id} class="group">
@@ -98,7 +98,7 @@
         </span>
         <div class="relative flex space-x-3 items-center justify-between">
           <div class="flex min-w-0 justify-between space-x-4 items-center">
-            <img class="h-12 w-12 rounded-md shadow" src={track.cover_url} alt={track.title} />
+            <img class="h-12 w-12 rounded-md shadow-sm" src={track.cover_url} alt={track.title} />
             <div>
               <p
                 :if={track.artist.musicbrainz_id not in @artist_ids}
@@ -182,7 +182,7 @@
             <.focus_wrap
               id={"actions-#{track.scrobbled_at_uts}"}
               class={[
-                "hidden pointer-events-auto absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-zinc-800 py-2 shadow-lg ring-1 ring-zinc-900/5 focus:outline-none"
+                "hidden pointer-events-auto absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-zinc-800 py-2 shadow-lg ring-1 ring-zinc-900/5 focus:outline-hidden"
               ]}
               role="menu"
               aria-orientation="vertical"

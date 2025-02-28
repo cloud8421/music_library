@@ -9,14 +9,14 @@ defmodule MusicLibraryWeb.DataComponents do
     ~H"""
     <div
       class={[
-        "relative overflow-hidden rounded-md bg-white dark:bg-zinc-800 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6 cursor-pointer",
+        "relative overflow-hidden rounded-md bg-white dark:bg-zinc-800 px-4 pb-3 pt-5 shadow-sm sm:px-6 sm:pt-6 cursor-pointer",
         @class
       ]}
       phx-click={JS.navigate(~p"/collection/#{@record}")}
     >
       <dt>
         <img
-          class="absolute w-20 rounded-md shadow"
+          class="absolute w-20 rounded-md shadow-sm"
           src={~p"/covers/#{@record.id}?vsn=#{@record.cover_hash}"}
           alt={@record.title}
         />
@@ -48,7 +48,7 @@ defmodule MusicLibraryWeb.DataComponents do
 
   def counter(assigns) do
     ~H"""
-    <div class="overflow-hidden rounded-md bg-white dark:bg-zinc-800 px-4 pb-3 pt-5 shadow sm:px-6 sm:pt-6">
+    <div class="overflow-hidden rounded-md bg-white dark:bg-zinc-800 px-4 pb-3 pt-5 shadow-sm sm:px-6 sm:pt-6">
       <dt class="sm:mt-3">
         <p class="truncate text-sm font-medium text-center text-zinc-500 dark:text-zinc-400">
           {@title}

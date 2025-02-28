@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 
-#: lib/music_library_web/components/core_components.ex:507
+#: lib/music_library_web/components/core_components.ex:511
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr ""
@@ -69,7 +69,7 @@ msgstr ""
 msgid "Error importing record"
 msgstr ""
 
-#: lib/music_library_web/components/core_components.ex:162
+#: lib/music_library_web/components/core_components.ex:166
 #, elixir-autogen, elixir-format
 msgid "Error!"
 msgstr ""
@@ -90,7 +90,7 @@ msgstr ""
 msgid "Genres"
 msgstr ""
 
-#: lib/music_library_web/components/core_components.ex:171
+#: lib/music_library_web/components/core_components.ex:175
 #, elixir-autogen, elixir-format
 msgid "Hang in there while we get back on track"
 msgstr ""
@@ -241,7 +241,7 @@ msgstr ""
 msgid "Showing <b>%{visible}</b> of <b>%{total}</b> records"
 msgstr ""
 
-#: lib/music_library_web/components/core_components.ex:166
+#: lib/music_library_web/components/core_components.ex:170
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr ""
@@ -252,7 +252,7 @@ msgstr ""
 msgid "Stats"
 msgstr ""
 
-#: lib/music_library_web/components/core_components.ex:161
+#: lib/music_library_web/components/core_components.ex:165
 #, elixir-autogen, elixir-format
 msgid "Success!"
 msgstr ""
@@ -314,8 +314,8 @@ msgstr ""
 msgid "You must be logged in to access this page"
 msgstr ""
 
-#: lib/music_library_web/components/core_components.ex:82
-#: lib/music_library_web/components/core_components.ex:138
+#: lib/music_library_web/components/core_components.ex:86
+#: lib/music_library_web/components/core_components.ex:142
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr ""

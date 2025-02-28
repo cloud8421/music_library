@@ -124,7 +124,7 @@ defmodule MusicLibraryWeb.RecordComponents do
             <.focus_wrap
               id={"actions-#{record.id}"}
               class={[
-                "hidden pointer-events-auto absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-zinc-800 py-2 shadow-lg ring-1 ring-zinc-900/5 focus:outline-none"
+                "hidden pointer-events-auto absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-zinc-800 py-2 shadow-lg ring-1 ring-zinc-900/5 focus:outline-hidden"
               ]}
               role="menu"
               aria-orientation="vertical"
@@ -241,7 +241,7 @@ defmodule MusicLibraryWeb.RecordComponents do
             />
             <button
               type="button"
-              class="absolute inset-0 focus:outline-none"
+              class="absolute inset-0 focus:outline-hidden"
               phx-click={JS.navigate(@record_path.(record))}
             >
               <span class="sr-only">{gettext("View details")}</span>

@@ -54,7 +54,7 @@ defmodule MusicLibraryWeb.Pagination do
       </div>
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-items-center sm:justify-center">
         <div>
-          <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+          <nav class="isolate inline-flex -space-x-px rounded-md shadow-xs" aria-label="Pagination">
             <.prev_link
               :if={@page_links.prev_page}
               page_number={@page_links.prev_page}

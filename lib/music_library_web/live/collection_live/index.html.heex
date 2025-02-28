@@ -2,7 +2,7 @@
   <header class="gap-6 mb-2">
     <div class="flex items-center justify-between gap-6 mb-2 mt-2">
       <.search_form query={@record_list_params.query} />
-      <nav class="mt-2 isolate inline-flex rounded-md shadow-sm">
+      <nav class="mt-2 isolate inline-flex rounded-md shadow-xs">
         <.link
           class={[
             "relative inline-flex items-center rounded-l-md",
@@ -34,7 +34,7 @@
   </header>
 
   <div class="flex items-end justify-between gap-6 mt-8">
-    <span class="isolate inline-flex rounded-md shadow-sm">
+    <span class="isolate inline-flex rounded-md shadow-xs">
       <.link
         patch={order_path(@record_list_params, :alphabetical)}
         class={[

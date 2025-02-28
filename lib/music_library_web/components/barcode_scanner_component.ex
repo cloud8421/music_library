@@ -71,7 +71,7 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
         |> JS.dispatch("camera_request", to: "#barcode-scanner")
         |> JS.hide(to: "#camera-button")
       }
-      class="relative block w-full h-96 rounded-lg border-2 border-dashed border-zinc-300 p-12 text-center hover:border-zinc-400 outline-none"
+      class="relative block w-full h-96 rounded-lg border-2 border-dashed border-zinc-300 p-12 text-center hover:border-zinc-400 outline-hidden"
     >
       <svg
         class="mx-auto size-12 text-zinc-400"
