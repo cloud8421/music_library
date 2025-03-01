@@ -4,6 +4,7 @@ defmodule MusicLibraryWeb.ImportComponent do
   import MusicLibraryWeb.RecordComponents,
     only: [toggle_actions_menu: 1, close_actions_menu: 1, format_label: 1, type_label: 1]
 
+  alias MusicBrainz.ReleaseGroupSearchResult
   alias MusicLibrary.Records
 
   @impl true
@@ -62,6 +63,12 @@ defmodule MusicLibraryWeb.ImportComponent do
     ~H"""
     <li id={@id} class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700">
       <div class="shrink-0 flex items-center justify-between w-full px-4">
+        <img
+          class="w-20 flex-none rounded-lg mr-4"
+          alt={@release_group.title}
+          src={ReleaseGroupSearchResult.thumb_url(@release_group)}
+          onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
+        />
         <div class="min-w-0 flex-auto">
           <h1 class="text-sm leading-6 text-zinc-700 dark:text-zinc-400">
             {@release_group.artists}

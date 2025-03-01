@@ -13,4 +13,8 @@ defmodule MusicBrainz.ReleaseGroupSearchResult do
       release: rg["first-release-date"]
     }
   end
+
+  def thumb_url(rgr) do
+    "https://coverartarchive.org/release-group/#{rgr.id}/front-250"
+  end
 end

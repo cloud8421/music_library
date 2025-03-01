@@ -146,7 +146,7 @@ msgstr ""
 msgid "No cover selected"
 msgstr ""
 
-#: lib/music_library_web/components/import_component.ex:44
+#: lib/music_library_web/components/import_component.ex:45
 #, elixir-autogen, elixir-format
 msgid "No results"
 msgstr ""
@@ -218,12 +218,12 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: lib/music_library_web/components/import_component.ex:26
+#: lib/music_library_web/components/import_component.ex:27
 #, elixir-autogen, elixir-format
 msgid "Search for a record on MusicBrainz"
 msgstr ""
 
-#: lib/music_library_web/components/import_component.ex:27
+#: lib/music_library_web/components/import_component.ex:28
 #, elixir-autogen, elixir-format
 msgid "Search for records"
 msgstr ""
@@ -337,19 +337,19 @@ msgstr ""
 msgid "Scrobble activity"
 msgstr ""
 
-#: lib/music_library_web/components/import_component.ex:85
+#: lib/music_library_web/components/import_component.ex:92
 #: lib/music_library_web/live/stats_live/index.html.heex:169
 #, elixir-autogen, elixir-format
 msgid "Choose which format to import"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:121
+#: lib/music_library_web/components/barcode_scanner_component.ex:128
 #: lib/music_library_web/live/stats_live/index.html.heex:141
 #, elixir-autogen, elixir-format
 msgid "Collected"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:118
+#: lib/music_library_web/components/barcode_scanner_component.ex:125
 #: lib/music_library_web/live/stats_live/index.html.heex:147
 #, elixir-autogen, elixir-format
 msgid "Wishlisted"
@@ -632,42 +632,42 @@ msgstr ""
 msgid "Scan barcodes · Collection"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:23
+#: lib/music_library_web/components/barcode_scanner_component.ex:24
 #, elixir-autogen, elixir-format
 msgid "Scan one or more barcodes"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:90
+#: lib/music_library_web/components/barcode_scanner_component.ex:91
 #, elixir-autogen, elixir-format
 msgid "Open camera"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:54
+#: lib/music_library_web/components/barcode_scanner_component.ex:55
 #, elixir-autogen, elixir-format
 msgid "Import releases"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:162
+#: lib/music_library_web/components/barcode_scanner_component.ex:169
 #, elixir-autogen, elixir-format
 msgid "Failed to search release for barcode %{number}"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:153
+#: lib/music_library_web/components/barcode_scanner_component.ex:160
 #, elixir-autogen, elixir-format
 msgid "No release found for barcode %{number}"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:51
+#: lib/music_library_web/components/barcode_scanner_component.ex:52
 #, elixir-autogen, elixir-format
 msgid "Importing..."
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:192
+#: lib/music_library_web/components/barcode_scanner_component.ex:199
 #, elixir-autogen, elixir-format
 msgid "Records imported successfully"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:116
+#: lib/music_library_web/components/barcode_scanner_component.ex:123
 #, elixir-autogen, elixir-format
 msgid "New"
 msgstr ""

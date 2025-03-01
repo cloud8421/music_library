@@ -1,6 +1,7 @@
 defmodule MusicLibraryWeb.BarcodeScannerComponent do
   use MusicLibraryWeb, :live_component
 
+  alias MusicBrainz.ReleaseGroupSearchResult
   alias MusicLibrary.Records
   alias MusicLibraryWeb.RecordComponents
 
@@ -100,6 +101,12 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
   defp release(assigns) do
     ~H"""
     <div class="flex items-center justify-between w-full px-4">
+      <img
+        class="w-20 flex-none rounded-lg mr-4"
+        alt={@release.release_group.title}
+        src={ReleaseGroupSearchResult.thumb_url(@release.release_group)}
+        onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
+      />
       <div class="min-w-0 flex-auto">
         <h1 class="text-sm leading-6 text-zinc-700 dark:text-zinc-400">
           {@release.artists}
