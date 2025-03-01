@@ -95,6 +95,7 @@ defmodule LastFm.API do
       connect_options: [
         timeout: 2500
       ],
+      pool_max_idle_time: 30_000,
       user_agent: config.user_agent
     )
     |> Req.Request.merge_options(config.req_options)
