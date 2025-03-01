@@ -59,13 +59,16 @@ defmodule MusicLibrary.RecordsTest do
       assert record.release_ids == []
       assert record.included_release_group_ids == []
 
+      new_release_group = release_group(:lockdown_trilogy)
+      new_release_group_releases = release_group_releases(:lockdown_trilogy)
+
       Req.Test.stub(MusicBrainz.API, fn conn ->
         case conn.path_info do
           [_ws, _version, "release-group", ^release_group_id] ->
-            Req.Test.json(conn, release_group(:lockdown_trilogy))
+            Req.Test.json(conn, new_release_group)
 
           [_ws, _version, "release"] ->
-            Req.Test.json(conn, %{"releases" => release_group(:lockdown_trilogy)["releases"]})
+            Req.Test.json(conn, new_release_group_releases)
         end
       end)
 
@@ -186,6 +189,7 @@ defmodule MusicLibrary.RecordsTest do
 
       release_group = release_group(:marbles)
       release_group_id = release_group_id(:marbles)
+      release_group_releases = release_group_releases(:marbles)
 
       cover_data = File.read!(marbles_cover_fixture())
 
@@ -195,7 +199,7 @@ defmodule MusicLibrary.RecordsTest do
             Req.Test.json(conn, release_group)
 
           [_ws, _version, "release"] ->
-            Req.Test.json(conn, %{"releases" => release_group["releases"]})
+            Req.Test.json(conn, release_group_releases)
 
           [_release_group, ^release_group_id, "front"] ->
             Plug.Conn.send_resp(conn, 200, cover_data)
@@ -241,6 +245,7 @@ defmodule MusicLibrary.RecordsTest do
 
       release_group = release_group(:marbles)
       release_group_id = release_group_id(:marbles)
+      release_group_releases = release_group_releases(:marbles)
 
       cover_data = File.read!(marbles_cover_fixture())
 
@@ -253,7 +258,7 @@ defmodule MusicLibrary.RecordsTest do
             Req.Test.json(conn, release)
 
           [_ws, _version, "release"] ->
-            Req.Test.json(conn, %{"releases" => release_group["releases"]})
+            Req.Test.json(conn, release_group_releases)
 
           [_release_group, ^release_group_id, "front"] ->
             Plug.Conn.send_resp(conn, 200, cover_data)

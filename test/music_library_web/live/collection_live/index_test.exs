@@ -246,6 +246,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       first_release_group_search_result_id = first_release_group_search_result["id"]
 
       release_group = release_group(:marbles)
+      release_group_releases = release_group_releases(:marbles)
 
       cover_data = File.read!(marbles_cover_fixture())
 
@@ -258,7 +259,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
             Req.Test.json(conn, release_group_search_results())
 
           [_ws, _version, "release"] ->
-            Req.Test.json(conn, %{"releases" => release_group["releases"]})
+            Req.Test.json(conn, release_group_releases)
 
           [_release_group, ^first_release_group_search_result_id, "front"] ->
             Plug.Conn.send_resp(conn, 200, cover_data)
@@ -354,6 +355,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
     release_group = release_group(:marbles)
     release_group_id = release_group["id"]
+    release_group_releases = release_group_releases(:marbles)
 
     cover_data = File.read!(marbles_cover_fixture())
 
@@ -371,7 +373,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
             Req.Test.json(conn, releases)
           else
             # Search by release group ID
-            Req.Test.json(conn, %{"releases" => release_group["releases"]})
+            Req.Test.json(conn, release_group_releases)
           end
 
         [_release_group, ^release_group_id, "front"] ->

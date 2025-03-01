@@ -181,6 +181,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
 
       release_group = release_group(:mystery_of_time)
       release_group_id = release_group_id(:mystery_of_time)
+      release_group_releases = release_group_releases(:mystery_of_time)
 
       cover_data = File.read!(marbles_cover_fixture())
 
@@ -193,7 +194,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
             Req.Test.json(conn, release)
 
           [_ws, _version, "release"] ->
-            Req.Test.json(conn, %{"releases" => release_group["releases"]})
+            Req.Test.json(conn, release_group_releases)
 
           [_release_group, ^release_group_id, "front"] ->
             Plug.Conn.send_resp(conn, 200, cover_data)

@@ -28,6 +28,11 @@ defmodule MusicBrainz.Fixtures.ReleaseGroup do
     |> JSON.decode!()
   end
 
+  def release_group_releases(name) do
+    rg = release_group(name)
+    %{"releases" => rg["releases"]}
+  end
+
   def release_group_id(name) do
     release_group(name) |> Map.get("id")
   end
