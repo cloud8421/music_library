@@ -100,9 +100,9 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
 
   defp release(assigns) do
     ~H"""
-    <div class="flex items-center justify-between w-full px-4">
+    <div class="flex items-center justify-between w-full">
       <img
-        class="w-20 flex-none rounded-lg mr-4"
+        class="w-16 md:w-20 flex-none rounded-lg mr-4"
         alt={@release.release_group.title}
         src={ReleaseGroupSearchResult.thumb_url(@release.release_group)}
         onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
