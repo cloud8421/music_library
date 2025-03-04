@@ -69,10 +69,6 @@ defmodule MusicLibraryWeb.Router do
     use ErrorTracker.Web, :router
     import Phoenix.LiveDashboard.Router
 
-    scope "/metrics", MusicLibraryWeb do
-      get "/", MetricsController, :index
-    end
-
     scope "/dev" do
       pipe_through [:browser, :logged_in]
 
