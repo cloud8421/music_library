@@ -24,11 +24,25 @@ defmodule MusicLibraryWeb.RecordComponents do
         id={id}
       >
         <div class="flex min-w-0 gap-x-4 items-center">
-          <img
-            class="w-20 flex-none rounded-lg"
-            alt={record.title}
-            src={~p"/covers/#{record.id}?vsn=#{record.cover_hash}"}
-          />
+          <div class="relative">
+            <img
+              class="w-20 flex-none rounded-lg"
+              alt={record.title}
+              src={~p"/covers/#{record.id}?vsn=#{record.cover_hash}"}
+            />
+            <span
+              :if={Records.Record.included_release_groups_count(record) > 0}
+              class={[
+                "absolute right-0 bottom-0 rounded-br-lg rounded-tl-lg px-1",
+                "text-xs font-medium",
+                "bg-zinc-50 dark:bg-zinc-500/10",
+                "text-zinc-700 dark:text-zinc-400",
+                "border-1 border-zinc-600/20 dark:border-zinc-500/20"
+              ]}
+            >
+              {Records.Record.included_release_groups_count(record)}
+            </span>
+          </div>
           <div class="min-w-0 flex-auto">
             <h1 class="text-sm leading-6 text-zinc-700">
               <.link
@@ -50,13 +64,6 @@ defmodule MusicLibraryWeb.RecordComponents do
             </p>
             <p class="sm:hidden mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
               {format_label(record.format)} · {type_label(record.type)}
-              <span :if={Records.Record.included_release_groups_count(record) > 0}>
-                ·
-                <span class="sr-only">
-                  {gettext("Number of included records")}
-                </span>
-                <.round_badge text={Records.Record.included_release_groups_count(record)} />
-              </span>
               <span :if={record.purchased_at}>
                 ·
                 <span class="sr-only">
@@ -77,13 +84,6 @@ defmodule MusicLibraryWeb.RecordComponents do
           <div class="hidden sm:flex sm:flex-col sm:items-end">
             <p class="text-xs leading-6 text-zinc-900 dark:text-zinc-300">
               {format_label(record.format)} · {type_label(record.type)}
-              <span :if={Records.Record.included_release_groups_count(record) > 0}>
-                ·
-                <span class="sr-only">
-                  {gettext("Number of included records")}
-                </span>
-                <.round_badge text={Records.Record.included_release_groups_count(record)} />
-              </span>
             </p>
             <p :if={record.purchased_at} class="text-xs leading-6 text-zinc-900 dark:text-zinc-300">
               <span class="sr-only">

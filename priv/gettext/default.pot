@@ -179,7 +179,7 @@ msgstr ""
 msgid "Purchased at"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:63
+#: lib/music_library_web/components/record_components.ex:70
 #: lib/music_library_web/components/record_components.ex:90
 #: lib/music_library_web/live/collection_live/show.html.heex:200
 #, elixir-autogen, elixir-format
@@ -353,12 +353,6 @@ msgstr ""
 #: lib/music_library_web/live/stats_live/index.html.heex:147
 #, elixir-autogen, elixir-format
 msgid "Wishlisted"
-msgstr ""
-
-#: lib/music_library_web/components/record_components.ex:56
-#: lib/music_library_web/components/record_components.ex:83
-#, elixir-autogen, elixir-format
-msgid "Number of included records"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/show.html.heex:219
@@ -537,7 +531,7 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:48
+#: lib/music_library_web/components/record_components.ex:62
 #: lib/music_library_web/live/wishlist_live/show.html.heex:27
 #, elixir-autogen, elixir-format
 msgid "Unreleased"
