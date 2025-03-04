@@ -24,9 +24,9 @@ defmodule MusicLibraryWeb.RecordComponents do
         id={id}
       >
         <div class="flex min-w-0 gap-x-4 items-center">
-          <div class="relative">
+          <div class="relative w-20 flex-none">
             <img
-              class="w-20 flex-none rounded-lg"
+              class="rounded-lg"
               alt={record.title}
               src={~p"/covers/#{record.id}?vsn=#{record.cover_hash}"}
             />
