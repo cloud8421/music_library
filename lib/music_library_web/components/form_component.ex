@@ -56,24 +56,62 @@ defmodule MusicLibraryWeb.FormComponent do
           type="datetime-local"
           label={gettext("Purchased at")}
         />
-        <div phx-drop-target={@uploads.cover_data.ref}>
+        <div class="col-span-full">
           <.label for={@uploads.cover_data.ref}>
             {gettext("Cover art")}
           </.label>
-          <.error :for={{_index, msg} <- @uploads.cover_data.errors}>{msg}</.error>
-          <span
-            :if={@uploads.cover_data.entries == []}
-            class="text-xs sm:text-sm float-right text-zinc-700 dark:text-zinc-400"
+          <div
+            phx-drop-target={@uploads.cover_data.ref}
+            class={[
+              "mt-2 flex justify-center rounded-lg",
+              "border border-dashed border-zinc-300",
+              "px-6 py-10"
+            ]}
           >
-            {gettext("No cover selected")}
-          </span>
-          <%= for entry <- @uploads.cover_data.entries do %>
-            <span class="float-right text-zinc-700 dark:text-zinc-400">{entry.progress}%</span>
-          <% end %>
-          <.live_file_input
-            class="mt-2 block w-full rounded-lg text-zinc-900 dark:text-zinc-200 focus:ring-0 text-xs sm:text-sm sm:leading-6"
-            upload={@uploads.cover_data}
-          />
+            <div class="text-center">
+              <svg
+                :if={@uploads.cover_data.entries == []}
+                class="mx-auto size-24 text-zinc-300"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+                data-slot="icon"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <.live_img_preview
+                :for={entry <- @uploads.cover_data.entries}
+                class="mx-auto size-24"
+                entry={entry}
+              />
+              <div class="mt-4 text-sm/6 text-zinc-600 dark:text-zinc-400">
+                <%= for entry <- @uploads.cover_data.entries do %>
+                  <span>{entry.progress}%</span>
+                <% end %>
+              </div>
+              <div class="mt-4 flex text-sm/6 text-zinc-600 dark:text-zinc-300">
+                <label
+                  for={@uploads.cover_data.ref}
+                  class={[
+                    "relative cursor-pointer rounded-md font-semibold",
+                    "focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2",
+                    "hover:text-zinc-200"
+                  ]}
+                >
+                  <span>{gettext("Upload a file")}</span>
+                  <.live_file_input class="sr-only" upload={@uploads.cover_data} />
+                </label>
+                <p class="pl-1">{gettext("or drag and drop")}</p>
+              </div>
+              <p class="text-xs/5 text-zinc-600 dark:text-zinc-400">
+                {gettext("PNG, JPG, WEBP up to 8MB")}
+              </p>
+            </div>
+          </div>
         </div>
         <:actions>
           <.button phx-disable-with={gettext("Saving...")}>{gettext("Save")}</.button>

@@ -141,11 +141,6 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex:68
-#, elixir-autogen, elixir-format
-msgid "No cover selected"
-msgstr ""
-
 #: lib/music_library_web/components/import_component.ex:45
 #, elixir-autogen, elixir-format
 msgid "No results"
@@ -193,7 +188,7 @@ msgstr ""
 msgid "Record imported successfully"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex:128
+#: lib/music_library_web/components/form_component.ex:166
 #, elixir-autogen, elixir-format
 msgid "Record updated successfully"
 msgstr ""
@@ -203,12 +198,12 @@ msgstr ""
 msgid "Release"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex:79
+#: lib/music_library_web/components/form_component.ex:117
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex:79
+#: lib/music_library_web/components/form_component.ex:117
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr ""
@@ -679,4 +674,19 @@ msgstr ""
 #: lib/music_library_web/live/artist_live/show.html.heex:88
 #, elixir-autogen, elixir-format
 msgid "Similar artists"
+msgstr ""
+
+#: lib/music_library_web/components/form_component.ex:111
+#, elixir-autogen, elixir-format
+msgid "PNG, JPG, WEBP up to 8MB"
+msgstr ""
+
+#: lib/music_library_web/components/form_component.ex:105
+#, elixir-autogen, elixir-format
+msgid "Upload a file"
+msgstr ""
+
+#: lib/music_library_web/components/form_component.ex:108
+#, elixir-autogen, elixir-format
+msgid "or drag and drop"
 msgstr ""
