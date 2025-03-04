@@ -41,3 +41,4 @@ cpus = 1
 
 [metrics]
 path = "/metrics"
+port = 8080
