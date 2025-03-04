@@ -88,6 +88,7 @@ defmodule MusicLibrary.MixProject do
 
       # Prod error/perf tooling
       {:phoenix_live_dashboard, "~> 0.8.3"},
+      {:telemetry_metrics_prometheus, "~> 1.1.0"},
       {:error_tracker, "~> 0.5.1"},
       {:recon, "~> 2.5"},
       {:telemetry_metrics, "~> 1.0"},

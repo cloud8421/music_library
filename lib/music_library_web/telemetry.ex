@@ -10,6 +10,7 @@ defmodule MusicLibraryWeb.Telemetry do
   def init(_arg) do
     children = [
       {MusicLibraryWeb.Telemetry.Storage, metrics()},
+      {TelemetryMetricsPrometheus, [metrics: prometheus_metrics()]},
       # Telemetry poller will execute the given period measurements
       # every 10_000ms. Learn more here: https://hexdocs.pm/telemetry_metrics
       {:telemetry_poller, measurements: periodic_measurements(), period: 10_000}
@@ -100,6 +101,16 @@ defmodule MusicLibraryWeb.Telemetry do
       summary("vm.total_run_queue_lengths.total"),
       summary("vm.total_run_queue_lengths.cpu"),
       summary("vm.total_run_queue_lengths.io")
+    ]
+  end
+
+  def prometheus_metrics do
+    [
+      # VM Metrics
+      last_value("vm.memory.total", unit: {:byte, :megabyte}),
+      last_value("vm.total_run_queue_lengths.total"),
+      last_value("vm.total_run_queue_lengths.cpu"),
+      last_value("vm.total_run_queue_lengths.io")
     ]
   end
 

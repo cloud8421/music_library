@@ -38,3 +38,7 @@ soft_limit = 1000
 memory = '512mb'
 cpu_kind = 'shared'
 cpus = 1
+
+[metrics]
+port = 9568
+path = "/metrics"
