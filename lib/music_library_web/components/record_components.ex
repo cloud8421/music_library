@@ -35,8 +35,8 @@ defmodule MusicLibraryWeb.RecordComponents do
               class={[
                 "absolute right-0 bottom-0 rounded-br-lg rounded-tl-lg px-1",
                 "text-xs font-medium",
-                "bg-zinc-50 dark:bg-zinc-500/10",
-                "text-zinc-700 dark:text-zinc-400",
+                "bg-zinc-200/80 dark:bg-zinc-500/70",
+                "text-zinc-700 dark:text-zinc-200",
                 "border-1 border-zinc-600/20 dark:border-zinc-500/20"
               ]}
             >
