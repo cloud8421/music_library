@@ -431,7 +431,7 @@ msgstr ""
 msgid "Dev dashboard"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:247
+#: lib/music_library_web/components/record_components.ex:261
 #, elixir-autogen, elixir-format
 msgid "View details"
 msgstr ""
@@ -543,63 +543,63 @@ msgstr ""
 msgid "Unreleased"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:272
+#: lib/music_library_web/components/record_components.ex:286
 #, elixir-autogen, elixir-format
 msgid "Album"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:38
-#: lib/music_library_web/components/record_components.ex:266
+#: lib/music_library_web/components/record_components.ex:280
 #, elixir-autogen, elixir-format
 msgid "Backup"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:268
+#: lib/music_library_web/components/record_components.ex:282
 #, elixir-autogen, elixir-format
 msgid "Blu-ray"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:265
+#: lib/music_library_web/components/record_components.ex:279
 #, elixir-autogen, elixir-format
 msgid "CD"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:275
+#: lib/music_library_web/components/record_components.ex:289
 #, elixir-autogen, elixir-format
 msgid "Comp"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:269
+#: lib/music_library_web/components/record_components.ex:283
 #, elixir-autogen, elixir-format
 msgid "DVD"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:273
+#: lib/music_library_web/components/record_components.ex:287
 #, elixir-autogen, elixir-format
 msgid "EP"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:274
+#: lib/music_library_web/components/record_components.ex:288
 #, elixir-autogen, elixir-format
 msgid "Live"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:270
+#: lib/music_library_web/components/record_components.ex:284
 #, elixir-autogen, elixir-format
 msgid "Multi"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:277
+#: lib/music_library_web/components/record_components.ex:291
 #, elixir-autogen, elixir-format
 msgid "Other"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:276
+#: lib/music_library_web/components/record_components.ex:290
 #, elixir-autogen, elixir-format
 msgid "Single"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex:267
+#: lib/music_library_web/components/record_components.ex:281
 #, elixir-autogen, elixir-format
 msgid "Vinyl"
 msgstr ""
