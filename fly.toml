@@ -40,5 +40,4 @@ cpu_kind = 'shared'
 cpus = 1
 
 [metrics]
-port = 9568
 path = "/metrics"
