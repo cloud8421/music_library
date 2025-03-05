@@ -5,18 +5,36 @@
       <div class="flex">
         <div class="flex space-x-2 md:space-x-8">
           <.link navigate={~p"/"} class={section_link_classes(assigns[:nav_section], :stats)}>
+            <.icon
+              name="hero-chart-pie"
+              class="max-sm:hidden h-4 w-4 mr-2"
+              aria-hidden="true"
+              data-slot="icon"
+            />
             {gettext("Stats")}
           </.link>
           <.link
             navigate={~p"/collection"}
             class={section_link_classes(assigns[:nav_section], :records)}
           >
+            <.icon
+              name="hero-circle-stack"
+              class="max-sm:hidden h-4 w-4 mr-2"
+              aria-hidden="true"
+              data-slot="icon"
+            />
             {gettext("Collection")}
           </.link>
           <.link
             navigate={~p"/wishlist"}
             class={section_link_classes(assigns[:nav_section], :wishlist)}
           >
+            <.icon
+              name="hero-star"
+              class="max-sm:hidden h-4 w-4 mr-2"
+              aria-hidden="true"
+              data-slot="icon"
+            />
             {gettext("Wishlist")}
           </.link>
         </div>

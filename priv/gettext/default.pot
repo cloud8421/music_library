@@ -29,7 +29,7 @@ msgstr ""
 msgid "Choose a value"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex:14
+#: lib/music_library_web/components/layouts/app.html.heex:26
 #: lib/music_library_web/live/artist_live/show.html.heex:105
 #: lib/music_library_web/live/collection_live/index.ex:157
 #: lib/music_library_web/live/collection_live/show.ex:117
@@ -123,7 +123,7 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex:47
+#: lib/music_library_web/components/layouts/app.html.heex:65
 #, elixir-autogen, elixir-format
 msgid "Logout"
 msgstr ""
@@ -241,7 +241,7 @@ msgstr ""
 msgid "Something went wrong!"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex:8
+#: lib/music_library_web/components/layouts/app.html.heex:14
 #: lib/music_library_web/live/stats_live/index.ex:27
 #, elixir-autogen, elixir-format
 msgid "Stats"
@@ -296,7 +296,7 @@ msgstr ""
 msgid "Welcome to your Music Library"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex:20
+#: lib/music_library_web/components/layouts/app.html.heex:38
 #: lib/music_library_web/live/artist_live/show.html.heex:114
 #: lib/music_library_web/live/wishlist_live/index.ex:159
 #: lib/music_library_web/live/wishlist_live/show.ex:137
@@ -415,7 +415,7 @@ msgstr ""
 msgid "Made by"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex:26
+#: lib/music_library_web/components/layouts/app.html.heex:44
 #, elixir-autogen, elixir-format
 msgid "Dev dashboard"
 msgstr ""
@@ -490,7 +490,7 @@ msgstr ""
 msgid "A->Z"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex:29
+#: lib/music_library_web/components/layouts/app.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "Errors"
 msgstr ""
@@ -537,7 +537,7 @@ msgstr ""
 msgid "Album"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex:38
+#: lib/music_library_web/components/layouts/app.html.heex:56
 #: lib/music_library_web/components/record_components.ex:280
 #, elixir-autogen, elixir-format
 msgid "Backup"
