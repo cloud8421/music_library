@@ -40,7 +40,7 @@ defmodule MusicLibrary.MixProject do
       {:gettext, "~> 0.20"},
 
       # Web Server
-      {:dns_cluster, "~> 0.1.1"},
+      {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
       {:phoenix, "~> 1.7.14"},
 
