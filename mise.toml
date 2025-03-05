@@ -63,3 +63,11 @@ run = 'mix test'
 [tasks.console]
 description = 'Run the application attached to an IEx console'
 run = 'iex -S mix phx.server'
+
+[tasks.docker-build]
+description = 'Builds and tags the application Docker image'
+run = 'docker build -t fullyforged/music_library .'
+
+[tasks.docker-push]
+description = 'Push the image to the registry'
+run = 'docker push fullyforged/music_library'
