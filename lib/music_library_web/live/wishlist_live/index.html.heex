@@ -2,8 +2,19 @@
   <header class="gap-6 mb-2">
     <div class="flex items-center justify-between gap-6 mb-2 mt-2">
       <.search_form query={@record_list_params.query} />
-      <.link patch={~p"/wishlist/import"}>
-        <.button>{gettext("Import")}</.button>
+      <.link
+        class={[
+          "relative inline-flex items-center rounded-md",
+          "px-3 py-2 text-xs sm:text-sm font-semibold",
+          "bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200",
+          "disabled:bg-zinc-300 dark:disabled:bg-zinc-300 disabled:active:text-white",
+          "text-white active:text-white/80 dark:text-zinc-900 dark:active:text-zinc-900/80",
+          "focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
+        ]}
+        patch={~p"/wishlist/import"}
+      >
+        <.icon name="hero-plus" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
+        {gettext("Import")}
       </.link>
     </div>
   </header>
