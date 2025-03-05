@@ -415,11 +415,6 @@ msgstr ""
 msgid "Made by"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex:44
-#, elixir-autogen, elixir-format
-msgid "Dev dashboard"
-msgstr ""
-
 #: lib/music_library_web/components/record_components.ex:261
 #, elixir-autogen, elixir-format
 msgid "View details"
@@ -689,4 +684,9 @@ msgstr ""
 #: lib/music_library_web/components/form_component.ex:108
 #, elixir-autogen, elixir-format
 msgid "or drag and drop"
+msgstr ""
+
+#: lib/music_library_web/components/layouts/app.html.heex:44
+#, elixir-autogen, elixir-format
+msgid "Live Dashboard"
 msgstr ""
