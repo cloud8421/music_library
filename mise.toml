@@ -24,13 +24,18 @@ run = 'npm outdated'
 hide = true
 dir = 'assets'
 
+[tasks.tailwind-update]
+description = 'Update the Tailwind version configured in the project'
+run = 'mix tailwind.update_version'
+hide = true
+
 [tasks.setup]
 depends = ['npm-install']
 description = 'Install dependencies and setup the database'
 run = ['mix setup']
 
 [tasks.deps-update]
-depends = ['npm-update']
+depends = ['npm-update', 'tailwind-update']
 description = 'Update dependencies'
 run = ['mix deps.update --all']
 
