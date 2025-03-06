@@ -30,6 +30,7 @@ defmodule MusicLibraryWeb.FormComponent do
         id="record-form"
         phx-target={@myself}
         phx-change="validate"
+        phx-auto-recover="recover_form"
         phx-submit="save"
       >
         <div class="sm:columns-2">
@@ -144,6 +145,10 @@ defmodule MusicLibraryWeb.FormComponent do
       end)
 
     save_record(socket, record_params, uploaded_covers)
+  end
+
+  def handle_event("recover_form", params, socket) do
+    handle_event("validate", params, socket)
   end
 
   defp save_record(socket, record_params, uploaded_covers) do
