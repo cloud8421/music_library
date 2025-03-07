@@ -50,10 +50,10 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
       <div class="mt-4 flex justify-center">
         <.button
           disabled={length(@scan_results) == 0}
-          phx-disable-with={gettext("Importing...")}
+          phx-disable-with={gettext("Adding...")}
           phx-click={JS.push("import_releases", target: "#barcode-scanner")}
         >
-          {gettext("Import releases")}
+          {gettext("Add releases")}
         </.button>
       </div>
     </div>

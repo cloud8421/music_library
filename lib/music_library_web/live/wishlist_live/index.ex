@@ -46,7 +46,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
       end
 
     socket
-    |> assign(:page_title, gettext("Import from MusicBrainz · Wishlist"))
+    |> assign(:page_title, gettext("Add new Record · Wishlist"))
     |> assign(:record, nil)
   end
 

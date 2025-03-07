@@ -24,8 +24,8 @@ defmodule MusicLibraryWeb.ImportComponent do
           name={:mb_query}
           field={@form[:mb_query]}
           type="text"
-          label={gettext("Search for a record on MusicBrainz")}
-          prompt={gettext("Search for records")}
+          label={gettext("Search for a record")}
+          prompt={gettext("Search for a record")}
           phx-debounce="500"
           autocorrect="off"
           autocapitalize="none"

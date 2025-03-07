@@ -41,7 +41,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
       end
 
     socket
-    |> assign(:page_title, gettext("Import from MusicBrainz · Collection"))
+    |> assign(:page_title, gettext("Add new Record · Collection"))
     |> assign(:record, nil)
   end
 

@@ -95,12 +95,6 @@ msgstr ""
 msgid "Hang in there while we get back on track"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex:18
-#: lib/music_library_web/live/wishlist_live/index.html.heex:17
-#, elixir-autogen, elixir-format
-msgid "Import"
-msgstr ""
-
 #: lib/music_library_web/live/collection_live/show.html.heex:231
 #: lib/music_library_web/live/wishlist_live/show.html.heex:243
 #, elixir-autogen, elixir-format
@@ -211,16 +205,6 @@ msgstr ""
 #: lib/music_library_web/components/record_components.ex:202
 #, elixir-autogen, elixir-format
 msgid "Search"
-msgstr ""
-
-#: lib/music_library_web/components/import_component.ex:27
-#, elixir-autogen, elixir-format
-msgid "Search for a record on MusicBrainz"
-msgstr ""
-
-#: lib/music_library_web/components/import_component.ex:28
-#, elixir-autogen, elixir-format
-msgid "Search for records"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex:140
@@ -398,16 +382,6 @@ msgstr ""
 #: lib/music_library_web/live/collection_live/show.ex:115
 #, elixir-autogen, elixir-format
 msgid "Details"
-msgstr ""
-
-#: lib/music_library_web/live/collection_live/index.ex:44
-#, elixir-autogen, elixir-format
-msgid "Import from MusicBrainz · Collection"
-msgstr ""
-
-#: lib/music_library_web/live/wishlist_live/index.ex:49
-#, elixir-autogen, elixir-format
-msgid "Import from MusicBrainz · Wishlist"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/root.html.heex:59
@@ -626,19 +600,9 @@ msgstr ""
 msgid "Open camera"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:56
-#, elixir-autogen, elixir-format
-msgid "Import releases"
-msgstr ""
-
 #: lib/music_library_web/components/barcode_scanner_component.ex:187
 #, elixir-autogen, elixir-format
 msgid "Failed to search release for barcode %{number}"
-msgstr ""
-
-#: lib/music_library_web/components/barcode_scanner_component.ex:53
-#, elixir-autogen, elixir-format
-msgid "Importing..."
 msgstr ""
 
 #: lib/music_library_web/components/barcode_scanner_component.ex:200
@@ -694,4 +658,36 @@ msgstr ""
 #: lib/music_library_web/components/barcode_scanner_component.ex:211
 #, elixir-autogen, elixir-format
 msgid "Some records could not be imported: %{summary}"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/index.html.heex:18
+#: lib/music_library_web/live/wishlist_live/index.html.heex:17
+#, elixir-autogen, elixir-format
+msgid "Add"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/index.ex:44
+#, elixir-autogen, elixir-format
+msgid "Add new Record · Collection"
+msgstr ""
+
+#: lib/music_library_web/live/wishlist_live/index.ex:49
+#, elixir-autogen, elixir-format
+msgid "Add new Record · Wishlist"
+msgstr ""
+
+#: lib/music_library_web/components/barcode_scanner_component.ex:56
+#, elixir-autogen, elixir-format
+msgid "Add releases"
+msgstr ""
+
+#: lib/music_library_web/components/barcode_scanner_component.ex:53
+#, elixir-autogen, elixir-format
+msgid "Adding..."
+msgstr ""
+
+#: lib/music_library_web/components/import_component.ex:27
+#: lib/music_library_web/components/import_component.ex:28
+#, elixir-autogen, elixir-format
+msgid "Search for a record"
 msgstr ""

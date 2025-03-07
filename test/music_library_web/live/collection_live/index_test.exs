@@ -229,12 +229,12 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     end
   end
 
-  describe "Importing a new record" do
+  describe "Adding a new record" do
     test "it shows the import modal", %{conn: conn} do
       conn
       |> visit(~p"/collection")
-      |> click_link("Import")
-      |> assert_has("label", text: "Search for a record on MusicBrainz")
+      |> click_link("Add")
+      |> assert_has("label", text: "Search for a record")
       |> assert_has("div", text: "No results")
       |> assert_path(~p"/collection/import")
     end
@@ -269,7 +269,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       session =
         conn
         |> visit(~p"/collection/import")
-        |> fill_in("Search for a record on MusicBrainz", with: "Marillion Marbles")
+        |> fill_in("Search for a record", with: "Marillion Marbles")
 
       for release_group_search_result <- release_group_search_results do
         result = ReleaseGroupSearchResult.from_api_response(release_group_search_result)
@@ -386,7 +386,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     |> trigger_hook("#barcode-scanner", "barcode_scanned", %{"number" => barcode})
     |> assert_has("h2", text: "Marbles")
     |> assert_has("span", text: "New")
-    |> click_button("Import releases")
+    |> click_button("Add releases")
 
     [record] = MusicLibrary.Repo.all(MusicLibrary.Records.Record)
 
