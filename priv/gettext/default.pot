@@ -135,7 +135,7 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: lib/music_library_web/components/import_component.ex:45
+#: lib/music_library_web/components/add_record_component.ex:45
 #, elixir-autogen, elixir-format
 msgid "No results"
 msgstr ""
@@ -316,7 +316,7 @@ msgstr ""
 msgid "Scrobble activity"
 msgstr ""
 
-#: lib/music_library_web/components/import_component.ex:92
+#: lib/music_library_web/components/add_record_component.ex:92
 #: lib/music_library_web/live/stats_live/index.html.heex:169
 #, elixir-autogen, elixir-format
 msgid "Choose which format to import"
@@ -686,8 +686,8 @@ msgstr ""
 msgid "Adding..."
 msgstr ""
 
-#: lib/music_library_web/components/import_component.ex:27
-#: lib/music_library_web/components/import_component.ex:28
+#: lib/music_library_web/components/add_record_component.ex:27
+#: lib/music_library_web/components/add_record_component.ex:28
 #, elixir-autogen, elixir-format
 msgid "Search for a record"
 msgstr ""
