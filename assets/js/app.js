@@ -62,3 +62,27 @@ liveSocket.connect();
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket;
+
+// Credit: https://andrewtimberlake.com/blog/2025/03/see-what-liveview-changes-are-being-made
+window.enableLiveViewChangeObserver = () => {
+  // Mutation observer to highlight changed elements
+  return new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === "childList") {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            node.style.transition = "outline 0.3s ease-in-out";
+            node.style.outline = "2px solid red";
+            setTimeout(() => {
+              node.style.outline = "none";
+              node.style.transition = "";
+            }, 1000);
+          }
+        });
+      }
+    });
+  }).observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+};
