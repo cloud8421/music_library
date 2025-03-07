@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
   use MusicLibraryWeb, :live_component
 
   alias MusicBrainz.ReleaseGroupSearchResult
+  alias MusicLibrary.BarcodeScan
   alias MusicLibrary.Records
   alias MusicLibraryWeb.RecordComponents
 
@@ -12,7 +13,7 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
     {:ok,
      socket
      |> assign(:camera, :pending)
-     |> assign(:releases, [])}
+     |> assign(:scan_results, [])}
   end
 
   @impl true
@@ -31,8 +32,8 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
 
       <ul class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5">
         <li
-          :for={{status, record_id, release} <- @releases}
-          id={release.id}
+          :for={scan_result <- @scan_results}
+          id={scan_result.number}
           class="flex justify-between gap-x-6 py-5"
           phx-mounted={
             JS.transition(
@@ -42,13 +43,13 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
             )
           }
         >
-          <.release status={status} record_id={record_id} release={release} />
+          <.scan_result scan_result={scan_result} />
         </li>
       </ul>
 
       <div class="mt-4 flex justify-center">
         <.button
-          disabled={length(@releases) == 0}
+          disabled={length(@scan_results) == 0}
           phx-disable-with={gettext("Importing...")}
           phx-click={JS.push("import_releases", target: "#barcode-scanner")}
         >
@@ -94,6 +95,35 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
     """
   end
 
+  attr :scan_result, BarcodeScan.Result, required: true
+
+  defp scan_result(assigns) do
+    ~H"""
+    <.barcode_not_found :if={@scan_result.status == :not_found} number={@scan_result.number} />
+    <.release
+      :if={@scan_result.status != :not_found}
+      release={@scan_result.release}
+      record_id={@scan_result.record_id}
+      status={@scan_result.status}
+    />
+    """
+  end
+
+  attr :number, :string, required: true
+
+  defp barcode_not_found(assigns) do
+    ~H"""
+    <div class="w-full bg-red-50 dark:bg-red-950 p-4">
+      <h1 class="text-sm leading-6 text-zinc-700 dark:text-zinc-400">
+        {gettext("Barcode not found")}
+      </h1>
+      <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+        {@number}
+      </h2>
+    </div>
+    """
+  end
+
   attr :release, MusicBrainz.ReleaseSearchResult, required: true
   attr :record_id, :string
   attr :status, :atom, required: true, values: [:collected, :wishlisted, :new]
@@ -133,35 +163,23 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
 
   @impl true
   def handle_event("camera_allowed", _params, socket) do
-    Logger.debug(fn -> "Camera access allowed" end)
     {:noreply, assign(socket, camera: :allowed)}
   end
 
   def handle_event("camera_denied", _params, socket) do
-    Logger.debug(fn -> "Camera access denied" end)
     {:noreply, assign(socket, camera: :denied)}
   end
 
   def handle_event("barcode_scanned", %{"number" => number}, socket) do
-    Logger.debug(fn -> "Scanned barcode #{number}" end)
-
     socket =
-      case MusicBrainz.search_release_by_barcode(number) do
-        {:ok, [best_match_release | _other_releases]} ->
-          Logger.debug(fn -> "Found release #{best_match_release.id}" end)
-          assign_release_with_status(best_match_release, socket)
+      case BarcodeScan.scan(number) do
+        {:ok, scan_result} ->
+          assign(socket, :scan_results, [scan_result | socket.assigns.scan_results])
 
-        {:ok, []} ->
-          Logger.debug(fn -> "No release found for barcode #{number}" end)
-
-          put_flash(
-            socket,
-            :error,
-            gettext("No release found for barcode %{number}", number: number)
-          )
-
-        {:error, _reason} ->
-          Logger.error(fn -> "Failed to search release for barcode #{number}" end)
+        {:error, reason} ->
+          Logger.error(fn ->
+            "Failed to search release for barcode #{number}: #{inspect(reason)}"
+          end)
 
           put_flash(
             socket,
@@ -177,45 +195,17 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
     current_time = DateTime.utc_now()
     # TODO: error handling when a release fails to import
     :ok =
-      Enum.each(socket.assigns.releases, fn {status, record_id, release} ->
-        if status == :new do
-          Records.import_from_musicbrainz_release(release.id,
-            format: MusicBrainz.ReleaseSearchResult.format(release),
-            purchased_at: current_time
-          )
-        end
-
-        if status == :wishlisted do
-          record = Records.get_record!(record_id)
-          Records.update_record(record, %{"purchased_at" => current_time})
-        end
+      Enum.each(socket.assigns.scan_results, fn scan_result ->
+        BarcodeScan.import(scan_result, current_time)
       end)
 
     qs = %{order: :purchase}
 
     {:noreply,
      socket
-     |> assign(:releases, [])
+     |> assign(:scan_results, [])
      |> put_flash(:info, gettext("Records imported successfully"))
      |> push_patch(to: ~p"/collection?#{qs}")}
-  end
-
-  defp assign_release_with_status(release, socket) do
-    format = MusicBrainz.ReleaseSearchResult.format(release)
-
-    release_with_status =
-      case Records.get_release_status(release.id, format) do
-        nil ->
-          {:new, nil, release}
-
-        %{record_id: record_id, purchased_at: nil} ->
-          {:wishlisted, record_id, release}
-
-        %{record_id: record_id} ->
-          {:collected, record_id, release}
-      end
-
-    assign(socket, :releases, [release_with_status | socket.assigns.releases])
   end
 
   defp release_format_label(release) do

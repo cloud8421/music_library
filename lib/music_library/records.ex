@@ -107,7 +107,11 @@ defmodule MusicLibrary.Records do
           purchased_at: fragment("records.purchased_at")
         }
 
-    Repo.one(q)
+    case Repo.one(q) do
+      nil -> :new
+      %{record_id: record_id, purchased_at: nil} -> {:wishlisted, record_id}
+      %{record_id: record_id} -> {:collected, record_id}
+    end
   end
 
   def get_artist_records(musicbrainz_id) do

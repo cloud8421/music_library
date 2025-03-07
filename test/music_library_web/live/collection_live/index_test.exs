@@ -385,6 +385,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     |> visit(~p"/collection/scan")
     |> trigger_hook("#barcode-scanner", "barcode_scanned", %{"number" => barcode})
     |> assert_has("h2", text: "Marbles")
+    |> assert_has("span", text: "New")
     |> click_button("Import releases")
 
     [record] = MusicLibrary.Repo.all(MusicLibrary.Records.Record)
