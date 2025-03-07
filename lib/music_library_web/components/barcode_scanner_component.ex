@@ -193,18 +193,30 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
 
   def handle_event("import_releases", _params, socket) do
     current_time = DateTime.utc_now()
-    # TODO: error handling when a release fails to import
-    :ok =
-      Enum.each(socket.assigns.scan_results, fn scan_result ->
-        BarcodeScan.import(scan_result, current_time)
-      end)
+
+    socket =
+      case BarcodeScan.import_results(socket.assigns.scan_results, current_time) do
+        [] ->
+          put_flash(socket, :info, gettext("Records imported successfully"))
+
+        errors ->
+          errors_summary =
+            Enum.map_join(errors, "\n", fn {number, reason} ->
+              "#{number}: #{inspect(reason)}"
+            end)
+
+          put_flash(
+            socket,
+            :error,
+            gettext("Some records could not be imported: %{summary}", summary: errors_summary)
+          )
+      end
 
     qs = %{order: :purchase}
 
     {:noreply,
      socket
      |> assign(:scan_results, [])
-     |> put_flash(:info, gettext("Records imported successfully"))
      |> push_patch(to: ~p"/collection?#{qs}")}
   end
 

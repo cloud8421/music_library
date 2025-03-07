@@ -26,7 +26,19 @@ defmodule MusicLibrary.BarcodeScan do
     end
   end
 
-  def import(scan_result, current_time) do
+  def import_results(scan_results, current_time) do
+    Enum.reduce(scan_results, [], fn scan_result, errors ->
+      case import_result(scan_result, current_time) do
+        {:error, reason} ->
+          [{scan_result.number, reason} | errors]
+
+        _ ->
+          errors
+      end
+    end)
+  end
+
+  defp import_result(scan_result, current_time) do
     case scan_result.status do
       :new ->
         Records.import_from_musicbrainz_release(scan_result.release.id,
