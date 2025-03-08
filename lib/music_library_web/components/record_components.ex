@@ -166,7 +166,10 @@ defmodule MusicLibraryWeb.RecordComponents do
                 role="menuitem"
                 tabindex="0"
                 id={"actions-#{record.id}-purchase"}
-                phx-click={JS.push("add-to-collection", value: %{id: record.id})}
+                phx-click={
+                  JS.dispatch("music_library:confetti")
+                  |> JS.push("add-to-collection", value: %{id: record.id})
+                }
               >
                 {gettext("Purchased")}
               </.link>

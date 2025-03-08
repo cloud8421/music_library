@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "barcode-detector": "^3.0.0"
+    "barcode-detector": "^3.0.0",
+    "canvas-confetti": "^1.9.3"
   }
 }

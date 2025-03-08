@@ -22,6 +22,7 @@ import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 import BarcodeScannerHook from "./barcode-scanner";
+import confetti from "canvas-confetti";
 
 let Hooks = {};
 Hooks.BarcodeScanner = BarcodeScannerHook;
@@ -52,6 +53,12 @@ window.addEventListener("music_library:clipcopy", (event) => {
 });
 window.addEventListener("music_library:scroll_top", (_event) => {
   window.scrollTo(0, 0);
+});
+window.addEventListener("music_library:confetti", (_event) => {
+  confetti({
+    particleCount: 100,
+    spread: 200,
+  });
 });
 
 // connect if there are any LiveViews on the page
