@@ -29,6 +29,11 @@ description = 'Update the Tailwind version configured in the project'
 run = 'mix tailwind.update_version'
 hide = true
 
+[tasks.tailwind-outdated]
+description = 'Checks that the Tailwind version is up to date'
+run = 'mix tailwind.check_version'
+hide = true
+
 [tasks.setup]
 depends = ['npm-install']
 description = 'Install dependencies and setup the database'
@@ -40,7 +45,7 @@ description = 'Update dependencies'
 run = ['mix deps.update --all']
 
 [tasks.deps-outdated]
-depends = ['npm-outdated']
+depends = ['npm-outdated', 'tailwind-outdated']
 description = 'Show outdated dependencies'
 run = ['mix hex.outdated --all']
 
