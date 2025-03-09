@@ -28,7 +28,7 @@ defmodule MusicLibrary.Wishlist do
         where: fragment("records.purchased_at IS NULL"),
         select: %{record_id: fragment("records.id"), release_id: r.value}
 
-    q |> Repo.all()
+    Repo.all(q)
   end
 
   defp base_search do

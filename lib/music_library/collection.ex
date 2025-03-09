@@ -68,7 +68,7 @@ defmodule MusicLibrary.Collection do
         where: fragment("records.purchased_at IS NOT NULL"),
         select: %{record_id: fragment("records.id"), release_id: r.value}
 
-    q |> Repo.all()
+    Repo.all(q)
   end
 
   def count_records_by_genre do
@@ -78,7 +78,7 @@ defmodule MusicLibrary.Collection do
         order_by: [desc: count(r.value)],
         select: %{genre: r.value, count: count(r.value)}
 
-    q |> Repo.all()
+    Repo.all(q)
   end
 
   defp base_search do
