@@ -33,7 +33,7 @@ defmodule Mix.Tasks.Tailwind.UpdateVersion do
       new_config_contents =
         String.replace(
           config_contents,
-          ~r{version: "#{current_version}"},
+          ~s(version: "#{current_version}"),
           "version: \"#{latest_version}\""
         )
 
