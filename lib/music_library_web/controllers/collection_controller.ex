@@ -14,4 +14,20 @@ defmodule MusicLibraryWeb.CollectionController do
 
     render(conn, :show, record: random_record)
   end
+
+  def index(conn, params) do
+    limit =
+      Map.get(params, "limit", "20")
+      |> String.to_integer()
+
+    offset =
+      Map.get(params, "offset", "0")
+      |> String.to_integer()
+
+    total = Collection.search_records_count("")
+
+    records = Collection.search_records("", limit: limit, offset: offset)
+
+    render(conn, :index, total: total, limit: limit, offset: offset, records: records)
+  end
 end
