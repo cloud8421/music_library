@@ -31,7 +31,7 @@ msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex:26
 #: lib/music_library_web/live/artist_live/show.html.heex:105
-#: lib/music_library_web/live/collection_live/index.ex:157
+#: lib/music_library_web/live/collection_live/index.ex:158
 #: lib/music_library_web/live/collection_live/show.ex:117
 #: lib/music_library_web/live/collection_live/show.ex:134
 #, elixir-autogen, elixir-format
@@ -59,8 +59,8 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.ex:132
-#: lib/music_library_web/live/collection_live/index.ex:139
+#: lib/music_library_web/live/collection_live/index.ex:133
+#: lib/music_library_web/live/collection_live/index.ex:140
 #: lib/music_library_web/live/stats_live/index.ex:53
 #: lib/music_library_web/live/stats_live/index.ex:59
 #: lib/music_library_web/live/wishlist_live/index.ex:120
@@ -158,7 +158,7 @@ msgstr ""
 msgid "Previous"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex:196
+#: lib/music_library_web/live/collection_live/index.html.heex:69
 #, elixir-autogen, elixir-format
 msgid "Purchase"
 msgstr ""
@@ -175,7 +175,7 @@ msgstr ""
 msgid "Purchased on"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.ex:124
+#: lib/music_library_web/live/collection_live/index.ex:125
 #: lib/music_library_web/live/stats_live/index.ex:45
 #: lib/music_library_web/live/wishlist_live/index.ex:112
 #, elixir-autogen, elixir-format
@@ -214,7 +214,7 @@ msgstr ""
 msgid "Show"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex:201
+#: lib/music_library_web/live/collection_live/index.html.heex:74
 #: lib/music_library_web/live/wishlist_live/index.html.heex:23
 #, elixir-autogen, elixir-format
 msgid "Showing <b>%{visible}</b> of <b>%{total}</b> records"
@@ -236,7 +236,7 @@ msgstr ""
 msgid "Success!"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.ex:21
+#: lib/music_library_web/live/collection_live/index.ex:22
 #: lib/music_library_web/live/collection_live/show.ex:14
 #: lib/music_library_web/live/wishlist_live/index.ex:21
 #: lib/music_library_web/live/wishlist_live/show.ex:13
@@ -322,13 +322,13 @@ msgstr ""
 msgid "Choose which format to import"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:158
+#: lib/music_library_web/components/barcode_scanner_component.ex:293
 #: lib/music_library_web/live/stats_live/index.html.heex:141
 #, elixir-autogen, elixir-format
 msgid "Collected"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:155
+#: lib/music_library_web/components/barcode_scanner_component.ex:290
 #: lib/music_library_web/live/stats_live/index.html.heex:147
 #, elixir-autogen, elixir-format
 msgid "Wishlisted"
@@ -454,7 +454,7 @@ msgstr ""
 msgid "Error loading play count"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex:178
+#: lib/music_library_web/live/collection_live/index.html.heex:51
 #, elixir-autogen, elixir-format
 msgid "A->Z"
 msgstr ""
@@ -580,12 +580,12 @@ msgstr ""
 msgid "Published releases"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex:159
+#: lib/music_library_web/live/collection_live/index.html.heex:32
 #, elixir-autogen, elixir-format
 msgid "Scan"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.ex:58
+#: lib/music_library_web/live/collection_live/index.ex:59
 #, elixir-autogen, elixir-format
 msgid "Scan barcodes · Collection"
 msgstr ""
@@ -600,17 +600,17 @@ msgstr ""
 msgid "Open camera"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:187
+#: lib/music_library_web/components/barcode_scanner_component.ex:322
 #, elixir-autogen, elixir-format
 msgid "Failed to search release for barcode %{number}"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:200
+#: lib/music_library_web/components/barcode_scanner_component.ex:335
 #, elixir-autogen, elixir-format
 msgid "Records imported successfully"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:153
+#: lib/music_library_web/components/barcode_scanner_component.ex:288
 #, elixir-autogen, elixir-format
 msgid "New"
 msgstr ""
@@ -650,12 +650,12 @@ msgstr ""
 msgid "Live Dashboard"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:118
+#: lib/music_library_web/components/barcode_scanner_component.ex:253
 #, elixir-autogen, elixir-format
 msgid "Barcode not found"
 msgstr ""
 
-#: lib/music_library_web/components/barcode_scanner_component.ex:211
+#: lib/music_library_web/components/barcode_scanner_component.ex:346
 #, elixir-autogen, elixir-format
 msgid "Some records could not be imported: %{summary}"
 msgstr ""
@@ -666,7 +666,7 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.ex:44
+#: lib/music_library_web/live/collection_live/index.ex:45
 #, elixir-autogen, elixir-format
 msgid "Add new Record · Collection"
 msgstr ""

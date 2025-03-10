@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
   use MusicLibraryWeb, :live_view
   import MusicLibraryWeb.Pagination
   import MusicLibraryWeb.RecordComponents
+  import MusicLibraryWeb.BarcodeScannerComponent, only: [barcode_icon: 1]
 
   alias MusicLibrary.Collection
   alias MusicLibrary.Records
