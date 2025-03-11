@@ -1,11 +1,10 @@
-@variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
-@variant phx-submit-loading (.phx-submit-loading&, .phx-submit-loading &);
-@variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
-
+@import "tailwindcss";
 @plugin "./heroicons.tailwind.plugin.js";
 @plugin "@tailwindcss/forms";
 
-@import "tailwindcss";
+@custom-variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
+@custom-variant phx-submit-loading (.phx-submit-loading&, .phx-submit-loading &);
+@custom-variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
 
 @layer base {
   button:not(:disabled),
