@@ -54,9 +54,17 @@ defmodule LastFm.Feed do
   def all_albums do
     m = [
       {
-        {:"$1", %{scrobbled_at_label: :"$2", album: :"$3", cover_url: :"$4"}},
+        {:"$1", %{scrobbled_at_label: :"$2", album: :"$3", cover_url: :"$4", artist: :"$5"}},
         [],
-        [%{scrobbled_at_uts: :"$1", scrobbled_at_label: :"$2", album: :"$3", cover_url: :"$4"}]
+        [
+          %{
+            scrobbled_at_uts: :"$1",
+            scrobbled_at_label: :"$2",
+            album: :"$3",
+            cover_url: :"$4",
+            artist: :"$5"
+          }
+        ]
       }
     ]
 

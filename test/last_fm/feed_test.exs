@@ -65,6 +65,7 @@ defmodule LastFm.FeedTest do
 
       assert [
                %{
+                 artist: @track_two.artist,
                  album: @track_two.album,
                  cover_url: @track_two.cover_url,
                  scrobbled_at_uts: @track_two.scrobbled_at_uts,
