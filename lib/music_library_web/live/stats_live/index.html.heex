@@ -83,7 +83,7 @@
     </button>
   </div>
   <%!-- TODO: replace with OSS version --%>
-  <span class="mt-4 isolate inline-flex rounded-md shadow-xs">
+  <span class="mt-5 isolate inline-flex rounded-md shadow-xs">
     <button
       phx-click={JS.push("set_scrobble_activity_mode", value: %{"mode" => :tracks})}
       class={[
@@ -113,7 +113,7 @@
     :if={@scrobble_activity_mode == :albums}
     id="scrobble-activity-albums"
     role="list"
-    class="mt-4 rounded-md px-4 py-5 shadow-sm"
+    class="mt-5 rounded-md px-4 py-5 shadow-sm"
     phx-update="stream"
   >
     <li :for={{id, album} <- @streams.recent_albums} id={id} class="group">
@@ -245,7 +245,7 @@
     :if={@scrobble_activity_mode == :tracks}
     id="scrobble-activity-tracks"
     role="list"
-    class="mt-4 rounded-md px-4 py-5 shadow-sm"
+    class="mt-5 rounded-md px-4 py-5 shadow-sm"
     phx-update="stream"
   >
     <li :for={{id, track} <- @streams.recent_tracks} id={id} class="group">
