@@ -19,10 +19,13 @@ defmodule MusicLibraryWeb.StatsLive.Index do
      |> stream_configure(:recent_tracks,
        dom_id: fn track -> "track-#{track.scrobbled_at_uts}" end
      )
-     |> stream(:recent_tracks, recent_tracks)
+     |> stream_configure(:recent_albums,
+       dom_id: fn album -> "album-#{album.scrobbled_at_uts}" end
+     )
      |> assign_counts()
      |> assign_scrobble_activity(recent_tracks)
      |> assign(
+       scrobble_activity_mode: :tracks,
        latest_record: latest_record,
        page_title: gettext("Stats"),
        nav_section: :stats
@@ -60,11 +63,20 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     end
   end
 
-  def handle_info(%{tracks: recent_tracks}, socket) do
+  def handle_event("set_scrobble_activity_mode", %{"mode" => mode}, socket)
+      when mode in ["tracks", "albums"] do
+    recent_tracks = LastFm.Feed.all_tracks()
+
     {:noreply,
      socket
      |> assign_scrobble_activity(recent_tracks)
-     |> stream(:recent_tracks, recent_tracks, reset: true)}
+     |> assign(scrobble_activity_mode: String.to_existing_atom(mode))}
+  end
+
+  def handle_info(%{tracks: recent_tracks}, socket) do
+    {:noreply,
+     socket
+     |> assign_scrobble_activity(recent_tracks)}
   end
 
   defp assign_counts(socket) do
@@ -95,7 +107,23 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     recent_artist_ids = recent_artist_ids(recent_tracks)
     artist_ids = MapSet.intersection(all_artist_ids, recent_artist_ids)
 
-    assign(socket,
+    recent_albums =
+      recent_tracks
+      |> Enum.uniq_by(fn t -> t.album end)
+      |> Enum.map(fn t ->
+        %{
+          scrobbled_at_uts: t.scrobbled_at_uts,
+          scrobbled_at_label: t.scrobbled_at_label,
+          metadata: t.album,
+          artist: t.artist,
+          cover_url: t.cover_url
+        }
+      end)
+
+    socket
+    |> stream(:recent_tracks, recent_tracks, reset: true)
+    |> stream(:recent_albums, recent_albums, reset: true)
+    |> assign(
       collected_releases: collected_releases,
       wishlisted_releases: wishlisted_releases,
       artist_ids: artist_ids

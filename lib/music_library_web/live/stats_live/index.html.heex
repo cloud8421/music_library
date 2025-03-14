@@ -83,10 +83,169 @@
     </button>
   </div>
   <%!-- TODO: replace with OSS version --%>
+  <span class="mt-4 isolate inline-flex rounded-md shadow-xs">
+    <button
+      phx-click={JS.push("set_scrobble_activity_mode", value: %{"mode" => :tracks})}
+      class={[
+        "relative inline-flex items-center rounded-l-md",
+        "px-3 py-2 text-xs sm:text-sm font-semibold",
+        "ring-1 ring-inset focus:z-10",
+        "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 ring-zinc-300",
+        @scrobble_activity_mode == :tracks && "!bg-zinc-100 dark:!bg-zinc-700"
+      ]}
+    >
+      {gettext("Tracks")}
+    </button>
+    <button
+      phx-click={JS.push("set_scrobble_activity_mode", value: %{"mode" => :albums})}
+      class={[
+        "relative -ml-px inline-flex items-center rounded-r-md",
+        "px-3 py-2 text-xs sm:text-sm font-semibold",
+        "ring-1 ring-inset focus:z-10",
+        "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 ring-zinc-300",
+        @scrobble_activity_mode == :albums && "!bg-zinc-100 dark:!bg-zinc-700"
+      ]}
+    >
+      {gettext("Albums")}
+    </button>
+  </span>
   <ul
-    id="scrobble-activity"
+    :if={@scrobble_activity_mode == :albums}
+    id="scrobble-activity-albums"
     role="list"
-    class="mt-5 rounded-md px-4 py-5 shadow-sm"
+    class="mt-4 rounded-md px-4 py-5 shadow-sm"
+    phx-update="stream"
+  >
+    <li :for={{id, album} <- @streams.recent_albums} id={id} class="group">
+      <div class="relative pb-8 group-last:pb-0">
+        <span
+          class="group-last:hidden absolute left-6 top-6 -ml-px h-full w-0.5 bg-zinc-200"
+          aria-hidden="true"
+        >
+        </span>
+        <div class="relative flex space-x-3 items-center justify-between">
+          <div class="flex min-w-0 justify-between space-x-4 items-center">
+            <img
+              class="h-12 w-12 rounded-md shadow-sm"
+              src={album.cover_url}
+              alt={album.metadata.title}
+            />
+            <div>
+              <p
+                :if={album.artist.musicbrainz_id not in @artist_ids}
+                class="font-semibold text-sm block text-zinc-500 dark:text-zinc-400"
+              >
+                {album.artist.name}
+              </p>
+              <.link
+                :if={album.artist.musicbrainz_id in @artist_ids}
+                class="font-semibold text-sm block text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
+                navigate={~p"/artists/#{album.artist.musicbrainz_id}"}
+              >
+                {album.artist.name}
+              </.link>
+              <p class="font-semibold text-sm md:text-base text-zinc-700 dark:text-zinc-300">
+                {album.metadata.title}
+              </p>
+              <time
+                datetime={format_scrobbled_at_uts(album.scrobbled_at_uts)}
+                class="whitespace-nowrap text-right text-xs sm:text-sm text-zinc-500 dark:text-zinc-400"
+              >
+                {album.scrobbled_at_label}
+              </time>
+            </div>
+          </div>
+
+          <div class="flex gap-1 flex-col text-right">
+            <.badge
+              :if={album.metadata.musicbrainz_id == ""}
+              color={:gray}
+              text={gettext("No MB ID")}
+            />
+            <.link
+              :if={
+                record_id = tracked_record?(@collected_releases, album.metadata.musicbrainz_id)
+              }
+              navigate={~p"/collection/#{record_id}"}
+            >
+              <.badge color={:green} text={gettext("Collected")} />
+            </.link>
+            <.link
+              :if={
+                record_id = tracked_record?(@wishlisted_releases, album.metadata.musicbrainz_id)
+              }
+              navigate={~p"/wishlist/#{record_id}"}
+            >
+              <.badge color={:yellow} text={gettext("Wishlisted")} />
+            </.link>
+          </div>
+
+          <div
+            :if={
+              album.metadata.musicbrainz_id !== "" and
+                !tracked_record?(
+                  @collected_releases ++ @wishlisted_releases,
+                  album.metadata.musicbrainz_id
+                )
+            }
+            class="relative flex-none"
+          >
+            <button
+              type="button"
+              class="text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-300"
+              aria-expanded="false"
+              aria-haspopup="true"
+              phx-click={toggle_actions_menu(album.scrobbled_at_uts)}
+              phx-click-away={close_actions_menu(album.scrobbled_at_uts)}
+            >
+              <span class="sr-only">{gettext("Choose which format to import")}</span>
+              <.icon name="hero-star" class="-mt-1 h-5 w-5" aria-hidden="true" data-slot="icon" />
+            </button>
+            <!--
+          Dropdown menu, show/hide based on menu state.
+
+          Entering: "transition ease-out duration-100"
+            From: "transform opacity-0 scale-95"
+            To: "transform opacity-100 scale-100"
+          Leaving: "transition ease-in duration-75"
+            From: "transform opacity-100 scale-100"
+            To: "transform opacity-0 scale-95"
+        -->
+            <.focus_wrap
+              id={"actions-#{album.scrobbled_at_uts}"}
+              class={[
+                "hidden pointer-events-auto absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-zinc-800 py-2 shadow-lg ring-1 ring-zinc-900/5 focus:outline-hidden"
+              ]}
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="options-menu-0-button"
+            >
+              <.link
+                :for={format <- Records.Record.formats()}
+                class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
+                role="menuitem"
+                tabindex="0"
+                id={"actions-#{album.scrobbled_at_uts}-#{format}-import"}
+                phx-click={
+                  JS.push("import",
+                    value: %{id: album.metadata.musicbrainz_id, format: format},
+                    page_loading: true
+                  )
+                }
+              >
+                {format_label(format)}
+              </.link>
+            </.focus_wrap>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+  <ul
+    :if={@scrobble_activity_mode == :tracks}
+    id="scrobble-activity-tracks"
+    role="list"
+    class="mt-4 rounded-md px-4 py-5 shadow-sm"
     phx-update="stream"
   >
     <li :for={{id, track} <- @streams.recent_tracks} id={id} class="group">
