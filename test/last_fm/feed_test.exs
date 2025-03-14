@@ -46,32 +46,5 @@ defmodule LastFm.FeedTest do
       :ok = Feed.update([@track_two, @track_one])
       assert [@track_two, @track_one] == Feed.all_tracks()
     end
-
-    test "it returns artists in descending order of scrobble" do
-      :ok = Feed.update([@track_two, @track_one])
-
-      assert [
-               %{
-                 artist: @track_two.artist,
-                 scrobbled_at_uts: @track_two.scrobbled_at_uts,
-                 scrobbled_at_label: @track_two.scrobbled_at_label
-               }
-             ] ==
-               Feed.all_artists()
-    end
-
-    test "it returns albums in descending order of scrobble" do
-      :ok = Feed.update([@track_two, @track_one])
-
-      assert [
-               %{
-                 artist: @track_two.artist,
-                 album: @track_two.album,
-                 cover_url: @track_two.cover_url,
-                 scrobbled_at_uts: @track_two.scrobbled_at_uts,
-                 scrobbled_at_label: @track_two.scrobbled_at_label
-               }
-             ] == Feed.all_albums()
-    end
   end
 end

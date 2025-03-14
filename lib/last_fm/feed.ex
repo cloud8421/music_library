@@ -37,40 +37,6 @@ defmodule LastFm.Feed do
     :ets.select_reverse(__MODULE__, m)
   end
 
-  @spec all_artists() :: [LastFm.Artist.t()]
-  def all_artists do
-    m = [
-      {
-        {:"$1", %{scrobbled_at_label: :"$2", artist: :"$3"}},
-        [],
-        [%{scrobbled_at_uts: :"$1", scrobbled_at_label: :"$2", artist: :"$3"}]
-      }
-    ]
-
-    :ets.select_reverse(__MODULE__, m) |> Enum.uniq_by(fn pair -> pair.artist end)
-  end
-
-  @spec all_albums() :: [LastFm.Album.t()]
-  def all_albums do
-    m = [
-      {
-        {:"$1", %{scrobbled_at_label: :"$2", album: :"$3", cover_url: :"$4", artist: :"$5"}},
-        [],
-        [
-          %{
-            scrobbled_at_uts: :"$1",
-            scrobbled_at_label: :"$2",
-            album: :"$3",
-            cover_url: :"$4",
-            artist: :"$5"
-          }
-        ]
-      }
-    ]
-
-    :ets.select_reverse(__MODULE__, m) |> Enum.uniq_by(fn pair -> pair.album end)
-  end
-
   @spec subscribe() :: :ok
   def subscribe do
     Phoenix.PubSub.subscribe(LastFm.PubSub, "feed:update")
