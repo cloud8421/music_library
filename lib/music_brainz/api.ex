@@ -321,7 +321,7 @@ defmodule MusicBrainz.API do
       url: "/release",
       params: [
         fmt: "json",
-        query: "barcode:#{barcode}"
+        query: "barcode:#{barcode} AND NOT format:digitalmedia"
       ]
     )
     |> Req.Request.append_response_steps(
