@@ -8,10 +8,10 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
   def mount(_params, _session, socket) do
     latest_record = Collection.get_latest_record!()
-    recent_tracks = LastFm.Feed.all_tracks()
+    recent_tracks = LastFm.get_scrobbled_tracks()
 
     if connected?(socket) do
-      LastFm.Feed.subscribe()
+      LastFm.subscribe_to_feed()
     end
 
     {:ok,
@@ -33,7 +33,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   end
 
   def handle_event("refresh_lastfm_feed", _, socket) do
-    LastFm.Refresh.refresh()
+    LastFm.refresh_scrobbled_tracks()
     {:noreply, socket}
   end
 
@@ -65,7 +65,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
   def handle_event("set_scrobble_activity_mode", %{"mode" => mode}, socket)
       when mode in ["tracks", "albums"] do
-    recent_tracks = LastFm.Feed.all_tracks()
+    recent_tracks = LastFm.get_scrobbled_tracks()
 
     {:noreply,
      socket

@@ -1,5 +1,11 @@
 defmodule LastFm do
-  alias LastFm.API
+  alias LastFm.{API, Feed, Refresh}
+
+  def get_scrobbled_tracks, do: Feed.all_tracks()
+
+  def subscribe_to_feed, do: Feed.subscribe()
+
+  def refresh_scrobbled_tracks, do: Refresh.refresh()
 
   def get_artist_info(musicbrainz_id, name) do
     last_fm_config = last_fm_config()
