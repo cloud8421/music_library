@@ -81,6 +81,10 @@ run = 'fly ssh console'
 description = 'Backup the production database to the local development env'
 run = 'mix music_library.prod.db_backup'
 
+[tasks.prod-prune-backups]
+description = 'Deletes all downloaded database backups'
+run = 'rm data/music_library_prod*'
+
 # GIT TOOLING
 
 [tasks.static-checks-hook]
