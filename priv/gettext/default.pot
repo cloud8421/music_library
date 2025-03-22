@@ -696,12 +696,12 @@ msgstr ""
 msgid "Search for a record"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:109
+#: lib/music_library_web/live/stats_live/index.html.heex:97
 #, elixir-autogen, elixir-format
 msgid "Albums"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex:97
+#: lib/music_library_web/live/stats_live/index.html.heex:109
 #, elixir-autogen, elixir-format
 msgid "Tracks"
 msgstr ""

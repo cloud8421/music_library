@@ -160,9 +160,23 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         |> Records.change_record(%{release_ids: ["2157367e-bf73-48bb-8185-41023a54fa08"]})
         |> Repo.update!()
 
+      # By default, we show scrobbled albums
+
       session =
         conn
         |> visit("/")
+        |> assert_has("#album-#{machinarium_soundtrack_track.scrobbled_at_uts}",
+          text: "Wishlisted"
+        )
+        |> assert_has("#album-#{the_last_flight_track.scrobbled_at_uts}", text: "Collected")
+        |> assert_has("#album-#{the_mystery_of_time_track.scrobbled_at_uts}",
+          text: "Choose which format to import"
+        )
+        |> assert_has("#album-#{in_murmuration_track.scrobbled_at_uts}",
+          text: "No MB ID"
+        )
+        # Switch to tracks list
+        |> click_button("Tracks")
         |> assert_has("#track-#{machinarium_soundtrack_track.scrobbled_at_uts}",
           text: "Wishlisted"
         )

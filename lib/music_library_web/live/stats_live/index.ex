@@ -25,7 +25,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
      |> assign_counts()
      |> assign_scrobble_activity(recent_tracks)
      |> assign(
-       scrobble_activity_mode: :tracks,
+       scrobble_activity_mode: :albums,
        latest_record: latest_record,
        page_title: gettext("Stats"),
        nav_section: :stats
