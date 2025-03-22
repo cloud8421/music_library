@@ -168,6 +168,8 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         |> assert_has("#album-#{machinarium_soundtrack_track.scrobbled_at_uts}",
           text: "Wishlisted"
         )
+        |> refute_has("p", text: machinarium_soundtrack_track.title)
+        |> assert_has("p", text: machinarium_soundtrack_track.album.title)
         |> assert_has("#album-#{the_last_flight_track.scrobbled_at_uts}", text: "Collected")
         |> assert_has("#album-#{the_mystery_of_time_track.scrobbled_at_uts}",
           text: "Choose which format to import"
@@ -180,6 +182,8 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         |> assert_has("#track-#{machinarium_soundtrack_track.scrobbled_at_uts}",
           text: "Wishlisted"
         )
+        |> assert_has("p", text: machinarium_soundtrack_track.title)
+        |> assert_has("p", text: machinarium_soundtrack_track.album.title)
         |> assert_has("#track-#{the_last_flight_track.scrobbled_at_uts}", text: "Collected")
         |> assert_has("#track-#{the_mystery_of_time_track.scrobbled_at_uts}",
           text: "Choose which format to import"
