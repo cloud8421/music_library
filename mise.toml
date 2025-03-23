@@ -85,6 +85,10 @@ run = 'mix music_library.prod.db_backup'
 description = 'Deletes all downloaded database backups'
 run = 'rm data/music_library_prod*'
 
+[tasks.prod-test]
+description = 'Run HTTP tests against production'
+run = 'hurl --test test/prod.hurl'
+
 # GIT TOOLING
 
 [tasks.static-checks-hook]
