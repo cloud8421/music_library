@@ -61,8 +61,8 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
-# Use Jason for JSON parsing in Phoenix
-config :phoenix, :json_library, Jason
+# Use JSON for JSON parsing in Phoenix
+config :phoenix, :json_library, JSON
 
 config :error_tracker,
   repo: MusicLibrary.ErrorRepo,
