@@ -49,3 +49,5 @@ config :music_library, MusicBrainz,
   ]
 
 config :phoenix_test, :endpoint, MusicLibraryWeb.Endpoint
+
+config :floki, :html_parser, Floki.HTMLParser.FastHtml

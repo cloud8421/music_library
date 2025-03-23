@@ -85,6 +85,7 @@ defmodule MusicLibrary.MixProject do
       # Test tooling
       {:phoenix_test, "~> 0.5.1", only: :test},
       {:floki, ">= 0.30.0", only: :test},
+      {:fast_html, "~> 2.0", only: :test},
 
       # Prod error/perf tooling
       {:phoenix_live_dashboard, "~> 0.8.3"},
