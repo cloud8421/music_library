@@ -56,7 +56,7 @@
 The project is managed and configured via [mise-en-place](https://mise.jdx.dev):
 
 - `mise install` will pull the correct Erlang, Elixir and Node.js versions
-- `mise run setup` will setup dependencies and database structure
+- `mise run dev:setup` will setup dependencies and database structure
 
 ## Environment configuration
 

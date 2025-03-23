@@ -56,37 +56,37 @@ hide = true
 
 # DEPENDENCIES
 
-[tasks.deps-outdated]
+[tasks."deps:outdated"]
 depends = ['npm-outdated', 'tailwind-outdated', 'mix-outdated']
 description = 'Show outdated dependencies'
 
-[tasks.deps-update]
+[tasks."deps:update"]
 depends = ['npm-update', 'tailwind-update', 'mix-update']
 description = 'Update dependencies'
 
 # SETUP
 
-[tasks.setup]
+[tasks."dev:setup"]
 depends = ['npm-install']
 description = 'Install dependencies and setup the database'
 run = ['mix setup']
 
 # PRODUCTION
 
-[tasks.prod-console]
+[tasks."prod:console"]
 description = 'Open an ssh console to the production env'
 run = 'fly ssh console'
 
-[tasks.prod-backup]
+[tasks."prod:backup"]
 description = 'Backup the production database to the local development env'
 run = 'mix music_library.prod.db_backup'
 
-[tasks.prod-prune-backups]
+[tasks."prod:prune-backups"]
 confirm = 'Are you sure you want to delete all downloaded database backups?'
 description = 'Deletes all downloaded database backups'
 run = 'rm data/music_library_prod*'
 
-[tasks.prod-test]
+[tasks."prod:test"]
 description = 'Run HTTP tests against production'
 run = 'hurl --test test/prod.hurl'
 
@@ -103,7 +103,7 @@ hide = true
 
 # DEVELOPMENT/TEST
 
-[tasks.static-checks]
+[tasks."dev:static-checks"]
 description = 'Run static checks for code formatting, translations, quality'
 run = 'mix do format, credo, gettext.extract'
 
@@ -111,16 +111,16 @@ run = 'mix do format, credo, gettext.extract'
 description = 'Run project tests'
 run = 'mix test'
 
-[tasks.console]
+[tasks."dev:console"]
 description = 'Run the application attached to an IEx console'
 run = 'iex -S mix phx.server'
 
 # DOCKER
 
-[tasks.docker-build]
+[tasks."docker:build"]
 description = 'Builds and tags the application Docker image'
 run = 'docker build -t fullyforged/music_library .'
 
-[tasks.docker-push]
+[tasks."docker:push"]
 description = 'Push the image to the registry'
 run = 'docker push fullyforged/music_library'
