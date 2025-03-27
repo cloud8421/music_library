@@ -83,7 +83,7 @@ defmodule MusicLibrary.MixProject do
       {:nimble_options, "~> 1.1"},
 
       # Test tooling
-      {:phoenix_test, "~> 0.5.1", only: :test},
+      {:phoenix_test, "~> 0.6.0", only: :test},
       {:floki, ">= 0.30.0", only: :test},
       {:fast_html, "~> 2.0", only: :test},
 
