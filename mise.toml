@@ -77,6 +77,10 @@ run = ['mix setup']
 description = 'Open an ssh console to the production env'
 run = 'fly ssh console'
 
+[tasks."prod:migrate"]
+description = 'Run migrations against production'
+run = 'mix music_library.prod.db_migrate'
+
 [tasks."prod:backup"]
 description = 'Backup the production database to the local development env'
 run = 'mix music_library.prod.db_backup'
