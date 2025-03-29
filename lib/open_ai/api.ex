@@ -32,6 +32,10 @@ defmodule OpenAI.API do
     end
 
     Req.post!("https://api.openai.com/v1/chat/completions",
+      receive_timeout: 1000,
+      connect_options: [
+        timeout: 2500
+      ],
       json: %{
         model: completion.model,
         messages: [Map.take(completion, [:content, :role])],
