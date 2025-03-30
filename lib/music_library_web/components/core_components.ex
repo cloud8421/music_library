@@ -655,7 +655,7 @@ defmodule MusicLibraryWeb.CoreComponents do
       :green ->
         ~H"""
         <span class={[
-          "inline-flex items-center rounded-md",
+          "inline-flex items-center rounded-md whitespace-nowrap",
           "px-2 py-1 text-xs font-medium",
           "ring-1 ring-inset",
           "bg-green-50 dark:bg-green-500/10",
@@ -669,7 +669,7 @@ defmodule MusicLibraryWeb.CoreComponents do
       :yellow ->
         ~H"""
         <span class={[
-          "inline-flex items-center rounded-md",
+          "inline-flex items-center rounded-md whitespace-nowrap",
           "px-2 py-1 text-xs font-medium",
           "ring-1 ring-inset",
           "bg-yellow-50 dark:bg-yellow-400/10",
@@ -683,7 +683,7 @@ defmodule MusicLibraryWeb.CoreComponents do
       :gray ->
         ~H"""
         <span class={[
-          "inline-flex items-center rounded-md",
+          "inline-flex items-center rounded-md whitespace-nowrap",
           "px-2 py-1 text-xs font-medium",
           "ring-1 ring-inset",
           "bg-zinc-50 dark:bg-zinc-500/10",
