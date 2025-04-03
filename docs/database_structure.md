@@ -1,5 +1,20 @@
 # Database Structure
 
+<!--toc:start-->
+
+- [Database Structure](#database-structure)
+  - [Entity Relationship Diagram](#entity-relationship-diagram)
+  - [Tables Description](#tables-description)
+    - [Records](#records)
+    - [Records Search Index](#records-search-index)
+    - [Views](#views)
+      - [Artist Records View](#artist-records-view)
+    - [Triggers](#triggers)
+    - [Indices](#indices)
+  - [Notes](#notes)
+  - [WHY ONE TABLE?](#why-one-table)
+  <!--toc:end-->
+
 This document describes the database structure of the Music Library application.
 
 ## Entity Relationship Diagram
@@ -119,3 +134,13 @@ The following indices are maintained for performance:
    - Records with `purchased_at IS NOT NULL` are in the collection
    - Records with `purchased_at IS NULL` are in the wishlist
 
+## WHY ONE TABLE?
+
+In traditional relational database design, you would split out artists into a
+separate table, and associate them with records via a join table. So why
+sticking with one table?
+
+1. You only need to backup/export one table.
+2. Re-fetching data from MusicBrainz becomes trivial, as it just needs to update one field and everything else cascades accordingly.
+3. Traditional efficiency design constraints [do not apply to
+   SQLite](https://www.sqlite.org/np1queryprob.html), so it makes it easier to experiment with alternative database designs.
