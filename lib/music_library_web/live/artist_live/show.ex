@@ -61,9 +61,10 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
 
   # Bios start with text, then a link to read more on Last.fm, followed by a license text.
   # We split the bio at the read more link in order to render the license separately.
-  @last_fm_link_regex ~r/<a.*Read more on Last\.fm<\/a>\.*\s*/
   defp render_bio(bio) do
-    case String.split(bio, @last_fm_link_regex, include_captures: true) do
+    last_fm_link_regex = ~r/<a.*Read more on Last\.fm<\/a>\.*\s*/
+
+    case String.split(bio, last_fm_link_regex, include_captures: true) do
       [text, link, ""] ->
         reformatted_bio =
           Enum.join(
