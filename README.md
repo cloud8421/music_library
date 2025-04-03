@@ -90,6 +90,10 @@ The application is setup for deployment on Fly.io - just make sure you edit
 
 See the `.github` folder.
 
+## Architecture
+
+See the `docs` folder.
+
 ## Favicons
 
 This favicon was generated using the following graphics from Twitter Twemoji:
