@@ -1,4 +1,38 @@
 defmodule LastFm.Refresh do
+  @moduledoc """
+  A GenServer that manages periodic refreshing of Last.fm scrobbled tracks.
+
+  This module is responsible for:
+  - Fetching recent tracks from Last.fm at configurable intervals
+  - Updating an in-memory feed with the latest tracks
+  - Supporting both automatic and manual refresh modes
+
+  ## Configuration
+
+  The server accepts a `LastFm.Config` struct with the following options:
+  - `auto_refresh`: When true, automatically starts refreshing on init
+  - `refresh_interval`: Time in milliseconds between refresh attempts
+
+  ## Operation Modes
+
+  1. Automatic Mode (`auto_refresh: true`):
+     - Starts refreshing immediately on initialization
+     - Continues to refresh at the configured interval
+     - Handles failures gracefully by continuing to retry
+
+  2. Manual Mode (`auto_refresh: false`):
+     - Server remains dormant on initialization
+     - Refreshes only occur via explicit `refresh/0` calls
+     - Useful for testing or controlled refresh scenarios
+
+  ## Usage
+
+      # Manual refresh
+      LastFm.Refresh.refresh()
+
+  The module uses `LastFm.Feed` to store and broadcast track updates to subscribers.
+  """
+
   use GenServer
 
   require Logger
