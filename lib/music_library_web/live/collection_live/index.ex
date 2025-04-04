@@ -12,7 +12,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
     query: "",
     page: 1,
     page_size: 20,
-    order: :alphabetical
+    order: :purchase
   }
 
   @impl true
@@ -78,7 +78,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
   defp apply_action(socket, :index, params) do
     query = params["query"] || ""
-    order = parse_order(params["order"] || "alphabetical")
+    order = parse_order(params["order"] || "purchase")
     total_records = Collection.search_records_count(query)
 
     record_list_params =

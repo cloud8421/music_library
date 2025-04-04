@@ -158,7 +158,7 @@ msgstr ""
 msgid "Previous"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex:69
+#: lib/music_library_web/live/collection_live/index.html.heex:56
 #, elixir-autogen, elixir-format
 msgid "Purchase"
 msgstr ""
@@ -458,7 +458,7 @@ msgstr ""
 msgid "Error loading play count"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex:51
+#: lib/music_library_web/live/collection_live/index.html.heex:69
 #, elixir-autogen, elixir-format
 msgid "A->Z"
 msgstr ""

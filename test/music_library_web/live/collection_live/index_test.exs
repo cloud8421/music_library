@@ -41,7 +41,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
       {expected_present, expected_absent} = Enum.split(records, @default_records_page_size)
 
-      session = visit(conn, ~p"/collection")
+      session = visit(conn, ~p"/collection?order=alphabetical")
 
       for record <- expected_present do
         cover_url = ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
@@ -80,7 +80,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       {page_2_records, rest_of_records} = Enum.split(rest_of_records, page_size)
 
       page_2_session =
-        visit(conn, ~p"/collection?page=2&page_size=#{page_size}")
+        visit(conn, ~p"/collection?order=alphabetical&page=2&page_size=#{page_size}")
 
       for record <- page_1_records do
         refute_has(page_2_session, "#records-#{record.id}")
@@ -102,7 +102,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       {page_3_records, rest_of_records} = Enum.split(rest_of_records, page_size)
 
       page_3_session =
-        visit(conn, ~p"/collection?page=3&page_size=#{page_size}")
+        visit(conn, ~p"/collection?order=alphabetical&page=3&page_size=#{page_size}")
 
       for record <- page_3_records do
         assert_has(page_3_session, "#records-#{record.id}")

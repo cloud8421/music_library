@@ -38,22 +38,9 @@
   <div class="flex items-end justify-between gap-6 mt-8">
     <span class="isolate inline-flex rounded-md shadow-xs">
       <.link
-        patch={order_path(@record_list_params, :alphabetical)}
-        class={[
-          "relative inline-flex items-center rounded-l-md",
-          "px-3 py-2 text-xs sm:text-sm font-semibold",
-          "ring-1 ring-inset focus:z-10",
-          "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 ring-zinc-300",
-          @record_list_params.order == :alphabetical && "!bg-zinc-100 dark:!bg-zinc-700"
-        ]}
-      >
-        <.icon name="hero-user-solid" class="mr-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
-        {gettext("A->Z")}
-      </.link>
-      <.link
         patch={order_path(@record_list_params, :purchase)}
         class={[
-          "relative -ml-px inline-flex items-center rounded-r-md",
+          "relative inline-flex items-center rounded-l-md",
           "px-3 py-2 text-xs sm:text-sm font-semibold",
           "ring-1 ring-inset focus:z-10",
           "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 ring-zinc-300",
@@ -67,6 +54,19 @@
           data-slot="icon"
         />
         {gettext("Purchase")}
+      </.link>
+      <.link
+        patch={order_path(@record_list_params, :alphabetical)}
+        class={[
+          "relative -ml-px inline-flex items-center rounded-r-md",
+          "px-3 py-2 text-xs sm:text-sm font-semibold",
+          "ring-1 ring-inset focus:z-10",
+          "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 ring-zinc-300",
+          @record_list_params.order == :alphabetical && "!bg-zinc-100 dark:!bg-zinc-700"
+        ]}
+      >
+        <.icon name="hero-user-solid" class="mr-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
+        {gettext("A->Z")}
       </.link>
     </span>
 
