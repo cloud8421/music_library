@@ -8,6 +8,7 @@ defmodule MusicLibrary.MixProject do
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
+      gettext: [write_reference_line_numbers: false],
       aliases: aliases(),
       deps: deps()
     ]
