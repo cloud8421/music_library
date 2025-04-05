@@ -279,6 +279,7 @@ defmodule MusicLibrary.Records do
            from records, json_each(records.artists) artist
            group by name
            order by count desc
+           limit 30
            """),
            select: {fragment("name"), fragment("count")}
 
@@ -296,6 +297,7 @@ defmodule MusicLibrary.Records do
            from records, json_each(records.genres) genre
            group by name
            order by count desc
+           limit 30
            """),
            select: {fragment("name"), fragment("count")}
 
