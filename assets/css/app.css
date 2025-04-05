@@ -1,4 +1,8 @@
-@import "tailwindcss";
+@import "tailwindcss" source(none);
+@source "../css";
+@source "../js";
+@source "../../lib/music_library_web";
+
 @plugin "./heroicons.tailwind.plugin.js";
 @plugin "@tailwindcss/forms";
 
