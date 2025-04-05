@@ -3,6 +3,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
   import MusicLibraryWeb.DataComponents
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
+  import MusicLibraryWeb.ChartComponents
 
   alias MusicLibrary.{Artists, Collection, Records, Wishlist}
 
@@ -28,7 +29,9 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        scrobble_activity_mode: :albums,
        latest_record: latest_record,
        page_title: gettext("Stats"),
-       nav_section: :stats
+       nav_section: :stats,
+       records_by_artist: Records.count_records_by_artist(),
+       records_by_genre: Records.count_records_by_genre()
      )}
   end
 

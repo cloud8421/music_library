@@ -68,6 +68,38 @@
   </dl>
 </div>
 
+<div class="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-5">
+  <div>
+    <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
+      {gettext("Records by Artist")}
+    </h1>
+    <div class="mt-5 bg-white dark:bg-zinc-800 rounded-md shadow-sm p-4">
+      <.vertical_bar_chart
+        data={@records_by_artist}
+        width={600}
+        height={600}
+        bar_color="rgb(79, 70, 229)"
+        class="w-full"
+      />
+    </div>
+  </div>
+
+  <div>
+    <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
+      {gettext("Records by Genre")}
+    </h1>
+    <div class="mt-5 bg-white dark:bg-zinc-800 rounded-md shadow-sm p-4">
+      <.vertical_bar_chart
+        data={@records_by_genre}
+        width={600}
+        height={600}
+        bar_color="rgb(244, 63, 94)"
+        class="w-full"
+      />
+    </div>
+  </div>
+</div>
+
 <div class="flow-root">
   <div class="mt-5 flex justify-between items-center">
     <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
