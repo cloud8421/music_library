@@ -17,6 +17,7 @@ defmodule MusicLibraryWeb.ChartComponents do
   attr :height, :integer, default: 300
   attr :bar_color, :string, default: "rgb(79, 70, 229)"
   attr :class, :string, default: ""
+  attr :label_click, :any, default: nil, doc: "the function for handling phx-click on each label"
 
   def vertical_bar_chart(assigns) do
     assigns =
@@ -62,7 +63,8 @@ defmodule MusicLibraryWeb.ChartComponents do
           x="140"
           y={y + @bar_height / 2 + 4}
           text-anchor="end"
-          class="text-xs fill-zinc-500 dark:fill-zinc-400"
+          class={["text-xs fill-zinc-500 dark:fill-zinc-400", @label_click && "cursor-pointer"]}
+          phx-click={@label_click && @label_click.(label)}
         >
           {truncate_label(label, 20)}
         </text>

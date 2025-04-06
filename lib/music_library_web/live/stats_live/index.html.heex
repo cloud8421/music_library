@@ -79,6 +79,9 @@
         width={600}
         height={35 * length(@records_by_artist)}
         bar_color="rgb(79, 70, 229)"
+        label_click={
+          fn label -> JS.navigate(~p"/collection?#{%{query: ~s(artist:"#{label}")}}") end
+        }
         class="w-full"
       />
     </div>
@@ -94,6 +97,9 @@
         width={600}
         height={35 * length(@records_by_genre)}
         bar_color="rgb(244, 63, 94)"
+        label_click={
+          fn label -> JS.navigate(~p"/collection?#{%{query: ~s(genre:"#{label}")}}") end
+        }
         class="w-full"
       />
     </div>
