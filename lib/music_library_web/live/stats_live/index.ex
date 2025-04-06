@@ -10,6 +10,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   def mount(_params, _session, socket) do
     latest_record = Collection.get_latest_record!()
     recent_tracks = LastFm.get_scrobbled_tracks()
+    records_by_artists = Collection.count_records_by_artist(limit: 50)
+    records_by_genre = Collection.count_records_by_genre(limit: 50)
 
     if connected?(socket) do
       LastFm.subscribe_to_feed()
@@ -30,8 +32,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        latest_record: latest_record,
        page_title: gettext("Stats"),
        nav_section: :stats,
-       records_by_artist: Collection.count_records_by_artist(),
-       records_by_genre: Collection.count_records_by_genre()
+       records_by_artist: records_by_artists,
+       records_by_genre: records_by_genre
      )}
   end
 

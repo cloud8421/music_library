@@ -71,7 +71,9 @@ defmodule MusicLibrary.Collection do
     Repo.all(q)
   end
 
-  def count_records_by_artist(limit \\ 30) do
+  def count_records_by_artist(opts \\ []) do
+    limit = Keyword.get(opts, :limit, 30)
+
     q =
       from r in fragment("records, json_each(records.artists)"),
         where: fragment("records.purchased_at IS NOT NULL"),
@@ -87,7 +89,9 @@ defmodule MusicLibrary.Collection do
     Repo.all(q)
   end
 
-  def count_records_by_genre(limit \\ 30) do
+  def count_records_by_genre(opts \\ []) do
+    limit = Keyword.get(opts, :limit, 30)
+
     q =
       from r in fragment("records, json_each(records.genres)"),
         where: fragment("records.purchased_at IS NOT NULL"),
