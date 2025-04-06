@@ -79,8 +79,12 @@
         width={600}
         height={35 * length(@records_by_artist)}
         bar_color="rgb(79, 70, 229)"
+        label_fn={fn {artist, _count} -> artist end}
+        value_fn={fn {_artist, count} -> count end}
         label_click={
-          fn label -> JS.navigate(~p"/collection?#{%{query: ~s(artist:"#{label}")}}") end
+          fn {artist, _count} ->
+            JS.navigate(~p"/collection?#{%{query: ~s(artist:"#{artist}")}}")
+          end
         }
         class="w-full"
       />
@@ -97,8 +101,10 @@
         width={600}
         height={35 * length(@records_by_genre)}
         bar_color="rgb(244, 63, 94)"
+        label_fn={fn {genre, _count} -> genre end}
+        value_fn={fn {_genre, count} -> count end}
         label_click={
-          fn label -> JS.navigate(~p"/collection?#{%{query: ~s(genre:"#{label}")}}") end
+          fn {genre, _count} -> JS.navigate(~p"/collection?#{%{query: ~s(genre:"#{genre}")}}") end
         }
         class="w-full"
       />

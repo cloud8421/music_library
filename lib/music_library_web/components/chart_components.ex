@@ -7,12 +7,16 @@ defmodule MusicLibraryWeb.ChartComponents do
   ## Examples
       <.vertical_bar_chart
         data={[{"Artist 1", 5}, {"Artist 2", 3}]}
+        label_fn={&elem(&1, 0)}
+        value_fn={&elem(&1, 1)}
         width={400}
         height={300}
         bar_color="rgb(79, 70, 229)"
       />
   """
-  attr :data, :list, required: true, doc: "List of {label, value} tuples"
+  attr :data, :list, required: true
+  attr :label_fn, :any, required: true
+  attr :value_fn, :any, required: true
   attr :width, :integer, default: 400
   attr :height, :integer, default: 300
   attr :bar_color, :string, default: "rgb(79, 70, 229)"
@@ -23,7 +27,7 @@ defmodule MusicLibraryWeb.ChartComponents do
     assigns =
       assigns
       |> assign(:padding, 40)
-      |> assign(:max_value, max_value(assigns.data))
+      |> assign(:max_value, max_value(assigns.data, assigns.value_fn))
       # Account for labels
       |> assign(:chart_width, assigns.width - 150)
       # Account for bottom padding
@@ -54,8 +58,8 @@ defmodule MusicLibraryWeb.ChartComponents do
       <% end %>
 
       <%!-- Bars and labels --%>
-      <%= for {{label, value}, index} <- Enum.with_index(@data) do %>
-        <% bar_width = @chart_width * value / @max_value %>
+      <%= for {datum, index} <- Enum.with_index(@data) do %>
+        <% bar_width = @chart_width * @value_fn.(datum) / @max_value %>
         <% y = @padding / 2 + index * (@bar_height + 4) %>
 
         <%!-- Label --%>
@@ -64,9 +68,9 @@ defmodule MusicLibraryWeb.ChartComponents do
           y={y + @bar_height / 2 + 4}
           text-anchor="end"
           class={["text-xs fill-zinc-500 dark:fill-zinc-400", @label_click && "cursor-pointer"]}
-          phx-click={@label_click && @label_click.(label)}
+          phx-click={@label_click && @label_click.(datum)}
         >
-          {truncate_label(label, 20)}
+          {truncate_label(@label_fn.(datum), 20)}
         </text>
 
         <%!-- Bar --%>
@@ -78,7 +82,7 @@ defmodule MusicLibraryWeb.ChartComponents do
           fill={@bar_color}
           class="opacity-80 hover:opacity-100 transition-opacity"
         >
-          <title>{label}: {value}</title>
+          <title>{@label_fn.(datum)}: {@value_fn.(datum)}</title>
         </rect>
 
         <%!-- Value label --%>
@@ -87,16 +91,16 @@ defmodule MusicLibraryWeb.ChartComponents do
           y={y + @bar_height / 2 + 4}
           class="text-xs fill-zinc-500 dark:fill-zinc-400"
         >
-          {value}
+          {@value_fn.(datum)}
         </text>
       <% end %>
     </svg>
     """
   end
 
-  defp max_value(data) do
-    {_, max} = Enum.max_by(data, fn {_, value} -> value end)
-    max
+  defp max_value(data, value_fn) do
+    max = Enum.max_by(data, value_fn)
+    value_fn.(max)
   end
 
   defp calculate_bar_height(data, available_height) do
