@@ -267,40 +267,4 @@ defmodule MusicLibrary.Records do
   def change_record(%Record{} = record, attrs \\ %{}) do
     Record.changeset(record, attrs)
   end
-
-  @doc """
-  Returns a list of tuples containing artist names and their record count,
-  ordered by count in descending order.
-  """
-  def count_records_by_artist do
-    q =
-      from r in fragment("""
-           select json_extract(artist.value, '$.name') as name, count(1) as count
-           from records, json_each(records.artists) artist
-           group by name
-           order by count desc
-           limit 30
-           """),
-           select: {fragment("name"), fragment("count")}
-
-    Repo.all(q)
-  end
-
-  @doc """
-  Returns a list of tuples containing genre names and their record count,
-  ordered by count in descending order.
-  """
-  def count_records_by_genre do
-    q =
-      from r in fragment("""
-           select genre.value as name, count(1) as count
-           from records, json_each(records.genres) genre
-           group by name
-           order by count desc
-           limit 30
-           """),
-           select: {fragment("name"), fragment("count")}
-
-    Repo.all(q)
-  end
 end

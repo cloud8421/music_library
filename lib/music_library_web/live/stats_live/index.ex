@@ -30,8 +30,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        latest_record: latest_record,
        page_title: gettext("Stats"),
        nav_section: :stats,
-       records_by_artist: Records.count_records_by_artist(),
-       records_by_genre: Records.count_records_by_genre()
+       records_by_artist: Collection.count_records_by_artist(),
+       records_by_genre: Collection.count_records_by_genre()
      )}
   end
 

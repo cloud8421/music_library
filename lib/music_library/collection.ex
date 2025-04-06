@@ -71,12 +71,42 @@ defmodule MusicLibrary.Collection do
     Repo.all(q)
   end
 
-  def count_records_by_genre do
+  @doc """
+  Returns a list of tuples containing artist names and their record count,
+  ordered by count in descending order.
+
+      q =
+      from r in fragment("records, json_each(records.release_ids)"),
+        where: fragment("records.format = ?", ^format) and r.value == ^release_id,
+        select: %{
+          record_id: fragment("records.id"),
+          purchased_at: fragment("records.purchased_at")
+        }
+  """
+  def count_records_by_artist(limit \\ 30) do
+    q =
+      from r in fragment("records, json_each(records.artists)"),
+        where: fragment("records.purchased_at IS NOT NULL"),
+        group_by: fragment("json_extract(?, '$.name')", r.value),
+        order_by: [desc: fragment("count(1)")],
+        select: {fragment("json_extract(?, '$.name')", r.value), fragment("count(1)")},
+        limit: ^limit
+
+    Repo.all(q)
+  end
+
+  @doc """
+  Returns a list of tuples containing genre names and their record count,
+  ordered by count in descending order.
+  """
+  def count_records_by_genre(limit \\ 30) do
     q =
       from r in fragment("records, json_each(records.genres)"),
+        where: fragment("records.purchased_at IS NOT NULL"),
         group_by: r.value,
-        order_by: [desc: count(r.value)],
-        select: %{genre: r.value, count: count(r.value)}
+        order_by: [desc: fragment("count(1)")],
+        select: {r.value, fragment("count(1)")},
+        limit: ^limit
 
     Repo.all(q)
   end
