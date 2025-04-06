@@ -77,7 +77,11 @@ defmodule MusicLibrary.Collection do
         where: fragment("records.purchased_at IS NOT NULL"),
         group_by: fragment("json_extract(?, '$.name')", r.value),
         order_by: [desc: fragment("count(1)")],
-        select: {fragment("json_extract(?, '$.name')", r.value), fragment("count(1)")},
+        select: %{
+          id: fragment("json_extract(?, '$.musicbrainz_id')", r.value),
+          name: fragment("json_extract(?, '$.name')", r.value),
+          count: fragment("count(1)")
+        },
         limit: ^limit
 
     Repo.all(q)

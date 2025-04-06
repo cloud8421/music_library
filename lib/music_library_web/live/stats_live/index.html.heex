@@ -79,11 +79,11 @@
         width={600}
         height={35 * length(@records_by_artist)}
         bar_color="rgb(79, 70, 229)"
-        label_fn={fn {artist, _count} -> artist end}
-        value_fn={fn {_artist, count} -> count end}
+        label_fn={fn datum -> datum.name end}
+        value_fn={fn datum -> datum.count end}
         label_click={
-          fn {artist, _count} ->
-            JS.navigate(~p"/collection?#{%{query: ~s(artist:"#{artist}")}}")
+          fn datum ->
+            JS.navigate(~p"/artists/#{datum.id}")
           end
         }
         class="w-full"
