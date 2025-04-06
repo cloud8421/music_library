@@ -24,6 +24,34 @@ defmodule LastFm.API do
     defp map_error(16), do: :transient_error
     defp map_error(26), do: :suspended_api_key
     defp map_error(29), do: :rate_limit_exceeded
+
+    @doc """
+    Returns true if the error is retryable, false otherwise.
+    """
+    def retryable_error?(error)
+        when error in [
+               :transient_error,
+               :service_offline,
+               :rate_limit_exceeded,
+               :operation_failed
+             ],
+        do: true
+
+    def retryable_error?(_error), do: false
+
+    @doc """
+    Returns the recommended retry delay in milliseconds for retryable errors.
+    Returns nil for non-retryable errors.
+    """
+    # 1 minute
+    def retry_delay(:rate_limit_exceeded), do: 60_000
+    # 30 seconds
+    def retry_delay(:service_offline), do: 30_000
+    # 5 seconds
+    def retry_delay(:transient_error), do: 5_000
+    # 5 seconds
+    def retry_delay(:operation_failed), do: 5_000
+    def retry_delay(_), do: nil
   end
 
   def get_recent_tracks(config) do

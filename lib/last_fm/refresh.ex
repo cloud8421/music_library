@@ -92,9 +92,12 @@ defmodule LastFm.Refresh do
         Feed.update(tracks)
         {:noreply, config, config.refresh_interval}
 
-      {:error, _reason} ->
-        # TODO: think about failure scenario - error is logged at the API level
-        {:noreply, config, config.refresh_interval}
+      {:error, error} ->
+        if API.ErrorResponse.retryable_error?(error) do
+          {:noreply, config, API.ErrorResponse.retry_delay(error)}
+        else
+          {:stop, error, config}
+        end
     end
   end
 end
