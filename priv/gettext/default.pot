@@ -694,10 +694,10 @@ msgstr ""
 
 #: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format
-msgid "Records by Artist"
+msgid "Collection records by Artist"
 msgstr ""
 
 #: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format
-msgid "Records by Genre"
+msgid "Collection records by Genre"
 msgstr ""
