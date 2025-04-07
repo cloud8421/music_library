@@ -22,7 +22,7 @@ defmodule MusicBrainz.Config do
           )
 
   @doc NimbleOptions.docs(@schema)
-  @spec resolve(atom) :: t | no_return
+  @spec resolve(Application.app()) :: t | no_return
   def resolve(otp_app) do
     app_config =
       Application.get_env(otp_app, MusicBrainz)
