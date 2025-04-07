@@ -17,11 +17,13 @@ defmodule MusicLibraryWeb.CollectionController do
 
   def index(conn, params) do
     limit =
-      Map.get(params, "limit", "20")
+      params
+      |> Map.get("limit", "20")
       |> String.to_integer()
 
     offset =
-      Map.get(params, "offset", "0")
+      params
+      |> Map.get("offset", "0")
       |> String.to_integer()
 
     total = Collection.search_records_count("")
