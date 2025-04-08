@@ -10,7 +10,40 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
   end
 
   @impl true
-  def handle_params(%{"musicbrainz_id" => musicbrainz_id}, _, socket) do
+  def handle_params(params, _url, socket) do
+    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+  end
+
+  @impl true
+  def handle_event("import", %{"id" => musicbrainz_id, "format" => format}, socket) do
+    case Records.import_from_musicbrainz_release_group(musicbrainz_id,
+           format: format,
+           purchased_at: nil
+         ) do
+      {:ok, _record} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, gettext("Record imported successfully"))
+         |> push_navigate(to: ~p"/artists/#{socket.assigns.artist.musicbrainz_id}")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           gettext("Error importing record") <> "," <> inspect(changeset.errors)
+         )
+         |> push_patch(to: ~p"/artists/#{socket.assigns.artist.musicbrainz_id}")}
+
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, gettext("Error importing record") <> "," <> inspect(reason))
+         |> push_patch(to: ~p"/artists/#{socket.assigns.artist.musicbrainz_id}")}
+    end
+  end
+
+  defp apply_action(socket, :show, %{"musicbrainz_id" => musicbrainz_id}) do
     artist = Artists.get_artist!(musicbrainz_id)
 
     %{collection: collection_records, wishlist: wishlist_records} =
@@ -18,25 +51,39 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
       |> Records.get_artist_records()
       |> group_and_sort()
 
-    {:noreply,
-     socket
-     |> assign(:nav_section, :artists)
-     |> assign(:artist, artist)
-     |> stream(:collection_records, collection_records, reset: true)
-     |> stream(:wishlist_records, wishlist_records, reset: true)
-     |> assign(:collection_records_count, Enum.count(collection_records))
-     |> assign(:wishlist_records_count, Enum.count(wishlist_records))
-     |> assign_async(:artist_info, fn ->
-       with {:ok, artist_info} <- LastFm.get_artist_info(artist.musicbrainz_id, artist.name) do
-         {:ok, %{artist_info: artist_info}}
-       end
-     end)
-     |> assign_async(:similar_artists, fn ->
-       with {:ok, similar_artists} <- Artists.get_similar_artists(artist) do
-         {:ok, %{similar_artists: similar_artists}}
-       end
-     end)
-     |> assign(:page_title, page_title(socket.assigns.live_action, artist))}
+    socket
+    |> assign(:nav_section, :artists)
+    |> assign(:artist, artist)
+    |> stream(:collection_records, collection_records, reset: true)
+    |> stream(:wishlist_records, wishlist_records, reset: true)
+    |> assign(:collection_records_count, Enum.count(collection_records))
+    |> assign(:wishlist_records_count, Enum.count(wishlist_records))
+    |> assign_async(:artist_info, fn ->
+      with {:ok, artist_info} <- LastFm.get_artist_info(artist.musicbrainz_id, artist.name) do
+        {:ok, %{artist_info: artist_info}}
+      end
+    end)
+    |> assign_async(:similar_artists, fn ->
+      with {:ok, similar_artists} <- Artists.get_similar_artists(artist) do
+        {:ok, %{similar_artists: similar_artists}}
+      end
+    end)
+    |> assign(:page_title, page_title(socket.assigns.live_action, artist))
+  end
+
+  defp apply_action(socket, :import, params) do
+    socket =
+      if get_in(socket.assigns, [:streams, :collection_records]) == nil do
+        socket
+        |> apply_action(:show, params)
+      else
+        socket
+      end
+
+    socket
+    |> assign(:page_title, gettext("Add more · Artist"))
+    |> assign(:initial_query, "arid:#{socket.assigns.artist.musicbrainz_id}")
+    |> assign(:record, nil)
   end
 
   defp page_title(:show, artist) do
@@ -45,6 +92,17 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
         artist.name,
         "·",
         gettext("Details")
+      ],
+      " "
+    )
+  end
+
+  defp page_title(:import, artist) do
+    Enum.join(
+      [
+        artist.name,
+        "·",
+        gettext("Add more")
       ],
       " "
     )

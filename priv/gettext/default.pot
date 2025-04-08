@@ -57,6 +57,7 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
+#: lib/music_library_web/live/artist_live/show.ex
 #: lib/music_library_web/live/collection_live/index.ex
 #: lib/music_library_web/live/stats_live/index.ex
 #: lib/music_library_web/live/wishlist_live/index.ex
@@ -167,6 +168,7 @@ msgstr ""
 msgid "Purchased on"
 msgstr ""
 
+#: lib/music_library_web/live/artist_live/show.ex
 #: lib/music_library_web/live/collection_live/index.ex
 #: lib/music_library_web/live/stats_live/index.ex
 #: lib/music_library_web/live/wishlist_live/index.ex
@@ -700,4 +702,15 @@ msgstr ""
 #: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Collection records by Genre"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.ex
+#: lib/music_library_web/live/artist_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Add more"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Add more · Artist"
 msgstr ""

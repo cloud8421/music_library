@@ -147,8 +147,27 @@ defmodule MusicLibraryWeb.AddRecordComponent do
      |> stream_configure(:release_groups,
        dom_id: fn rg -> "musicbrainz_#{rg.id}" end
      )
-     |> stream(:release_groups, [])
-     |> assign(:form, to_form(%{"mb_query" => ""}))}
+     |> stream(:release_groups, [])}
+  end
+
+  @impl true
+  def update(assigns, socket) do
+    mb_query = assigns.initial_query || ""
+
+    socket =
+      if mb_query != "" do
+        {:ok, release_groups} = search(mb_query)
+
+        stream(socket, :release_groups, release_groups, reset: true)
+      else
+        socket
+      end
+
+    {:ok,
+     assign(socket,
+       icon_name: assigns.icon_name,
+       form: to_form(%{"mb_query" => mb_query})
+     )}
   end
 
   @impl true

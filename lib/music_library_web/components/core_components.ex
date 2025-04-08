@@ -631,6 +631,7 @@ defmodule MusicLibraryWeb.CoreComponents do
   Renders a round badge.
   """
   attr :text, :string, required: true
+  attr :class, :string, default: nil
 
   def round_badge(assigns) do
     ~H"""
@@ -640,7 +641,8 @@ defmodule MusicLibraryWeb.CoreComponents do
       "ring-1 ring-inset",
       "bg-zinc-50 dark:bg-zinc-500/10",
       "text-zinc-700 dark:text-zinc-400",
-      "ring-zinc-600/20 dark:ring-zinc-500/20"
+      "ring-zinc-600/20 dark:ring-zinc-500/20",
+      @class
     ]}>
       {assigns.text}
     </span>

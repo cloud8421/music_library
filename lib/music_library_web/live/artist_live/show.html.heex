@@ -1,39 +1,55 @@
 <div class="mt-4 px-4 sm:px-6 lg:px-8">
-  <header class="flex items-center mt-1 gap-1">
+  <header class="mt-1 gap-1">
     <h1 class="font-semibold text-2xl leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
       {@artist.name}
     </h1>
-    <.async_result :let={artist_info} assign={@artist_info}>
-      <:loading>
-        <div class="ml-2 text-zinc-700 dark:text-zinc-300">
-          <span class="sr-only">{gettext("Loading play count")}</span>
-          <.icon
-            name="hero-arrow-path"
-            class="-mt-1 h-5 w-5 animate-spin"
-            aria-hidden="true"
-            data-slot="icon"
-          />
-        </div>
-      </:loading>
-      <:failed :let={_failure}>
-        <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
-          <.icon
-            name="hero-exclamation-triangle"
-            class="-mt-1 mr-1 ml-2 h-5 w-5"
-            aria-hidden="true"
-            data-slot="icon"
-          />
-          {gettext("Error loading play count")}
-        </div>
-      </:failed>
-      <.round_badge :if={artist_info.on_tour} text={gettext("On Tour")} />
-      <span
-        :if={artist_info.play_count > 0}
-        class="ml-2 text-sm font-normal text-zinc-700 dark:text-zinc-300 grow text-right"
+    <div class="mt-4 flex items-center justify-between">
+      <.async_result :let={artist_info} assign={@artist_info}>
+        <:loading>
+          <div class="mt-4 text-zinc-700 dark:text-zinc-300">
+            <span class="sr-only">{gettext("Loading play count")}</span>
+            <.icon
+              name="hero-arrow-path"
+              class="-mt-1 h-5 w-5 animate-spin"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+          </div>
+        </:loading>
+        <:failed :let={_failure}>
+          <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
+            <.icon
+              name="hero-exclamation-triangle"
+              class="-mt-1 mr-1 ml-2 h-5 w-5"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+            {gettext("Error loading play count")}
+          </div>
+        </:failed>
+        <.round_badge :if={artist_info.on_tour} text={gettext("On Tour")} class="mr-2" />
+        <span
+          :if={artist_info.play_count > 0}
+          class="text-xs font-medium text-zinc-700 dark:text-zinc-300 grow"
+        >
+          {ngettext("1 scrobble", "%{count} scrobbles", artist_info.play_count)}
+        </span>
+      </.async_result>
+      <.link
+        class={[
+          "relative inline-flex items-center rounded-md",
+          "px-3 py-2 text-xs sm:text-sm font-semibold",
+          "bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200",
+          "disabled:bg-zinc-300 dark:disabled:bg-zinc-300 disabled:active:text-white",
+          "text-white active:text-white/80 dark:text-zinc-900 dark:active:text-zinc-900/80",
+          "focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
+        ]}
+        patch={~p"/artists/#{@artist.musicbrainz_id}/import"}
       >
-        {ngettext("1 scrobble", "%{count} scrobbles", artist_info.play_count)}
-      </span>
-    </.async_result>
+        <.icon name="hero-plus" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
+        {gettext("Add more")}
+      </.link>
+    </div>
   </header>
 
   <div class="mt-4 md:grid md:grid-cols-5 md:gap-2">
@@ -120,3 +136,21 @@
     </div>
   </div>
 </div>
+
+<.modal
+  :if={@live_action == :import}
+  id="record-modal"
+  show
+  on_cancel={JS.patch(~p"/artists/#{@artist.musicbrainz_id}")}
+>
+  <.live_component
+    module={MusicLibraryWeb.AddRecordComponent}
+    id={:search}
+    title={@page_title}
+    action={@live_action}
+    record={@record}
+    patch={~p"/artists/#{@artist.musicbrainz_id}"}
+    initial_query={"arid:#{@artist.musicbrainz_id}"}
+    icon_name="hero-plus"
+  />
+</.modal>
