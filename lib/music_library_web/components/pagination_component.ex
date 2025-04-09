@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.Pagination do
+defmodule MusicLibraryWeb.PaginationComponent do
   use Phoenix.Component
   use Gettext, backend: MusicLibraryWeb.Gettext
 
