@@ -57,10 +57,7 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.ex
 #: lib/music_library_web/live/collection_live/index.ex
-#: lib/music_library_web/live/stats_live/index.ex
-#: lib/music_library_web/live/wishlist_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Error importing record"
 msgstr ""
@@ -168,10 +165,7 @@ msgstr ""
 msgid "Purchased on"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.ex
 #: lib/music_library_web/live/collection_live/index.ex
-#: lib/music_library_web/live/stats_live/index.ex
-#: lib/music_library_web/live/wishlist_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Record imported successfully"
 msgstr ""
@@ -713,4 +707,18 @@ msgstr ""
 #: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Add more · Artist"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.ex
+#: lib/music_library_web/live/stats_live/index.ex
+#: lib/music_library_web/live/wishlist_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Error wishlisting record"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.ex
+#: lib/music_library_web/live/stats_live/index.ex
+#: lib/music_library_web/live/wishlist_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Record wishlisted successfully"
 msgstr ""

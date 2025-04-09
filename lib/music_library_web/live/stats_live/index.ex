@@ -50,7 +50,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       {:ok, record} ->
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Record imported successfully"))
+         |> put_flash(:info, gettext("Record wishlisted successfully"))
          |> push_navigate(to: ~p"/wishlist/#{record.id}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -58,13 +58,13 @@ defmodule MusicLibraryWeb.StatsLive.Index do
          socket
          |> put_flash(
            :error,
-           gettext("Error importing record") <> "," <> inspect(changeset.errors)
+           gettext("Error wishlisting record") <> "," <> inspect(changeset.errors)
          )}
 
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(:error, gettext("Error importing record") <> "," <> inspect(reason))}
+         |> put_flash(:error, gettext("Error wishlisting record") <> "," <> inspect(reason))}
     end
   end
 

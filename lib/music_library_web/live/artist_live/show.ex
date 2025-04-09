@@ -23,7 +23,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
       {:ok, _record} ->
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Record imported successfully"))
+         |> put_flash(:info, gettext("Record wishlisted successfully"))
          |> push_navigate(to: ~p"/artists/#{socket.assigns.artist.musicbrainz_id}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -31,14 +31,14 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
          socket
          |> put_flash(
            :error,
-           gettext("Error importing record") <> "," <> inspect(changeset.errors)
+           gettext("Error wishlisting record") <> "," <> inspect(changeset.errors)
          )
          |> push_patch(to: ~p"/artists/#{socket.assigns.artist.musicbrainz_id}")}
 
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(:error, gettext("Error importing record") <> "," <> inspect(reason))
+         |> put_flash(:error, gettext("Error wishlisting record") <> "," <> inspect(reason))
          |> push_patch(to: ~p"/artists/#{socket.assigns.artist.musicbrainz_id}")}
     end
   end
