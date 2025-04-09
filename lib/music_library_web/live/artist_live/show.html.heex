@@ -34,6 +34,12 @@
         >
           {ngettext("1 scrobble", "%{count} scrobbles", artist_info.play_count)}
         </span>
+        <span
+          :if={artist_info.play_count == 0}
+          class="text-xs font-medium text-zinc-700 dark:text-zinc-300 grow"
+        >
+          {gettext("No scrobbles")}
+        </span>
       </.async_result>
       <.link
         class={[
