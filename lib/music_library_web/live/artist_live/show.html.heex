@@ -58,8 +58,11 @@
     </div>
   </header>
 
-  <div class="mt-4 md:grid md:grid-cols-5 md:gap-2">
-    <div class="col-span-1 mt-4">
+  <div class="mt-4 grid md:grid-cols-5 md:gap-2">
+    <div class="col-span-5 md:col-span-1 mt-4 order-2 md:order-1">
+      <h2 class="font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300">
+        {gettext("Meta")}
+      </h2>
       <.async_result :let={artist_info} assign={@artist_info}>
         <:loading>
           <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
@@ -81,7 +84,7 @@
           :if={artist_info.bio !== ""}
           class="text-sm leading-5 text-zinc-500 dark:text-zinc-400"
         >
-          <summary class="text-sm mb-4">{gettext("Biography")}</summary>
+          <summary class="text-sm mt-4 mb-4">{gettext("Biography")}</summary>
           {render_bio(@artist_info.result.summary)}
         </details>
       </.async_result>
@@ -121,7 +124,7 @@
         </details>
       </.async_result>
     </div>
-    <div class="col-span-4">
+    <div class="col-span-4 md:order-1">
       <.record_grid
         :if={@collection_records_count > 0}
         title={gettext("Collection")}

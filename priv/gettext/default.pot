@@ -727,3 +727,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "No scrobbles"
 msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Meta"
+msgstr ""
