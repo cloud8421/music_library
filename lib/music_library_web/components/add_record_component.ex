@@ -7,6 +7,8 @@ defmodule MusicLibraryWeb.AddRecordComponent do
   alias MusicBrainz.ReleaseGroupSearchResult
   alias MusicLibrary.Records
 
+  @batch_size 20
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -35,6 +37,8 @@ defmodule MusicLibraryWeb.AddRecordComponent do
       <ul
         id="release-groups"
         phx-update="stream"
+        phx-viewport-bottom={!@loaded_all_results? && "load-more"}
+        phx-target={@myself}
         role="list"
         class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5"
       >
@@ -147,7 +151,8 @@ defmodule MusicLibraryWeb.AddRecordComponent do
      |> stream_configure(:release_groups,
        dom_id: fn rg -> "musicbrainz_#{rg.id}" end
      )
-     |> stream(:release_groups, [])}
+     |> stream(:release_groups, [])
+     |> assign(:loaded_all_results?, false)}
   end
 
   @impl true
@@ -156,7 +161,8 @@ defmodule MusicLibraryWeb.AddRecordComponent do
 
     socket =
       if mb_query != "" do
-        {:ok, release_groups} = search(mb_query)
+        {:ok, release_groups} =
+          MusicBrainz.search_release_group(mb_query, limit: @batch_size, offset: 0)
 
         stream(socket, :release_groups, release_groups, reset: true)
       else
@@ -165,6 +171,7 @@ defmodule MusicLibraryWeb.AddRecordComponent do
 
     {:ok,
      assign(socket,
+       offset: 0,
        icon_name: assigns.icon_name,
        form: to_form(%{"mb_query" => mb_query})
      )}
@@ -172,17 +179,35 @@ defmodule MusicLibraryWeb.AddRecordComponent do
 
   @impl true
   def handle_event("search", %{"mb_query" => mb_query}, socket) do
-    {:ok, release_groups} = search(mb_query)
+    {:ok, release_groups} =
+      MusicBrainz.search_release_group(mb_query, limit: @batch_size, offset: 0)
 
     {:noreply,
      socket
+     |> assign(:offset, 0)
      |> stream(:release_groups, release_groups, reset: true)
      |> assign(:form, to_form(%{"mb_query" => mb_query}))}
   end
 
-  defp search(""), do: {:ok, []}
+  def handle_event("load-more", _params, socket) do
+    %{"mb_query" => mb_query} = socket.assigns.form.params
+    offset = socket.assigns.offset + @batch_size
 
-  defp search(mb_query) do
-    MusicBrainz.search_release_group(mb_query, limit: 10)
+    case MusicBrainz.search_release_group(mb_query, limit: @batch_size, offset: offset) do
+      {:ok, []} ->
+        {:noreply,
+         socket
+         |> assign(:offset, offset)
+         |> assign(:loaded_all_results?, true)}
+
+      {:ok, release_groups} ->
+        {:noreply,
+         socket
+         |> assign(:offset, offset)
+         |> stream(:release_groups, release_groups)}
+
+      {:error, _reason} ->
+        {:noreply, socket}
+    end
   end
 end
