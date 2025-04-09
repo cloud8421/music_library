@@ -1,5 +1,5 @@
 defmodule MusicLibraryWeb.ChartComponents do
-  use Phoenix.Component
+  use MusicLibraryWeb, :live_component
 
   @doc """
   Renders a horizontal bar chart.
