@@ -220,11 +220,11 @@ defmodule MusicLibraryWeb.RecordComponents do
   def record_grid(assigns) do
     ~H"""
     <div class="mt-4">
-      <header class="flex items-baseline justify-between">
+      <header class="flex items-baseline justify-start">
         <h2 class="font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300">
           {@title}
         </h2>
-        <span class="ml-2 text-sm font-normal text-zinc-700 dark:text-zinc-300">
+        <span class="ml-2 text-xs font-normal text-zinc-700 dark:text-zinc-300">
           {ngettext("1 record", "%{count} records", @records_count)}
         </span>
       </header>
