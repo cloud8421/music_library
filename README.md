@@ -10,11 +10,13 @@
     - [Edit a record in the collection](#edit-a-record-in-the-collection)
     - [View a record's details in the collection](#view-a-records-details-in-the-collection)
     - [Adding a record in the wishlist](#adding-a-record-in-the-wishlist)
+    - [View an artist's details](#view-an-artists-details)
   - [Setup](#setup)
   - [Environment configuration](#environment-configuration)
   - [Running the application](#running-the-application)
   - [Deployment](#deployment)
   - [CI](#ci)
+  - [Architecture](#architecture)
   - [Favicons](#favicons)
   <!--toc:end-->
 
