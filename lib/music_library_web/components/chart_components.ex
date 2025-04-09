@@ -28,73 +28,79 @@ defmodule MusicLibraryWeb.ChartComponents do
       assigns
       |> assign(:padding, 40)
       |> assign(:max_value, max_value(assigns.data, assigns.value_fn))
-      # Account for labels
-      |> assign(:chart_width, assigns.width - 150)
+      # Account for labels and padding
+      |> assign(:chart_width, assigns.width - 150 - 40)
       # Account for bottom padding
       |> assign(:chart_height, assigns.height - 40)
       |> assign(:bar_height, calculate_bar_height(assigns.data, assigns.height - 40))
 
     ~H"""
-    <svg class={@class} width={@width} height={@height}>
-      <%!-- X-axis labels and lines --%>
-      <%= for {value, x} <- x_axis_values(@max_value, @chart_width) do %>
-        <text
-          x={x + 150}
-          y={@height - 10}
-          text-anchor="middle"
-          class="text-xs fill-zinc-500 dark:fill-zinc-400"
-        >
-          {value}
-        </text>
-        <line
-          x1={x + 150}
-          y1={@padding / 2}
-          x2={x + 150}
-          y2={@height - @padding / 2}
-          stroke="rgb(228, 228, 231)"
-          stroke-width="1"
-          stroke-dasharray="4,4"
-        />
-      <% end %>
+    <div class={["w-full", @class]}>
+      <svg
+        viewBox={"0 0 #{@width} #{@height}"}
+        preserveAspectRatio="xMidYMid meet"
+        class="w-full h-full"
+      >
+        <%!-- X-axis labels and lines --%>
+        <%= for {value, x} <- x_axis_values(@max_value, @chart_width) do %>
+          <text
+            x={x + 150}
+            y={@height - 10}
+            text-anchor="middle"
+            class="text-xs fill-zinc-500 dark:fill-zinc-400"
+          >
+            {value}
+          </text>
+          <line
+            x1={x + 150}
+            y1={@padding / 2}
+            x2={x + 150}
+            y2={@height - @padding / 2}
+            stroke="rgb(228, 228, 231)"
+            stroke-width="1"
+            stroke-dasharray="4,4"
+          />
+        <% end %>
 
-      <%!-- Bars and labels --%>
-      <%= for {datum, index} <- Enum.with_index(@data) do %>
-        <% bar_width = @chart_width * @value_fn.(datum) / @max_value %>
-        <% y = @padding / 2 + index * (@bar_height + 4) %>
+        <%!-- Bars and labels --%>
+        <%= for {datum, index} <- Enum.with_index(@data) do %>
+          <% bar_width = @chart_width * @value_fn.(datum) / @max_value %>
+          <% y = @padding / 2 + index * (@bar_height + 4) %>
 
-        <%!-- Label --%>
-        <text
-          x="140"
-          y={y + @bar_height / 2 + 4}
-          text-anchor="end"
-          class={["text-xs fill-zinc-500 dark:fill-zinc-400", @label_click && "cursor-pointer"]}
-          phx-click={@label_click && @label_click.(datum)}
-        >
-          {truncate_label(@label_fn.(datum), 20)}
-        </text>
+          <%!-- Label --%>
+          <text
+            x="140"
+            y={y + @bar_height / 2 + 4}
+            text-anchor="end"
+            class={["text-xs fill-zinc-500 dark:fill-zinc-400", @label_click && "cursor-pointer"]}
+            phx-click={@label_click && @label_click.(datum)}
+          >
+            {truncate_label(@label_fn.(datum), 20)}
+          </text>
 
-        <%!-- Bar --%>
-        <rect
-          x="150"
-          y={y}
-          width={bar_width}
-          height={@bar_height}
-          fill={@bar_color}
-          class="opacity-80 hover:opacity-100 transition-opacity"
-        >
-          <title>{@label_fn.(datum)}: {@value_fn.(datum)}</title>
-        </rect>
+          <%!-- Bar --%>
+          <rect
+            x="150"
+            y={y}
+            width={bar_width}
+            height={@bar_height}
+            fill={@bar_color}
+            class="opacity-80 hover:opacity-100 transition-opacity"
+          >
+            <title>{@label_fn.(datum)}: {@value_fn.(datum)}</title>
+          </rect>
 
-        <%!-- Value label --%>
-        <text
-          x={150 + bar_width + 5}
-          y={y + @bar_height / 2 + 4}
-          class="text-xs fill-zinc-500 dark:fill-zinc-400"
-        >
-          {@value_fn.(datum)}
-        </text>
-      <% end %>
-    </svg>
+          <%!-- Value label --%>
+          <text
+            x={150 + bar_width + 5}
+            y={y + @bar_height / 2 + 4}
+            class="text-xs fill-zinc-500 dark:fill-zinc-400"
+          >
+            {@value_fn.(datum)}
+          </text>
+        <% end %>
+      </svg>
+    </div>
     """
   end
 
