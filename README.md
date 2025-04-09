@@ -51,6 +51,10 @@
 
 ![Adding a record in the wishlist](.github/screenshots/wishlist-import-record.png)
 
+### View an artist's details
+
+![View an artist's details](.github/screenshots/artist-details.png)
+
 ## Setup
 
 The project is managed and configured via [mise-en-place](https://mise.jdx.dev):
