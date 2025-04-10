@@ -16,6 +16,7 @@ PHX_HOST = 'music-library.claudio-ortolina.org'
 PORT = '8080'
 LAST_FM_USER = 'cloud8421'
 POOL_SIZE = '5'
+TIMEZONE = 'Europe/London'
 
 [[mounts]]
 source = 'music_library'

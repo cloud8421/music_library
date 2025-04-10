@@ -32,6 +32,10 @@ if openai_key = System.get_env("OPENAI_KEY") do
   config :music_library, OpenAI, api_key: openai_key
 end
 
+if timezone = System.get_env("TIMEZONE") do
+  config :music_library, :timezone, timezone
+end
+
 config :music_library, MusicLibrary.Repo,
   load_extensions: [
     MusicLibrary.Repo.extension_path("unicode")

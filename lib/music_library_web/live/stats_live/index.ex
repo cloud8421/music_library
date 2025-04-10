@@ -10,8 +10,6 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   attr :title, :string, required: true
   attr :class, :string
 
-  @timezone "Europe/London"
-
   defp album_preview(assigns) do
     ~H"""
     <div
@@ -85,6 +83,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
     {:ok,
      socket
+     |> assign(:timezone, resolve_timezone!())
      |> stream_configure(:recent_tracks,
        dom_id: fn track -> "track-#{track.scrobbled_at_uts}" end
      )
@@ -173,7 +172,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       Enum.map(recent_tracks, fn t ->
         %{
           t
-          | scrobbled_at_label: localize_scrobbled_at(t.scrobbled_at_uts, @timezone)
+          | scrobbled_at_label: localize_scrobbled_at(t.scrobbled_at_uts, socket.assigns.timezone)
         }
       end)
 
@@ -271,5 +270,10 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   defp close_actions_menu(track_id) do
     JS.hide(to: "#actions-#{track_id}")
     |> JS.remove_class("pointer-events-none", to: "#scrobble-activity > li")
+  end
+
+  defp resolve_timezone! do
+    Application.get_env(:music_library, MusicLibraryWeb)
+    |> Keyword.fetch!(:timezone)
   end
 end
