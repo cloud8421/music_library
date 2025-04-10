@@ -194,16 +194,11 @@ defmodule MusicLibraryWeb.AddRecordComponent do
     offset = socket.assigns.offset + @batch_size
 
     case MusicBrainz.search_release_group(mb_query, limit: @batch_size, offset: offset) do
-      {:ok, []} ->
-        {:noreply,
-         socket
-         |> assign(:offset, offset)
-         |> assign(:loaded_all_results?, true)}
-
       {:ok, release_groups} ->
         {:noreply,
          socket
          |> assign(:offset, offset)
+         |> assign(:loaded_all_results?, length(release_groups) < @batch_size)
          |> stream(:release_groups, release_groups)}
 
       {:error, _reason} ->
