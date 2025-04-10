@@ -7,6 +7,10 @@
 # General application configuration
 import Config
 
+config :elixir, :time_zone_database, TimeZoneInfo.TimeZoneDatabase
+
+config :time_zone_info, update: :daily
+
 config :music_library,
   ecto_repos: [MusicLibrary.Repo, MusicLibrary.ErrorRepo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
