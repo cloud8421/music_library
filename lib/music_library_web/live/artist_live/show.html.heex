@@ -27,7 +27,9 @@
             {gettext("Error loading play count")}
           </div>
         </:failed>
-        <.round_badge :if={artist_info.on_tour} text={gettext("On Tour")} class="mr-2" />
+        <a :if={artist_info.on_tour} href={LastFm.Artist.events_url(artist_info)} target="_blank">
+          <.round_badge text={gettext("On Tour")} class="mr-2" />
+        </a>
         <span
           :if={artist_info.play_count > 0}
           class="text-xs font-medium text-zinc-700 dark:text-zinc-300 grow"

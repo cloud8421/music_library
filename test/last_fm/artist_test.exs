@@ -21,7 +21,8 @@ defmodule LastFm.ArtistTest do
                image:
                  "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png",
                play_count: 123,
-               on_tour: false
+               on_tour: false,
+               base_url: "https://www.last.fm/music/Steven+Wilson"
              } ==
                LastFm.Artist.from_api_response(api_response)
     end
