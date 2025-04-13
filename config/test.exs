@@ -16,6 +16,11 @@ config :music_library, MusicLibrary.ErrorRepo,
   pool_size: 32,
   pool: Ecto.Adapters.SQL.Sandbox
 
+config :music_library, MusicLibrary.BackgroundRepo,
+  database: Path.expand("../data/music_library_background_test.db", __DIR__),
+  pool_size: 32,
+  pool: Ecto.Adapters.SQL.Sandbox
+
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :music_library, MusicLibraryWeb.Endpoint,
@@ -51,3 +56,5 @@ config :music_library, MusicBrainz,
 config :phoenix_test, :endpoint, MusicLibraryWeb.Endpoint
 
 config :floki, :html_parser, Floki.HTMLParser.FastHtml
+
+config :music_library, Oban, testing: :manual

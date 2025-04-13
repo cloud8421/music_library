@@ -12,6 +12,7 @@ kill_signal = 'SIGTERM'
 [env]
 DATABASE_PATH = '/mnt/music_library/music_library_prod.db'
 ERROR_DATABASE_PATH = '/mnt/music_library/music_library_prod_errors.db'
+BACKGROUND_DATABASE_PATH = '/mnt/music_library/music_library_prod_background.db'
 PHX_HOST = 'music-library.claudio-ortolina.org'
 PORT = '8080'
 LAST_FM_USER = 'cloud8421'

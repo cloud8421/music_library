@@ -12,7 +12,7 @@ config :elixir, :time_zone_database, TimeZoneInfo.TimeZoneDatabase
 config :time_zone_info, update: :daily
 
 config :music_library,
-  ecto_repos: [MusicLibrary.Repo, MusicLibrary.ErrorRepo],
+  ecto_repos: [MusicLibrary.BackgroundRepo, MusicLibrary.Repo, MusicLibrary.ErrorRepo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 
 config :music_library, MusicLibraryWeb,
@@ -76,7 +76,14 @@ config :error_tracker,
   otp_app: :music_library,
   enabled: true
 
+config :music_library, Oban,
+  engine: Oban.Engines.Lite,
+  queues: [default: 10],
+  repo: MusicLibrary.BackgroundRepo
+
 config :music_library, MusicLibrary.ErrorRepo, priv: "priv/error_repo"
+
+config :music_library, MusicLibrary.BackgroundRepo, priv: "priv/background_repo"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

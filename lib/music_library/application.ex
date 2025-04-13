@@ -11,6 +11,8 @@ defmodule MusicLibrary.Application do
       MusicLibraryWeb.Telemetry,
       MusicLibrary.Repo,
       MusicLibrary.ErrorRepo,
+      MusicLibrary.BackgroundRepo,
+      {Oban, Application.fetch_env!(:music_library, Oban)},
       {Ecto.Migrator,
        repos: Application.fetch_env!(:music_library, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:music_library, :dns_cluster_query) || :ignore},

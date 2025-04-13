@@ -86,6 +86,9 @@ defmodule MusicLibrary.MixProject do
       # Data validation
       {:nimble_options, "~> 1.1"},
 
+      # Background Jobs
+      {:oban, "~> 2.19"},
+
       # Test tooling
       {:phoenix_test, "~> 0.6.0", only: :test},
       {:floki, ">= 0.30.0", only: :test},
