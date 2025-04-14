@@ -310,7 +310,7 @@ defmodule MusicLibrary.RecordsTest do
       assert updated_record.cover_data !== record.cover_data
 
       assert updated_record.cover_hash ==
-               "14A033C9315419E0903B4D74EA6A95D4DC58CC7FE82F6F03BDA5750E7D3A590C"
+               "6E0D25D1FD1019D771D7EB3F777E2C7C1B06A73A92E56A584D674D86DD8AF441"
     end
   end
 end

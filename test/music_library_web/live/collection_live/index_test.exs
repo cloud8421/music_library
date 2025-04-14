@@ -303,7 +303,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
              ]
 
       assert record.cover_hash ==
-               "0ED79C93C5BECC7B28FE05CAA3E49B924A3377EA3219CA8FFAE3B2B0960F2AC8"
+               "E7238C742E5B8711FC5BFF01A4A1F727D9E404A4D1420429A6B37ABFFC0B5960"
 
       {:ok, resized_cover_data} = Cover.resize(cover_data)
 
@@ -407,7 +407,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
            ]
 
     assert record.cover_hash ==
-             "0ED79C93C5BECC7B28FE05CAA3E49B924A3377EA3219CA8FFAE3B2B0960F2AC8"
+             "E7238C742E5B8711FC5BFF01A4A1F727D9E404A4D1420429A6B37ABFFC0B5960"
 
     {:ok, resized_cover_data} = Cover.resize(cover_data)
 

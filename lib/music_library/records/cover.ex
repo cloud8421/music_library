@@ -6,7 +6,7 @@ defmodule MusicLibrary.Records.Cover do
 
   @external_resource fallback_path
 
-  @size 600
+  @size 2000
 
   def fallback_data, do: unquote(fallback_data)
 
