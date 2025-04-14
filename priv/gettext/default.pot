@@ -344,7 +344,6 @@ msgstr ""
 msgid "Refresh LastFm Feed"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
 #: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Cover refreshed successfully"
@@ -731,4 +730,14 @@ msgstr ""
 #: lib/music_library_web/live/artist_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Meta"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Cover scheduled for refresh"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Record updated in the background"
 msgstr ""

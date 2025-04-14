@@ -8,13 +8,17 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   alias Phoenix.LiveView.JS
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(%{"id" => record_id}, _session, socket) do
     socket =
       if static_changed?(socket) do
         put_flash(socket, :warning, gettext("The application has been updated, please reload."))
       else
         socket
       end
+
+    if connected?(socket) do
+      Records.subscribe(record_id)
+    end
 
     {:ok, socket}
   end
@@ -79,14 +83,11 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   end
 
   def handle_event("refresh_cover", %{"id" => id}, socket) do
-    record = Records.get_record!(id)
-
-    case Records.refresh_cover(record) do
-      {:ok, updated_record} ->
+    case Records.refresh_cover_async(id) do
+      {:ok, _worker} ->
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Cover refreshed successfully"))
-         |> assign(:record, updated_record)}
+         |> put_flash(:info, gettext("Cover scheduled for refresh"))}
 
       {:error, reason} ->
         {:noreply,
@@ -101,6 +102,14 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   @impl true
   def handle_info({MusicLibraryWeb.FormComponent, {:saved, record}}, socket) do
     {:noreply, assign(socket, :record, record)}
+  end
+
+  @impl true
+  def handle_info({:update, record}, socket) do
+    {:noreply,
+     socket
+     |> put_flash(:info, gettext("Record updated in the background"))
+     |> assign(:record, record)}
   end
 
   def page_title(:show, record) do

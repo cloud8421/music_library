@@ -6,7 +6,7 @@ defmodule MusicLibrary.Records do
   import Ecto.Query, warn: false
 
   alias MusicLibrary.Records.{ArtistRecord, Cover, Record, SearchParser}
-  alias MusicLibrary.Repo
+  alias MusicLibrary.{BackgroundRepo, Repo, Worker}
 
   def essential_fields do
     [
@@ -200,6 +200,12 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  def refresh_cover_async(record_id) do
+    %{"id" => record_id}
+    |> Worker.RefreshCover.new()
+    |> BackgroundRepo.insert()
+  end
+
   def resize_cover(record) do
     {:ok, thumb_data} = Cover.resize(record.cover_data)
 
@@ -266,5 +272,17 @@ defmodule MusicLibrary.Records do
 
   def change_record(%Record{} = record, attrs \\ %{}) do
     Record.changeset(record, attrs)
+  end
+
+  def subscribe(record_id) do
+    Phoenix.PubSub.subscribe(MusicLibrary.PubSub, "records:#{record_id}")
+  end
+
+  def notify_update(record) do
+    Phoenix.PubSub.broadcast(
+      MusicLibrary.PubSub,
+      "records:#{record.id}",
+      {:update, record}
+    )
   end
 end
