@@ -200,9 +200,12 @@ defmodule MusicLibrary.Records do
     end
   end
 
-  def refresh_cover_async(record_id) do
-    %{"id" => record_id}
-    |> Worker.RefreshCover.new()
+  def refresh_cover_async(record) do
+    meta = %{title: record.title, artists: Enum.map(record.artists, & &1.name)}
+    params = %{"id" => record.id}
+
+    params
+    |> Worker.RefreshCover.new(meta: meta)
     |> BackgroundRepo.insert()
   end
 
