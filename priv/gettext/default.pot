@@ -741,3 +741,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Record updated in the background"
 msgstr ""
+
+#: lib/music_library_web/components/layouts/app.html.heex
+#, elixir-autogen, elixir-format
+msgid "Oban"
+msgstr ""

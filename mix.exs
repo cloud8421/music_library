@@ -88,6 +88,7 @@ defmodule MusicLibrary.MixProject do
 
       # Background Jobs
       {:oban, "~> 2.19"},
+      {:oban_web, "~> 2.11"},
 
       # Test tooling
       {:phoenix_test, "~> 0.6.0", only: :test},

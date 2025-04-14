@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.Router do
   use MusicLibraryWeb, :router
 
   import MusicLibraryWeb.Auth, only: [require_logged_in: 2, require_api_token: 2]
+  import Oban.Web.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -80,6 +81,8 @@ defmodule MusicLibraryWeb.Router do
         metrics: MusicLibraryWeb.Telemetry,
         metrics_history: {MusicLibraryWeb.Telemetry.Storage, :metrics_history, []},
         ecto_repos: [MusicLibrary.Repo, MusicLibrary.ErrorRepo]
+
+      oban_dashboard "/oban"
     end
   end
 end
