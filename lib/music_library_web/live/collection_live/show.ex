@@ -83,11 +83,14 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   end
 
   def handle_event("refresh_cover", %{"id" => id}, socket) do
-    case Records.refresh_cover_async(id) do
-      {:ok, _worker} ->
+    record = Records.get_record!(id)
+
+    case Records.refresh_cover(record) do
+      {:ok, record} ->
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Cover scheduled for refresh"))}
+         |> assign(:record, record)
+         |> put_flash(:info, gettext("Cover refreshed successfully"))}
 
       {:error, reason} ->
         {:noreply,
