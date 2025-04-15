@@ -2,6 +2,8 @@
 LAST_FM_USER = 'change-me'
 LAST_FM_API_KEY = 'change-me'
 OPENAI_KEY = 'change-me'
+FLUXON_KEY_FINGERPRINT = 'change-me'
+FLUXON_LICENSE_KEY = 'change-me'
 
 [tools]
 hurl = 'latest'
@@ -66,8 +68,16 @@ description = 'Update dependencies'
 
 # SETUP
 
+[tasks.fluxon-add-repo]
+description = "Add the fluxon repo"
+run = """
+mix hex.repo add fluxon https://repo.fluxonui.com \
+  --fetch-public-key $FLUXON_KEY_FINGERPRINT \
+  --auth-key $FLUXON_LICENSE_KEY
+"""
+
 [tasks."dev:setup"]
-depends = ['npm-install']
+depends = ['npm-install', 'fluxon-add-repo']
 description = 'Install dependencies and setup the database'
 run = ['mix setup']
 

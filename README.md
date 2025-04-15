@@ -64,6 +64,11 @@ The project is managed and configured via [mise-en-place](https://mise.jdx.dev):
 - `mise install` will pull the correct Erlang, Elixir and Node.js versions
 - `mise run dev:setup` will setup dependencies and database structure
 
+> [!IMPORTANT]
+> The project uses [Fluxon UI](https://fluxonui.com/), so it requires a valid
+> set of credentials. See the `env` section in `mise.toml` for the required
+> environment variables.
+
 ## Environment configuration
 
 The application requires the following environment variables:
