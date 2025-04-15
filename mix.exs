@@ -62,6 +62,7 @@ defmodule MusicLibrary.MixProject do
        app: false,
        compile: false,
        depth: 1},
+      {:fluxon, "~> 1.1.0", repo: :fluxon},
 
       # Dev tooling
       {:phoenix_live_reload, "~> 1.2", only: :dev},
