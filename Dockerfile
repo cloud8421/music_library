@@ -37,6 +37,13 @@ WORKDIR /app
 RUN mix local.hex --force && \
   mix local.rebar --force
 
+# install Fluxon UI repo
+RUN --mount=type=secret,id=FLUXON_LICENSE_KEY \
+  --mount=type=secret,id=FLUXON_KEY_FINGERPRINT \
+  mix hex.repo add fluxon https://repo.fluxonui.com \
+  --fetch-public-key "$(cat /run/secrets/FLUXON_KEY_FINGERPRINT)" \
+  --auth-key "$(cat /run/secrets/FLUXON_LICENSE_KEY)"
+
 # set build ENV
 ENV MIX_ENV="prod"
 ENV ERL_FLAGS="+JPperf true"

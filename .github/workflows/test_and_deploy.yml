@@ -50,6 +50,14 @@ jobs:
           mix deps.clean --all
           mix clean
         shell: sh
+      - name: Add Fluxon UI repo
+        run: |
+          mix hex.repo add fluxon https://repo.fluxonui.com \
+            --fetch-public-key $FLUXON_KEY_FINGERPRINT \
+            --auth-key $FLUXON_LICENSE_KEY
+        env:
+          FLUXON_LICENSE_KEY: ${{ secrets.FLUXON_LICENSE_KEY }}
+          FLUXON_KEY_FINGERPRINT: ${{ secrets.FLUXON_KEY_FINGERPRINT }}
       - run: mix deps.get
       - run: mix deps.unlock --check-unused
       - run: mix gettext.extract --check-up-to-date
@@ -63,13 +71,18 @@ jobs:
     runs-on: ubuntu-24.04
     environment: production
     if: github.ref == 'refs/heads/main'
-    concurrency: deploy-group    # optional: ensure only one action runs at a time
+    concurrency: deploy-group # optional: ensure only one action runs at a time
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
+      - run: |
+          flyctl deploy --remote-only \
+            --build-secret FLUXON_LICENSE_KEY=$FLUXON_LICENSE_KEY \
+            --build-secret FLUXON_KEY_FINGERPRINT=$FLUXON_KEY_FINGERPRINT
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          FLUXON_LICENSE_KEY: ${{ secrets.FLUXON_LICENSE_KEY }}
+          FLUXON_KEY_FINGERPRINT: ${{ secrets.FLUXON_KEY_FINGERPRINT }}
 
   verify:
     name: Verify
@@ -77,7 +90,7 @@ jobs:
     runs-on: ubuntu-24.04
     environment: production
     if: github.ref == 'refs/heads/main'
-    concurrency: deploy-group    # optional: ensure only one action runs at a time
+    concurrency: deploy-group # optional: ensure only one action runs at a time
     steps:
       - uses: actions/checkout@v4
       - uses: gacts/install-hurl@v1
