@@ -50,13 +50,15 @@ defmodule MusicLibraryWeb.FormComponent do
           />
         </div>
         <.input field={@form[:musicbrainz_id]} type="text" label={gettext("MusicBrainz ID")} />
-        <.input field={@form[:release]} type="text" label={gettext("Release")} />
-        <.input
-          :if={@show_purchased_at}
-          field={@form[:purchased_at]}
-          type="datetime-local"
-          label={gettext("Purchased at")}
-        />
+        <div class="sm:columns-2">
+          <.input field={@form[:release]} type="text" label={gettext("Release")} />
+          <.input
+            :if={@show_purchased_at}
+            field={@form[:purchased_at]}
+            type="datetime-local"
+            label={gettext("Purchased at")}
+          />
+        </div>
         <div class="col-span-full">
           <.label for={@uploads.cover_data.ref}>
             {gettext("Cover art")}
