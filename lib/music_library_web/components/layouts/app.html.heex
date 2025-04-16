@@ -3,7 +3,7 @@
   <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
     <div class="flex h-16 justify-between">
       <div class="flex">
-        <div class="flex space-x-2 md:space-x-8">
+        <div class="flex space-x-2 md:space-x-4">
           <.link navigate={~p"/"} class={section_link_classes(assigns[:nav_section], :stats)}>
             <.icon
               name="hero-chart-pie"
@@ -39,14 +39,22 @@
           </.link>
         </div>
       </div>
-      <div class="flex space-x-2 md:space-x-8">
+      <div class="flex space-x-2 md:space-x-4">
         <a class={["max-sm:hidden" | nav_link_classes()]} } href={~p"/dev/dashboard"}>
+          <.icon name="hero-chart-bar" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
           {gettext("Live Dashboard")}
         </a>
         <a class={["max-sm:hidden" | nav_link_classes()]} } href={~p"/dev/errors"}>
+          <.icon
+            name="hero-exclamation-circle"
+            class="h-4 w-4 mr-2"
+            aria-hidden="true"
+            data-slot="icon"
+          />
           {gettext("Errors")}
         </a>
         <a class={["max-sm:hidden" | nav_link_classes()]} } href={~p"/dev/oban"}>
+          <.icon name="hero-cog" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
           {gettext("Oban")}
         </a>
         <a class={["max-sm:hidden" | nav_link_classes()]} } href={~p"/backup"}>
