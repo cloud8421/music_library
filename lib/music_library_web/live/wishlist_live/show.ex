@@ -124,11 +124,9 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
   end
 
   def page_title(action, record) do
-    artist_names = Enum.map(record.artists, & &1.name)
-
     Enum.join(
       [
-        Enum.join(artist_names, ", "),
+        Records.Record.artist_names(record),
         "-",
         record.title,
         "·",

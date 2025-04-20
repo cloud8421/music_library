@@ -116,11 +116,9 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   end
 
   def page_title(:show, record) do
-    artist_names = Enum.map(record.artists, & &1.name)
-
     Enum.join(
       [
-        Enum.join(artist_names, ", "),
+        Records.Record.artist_names(record),
         "-",
         record.title,
         "·",
@@ -133,11 +131,9 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   end
 
   def page_title(action, record) do
-    artist_names = Enum.map(record.artists, & &1.name)
-
     Enum.join(
       [
-        Enum.join(artist_names, ", "),
+        Records.Record.artist_names(record),
         "-",
         record.title,
         "·",

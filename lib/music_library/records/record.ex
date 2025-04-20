@@ -30,6 +30,10 @@ defmodule MusicLibrary.Records.Record do
     timestamps(type: :utc_datetime)
   end
 
+  def artist_names(record) do
+    Enum.map_join(record.artists, ", ", fn artist -> artist.name end)
+  end
+
   def formats, do: @formats
   def types, do: @types
 

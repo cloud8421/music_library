@@ -3,7 +3,7 @@ defmodule MusicLibraryWeb.FormComponent do
 
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
   alias MusicLibrary.Records
-  alias MusicLibrary.Records.Cover
+  alias MusicLibrary.Records.{Cover, Record}
 
   @impl true
   def mount(socket) do
@@ -18,7 +18,7 @@ defmodule MusicLibraryWeb.FormComponent do
     <div>
       <header>
         <h1 class="text-sm font-medium leading-6 text-zinc-700 dark:text-zinc-400">
-          {Enum.map(@record.artists, & &1.name) |> Enum.join(", ")}
+          {Record.artist_names(@record)}
         </h1>
         <h2 class="text-base font-medium leading-6 text-zinc-700 dark:text-zinc-400">
           {@record.title}
