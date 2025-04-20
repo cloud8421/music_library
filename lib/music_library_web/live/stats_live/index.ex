@@ -74,8 +74,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   def mount(_params, _session, socket) do
     latest_record = Collection.get_latest_record!()
     recent_tracks = LastFm.get_scrobbled_tracks()
-    records_by_artists = Collection.count_records_by_artist(limit: 50)
-    records_by_genre = Collection.count_records_by_genre(limit: 50)
+    records_by_artists = Collection.count_records_by_artist(limit: 20)
+    records_by_genre = Collection.count_records_by_genre(limit: 20)
 
     if connected?(socket) do
       LastFm.subscribe_to_feed()

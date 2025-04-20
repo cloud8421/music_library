@@ -11,7 +11,7 @@ defmodule MusicLibraryWeb.ChartComponents do
         value_fn={&elem(&1, 1)}
         width={400}
         height={300}
-        bar_color="rgb(79, 70, 229)"
+        color_class="fill-red-500"
       />
   """
   attr :data, :list, required: true
@@ -19,7 +19,7 @@ defmodule MusicLibraryWeb.ChartComponents do
   attr :value_fn, :any, required: true
   attr :width, :integer, default: 400
   attr :height, :integer, default: 300
-  attr :bar_color, :string, default: "rgb(79, 70, 229)"
+  attr :color_class, :string, required: true
   attr :class, :string, default: ""
   attr :label_click, :any, default: nil, doc: "the function for handling phx-click on each label"
 
@@ -84,8 +84,7 @@ defmodule MusicLibraryWeb.ChartComponents do
             y={y}
             width={bar_width}
             height={@bar_height}
-            fill={@bar_color}
-            class="opacity-80 hover:opacity-100 transition-opacity"
+            class={["opacity-80 hover:opacity-100 transition-opacity", @color_class]}
           >
             <title>{@label_fn.(datum)}: {@value_fn.(datum)}</title>
           </rect>

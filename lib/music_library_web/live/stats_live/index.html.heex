@@ -71,14 +71,14 @@
 <div class="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-5">
   <div>
     <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
-      {gettext("Collection records by Artist")}
+      {gettext("Top %{n} Artists", %{n: length(@records_by_artist)})}
     </h1>
     <div class="mt-5 bg-white dark:bg-zinc-800 rounded-md shadow-sm">
       <.vertical_bar_chart
         data={@records_by_artist}
         width={600}
         height={35 * length(@records_by_artist)}
-        bar_color="rgb(79, 70, 229)"
+        color_class="fill-red-500"
         label_fn={fn datum -> datum.name end}
         value_fn={fn datum -> datum.count end}
         label_click={
@@ -93,14 +93,14 @@
 
   <div>
     <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
-      {gettext("Collection records by Genre")}
+      {gettext("Top %{n} Genres", %{n: length(@records_by_genre)})}
     </h1>
     <div class="mt-5 bg-white dark:bg-zinc-800 rounded-md shadow-sm">
       <.vertical_bar_chart
         data={@records_by_genre}
         width={600}
         height={35 * length(@records_by_genre)}
-        bar_color="rgb(244, 63, 94)"
+        color_class="fill-zinc-500"
         label_fn={fn {genre, _count} -> genre end}
         value_fn={fn {_genre, count} -> count end}
         label_click={
