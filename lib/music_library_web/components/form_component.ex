@@ -49,7 +49,12 @@ defmodule MusicLibraryWeb.FormComponent do
             options={formats_with_labels()}
           />
         </div>
-        <.input field={@form[:musicbrainz_id]} type="text" label={gettext("MusicBrainz ID")} />
+        <.input
+          input_class="font-mono"
+          field={@form[:musicbrainz_id]}
+          type="text"
+          label={gettext("MusicBrainz ID")}
+        />
         <div class="sm:columns-2">
           <.input field={@form[:release]} type="text" label={gettext("Release")} />
           <.input

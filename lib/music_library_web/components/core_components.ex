@@ -293,6 +293,7 @@ defmodule MusicLibraryWeb.CoreComponents do
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
+  attr :input_class, :string, default: nil
 
   attr :rest, :global,
     include:
@@ -405,7 +406,8 @@ defmodule MusicLibraryWeb.CoreComponents do
           "ring-zinc-200 dark:ring-zinc-400",
           "placeholder:text-zinc-400 dark:placeholder:text-zinc-400",
           @errors == [] && "border-zinc-300 focus:border-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
+          @errors != [] && "border-rose-400 focus:border-rose-400",
+          @input_class
         ]}
         {@rest}
       />
