@@ -35,6 +35,15 @@ defmodule MusicLibrary.Artists do
     q |> Repo.all() |> MapSet.new()
   end
 
+  def get_all_artist_pairs do
+    q =
+      from ar in ArtistRecord,
+        distinct: true,
+        select: %{artist_id: ar.musicbrainz_id, record_id: ar.record_id}
+
+    q |> Repo.all()
+  end
+
   defp get_collected_artist_ids do
     q =
       from ar in ArtistRecord,
