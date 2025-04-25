@@ -32,6 +32,10 @@ if openai_key = System.get_env("OPENAI_KEY") do
   config :music_library, OpenAI, api_key: openai_key
 end
 
+if personal_access_token = System.get_env("DISCOGS_PERSONAL_ACCESS_TOKEN") do
+  config :music_library, Discogs, personal_access_token: personal_access_token
+end
+
 if timezone = System.get_env("TIMEZONE") do
   config :music_library, :timezone, timezone
 end

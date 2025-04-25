@@ -53,6 +53,12 @@ config :music_library, MusicBrainz,
     max_retries: 0
   ]
 
+config :music_library, Discogs,
+  req_options: [
+    plug: {Req.Test, Discogs.API},
+    max_retries: 0
+  ]
+
 config :phoenix_test, :endpoint, MusicLibraryWeb.Endpoint
 
 config :floki, :html_parser, Floki.HTMLParser.FastHtml

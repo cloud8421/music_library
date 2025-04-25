@@ -42,6 +42,8 @@ config :music_library, LastFm,
 
 config :music_library, MusicBrainz, user_agent: user_agent
 
+config :music_library, Discogs, personal_access_token: "change me", user_agent: user_agent
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",
