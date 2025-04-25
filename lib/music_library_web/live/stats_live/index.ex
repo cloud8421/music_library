@@ -187,7 +187,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
     recent_albums =
       localized_recent_tracks
-      |> Enum.uniq_by(fn t -> t.album end)
+      |> Enum.dedup_by(fn t -> t.album end)
       |> Enum.map(fn t ->
         %{
           scrobbled_at_uts: t.scrobbled_at_uts,
