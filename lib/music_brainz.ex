@@ -32,5 +32,9 @@ defmodule MusicBrainz do
     API.get_cover_art(id_or_url, music_brainz_config())
   end
 
+  def get_artist(musicbrainz_id) do
+    API.get_artist(musicbrainz_id, music_brainz_config())
+  end
+
   defp music_brainz_config, do: MusicBrainz.Config.resolve(:music_library)
 end

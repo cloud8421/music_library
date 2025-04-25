@@ -8,7 +8,7 @@ defmodule MusicBrainz.API do
 
   require Logger
 
-  alias MusicBrainz.{ReleaseGroupSearchResult, ReleaseSearchResult}
+  alias MusicBrainz.{Artist, ReleaseGroupSearchResult, ReleaseSearchResult}
 
   @doc """
   Uses the [lookup](https://musicbrainz.org/doc/MusicBrainz_API#Lookups) endpoint with the release group id and include the
@@ -451,6 +451,20 @@ defmodule MusicBrainz.API do
     |> get_request()
   end
 
+  def get_artist(musicbrainz_id, config) do
+    config
+    |> new_request()
+    |> Req.merge(
+      url: "/artist/#{musicbrainz_id}",
+      params: [
+        fmt: "json",
+        inc: "url-rels"
+      ]
+    )
+    |> Req.Request.append_response_steps(parse_artist: &parse_artist/1)
+    |> get_request()
+  end
+
   @doc """
   Uses the [cover art](https://musicbrainz.org/doc/Cover_Art_Archive/API) endpoint with the release group id to get the cover image.
   """
@@ -524,5 +538,11 @@ defmodule MusicBrainz.API do
       Enum.map(response.body["release-groups"], &ReleaseGroupSearchResult.from_api_response/1)
 
     {request, Map.put(response, :body, releases)}
+  end
+
+  defp parse_artist({request, response}) do
+    artist = Artist.from_api_response(response.body)
+
+    {request, Map.put(response, :body, artist)}
   end
 end
