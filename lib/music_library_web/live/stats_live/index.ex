@@ -4,7 +4,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
   import MusicLibraryWeb.ChartComponents
 
-  alias MusicLibrary.{Artists, Collection, Records, Wishlist}
+  alias MusicLibrary.{Collection, Records, ScrobbleActivity, Wishlist}
 
   attr :record, MusicLibrary.Records.Record, required: true
   attr :title, :string, required: true
@@ -168,35 +168,13 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   end
 
   defp assign_scrobble_activity(socket, recent_tracks) do
-    localized_recent_tracks =
-      Enum.map(recent_tracks, fn t ->
-        %{
-          t
-          | scrobbled_at_label: localize_scrobbled_at(t.scrobbled_at_uts, socket.assigns.timezone)
-        }
-      end)
-
-    recent_release_ids = recent_release_ids(localized_recent_tracks)
-
-    collected_releases = Collection.collected_releases(recent_release_ids)
-    wishlisted_releases = Wishlist.wishlisted_releases(recent_release_ids)
-
-    all_artist_ids = Artists.get_all_artist_ids()
-    recent_artist_ids = recent_artist_ids(localized_recent_tracks)
-    artist_ids = MapSet.intersection(all_artist_ids, recent_artist_ids)
-
-    recent_albums =
-      localized_recent_tracks
-      |> Enum.dedup_by(fn t -> t.album end)
-      |> Enum.map(fn t ->
-        %{
-          scrobbled_at_uts: t.scrobbled_at_uts,
-          scrobbled_at_label: t.scrobbled_at_label,
-          metadata: t.album,
-          artist: t.artist,
-          cover_url: t.cover_url
-        }
-      end)
+    %{
+      localized_recent_tracks: localized_recent_tracks,
+      localized_recent_albums: recent_albums,
+      collected_releases: collected_releases,
+      wishlisted_releases: wishlisted_releases,
+      artist_ids: artist_ids
+    } = ScrobbleActivity.from_recent_tracks(recent_tracks, socket.assigns.timezone)
 
     socket
     |> stream(:recent_tracks, localized_recent_tracks, reset: true)
@@ -208,34 +186,10 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     )
   end
 
-  defp recent_release_ids(recent_tracks) do
-    recent_tracks
-    |> Enum.map(fn t -> t.album.musicbrainz_id end)
-    |> Enum.uniq()
-    |> Enum.reject(fn musicbrainz_id -> musicbrainz_id == "" end)
-  end
-
-  def recent_artist_ids(recent_tracks) do
-    recent_tracks
-    |> Enum.map(fn t -> t.artist.musicbrainz_id end)
-    |> Enum.uniq()
-    |> Enum.reject(fn musicbrainz_id -> musicbrainz_id == "" end)
-    |> MapSet.new()
-  end
-
   defp tracked_record?(tracked_releases, release_id) do
     Enum.find_value(tracked_releases, fn tracked_release ->
       if tracked_release.release_id == release_id, do: tracked_release.record_id
     end)
-  end
-
-  defp localize_scrobbled_at(uts, timezone) do
-    ldt =
-      uts
-      |> DateTime.from_unix!()
-      |> DateTime.shift_zone!(timezone)
-
-    "#{ldt.day}/#{ldt.month}/#{ldt.year} #{ldt.hour}:#{ldt.minute}"
   end
 
   # The Tailwind build step requires all needed classes to be explicitly referenced
