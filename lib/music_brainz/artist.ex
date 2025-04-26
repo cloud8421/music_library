@@ -1,6 +1,6 @@
 defmodule MusicBrainz.Artist do
   @enforce_keys [:id, :name, :sort_name]
-  defstruct [:id, :name, :sort_name, :country, :relations]
+  defstruct [:id, :name, :sort_name, :country, :relations, :musicbrainz_data]
 
   def from_api_response(r) do
     %__MODULE__{
@@ -8,7 +8,8 @@ defmodule MusicBrainz.Artist do
       name: r["name"],
       sort_name: r["sort-name"],
       country: r["country"],
-      relations: parse_relations(r["relations"])
+      relations: parse_relations(r["relations"]),
+      musicbrainz_data: r
     }
   end
 

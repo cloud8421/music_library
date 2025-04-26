@@ -2,7 +2,7 @@ defmodule MusicLibrary.Artists do
   import Ecto.Query, warn: false
   alias MusicLibrary.Repo
 
-  alias MusicLibrary.Records.{ArtistRecord, Record}
+  alias MusicLibrary.Records.{ArtistInfo, ArtistRecord, Record}
 
   def get_artist!(musicbrainz_id) do
     q =
@@ -42,6 +42,20 @@ defmodule MusicLibrary.Artists do
         select: %{artist_id: ar.musicbrainz_id, record_id: ar.record_id}
 
     q |> Repo.all()
+  end
+
+  def fetch_artist_info(artist_id) do
+    with {:ok, musicbrainz_artist} <- MusicBrainz.get_artist(artist_id),
+         discogs_id = MusicBrainz.Artist.get_discogs_id(musicbrainz_artist),
+         {:ok, discogs_artist} <- Discogs.get_artist(discogs_id) do
+      %ArtistInfo{}
+      |> ArtistInfo.changeset(%{
+        id: musicbrainz_artist.id,
+        musicbrainz_data: musicbrainz_artist.musicbrainz_data,
+        discogs_data: discogs_artist
+      })
+      |> Repo.insert(on_conflict: {:replace, [:musicbrainz_data, :discogs_data]})
+    end
   end
 
   defp get_collected_artist_ids do
