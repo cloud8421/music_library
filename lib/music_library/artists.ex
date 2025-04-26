@@ -46,16 +46,30 @@ defmodule MusicLibrary.Artists do
   end
 
   def fetch_artist_info(artist_id) do
-    with {:ok, musicbrainz_artist} <- MusicBrainz.get_artist(artist_id),
-         discogs_id = MusicBrainz.Artist.get_discogs_id(musicbrainz_artist),
-         {:ok, discogs_artist} <- Discogs.get_artist(discogs_id) do
-      %ArtistInfo{}
-      |> ArtistInfo.changeset(%{
-        id: musicbrainz_artist.id,
-        musicbrainz_data: musicbrainz_artist.musicbrainz_data,
-        discogs_data: discogs_artist
-      })
-      |> Repo.insert(on_conflict: {:replace, [:musicbrainz_data, :discogs_data]})
+    case MusicBrainz.get_artist(artist_id) do
+      {:ok, musicbrainz_artist} ->
+        if discogs_id = MusicBrainz.Artist.get_discogs_id(musicbrainz_artist) do
+          case Discogs.get_artist(discogs_id) do
+            {:ok, discogs_artist} ->
+              %ArtistInfo{}
+              |> ArtistInfo.changeset(%{
+                id: musicbrainz_artist.id,
+                musicbrainz_data: musicbrainz_artist.musicbrainz_data,
+                discogs_data: discogs_artist
+              })
+              |> Repo.insert(on_conflict: {:replace, [:musicbrainz_data, :discogs_data]})
+
+            error ->
+              error
+          end
+        else
+          %ArtistInfo{}
+          |> ArtistInfo.changeset(%{
+            id: musicbrainz_artist.id,
+            musicbrainz_data: musicbrainz_artist.musicbrainz_data
+          })
+          |> Repo.insert(on_conflict: {:replace, [:musicbrainz_data, :discogs_data]})
+        end
     end
   end
 

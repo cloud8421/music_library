@@ -24,7 +24,7 @@ defmodule MusicLibrary.Records.ArtistInfo do
       :image_data,
       :image_data_width
     ])
-    |> validate_required([:musicbrainz_data, :discogs_data])
+    |> validate_required([:musicbrainz_data])
     |> generate_image_hash()
   end
 
