@@ -12,6 +12,12 @@ defmodule MusicBrainz.Artist do
     }
   end
 
+  def get_discogs_id(r) do
+    Enum.find_value(r.relations, fn relation ->
+      if relation.type == "discogs", do: parse_discogs_id(relation.url["resource"])
+    end)
+  end
+
   defp parse_relations(relations) do
     Enum.map(relations, fn relation ->
       %{
@@ -20,4 +26,7 @@ defmodule MusicBrainz.Artist do
       }
     end)
   end
+
+  defp parse_discogs_id("https://www.discogs.com/artist/" <> id), do: id
+  defp parse_discogs_id(_other), do: nil
 end
