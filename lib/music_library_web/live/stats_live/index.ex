@@ -14,7 +14,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     ~H"""
     <div
       class={[
-        "relative overflow-hidden rounded-md bg-white dark:bg-zinc-800 px-4 pb-3 pt-5 shadow-sm sm:px-6 sm:pt-6 cursor-pointer",
+        "relative overflow-hidden rounded-md bg-white dark:bg-zinc-800 px-4 pb-5 pt-5 shadow-sm sm:px-6 sm:pt-6 cursor-pointer",
         @class
       ]}
       phx-click={JS.navigate(~p"/collection/#{@record}")}
