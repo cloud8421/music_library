@@ -3,6 +3,7 @@ defmodule MusicLibrary.Artists do
   alias MusicLibrary.Repo
 
   alias MusicLibrary.Records.{ArtistInfo, ArtistRecord, Record}
+  alias MusicLibrary.{BackgroundRepo, Worker}
 
   def get_artist!(musicbrainz_id) do
     q =
@@ -56,6 +57,15 @@ defmodule MusicLibrary.Artists do
       })
       |> Repo.insert(on_conflict: {:replace, [:musicbrainz_data, :discogs_data]})
     end
+  end
+
+  def fetch_artist_info_async(artist_id) do
+    meta = %{}
+    params = %{"id" => artist_id}
+
+    params
+    |> Worker.FetchArtistInfo.new(meta: meta)
+    |> BackgroundRepo.insert()
   end
 
   defp get_collected_artist_ids do
