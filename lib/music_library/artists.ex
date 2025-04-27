@@ -73,6 +73,24 @@ defmodule MusicLibrary.Artists do
     end
   end
 
+  def get_artist_info!(artist_id) do
+    Repo.get!(ArtistInfo, artist_id)
+  end
+
+  def fetch_image(artist_id) do
+    artist_info = get_artist_info!(artist_id)
+
+    with {:ok, image} <- ArtistInfo.extract_image(artist_info),
+         {:ok, image_data} <- Discogs.get_artist_image(image.url) do
+      artist_info
+      |> ArtistInfo.changeset(%{
+        image_data: image_data,
+        image_data_width: image.width
+      })
+      |> Repo.update()
+    end
+  end
+
   def fetch_artist_info_async(artist_id) do
     meta = %{}
     params = %{"id" => artist_id}
@@ -80,6 +98,19 @@ defmodule MusicLibrary.Artists do
     params
     |> Worker.FetchArtistInfo.new(meta: meta)
     |> BackgroundRepo.insert()
+  end
+
+  def get_image(artist_id) do
+    q =
+      from ai in ArtistInfo,
+        where: ai.id == ^artist_id,
+        select: %{
+          image_data: ai.image_data,
+          image_data_width: ai.image_data_width,
+          image_data_hash: ai.image_data_hash
+        }
+
+    Repo.one(q)
   end
 
   defp get_collected_artist_ids do

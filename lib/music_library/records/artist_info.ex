@@ -41,4 +41,21 @@ defmodule MusicLibrary.Records.ArtistInfo do
         put_change(changeset, :image_data_hash, Cover.hash(image_data))
     end
   end
+
+  def extract_image(artist_info) when is_nil(artist_info.discogs_data) do
+    {:error, :no_discogs_data}
+  end
+
+  def extract_image(artist_info) do
+    primary_image =
+      Enum.find(artist_info.discogs_data["images"], fn image ->
+        image["type"] == "primary"
+      end)
+
+    if primary_image do
+      {:ok, %{url: primary_image["resource_url"], width: primary_image["width"]}}
+    else
+      {:error, :image_not_found}
+    end
+  end
 end
