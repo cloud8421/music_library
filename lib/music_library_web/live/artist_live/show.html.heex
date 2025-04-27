@@ -3,6 +3,7 @@
     <h1 class="font-semibold text-2xl leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
       {@artist.name}
     </h1>
+
     <div class="mt-4 flex items-center justify-between">
       <.async_result :let={artist_info} assign={@artist_info}>
         <:loading>
@@ -60,11 +61,17 @@
     </div>
   </header>
 
-  <div class="mt-4 grid md:grid-cols-5 md:gap-2">
+  <div class="mt-4 grid md:grid-cols-5 md:gap-4">
     <div class="col-span-5 md:col-span-1 mt-4 order-2 md:order-1">
       <h2 class="font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300">
         {gettext("Meta")}
       </h2>
+      <img
+        class="w-full rounded-md shadow-sm mt-4"
+        src={~p"/artists/#{@artist.musicbrainz_id}/image"}
+        alt={@artist.name}
+        onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
+      />
       <.async_result :let={artist_info} assign={@artist_info}>
         <:loading>
           <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
