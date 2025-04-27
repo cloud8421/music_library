@@ -1,5 +1,5 @@
 defmodule MusicLibrary.Worker.FetchArtistImage do
-  use Oban.Worker, queue: :default, max_attempts: 3
+  use Oban.Worker, queue: :heavy_writes, max_attempts: 3
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"id" => artist_id}}) do
