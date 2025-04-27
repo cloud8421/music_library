@@ -100,6 +100,15 @@ defmodule MusicLibrary.Artists do
     |> BackgroundRepo.insert()
   end
 
+  def fetch_image_async(artist_id) do
+    meta = %{}
+    params = %{"id" => artist_id}
+
+    params
+    |> Worker.FetchArtistImage.new(meta: meta)
+    |> BackgroundRepo.insert()
+  end
+
   def get_image(artist_id) do
     q =
       from ai in ArtistInfo,
