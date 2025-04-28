@@ -48,7 +48,7 @@ defmodule MusicLibrary.Records.ArtistInfo do
 
   def extract_image(artist_info) do
     primary_image =
-      Enum.find(artist_info.discogs_data["images"], fn image ->
+      Enum.find(artist_info.discogs_data["images"] || [], fn image ->
         image["type"] == "primary"
       end)
 
