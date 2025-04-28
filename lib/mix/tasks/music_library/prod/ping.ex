@@ -10,6 +10,7 @@ defmodule Mix.Tasks.MusicLibrary.Prod.Ping do
     Application.ensure_all_started(:req)
     Mix.Shell.IO.info("==> Pinging the production instance")
 
-    Req.get!("https://music-library.claudio-ortolina.org/api")
+    response = Req.get!("https://music-library.claudio-ortolina.org/health")
+    if response.status !== 200, do: System.halt(1)
   end
 end
