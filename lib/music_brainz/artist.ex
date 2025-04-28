@@ -8,7 +8,7 @@ defmodule MusicBrainz.Artist do
       name: r["name"],
       sort_name: r["sort-name"],
       country: r["country"],
-      relations: parse_relations(r["relations"]),
+      relations: parse_relations(r["relations"] || []),
       musicbrainz_data: r
     }
   end
