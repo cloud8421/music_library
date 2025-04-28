@@ -70,6 +70,9 @@ defmodule MusicLibrary.Artists do
           })
           |> Repo.insert(on_conflict: {:replace, [:musicbrainz_data, :discogs_data]})
         end
+
+      error ->
+        error
     end
   end
 
