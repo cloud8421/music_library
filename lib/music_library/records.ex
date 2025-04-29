@@ -283,7 +283,15 @@ defmodule MusicLibrary.Records do
   end
 
   def delete_record(%Record{} = record) do
-    Repo.delete(record)
+    with {:ok, record} <- Repo.delete(record) do
+      record
+      |> Record.artist_ids()
+      |> Enum.each(fn artist_id ->
+        Artists.prune_artist_info_async(artist_id)
+      end)
+
+      {:ok, record}
+    end
   end
 
   def change_record(%Record{} = record, attrs \\ %{}) do

@@ -45,6 +45,14 @@ defmodule MusicLibrary.Artists do
     q |> Repo.all()
   end
 
+  def exists?(artist_id) do
+    Repo.get_by(ArtistRecord, musicbrainz_id: artist_id) !== nil
+  end
+
+  def delete_artist_info(artist_id) do
+    Repo.delete_all(from ai in ArtistInfo, where: ai.id == ^artist_id)
+  end
+
   def fetch_artist_info(artist_id) do
     with {:ok, musicbrainz_artist} <- MusicBrainz.get_artist(artist_id) do
       if discogs_id = MusicBrainz.Artist.get_discogs_id(musicbrainz_artist) do
@@ -103,6 +111,15 @@ defmodule MusicLibrary.Artists do
 
     params
     |> Worker.FetchArtistImage.new(meta: meta)
+    |> BackgroundRepo.insert()
+  end
+
+  def prune_artist_info_async(artist_id) do
+    meta = %{}
+    params = %{"id" => artist_id}
+
+    params
+    |> Worker.PruneArtistInfo.new(meta: meta)
     |> BackgroundRepo.insert()
   end
 
