@@ -44,6 +44,30 @@ defmodule MusicLibrary.RecordsTest do
       assert record.cover_hash ==
                "599407DDF69907D4A60FE13CCAA824D25CF08DC124FD6AA3E8E7ECD98C885FFE"
     end
+
+    test "it queues a task to retrieve artist info data" do
+      record =
+        record(musicbrainz_data: release_group(:lockdown_trilogy))
+
+      [artist] = record.artists
+
+      assert_enqueued worker: MusicLibrary.Worker.FetchArtistInfo,
+                      args: %{id: artist.musicbrainz_id}
+    end
+  end
+
+  describe "delete_record/1" do
+    test "it queues a task to delete artist info data" do
+      record =
+        record(musicbrainz_data: release_group(:lockdown_trilogy))
+
+      [artist] = record.artists
+
+      Records.delete_record(record)
+
+      assert_enqueued worker: MusicLibrary.Worker.PruneArtistInfo,
+                      args: %{id: artist.musicbrainz_id}
+    end
   end
 
   describe "refresh_musicbrainz_data/1" do
