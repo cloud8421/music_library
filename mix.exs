@@ -63,6 +63,7 @@ defmodule MusicLibrary.MixProject do
        compile: false,
        depth: 1},
       {:fluxon, "~> 1.1.0", repo: :fluxon},
+      {:flagmojis, "~> 1.0"},
 
       # Dev tooling
       {:phoenix_live_reload, "~> 1.2", only: :dev},

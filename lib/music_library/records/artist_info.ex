@@ -28,6 +28,12 @@ defmodule MusicLibrary.Records.ArtistInfo do
     |> generate_image_hash()
   end
 
+  def country(artist_info) do
+    %{"area" => area} = artist_info.musicbrainz_data
+    [country_code | _rest] = area["iso-3166-1-codes"]
+    %{name: area["name"], code: country_code}
+  end
+
   def generate_image_hash(%__MODULE__{image_data: image_data} = artist_info) do
     change(artist_info, image_data_hash: Cover.hash(image_data))
   end

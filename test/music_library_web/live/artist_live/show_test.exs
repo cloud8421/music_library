@@ -13,7 +13,13 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
 
     [artist] = collection_record.artists
 
-    %{collection_record: collection_record, artist_musicbrainz_id: artist.musicbrainz_id}
+    artist_info = artist_info(artist.musicbrainz_id)
+
+    %{
+      collection_record: collection_record,
+      artist_musicbrainz_id: artist.musicbrainz_id,
+      artist_info: artist_info
+    }
   end
 
   describe "Show artist" do
@@ -62,6 +68,27 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       |> refute_has("summary", text: "Biography")
       |> assert_has("div", text: "Error loading play count")
       |> assert_has("div", text: "Error loading biography")
+    end
+
+    test "it shows the artist country", %{
+      conn: conn,
+      artist_musicbrainz_id: artist_musicbrainz_id
+    } do
+      Req.Test.stub(LastFm.API, fn conn ->
+        case Map.get(conn.params, "method") do
+          "artist.getInfo" ->
+            Req.Test.json(conn, Fixtures.Artist.get_info())
+
+          "artist.getSimilar" ->
+            Req.Test.json(conn, Fixtures.Artist.get_similar_artists())
+        end
+      end)
+
+      conn
+      |> visit(~p"/artists/#{artist_musicbrainz_id}")
+      |> unwrap(&render_async/1)
+      |> assert_has("span", text: "United Kingdom")
+      |> assert_has("span", text: "🇬🇧")
     end
 
     test "it shows records from the collection and the wishlist", %{

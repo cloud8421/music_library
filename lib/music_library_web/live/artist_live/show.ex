@@ -2,7 +2,17 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
   use MusicLibraryWeb, :live_view
 
   alias MusicLibrary.{Artists, Records}
+  alias MusicLibrary.Records.ArtistInfo
   import MusicLibraryWeb.RecordComponents, only: [record_grid: 1]
+
+  attr :country, :map, required: true
+
+  def country_flag(assigns) do
+    ~H"""
+    <span>{Flagmojis.by_iso(@country.code).emoji}</span>
+    <span class="sr-only">{@country.name}</span>
+    """
+  end
 
   @impl true
   def mount(_params, _session, socket) do
@@ -45,6 +55,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
 
   defp apply_action(socket, :show, %{"musicbrainz_id" => musicbrainz_id}) do
     artist = Artists.get_artist!(musicbrainz_id)
+    artist_info = Artists.get_artist_info!(musicbrainz_id)
 
     %{collection: collection_records, wishlist: wishlist_records} =
       musicbrainz_id
@@ -54,6 +65,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     socket
     |> assign(:nav_section, :artists)
     |> assign(:artist, artist)
+    |> assign(:country, ArtistInfo.country(artist_info))
     |> stream(:collection_records, collection_records, reset: true)
     |> stream(:wishlist_records, wishlist_records, reset: true)
     |> assign(:collection_records_count, Enum.count(collection_records))

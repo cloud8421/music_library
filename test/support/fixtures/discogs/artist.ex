@@ -6,4 +6,11 @@ defmodule Discogs.Fixtures.Artist do
     |> File.read!()
     |> JSON.decode!()
   end
+
+  def image_data do
+    Path.join([@fixtures_folder, "steven wilson.jpeg"])
+    |> File.read!()
+  end
+
+  def image_width, do: 225
 end

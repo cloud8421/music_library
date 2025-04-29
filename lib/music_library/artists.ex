@@ -51,29 +51,31 @@ defmodule MusicLibrary.Artists do
         if discogs_id = MusicBrainz.Artist.get_discogs_id(musicbrainz_artist) do
           case Discogs.get_artist(discogs_id) do
             {:ok, discogs_artist} ->
-              %ArtistInfo{}
-              |> ArtistInfo.changeset(%{
+              create_artist_info(%{
                 id: musicbrainz_artist.id,
                 musicbrainz_data: musicbrainz_artist.musicbrainz_data,
                 discogs_data: discogs_artist
               })
-              |> Repo.insert(on_conflict: {:replace, [:musicbrainz_data, :discogs_data]})
 
             error ->
               error
           end
         else
-          %ArtistInfo{}
-          |> ArtistInfo.changeset(%{
+          create_artist_info(%{
             id: musicbrainz_artist.id,
             musicbrainz_data: musicbrainz_artist.musicbrainz_data
           })
-          |> Repo.insert(on_conflict: {:replace, [:musicbrainz_data, :discogs_data]})
         end
 
       error ->
         error
     end
+  end
+
+  def create_artist_info(attrs) do
+    %ArtistInfo{}
+    |> ArtistInfo.changeset(attrs)
+    |> Repo.insert(on_conflict: {:replace, [:musicbrainz_data, :discogs_data]})
   end
 
   def get_artist_info!(artist_id) do

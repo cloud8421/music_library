@@ -75,6 +75,21 @@ defmodule MusicLibrary.Fixtures.Records do
     record
   end
 
+  def artist_info(musicbrainz_id, attrs \\ %{}) do
+    {:ok, artist_info} =
+      attrs
+      |> Enum.into(%{
+        id: musicbrainz_id,
+        musicbrainz_data: MusicBrainz.Fixtures.Artist.get_artist(),
+        discogs_data: Discogs.Fixtures.Artist.get_artist(),
+        image_data: Discogs.Fixtures.Artist.image_data(),
+        image_width: Discogs.Fixtures.Artist.image_width()
+      })
+      |> MusicLibrary.Artists.create_artist_info()
+
+    artist_info
+  end
+
   def record_with_artist(artist_name, record_attrs \\ %{}) do
     record_attrs
     |> Map.put(:artists, [artist_attrs(artist_name)])
