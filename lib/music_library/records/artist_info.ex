@@ -53,15 +53,19 @@ defmodule MusicLibrary.Records.ArtistInfo do
   end
 
   def extract_image(artist_info) do
-    primary_image =
-      Enum.find(artist_info.discogs_data["images"] || [], fn image ->
-        image["type"] == "primary"
-      end)
+    primary_image = extract_image(artist_info.discogs_data, "primary")
+    secondary_image = extract_image(artist_info.discogs_data, "secondary")
 
-    if primary_image do
-      {:ok, %{url: primary_image["resource_url"], width: primary_image["width"]}}
+    if image = primary_image || secondary_image do
+      {:ok, %{url: image["resource_url"], width: image["width"]}}
     else
       {:error, :image_not_found}
     end
+  end
+
+  defp extract_image(discogs_data, type) do
+    Enum.find(discogs_data["images"] || [], fn image ->
+      image["type"] == type
+    end)
   end
 end
