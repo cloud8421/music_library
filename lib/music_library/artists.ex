@@ -126,7 +126,7 @@ defmodule MusicLibrary.Artists do
   def get_image(artist_id) do
     q =
       from ai in ArtistInfo,
-        where: ai.id == ^artist_id,
+        where: ai.id == ^artist_id and not is_nil(ai.image_data),
         select: %{
           image_data: ai.image_data,
           image_data_width: ai.image_data_width,
