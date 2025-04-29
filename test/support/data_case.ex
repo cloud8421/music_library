@@ -38,8 +38,15 @@ defmodule MusicLibrary.DataCase do
   Sets up the sandbox based on the test tags.
   """
   def setup_sandbox(tags) do
-    pid = Sandbox.start_owner!(MusicLibrary.Repo, shared: not tags[:async])
-    on_exit(fn -> Sandbox.stop_owner(pid) end)
+    repo_pid = Sandbox.start_owner!(MusicLibrary.Repo, shared: not tags[:async])
+
+    background_repo_pid =
+      Sandbox.start_owner!(MusicLibrary.BackgroundRepo, shared: not tags[:async])
+
+    on_exit(fn ->
+      Sandbox.stop_owner(repo_pid)
+      Sandbox.stop_owner(background_repo_pid)
+    end)
   end
 
   @doc """

@@ -5,6 +5,7 @@ defmodule MusicLibrary.Records do
 
   import Ecto.Query, warn: false
 
+  alias MusicLibrary.Artists
   alias MusicLibrary.Records.{ArtistRecord, Cover, Record, SearchParser}
   alias MusicLibrary.{BackgroundRepo, Repo, Worker}
 
@@ -258,6 +259,18 @@ defmodule MusicLibrary.Records do
   end
 
   def create_record(attrs \\ %{}) do
+    with {:ok, record} <- do_create_record(attrs) do
+      record
+      |> Record.artist_ids()
+      |> Enum.each(fn artist_id ->
+        Artists.fetch_artist_info_async(artist_id)
+      end)
+
+      {:ok, record}
+    end
+  end
+
+  defp do_create_record(attrs) do
     %Record{}
     |> Record.changeset(attrs)
     |> Repo.insert()
