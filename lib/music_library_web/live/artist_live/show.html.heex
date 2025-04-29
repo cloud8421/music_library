@@ -73,7 +73,7 @@
       </h2>
       <img
         class="w-full rounded-md shadow-sm mt-4"
-        src={~p"/artists/#{@artist_info.id}/image?vsn=#{@artist_info.image_data_hash}"}
+        src={~p"/artists/#{@artist_info.id}/image?vsn=#{@artist_info.image_data_hash || ""}"}
         alt={@artist.name}
         onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
       />
