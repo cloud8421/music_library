@@ -65,14 +65,15 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     socket
     |> assign(:nav_section, :artists)
     |> assign(:artist, artist)
+    |> assign(:artist_info, artist_info)
     |> assign(:country, ArtistInfo.country(artist_info))
     |> stream(:collection_records, collection_records, reset: true)
     |> stream(:wishlist_records, wishlist_records, reset: true)
     |> assign(:collection_records_count, Enum.count(collection_records))
     |> assign(:wishlist_records_count, Enum.count(wishlist_records))
-    |> assign_async(:artist_info, fn ->
-      with {:ok, artist_info} <- LastFm.get_artist_info(artist.musicbrainz_id, artist.name) do
-        {:ok, %{artist_info: artist_info}}
+    |> assign_async(:lastfm_artist_info, fn ->
+      with {:ok, lastfm_artist_info} <- LastFm.get_artist_info(artist.musicbrainz_id, artist.name) do
+        {:ok, %{lastfm_artist_info: lastfm_artist_info}}
       end
     end)
     |> assign_async(:similar_artists, fn ->

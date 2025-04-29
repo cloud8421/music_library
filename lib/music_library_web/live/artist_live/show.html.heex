@@ -6,7 +6,7 @@
     </h1>
 
     <div class="mt-4 flex items-center justify-between">
-      <.async_result :let={artist_info} assign={@artist_info}>
+      <.async_result :let={lastfm_artist_info} assign={@lastfm_artist_info}>
         <:loading>
           <div class="mt-4 text-zinc-700 dark:text-zinc-300">
             <span class="sr-only">{gettext("Loading play count")}</span>
@@ -29,17 +29,21 @@
             {gettext("Error loading play count")}
           </div>
         </:failed>
-        <a :if={artist_info.on_tour} href={LastFm.Artist.events_url(artist_info)} target="_blank">
+        <a
+          :if={lastfm_artist_info.on_tour}
+          href={LastFm.Artist.events_url(lastfm_artist_info)}
+          target="_blank"
+        >
           <.round_badge text={gettext("On Tour")} class="mr-2" />
         </a>
         <span
-          :if={artist_info.play_count > 0}
+          :if={lastfm_artist_info.play_count > 0}
           class="text-xs font-medium text-zinc-700 dark:text-zinc-300 grow"
         >
-          {ngettext("1 scrobble", "%{count} scrobbles", artist_info.play_count)}
+          {ngettext("1 scrobble", "%{count} scrobbles", lastfm_artist_info.play_count)}
         </span>
         <span
-          :if={artist_info.play_count == 0}
+          :if={lastfm_artist_info.play_count == 0}
           class="text-xs font-medium text-zinc-700 dark:text-zinc-300 grow"
         >
           {gettext("No scrobbles")}
@@ -69,11 +73,11 @@
       </h2>
       <img
         class="w-full rounded-md shadow-sm mt-4"
-        src={~p"/artists/#{@artist.musicbrainz_id}/image"}
+        src={~p"/artists/#{@artist_info.id}/image?vsn=#{@artist_info.image_data_hash}"}
         alt={@artist.name}
         onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
       />
-      <.async_result :let={artist_info} assign={@artist_info}>
+      <.async_result :let={lastfm_artist_info} assign={@lastfm_artist_info}>
         <:loading>
           <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
             {gettext("Loading biography")}
@@ -91,11 +95,11 @@
           </div>
         </:failed>
         <details
-          :if={artist_info.bio !== ""}
+          :if={lastfm_artist_info.bio !== ""}
           class="text-sm leading-5 text-zinc-500 dark:text-zinc-400"
         >
           <summary class="text-sm mt-4 mb-4">{gettext("Biography")}</summary>
-          {render_bio(@artist_info.result.summary)}
+          {render_bio(@lastfm_artist_info.result.summary)}
         </details>
       </.async_result>
 
