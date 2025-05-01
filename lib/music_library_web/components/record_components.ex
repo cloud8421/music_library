@@ -295,10 +295,16 @@ defmodule MusicLibraryWeb.RecordComponents do
 
   def selected_release_label(record) do
     if release = Records.Record.selected_release(record) do
-      Records.Record.selected_release_label(release)
+      release_label(release)
     else
       gettext("No release selected")
     end
+  end
+
+  def release_label(release) do
+    [release["date"], release["country"], release["packaging"]]
+    |> Enum.reject(&is_nil/1)
+    |> Enum.join(" ")
   end
 
   def toggle_actions_menu(record_id) do

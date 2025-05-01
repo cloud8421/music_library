@@ -71,27 +71,15 @@ defmodule MusicLibrary.Records.Record do
     end
   end
 
-  def selected_release_id_options(record) do
+  def releases(record) do
     record.musicbrainz_data
     |> ReleaseGroup.releases()
-    |> Enum.map(fn release ->
-      {
-        selected_release_label(release),
-        release["id"]
-      }
-    end)
   end
 
   def selected_release(record) do
-    record.musicbrainz_data
-    |> ReleaseGroup.releases()
+    record
+    |> releases()
     |> Enum.find(fn release -> release["id"] == record.selected_release_id end)
-  end
-
-  def selected_release_label(release) do
-    [release["date"], release["country"], release["packaging"]]
-    |> Enum.reject(&is_nil/1)
-    |> Enum.join(" ")
   end
 
   def changeset(record, attrs) do

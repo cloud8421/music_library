@@ -1,7 +1,9 @@
 defmodule MusicLibraryWeb.FormComponent do
   use MusicLibraryWeb, :live_component
 
-  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
+  import MusicLibraryWeb.RecordComponents,
+    only: [format_label: 1, type_label: 1, release_label: 1]
+
   alias MusicLibrary.Records
   alias MusicLibrary.Records.{Cover, Record}
 
@@ -54,7 +56,7 @@ defmodule MusicLibraryWeb.FormComponent do
         <Fluxon.Components.Select.select
           field={@form[:selected_release_id]}
           label={gettext("Selected Release")}
-          options={Record.selected_release_id_options(@record)}
+          options={selected_release_id_options(@record)}
         />
         <div class="sm:columns-2">
           <.input field={@form[:release_date]} type="text" label={gettext("Release Date")} />
@@ -190,6 +192,17 @@ defmodule MusicLibraryWeb.FormComponent do
 
   def types_with_labels do
     Enum.map(Records.Record.types(), fn t -> {type_label(t), t} end)
+  end
+
+  defp selected_release_id_options(record) do
+    record
+    |> Records.Record.releases()
+    |> Enum.map(fn release ->
+      {
+        release_label(release),
+        release["id"]
+      }
+    end)
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
