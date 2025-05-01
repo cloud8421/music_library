@@ -1,6 +1,5 @@
 defmodule MusicLibrary.Repo.Migrations.AddReleaseToRecords do
   use Ecto.Migration
-  import Ecto.Query
 
   def up do
     alter table(:records) do
@@ -9,12 +8,9 @@ defmodule MusicLibrary.Repo.Migrations.AddReleaseToRecords do
 
     flush()
 
-    query =
-      from(r in MusicLibrary.Records.Record,
-        update: [set: [release: r.year]]
-      )
-
-    MusicLibrary.Repo.update_all(query, [])
+    execute """
+    UPDATE records SET release = year;
+    """
   end
 
   def down do
