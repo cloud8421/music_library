@@ -43,7 +43,8 @@ defmodule MusicLibrary.BarcodeScan do
       :new ->
         Records.import_from_musicbrainz_release(scan_result.release.id,
           format: MusicBrainz.ReleaseSearchResult.format(scan_result.release),
-          purchased_at: current_time
+          purchased_at: current_time,
+          selected_release_id: scan_result.release.id
         )
 
       :wishlisted ->

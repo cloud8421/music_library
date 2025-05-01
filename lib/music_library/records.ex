@@ -148,6 +148,7 @@ defmodule MusicLibrary.Records do
   def import_from_musicbrainz_release_group(musicbrainz_id, opts \\ []) do
     format = Keyword.get(opts, :format, "cd")
     purchased_at = Keyword.get(opts, :purchased_at)
+    selected_release_id = Keyword.get(opts, :selected_release_id, nil)
 
     with {:ok, release_group} <- MusicBrainz.get_release_group(musicbrainz_id),
          {:ok, release_group_with_releases} <- merge_releases(musicbrainz_id, release_group),
@@ -156,7 +157,8 @@ defmodule MusicLibrary.Records do
       |> build_record_attrs(%{
         "cover_data" => cover_data,
         "format" => format,
-        "purchased_at" => purchased_at
+        "purchased_at" => purchased_at,
+        "selected_release_id" => selected_release_id
       })
       |> create_record()
     else

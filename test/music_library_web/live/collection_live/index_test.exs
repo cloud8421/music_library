@@ -395,6 +395,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     assert record.release_date == "2004-05-03"
     assert record.format == :cd
     assert record.musicbrainz_data == release_group
+    assert record.selected_release_id == "d3f9b9e2-73f5-4b47-a2a7-2c2199aad608"
 
     assert record.genres == [
              "alternative rock",
