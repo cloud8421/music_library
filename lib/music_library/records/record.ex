@@ -22,6 +22,7 @@ defmodule MusicLibrary.Records.Record do
     field :genres, {:array, :string}
     field :release_date, :string
     field :purchased_at, :utc_datetime
+    field :selected_release_id, :string
     field :release_ids, {:array, :string}, default: []
     field :included_release_group_ids, {:array, :string}, default: []
 
@@ -70,6 +71,29 @@ defmodule MusicLibrary.Records.Record do
     end
   end
 
+  def selected_release_id_options(record) do
+    record.musicbrainz_data
+    |> ReleaseGroup.releases()
+    |> Enum.map(fn release ->
+      {
+        selected_release_label(release),
+        release["id"]
+      }
+    end)
+  end
+
+  def selected_release(record) do
+    record.musicbrainz_data
+    |> ReleaseGroup.releases()
+    |> Enum.find(fn release -> release["id"] == record.selected_release_id end)
+  end
+
+  def selected_release_label(release) do
+    [release["date"], release["country"], release["packaging"]]
+    |> Enum.reject(&is_nil/1)
+    |> Enum.join(" ")
+  end
+
   def changeset(record, attrs) do
     record
     |> cast(attrs, [
@@ -81,6 +105,7 @@ defmodule MusicLibrary.Records.Record do
       :release_date,
       :genres,
       :release_ids,
+      :selected_release_id,
       :included_release_group_ids,
       :cover_url,
       :cover_data,

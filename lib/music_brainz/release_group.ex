@@ -9,6 +9,11 @@ defmodule MusicBrainz.ReleaseGroup do
     end)
   end
 
+  def releases(release_group) do
+    release_group
+    |> Map.get("releases", [])
+  end
+
   def release_ids(release_group) do
     release_group
     |> Map.get("releases", [])

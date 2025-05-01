@@ -226,6 +226,14 @@
           {Records.Record.release_count(@record)}
         </dd>
       </div>
+      <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+          {gettext("Collected release")}
+        </dt>
+        <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+          {selected_release_label(@record)}
+        </dd>
+      </div>
       <div
         :if={Records.Record.included_release_groups_count(@record) > 0}
         class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"

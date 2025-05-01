@@ -2,7 +2,13 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   use MusicLibraryWeb, :live_view
 
   import MusicLibraryWeb.RecordComponents,
-    only: [toggle_actions_menu: 1, close_actions_menu: 1, format_label: 1, type_label: 1]
+    only: [
+      toggle_actions_menu: 1,
+      close_actions_menu: 1,
+      format_label: 1,
+      type_label: 1,
+      selected_release_label: 1
+    ]
 
   alias MusicLibrary.Records
   alias Phoenix.LiveView.JS

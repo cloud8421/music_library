@@ -293,6 +293,14 @@ defmodule MusicLibraryWeb.RecordComponents do
   def type_label(:single), do: gettext("Single")
   def type_label(:other), do: gettext("Other")
 
+  def selected_release_label(record) do
+    if release = Records.Record.selected_release(record) do
+      Records.Record.selected_release_label(release)
+    else
+      gettext("No release selected")
+    end
+  end
+
   def toggle_actions_menu(record_id) do
     JS.toggle(to: "#actions-#{record_id}")
     |> JS.toggle_class("pointer-events-none", to: "#records > li")

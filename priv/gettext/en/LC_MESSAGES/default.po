@@ -742,3 +742,24 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Release Date"
 msgstr ""
+
+#: lib/music_library_web/components/form_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Choose a Release"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/wishlist_live/show.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Collected release"
+msgstr ""
+
+#: lib/music_library_web/components/record_components.ex
+#, elixir-autogen, elixir-format
+msgid "No release selected"
+msgstr ""
+
+#: lib/music_library_web/components/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Selected Release"
+msgstr ""

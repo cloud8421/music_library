@@ -66,6 +66,7 @@ defmodule MusicLibrary.Fixtures.Records do
         title: Enum.random(@titles),
         type: :album,
         format: Record.formats() |> Enum.random(),
+        selected_release_id: "d3f9b9e2-73f5-4b47-a2a7-2c2199aad608",
         release_date: Enum.random(1969..2024) |> Integer.to_string(),
         purchased_at: current_time,
         artists: [artist_attrs(artist_name)]

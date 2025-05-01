@@ -55,6 +55,13 @@ defmodule MusicLibraryWeb.FormComponent do
           type="text"
           label={gettext("MusicBrainz ID")}
         />
+        <.input
+          field={@form[:selected_release_id]}
+          type="select"
+          label={gettext("Selected Release")}
+          prompt={gettext("Choose a Release")}
+          options={Record.selected_release_id_options(@record)}
+        />
         <div class="sm:columns-2">
           <.input field={@form[:release_date]} type="text" label={gettext("Release Date")} />
           <.input
