@@ -35,7 +35,7 @@ defmodule MusicLibraryWeb.FormComponent do
         phx-auto-recover="recover_form"
         phx-submit="save"
       >
-        <div class="sm:columns-2">
+        <div class="sm:columns-2 space-y-2">
           <Fluxon.Components.Select.select
             field={@form[:type]}
             label={gettext("Type")}
@@ -47,10 +47,9 @@ defmodule MusicLibraryWeb.FormComponent do
             options={formats_with_labels()}
           />
         </div>
-        <.input
-          input_class="font-mono"
+        <Fluxon.Components.Input.input
+          class="font-mono"
           field={@form[:musicbrainz_id]}
-          type="text"
           label={gettext("MusicBrainz ID")}
         />
         <Fluxon.Components.Select.select
@@ -59,11 +58,10 @@ defmodule MusicLibraryWeb.FormComponent do
           options={selected_release_id_options(@record)}
         />
         <div class="sm:columns-2">
-          <.input field={@form[:release_date]} type="text" label={gettext("Release Date")} />
-          <.input
+          <Fluxon.Components.Input.input field={@form[:release_date]} label={gettext("Release Date")} />
+          <Fluxon.Components.DatePicker.date_time_picker
             :if={@show_purchased_at}
             field={@form[:purchased_at]}
-            type="datetime-local"
             label={gettext("Purchased at")}
           />
         </div>
