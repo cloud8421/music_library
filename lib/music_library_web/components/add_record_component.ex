@@ -21,16 +21,14 @@ defmodule MusicLibraryWeb.AddRecordComponent do
         phx-submit="search"
         class="px-4"
       >
-        <.input
+        <Fluxon.Components.Input.input
           id={:mb_query}
           name={:mb_query}
           field={@form[:mb_query]}
-          type="text"
+          type="search"
           label={gettext("Search for a record")}
-          prompt={gettext("Search for a record")}
           phx-debounce="500"
-          autocorrect="off"
-          autocapitalize="none"
+          autocomplete="off"
           autofocus
         />
       </.simple_form>

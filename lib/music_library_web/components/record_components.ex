@@ -197,15 +197,15 @@ defmodule MusicLibraryWeb.RecordComponents do
   def search_form(assigns) do
     ~H"""
     <form class="w-full sm:w-1/3" for={@query} phx-submit="search" phx-change="search">
-      <.input
+      <Fluxon.Components.Input.input
         type="search"
+        size="sm"
         id={:query}
         name={:query}
         value={@query}
         placeholder={gettext("Search")}
         phx-debounce="500"
-        autocorrect="off"
-        autocapitalize="none"
+        autocomplete="off"
       />
     </form>
     """
