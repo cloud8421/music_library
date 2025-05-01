@@ -34,18 +34,14 @@ defmodule MusicLibraryWeb.FormComponent do
         phx-submit="save"
       >
         <div class="sm:columns-2">
-          <.input
+          <Fluxon.Components.Select.select
             field={@form[:type]}
-            type="select"
             label={gettext("Type")}
-            prompt={gettext("Choose a value")}
             options={types_with_labels()}
           />
-          <.input
+          <Fluxon.Components.Select.select
             field={@form[:format]}
-            type="select"
             label={gettext("Format")}
-            prompt={gettext("Choose a value")}
             options={formats_with_labels()}
           />
         </div>
@@ -55,11 +51,9 @@ defmodule MusicLibraryWeb.FormComponent do
           type="text"
           label={gettext("MusicBrainz ID")}
         />
-        <.input
+        <Fluxon.Components.Select.select
           field={@form[:selected_release_id]}
-          type="select"
           label={gettext("Selected Release")}
-          prompt={gettext("Choose a Release")}
           options={Record.selected_release_id_options(@record)}
         />
         <div class="sm:columns-2">
