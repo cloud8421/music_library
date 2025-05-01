@@ -57,7 +57,7 @@ defmodule MusicLibraryWeb.RecordComponents do
               {record.title}
             </h2>
             <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-              {Records.Record.format_release(record.release)}
+              {Records.Record.format_release_date(record.release_date)}
               <span :if={@current_date && !Records.Record.released?(record, @current_date)}>
                 ({gettext("Unreleased")})
               </span>
@@ -271,7 +271,7 @@ defmodule MusicLibraryWeb.RecordComponents do
             {format_label(record.format)} · {type_label(record.type)}
           </p>
           <p class="pointer-events-none block text-sm font-medium text-zinc-500">
-            {Records.Record.format_release(record.release)}
+            {Records.Record.format_release_date(record.release_date)}
           </p>
         </li>
       </ul>

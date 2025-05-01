@@ -16,26 +16,26 @@ defmodule MusicLibrary.Records.RecordTest do
     test "returns true if the record has a release date in the past", %{
       current_date: current_date
     } do
-      record = %Record{release: "2024-01-01"}
+      record = %Record{release_date: "2024-01-01"}
       assert Record.released?(record, current_date)
     end
 
     test "returns false if the record has a release date in the future", %{
       current_date: current_date
     } do
-      record = %Record{release: "2025-02-01"}
+      record = %Record{release_date: "2025-02-01"}
       refute Record.released?(record, current_date)
     end
 
     test "returns true if the record is released today", %{current_date: current_date} do
-      record = %Record{release: "2025-01-01"}
+      record = %Record{release_date: "2025-01-01"}
       assert Record.released?(record, current_date)
     end
 
     test "it returns true if the release date is not precise enough", %{
       current_date: current_date
     } do
-      record = %Record{release: "2019"}
+      record = %Record{release_date: "2019"}
       assert Record.released?(record, current_date)
     end
   end
@@ -54,28 +54,28 @@ defmodule MusicLibrary.Records.RecordTest do
                  id: "749c07b5-4900-404b-bea9-bb6b16fa991e",
                  type: :other,
                  title: "Claustrophobic Universe",
-                 release: "2021-04-23",
+                 release_date: "2021-04-23",
                  artists: "Mariusz Duda"
                },
                %MusicBrainz.ReleaseGroupSearchResult{
                  id: "61077431-0057-4119-8f06-0df1098d21e5",
                  type: :other,
                  title: "Interior Drawings",
-                 release: "2021-12-10",
+                 release_date: "2021-12-10",
                  artists: "Mariusz Duda"
                },
                %MusicBrainz.ReleaseGroupSearchResult{
                  id: "c36123e3-8899-48a5-8196-9dbb72421d69",
                  type: :other,
                  title: "Let’s Meet Outside",
-                 release: "2022-05-20",
+                 release_date: "2022-05-20",
                  artists: "Mariusz Duda"
                },
                %MusicBrainz.ReleaseGroupSearchResult{
                  id: "d463f2b1-d254-4baf-a957-fb78c6e5b956",
                  type: :other,
                  title: "Lockdown Spaces",
-                 release: "2020-06-26",
+                 release_date: "2020-06-26",
                  artists: "Mariusz Duda"
                }
              ]

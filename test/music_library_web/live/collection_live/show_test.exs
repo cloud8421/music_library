@@ -26,7 +26,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
         conn
         |> visit(~p"/collection/#{record.id}")
         |> assert_has("h2", text: escape(record.title))
-        |> assert_has("p", text: record.release)
+        |> assert_has("p", text: record.release_date)
         |> assert_has("p", text: format_label(record.format))
         |> assert_has("p", text: type_label(record.type))
         |> assert_has("dd", text: Record.format_as_date(record.purchased_at))

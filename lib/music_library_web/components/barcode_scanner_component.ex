@@ -280,7 +280,7 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
           {@release.title}
         </h2>
         <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-          {release_format_label(@release)} · {Records.Record.format_release(@release.date)} · {RecordComponents.type_label(
+          {release_format_label(@release)} · {Records.Record.format_release_date(@release.date)} · {RecordComponents.type_label(
             @release.release_group.type
           )}
         </p>

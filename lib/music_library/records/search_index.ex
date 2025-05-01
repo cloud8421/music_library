@@ -20,7 +20,7 @@ defmodule MusicLibrary.Records.SearchIndex do
     field :title, :string
     field :musicbrainz_id, Ecto.UUID
     field :genres, {:array, :string}
-    field :release, :string
+    field :release_date, :string
     field :purchased_at, :utc_datetime
     field :cover_hash, :string
     field :release_ids, {:array, :string}, default: []

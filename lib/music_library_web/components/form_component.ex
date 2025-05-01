@@ -56,7 +56,7 @@ defmodule MusicLibraryWeb.FormComponent do
           label={gettext("MusicBrainz ID")}
         />
         <div class="sm:columns-2">
-          <.input field={@form[:release]} type="text" label={gettext("Release")} />
+          <.input field={@form[:release_date]} type="text" label={gettext("Release Date")} />
           <.input
             :if={@show_purchased_at}
             field={@form[:purchased_at]}

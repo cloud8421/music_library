@@ -81,7 +81,9 @@ defmodule MusicLibraryWeb.AddRecordComponent do
             {@release_group.title}
           </h2>
           <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-            {Records.Record.format_release(@release_group.release)} · {type_label(@release_group.type)}
+            {Records.Record.format_release_date(@release_group.release_date)} · {type_label(
+              @release_group.type
+            )}
           </p>
         </div>
         <div class="relative flex-none">

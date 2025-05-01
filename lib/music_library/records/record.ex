@@ -20,7 +20,7 @@ defmodule MusicLibrary.Records.Record do
     field :musicbrainz_id, Ecto.UUID
     field :musicbrainz_data, :map, default: %{}
     field :genres, {:array, :string}
-    field :release, :string
+    field :release_date, :string
     field :purchased_at, :utc_datetime
     field :release_ids, {:array, :string}, default: []
     field :included_release_group_ids, {:array, :string}, default: []
@@ -55,10 +55,10 @@ defmodule MusicLibrary.Records.Record do
     Enum.count(record.release_ids)
   end
 
-  def released?(%{release: nil}, _current_day), do: true
+  def released?(%{release_date: nil}, _current_day), do: true
 
   def released?(record, current_day) do
-    case Date.from_iso8601(record.release) do
+    case Date.from_iso8601(record.release_date) do
       {:ok, release_date} ->
         Date.compare(current_day, release_date) != :lt
 
@@ -78,7 +78,7 @@ defmodule MusicLibrary.Records.Record do
       :title,
       :musicbrainz_id,
       :musicbrainz_data,
-      :release,
+      :release_date,
       :genres,
       :release_ids,
       :included_release_group_ids,
@@ -169,7 +169,7 @@ defmodule MusicLibrary.Records.Record do
       "musicbrainz_data" => release_group,
       "title" => release_group["title"],
       "artists" => artists_attrs,
-      "release" => release_group["first-release-date"],
+      "release_date" => release_group["first-release-date"],
       "type" => parse_subtype(release_group["primary-type"]),
       "genres" => Enum.map(release_group["genres"], fn g -> g["name"] end),
       "release_ids" => Enum.map(release_group["releases"], fn r -> r["id"] end),
@@ -191,22 +191,22 @@ defmodule MusicLibrary.Records.Record do
   and can be nil or empty string.
 
       iex> alias MusicLibrary.Records.Record
-      iex> Record.format_release(nil)
+      iex> Record.format_release_date(nil)
       "N/A"
-      iex> Record.format_release("")
+      iex> Record.format_release_date("")
       "N/A"
-      iex> Record.format_release("2021")
+      iex> Record.format_release_date("2021")
       "2021"
-      iex> Record.format_release("2021-12")
+      iex> Record.format_release_date("2021-12")
       "12/2021"
-      iex> Record.format_release("2021-12-23")
+      iex> Record.format_release_date("2021-12-23")
       "23/12/2021"
   """
-  @spec format_release(String.t() | nil) :: String.t()
-  def format_release(nil), do: "N/A"
+  @spec format_release_date(String.t() | nil) :: String.t()
+  def format_release_date(nil), do: "N/A"
 
-  def format_release(release) do
-    case String.split(release, "-", trim: true) do
+  def format_release_date(release_date) do
+    case String.split(release_date, "-", trim: true) do
       [] -> "N/A"
       [year] -> year
       [year, month] -> "#{month}/#{year}"

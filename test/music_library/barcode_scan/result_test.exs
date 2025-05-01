@@ -9,7 +9,7 @@ defmodule MusicLibrary.BarcodeScan.ResultTest do
     type: :album,
     title: "Test Release Group",
     artists: ["Test Artist"],
-    release: "2021-01-01"
+    release_date: "2021-01-01"
   }
 
   @release %ReleaseSearchResult{

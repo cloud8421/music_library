@@ -26,7 +26,7 @@ defmodule MusicLibraryWeb.WishlistLive.ShowTest do
         conn
         |> visit(~p"/wishlist/#{record.id}")
         |> assert_has("h2", text: escape(record.title))
-        |> assert_has("p", text: record.release)
+        |> assert_has("p", text: record.release_date)
         |> assert_has("p", text: format_label(record.format))
         |> assert_has("p", text: type_label(record.type))
         |> assert_has("dd", text: record.id)

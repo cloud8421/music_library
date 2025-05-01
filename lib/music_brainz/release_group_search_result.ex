@@ -1,6 +1,6 @@
 defmodule MusicBrainz.ReleaseGroupSearchResult do
-  @enforce_keys [:id, :type, :title, :artists, :release]
-  defstruct [:id, :type, :title, :artists, :release]
+  @enforce_keys [:id, :type, :title, :artists, :release_date]
+  defstruct [:id, :type, :title, :artists, :release_date]
 
   alias MusicBrainz.ReleaseGroup
 
@@ -10,7 +10,7 @@ defmodule MusicBrainz.ReleaseGroupSearchResult do
       type: ReleaseGroup.parse_type(rg["primary-type"]),
       title: rg["title"],
       artists: Enum.map_join(rg["artist-credit"], ", ", fn ac -> ac["artist"]["name"] end),
-      release: rg["first-release-date"]
+      release_date: rg["first-release-date"]
     }
   end
 

@@ -49,7 +49,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         session
         |> assert_has("#records-#{record.id}")
         |> assert_has("#records-#{record.id} h2", text: escape(record.title))
-        |> assert_has("#records-#{record.id} p", text: record.release)
+        |> assert_has("#records-#{record.id} p", text: record.release_date)
         |> assert_has("#records-#{record.id} p", text: format_label(record.format))
         |> assert_has("#records-#{record.id} p", text: type_label(record.type))
         |> assert_has("#records-#{record.id} span",
@@ -134,7 +134,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       session
       |> assert_has("#records-#{record.id}")
       |> assert_has("#records-#{record.id} h2", text: escape(record.title))
-      |> assert_has("#records-#{record.id} p", text: record.release)
+      |> assert_has("#records-#{record.id} p", text: record.release_date)
       |> assert_has("#records-#{record.id} p", text: format_label(record.format))
       |> assert_has("#records-#{record.id} p", text: type_label(record.type))
       |> assert_has("#records-#{record.id} span",
@@ -176,7 +176,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         session
         |> assert_has("#records-#{record.id}")
         |> assert_has("#records-#{record.id} h2", text: escape(record.title))
-        |> assert_has("#records-#{record.id} p", text: record.release)
+        |> assert_has("#records-#{record.id} p", text: record.release_date)
         |> assert_has("#records-#{record.id} p", text: format_label(record.format))
         |> assert_has("#records-#{record.id} p", text: type_label(record.type))
         |> assert_has("#records-#{record.id} span",
@@ -277,7 +277,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         session
         |> assert_has("h1", text: result.artists)
         |> assert_has("h2", text: result.title)
-        |> assert_has("p", text: Record.format_release(result.release))
+        |> assert_has("p", text: Record.format_release_date(result.release_date))
       end
 
       session =
@@ -288,7 +288,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
       assert record.musicbrainz_id == first_release_group_search_result_id
       assert record.title == "Marbles"
-      assert record.release == "2004-05-03"
+      assert record.release_date == "2004-05-03"
       assert record.format == :cd
       assert record.musicbrainz_data == release_group
 
@@ -392,7 +392,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
     assert record.musicbrainz_id == release_group_id
     assert record.title == "Marbles"
-    assert record.release == "2004-05-03"
+    assert record.release_date == "2004-05-03"
     assert record.format == :cd
     assert record.musicbrainz_data == release_group
 
