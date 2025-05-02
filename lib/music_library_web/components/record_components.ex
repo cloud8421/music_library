@@ -302,7 +302,11 @@ defmodule MusicLibraryWeb.RecordComponents do
   end
 
   def release_label(release) do
-    [release["date"], release["country"] |> country_label(), release["packaging"]]
+    [
+      release["date"],
+      release["country"] |> country_label(),
+      release["packaging"] |> packaging_label()
+    ]
     |> Enum.reject(&is_nil/1)
     |> Enum.join(" ")
   end
@@ -311,6 +315,9 @@ defmodule MusicLibraryWeb.RecordComponents do
   defp country_label("XW"), do: "🌍"
   defp country_label("XE"), do: "🇪🇺"
   defp country_label(country_code), do: Flagmojis.by_iso(country_code).emoji
+
+  defp packaging_label("None"), do: gettext("Digital download")
+  defp packaging_label(other), do: other
 
   def toggle_actions_menu(record_id) do
     JS.toggle(to: "#actions-#{record_id}")
