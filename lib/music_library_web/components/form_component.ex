@@ -53,6 +53,7 @@ defmodule MusicLibraryWeb.FormComponent do
           label={gettext("MusicBrainz ID")}
         />
         <Fluxon.Components.Select.select
+          searchable
           field={@form[:selected_release_id]}
           label={gettext("Selected Release")}
           options={selected_release_id_options(@record)}
