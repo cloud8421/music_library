@@ -227,7 +227,7 @@ defmodule MusicLibrary.Records.Record do
     end
   end
 
-  def format_as_date(purchased_at) do
-    "#{purchased_at.day}/#{purchased_at.month}/#{purchased_at.year}"
+  def format_as_date(dt) do
+    Calendar.strftime(dt, "%d/%m/%Y")
   end
 end

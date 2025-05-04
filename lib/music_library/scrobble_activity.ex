@@ -81,7 +81,7 @@ defmodule MusicLibrary.ScrobbleActivity do
       |> DateTime.from_unix!()
       |> DateTime.shift_zone!(timezone)
 
-    "#{ldt.day}/#{ldt.month}/#{ldt.year} #{ldt.hour}:#{ldt.minute}"
+    Calendar.strftime(ldt, "%d/%m/%Y %X")
   end
 
   defp recent_release_ids(recent_tracks) do
