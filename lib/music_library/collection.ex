@@ -5,6 +5,8 @@ defmodule MusicLibrary.Collection do
   alias MusicLibrary.Records.{Record, SearchIndex}
   alias MusicLibrary.Repo
 
+  import MusicLibrary.Records, only: [order_alphabetically: 0]
+
   def search_records(query, opts \\ []) do
     limit = Keyword.get(opts, :limit, 20)
     offset = Keyword.get(opts, :offset, 0)
@@ -43,7 +45,7 @@ defmodule MusicLibrary.Collection do
     q =
       from r in Record,
         where: not is_nil(r.purchased_at),
-        order_by: [desc: r.purchased_at],
+        order_by: [{:desc, r.purchased_at}, order_alphabetically()],
         limit: 1,
         select: ^Records.essential_fields()
 

@@ -47,6 +47,14 @@ defmodule MusicLibrary.Records do
     Repo.aggregate(search, :count)
   end
 
+  defmacro order_alphabetically do
+    quote do
+      fragment(
+        "unaccent(json_extract(artists, '$[0].sort_name')) COLLATE NOCASE ASC, unaccent(title) COLLATE NOCASE ASC"
+      )
+    end
+  end
+
   defp build_search(initial_search, query, order \\ :alphabetical) do
     {:ok, parsed_query} = SearchParser.parse(query)
 
@@ -54,15 +62,14 @@ defmodule MusicLibrary.Records do
       case order do
         :alphabetical ->
           initial_search
-          |> order_by(
-            fragment(
-              "unaccent(json_extract(artists, '$[0].sort_name')) COLLATE NOCASE ASC, unaccent(title) COLLATE NOCASE ASC"
-            )
-          )
+          |> order_by(order_alphabetically())
 
         :purchase ->
           initial_search
-          |> order_by([r], {:desc, r.purchased_at})
+          |> order_by([r], [
+            {:desc, r.purchased_at},
+            order_alphabetically()
+          ])
       end
 
     Enum.reduce(parsed_query, search_with_order, fn
