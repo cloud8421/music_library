@@ -63,6 +63,7 @@ defmodule MusicLibraryWeb.FormComponent do
           <Fluxon.Components.DatePicker.date_time_picker
             :if={@show_purchased_at}
             field={@form[:purchased_at]}
+            display_format="%B %-d, %Y at %I:%M %p"
             label={gettext("Purchased at")}
           />
         </div>
