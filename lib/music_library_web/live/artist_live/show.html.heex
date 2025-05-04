@@ -8,15 +8,8 @@
     <div class="mt-4 flex items-center justify-between">
       <.async_result :let={lastfm_artist_info} assign={@lastfm_artist_info}>
         <:loading>
-          <div class="mt-4 text-zinc-700 dark:text-zinc-300">
-            <span class="sr-only">{gettext("Loading play count")}</span>
-            <.icon
-              name="hero-arrow-path"
-              class="-mt-1 h-5 w-5 animate-spin"
-              aria-hidden="true"
-              data-slot="icon"
-            />
-          </div>
+          <span class="sr-only">{gettext("Loading play count")}</span>
+          <Fluxon.Components.Loading.loading />
         </:loading>
         <:failed :let={_failure}>
           <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
