@@ -289,7 +289,7 @@ defmodule MusicBrainz.API do
       url: "/release/#{id}",
       params: [
         fmt: "json",
-        inc: "release-groups+recordings"
+        inc: "release-groups+recordings+artists"
       ]
     )
     |> get_request()

@@ -2,14 +2,19 @@ defmodule MusicBrainz.Release do
   @enforce_keys [:id, :date, :barcode, :media]
   defstruct [:id, :date, :barcode, :media]
 
+  defmodule Artist do
+    @enforce_keys [:id, :name, :sort_name]
+    defstruct [:id, :name, :sort_name]
+  end
+
   defmodule Medium do
     @enforce_keys [:format, :number, :track_count, :tracks]
     defstruct [:format, :number, :track_count, :tracks]
   end
 
   defmodule Track do
-    @enforce_keys [:id, :title, :length, :number, :position]
-    defstruct [:id, :title, :length, :number, :position]
+    @enforce_keys [:id, :title, :artists, :length, :number, :position]
+    defstruct [:id, :title, :artists, :length, :number, :position]
   end
 
   def media_count(release) do
@@ -41,9 +46,20 @@ defmodule MusicBrainz.Release do
       %Track{
         id: t["id"],
         title: t["title"],
+        artists: parse_artists(t["recording"]["artist-credit"]),
         length: t["length"],
         number: t["number"],
         position: t["position"]
+      }
+    end)
+  end
+
+  defp parse_artists(artists) do
+    Enum.map(artists, fn a ->
+      %Artist{
+        id: a["artist"]["id"],
+        name: a["artist"]["name"],
+        sort_name: a["artist"]["sort-name"]
       }
     end)
   end
