@@ -1,6 +1,6 @@
 defmodule MusicBrainz.Release do
-  @enforce_keys [:id, :date, :barcode, :media]
-  defstruct [:id, :date, :barcode, :media]
+  @enforce_keys [:id, :artists, :date, :barcode, :media]
+  defstruct [:id, :artists, :date, :barcode, :media]
 
   defmodule Artist do
     @enforce_keys [:id, :name, :sort_name]
@@ -24,6 +24,7 @@ defmodule MusicBrainz.Release do
   def from_api_response(r) do
     %__MODULE__{
       id: r["id"],
+      artists: parse_artists(r["artist-credit"]),
       date: r["date"],
       barcode: r["barcode"],
       media: parse_media(r["media"])
