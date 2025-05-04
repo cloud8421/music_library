@@ -673,6 +673,7 @@ msgstr ""
 msgid "Albums"
 msgstr ""
 
+#: lib/music_library_web/live/collection_live/show.html.heex
 #: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Tracks"
@@ -757,4 +758,19 @@ msgstr ""
 #: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "Digital download"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Error loading tracks"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Loading release with tracks"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Show Tracks"
 msgstr ""

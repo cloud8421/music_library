@@ -6,11 +6,16 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
   import MusicLibraryWeb.RecordComponents,
     only: [format_label: 1, type_label: 1, selected_release_label: 1]
 
+  alias MusicBrainz.Fixtures
   alias MusicLibrary.Records.Record
 
   describe "Edit record from show page" do
     test "can navigate to the record edit form", %{conn: conn} do
       record = record()
+
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        Req.Test.json(conn, Fixtures.Release.release(:marbles))
+      end)
 
       conn
       |> visit(~p"/collection/#{record.id}")
@@ -24,6 +29,10 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
     test "it includes all needed information", %{conn: conn} do
       record = record()
       cover_url = ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        Req.Test.json(conn, Fixtures.Release.release(:marbles))
+      end)
 
       session =
         conn

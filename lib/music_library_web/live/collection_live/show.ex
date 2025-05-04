@@ -33,6 +33,18 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   def handle_params(%{"id" => id}, _, socket) do
     record = Records.get_record!(id)
 
+    socket =
+      if record.selected_release_id do
+        socket
+        |> assign_async(:release_with_tracks, fn ->
+          with {:ok, release} <- MusicBrainz.get_release(record.selected_release_id) do
+            {:ok, %{release_with_tracks: MusicBrainz.Release.from_api_response(release)}}
+          end
+        end)
+      else
+        socket
+      end
+
     {:noreply,
      socket
      |> assign(:nav_section, :records)

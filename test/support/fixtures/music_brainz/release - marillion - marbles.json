@@ -1,51 +1,298 @@
 {
-  "asin": "B0002Y4TM4",
-  "barcode": "5037300650128",
-  "country": "GB",
-  "cover-art-archive": {
-    "artwork": true,
-    "back": true,
-    "count": 14,
-    "darkened": false,
-    "front": true
-  },
-  "date": "2004-05-03",
-  "disambiguation": "",
-  "id": "d3f9b9e2-73f5-4b47-a2a7-2c2199aad608",
-  "packaging": "Jewel Case",
-  "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
-  "quality": "normal",
   "release-events": [
     {
       "area": {
-        "disambiguation": "",
-        "id": "8a754a16-0027-3a29-b6d7-2b40ea0481ed",
-        "iso-3166-1-codes": [
-          "GB"
-        ],
-        "name": "United Kingdom",
-        "sort-name": "United Kingdom",
         "type": null,
-        "type-id": null
+        "sort-name": "Europe",
+        "id": "89a675c2-3e37-3518-b83c-418bad59a85a",
+        "iso-3166-1-codes": [
+          "XE"
+        ],
+        "disambiguation": "",
+        "type-id": null,
+        "name": "Europe"
       },
       "date": "2004-05-03"
     }
   ],
-  "release-group": {
-    "disambiguation": "",
-    "first-release-date": "2004-05-03",
-    "id": "20790e26-98e4-3ad3-a67f-b674758b942d",
-    "primary-type": "Album",
-    "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
-    "secondary-type-ids": [],
-    "secondary-types": [],
-    "title": "Marbles"
-  },
+  "media": [
+    {
+      "format": "CD",
+      "format-id": "9712d52a-4509-3d4b-a1a2-67c88c643e31",
+      "track-offset": 0,
+      "position": 1,
+      "tracks": [
+        {
+          "recording": {
+            "disambiguation": "",
+            "first-release-date": "2004-05-03",
+            "video": false,
+            "title": "The Invisible Man",
+            "length": 817613,
+            "id": "03c612c6-5a13-455f-ab2f-0fe40906250a"
+          },
+          "number": "1",
+          "id": "ea424146-3f1f-4651-b873-50e678a0fc7a",
+          "position": 1,
+          "length": 817613,
+          "title": "The Invisible Man"
+        },
+        {
+          "number": "2",
+          "recording": {
+            "id": "40a23122-cd24-466c-be01-187f6f3c9acf",
+            "length": 102746,
+            "title": "Marbles I",
+            "video": false,
+            "first-release-date": "2004-05-03",
+            "disambiguation": ""
+          },
+          "position": 2,
+          "length": 102746,
+          "id": "76e900f8-0156-4306-b490-1945ae96d240",
+          "title": "Marbles I"
+        },
+        {
+          "position": 3,
+          "length": 294293,
+          "id": "86187f02-6779-4ded-b84e-9d21d8abb8ca",
+          "number": "3",
+          "recording": {
+            "id": "f633fea4-8f29-4fda-a15f-86627f9048da",
+            "length": 294293,
+            "video": false,
+            "title": "Genie",
+            "first-release-date": "2004-05-03",
+            "disambiguation": ""
+          },
+          "title": "Genie"
+        },
+        {
+          "title": "Fantastic Place",
+          "recording": {
+            "id": "f703b00d-0216-4e08-88cd-875c183d1e3c",
+            "length": 372520,
+            "title": "Fantastic Place",
+            "video": false,
+            "first-release-date": "2004-05-03",
+            "disambiguation": ""
+          },
+          "number": "4",
+          "position": 4,
+          "id": "71c3f5aa-54c2-4af4-a7b8-e269879a8ba5",
+          "length": 372520
+        },
+        {
+          "title": "The Only Unforgivable Thing",
+          "length": 433293,
+          "position": 5,
+          "id": "0ecee1da-d20e-4d9e-9899-d5c1c15b0588",
+          "recording": {
+            "title": "The Only Unforgivable Thing",
+            "video": false,
+            "length": 433293,
+            "id": "af263b9a-d21c-4210-b61e-bff2be7c3424",
+            "disambiguation": "",
+            "first-release-date": "2004-05-03"
+          },
+          "number": "5"
+        },
+        {
+          "title": "Marbles II",
+          "position": 6,
+          "length": 122880,
+          "id": "b71db64f-4eee-4f44-a478-2d20e52b6adf",
+          "recording": {
+            "video": false,
+            "title": "Marbles II",
+            "id": "0b20b4eb-60ac-4c19-b4ba-8ac2ace07136",
+            "length": 122880,
+            "disambiguation": "",
+            "first-release-date": "2004-05-03"
+          },
+          "number": "6"
+        },
+        {
+          "recording": {
+            "first-release-date": "2004-05-03",
+            "disambiguation": "",
+            "length": 1078253,
+            "id": "08864ce2-20fd-49d4-8ef4-d916cec4f5c9",
+            "title": "Ocean Cloud",
+            "video": false
+          },
+          "number": "7",
+          "position": 7,
+          "length": 1078253,
+          "id": "0d3a4853-22f9-46c9-a8ee-354e62c6db87",
+          "title": "Ocean Cloud"
+        }
+      ],
+      "title": "",
+      "track-count": 7
+    },
+    {
+      "format": "CD",
+      "format-id": "9712d52a-4509-3d4b-a1a2-67c88c643e31",
+      "track-offset": 0,
+      "title": "",
+      "track-count": 8,
+      "position": 2,
+      "tracks": [
+        {
+          "title": "Marbles III",
+          "recording": {
+            "first-release-date": "2004-05-03",
+            "disambiguation": "",
+            "id": "d576eda2-5f8c-4f8b-b741-c1ccc5aa1216",
+            "length": 111866,
+            "title": "Marbles III",
+            "video": false
+          },
+          "number": "1",
+          "position": 1,
+          "id": "683cae13-1de9-43f5-bb80-d72a50ffd539",
+          "length": 111866
+        },
+        {
+          "title": "The Damage",
+          "position": 2,
+          "length": 275186,
+          "id": "435ce489-3766-4b0c-be24-7a9506fc9e90",
+          "number": "2",
+          "recording": {
+            "length": 275186,
+            "id": "24e40cd4-1be3-4a41-a78f-8290a4a4b983",
+            "title": "The Damage",
+            "video": false,
+            "first-release-date": "2004-04-19",
+            "disambiguation": ""
+          }
+        },
+        {
+          "title": "Don’t Hurt Yourself",
+          "recording": {
+            "first-release-date": "2004-05-03",
+            "disambiguation": "",
+            "length": 348746,
+            "id": "c9ada0dc-548f-4f06-86e2-ac4a4c55b1c6",
+            "title": "Don’t Hurt Yourself",
+            "video": false
+          },
+          "number": "3",
+          "position": 3,
+          "id": "5548e295-5db5-4894-aa75-985255820362",
+          "length": 348746
+        },
+        {
+          "title": "You’re Gone",
+          "recording": {
+            "id": "9eac6df4-b14d-492c-b142-3aa081d842a9",
+            "length": 385720,
+            "video": false,
+            "title": "You’re Gone",
+            "first-release-date": "2004-04-19",
+            "disambiguation": ""
+          },
+          "number": "4",
+          "length": 385720,
+          "position": 4,
+          "id": "dd0f6929-cc08-416a-982d-454e34809aaf"
+        },
+        {
+          "title": "Angelina",
+          "id": "df6bd598-8333-4e3a-870a-63893dd87c01",
+          "position": 5,
+          "length": 462613,
+          "number": "5",
+          "recording": {
+            "first-release-date": "2004-05-03",
+            "disambiguation": "",
+            "length": 462613,
+            "id": "d718635b-8fd3-4d94-9fe3-68465737fed5",
+            "title": "Angelina",
+            "video": false
+          }
+        },
+        {
+          "title": "Drilling Holes",
+          "recording": {
+            "video": false,
+            "title": "Drilling Holes",
+            "length": 311666,
+            "id": "969d518d-5528-46c6-ac2b-ac2de5e78ba1",
+            "disambiguation": "",
+            "first-release-date": "2004-05-03"
+          },
+          "number": "6",
+          "position": 6,
+          "id": "d17e2d73-1365-4473-bf6a-b3250115f8ef",
+          "length": 311666
+        },
+        {
+          "recording": {
+            "video": false,
+            "title": "Marbles IV",
+            "id": "5f5c3acf-5701-4ddf-b1c8-173608cdbb7b",
+            "length": 86146,
+            "disambiguation": "",
+            "first-release-date": "2004-05-03"
+          },
+          "number": "7",
+          "position": 7,
+          "length": 86146,
+          "id": "acafcabd-c91a-4aa3-80fa-4f2c4b64a962",
+          "title": "Marbles IV"
+        },
+        {
+          "number": "8",
+          "recording": {
+            "first-release-date": "2004-05-03",
+            "disambiguation": "",
+            "id": "18b32261-ef00-46a1-a573-7c910cd68fb9",
+            "length": 730054,
+            "video": false,
+            "title": "Neverland"
+          },
+          "length": 730054,
+          "position": 8,
+          "id": "635021dd-a956-4830-af47-c7b9a5540deb",
+          "title": "Neverland"
+        }
+      ]
+    }
+  ],
+  "country": "XE",
   "status": "Official",
-  "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
-  "text-representation": {
-    "language": "eng",
-    "script": "Latn"
+  "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
+  "release-group": {
+    "first-release-date": "2004-05-03",
+    "primary-type": "Album",
+    "secondary-types": [],
+    "disambiguation": "",
+    "id": "20790e26-98e4-3ad3-a67f-b674758b942d",
+    "secondary-type-ids": [],
+    "title": "Marbles",
+    "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc"
   },
-  "title": "Marbles"
+  "disambiguation": "non‐deluxe double CD with o‐card",
+  "cover-art-archive": {
+    "count": 0,
+    "front": false,
+    "back": false,
+    "darkened": false,
+    "artwork": false
+  },
+  "barcode": "",
+  "asin": null,
+  "quality": "normal",
+  "date": "2004-05-03",
+  "title": "Marbles",
+  "text-representation": {
+    "script": "Latn",
+    "language": "eng"
+  },
+  "packaging": "Jewel Case",
+  "id": "d3f9b9e2-73f5-4b47-a2a7-2c2199aad608",
+  "status-id": "4e304316-386d-3409-af2e-78857eec5cfe"
 }
