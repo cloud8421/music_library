@@ -8,7 +8,14 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
   import MusicBrainz.Fixtures.Release
 
   defp fill_collection(_) do
-    records = Enum.map(1..19, fn _ -> record() end)
+    current_time = DateTime.utc_now()
+
+    records =
+      Enum.map(1..19, fn i ->
+        purchased_at = DateTime.add(current_time, i, :second)
+        record(%{purchased_at: purchased_at})
+      end)
+
     %{collection: records}
   end
 
@@ -45,8 +52,6 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
     end
 
     test "it shows the latest purchase", %{conn: conn, collection: collection} do
-      # purchased_at has second precision, so finding the latest purchased using then
-      # highest purchased_at value doesn't work, as it picks the wrong value.
       latest_record = List.last(collection)
 
       session =
