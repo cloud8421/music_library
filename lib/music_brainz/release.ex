@@ -22,7 +22,7 @@ defmodule MusicBrainz.Release do
   end
 
   def medium_duration(medium) do
-    Enum.sum_by(medium.tracks, fn track -> track.length end)
+    Enum.sum_by(medium.tracks, fn track -> track.length || 0 end)
   end
 
   def from_api_response(r) do
