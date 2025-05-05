@@ -41,5 +41,10 @@ defmodule LastFm do
     end
   end
 
+  def auth_url do
+    last_fm_config = last_fm_config()
+    "https://www.last.fm/api/auth/?api_key=" <> last_fm_config.api_key
+  end
+
   defp last_fm_config, do: LastFm.Config.resolve(:music_library)
 end

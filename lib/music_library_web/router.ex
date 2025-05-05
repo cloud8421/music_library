@@ -29,6 +29,8 @@ defmodule MusicLibraryWeb.Router do
     get "/login", SessionController, :new
     post "/sessions/create", SessionController, :create
 
+    get "/auth/last_fm/callback", LastFmController, :callback
+
     scope "/" do
       pipe_through :logged_in
 

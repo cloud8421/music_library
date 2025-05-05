@@ -1,6 +1,7 @@
 defmodule LastFm.Config do
   @type t :: %__MODULE__{
           api_key: String.t(),
+          shared_secret: String.t(),
           user: String.t(),
           auto_refresh: boolean(),
           refresh_interval: pos_integer(),
@@ -10,6 +11,7 @@ defmodule LastFm.Config do
 
   @enforce_keys [:api_key, :user]
   defstruct api_key: "",
+            shared_secret: "",
             user: "",
             auto_refresh: true,
             refresh_interval: 60_000,
@@ -18,6 +20,10 @@ defmodule LastFm.Config do
 
   @schema NimbleOptions.new!(
             api_key: [
+              type: :string,
+              required: true
+            ],
+            shared_secret: [
               type: :string,
               required: true
             ],
