@@ -173,4 +173,10 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
   defp title_segment(:show), do: gettext("Show")
   defp title_segment(:edit), do: gettext("Edit")
+
+  defp medium_duration(medium) do
+    medium
+    |> MusicBrainz.Release.medium_duration()
+    |> format_duration()
+  end
 end

@@ -21,6 +21,10 @@ defmodule MusicBrainz.Release do
     Enum.count(release.media)
   end
 
+  def medium_duration(medium) do
+    Enum.sum_by(medium.tracks, fn track -> track.length end)
+  end
+
   def from_api_response(r) do
     %__MODULE__{
       id: r["id"],
