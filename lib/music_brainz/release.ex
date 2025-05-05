@@ -8,8 +8,8 @@ defmodule MusicBrainz.Release do
   end
 
   defmodule Medium do
-    @enforce_keys [:format, :number, :track_count, :tracks]
-    defstruct [:format, :number, :track_count, :tracks]
+    @enforce_keys [:title, :format, :number, :track_count, :tracks]
+    defstruct [:title, :format, :number, :track_count, :tracks]
   end
 
   defmodule Track do
@@ -38,6 +38,7 @@ defmodule MusicBrainz.Release do
   defp parse_media(media) do
     Enum.map(media, fn m ->
       %Medium{
+        title: m["title"],
         format: m["format"],
         number: m["position"],
         track_count: m["track-count"],

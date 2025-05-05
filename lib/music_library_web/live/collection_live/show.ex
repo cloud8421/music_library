@@ -179,4 +179,12 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     |> MusicBrainz.Release.medium_duration()
     |> format_duration()
   end
+
+  defp medium_title(medium) do
+    if medium.title !== "" do
+      medium.title
+    else
+      gettext("Disc %{no}", %{no: medium.number})
+    end
+  end
 end

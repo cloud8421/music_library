@@ -775,7 +775,7 @@ msgstr ""
 msgid "Show Tracks"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Disc %{no}"
 msgstr ""

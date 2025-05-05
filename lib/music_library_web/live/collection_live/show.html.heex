@@ -305,7 +305,7 @@
           :if={MusicBrainz.Release.media_count(release_with_tracks) > 1}
           class="text-sm font-semibold"
         >
-          {gettext("Disc %{no}", %{no: medium.number})}
+          {medium_title(medium)}
         </h4>
         <ul class="w-full table table-auto">
           <li
