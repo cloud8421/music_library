@@ -1,7 +1,7 @@
 defmodule LastFm.API do
   require Logger
 
-  alias LastFm.{Artist, Track}
+  alias LastFm.{Artist, Session, Track}
 
   defmodule ErrorResponse do
     defstruct [:error, :message]
@@ -71,6 +71,7 @@ defmodule LastFm.API do
     |> new_request()
     |> Req.merge(url: "/", params: params)
     |> Req.Request.append_response_steps(parse_error: &parse_error/1)
+    |> Req.Request.append_response_steps(parse_session: &parse_session/1)
     |> get_request()
   end
 
@@ -179,6 +180,11 @@ defmodule LastFm.API do
     api_key = Req.Request.get_private(request, :api_key)
     Logger.debug("Fetching data from #{sanitize_url(url, api_key)}")
     request
+  end
+
+  defp parse_session({request, response}) do
+    session = Session.parse(response.body)
+    {request, Map.put(response, :body, session)}
   end
 
   defp parse_error({request, response}) do
