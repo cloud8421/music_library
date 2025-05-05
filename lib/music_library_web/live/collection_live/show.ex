@@ -27,7 +27,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
       Records.subscribe(record_id)
     end
 
-    {:ok, socket}
+    {:ok, assign(socket, :release_with_tracks, nil)}
   end
 
   @impl true
@@ -37,11 +37,6 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     socket =
       if record.selected_release_id do
         socket
-        |> assign_async(:release_with_tracks, fn ->
-          with {:ok, release} <- MusicBrainz.get_release(record.selected_release_id) do
-            {:ok, %{release_with_tracks: MusicBrainz.Release.from_api_response(release)}}
-          end
-        end)
       else
         socket
       end
@@ -119,6 +114,18 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
            gettext("Error refreshing cover") <> "," <> inspect(reason)
          )}
     end
+  end
+
+  def handle_event("load_release_with_tracks", _params, socket) do
+    selected_release_id = socket.assigns.record.selected_release_id
+
+    {:noreply,
+     socket
+     |> assign_async(:release_with_tracks, fn ->
+       with {:ok, release} <- MusicBrainz.get_release(selected_release_id) do
+         {:ok, %{release_with_tracks: MusicBrainz.Release.from_api_response(release)}}
+       end
+     end)}
   end
 
   @impl true
