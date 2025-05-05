@@ -61,6 +61,4 @@ config :music_library, Discogs,
 
 config :phoenix_test, :endpoint, MusicLibraryWeb.Endpoint
 
-config :floki, :html_parser, Floki.HTMLParser.FastHtml
-
 config :music_library, Oban, testing: :manual
