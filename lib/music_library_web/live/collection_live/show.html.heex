@@ -281,7 +281,7 @@
   on_open={JS.push("load_release_with_tracks")}
   open
 >
-  <h3 class="text-lg font-semibold mb-4">{gettext("Tracks")}</h3>
+  <h3 class="text-lg font-semibold text-zinc-700 dark:text-zinc-300 mb-4">{gettext("Tracks")}</h3>
 
   <div :if={@release_with_tracks} class="space-y-4">
     <.async_result :let={release_with_tracks} assign={@release_with_tracks}>
@@ -303,7 +303,7 @@
       <div :for={medium <- release_with_tracks.media} class="space-y-4">
         <h4
           :if={MusicBrainz.Release.media_count(release_with_tracks) > 1}
-          class="text-sm font-semibold"
+          class="text-sm font-semibold text-zinc-700 dark:text-zinc-300"
         >
           {medium_title(medium)}
         </h4>
