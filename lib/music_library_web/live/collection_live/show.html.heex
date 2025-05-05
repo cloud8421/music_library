@@ -308,21 +308,17 @@
         <ul class="w-full table table-auto">
           <li
             :for={track <- medium.tracks}
-            class="contents text-sm leading-5 text-zinc-700 dark:text-zinc-300 list-none"
+            class="contents leading-5 text-zinc-700 dark:text-zinc-300 list-none"
           >
             <div class="table-row">
-              <span class="table-cell text-right pr-1">{track.position}</span>
-              <span class="table-cell">{track.title}</span>
-              <span class="table-cell text-right pl-1">{track.length}</span>
+              <span class="table-cell text-xs text-right pr-1">{track.position}</span>
+              <span class="table-cell text-sm font-medium leading-6">{track.title}</span>
+              <span class="table-cell text-xs text-right pl-1">{track.length}</span>
             </div>
-            <div
-              :for={artist <- track.artists}
-              :if={release_with_tracks.artists !== track.artists}
-              class="table-row text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
-            >
+            <div :if={release_with_tracks.artists !== track.artists} class="table-row text-xs">
               <span class="table-cell" />
               <span class="table-cell">
-                {artist.name}
+                {Enum.map_join(track.artists, ", ", fn artist -> artist.name end)}
               </span>
             </div>
           </li>
