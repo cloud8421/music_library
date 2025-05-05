@@ -54,6 +54,35 @@ defmodule LastFm.API do
     def retry_delay(_), do: nil
   end
 
+  def get_session(token, config) do
+    # Note that params needs to be ordered alphabetically
+    params =
+      [
+        api_key: config.api_key,
+        method: "auth.getSession",
+        token: token
+      ]
+
+    signature = signature(params, config.shared_secret)
+
+    params = Keyword.put(params, :api_sig, signature)
+
+    config
+    |> new_request()
+    |> Req.merge(url: "/", params: params)
+    |> Req.Request.append_response_steps(parse_error: &parse_error/1)
+    |> get_request()
+  end
+
+  defp signature(params, shared_secret) do
+    encoded_params =
+      Enum.map_join(params, fn {key, value} ->
+        "#{key}#{value}"
+      end)
+
+    :crypto.hash(:md5, encoded_params <> shared_secret) |> Base.encode16(case: :lower)
+  end
+
   def get_recent_tracks(config) do
     params =
       config
