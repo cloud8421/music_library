@@ -9,6 +9,7 @@ defmodule MusicLibrary.Application do
   def start(_type, _args) do
     children = [
       MusicLibraryWeb.Telemetry,
+      MusicLibrary.Vault,
       MusicLibrary.Repo,
       MusicLibrary.ErrorRepo,
       MusicLibrary.BackgroundRepo,

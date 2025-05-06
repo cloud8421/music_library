@@ -50,6 +50,7 @@ defmodule MusicLibrary.MixProject do
       {:ecto_sql, "~> 3.10"},
       {:ecto_sqlite3, ">= 0.0.0"},
       {:ecto_sqlite3_extras, "~> 1.2.2"},
+      {:cloak_ecto, "~> 1.3"},
 
       # UI
       {:phoenix_html, "~> 4.2"},

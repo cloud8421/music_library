@@ -779,3 +779,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Disc %{no}"
 msgstr ""
+
+#: lib/music_library_web/controllers/last_fm_controller.ex
+#, elixir-autogen, elixir-format
+msgid "Successfully connected your Last.fm account"
+msgstr ""

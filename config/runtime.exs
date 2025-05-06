@@ -49,6 +49,21 @@ config :music_library, MusicLibrary.Repo,
     MusicLibrary.Repo.extension_path("unicode")
   ]
 
+cloak_encryption_key =
+  System.get_env("CLOAK_ENCRYPTION_KEY") ||
+    raise """
+    environment variable CLOAK_ENCRYPTION_KEY is missing.
+    Generate one with: iex> 32 |> :crypto.strong_rand_bytes() |> Base.encode64()
+    """
+
+config :music_library, MusicLibrary.Vault,
+  json_library: JSON,
+  ciphers: [
+    default:
+      {Cloak.Ciphers.AES.GCM,
+       tag: "AES.GCM.V1", key: Base.decode64!(cloak_encryption_key), iv_length: 12}
+  ]
+
 if config_env() == :prod do
   database_path =
     System.get_env("DATABASE_PATH") ||
