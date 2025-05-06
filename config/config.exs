@@ -38,6 +38,7 @@ config :music_library, LastFm,
   auto_refresh: true,
   refresh_interval: System.convert_time_unit(60, :second, :millisecond),
   api_key: "change me",
+  shared_secret: "change me",
   user_agent: user_agent
 
 config :music_library, MusicBrainz, user_agent: user_agent
