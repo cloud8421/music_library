@@ -64,6 +64,8 @@ jobs:
       - run: mix format --check-formatted
       - run: mix credo --strict
       - run: mix test
+        env:
+          CLOAK_ENCRYPTION_KEY: f5ol1dJROsm9yi/tvtHiblN8aLH1FUN/obEvUcASx3U=
 
   deploy:
     name: Deploy
