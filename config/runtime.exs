@@ -20,18 +20,6 @@ if System.get_env("PHX_SERVER") do
   config :music_library, MusicLibraryWeb.Endpoint, server: true
 end
 
-if api_key = System.get_env("LAST_FM_API_KEY") do
-  config :music_library, LastFm, api_key: api_key
-end
-
-if shared_secret = System.get_env("LAST_FM_SHARED_SECRET") do
-  config :music_library, LastFm, shared_secret: shared_secret
-end
-
-if user = System.get_env("LAST_FM_USER") do
-  config :music_library, LastFm, user: user
-end
-
 if openai_key = System.get_env("OPENAI_KEY") do
   config :music_library, OpenAI, api_key: openai_key
 end
@@ -63,6 +51,20 @@ config :music_library, MusicLibrary.Vault,
       {Cloak.Ciphers.AES.GCM,
        tag: "AES.GCM.V1", key: Base.decode64!(cloak_encryption_key), iv_length: 12}
   ]
+
+if config_env() !== :test do
+  if api_key = System.get_env("LAST_FM_API_KEY") do
+    config :music_library, LastFm, api_key: api_key
+  end
+
+  if shared_secret = System.get_env("LAST_FM_SHARED_SECRET") do
+    config :music_library, LastFm, shared_secret: shared_secret
+  end
+
+  if user = System.get_env("LAST_FM_USER") do
+    config :music_library, LastFm, user: user
+  end
+end
 
 if config_env() == :prod do
   database_path =

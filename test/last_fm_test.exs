@@ -53,7 +53,7 @@ defmodule LastFmTest do
         {:ok, body, conn} = Plug.Conn.read_body(conn)
 
         assert body ==
-                 "album%5B0%5D=Dominion&api_key=48df017be28e54860d2f3756b229c91a&api_sig=3654e07703b66d58e7c6f36a3eff7747&artist%5B0%5D=IQ&format=json&mbid%5B0%5D=aefaaf73-b52c-4b0d-91df-f8e4321db2bd&method=track.scrobble&sk=session_key&timestamp%5B0%5D=1746561301&track%5B0%5D=Wonderland"
+                 "album%5B0%5D=Dominion&api_key=change+me&api_sig=f3c0644ba671654aafb2396806c4b96f&artist%5B0%5D=IQ&format=json&mbid%5B0%5D=aefaaf73-b52c-4b0d-91df-f8e4321db2bd&method=track.scrobble&sk=session_key&timestamp%5B0%5D=1746561301&track%5B0%5D=Wonderland"
 
         Req.Test.json(conn, response_body)
       end)
