@@ -784,3 +784,18 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Successfully connected your Last.fm account"
 msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Error scrobbling release"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Release scrobbled successfully"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Scrobble to Last.fm"
+msgstr ""

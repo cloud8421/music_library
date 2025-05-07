@@ -11,7 +11,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
       format_duration: 1
     ]
 
-  alias MusicLibrary.Records
+  alias MusicLibrary.{Records, ScrobbleActivity}
   alias Phoenix.LiveView.JS
 
   @impl true
@@ -126,6 +126,29 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
          {:ok, %{release_with_tracks: MusicBrainz.Release.from_api_response(release)}}
        end
      end)}
+  end
+
+  def handle_event("scrobble_release", _params, socket) do
+    release_with_tracks_async_result =
+      socket.assigns.release_with_tracks
+
+    if release_with_tracks =
+         release_with_tracks_async_result && release_with_tracks_async_result.result do
+      case ScrobbleActivity.scrobble(release_with_tracks, DateTime.utc_now()) do
+        {:ok, _} ->
+          {:noreply,
+           socket
+           |> put_flash(:info, gettext("Release scrobbled successfully"))}
+
+        {:error, reason} ->
+          {:noreply,
+           socket
+           |> put_flash(
+             :error,
+             gettext("Error scrobbling release") <> "," <> inspect(reason)
+           )}
+      end
+    end
   end
 
   @impl true
