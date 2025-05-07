@@ -1,5 +1,37 @@
 defmodule MusicLibrary.ScrobbleActivity do
+  alias LastFm.Scrobble
   alias MusicLibrary.{Artists, Collection, Wishlist}
+
+  def scrobble(release_with_tracks, started_time \\ DateTime.utc_now()) do
+    session_key = MusicLibrary.Secrets.get!("last_fm_session_key").value
+
+    {scrobbles, _finished_time} =
+      release_with_tracks
+      |> MusicBrainz.Release.tracks()
+      |> Enum.map_reduce(started_time, fn track, time ->
+        album_artist =
+          if release_with_tracks.artists !== track.artists do
+            main_artist_name(release_with_tracks.artists)
+          end
+
+        time = time |> DateTime.add(track.length, :millisecond)
+
+        scrobble = %Scrobble{
+          artist: main_artist_name(track.artists),
+          album: release_with_tracks.title,
+          album_artist: album_artist,
+          track: track.title,
+          timestamp: DateTime.to_unix(time)
+        }
+
+        {scrobble, time}
+      end)
+
+    LastFm.scrobble(scrobbles, session_key)
+  end
+
+  defp main_artist_name([]), do: nil
+  defp main_artist_name([artist | _rest]), do: artist.name
 
   def from_recent_tracks(recent_tracks, timezone) do
     all_artist_pairs = Artists.get_all_artist_pairs()
