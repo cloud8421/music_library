@@ -1,20 +1,20 @@
 defmodule LastFm.API do
   require Logger
 
-  alias LastFm.{API.ErrorResponse, Artist, Session, Track}
+  alias LastFm.{Artist, Session, Track}
+  alias LastFm.API.{ErrorResponse, Signature}
 
   def get_session(token, config) do
-    # Note that params needs to be ordered alphabetically
     params =
-      [
+      %{
         api_key: config.api_key,
         method: "auth.getSession",
         token: token
-      ]
+      }
 
-    signature = signature(params, config.shared_secret)
+    signature = Signature.generate(params, config.shared_secret)
 
-    params = Keyword.put(params, :api_sig, signature)
+    params = Map.put(params, "api_sig", signature)
 
     config
     |> new_request()
@@ -39,13 +39,9 @@ defmodule LastFm.API do
       end)
       |> Enum.into(%{})
 
-    params =
-      params
-      |> Map.merge(track_params)
+    params = Map.merge(params, track_params)
 
-    sorted_params = Enum.sort(params)
-
-    signature = signature(sorted_params, config.shared_secret)
+    signature = Signature.generate(params, config.shared_secret)
 
     body = Map.merge(params, %{"api_sig" => signature, "format" => "json"})
 
@@ -53,15 +49,6 @@ defmodule LastFm.API do
     |> new_request()
     |> Req.merge(url: "/", form: body)
     |> post_request()
-  end
-
-  defp signature(params, shared_secret) do
-    encoded_params =
-      Enum.map_join(params, fn {key, value} ->
-        "#{key}#{value}"
-      end)
-
-    :crypto.hash(:md5, encoded_params <> shared_secret) |> Base.encode16(case: :lower)
   end
 
   def get_recent_tracks(config) do
