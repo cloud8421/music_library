@@ -1,5 +1,5 @@
 defmodule LastFm do
-  alias LastFm.{API, Feed, Refresh}
+  alias LastFm.{API, Feed, Refresh, Scrobble}
 
   def get_scrobbled_tracks, do: Feed.all_tracks()
 
@@ -47,10 +47,12 @@ defmodule LastFm do
     API.get_session(token, last_fm_config)
   end
 
-  def scrobble(tracks, session_key) do
+  def scrobble(scrobbles, session_key) do
     last_fm_config = last_fm_config()
 
-    API.scrobble(tracks, session_key, last_fm_config)
+    scrobbles
+    |> Enum.map(&Scrobble.encode/1)
+    |> API.scrobble(session_key, last_fm_config)
   end
 
   def auth_url do

@@ -1,7 +1,7 @@
 defmodule LastFmTest do
   use ExUnit.Case, async: true
 
-  alias LastFm.{Artist, Fixtures}
+  alias LastFm.{Artist, Fixtures, Scrobble}
 
   describe "get_artist_info/1" do
     test "it returns the artist info" do
@@ -23,8 +23,8 @@ defmodule LastFmTest do
 
   describe "scrobble/2" do
     test "it returns the scrobbled track" do
-      tracks = [
-        %{
+      scrobbles = [
+        %Scrobble{
           track: "Wonderland",
           artist: "IQ",
           album: "Dominion",
@@ -58,7 +58,7 @@ defmodule LastFmTest do
         Req.Test.json(conn, response_body)
       end)
 
-      assert {:ok, response_body} == LastFm.scrobble(tracks, session_key)
+      assert {:ok, response_body} == LastFm.scrobble(scrobbles, session_key)
     end
   end
 end
