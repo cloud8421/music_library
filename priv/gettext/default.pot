@@ -804,3 +804,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Connect your Last.fm account"
 msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Scrobbling..."
+msgstr ""
