@@ -47,6 +47,12 @@ defmodule LastFm do
     API.get_session(token, last_fm_config)
   end
 
+  def scrobble(tracks, session_key) do
+    last_fm_config = last_fm_config()
+
+    API.scrobble(tracks, session_key, last_fm_config)
+  end
+
   def auth_url do
     last_fm_config = last_fm_config()
     "https://www.last.fm/api/auth/?api_key=" <> last_fm_config.api_key

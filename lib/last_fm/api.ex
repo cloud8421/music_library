@@ -75,6 +75,37 @@ defmodule LastFm.API do
     |> get_request()
   end
 
+  def scrobble(tracks, session_key, config) do
+    params =
+      %{"api_key" => config.api_key, "method" => "track.scrobble", "sk" => session_key}
+
+    track_params =
+      tracks
+      |> Enum.with_index()
+      |> Enum.flat_map(fn {track, index} ->
+        track
+        |> Enum.map(fn {key, value} ->
+          {"#{key}[#{index}]", value}
+        end)
+      end)
+      |> Enum.into(%{})
+
+    params =
+      params
+      |> Map.merge(track_params)
+
+    sorted_params = Enum.sort(params)
+
+    signature = signature(sorted_params, config.shared_secret)
+
+    body = Map.merge(params, %{"api_sig" => signature, "format" => "json"})
+
+    config
+    |> new_request()
+    |> Req.merge(url: "/", form: body)
+    |> post_request()
+  end
+
   defp signature(params, shared_secret) do
     encoded_params =
       Enum.map_join(params, fn {key, value} ->
@@ -164,6 +195,19 @@ defmodule LastFm.API do
 
   defp get_request(request) do
     case Req.get(request) do
+      {:ok, %{body: %ErrorResponse{} = error_response}} ->
+        {:error, error_response.error}
+
+      {:ok, response} ->
+        {:ok, response.body}
+
+      error ->
+        error
+    end
+  end
+
+  defp post_request(request) do
+    case Req.post(request) do
       {:ok, %{body: %ErrorResponse{} = error_response}} ->
         {:error, error_response.error}
 
