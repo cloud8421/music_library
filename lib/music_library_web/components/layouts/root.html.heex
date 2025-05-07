@@ -31,6 +31,7 @@
       href={~p"/images/apple-touch-icon.png"}
     />
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    {Application.get_env(:live_debugger, :live_debugger_tags)}
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
   </head>
