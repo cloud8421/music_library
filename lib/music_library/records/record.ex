@@ -74,6 +74,7 @@ defmodule MusicLibrary.Records.Record do
   def releases(record) do
     record.musicbrainz_data
     |> ReleaseGroup.releases()
+    |> Enum.sort_by(fn r -> {r["date"], r["country"]} end, :desc)
   end
 
   def selected_release(record) do
