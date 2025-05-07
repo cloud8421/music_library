@@ -1,14 +1,37 @@
 defmodule MusicLibrary.ScrobbleActivity do
   alias LastFm.Scrobble
+  alias MusicBrainz.Release
   alias MusicLibrary.{Artists, Collection, Wishlist}
 
-  def scrobble(release_with_tracks, started_time \\ DateTime.utc_now()) do
+  def scrobble(release_with_tracks, opts) when is_list(opts) do
+    case opts do
+      [started_at: _, finished_at: _] ->
+        raise ArgumentError, """
+        Cannot scobble a release with both started_at and finished_at.
+          Remove either of them.
+        """
+
+      [started_at: started_at] ->
+        scrobble(release_with_tracks, {:started_at, started_at})
+
+      [finished_at: finished_at] ->
+        scrobble(release_with_tracks, {:finished_at, finished_at})
+    end
+  end
+
+  def scrobble(release_with_tracks, {:finished_at, finished_at}) do
+    release_duration = Release.release_duration(release_with_tracks)
+    started_at = DateTime.add(finished_at, -release_duration, :millisecond)
+    scrobble(release_with_tracks, {:started_at, started_at})
+  end
+
+  def scrobble(release_with_tracks, {:started_at, started_at}) do
     session_key = MusicLibrary.Secrets.get!("last_fm_session_key").value
 
-    {scrobbles, _finished_time} =
+    {scrobbles, _finished_at} =
       release_with_tracks
       |> MusicBrainz.Release.tracks()
-      |> Enum.map_reduce(started_time, fn track, time ->
+      |> Enum.map_reduce(started_at, fn track, time ->
         album_artist =
           if release_with_tracks.artists !== track.artists do
             main_artist_name(release_with_tracks.artists)

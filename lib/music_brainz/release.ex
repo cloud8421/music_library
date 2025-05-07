@@ -25,6 +25,10 @@ defmodule MusicBrainz.Release do
     Enum.sum_by(medium.tracks, fn track -> track.length || 0 end)
   end
 
+  def release_duration(release) do
+    Enum.sum_by(release.media, fn medium -> medium_duration(medium) end)
+  end
+
   def tracks(release) do
     Enum.flat_map(release.media, fn medium -> medium.tracks end)
   end
