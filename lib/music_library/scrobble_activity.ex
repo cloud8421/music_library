@@ -1,7 +1,11 @@
 defmodule MusicLibrary.ScrobbleActivity do
   alias LastFm.Scrobble
   alias MusicBrainz.Release
-  alias MusicLibrary.{Artists, Collection, Wishlist}
+  alias MusicLibrary.{Artists, Collection, Secrets, Wishlist}
+
+  def can_scrobble? do
+    Secrets.get("last_fm_session_key") !== nil
+  end
 
   def scrobble(release_with_tracks, opts) when is_list(opts) do
     case opts do
@@ -26,7 +30,7 @@ defmodule MusicLibrary.ScrobbleActivity do
   end
 
   def scrobble(release_with_tracks, {:started_at, started_at}) do
-    session_key = MusicLibrary.Secrets.get!("last_fm_session_key").value
+    session_key = Secrets.get!("last_fm_session_key").value
 
     {scrobbles, _finished_at} =
       release_with_tracks

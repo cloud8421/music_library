@@ -27,7 +27,10 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
       Records.subscribe(record_id)
     end
 
-    {:ok, assign(socket, :release_with_tracks, nil)}
+    {:ok,
+     socket
+     |> assign(:can_scrobble?, ScrobbleActivity.can_scrobble?())
+     |> assign(:release_with_tracks, nil)}
   end
 
   @impl true

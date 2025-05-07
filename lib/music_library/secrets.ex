@@ -11,4 +11,8 @@ defmodule MusicLibrary.Secrets do
   def get!(name) do
     Repo.get!(Secret, name)
   end
+
+  def get(name) do
+    Repo.get(Secret, name)
+  end
 end
