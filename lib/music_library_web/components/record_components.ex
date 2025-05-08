@@ -305,9 +305,10 @@ defmodule MusicLibraryWeb.RecordComponents do
     [
       release["date"],
       release["country"] |> country_label(),
-      release["packaging"] |> packaging_label()
+      release["packaging"] |> packaging_label(),
+      release["disambiguation"]
     ]
-    |> Enum.reject(&is_nil/1)
+    |> Enum.reject(fn fragment -> fragment in [nil, ""] end)
     |> Enum.join(" ")
   end
 
