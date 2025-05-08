@@ -324,7 +324,7 @@
         >
           {medium_title(medium)}
         </h4>
-        <ul class="w-full table table-auto">
+        <ul id={"disc-#{medium.number}"} class="w-full table table-auto">
           <li
             :for={track <- medium.tracks}
             class="contents leading-5 text-zinc-700 dark:text-zinc-300 list-none"

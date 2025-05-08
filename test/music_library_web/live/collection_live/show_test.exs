@@ -58,4 +58,45 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
       end
     end
   end
+
+  describe "Side panel" do
+    test "shows a record's tracks", %{conn: conn} do
+      record = record()
+
+      release_response = Fixtures.Release.release(:marbles)
+
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        Req.Test.json(conn, release_response)
+      end)
+
+      session =
+        conn
+        |> visit(~p"/collection/#{record.id}")
+        |> assert_has("button", text: "Show Tracks")
+        |> unwrap(fn view ->
+          # we can't directly click the "Show Tracks" button as
+          # its phx-click event uses a JS command. Bit of a hack, but we can simulate
+          # the click by pretending we're dealing with a JS hook, and trigger the event
+          # that is sent by the JS command.
+          view
+          |> Phoenix.LiveViewTest.render_hook(:load_release_with_tracks, %{})
+        end)
+        |> assert_has("a", text: "Connect your Last.fm account")
+
+      release =
+        MusicBrainz.Release.from_api_response(release_response)
+
+      for medium <- release.media do
+        session
+        |> within("#disc-#{medium.number}", fn inner_session ->
+          for track <- medium.tracks do
+            inner_session
+            |> assert_has("li", text: escape(track.title))
+          end
+
+          inner_session
+        end)
+      end
+    end
+  end
 end
