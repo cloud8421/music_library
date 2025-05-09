@@ -125,7 +125,11 @@ defmodule MusicLibraryWeb.FormComponent do
           </div>
         </div>
         <:actions>
-          <.button phx-disable-with={gettext("Saving...")}>{gettext("Save")}</.button>
+          <div class="w-full md:flex md:justify-center">
+            <.button class="w-full md:w-auto" phx-disable-with={gettext("Saving...")}>
+              {gettext("Save")}
+            </.button>
+          </div>
         </:actions>
       </.simple_form>
     </div>
