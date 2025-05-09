@@ -49,7 +49,11 @@ defmodule MusicLibrary.BarcodeScan do
 
       :wishlisted ->
         record = Records.get_record!(scan_result.record_id)
-        Records.update_record(record, %{"purchased_at" => current_time})
+
+        Records.update_record(record, %{
+          "purchased_at" => current_time,
+          "selected_release_id" => scan_result.release.id
+        })
 
       :collected ->
         {:error, :already_collected}
