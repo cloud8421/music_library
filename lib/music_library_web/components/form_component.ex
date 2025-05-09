@@ -58,7 +58,7 @@ defmodule MusicLibraryWeb.FormComponent do
           label={gettext("Selected Release")}
           options={selected_release_id_options(@record)}
         />
-        <div class="sm:columns-2">
+        <div class={[@show_purchased_at && "sm:columns-2", "space-y-2"]}>
           <Fluxon.Components.Input.input field={@form[:release_date]} label={gettext("Release Date")} />
           <Fluxon.Components.DatePicker.date_time_picker
             :if={@show_purchased_at}
