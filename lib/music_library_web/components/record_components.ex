@@ -315,7 +315,14 @@ defmodule MusicLibraryWeb.RecordComponents do
   defp country_label(nil), do: nil
   defp country_label("XW"), do: "🌍"
   defp country_label("XE"), do: "🇪🇺"
-  defp country_label(country_code), do: Flagmojis.by_iso(country_code).emoji
+
+  defp country_label(country_code) do
+    if flagmoji = Flagmojis.by_iso(country_code) do
+      flagmoji.emoji
+    else
+      country_code
+    end
+  end
 
   defp packaging_label("None"), do: gettext("Digital download")
   defp packaging_label(other), do: other
