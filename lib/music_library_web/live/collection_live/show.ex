@@ -7,8 +7,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
       close_actions_menu: 1,
       format_label: 1,
       type_label: 1,
-      selected_release_label: 1,
-      format_duration: 1
+      selected_release_label: 1
     ]
 
   alias MusicLibrary.{Records, ScrobbleActivity}
@@ -119,41 +118,6 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     end
   end
 
-  def handle_event("load_release_with_tracks", _params, socket) do
-    selected_release_id = socket.assigns.record.selected_release_id
-
-    {:noreply,
-     socket
-     |> assign_async(:release_with_tracks, fn ->
-       with {:ok, release} <- MusicBrainz.get_release(selected_release_id) do
-         {:ok, %{release_with_tracks: MusicBrainz.Release.from_api_response(release)}}
-       end
-     end)}
-  end
-
-  def handle_event("scrobble_release", _params, socket) do
-    release_with_tracks_async_result =
-      socket.assigns.release_with_tracks
-
-    if release_with_tracks =
-         release_with_tracks_async_result && release_with_tracks_async_result.result do
-      case ScrobbleActivity.scrobble(release_with_tracks, finished_at: DateTime.utc_now()) do
-        {:ok, _} ->
-          {:noreply,
-           socket
-           |> put_flash(:info, gettext("Release scrobbled successfully"))}
-
-        {:error, reason} ->
-          {:noreply,
-           socket
-           |> put_flash(
-             :error,
-             gettext("Error scrobbling release") <> "," <> inspect(reason)
-           )}
-      end
-    end
-  end
-
   @impl true
   def handle_info({MusicLibraryWeb.FormComponent, {:saved, record}}, socket) do
     {:noreply, assign(socket, :record, record)}
@@ -199,18 +163,4 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
   defp title_segment(:show), do: gettext("Show")
   defp title_segment(:edit), do: gettext("Edit")
-
-  defp medium_duration(medium) do
-    medium
-    |> MusicBrainz.Release.medium_duration()
-    |> format_duration()
-  end
-
-  defp medium_title(medium) do
-    if medium.title !== "" do
-      medium.title
-    else
-      gettext("Disc %{no}", %{no: medium.number})
-    end
-  end
 end
