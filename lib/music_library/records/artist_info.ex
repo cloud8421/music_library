@@ -30,8 +30,12 @@ defmodule MusicLibrary.Records.ArtistInfo do
 
   def country(artist_info) do
     %{"area" => area} = artist_info.musicbrainz_data
-    [country_code | _rest] = area["iso-3166-1-codes"]
-    %{name: area["name"], code: country_code}
+    [country_code | _rest] = area["iso-3166-1-codes"] || area["iso-3166-2-codes"]
+    %{name: area["name"], code: keep_alpha_2(country_code)}
+  end
+
+  defp keep_alpha_2(country_code) do
+    String.slice(country_code, 0..1)
   end
 
   def generate_image_hash(%__MODULE__{image_data: image_data} = artist_info) do
