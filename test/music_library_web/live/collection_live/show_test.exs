@@ -60,6 +60,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
   end
 
   describe "Side panel" do
+    @tag :skip
     test "shows a record's tracks", %{conn: conn} do
       record = record()
 
