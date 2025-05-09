@@ -797,15 +797,15 @@ msgstr ""
 
 #: lib/music_library_web/components/release_component.ex
 #, elixir-autogen, elixir-format
-msgid "Scrobble to Last.fm"
-msgstr ""
-
-#: lib/music_library_web/components/release_component.ex
-#, elixir-autogen, elixir-format
 msgid "Connect your Last.fm account"
 msgstr ""
 
 #: lib/music_library_web/components/release_component.ex
 #, elixir-autogen, elixir-format
 msgid "Scrobbling..."
+msgstr ""
+
+#: lib/music_library_web/components/release_component.ex
+#, elixir-autogen, elixir-format
+msgid "Scrobble release"
 msgstr ""
