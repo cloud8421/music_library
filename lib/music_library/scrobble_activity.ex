@@ -7,29 +7,29 @@ defmodule MusicLibrary.ScrobbleActivity do
     Secrets.get("last_fm_session_key") !== nil
   end
 
-  def scrobble(release_with_tracks, opts) when is_list(opts) do
-    case opts do
-      [started_at: _, finished_at: _] ->
+  def scrobble_release(release_with_tracks, opts) when is_list(opts) do
+    case Enum.sort(opts) do
+      [finished_at: _, started_at: _] ->
         raise ArgumentError, """
         Cannot scobble a release with both started_at and finished_at.
           Remove either of them.
         """
 
       [started_at: started_at] ->
-        scrobble(release_with_tracks, {:started_at, started_at})
+        scrobble_release(release_with_tracks, {:started_at, started_at})
 
       [finished_at: finished_at] ->
-        scrobble(release_with_tracks, {:finished_at, finished_at})
+        scrobble_release(release_with_tracks, {:finished_at, finished_at})
     end
   end
 
-  def scrobble(release_with_tracks, {:finished_at, finished_at}) do
+  def scrobble_release(release_with_tracks, {:finished_at, finished_at}) do
     release_duration = Release.release_duration(release_with_tracks)
     started_at = DateTime.add(finished_at, -release_duration, :millisecond)
-    scrobble(release_with_tracks, {:started_at, started_at})
+    scrobble_release(release_with_tracks, {:started_at, started_at})
   end
 
-  def scrobble(release_with_tracks, {:started_at, started_at}) do
+  def scrobble_release(release_with_tracks, {:started_at, started_at}) do
     session_key = Secrets.get!("last_fm_session_key").value
 
     {scrobbles, _finished_at} =

@@ -809,3 +809,13 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Scrobble release"
 msgstr ""
+
+#: lib/music_library_web/components/release_component.ex
+#, elixir-autogen, elixir-format
+msgid "Disc scrobbled successfully"
+msgstr ""
+
+#: lib/music_library_web/components/release_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Error scrobbling disc"
+msgstr ""

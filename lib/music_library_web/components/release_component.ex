@@ -124,7 +124,7 @@ defmodule MusicLibraryWeb.ReleaseComponent do
 
     if release_with_tracks =
          release_with_tracks_async_result && release_with_tracks_async_result.result do
-      case ScrobbleActivity.scrobble(release_with_tracks, finished_at: DateTime.utc_now()) do
+      case ScrobbleActivity.scrobble_release(release_with_tracks, finished_at: DateTime.utc_now()) do
         {:ok, _} ->
           {:noreply,
            socket
