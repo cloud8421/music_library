@@ -819,3 +819,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Error scrobbling disc"
 msgstr ""
+
+#: lib/music_library_web/components/release_component.ex
+#, elixir-autogen, elixir-format
+msgid "Scrobble disc"
+msgstr ""

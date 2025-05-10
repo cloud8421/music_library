@@ -35,26 +35,71 @@ defmodule MusicLibrary.ScrobbleActivity do
     {scrobbles, _finished_at} =
       release_with_tracks
       |> MusicBrainz.Release.tracks()
-      |> Enum.map_reduce(started_at, fn track, time ->
-        album_artist =
-          if release_with_tracks.artists !== track.artists do
-            main_artist_name(release_with_tracks.artists)
-          end
-
-        time = time |> DateTime.add(track.length, :millisecond)
-
-        scrobble = %Scrobble{
-          artist: main_artist_name(track.artists),
-          album: release_with_tracks.title,
-          album_artist: album_artist,
-          track: track.title,
-          timestamp: DateTime.to_unix(time)
-        }
-
-        {scrobble, time}
-      end)
+      |> to_scrobbles(release_with_tracks, started_at)
 
     LastFm.scrobble(scrobbles, session_key)
+  end
+
+  def scrobble_medium(number, release_with_tracks, opts) when is_list(opts) do
+    case Enum.sort(opts) do
+      [finished_at: _, started_at: _] ->
+        raise ArgumentError, """
+        Cannot scobble a medium with both started_at and finished_at.
+          Remove either of them.
+        """
+
+      [started_at: started_at] ->
+        scrobble_medium(number, release_with_tracks, {:started_at, started_at})
+
+      [finished_at: finished_at] ->
+        scrobble_medium(number, release_with_tracks, {:finished_at, finished_at})
+    end
+  end
+
+  def scrobble_medium(number, release_with_tracks, {:finished_at, finished_at}) do
+    medium_duration =
+      release_with_tracks.media
+      |> Enum.find(fn medium -> medium.number == number end)
+      |> Release.medium_duration()
+
+    started_at = DateTime.add(finished_at, -medium_duration, :millisecond)
+    scrobble_medium(number, release_with_tracks, {:started_at, started_at})
+  end
+
+  def scrobble_medium(number, release_with_tracks, {:started_at, started_at}) do
+    session_key = Secrets.get!("last_fm_session_key").value
+
+    medium =
+      release_with_tracks.media
+      |> Enum.find(fn medium -> medium.number == number end)
+
+    {scrobbles, _finished_at} =
+      medium.tracks
+      |> to_scrobbles(release_with_tracks, started_at)
+
+    LastFm.scrobble(scrobbles, session_key)
+  end
+
+  defp to_scrobbles(tracks, release_with_tracks, started_at) do
+    tracks
+    |> Enum.map_reduce(started_at, fn track, time ->
+      album_artist =
+        if release_with_tracks.artists !== track.artists do
+          main_artist_name(release_with_tracks.artists)
+        end
+
+      time = time |> DateTime.add(track.length, :millisecond)
+
+      scrobble = %Scrobble{
+        artist: main_artist_name(track.artists),
+        album: release_with_tracks.title,
+        album_artist: album_artist,
+        track: track.title,
+        timestamp: DateTime.to_unix(time)
+      }
+
+      {scrobble, time}
+    end)
   end
 
   defp main_artist_name([]), do: nil

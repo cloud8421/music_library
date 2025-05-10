@@ -66,12 +66,24 @@ defmodule MusicLibraryWeb.ReleaseComponent do
               </div>
             </:failed>
             <div :for={medium <- release_with_tracks.media} class="space-y-4">
-              <h4
-                :if={MusicBrainz.Release.media_count(release_with_tracks) > 1}
-                class="text-sm font-semibold text-zinc-700 dark:text-zinc-300"
-              >
-                {medium_title(medium)}
-              </h4>
+              <div class="flex justify-between items-center gap-4">
+                <h4
+                  :if={MusicBrainz.Release.media_count(release_with_tracks) > 1}
+                  class="text-sm font-semibold text-zinc-700 dark:text-zinc-300"
+                >
+                  {medium_title(medium)}
+                </h4>
+                <Fluxon.Components.Button.button
+                  :if={@can_scrobble?}
+                  size="xs"
+                  phx-click="scrobble_medium"
+                  phx-value-number={medium.number}
+                  phx-target={@myself}
+                  phx-disable-with={gettext("Scrobbling...")}
+                >
+                  {gettext("Scrobble disc")}
+                </Fluxon.Components.Button.button>
+              </div>
               <ul id={"disc-#{medium.number}"} class="w-full table table-auto">
                 <li
                   :for={track <- medium.tracks}
@@ -135,6 +147,33 @@ defmodule MusicLibraryWeb.ReleaseComponent do
            |> put_flash(
              :error,
              gettext("Error scrobbling release") <> "," <> inspect(reason)
+           )}
+      end
+    end
+  end
+
+  def handle_event("scrobble_medium", %{"number" => number}, socket) do
+    release_with_tracks_async_result =
+      socket.assigns.release_with_tracks
+
+    number = String.to_integer(number)
+
+    if release_with_tracks =
+         release_with_tracks_async_result && release_with_tracks_async_result.result do
+      case ScrobbleActivity.scrobble_medium(number, release_with_tracks,
+             finished_at: DateTime.utc_now()
+           ) do
+        {:ok, _} ->
+          {:noreply,
+           socket
+           |> put_flash(:info, gettext("Disc scrobbled successfully"))}
+
+        {:error, reason} ->
+          {:noreply,
+           socket
+           |> put_flash(
+             :error,
+             gettext("Error scrobbling disc") <> "," <> inspect(reason)
            )}
       end
     end
