@@ -33,7 +33,7 @@ defmodule MusicLibraryWeb.ReleaseComponent do
           <h3 class="text-lg font-semibold text-zinc-700 dark:text-zinc-300">{gettext("Tracks")}</h3>
           <Fluxon.Components.Button.button
             :if={@can_scrobble?}
-            size="xs"
+            size="sm"
             phx-click="scrobble_release"
             phx-target={@myself}
             phx-disable-with={gettext("Scrobbling...")}
@@ -43,7 +43,7 @@ defmodule MusicLibraryWeb.ReleaseComponent do
           <Fluxon.Components.Button.button
             :if={!@can_scrobble?}
             as="link"
-            size="xs"
+            size="sm"
             href={LastFm.auth_url()}
           >
             {gettext("Connect your Last.fm account")}
@@ -71,13 +71,13 @@ defmodule MusicLibraryWeb.ReleaseComponent do
               <div class="flex justify-between items-center gap-4">
                 <h4
                   :if={MusicBrainz.Release.media_count(release_with_tracks) > 1}
-                  class="text-sm font-semibold text-zinc-700 dark:text-zinc-300"
+                  class="text-sm md:text-md font-semibold text-zinc-700 dark:text-zinc-300"
                 >
                   {medium_title(medium)}
                 </h4>
                 <Fluxon.Components.Button.button
                   :if={@can_scrobble?}
-                  size="xs"
+                  size="sm"
                   phx-click="scrobble_medium"
                   phx-value-number={medium.number}
                   phx-target={@myself}
@@ -92,13 +92,20 @@ defmodule MusicLibraryWeb.ReleaseComponent do
                   class="contents leading-5 text-zinc-700 dark:text-zinc-300 list-none"
                 >
                   <div class="table-row">
-                    <span class="table-cell text-xs text-right pr-1">{track.position}</span>
-                    <span class="table-cell text-xs font-medium leading-8">{track.title}</span>
-                    <span class="table-cell text-xs text-right pl-2">
+                    <span class="table-cell text-xs md:text-sm text-right pr-1">
+                      {track.position}
+                    </span>
+                    <span class="table-cell text-xs md:text-sm font-medium leading-8">
+                      {track.title}
+                    </span>
+                    <span class="table-cell text-xs md:text-sm text-right pl-2">
                       {track.length && format_duration(track.length)}
                     </span>
                   </div>
-                  <div :if={release_with_tracks.artists !== track.artists} class="table-row text-xs">
+                  <div
+                    :if={release_with_tracks.artists !== track.artists}
+                    class="table-row text-xs md:text-sm"
+                  >
                     <span class="table-cell" />
                     <span class="table-cell">
                       {Enum.map_join(track.artists, ", ", fn artist -> artist.name end)}
@@ -107,7 +114,7 @@ defmodule MusicLibraryWeb.ReleaseComponent do
                 </li>
               </ul>
               <Fluxon.Components.Separator.separator />
-              <p class="text-xs text-right text-zinc-700 dark:text-zinc-300">
+              <p class="text-xs md:text-sm text-right text-zinc-700 dark:text-zinc-300">
                 {medium_duration(medium)}
               </p>
             </div>
