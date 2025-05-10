@@ -221,7 +221,7 @@
 
             <button
               :if={@record.selected_release_id}
-              phx-click={Fluxon.open_dialog("release-with-tracks-sheet")}
+              phx-click={MusicLibraryWeb.ReleaseComponent.open("release-with-tracks-sheet")}
             >
               <span class="sr-only">{gettext("Show Tracks")}</span>
               <.icon

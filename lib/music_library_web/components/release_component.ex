@@ -9,6 +9,8 @@ defmodule MusicLibraryWeb.ReleaseComponent do
 
   alias MusicLibrary.ScrobbleActivity
 
+  def open(id), do: Fluxon.open_dialog(id)
+
   @impl true
   def mount(socket) do
     {:ok,
