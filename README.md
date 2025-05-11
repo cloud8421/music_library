@@ -7,10 +7,13 @@
   - [Screenshots](#screenshots)
     - [Stats](#stats)
     - [Collection](#collection)
+    - [Searching for a record to add](#searching-for-a-record-to-add)
     - [Edit a record in the collection](#edit-a-record-in-the-collection)
     - [View a record's details in the collection](#view-a-records-details-in-the-collection)
+    - [View a record's tracklist](#view-a-records-tracklist)
     - [Adding a record in the wishlist](#adding-a-record-in-the-wishlist)
     - [View an artist's details](#view-an-artists-details)
+    - [View the scrobble activity](#view-the-scrobble-activity)
   - [Setup](#setup)
   - [Environment configuration](#environment-configuration)
   - [Running the application](#running-the-application)
@@ -41,6 +44,10 @@
 
 ![Collection](.github/screenshots/collection.png)
 
+### Searching for a record to add
+
+![Searching for a Record to add](.github/screenshots/record-search.png)
+
 ### Edit a record in the collection
 
 ![Edit a record in the collection](.github/screenshots/collection-edit-record.png)
@@ -49,6 +56,10 @@
 
 ![View a record's details in the collection](.github/screenshots/collection-record-details.png)
 
+### View a record's tracklist
+
+![View a record's tracklist](.github/screenshots/record-tracklist.png)
+
 ### Adding a record in the wishlist
 
 ![Adding a record in the wishlist](.github/screenshots/wishlist-import-record.png)
@@ -56,6 +67,10 @@
 ### View an artist's details
 
 ![View an artist's details](.github/screenshots/artist-details.png)
+
+### View the scrobble activity
+
+![View the scrobble activity](.github/screenshots/scrobble-activity.png)
 
 ## Setup
 
