@@ -13,12 +13,15 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
     test "can navigate to the record edit form", %{conn: conn} do
       record = record()
 
+      release_response = Fixtures.Release.release(:marbles)
+
       Req.Test.stub(MusicBrainz.API, fn conn ->
-        Req.Test.json(conn, Fixtures.Release.release(:marbles))
+        Req.Test.json(conn, release_response)
       end)
 
       conn
       |> visit(~p"/collection/#{record.id}")
+      |> unwrap(&render_async/1)
       |> assert_has("a", text: "Edit")
       |> click_link("Edit")
       |> assert_path(~p"/collection/#{record}/show/edit")
@@ -30,13 +33,16 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
       record = record()
       cover_url = ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
 
+      release_response = Fixtures.Release.release(:marbles)
+
       Req.Test.stub(MusicBrainz.API, fn conn ->
-        Req.Test.json(conn, Fixtures.Release.release(:marbles))
+        Req.Test.json(conn, release_response)
       end)
 
       session =
         conn
         |> visit(~p"/collection/#{record.id}")
+        |> unwrap(&render_async/1)
         |> assert_has("h2", text: escape(record.title))
         |> assert_has("p", text: record.release_date)
         |> assert_has("p", text: format_label(record.format))
@@ -60,7 +66,6 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
   end
 
   describe "Side panel" do
-    @tag :skip
     test "shows a record's tracks", %{conn: conn} do
       record = record()
 
@@ -74,14 +79,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
         conn
         |> visit(~p"/collection/#{record.id}")
         |> assert_has("button", text: "Show Tracks")
-        |> unwrap(fn view ->
-          # we can't directly click the "Show Tracks" button as
-          # its phx-click event uses a JS command. Bit of a hack, but we can simulate
-          # the click by pretending we're dealing with a JS hook, and trigger the event
-          # that is sent by the JS command.
-          view
-          |> Phoenix.LiveViewTest.render_hook(:load_release_with_tracks, %{})
-        end)
+        |> unwrap(&render_async/1)
         |> assert_has("a", text: "Connect your Last.fm account")
 
       release =

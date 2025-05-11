@@ -15,8 +15,19 @@ defmodule MusicLibraryWeb.ReleaseComponent do
   def mount(socket) do
     {:ok,
      socket
-     |> assign(:can_scrobble?, ScrobbleActivity.can_scrobble?())
-     |> assign(:release_with_tracks, nil)}
+     |> assign(:can_scrobble?, ScrobbleActivity.can_scrobble?())}
+  end
+
+  @impl true
+  def update(%{record: record} = assigns, socket) do
+    {:ok,
+     socket
+     |> assign(assigns)
+     |> assign_async(:release_with_tracks, fn ->
+       with {:ok, release} <- MusicBrainz.get_release(record.selected_release_id) do
+         {:ok, %{release_with_tracks: MusicBrainz.Release.from_api_response(release)}}
+       end
+     end)}
   end
 
   @impl true
@@ -27,7 +38,6 @@ defmodule MusicLibraryWeb.ReleaseComponent do
         :if={@record.selected_release_id}
         id={@sheet_id}
         placement="right"
-        on_open={JS.push("load_release_with_tracks", target: @myself)}
       >
         <div class="mt-6 flex justify-between items-center gap-4">
           <h3 class="text-lg font-semibold text-zinc-700 dark:text-zinc-300">{gettext("Tracks")}</h3>
@@ -126,18 +136,6 @@ defmodule MusicLibraryWeb.ReleaseComponent do
   end
 
   @impl true
-  def handle_event("load_release_with_tracks", _params, socket) do
-    selected_release_id = socket.assigns.record.selected_release_id
-
-    {:noreply,
-     socket
-     |> assign_async(:release_with_tracks, fn ->
-       with {:ok, release} <- MusicBrainz.get_release(selected_release_id) do
-         {:ok, %{release_with_tracks: MusicBrainz.Release.from_api_response(release)}}
-       end
-     end)}
-  end
-
   def handle_event("scrobble_release", _params, socket) do
     release_with_tracks_async_result =
       socket.assigns.release_with_tracks

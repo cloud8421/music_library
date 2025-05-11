@@ -37,10 +37,10 @@ defmodule MusicBrainz.Release do
     %__MODULE__{
       id: r["id"],
       title: r["title"],
-      artists: parse_artists(r["artist-credit"]),
+      artists: parse_artists(r["artist-credit"] || []),
       date: r["date"],
       barcode: r["barcode"],
-      media: parse_media(r["media"])
+      media: parse_media(r["media"] || [])
     }
   end
 
