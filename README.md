@@ -28,8 +28,10 @@
 - Add records from MusicBrainz, with optional override of specific pieces of data
 - Manage a collection and a wishlist of records, with ways to quickly search
   and filter based on records' metadata
-- Integration with Last.fm (display latest scrobbles, and where possible
-  connect them with records in the collection or wishlist)
+- Integration with Last.fm:
+  - display latest scrobbles, and where possible
+    connect them with records in the collection or wishlist
+  - scrobble a record
 - Some basic stats
 - All data stored in a single SQLite database for portability and ease of backup/restore
 - Ideal for deployment on a server with limited resources (1CPU, 512MB RAM)
