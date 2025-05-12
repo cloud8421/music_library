@@ -59,14 +59,6 @@
         {gettext("A->Z")}
       </.button>
     </span>
-
-    <p class="text-right text-sm max-sm:text-xs text-zinc-900 dark:text-zinc-400">
-      {gettext(
-        "Showing <b>%{visible}</b> of <b>%{total}</b> records",
-        %{visible: Enum.count(@streams.records), total: @record_list_params.total_entries}
-      )
-      |> raw()}
-    </p>
   </div>
 </div>
 
