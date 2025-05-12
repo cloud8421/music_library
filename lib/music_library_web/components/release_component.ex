@@ -78,11 +78,11 @@ defmodule MusicLibraryWeb.ReleaseComponent do
               </div>
             </:failed>
             <div :for={medium <- release_with_tracks.media} class="space-y-4">
-              <div class="flex justify-between items-center gap-4">
-                <h4
-                  :if={MusicBrainz.Release.media_count(release_with_tracks) > 1}
-                  class="text-sm md:text-md font-semibold text-zinc-700 dark:text-zinc-300"
-                >
+              <div
+                :if={MusicBrainz.Release.media_count(release_with_tracks) > 1}
+                class="flex justify-between items-center gap-4"
+              >
+                <h4 class="text-sm md:text-md font-semibold text-zinc-700 dark:text-zinc-300">
                   {medium_title(medium)}
                 </h4>
                 <Fluxon.Components.Button.button
