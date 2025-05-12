@@ -48,13 +48,14 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
       </ul>
 
       <div class="mt-4 flex justify-center">
-        <.button
+        <Fluxon.Components.Button.button
+          variant="solid"
           disabled={length(@scan_results) == 0}
           phx-disable-with={gettext("Adding...")}
           phx-click={JS.push("import_releases", target: "#barcode-scanner")}
         >
           {gettext("Add releases")}
-        </.button>
+        </Fluxon.Components.Button.button>
       </div>
     </div>
     """
