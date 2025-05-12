@@ -140,7 +140,7 @@ hide = true
 
 [tasks."dev:static-checks"]
 description = 'Run static checks for code formatting, translations, quality'
-run = 'mix do format, credo, gettext.extract'
+run = 'mix do format, credo, gettext.extract --merge'
 
 [tasks.test]
 description = 'Run project tests'
