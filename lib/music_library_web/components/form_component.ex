@@ -36,31 +36,19 @@ defmodule MusicLibraryWeb.FormComponent do
         phx-submit="save"
       >
         <div class="sm:columns-2 space-y-2">
-          <Fluxon.Components.Select.select
-            field={@form[:type]}
-            label={gettext("Type")}
-            options={types_with_labels()}
-          />
-          <Fluxon.Components.Select.select
-            field={@form[:format]}
-            label={gettext("Format")}
-            options={formats_with_labels()}
-          />
+          <.select field={@form[:type]} label={gettext("Type")} options={types_with_labels()} />
+          <.select field={@form[:format]} label={gettext("Format")} options={formats_with_labels()} />
         </div>
-        <Fluxon.Components.Input.input
-          class="font-mono"
-          field={@form[:musicbrainz_id]}
-          label={gettext("MusicBrainz ID")}
-        />
-        <Fluxon.Components.Select.select
+        <.input class="font-mono" field={@form[:musicbrainz_id]} label={gettext("MusicBrainz ID")} />
+        <.select
           searchable
           field={@form[:selected_release_id]}
           label={gettext("Selected Release")}
           options={selected_release_id_options(@record)}
         />
         <div class={[@show_purchased_at && "sm:columns-2", "space-y-2"]}>
-          <Fluxon.Components.Input.input field={@form[:release_date]} label={gettext("Release Date")} />
-          <Fluxon.Components.DatePicker.date_time_picker
+          <.input field={@form[:release_date]} label={gettext("Release Date")} />
+          <.date_time_picker
             :if={@show_purchased_at}
             field={@form[:purchased_at]}
             display_format="%B %-d, %Y at %I:%M %p"

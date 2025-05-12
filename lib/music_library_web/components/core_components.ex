@@ -19,6 +19,13 @@ defmodule MusicLibraryWeb.CoreComponents do
   alias Phoenix.LiveView.JS
   use Gettext, backend: MusicLibraryWeb.Gettext
 
+  defdelegate date_time_picker(assigns), to: Fluxon.Components.DatePicker
+  defdelegate input(assigns), to: Fluxon.Components.Input
+  defdelegate loading(assigns), to: Fluxon.Components.Loading
+  defdelegate select(assigns), to: Fluxon.Components.Select
+  defdelegate separator(assigns), to: Fluxon.Components.Separator
+  defdelegate sheet(assigns), to: Fluxon.Components.Sheet
+
   @doc """
   Renders a modal.
 

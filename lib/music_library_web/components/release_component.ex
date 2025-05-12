@@ -34,11 +34,7 @@ defmodule MusicLibraryWeb.ReleaseComponent do
   def render(assigns) do
     ~H"""
     <div>
-      <Fluxon.Components.Sheet.sheet
-        :if={@record.selected_release_id}
-        id={@sheet_id}
-        placement="right"
-      >
+      <.sheet :if={@record.selected_release_id} id={@sheet_id} placement="right">
         <div class="mt-6 flex justify-between items-center gap-4">
           <h3 class="text-lg font-semibold text-zinc-700 dark:text-zinc-300">{gettext("Tracks")}</h3>
           <Fluxon.Components.Button.button
@@ -64,7 +60,7 @@ defmodule MusicLibraryWeb.ReleaseComponent do
           <.async_result :let={release_with_tracks} assign={@release_with_tracks}>
             <:loading>
               <span class="sr-only">{gettext("Loading release with tracks")}</span>
-              <Fluxon.Components.Loading.loading />
+              <.loading />
             </:loading>
             <:failed :let={_failure}>
               <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
@@ -123,14 +119,14 @@ defmodule MusicLibraryWeb.ReleaseComponent do
                   </div>
                 </li>
               </ul>
-              <Fluxon.Components.Separator.separator />
+              <.separator />
               <p class="text-xs md:text-sm text-right text-zinc-700 dark:text-zinc-300">
                 {medium_duration(medium)}
               </p>
             </div>
           </.async_result>
         </div>
-      </Fluxon.Components.Sheet.sheet>
+      </.sheet>
     </div>
     """
   end

@@ -21,7 +21,7 @@ defmodule MusicLibraryWeb.AddRecordComponent do
         phx-submit="search"
         class="px-4"
       >
-        <Fluxon.Components.Input.input
+        <.input
           id={:mb_query}
           name={:mb_query}
           field={@form[:mb_query]}
