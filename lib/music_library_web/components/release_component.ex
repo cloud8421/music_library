@@ -37,7 +37,7 @@ defmodule MusicLibraryWeb.ReleaseComponent do
       <.sheet :if={@record.selected_release_id} id={@sheet_id} placement="right">
         <div class="mt-6 flex justify-between items-center gap-4">
           <h3 class="text-lg font-semibold text-zinc-700 dark:text-zinc-300">{gettext("Tracks")}</h3>
-          <Fluxon.Components.Button.button
+          <.button
             :if={@can_scrobble?}
             size="sm"
             phx-click="scrobble_release"
@@ -45,15 +45,10 @@ defmodule MusicLibraryWeb.ReleaseComponent do
             phx-disable-with={gettext("Scrobbling...")}
           >
             {gettext("Scrobble release")}
-          </Fluxon.Components.Button.button>
-          <Fluxon.Components.Button.button
-            :if={!@can_scrobble?}
-            as="link"
-            size="sm"
-            href={LastFm.auth_url()}
-          >
+          </.button>
+          <.button :if={!@can_scrobble?} as="link" size="sm" href={LastFm.auth_url()}>
             {gettext("Connect your Last.fm account")}
-          </Fluxon.Components.Button.button>
+          </.button>
         </div>
 
         <div :if={@release_with_tracks} class="space-y-4 mt-4">
@@ -81,7 +76,7 @@ defmodule MusicLibraryWeb.ReleaseComponent do
                 <h4 class="text-sm md:text-md font-semibold text-zinc-700 dark:text-zinc-300">
                   {medium_title(medium)}
                 </h4>
-                <Fluxon.Components.Button.button
+                <.button
                   :if={@can_scrobble?}
                   size="sm"
                   phx-click="scrobble_medium"
@@ -90,7 +85,7 @@ defmodule MusicLibraryWeb.ReleaseComponent do
                   phx-disable-with={gettext("Scrobbling...")}
                 >
                   {gettext("Scrobble disc")}
-                </Fluxon.Components.Button.button>
+                </.button>
               </div>
               <ul id={"disc-#{medium.number}"} class="w-full table table-auto">
                 <li

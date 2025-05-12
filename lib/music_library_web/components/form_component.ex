@@ -114,13 +114,9 @@ defmodule MusicLibraryWeb.FormComponent do
         </div>
         <:actions>
           <div class="w-full md:flex md:justify-center">
-            <Fluxon.Components.Button.button
-              variant="solid"
-              class="w-full md:w-auto"
-              phx-disable-with={gettext("Saving...")}
-            >
+            <.button variant="solid" class="w-full md:w-auto" phx-disable-with={gettext("Saving...")}>
               {gettext("Save")}
-            </Fluxon.Components.Button.button>
+            </.button>
           </div>
         </:actions>
       </.simple_form>

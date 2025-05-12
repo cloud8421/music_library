@@ -3,7 +3,7 @@
     <div class="flex items-center justify-between gap-6 mb-2 mt-2">
       <.search_form query={@record_list_params.query} />
       <nav class="isolate inline-flex rounded-md shadow-xs">
-        <Fluxon.Components.Button.button
+        <.button
           class="rounded-l-md rounded-r-none"
           variant="solid"
           as="link"
@@ -12,8 +12,8 @@
         >
           <.icon name="hero-plus" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
           {gettext("Add")}
-        </Fluxon.Components.Button.button>
-        <Fluxon.Components.Button.button
+        </.button>
+        <.button
           class="-ml-px rounded-r-md rounded-l-none"
           variant="solid"
           as="link"
@@ -22,14 +22,14 @@
         >
           <.barcode_icon class="mr-2 fill-current" />
           {gettext("Scan")}
-        </Fluxon.Components.Button.button>
+        </.button>
       </nav>
     </div>
   </header>
 
   <div class="flex items-end justify-between gap-6 mt-8">
     <span class="isolate inline-flex rounded-md shadow-xs">
-      <Fluxon.Components.Button.button
+      <.button
         patch={order_path(@record_list_params, :purchase)}
         as="link"
         size="sm"
@@ -45,8 +45,8 @@
           data-slot="icon"
         />
         {gettext("Purchase")}
-      </Fluxon.Components.Button.button>
-      <Fluxon.Components.Button.button
+      </.button>
+      <.button
         patch={order_path(@record_list_params, :alphabetical)}
         as="link"
         size="sm"
@@ -57,7 +57,7 @@
       >
         <.icon name="hero-user-solid" class="mr-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
         {gettext("A->Z")}
-      </Fluxon.Components.Button.button>
+      </.button>
     </span>
 
     <p class="text-right text-sm max-sm:text-xs text-zinc-900 dark:text-zinc-400">
