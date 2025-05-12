@@ -20,19 +20,10 @@
         </div>
       </div>
 
-      <div>
-        <button
-          type="submit"
-          class={[
-            "flex w-full justify-center rounded-md",
-            "bg-zinc-900 hover:bg-zinc-700 dark:bg-zinc-100 dark:hover:bg-zinc-400",
-            "px-3 py-1.5 text-sm font-semibold leading-6",
-            "text-white dark:text-zinc-900",
-            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
-          ]}
-        >
+      <div class="w-full flex justify-center">
+        <.button variant="solid" type="submit">
           {gettext("Login")}
-        </button>
+        </.button>
       </div>
     </.form>
   </div>
