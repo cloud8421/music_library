@@ -3,47 +3,38 @@
     <div class="flex items-center justify-between gap-6 mb-2 mt-2">
       <.search_form query={@record_list_params.query} />
       <nav class="isolate inline-flex rounded-md shadow-xs">
-        <.link
-          class={[
-            "relative inline-flex items-center rounded-l-md",
-            "px-3 py-2 text-xs sm:text-sm font-semibold",
-            "bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200",
-            "disabled:bg-zinc-300 dark:disabled:bg-zinc-300 disabled:active:text-white",
-            "text-white active:text-white/80 dark:text-zinc-900 dark:active:text-zinc-900/80",
-            "focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
-          ]}
+        <Fluxon.Components.Button.button
+          class="rounded-l-md rounded-r-none"
+          variant="solid"
+          as="link"
+          size="sm"
           patch={~p"/collection/import"}
         >
           <.icon name="hero-plus" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
           {gettext("Add")}
-        </.link>
-        <.link
-          class={[
-            "relative -ml-px inline-flex items-center rounded-r-md",
-            "px-3 py-2 text-xs sm:text-sm font-semibold",
-            "bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200",
-            "disabled:bg-zinc-300 dark:disabled:bg-zinc-300 disabled:active:text-white",
-            "text-white active:text-white/80 dark:text-zinc-900 dark:active:text-zinc-900/80",
-            "focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
-          ]}
+        </Fluxon.Components.Button.button>
+        <Fluxon.Components.Button.button
+          class="-ml-px rounded-r-md rounded-l-none"
+          variant="solid"
+          as="link"
+          size="sm"
           patch={~p"/collection/scan"}
         >
           <.barcode_icon class="mr-2 fill-current" />
           {gettext("Scan")}
-        </.link>
+        </Fluxon.Components.Button.button>
       </nav>
     </div>
   </header>
 
   <div class="flex items-end justify-between gap-6 mt-8">
     <span class="isolate inline-flex rounded-md shadow-xs">
-      <.link
+      <Fluxon.Components.Button.button
         patch={order_path(@record_list_params, :purchase)}
+        as="link"
+        size="sm"
         class={[
-          "relative inline-flex items-center rounded-l-md",
-          "px-3 py-2 text-sm font-semibold",
-          "ring-1 ring-inset focus:z-10",
-          "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 ring-zinc-300",
+          "rounded-l-md rounded-r-none",
           @record_list_params.order == :purchase && "!bg-zinc-100 dark:!bg-zinc-700"
         ]}
       >
@@ -54,20 +45,19 @@
           data-slot="icon"
         />
         {gettext("Purchase")}
-      </.link>
-      <.link
+      </Fluxon.Components.Button.button>
+      <Fluxon.Components.Button.button
         patch={order_path(@record_list_params, :alphabetical)}
+        as="link"
+        size="sm"
         class={[
-          "relative -ml-px inline-flex items-center rounded-r-md",
-          "px-3 py-2 text-xs sm:text-sm font-semibold",
-          "ring-1 ring-inset focus:z-10",
-          "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 ring-zinc-300",
+          "-ml-px rounded-r-md rounded-l-none",
           @record_list_params.order == :alphabetical && "!bg-zinc-100 dark:!bg-zinc-700"
         ]}
       >
         <.icon name="hero-user-solid" class="mr-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
         {gettext("A->Z")}
-      </.link>
+      </Fluxon.Components.Button.button>
     </span>
 
     <p class="text-right text-sm max-sm:text-xs text-zinc-900 dark:text-zinc-400">
