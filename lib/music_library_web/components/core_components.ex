@@ -194,7 +194,7 @@ defmodule MusicLibraryWeb.CoreComponents do
         <.input field={@form[:email]} label="Email"/>
         <.input field={@form[:username]} label="Username" />
         <:actions>
-          <.button>Save</.button>
+          <button>Save</button>
         </:actions>
       </.simple_form>
   """
@@ -218,40 +218,6 @@ defmodule MusicLibraryWeb.CoreComponents do
         </div>
       </div>
     </.form>
-    """
-  end
-
-  @doc """
-  Renders a button.
-
-  ## Examples
-
-      <.button>Send!</.button>
-      <.button phx-click="go" class="ml-2">Send!</.button>
-  """
-  attr :type, :string, default: nil
-  attr :class, :string, default: nil
-  attr :rest, :global, include: ~w(disabled form name value)
-
-  slot :inner_block, required: true
-
-  def button(assigns) do
-    ~H"""
-    <button
-      type={@type}
-      class={[
-        "phx-submit-loading:opacity-75 rounded-md py-1 sm:py-2 px-2 sm:px-3 mt-2",
-        "text-xs sm:text-sm font-semibold leading-6 ",
-        "bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200",
-        "disabled:bg-zinc-300 dark:disabled:bg-zinc-300 disabled:active:text-white dark:disabled:text-zinc-500",
-        "text-white active:text-white/80 dark:text-zinc-900 dark:active:text-zinc-900/80",
-        "focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-zinc-600",
-        @class
-      ]}
-      {@rest}
-    >
-      {render_slot(@inner_block)}
-    </button>
     """
   end
 
