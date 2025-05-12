@@ -70,9 +70,10 @@
 
 <.modal
   :if={@live_action == :edit}
+  class="md:min-w-2xl"
   id="record-modal"
-  show
-  on_cancel={JS.patch(back_path(@record_list_params))}
+  open
+  on_close={JS.patch(back_path(@record_list_params))}
 >
   <.live_component
     module={MusicLibraryWeb.FormComponent}
@@ -86,9 +87,10 @@
 
 <.modal
   :if={@live_action == :import}
+  class="md:min-w-2xl max-w-sm md:max-w-3xl"
   id="record-modal"
-  show
-  on_cancel={JS.patch(back_path(@record_list_params))}
+  open
+  on_close={JS.patch(back_path(@record_list_params))}
 >
   <.live_component
     module={MusicLibraryWeb.AddRecordComponent}
@@ -104,9 +106,10 @@
 
 <.modal
   :if={@live_action == :barcode_scan}
+  class="min-w-sm md:min-w-2xl max-w-3xl"
   id="barcode-scanner-modal"
-  show
-  on_cancel={JS.patch(back_path(@record_list_params))}
+  open
+  on_close={JS.patch(back_path(@record_list_params))}
 >
   <.live_component
     module={MusicLibraryWeb.BarcodeScannerComponent}

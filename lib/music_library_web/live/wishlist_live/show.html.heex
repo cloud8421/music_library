@@ -278,9 +278,10 @@
 
 <.modal
   :if={@live_action == :edit}
+  class="md:min-w-2xl"
   id="record-modal"
-  show
-  on_cancel={JS.patch(~p"/wishlist/#{@record}")}
+  open
+  on_close={JS.patch(~p"/wishlist/#{@record}")}
 >
   <.live_component
     module={MusicLibraryWeb.FormComponent}

@@ -284,8 +284,8 @@
 <.modal
   :if={@live_action == :edit}
   id="record-modal"
-  show
-  on_cancel={JS.patch(~p"/collection/#{@record}")}
+  open
+  on_close={JS.patch(~p"/collection/#{@record}")}
 >
   <.live_component
     module={MusicLibraryWeb.FormComponent}

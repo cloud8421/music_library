@@ -155,9 +155,10 @@
 
 <.modal
   :if={@live_action == :import}
+  class="md:min-w-2xl max-w-sm md:max-w-3xl"
   id="record-modal"
-  show
-  on_cancel={JS.patch(~p"/artists/#{@artist.musicbrainz_id}")}
+  open
+  on_close={JS.patch(~p"/artists/#{@artist.musicbrainz_id}")}
 >
   <.live_component
     module={MusicLibraryWeb.AddRecordComponent}
