@@ -11,11 +11,6 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/music_library_web/components/core_components.ex
-#, elixir-autogen, elixir-format
-msgid "Actions"
-msgstr ""
-
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/collection_live/show.html.heex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
