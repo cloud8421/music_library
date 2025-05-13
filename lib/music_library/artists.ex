@@ -46,7 +46,11 @@ defmodule MusicLibrary.Artists do
   end
 
   def exists?(artist_id) do
-    Repo.get_by(ArtistRecord, musicbrainz_id: artist_id) !== nil
+    q =
+      from ar in ArtistRecord,
+        where: ar.musicbrainz_id == ^artist_id
+
+    Repo.exists?(q)
   end
 
   def delete_artist_info(artist_id) do
