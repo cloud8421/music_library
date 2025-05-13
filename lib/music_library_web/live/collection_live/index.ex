@@ -33,45 +33,24 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
   end
 
   defp apply_action(socket, :import, params) do
-    socket =
-      if get_in(socket.assigns, [:streams, :records]) == nil do
-        socket
-        |> apply_action(:index, params)
-      else
-        socket
-      end
-
     socket
+    |> apply_fallback_index(params)
     |> assign(:page_title, gettext("Add new Record · Collection"))
     |> assign(:record, nil)
   end
 
   defp apply_action(socket, :barcode_scan, params) do
-    socket =
-      if get_in(socket.assigns, [:streams, :records]) == nil do
-        socket
-        |> apply_action(:index, params)
-      else
-        socket
-      end
-
     socket
+    |> apply_fallback_index(params)
     |> assign(:page_title, gettext("Scan barcodes · Collection"))
     |> assign(:record, nil)
   end
 
   defp apply_action(socket, :edit, %{"id" => id} = params) do
-    socket =
-      if get_in(socket.assigns, [:streams, :records]) == nil do
-        socket
-        |> apply_action(:index, params)
-      else
-        socket
-      end
-
     record = Records.get_record!(id)
 
     socket
+    |> apply_fallback_index(params)
     |> assign(:page_title, Show.page_title(socket.assigns.live_action, record))
     |> assign(:record, record)
   end
@@ -88,6 +67,15 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
       |> merge_pagination(params, total_records)
 
     load_and_assign_records(socket, record_list_params)
+  end
+
+  def apply_fallback_index(socket, params) do
+    if get_in(socket.assigns, [:streams, :records]) == nil do
+      socket
+      |> apply_action(:index, params)
+    else
+      socket
+    end
   end
 
   @impl true
