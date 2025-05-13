@@ -72,6 +72,7 @@ defmodule MusicLibrary.MixProject do
       {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:live_debugger, "~> 0.2.0", only: :dev},
+      {:tidewave, "~> 0.1", only: :dev},
 
       # HTTP Clients
       {:finch, "~> 0.19.0"},
