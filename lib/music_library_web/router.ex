@@ -39,25 +39,28 @@ defmodule MusicLibraryWeb.Router do
       get "/covers/:record_id", CoverController, :show
       get "/artists/:musicbrainz_id/image", ArtistController, :image
 
-      live "/", StatsLive.Index, :index
+      live_session :default,
+        on_mount: MusicLibraryWeb.Hooks.StaticAssets do
+        live "/", StatsLive.Index, :index
 
-      live "/collection", CollectionLive.Index, :index
-      live "/collection/import", CollectionLive.Index, :import
-      live "/collection/scan", CollectionLive.Index, :barcode_scan
-      live "/collection/:id/edit", CollectionLive.Index, :edit
+        live "/collection", CollectionLive.Index, :index
+        live "/collection/import", CollectionLive.Index, :import
+        live "/collection/scan", CollectionLive.Index, :barcode_scan
+        live "/collection/:id/edit", CollectionLive.Index, :edit
 
-      live "/collection/:id", CollectionLive.Show, :show
-      live "/collection/:id/show/edit", CollectionLive.Show, :edit
+        live "/collection/:id", CollectionLive.Show, :show
+        live "/collection/:id/show/edit", CollectionLive.Show, :edit
 
-      live "/wishlist", WishlistLive.Index, :index
-      live "/wishlist/import", WishlistLive.Index, :import
-      live "/wishlist/:id/edit", WishlistLive.Index, :edit
+        live "/wishlist", WishlistLive.Index, :index
+        live "/wishlist/import", WishlistLive.Index, :import
+        live "/wishlist/:id/edit", WishlistLive.Index, :edit
 
-      live "/wishlist/:id", WishlistLive.Show, :show
-      live "/wishlist/:id/show/edit", WishlistLive.Show, :edit
+        live "/wishlist/:id", WishlistLive.Show, :show
+        live "/wishlist/:id/show/edit", WishlistLive.Show, :edit
 
-      live "/artists/:musicbrainz_id", ArtistLive.Show, :show
-      live "/artists/:musicbrainz_id/import", ArtistLive.Show, :import
+        live "/artists/:musicbrainz_id", ArtistLive.Show, :show
+        live "/artists/:musicbrainz_id/import", ArtistLive.Show, :import
+      end
     end
   end
 

@@ -14,13 +14,6 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    socket =
-      if static_changed?(socket) do
-        put_flash(socket, :warning, gettext("The application has been updated, please reload."))
-      else
-        socket
-      end
-
     current_date = DateTime.utc_now() |> DateTime.to_date()
 
     {:ok,

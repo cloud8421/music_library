@@ -203,10 +203,7 @@ msgstr ""
 msgid "Success!"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.ex
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/index.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/hooks/static_assets.ex
 #, elixir-autogen, elixir-format
 msgid "The application has been updated, please reload."
 msgstr ""

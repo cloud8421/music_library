@@ -17,13 +17,6 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    socket =
-      if static_changed?(socket) do
-        put_flash(socket, :warning, gettext("The application has been updated, please reload."))
-      else
-        socket
-      end
-
     {:ok, assign(socket, :nav_section, :records)}
   end
 

@@ -15,13 +15,6 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
   @impl true
   def mount(%{"id" => record_id}, _session, socket) do
-    socket =
-      if static_changed?(socket) do
-        put_flash(socket, :warning, gettext("The application has been updated, please reload."))
-      else
-        socket
-      end
-
     if connected?(socket) do
       Records.subscribe(record_id)
     end
