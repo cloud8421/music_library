@@ -23,6 +23,7 @@ defmodule MusicLibraryWeb.CoreComponents do
   defdelegate button(assigns), to: Fluxon.Components.Button
   defdelegate date_time_picker(assigns), to: Fluxon.Components.DatePicker
   defdelegate input(assigns), to: Fluxon.Components.Input
+  defdelegate label(assigns), to: Fluxon.Components.Form
   defdelegate loading(assigns), to: Fluxon.Components.Loading
   defdelegate modal(assigns), to: Fluxon.Components.Modal
   defdelegate select(assigns), to: Fluxon.Components.Select
@@ -142,14 +143,6 @@ defmodule MusicLibraryWeb.CoreComponents do
         </div>
       </div>
     </.form>
-    """
-  end
-
-  def label(assigns) do
-    ~H"""
-    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800 dark:text-zinc-400">
-      {render_slot(@inner_block)}
-    </label>
     """
   end
 
