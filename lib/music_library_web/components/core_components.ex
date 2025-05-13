@@ -41,7 +41,7 @@ defmodule MusicLibraryWeb.CoreComponents do
   attr :id, :string, doc: "the optional id of flash container"
   attr :flash, :map, default: %{}, doc: "the map of flash messages to display"
   attr :title, :string, default: nil
-  attr :kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup"
+  attr :kind, :atom, values: [:info, :warning, :error], doc: "used for styling and flash lookup"
   attr :rest, :global, doc: "the arbitrary HTML attributes to add to the flash container"
 
   slot :inner_block, doc: "the optional inner block that renders the flash message"
@@ -59,6 +59,8 @@ defmodule MusicLibraryWeb.CoreComponents do
         "fixed top-2 right-2 mr-2 w-80 sm:w-96 z-50 rounded-md shadow-md p-3 ring-1 ring-zinc-400 border-l-2",
         @kind == :info &&
           "border-l-emerald-500 bg-white dark:bg-zinc-700 text-emerald-700 dark:text-emerald-300",
+        @kind == :warning &&
+          "border-l-yellow-500 bg-white dark:bg-zinc-700 text-yellow-900 dark:text-yellow-300",
         @kind == :error &&
           "border-l-red-500 bg-white dark:bg-zinc-700 text-red-900 dark:text-red-300"
       ]}
@@ -66,6 +68,7 @@ defmodule MusicLibraryWeb.CoreComponents do
     >
       <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
         <.icon :if={@kind == :info} name="hero-information-circle-mini" class="h-4 w-4" />
+        <.icon :if={@kind == :warning} name="hero-exclamation-circle-mini" class="h-4 w-4" />
         <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="h-4 w-4" />
         {@title}
       </p>
@@ -94,6 +97,7 @@ defmodule MusicLibraryWeb.CoreComponents do
     ~H"""
     <div id={@id}>
       <.flash kind={:info} title={gettext("Success!")} flash={@flash} />
+      <.flash kind={:warning} title={gettext("Warning!")} flash={@flash} />
       <.flash kind={:error} title={gettext("Error!")} flash={@flash} />
       <.flash
         id="server-error"

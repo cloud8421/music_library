@@ -813,3 +813,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Scrobble disc"
 msgstr ""
+
+#: lib/music_library_web/components/core_components.ex
+#, elixir-autogen, elixir-format
+msgid "Warning!"
+msgstr ""
