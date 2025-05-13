@@ -19,6 +19,7 @@ defmodule MusicLibraryWeb.CoreComponents do
   alias Phoenix.LiveView.JS
   use Gettext, backend: MusicLibraryWeb.Gettext
 
+  defdelegate badge(assigns), to: Fluxon.Components.Badge
   defdelegate button(assigns), to: Fluxon.Components.Button
   defdelegate date_time_picker(assigns), to: Fluxon.Components.DatePicker
   defdelegate input(assigns), to: Fluxon.Components.Input
@@ -270,77 +271,6 @@ defmodule MusicLibraryWeb.CoreComponents do
     ~H"""
     <span class={[@name, @class]} {@rest} />
     """
-  end
-
-  @doc """
-  Renders a round badge.
-  """
-  attr :text, :string, required: true
-  attr :class, :string, default: nil
-
-  def round_badge(assigns) do
-    ~H"""
-    <span class={[
-      "inline-flex items-center rounded-full",
-      "px-2 py-1 text-xs font-medium",
-      "ring-1 ring-inset",
-      "bg-zinc-50 dark:bg-zinc-500/10",
-      "text-zinc-700 dark:text-zinc-400",
-      "ring-zinc-600/20 dark:ring-zinc-500/20",
-      @class
-    ]}>
-      {assigns.text}
-    </span>
-    """
-  end
-
-  attr :color, :atom, values: [:green, :yellow, :gray], required: true
-  attr :text, :string, required: true
-
-  def badge(assigns) do
-    case assigns.color do
-      :green ->
-        ~H"""
-        <span class={[
-          "inline-flex items-center rounded-md whitespace-nowrap",
-          "px-2 py-1 text-xs font-medium",
-          "ring-1 ring-inset",
-          "bg-green-50 dark:bg-green-500/10",
-          "text-green-700 dark:text-green-400",
-          "ring-green-600/20 dark:ring-green-500/20"
-        ]}>
-          {@text}
-        </span>
-        """
-
-      :yellow ->
-        ~H"""
-        <span class={[
-          "inline-flex items-center rounded-md whitespace-nowrap",
-          "px-2 py-1 text-xs font-medium",
-          "ring-1 ring-inset",
-          "bg-yellow-50 dark:bg-yellow-400/10",
-          "text-yellow-800 dark:text-yellow-500",
-          "ring-yellow-600/20 dark:ring-yellow-400/20"
-        ]}>
-          {@text}
-        </span>
-        """
-
-      :gray ->
-        ~H"""
-        <span class={[
-          "inline-flex items-center rounded-md whitespace-nowrap",
-          "px-2 py-1 text-xs font-medium",
-          "ring-1 ring-inset",
-          "bg-zinc-50 dark:bg-zinc-500/10",
-          "text-zinc-700 dark:text-zinc-400",
-          "ring-zinc-600/20 dark:ring-zinc-500/20"
-        ]}>
-          {@text}
-        </span>
-        """
-    end
   end
 
   ## JS Commands

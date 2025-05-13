@@ -24,10 +24,11 @@
         </:failed>
         <a
           :if={lastfm_artist_info.on_tour}
+          class="flex items-center"
           href={LastFm.Artist.events_url(lastfm_artist_info)}
           target="_blank"
         >
-          <.round_badge text={gettext("On Tour")} class="mr-2" />
+          <.badge variant="pill" class="mr-2">{gettext("On Tour")}</.badge>
         </a>
         <span
           :if={lastfm_artist_info.play_count > 0}
