@@ -4,7 +4,7 @@
     <div class="flex h-16 justify-between">
       <div class="flex">
         <div class="flex space-x-2 md:space-x-4">
-          <.link navigate={~p"/"} class={section_link_classes(assigns[:nav_section], :stats)}>
+          <.nav_link route={~p"/"} section={:stats} nav_section={assigns[:nav_section]}>
             <.icon
               name="hero-chart-pie"
               class="max-sm:hidden h-4 w-4 mr-2"
@@ -12,10 +12,11 @@
               data-slot="icon"
             />
             {gettext("Stats")}
-          </.link>
-          <.link
-            navigate={~p"/collection"}
-            class={section_link_classes(assigns[:nav_section], :records)}
+          </.nav_link>
+          <.nav_link
+            route={~p"/collection"}
+            section={:collection}
+            nav_section={assigns[:nav_section]}
           >
             <.icon
               name="hero-circle-stack"
@@ -24,11 +25,8 @@
               data-slot="icon"
             />
             {gettext("Collection")}
-          </.link>
-          <.link
-            navigate={~p"/wishlist"}
-            class={section_link_classes(assigns[:nav_section], :wishlist)}
-          >
+          </.nav_link>
+          <.nav_link route={~p"/wishlist"} section={:wishlist} nav_section={assigns[:nav_section]}>
             <.icon
               name="hero-star"
               class="max-sm:hidden h-4 w-4 mr-2"
@@ -36,7 +34,7 @@
               data-slot="icon"
             />
             {gettext("Wishlist")}
-          </.link>
+          </.nav_link>
         </div>
       </div>
       <div class="flex space-x-2 md:space-x-4 items-center">

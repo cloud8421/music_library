@@ -38,7 +38,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
     {:noreply,
      socket
-     |> assign(:nav_section, :records)
+     |> assign(:nav_section, :collection)
      |> assign(:page_title, page_title(socket.assigns.live_action, record))
      |> assign(:record, record)}
   end

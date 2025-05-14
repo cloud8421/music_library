@@ -12,19 +12,26 @@ defmodule MusicLibraryWeb.Layouts do
 
   embed_templates "layouts/*"
 
-  @nav_base_classes "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
-  @nav_inactive_classes "border-transparent text-zinc-500 hover:border-red-300 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200 dark:hover:border-red-700"
-  @nav_active_classes "border-red-500 text-zinc-900 dark:text-zinc-100"
+  attr :nav_section, :atom, required: true
+  attr :section, :atom, required: true
+  attr :route, :string, required: true
 
-  def section_link_classes(current_section, section) when current_section == section do
-    [@nav_base_classes, @nav_active_classes]
-  end
+  slot :inner_block, required: true
 
-  def section_link_classes(_current_section, _section) do
-    [@nav_base_classes, @nav_inactive_classes]
-  end
-
-  def nav_link_classes do
-    [@nav_base_classes, @nav_inactive_classes]
+  def nav_link(assigns) do
+    ~H"""
+    <.link
+      navigate={@route}
+      class={[
+        "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium",
+        @nav_section == @section &&
+          "border-red-500 text-zinc-900 dark:text-zinc-100",
+        @nav_section !== @section &&
+          "border-transparent text-zinc-500 hover:border-red-300 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200 dark:hover:border-red-700"
+      ]}
+    >
+      {render_slot(@inner_block)}
+    </.link>
+    """
   end
 end
