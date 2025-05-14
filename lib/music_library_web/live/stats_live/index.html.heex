@@ -128,30 +128,24 @@
   </div>
   <%!-- TODO: replace with OSS version --%>
   <span class="mt-5 isolate inline-flex rounded-md shadow-xs">
-    <button
+    <.button
       phx-click={JS.push("set_scrobble_activity_mode", value: %{"mode" => :albums})}
       class={[
-        "relative inline-flex items-center rounded-l-md",
-        "px-3 py-2 text-xs sm:text-sm font-semibold",
-        "ring-1 ring-inset focus:z-10",
-        "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 ring-zinc-300",
+        "rounded-l-md rounded-r-none",
         @scrobble_activity_mode == :albums && "!bg-zinc-100 dark:!bg-zinc-700"
       ]}
     >
       {gettext("Albums")}
-    </button>
-    <button
+    </.button>
+    <.button
       phx-click={JS.push("set_scrobble_activity_mode", value: %{"mode" => :tracks})}
       class={[
-        "relative -ml-px inline-flex items-center rounded-r-md",
-        "px-3 py-2 text-xs sm:text-sm font-semibold",
-        "ring-1 ring-inset focus:z-10",
-        "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 ring-zinc-300",
+        "-ml-px rounded-r-md rounded-l-none",
         @scrobble_activity_mode == :tracks && "!bg-zinc-100 dark:!bg-zinc-700"
       ]}
     >
       {gettext("Tracks")}
-    </button>
+    </.button>
   </span>
   <ul
     :if={@scrobble_activity_mode == :albums}
