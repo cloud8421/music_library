@@ -12,7 +12,7 @@ defmodule MusicLibraryWeb.Layouts do
 
   embed_templates "layouts/*"
 
-  attr :nav_section, :atom, required: true
+  attr :current_section, :atom, required: true
   attr :section, :atom, required: true
   attr :route, :string, required: true
 
@@ -24,9 +24,9 @@ defmodule MusicLibraryWeb.Layouts do
       navigate={@route}
       class={[
         "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium",
-        @nav_section == @section &&
+        @current_section == @section &&
           "border-red-500 text-zinc-900 dark:text-zinc-100",
-        @nav_section !== @section &&
+        @current_section !== @section &&
           "border-transparent text-zinc-500 hover:border-red-300 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200 dark:hover:border-red-700"
       ]}
     >

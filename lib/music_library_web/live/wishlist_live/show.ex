@@ -18,7 +18,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
     {:ok,
      socket
-     |> assign(nav_section: :wishlist)
+     |> assign(current_section: :wishlist)
      |> assign(:current_date, current_date)}
   end
 
@@ -28,7 +28,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
     {:noreply,
      socket
-     |> assign(:nav_section, :wishlist)
+     |> assign(:current_section, :wishlist)
      |> assign(:page_title, page_title(socket.assigns.live_action, record))
      |> assign(:record, record)}
   end

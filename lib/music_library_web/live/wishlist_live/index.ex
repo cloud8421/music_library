@@ -20,7 +20,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
 
     {:ok,
      socket
-     |> assign(nav_section: :wishlist)
+     |> assign(current_section: :wishlist)
      |> assign(:current_date, current_date)}
   end
 

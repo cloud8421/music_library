@@ -63,7 +63,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
       |> group_and_sort()
 
     socket
-    |> assign(:nav_section, :artists)
+    |> assign(:current_section, :artists)
     |> assign(:artist, artist)
     |> assign(:artist_info, artist_info)
     |> assign(:country, ArtistInfo.country(artist_info))

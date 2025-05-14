@@ -17,7 +17,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :nav_section, :collection)}
+    {:ok, assign(socket, :current_section, :collection)}
   end
 
   @impl true

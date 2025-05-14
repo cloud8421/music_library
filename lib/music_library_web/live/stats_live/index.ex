@@ -96,7 +96,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        scrobble_activity_mode: :albums,
        latest_record: latest_record,
        page_title: gettext("Stats"),
-       nav_section: :stats,
+       current_section: :stats,
        records_by_artist: records_by_artists,
        records_by_genre: records_by_genre
      )}
