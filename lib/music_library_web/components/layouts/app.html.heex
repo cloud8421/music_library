@@ -39,42 +39,45 @@
           </.link>
         </div>
       </div>
-      <div class="flex space-x-2 md:space-x-4">
-        <a class={["max-sm:hidden" | nav_link_classes()]} } href={~p"/dev/dashboard"}>
-          <.icon name="hero-chart-bar" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
-          {gettext("Live Dashboard")}
-        </a>
-        <a class={["max-sm:hidden" | nav_link_classes()]} } href={~p"/dev/errors"}>
-          <.icon
-            name="hero-exclamation-circle"
-            class="h-4 w-4 mr-2"
-            aria-hidden="true"
-            data-slot="icon"
-          />
-          {gettext("Errors")}
-        </a>
-        <a class={["max-sm:hidden" | nav_link_classes()]} } href={~p"/dev/oban"}>
-          <.icon name="hero-cog" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
-          {gettext("Oban")}
-        </a>
-        <a class={["max-sm:hidden" | nav_link_classes()]} } href={~p"/backup"}>
-          <.icon
-            name="hero-archive-box-arrow-down"
-            class="h-4 w-4 mr-2"
-            aria-hidden="true"
-            data-slot="icon"
-          />
-          {gettext("Backup")}
-        </a>
-        <a class={nav_link_classes()} } href={~p"/login"}>
-          <.icon
-            name="hero-arrow-left-start-on-rectangle"
-            class="h-4 w-4 mr-2"
-            aria-hidden="true"
-            data-slot="icon"
-          />
-          {gettext("Logout")}
-        </a>
+      <div class="flex space-x-2 md:space-x-4 items-center">
+        <.dropdown label={gettext("More")}>
+          <.dropdown_link href={~p"/dev/dashboard"}>
+            <.icon name="hero-chart-bar" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
+            {gettext("Live Dashboard")}
+          </.dropdown_link>
+          <.dropdown_link href={~p"/dev/errors"}>
+            <.icon
+              name="hero-exclamation-circle"
+              class="h-4 w-4 mr-2"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+            {gettext("Errors")}
+          </.dropdown_link>
+          <.dropdown_link href={~p"/dev/oban"}>
+            <.icon name="hero-cog" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
+            {gettext("Oban")}
+          </.dropdown_link>
+          <.dropdown_link href={~p"/backup"}>
+            <.icon
+              name="hero-archive-box-arrow-down"
+              class="h-4 w-4 mr-2"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+            {gettext("Backup")}
+          </.dropdown_link>
+          <.dropdown_separator />
+          <.dropdown_link href={~p"/login"}>
+            <.icon
+              name="hero-arrow-left-start-on-rectangle"
+              class="h-4 w-4 mr-2"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+            {gettext("Logout")}
+          </.dropdown_link>
+        </.dropdown>
       </div>
     </div>
   </div>

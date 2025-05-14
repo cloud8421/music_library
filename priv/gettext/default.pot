@@ -815,3 +815,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Warning!"
 msgstr ""
+
+#: lib/music_library_web/components/layouts/app.html.heex
+#, elixir-autogen, elixir-format
+msgid "More"
+msgstr ""

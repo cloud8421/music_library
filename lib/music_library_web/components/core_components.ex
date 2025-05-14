@@ -22,6 +22,10 @@ defmodule MusicLibraryWeb.CoreComponents do
   defdelegate badge(assigns), to: Fluxon.Components.Badge
   defdelegate button(assigns), to: Fluxon.Components.Button
   defdelegate date_time_picker(assigns), to: Fluxon.Components.DatePicker
+  defdelegate dropdown(assigns), to: Fluxon.Components.Dropdown
+  defdelegate dropdown_button(assigns), to: Fluxon.Components.Dropdown
+  defdelegate dropdown_link(assigns), to: Fluxon.Components.Dropdown
+  defdelegate dropdown_separator(assigns), to: Fluxon.Components.Dropdown
   defdelegate input(assigns), to: Fluxon.Components.Input
   defdelegate label(assigns), to: Fluxon.Components.Form
   defdelegate loading(assigns), to: Fluxon.Components.Loading
