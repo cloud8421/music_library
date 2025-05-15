@@ -85,14 +85,14 @@
           </div>
         </:failed>
         <details
-          :if={lastfm_artist_info.bio !== ""}
+          :if={lastfm_artist_info.summary !== ""}
           class="mt-2 text-sm leading-5 text-zinc-500 dark:text-zinc-400"
         >
           <summary class="text-sm mt-4 font-medium leading-6 text-zinc-900 dark:text-zinc-400">
             {gettext("Biography")}
           </summary>
           <div class="ml-2">
-            {render_bio(@lastfm_artist_info.result.summary)}
+            {render_bio(lastfm_artist_info.summary)}
           </div>
         </details>
       </.async_result>
