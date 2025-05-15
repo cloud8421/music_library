@@ -22,26 +22,8 @@
             {gettext("Error loading play count")}
           </div>
         </:failed>
-        <a
-          :if={lastfm_artist_info.on_tour}
-          class="flex items-center"
-          href={LastFm.Artist.events_url(lastfm_artist_info)}
-          target="_blank"
-        >
-          <.badge variant="pill" class="mr-2">{gettext("On Tour")}</.badge>
-        </a>
-        <span
-          :if={lastfm_artist_info.play_count > 0}
-          class="text-xs font-medium text-zinc-700 dark:text-zinc-300 grow"
-        >
-          {ngettext("1 scrobble", "%{count} scrobbles", lastfm_artist_info.play_count)}
-        </span>
-        <span
-          :if={lastfm_artist_info.play_count == 0}
-          class="text-xs font-medium text-zinc-700 dark:text-zinc-300 grow"
-        >
-          {gettext("No scrobbles")}
-        </span>
+        <.on_tour_link lastfm_artist_info={lastfm_artist_info} />
+        <.play_count play_count={lastfm_artist_info.play_count} />
       </.async_result>
       <.button variant="solid" as="link" patch={~p"/artists/#{@artist.musicbrainz_id}/import"}>
         <.icon name="hero-plus" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />

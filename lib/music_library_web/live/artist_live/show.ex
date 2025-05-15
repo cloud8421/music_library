@@ -14,6 +14,34 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     """
   end
 
+  attr :lastfm_artist_info, :map, required: true
+
+  defp on_tour_link(assigns) do
+    ~H"""
+    <a
+      :if={@lastfm_artist_info.on_tour}
+      class="flex items-center"
+      href={LastFm.Artist.events_url(@lastfm_artist_info)}
+      target="_blank"
+    >
+      <.badge variant="pill" class="mr-2">{gettext("On Tour")}</.badge>
+    </a>
+    """
+  end
+
+  attr :play_count, :integer, required: true
+
+  defp play_count(assigns) do
+    ~H"""
+    <span :if={@play_count > 0} class="text-xs font-medium text-zinc-700 dark:text-zinc-300 grow">
+      {ngettext("1 scrobble", "%{count} scrobbles", @play_count)}
+    </span>
+    <span :if={@play_count == 0} class="text-xs font-medium text-zinc-700 dark:text-zinc-300 grow">
+      {gettext("No scrobbles")}
+    </span>
+    """
+  end
+
   @impl true
   def mount(_params, _session, socket) do
     {:ok, socket}
