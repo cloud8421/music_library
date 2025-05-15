@@ -50,8 +50,8 @@
     </div>
   </header>
 
-  <div class="mt-4 grid md:grid-cols-5 md:gap-4">
-    <div class="col-span-5 md:col-span-1 mt-4 order-2 md:order-1">
+  <div class="mt-4 grid md:grid-cols-10 md:gap-4">
+    <div class="md:col-span-3 mt-4 order-2 md:order-1">
       <h2 class="font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300">
         {gettext("Meta")}
       </h2>
@@ -61,6 +61,30 @@
         alt={@artist.name}
         onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
       />
+      <dl>
+        <dt class="mt-4 text-sm">
+          {gettext("MusicBrainz ID")}
+        </dt>
+        <dd class="mt-2 text-sm flex justify-between">
+          <a href={MusicBrainz.Artist.url(@artist.musicbrainz_id)}>
+            <code class="overflow-hidden text-clip" id={"mb-#{@artist.musicbrainz_id}"}>
+              {@artist.musicbrainz_id}
+            </code>
+          </a>
+          <button phx-click={
+            JS.dispatch("music_library:clipcopy", to: "#mb-" <> @artist.musicbrainz_id)
+            |> JS.transition("animate-shake")
+          }>
+            <span class="sr-only">{gettext("Copy MusicBrainz ID to clipboard")}</span>
+            <.icon
+              name="hero-clipboard-document"
+              class="-mt-1 h-5 w-5"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+          </button>
+        </dd>
+      </dl>
       <.async_result :let={lastfm_artist_info} assign={@lastfm_artist_info}>
         <:loading>
           <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
@@ -122,7 +146,7 @@
         </details>
       </.async_result>
     </div>
-    <div class="col-span-4 md:order-1">
+    <div class="md:col-span-7 md:order-1">
       <.record_grid
         :if={@collection_records_count > 0}
         title={gettext("Collection")}

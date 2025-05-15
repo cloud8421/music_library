@@ -19,6 +19,10 @@ defmodule MusicBrainz.Artist do
     end)
   end
 
+  def url(id) do
+    "https://musicbrainz.org/artist/#{id}"
+  end
+
   defp parse_relations(relations) do
     Enum.map(relations, fn relation ->
       %{
