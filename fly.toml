@@ -40,7 +40,3 @@ soft_limit = 1000
 memory = '512mb'
 cpu_kind = 'shared'
 cpus = 1
-
-[metrics]
-path = "/metrics"
-port = 8080

@@ -15,8 +15,6 @@ defmodule MusicLibraryWeb.Endpoint do
     encrypt: true
   ]
 
-  plug MusicLibraryWeb.Telemetry.Plug, at: "/metrics"
-
   socket "/live", Phoenix.LiveView.Socket,
     websocket: [connect_info: [session: @session_options]],
     longpoll: [connect_info: [session: @session_options]]
