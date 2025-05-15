@@ -104,10 +104,14 @@
         </:failed>
         <details
           :if={lastfm_artist_info.bio !== ""}
-          class="text-sm leading-5 text-zinc-500 dark:text-zinc-400"
+          class="mt-2 text-sm leading-5 text-zinc-500 dark:text-zinc-400"
         >
-          <summary class="text-sm mt-4 mb-4">{gettext("Biography")}</summary>
-          {render_bio(@lastfm_artist_info.result.summary)}
+          <summary class="text-sm mt-4 font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+            {gettext("Biography")}
+          </summary>
+          <div class="ml-2">
+            {render_bio(@lastfm_artist_info.result.summary)}
+          </div>
         </details>
       </.async_result>
 
@@ -130,10 +134,12 @@
         </:failed>
         <details
           :if={similar_artists !== []}
-          class="text-sm leading-5 text-zinc-500 dark:text-zinc-400"
+          class="mt-2 text-sm leading-5 text-zinc-500 dark:text-zinc-400"
         >
-          <summary class="text-sm mb-4">{gettext("Similar artists")}</summary>
-          <ul>
+          <summary class="text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+            {gettext("Similar artists")}
+          </summary>
+          <ul class="mt-2 ml-2">
             <li :for={artist <- similar_artists}>
               <.link
                 class="text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
