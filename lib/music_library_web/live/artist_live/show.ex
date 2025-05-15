@@ -7,7 +7,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
 
   attr :country, :map, required: true
 
-  def country_flag(assigns) do
+  defp country_flag(assigns) do
     ~H"""
     <span>{Flagmojis.by_iso(@country.code).emoji}</span>
     <span class="sr-only">{@country.name}</span>
