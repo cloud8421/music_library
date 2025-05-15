@@ -62,10 +62,10 @@
         onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
       />
       <dl>
-        <dt class="mt-4 text-sm">
+        <dt class="mt-4 text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
           {gettext("MusicBrainz ID")}
         </dt>
-        <dd class="mt-2 text-sm flex justify-between">
+        <dd class="mt-1 text-xs md:text-sm flex justify-between leading-6 text-zinc-700 dark:text-zinc-300">
           <a href={MusicBrainz.Artist.url(@artist.musicbrainz_id)}>
             <code class="overflow-hidden text-clip" id={"mb-#{@artist.musicbrainz_id}"}>
               {@artist.musicbrainz_id}
