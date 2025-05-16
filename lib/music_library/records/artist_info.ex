@@ -29,8 +29,15 @@ defmodule MusicLibrary.Records.ArtistInfo do
   end
 
   def country(artist_info) do
-    %{"area" => area} = artist_info.musicbrainz_data
-    [country_code | _rest] = area["iso-3166-1-codes"] || area["iso-3166-2-codes"]
+    %{"area" => area} =
+      artist_info.musicbrainz_data
+
+    country_code =
+      case area["iso-3166-1-codes"] || area["iso-3166-2-codes"] do
+        [code | _rest] -> code
+        nil -> artist_info.musicbrainz_data["country"]
+      end
+
     %{name: area["name"], code: keep_alpha_2(country_code)}
   end
 
