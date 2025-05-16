@@ -12,7 +12,7 @@ defmodule MusicLibraryWeb.AddRecordComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="w-86 md:w-2xl">
       <.simple_form
         for={@form}
         id={:import_form}
@@ -38,7 +38,10 @@ defmodule MusicLibraryWeb.AddRecordComponent do
         phx-viewport-bottom={!@loaded_all_results? && "load-more"}
         phx-target={@myself}
         role="list"
-        class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5"
+        class={[
+          "mt-5 divide-y divide-zinc-100 dark:divide-slate-300/30",
+          "max-h-[500px] overflow-y-auto"
+        ]}
       >
         <.result
           :for={{id, release_group} <- @streams.release_groups}
@@ -50,7 +53,7 @@ defmodule MusicLibraryWeb.AddRecordComponent do
       <div
         :if={@release_groups_count == 0}
         id="release-groups-empty"
-        class="flex items-center justify-center h-32 text-md text-zinc-500"
+        class="flex items-center h-full justify-center h-32 text-md text-zinc-500"
       >
         {gettext("No results")}
       </div>
@@ -73,10 +76,10 @@ defmodule MusicLibraryWeb.AddRecordComponent do
           onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
         />
         <div class="min-w-0 flex-auto">
-          <h1 class="text-sm leading-6 text-zinc-700 dark:text-zinc-400">
+          <h1 class="truncate text-sm leading-6 text-zinc-700 dark:text-zinc-400">
             {@release_group.artists}
           </h1>
-          <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+          <h2 class="truncate mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
             {@release_group.title}
           </h2>
           <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
