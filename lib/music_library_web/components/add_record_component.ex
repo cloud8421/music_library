@@ -40,12 +40,6 @@ defmodule MusicLibraryWeb.AddRecordComponent do
         role="list"
         class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5"
       >
-        <li
-          id="release-groups-empty"
-          class="only:flex hidden items-center justify-center h-32 text-md text-zinc-500"
-        >
-          {gettext("No results")}
-        </li>
         <.result
           :for={{id, release_group} <- @streams.release_groups}
           id={id}
@@ -53,6 +47,13 @@ defmodule MusicLibraryWeb.AddRecordComponent do
           icon_name={@icon_name}
         />
       </ul>
+      <div
+        :if={@release_groups_count == 0}
+        id="release-groups-empty"
+        class="flex items-center justify-center h-32 text-md text-zinc-500"
+      >
+        {gettext("No results")}
+      </div>
     </div>
     """
   end
@@ -151,6 +152,7 @@ defmodule MusicLibraryWeb.AddRecordComponent do
      |> stream_configure(:release_groups,
        dom_id: fn rg -> "musicbrainz_#{rg.id}" end
      )
+     |> assign(:release_groups_count, 0)
      |> stream(:release_groups, [])
      |> assign(:loaded_all_results?, false)}
   end
@@ -164,7 +166,9 @@ defmodule MusicLibraryWeb.AddRecordComponent do
         {:ok, release_groups} =
           MusicBrainz.search_release_group(mb_query, limit: @batch_size, offset: 0)
 
-        stream(socket, :release_groups, release_groups, reset: true)
+        socket
+        |> assign(:release_groups_count, Enum.count(release_groups))
+        |> stream(:release_groups, release_groups, reset: true)
       else
         socket
       end
@@ -185,6 +189,7 @@ defmodule MusicLibraryWeb.AddRecordComponent do
     {:noreply,
      socket
      |> assign(:offset, 0)
+     |> assign(:release_groups_count, length(release_groups))
      |> stream(:release_groups, release_groups, reset: true)
      |> assign(:form, to_form(%{"mb_query" => mb_query}))}
   end
@@ -199,6 +204,7 @@ defmodule MusicLibraryWeb.AddRecordComponent do
          socket
          |> assign(:offset, offset)
          |> assign(:loaded_all_results?, length(release_groups) < @batch_size)
+         |> assign(:release_groups_count, length(release_groups))
          |> stream(:release_groups, release_groups)}
 
       {:error, _reason} ->
