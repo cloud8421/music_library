@@ -2,7 +2,7 @@ defmodule MusicLibrary.Records.Record do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias MusicBrainz.ReleaseGroup
+  alias MusicBrainz.{Release, ReleaseGroup}
   alias MusicLibrary.Records.{Artist, Cover}
 
   @formats [:cd, :backup, :vinyl, :blu_ray, :dvd, :multi]
@@ -74,13 +74,14 @@ defmodule MusicLibrary.Records.Record do
   def releases(record) do
     record.musicbrainz_data
     |> ReleaseGroup.releases()
-    |> Enum.sort_by(fn r -> {r["date"], r["country"]} end, :desc)
+    |> Enum.map(&Release.from_api_response/1)
+    |> Enum.sort_by(fn r -> {r.date, r.country} end, :desc)
   end
 
   def selected_release(record) do
     record
     |> releases()
-    |> Enum.find(fn release -> release["id"] == record.selected_release_id end)
+    |> Enum.find(fn release -> release.id == record.selected_release_id end)
   end
 
   def changeset(record, attrs) do

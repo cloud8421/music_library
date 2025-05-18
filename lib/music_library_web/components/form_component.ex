@@ -192,7 +192,7 @@ defmodule MusicLibraryWeb.FormComponent do
     |> Enum.map(fn release ->
       {
         release_label(release),
-        release["id"]
+        release.id
       }
     end)
   end

@@ -1,6 +1,7 @@
 defmodule MusicLibraryWeb.RecordComponents do
   use MusicLibraryWeb, :html
 
+  alias MusicBrainz.ReleaseSearchResult
   alias MusicLibrary.Records
   alias Phoenix.LiveView.JS
 
@@ -303,10 +304,10 @@ defmodule MusicLibraryWeb.RecordComponents do
 
   def release_label(release) do
     [
-      release["date"],
-      release["country"] |> country_label(),
-      release["packaging"] |> packaging_label(),
-      release["disambiguation"]
+      release.date,
+      release.country |> country_label(),
+      ReleaseSearchResult.format(release),
+      release.disambiguation
     ]
     |> Enum.reject(fn fragment -> fragment in [nil, ""] end)
     |> Enum.join(" ")
@@ -323,9 +324,6 @@ defmodule MusicLibraryWeb.RecordComponents do
       country_code
     end
   end
-
-  defp packaging_label("None"), do: gettext("Digital download")
-  defp packaging_label(other), do: other
 
   def format_duration(milliseconds) do
     milliseconds

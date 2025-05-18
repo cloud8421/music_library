@@ -1,6 +1,6 @@
 defmodule MusicBrainz.Release do
-  @enforce_keys [:id, :title, :artists, :date, :barcode, :media]
-  defstruct [:id, :title, :artists, :date, :barcode, :media]
+  @enforce_keys [:id, :title, :disambiguation, :artists, :date, :barcode, :country, :media]
+  defstruct [:id, :title, :disambiguation, :artists, :date, :barcode, :country, :media]
 
   defmodule Artist do
     @enforce_keys [:id, :name, :sort_name]
@@ -37,9 +37,11 @@ defmodule MusicBrainz.Release do
     %__MODULE__{
       id: r["id"],
       title: r["title"],
+      disambiguation: r["disambiguation"],
       artists: parse_artists(r["artist-credit"] || []),
       date: r["date"],
       barcode: r["barcode"],
+      country: r["country"],
       media: parse_media(r["media"] || [])
     }
   end
@@ -51,7 +53,7 @@ defmodule MusicBrainz.Release do
         format: m["format"],
         number: m["position"],
         track_count: m["track-count"],
-        tracks: parse_tracks(m["tracks"])
+        tracks: parse_tracks(m["tracks"] || [])
       }
     end)
   end

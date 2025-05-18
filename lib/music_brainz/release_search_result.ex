@@ -46,16 +46,18 @@ defmodule MusicBrainz.ReleaseSearchResult do
     end)
   end
 
+  defp parse_format(nil), do: :unknown
   defp parse_format("CD"), do: :cd
   defp parse_format("DVD-Audio"), do: :dvd
   defp parse_format("DVD-Video"), do: :dvd
   defp parse_format("Blu-ray"), do: :blu_ray
+  defp parse_format("Digital Media"), do: :digital_download
 
-  defp parse_format(maybe_vinyl) do
-    if String.contains?(maybe_vinyl, "Vinyl") do
-      :vinyl
-    else
-      :unknown
+  defp parse_format(format) do
+    cond do
+      String.contains?(format, "Vinyl") -> :vinyl
+      String.contains?(format, "CD") -> :cd
+      true -> :unknown
     end
   end
 end
