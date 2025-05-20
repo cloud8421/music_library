@@ -3,7 +3,9 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
 
   alias MusicLibrary.{Artists, Records}
   alias MusicLibrary.Records.ArtistInfo
-  import MusicLibraryWeb.RecordComponents, only: [record_grid: 1]
+
+  import MusicLibraryWeb.RecordComponents,
+    only: [record_grid: 1, toggle_actions_menu: 1, close_actions_menu: 1]
 
   attr :country, :map, required: true
 
@@ -78,6 +80,42 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
          socket
          |> put_flash(:error, gettext("Error wishlisting record") <> "," <> inspect(reason))
          |> push_patch(to: ~p"/artists/#{socket.assigns.artist.musicbrainz_id}")}
+    end
+  end
+
+  def handle_event("refresh_artist_info", %{"id" => id}, socket) do
+    case Artists.fetch_artist_info(id) do
+      {:ok, artist_info} ->
+        {:noreply,
+         socket
+         |> assign(:artist_info, artist_info)
+         |> put_flash(:info, gettext("Artist info refreshed successfully"))}
+
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           gettext("Error refreshing artist info") <> "," <> inspect(reason)
+         )}
+    end
+  end
+
+  def handle_event("refresh_artist_image", %{"id" => id}, socket) do
+    case Artists.fetch_image(id) do
+      {:ok, artist_info} ->
+        {:noreply,
+         socket
+         |> assign(:artist_info, artist_info)
+         |> put_flash(:info, gettext("Artist image refreshed successfully"))}
+
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           gettext("Error refreshing artist image") <> "," <> inspect(reason)
+         )}
     end
   end
 
