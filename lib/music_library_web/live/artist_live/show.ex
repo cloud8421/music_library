@@ -44,6 +44,51 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     """
   end
 
+  attr :title, :string, required: true
+  attr :artists, :list, required: true
+
+  defp artist_grid(assigns) do
+    ~H"""
+    <div class="mt-4">
+      <header class="flex items-baseline justify-start">
+        <h2 class="font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300">
+          {@title}
+        </h2>
+      </header>
+      <ul
+        role="list"
+        class="mt-4 grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-4 sm:gap-x-6 lg:grid-cols-6 xl:gap-x-8"
+      >
+        <li :for={artist <- @artists} class="relative">
+          <div class="group overflow-hidden rounded-lg bg-zinc-100 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:ring-offset-2 focus-within:ring-offset-zinc-100">
+            <div class="relative">
+              <img
+                src={~p"/artists/#{artist.musicbrainz_id}/image"}
+                alt={artist.name}
+                class="pointer-events-none aspect-square object-cover group-hover:opacity-75"
+                onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
+              />
+            </div>
+            <button
+              type="button"
+              class="absolute inset-0 focus:outline-hidden"
+              phx-click={
+                JS.patch(~p"/artists/#{artist.musicbrainz_id}")
+                |> JS.dispatch("music_library:scroll_top")
+              }
+            >
+              <span class="sr-only">{gettext("View details")}</span>
+            </button>
+          </div>
+          <p class="pointer-events-none mt-2 block truncate text-sm font-medium text-zinc-900 dark:text-zinc-300">
+            {artist.name}
+          </p>
+        </li>
+      </ul>
+    </div>
+    """
+  end
+
   @impl true
   def mount(_params, _session, socket) do
     {:ok, socket}
