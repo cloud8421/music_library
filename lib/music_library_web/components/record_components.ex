@@ -234,7 +234,7 @@ defmodule MusicLibraryWeb.RecordComponents do
         id={@id}
         phx-update="stream"
         role="list"
-        class="mt-4 grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-4 sm:gap-x-6 lg:grid-cols-6 xl:gap-x-8"
+        class="mt-4 grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-4 sm:gap-x-6 xl:gap-x-8"
       >
         <li :for={{id, record} <- @records} id={id} class="relative">
           <div class="group overflow-hidden rounded-lg bg-zinc-100 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:ring-offset-2 focus-within:ring-offset-zinc-100">
