@@ -43,8 +43,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       |> visit(~p"/artists/#{artist_musicbrainz_id}")
       |> unwrap(&render_async/1)
       |> assert_has("span", text: "123")
-      |> assert_has("summary", text: "Biography")
-      |> assert_has("details")
+      |> assert_has("dt", text: "Biography")
     end
 
     test "it gracefully handles errors in fetching bio and play count", %{

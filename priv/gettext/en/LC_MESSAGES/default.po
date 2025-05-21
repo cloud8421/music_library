@@ -362,11 +362,6 @@ msgstr ""
 
 #: lib/music_library_web/live/artist_live/show.html.heex
 #, elixir-autogen, elixir-format
-msgid "Biography"
-msgstr ""
-
-#: lib/music_library_web/live/artist_live/show.html.heex
-#, elixir-autogen, elixir-format
 msgid "Loading biography"
 msgstr ""
 
@@ -847,4 +842,14 @@ msgstr ""
 #: lib/music_library_web/live/artist_live/show.html.heex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Refresh info"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Biography"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Read more"
 msgstr ""

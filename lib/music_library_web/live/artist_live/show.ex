@@ -240,4 +240,14 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
         )
     end
   end
+
+  defp remove_read_more_link(summary) do
+    last_fm_link_regex = ~r/<a.*Read more on Last\.fm<\/a>\.*\s*/
+    reformatted_summary = String.replace(summary, last_fm_link_regex, "")
+
+    PhoenixHTMLHelpers.Format.text_to_html(reformatted_summary,
+      escape: false,
+      attributes: [class: "mt-2 text-sm/7"]
+    )
+  end
 end
