@@ -38,8 +38,10 @@ defmodule MusicLibrary.Records.ArtistInfo do
         nil -> artist_info.musicbrainz_data["country"]
       end
 
-    %{name: area["name"], code: keep_alpha_2(country_code)}
+    %{name: area["name"] || "World", code: keep_alpha_2(country_code) || "XW"}
   end
+
+  defp keep_alpha_2(nil), do: nil
 
   defp keep_alpha_2(country_code) do
     String.slice(country_code, 0..1)

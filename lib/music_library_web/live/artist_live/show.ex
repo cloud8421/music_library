@@ -5,13 +5,13 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
   alias MusicLibrary.Records.ArtistInfo
 
   import MusicLibraryWeb.RecordComponents,
-    only: [record_grid: 1, toggle_actions_menu: 1, close_actions_menu: 1]
+    only: [record_grid: 1, toggle_actions_menu: 1, close_actions_menu: 1, country_label: 1]
 
   attr :country, :map, required: true
 
   defp country_flag(assigns) do
     ~H"""
-    <span>{Flagmojis.by_iso(@country.code).emoji}</span>
+    <span>{country_label(@country.code)}</span>
     <span class="sr-only">{@country.name}</span>
     """
   end

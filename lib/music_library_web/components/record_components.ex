@@ -313,11 +313,11 @@ defmodule MusicLibraryWeb.RecordComponents do
     |> Enum.join(" ")
   end
 
-  defp country_label(nil), do: nil
-  defp country_label("XW"), do: "🌍"
-  defp country_label("XE"), do: "🇪🇺"
+  def country_label(nil), do: nil
+  def country_label("XW"), do: "🌍"
+  def country_label("XE"), do: "🇪🇺"
 
-  defp country_label(country_code) do
+  def country_label(country_code) do
     if flagmoji = Flagmojis.by_iso(country_code) do
       flagmoji.emoji
     else
