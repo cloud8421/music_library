@@ -51,7 +51,7 @@ window.addEventListener("phx:page-loading-start", (_info) => topbar.show(300));
 window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
 window.addEventListener("music_library:clipcopy", (event) => {
   if ("clipboard" in navigator) {
-    const text = event.target.textContent;
+    const text = event.target.textContent.trim();
     navigator.clipboard.writeText(text);
   } else {
     alert("Sorry, your browser does not support clipboard copy.");
