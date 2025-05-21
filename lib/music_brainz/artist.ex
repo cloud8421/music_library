@@ -13,10 +13,23 @@ defmodule MusicBrainz.Artist do
     }
   end
 
+  # MASSIVE ASSUMPTION: if there's more than one Discogs link,
+  # take the one with the lowest ID, as it's likely to be the main one.
   def get_discogs_id(r) do
-    Enum.find_value(r.relations, fn relation ->
-      if relation.type == "discogs", do: parse_discogs_id(relation.url["resource"])
-    end)
+    candidates =
+      r.relations
+      |> Enum.filter(fn relation ->
+        relation.type == "discogs"
+      end)
+      |> Enum.map(fn relation ->
+        parse_discogs_id(relation.url["resource"])
+      end)
+      |> Enum.sort()
+
+    case candidates do
+      [] -> nil
+      [id | _rest] -> id
+    end
   end
 
   def url(id) do
@@ -32,6 +45,6 @@ defmodule MusicBrainz.Artist do
     end)
   end
 
-  defp parse_discogs_id("https://www.discogs.com/artist/" <> id), do: id
+  defp parse_discogs_id("https://www.discogs.com/artist/" <> id), do: String.to_integer(id)
   defp parse_discogs_id(_other), do: nil
 end
