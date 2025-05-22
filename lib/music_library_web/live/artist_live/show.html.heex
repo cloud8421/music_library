@@ -168,43 +168,6 @@
           {render_bio(lastfm_artist_info.bio)}
         </.sheet>
       </.async_result>
-
-      <.async_result :let={similar_artists} assign={@similar_artists}>
-        <:loading>
-          <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
-            {gettext("Loading similar artists")}
-          </div>
-        </:loading>
-        <:failed :let={_failure}>
-          <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
-            <.icon
-              name="hero-exclamation-triangle"
-              class="-mt-1 mr-1 h-5 w-5"
-              aria-hidden="true"
-              data-slot="icon"
-            />
-            {gettext("Error loading similar artists")}
-          </div>
-        </:failed>
-        <details
-          :if={similar_artists !== []}
-          class="mt-2 text-sm leading-5 text-zinc-500 dark:text-zinc-400"
-        >
-          <summary class="text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-            {gettext("Similar artists")}
-          </summary>
-          <ul class="mt-2 ml-2">
-            <li :for={artist <- similar_artists}>
-              <.link
-                class="text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
-                patch={~p"/artists/#{artist.musicbrainz_id}"}
-              >
-                {artist.name}
-              </.link>
-            </li>
-          </ul>
-        </details>
-      </.async_result>
     </div>
     <div class="md:col-span-7 md:order-1">
       <.record_grid
