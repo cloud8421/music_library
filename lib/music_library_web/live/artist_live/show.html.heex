@@ -178,7 +178,7 @@
         records_count={@collection_records_count}
         record_path={fn record -> ~p"/collection/#{record}" end}
       />
-
+      <.separator class="mt-8 mb-8" />
       <.record_grid
         :if={@wishlist_records_count > 0}
         title={gettext("Wishlist")}
@@ -205,6 +205,7 @@
             {gettext("Error loading similar artists")}
           </div>
         </:failed>
+        <.separator class="mt-8 mb-8" />
         <.artist_grid title={gettext("Similar artists")} artists={similar_artists} />
       </.async_result>
     </div>
