@@ -34,7 +34,12 @@ defmodule MusicLibraryWeb.ReleaseComponent do
   def render(assigns) do
     ~H"""
     <div>
-      <.sheet :if={@record.selected_release_id} id={@sheet_id} placement="right">
+      <.sheet
+        :if={@record.selected_release_id}
+        id={@sheet_id}
+        placement="right"
+        class="min-w-xs sm:min-w-sm"
+      >
         <div class="mt-6 flex justify-between items-center gap-4">
           <h3 class="text-lg font-semibold text-zinc-700 dark:text-zinc-300">{gettext("Tracks")}</h3>
           <.button
