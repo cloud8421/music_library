@@ -4,7 +4,7 @@ defmodule MusicLibrary.Records.ArtistRecord do
   """
   use Ecto.Schema
 
-  alias MusicLibrary.Records.Artist
+  alias MusicLibrary.Artists.Artist
 
   @primary_key false
   schema "artist_records" do

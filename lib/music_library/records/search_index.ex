@@ -11,7 +11,8 @@ defmodule MusicLibrary.Records.SearchIndex do
   """
   use Ecto.Schema
 
-  alias MusicLibrary.Records.{Artist, Record}
+  alias MusicLibrary.Artists.Artist
+  alias MusicLibrary.Records.Record
 
   @primary_key {:id, :binary_id, autogenerate: false}
   schema "records_search_index" do

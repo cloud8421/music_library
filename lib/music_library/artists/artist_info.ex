@@ -1,4 +1,4 @@
-defmodule MusicLibrary.Records.ArtistInfo do
+defmodule MusicLibrary.Artists.ArtistInfo do
   use Ecto.Schema
   import Ecto.Changeset
 

@@ -2,7 +2,8 @@ defmodule MusicLibrary.Artists do
   import Ecto.Query, warn: false
   alias MusicLibrary.Repo
 
-  alias MusicLibrary.Records.{ArtistInfo, ArtistRecord, Record}
+  alias MusicLibrary.Artists.ArtistInfo
+  alias MusicLibrary.Records.{ArtistRecord, Record}
   alias MusicLibrary.{BackgroundRepo, Worker}
 
   def get_artist!(musicbrainz_id) do

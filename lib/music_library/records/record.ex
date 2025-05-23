@@ -3,7 +3,8 @@ defmodule MusicLibrary.Records.Record do
   import Ecto.Changeset
 
   alias MusicBrainz.{Release, ReleaseGroup}
-  alias MusicLibrary.Records.{Artist, Cover}
+  alias MusicLibrary.Artists.Artist
+  alias MusicLibrary.Records.Cover
 
   @formats [:cd, :backup, :vinyl, :blu_ray, :dvd, :multi]
   @types [:album, :ep, :live, :compilation, :single, :other]
