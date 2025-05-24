@@ -8,5 +8,7 @@ defmodule MusicLibrary.Worker.RecordRefreshMusicBrainzData do
     with {:ok, updated_record} <- MusicLibrary.Records.refresh_musicbrainz_data(record) do
       MusicLibrary.Records.notify_update(updated_record)
     end
+
+    Process.sleep(500)
   end
 end
