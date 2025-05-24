@@ -307,6 +307,7 @@ defmodule MusicLibraryWeb.RecordComponents do
       release.date,
       release.country |> country_label(),
       ReleaseSearchResult.format(release),
+      release.catalog_number,
       release.disambiguation
     ]
     |> Enum.reject(fn fragment -> fragment in [nil, ""] end)

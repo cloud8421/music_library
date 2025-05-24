@@ -1,6 +1,26 @@
 defmodule MusicBrainz.Release do
-  @enforce_keys [:id, :title, :disambiguation, :artists, :date, :barcode, :country, :media]
-  defstruct [:id, :title, :disambiguation, :artists, :date, :barcode, :country, :media]
+  @enforce_keys [
+    :id,
+    :title,
+    :disambiguation,
+    :artists,
+    :date,
+    :barcode,
+    :catalog_number,
+    :country,
+    :media
+  ]
+  defstruct [
+    :id,
+    :title,
+    :disambiguation,
+    :artists,
+    :date,
+    :barcode,
+    :catalog_number,
+    :country,
+    :media
+  ]
 
   defmodule Artist do
     @enforce_keys [:id, :name, :sort_name]
@@ -41,6 +61,7 @@ defmodule MusicBrainz.Release do
       artists: parse_artists(r["artist-credit"] || []),
       date: r["date"],
       barcode: r["barcode"],
+      catalog_number: parse_catalog_number(r["label-info"] || []),
       country: r["country"],
       media: parse_media(r["media"] || [])
     }
@@ -78,6 +99,12 @@ defmodule MusicBrainz.Release do
         name: a["artist"]["name"],
         sort_name: a["artist"]["sort-name"]
       }
+    end)
+  end
+
+  defp parse_catalog_number(label_infos) do
+    Enum.find_value(label_infos, fn li ->
+      li["catalog-number"]
     end)
   end
 end
