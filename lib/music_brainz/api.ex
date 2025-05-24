@@ -289,7 +289,7 @@ defmodule MusicBrainz.API do
       url: "/release/#{id}",
       params: [
         fmt: "json",
-        inc: "release-groups+recordings+artists"
+        inc: "release-groups+recordings+artists+labels"
       ]
     )
     |> get_request()
@@ -302,7 +302,7 @@ defmodule MusicBrainz.API do
       Keyword.merge(opts,
         fmt: "json",
         "release-group": release_group_id,
-        inc: "media"
+        inc: "media+labels"
       )
 
     config
