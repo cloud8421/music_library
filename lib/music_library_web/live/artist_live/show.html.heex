@@ -210,6 +210,18 @@
       </.async_result>
     </div>
   </div>
+
+  <.json_viewer
+    :if={@artist_info.musicbrainz_data}
+    title={gettext("MusicBrainz data")}
+    data={@artist_info.musicbrainz_data}
+  />
+
+  <.json_viewer
+    :if={@artist_info.discogs_data}
+    title={gettext("Discogs data")}
+    data={@artist_info.discogs_data}
+  />
 </div>
 
 <.modal

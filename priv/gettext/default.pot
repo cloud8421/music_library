@@ -271,6 +271,7 @@ msgstr ""
 msgid "Copy MusicBrainz ID to clipboard"
 msgstr ""
 
+#: lib/music_library_web/live/artist_live/show.html.heex
 #: lib/music_library_web/live/collection_live/show.html.heex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format
@@ -853,4 +854,9 @@ msgstr ""
 #: lib/music_library_web/live/artist_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Read more"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Discogs data"
 msgstr ""
