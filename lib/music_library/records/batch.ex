@@ -14,6 +14,12 @@ defmodule MusicLibrary.Records.Batch do
     end)
   end
 
+  def refresh_musicbrainz_data_async do
+    run_on_all_records(fn record ->
+      Records.refresh_musicbrainz_data_async(record)
+    end)
+  end
+
   def refresh_old_artwork do
     run_on_all_records(&refresh_old_artwork/1)
   end

@@ -81,7 +81,7 @@ config :error_tracker,
 
 config :music_library, Oban,
   engine: Oban.Engines.Lite,
-  queues: [default: 10, heavy_writes: 1],
+  queues: [default: 10, heavy_writes: 1, music_brainz: 1],
   repo: MusicLibrary.BackgroundRepo
 
 config :music_library, MusicLibrary.ErrorRepo, priv: "priv/error_repo"

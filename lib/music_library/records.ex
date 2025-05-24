@@ -236,6 +236,15 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  def refresh_musicbrainz_data_async(record) do
+    meta = %{title: record.title, artists: Enum.map(record.artists, & &1.name)}
+    params = %{"id" => record.id}
+
+    params
+    |> Worker.RecordRefreshMusicBrainzData.new(meta: meta)
+    |> BackgroundRepo.insert()
+  end
+
   defp merge_releases(musicbrainz_id, musicbrainz_data) do
     with {:ok, releases} <- stream_releases(musicbrainz_id) do
       {:ok, Map.put(musicbrainz_data, "releases", releases)}
