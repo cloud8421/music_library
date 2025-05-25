@@ -327,14 +327,6 @@ defmodule MusicLibraryWeb.RecordComponents do
   def type_label(:single), do: gettext("Single")
   def type_label(:other), do: gettext("Other")
 
-  def selected_release_label(record) do
-    if release = Records.Record.selected_release(record) do
-      release_label(release)
-    else
-      gettext("No release selected")
-    end
-  end
-
   def release_label(release) do
     [
       release.date,

@@ -731,7 +731,6 @@ msgstr ""
 msgid "Collected release"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/collection_live/show.html.heex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format

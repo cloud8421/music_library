@@ -3,8 +3,7 @@ defmodule MusicLibraryWeb.WishlistLive.ShowTest do
 
   import MusicLibrary.Fixtures.Records
 
-  import MusicLibraryWeb.RecordComponents,
-    only: [format_label: 1, type_label: 1, selected_release_label: 1]
+  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
 
   alias MusicLibrary.Records.Record
 
@@ -34,7 +33,9 @@ defmodule MusicLibraryWeb.WishlistLive.ShowTest do
         |> assert_has("p", text: type_label(record.type))
         |> assert_has("dd", text: record.id)
         |> assert_has("a", text: record.musicbrainz_id)
-        |> assert_has("dd", text: selected_release_label(record))
+        |> assert_has("span", text: "Multi")
+        |> assert_has("span", text: "2004-05-03")
+        |> assert_has("span", text: "🇬🇧")
         |> assert_has("dd", text: Record.format_as_date(record.inserted_at))
         |> assert_has("dd", text: Record.format_as_date(record.updated_at))
         |> assert_has("img[src='#{cover_url}']")
