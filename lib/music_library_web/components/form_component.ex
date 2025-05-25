@@ -41,7 +41,6 @@ defmodule MusicLibraryWeb.FormComponent do
         </div>
         <.input class="font-mono" field={@form[:musicbrainz_id]} label={gettext("MusicBrainz ID")} />
         <.select
-          searchable
           field={@form[:selected_release_id]}
           label={gettext("Selected Release")}
           options={selected_release_id_options(@record)}
