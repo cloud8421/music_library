@@ -133,7 +133,7 @@ defmodule MusicLibraryWeb.FormComponent do
   defp release_option(assigns) do
     ~H"""
     <div class={[
-      "cursor-default px-3 py-2 rounded-lg",
+      "cursor-default px-2 py-1 md:px-3 md:py-2 rounded-md",
       "in-data-highlighted:bg-zinc-100 dark:in-data-highlighted:bg-zinc-600",
       "[[data-highlighted]_&]:flx-focus:bg-zinc-100"
     ]}>
