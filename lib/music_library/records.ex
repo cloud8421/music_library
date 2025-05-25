@@ -76,10 +76,16 @@ defmodule MusicLibrary.Records do
       {:artist, artist}, search ->
         search
         |> where(fragment("records_search_index match 'artists : ?*'", literal(^artist)))
+        |> or_where(
+          fragment("records_search_index match 'normalized_artists : ?*'", literal(^artist))
+        )
 
       {:album, album}, search ->
         search
         |> where(fragment("records_search_index match 'title : ?*'", literal(^album)))
+        |> or_where(
+          fragment("records_search_index match 'normalized_title : ?*'", literal(^album))
+        )
 
       {:genre, genre}, search ->
         search
