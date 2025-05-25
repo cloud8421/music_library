@@ -322,7 +322,7 @@ defmodule MusicLibraryWeb.RecordComponents do
   def format_label(:blu_ray), do: gettext("Blu-ray")
   def format_label(:dvd), do: gettext("DVD")
   def format_label(:multi), do: gettext("Multi")
-  def format_label(:digital_download), do: gettext("Digital Download")
+  def format_label(:digital_download), do: gettext("Download")
   def format_label(:vhs), do: gettext("VHS")
   def format_label(:unknown), do: gettext("Unknown")
 
