@@ -329,11 +329,10 @@ defmodule MusicLibraryWeb.RecordComponents do
 
   def release_label(release) do
     [
-      release.date,
-      release.country |> country_label(),
-      ReleaseSearchResult.format(release),
       release.catalog_number,
-      release.disambiguation
+      ReleaseSearchResult.format(release),
+      release.date,
+      release.country |> country_label()
     ]
     |> Enum.reject(fn fragment -> fragment in [nil, ""] end)
     |> Enum.join(" ")
