@@ -17,7 +17,7 @@ defmodule MusicLibraryWeb.FormComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="w-82 md:w-2xl">
       <header>
         <h1 class="text-sm font-medium leading-6 text-zinc-700 dark:text-zinc-400">
           {Record.artist_names(@record)}
@@ -136,7 +136,7 @@ defmodule MusicLibraryWeb.FormComponent do
       "in-data-highlighted:bg-zinc-100 dark:in-data-highlighted:bg-zinc-600",
       "[[data-highlighted]_&]:flx-focus:bg-zinc-100"
     ]}>
-      <.release_summary release={@release} />
+      <.release_summary release={@release} class="w-74" />
     </div>
     """
   end

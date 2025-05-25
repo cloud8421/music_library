@@ -281,10 +281,14 @@ defmodule MusicLibraryWeb.RecordComponents do
   end
 
   attr :release, :map, required: true
+  attr :class, :string, required: false, default: nil
 
   def release_summary(assigns) do
     ~H"""
-    <div class="grid grid-cols-2 space-x-1 text-zinc-700 dark:text-zinc-300">
+    <div class={[
+      @class,
+      "grid grid-cols-2 w-full auto-cols-min space-x-1 text-zinc-700 dark:text-zinc-300"
+    ]}>
       <div class="space-x-1">
         <span :if={@release.catalog_number} class="font-mono text-xs md:text-sm">
           {@release.catalog_number}
