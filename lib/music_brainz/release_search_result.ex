@@ -8,8 +8,8 @@ defmodule MusicBrainz.ReleaseSearchResult do
     %__MODULE__{
       id: r["id"],
       title: r["title"],
-      release_group: parse_release_group(r["release-group"]),
-      artists: Enum.map_join(r["artist-credit"], ", ", fn ac -> ac["artist"]["name"] end),
+      release_group: r["release-group"] && parse_release_group(r["release-group"]),
+      artists: Enum.map_join(r["artist-credit"] || [], ", ", fn ac -> ac["artist"]["name"] end),
       date: r["date"],
       barcode: r["barcode"],
       media: parse_media(r["media"])
@@ -36,7 +36,7 @@ defmodule MusicBrainz.ReleaseSearchResult do
     }
   end
 
-  defp parse_media(media) do
+  def parse_media(media) do
     Enum.map(media, fn m ->
       %{
         format: m["format"],

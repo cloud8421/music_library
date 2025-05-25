@@ -280,12 +280,45 @@ defmodule MusicLibraryWeb.RecordComponents do
     """
   end
 
+  attr :release, :map, required: true
+
+  def release_summary(assigns) do
+    ~H"""
+    <div class="grid w-full grid-cols-2 space-x-1 text-zinc-700 dark:text-zinc-300">
+      <div class="space-x-1">
+        <span :if={@release.catalog_number} class="font-mono text-sm">
+          {@release.catalog_number}
+        </span>
+        <.format_badge release={@release} />
+      </div>
+      <div class="text-right">
+        <span class="text-sm">{@release.date}</span>
+        <span>{country_label(@release.country)}</span>
+      </div>
+      <div class="col-span-2">
+        <span class="text-xs text-zinc-900 dark:text-zinc-400">{@release.disambiguation}</span>
+      </div>
+    </div>
+    """
+  end
+
+  attr :release, :map, required: true
+
+  defp format_badge(assigns) do
+    ~H"""
+    <.badge>
+      {@release |> ReleaseSearchResult.format() |> format_label()}
+    </.badge>
+    """
+  end
+
   def format_label(:cd), do: gettext("CD")
   def format_label(:backup), do: gettext("Backup")
   def format_label(:vinyl), do: gettext("Vinyl")
   def format_label(:blu_ray), do: gettext("Blu-ray")
   def format_label(:dvd), do: gettext("DVD")
   def format_label(:multi), do: gettext("Multi")
+  def format_label(:digital_download), do: gettext("Digital Download")
 
   def type_label(:album), do: gettext("Album")
   def type_label(:ep), do: gettext("EP")

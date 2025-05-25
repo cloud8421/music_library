@@ -2,7 +2,7 @@ defmodule MusicLibraryWeb.FormComponent do
   use MusicLibraryWeb, :live_component
 
   import MusicLibraryWeb.RecordComponents,
-    only: [format_label: 1, type_label: 1, release_label: 1]
+    only: [format_label: 1, type_label: 1, release_label: 1, release_summary: 1]
 
   alias MusicLibrary.Records
   alias MusicLibrary.Records.{Cover, Record}
@@ -45,7 +45,11 @@ defmodule MusicLibraryWeb.FormComponent do
           field={@form[:selected_release_id]}
           label={gettext("Selected Release")}
           options={selected_release_id_options(@record)}
-        />
+        >
+          <:option :let={{_label, value}}>
+            <.release_option release={Records.Record.find_release(@record, value)} />
+          </:option>
+        </.select>
         <div class={[@show_purchased_at && "sm:columns-2", "space-y-2"]}>
           <.input field={@form[:release_date]} label={gettext("Release Date")} />
           <.date_time_picker
@@ -120,6 +124,20 @@ defmodule MusicLibraryWeb.FormComponent do
           </div>
         </:actions>
       </.simple_form>
+    </div>
+    """
+  end
+
+  attr :release, :map, required: true
+
+  defp release_option(assigns) do
+    ~H"""
+    <div class={[
+      "cursor-default px-3 py-2 rounded-lg",
+      "in-data-highlighted:bg-zinc-100 dark:in-data-highlighted:bg-zinc-600",
+      "[[data-highlighted]_&]:flx-focus:bg-zinc-100"
+    ]}>
+      <.release_summary release={@release} />
     </div>
     """
   end

@@ -80,9 +80,13 @@ defmodule MusicLibrary.Records.Record do
   end
 
   def selected_release(record) do
+    find_release(record, record.selected_release_id)
+  end
+
+  def find_release(record, release_id) do
     record
     |> releases()
-    |> Enum.find(fn release -> release.id == record.selected_release_id end)
+    |> Enum.find(fn release -> release.id == release_id end)
   end
 
   def changeset(record, attrs) do
