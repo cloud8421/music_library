@@ -57,6 +57,7 @@ defmodule MusicBrainz.ReleaseSearchResult do
     cond do
       String.contains?(format, "Vinyl") -> :vinyl
       String.contains?(format, "CD") -> :cd
+      String.contains?(format, "VHS") -> :vhs
       true -> :unknown
     end
   end

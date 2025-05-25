@@ -319,6 +319,8 @@ defmodule MusicLibraryWeb.RecordComponents do
   def format_label(:dvd), do: gettext("DVD")
   def format_label(:multi), do: gettext("Multi")
   def format_label(:digital_download), do: gettext("Digital Download")
+  def format_label(:vhs), do: gettext("VHS")
+  def format_label(:unknown), do: gettext("Unknown")
 
   def type_label(:album), do: gettext("Album")
   def type_label(:ep), do: gettext("EP")

@@ -866,3 +866,13 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Digital Download"
 msgstr ""
+
+#: lib/music_library_web/components/record_components.ex
+#, elixir-autogen, elixir-format
+msgid "Unknown"
+msgstr ""
+
+#: lib/music_library_web/components/record_components.ex
+#, elixir-autogen, elixir-format
+msgid "VHS"
+msgstr ""
