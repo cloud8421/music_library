@@ -24,38 +24,40 @@ This document describes the database structure of the Music Library application.
 erDiagram
     RECORDS {
         uuid id PK
-        string type
-        string format
+        enum type
+        enum format
         string title
-        uuid musicbrainz_id
-        string[] genres
         string cover_url
         blob cover_data
         string cover_hash
+        uuid musicbrainz_id
         map musicbrainz_data
+        string[] genres
+        string release_date
+        datetime purchased_at
+        string selected_release_id
         string[] release_ids
         string[] included_release_group_ids
-        string selected_release_id
-        datetime purchased_at
-        string release_date
-        map artists
+        Artist[] artists
         datetime inserted_at
         datetime updated_at
     }
 
     RECORDS_SEARCH_INDEX {
         uuid id PK
-        string type
-        string format
+        enum type
+        enum format
         string title
-        uuid musicbrainz_id
+        string normalized_title
+        Artist[] artists
+        string normalized_artists
         string[] genres
+        uuid musicbrainz_id
         string[] release_ids
         string[] included_release_group_ids
         string cover_hash
         datetime purchased_at
         string release_date
-        map artists
     }
 
     ARTIST_INFOS {
@@ -87,14 +89,14 @@ erDiagram
 The main table storing music records. Key features:
 
 - Uses UUID as primary key
-- Stores basic record information (title, type, format)
-- Includes MusicBrainz integration with IDs and additional data
-- Stores cover image data and URLs
-- Embeds artists data directly in a JSON field
+- Stores basic record information (title, type [album, ep, live, compilation, single, other], format [cd, backup, vinyl, blu_ray, dvd, multi])
+- Includes MusicBrainz integration with IDs and additional data (musicbrainz_id, musicbrainz_data)
+- Stores cover image data and URLs (cover_url, cover_data, cover_hash)
+- Embeds artists data as an array of objects (each with musicbrainz_id, name, sort_name, disambiguation)
 - Includes timestamps for record keeping
 - Tracks purchase status via `purchased_at` field
-- Stores release information including multiple release IDs and a selected release ID
-- Maintains release date information
+- Stores release information including multiple release IDs (`release_ids`), included release group IDs (`included_release_group_ids`), and a selected release ID (`selected_release_id`)
+- Maintains release date information (`release_date`)
 
 ### Records Search Index
 
@@ -102,9 +104,10 @@ A virtual FTS5 (Full Text Search) table that mirrors the records table for effic
 
 - Automatically synced with the records table via triggers
 - Optimized for full-text search operations
-- Contains most fields from the records table
+- Contains most fields from the records table, including:
+  - id, type, format, title, normalized_title, artists, normalized_artists, genres, musicbrainz_id, release_ids, included_release_group_ids, cover_hash, purchased_at, release_date
+- `normalized_title` and `normalized_artists` are unaccented versions for improved search
 - Some fields are marked as UNINDEXED for efficiency
-- Updated to use `release_date` instead of `release` field
 
 ### Artist Infos
 
@@ -112,7 +115,7 @@ A table that stores additional artist information:
 
 - Uses UUID as primary key
 - Stores MusicBrainz and Discogs data for artists
-- Maintains artist image data with dimensions
+- Maintains artist image data with dimensions and hash
 - Includes timestamps for record keeping
 
 ### Views
@@ -140,16 +143,15 @@ This view is crucial for querying artist information as it:
 
 The following triggers maintain the search index:
 
-1. `records_search_index_before_update`: Removes old record data from search index before updates
-2. `records_search_index_before_delete`: Removes record data from search index before deletion
-3. `records_after_insert`: Inserts new record data into search index after record creation
-4. `records_after_update`: Updates record data in search index after record updates
+1. `records_after_insert`: Inserts new record data into search index after record creation
+2. `records_after_update`: Updates record data in search index after record updates
 
 ### Indices
 
 The following indices are maintained for performance:
 
 1. On `records`:
+   - `type`
    - `format`
    - `title`
    - `musicbrainz_id`
@@ -160,15 +162,15 @@ The following indices are maintained for performance:
 ## Notes
 
 1. The database uses SQLite as the primary database.
-2. Artists data is embedded directly in the records table as JSON/map data, rather than having a separate table.
-3. The search index is implemented using SQLite's FTS5 extension for efficient full-text search capabilities.
-4. Where needed queries use SQLite's `unicode` extension to filter/sort over UTF-8 data.
+2. Artists data is embedded directly in the records table as an array of objects, not a separate table.
+3. The search index is implemented using SQLite's FTS5 extension for efficient full-text search capabilities, with normalized (unaccented) fields for better search.
+4. Where needed, queries use SQLite's `unicode` extension to filter/sort over UTF-8 data.
 5. The database supports both collection and wishlist functionality through the `purchased_at` field:
    - Records with `purchased_at IS NOT NULL` are in the collection
    - Records with `purchased_at IS NULL` are in the wishlist
-6. The schema has been updated to use `release_date` instead of `release` for better clarity
-7. A new `selected_release_id` field has been added to track the primary release for a record
-8. The `artist_infos` table has been added to store additional artist metadata and images
+6. The schema uses `release_date` for clarity
+7. The `selected_release_id` field tracks the primary release for a record
+8. The `artist_infos` table stores additional artist metadata and images
 9. The `artist_records` view provides a normalized way to query artist-record relationships
 
 ## WHY ONE TABLE?
