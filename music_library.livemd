@@ -129,3 +129,35 @@ genres =
 ```elixir
 Enum.join(genres.rows, ",")
 ```
+
+## Total artists per country
+
+<!-- livebook:{"attrs":"eyJjYWNoZV9xdWVyeSI6dHJ1ZSwiY29ubmVjdGlvbiI6eyJ0eXBlIjoic3FsaXRlIiwidmFyaWFibGUiOiJjb25uIn0sImRhdGFfZnJhbWVfYWxpYXMiOiJFbGl4aXIuRXhwbG9yZXIuRGF0YUZyYW1lIiwicXVlcnkiOiJTRUxFQ1RcbiAgICBjb3VudCgqKSBBUyB0b3RhbF9hcnRpc3RzLFxuICAgIGpzb25fZXh0cmFjdChtdXNpY2JyYWluel9kYXRhLCAnJC5jb3VudHJ5JykgQVMgY291bnRyeVxuRlJPTSBhcnRpc3RfaW5mb3NcbkdST1VQIEJZIGNvdW50cnlcbk9SREVSIEJZIHRvdGFsX2FydGlzdHMgREVTQzsiLCJyZXN1bHRfdmFyaWFibGUiOiJ0b3RhbF9hcnRpc3RzX3Blcl9jb3VudHJ5IiwidGltZW91dCI6bnVsbH0","chunks":null,"kind":"Elixir.KinoDB.SQLCell","livebook_object":"smart_cell"} -->
+
+```elixir
+total_artists_per_country =
+  Exqlite.query!(
+    conn,
+    ~S"""
+    SELECT
+        count(*) AS total_artists,
+        json_extract(musicbrainz_data, '$.country') AS country
+    FROM artist_infos
+    GROUP BY country
+    ORDER BY total_artists DESC;
+    """,
+    []
+  )
+```
+
+<!-- livebook:{"attrs":"eyJjaGFydF90aXRsZSI6IlRvdGFsIGFydGlzdHMgcGVyIGNvdW50cnkiLCJoZWlnaHQiOm51bGwsImxheWVycyI6W3siYWN0aXZlIjp0cnVlLCJjaGFydF90eXBlIjoiYmFyIiwiY29sb3JfZmllbGQiOm51bGwsImNvbG9yX2ZpZWxkX2FnZ3JlZ2F0ZSI6bnVsbCwiY29sb3JfZmllbGRfYmluIjpudWxsLCJjb2xvcl9maWVsZF9zY2FsZV9zY2hlbWUiOm51bGwsImNvbG9yX2ZpZWxkX3R5cGUiOm51bGwsImRhdGFfdmFyaWFibGUiOiJ0b3RhbF9hcnRpc3RzX3Blcl9jb3VudHJ5IiwiZ2VvZGF0YV9jb2xvciI6ImJsdWUiLCJsYXRpdHVkZV9maWVsZCI6bnVsbCwibG9uZ2l0dWRlX2ZpZWxkIjpudWxsLCJ4X2ZpZWxkIjoidG90YWxfYXJ0aXN0cyIsInhfZmllbGRfYWdncmVnYXRlIjpudWxsLCJ4X2ZpZWxkX2JpbiI6bnVsbCwieF9maWVsZF9zY2FsZV90eXBlIjpudWxsLCJ4X2ZpZWxkX3R5cGUiOiJxdWFudGl0YXRpdmUiLCJ5X2ZpZWxkIjoiY291bnRyeSIsInlfZmllbGRfYWdncmVnYXRlIjpudWxsLCJ5X2ZpZWxkX2JpbiI6bnVsbCwieV9maWVsZF9zY2FsZV90eXBlIjpudWxsLCJ5X2ZpZWxkX3R5cGUiOiJub21pbmFsIn1dLCJ2bF9hbGlhcyI6IkVsaXhpci5WZWdhTGl0ZSIsIndpZHRoIjo2MDB9","chunks":null,"kind":"Elixir.KinoVegaLite.ChartCell","livebook_object":"smart_cell"} -->
+
+```elixir
+VegaLite.new(width: 600, title: "Total artists per country")
+|> VegaLite.data_from_values(total_artists_per_country,
+  only: ["total_artists", "country"]
+)
+|> VegaLite.mark(:bar)
+|> VegaLite.encode_field(:x, "total_artists", type: :quantitative)
+|> VegaLite.encode_field(:y, "country", type: :nominal)
+```
