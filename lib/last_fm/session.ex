@@ -10,6 +10,28 @@ defmodule LastFm.Session do
 
   Record.defrecord(:xmlText, Record.extract(:xmlText, from_lib: "xmerl/include/xmerl.hrl"))
 
+  @doc """
+  Parses a Last.fm session XML response into a Session struct.
+
+  ## Examples
+
+      iex> xml = \"\"\"
+      ...> <?xml version="1.0" encoding="UTF-8"?>
+      ...> <lfm status="ok">
+      ...>   <session>
+      ...>     <name>cloud8421</name>
+      ...>     <key>super-secret</key>
+      ...>     <subscriber>1</subscriber>
+      ...>   </session>
+      ...> </lfm>
+      ...> \"\"\"
+      iex> LastFm.Session.parse(xml)
+      %LastFm.Session{
+        name: "cloud8421",
+        key: "super-secret",
+        pro: true
+      }
+  """
   def parse(xml_string) do
     doc = scan(xml_string)
 

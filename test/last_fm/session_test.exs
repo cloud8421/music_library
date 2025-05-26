@@ -3,6 +3,8 @@ defmodule LastFm.SessionTest do
 
   alias LastFm.Session
 
+  doctest LastFm.Session
+
   @xml """
   <?xml version="1.0" encoding="UTF-8"?>
   <lfm status="ok">
