@@ -3,8 +3,9 @@ defmodule LastFm.Feed do
   Holds a in-memory cache of scrobbled tracks.
 
   Tracks are keyed and ASC ordered by their scrobbling unix timestamp. While this
-  is technically prone to collision, it's very unlikely for that to happen due to the
-  nature of the data.
+  is technically prone to collision, it's very unlikely for that to happen since
+  scrobbles are sequential events that occur over time - a user can likely only listen
+  to one track at a time, and the timestamp has second-level precision.
   """
 
   @spec create_table!() :: :ok | no_return
