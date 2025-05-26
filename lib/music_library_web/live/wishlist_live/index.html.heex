@@ -18,6 +18,35 @@
       </.link>
     </div>
   </header>
+
+  <div class="flex items-end justify-between gap-6 mt-8">
+    <span class="isolate inline-flex rounded-md shadow-xs">
+      <.button
+        patch={order_path(@record_list_params, :insertion)}
+        as="link"
+        size="sm"
+        class={[
+          "rounded-l-md rounded-r-none",
+          @record_list_params.order == :insertion && "!bg-zinc-100 dark:!bg-zinc-700"
+        ]}
+      >
+        <.icon name="hero-star" class="mr-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
+        {gettext("Insertion")}
+      </.button>
+      <.button
+        patch={order_path(@record_list_params, :alphabetical)}
+        as="link"
+        size="sm"
+        class={[
+          "-ml-px rounded-r-md rounded-l-none",
+          @record_list_params.order == :alphabetical && "!bg-zinc-100 dark:!bg-zinc-700"
+        ]}
+      >
+        <.icon name="hero-user-solid" class="mr-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
+        {gettext("A->Z")}
+      </.button>
+    </span>
+  </div>
 </div>
 
 <.record_list

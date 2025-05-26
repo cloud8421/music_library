@@ -47,11 +47,13 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
 
   defp apply_action(socket, :index, params) do
     query = params["query"] || ""
+    order = parse_order(params["order"] || "insertion")
     total_records = Wishlist.search_records_count(query)
 
     record_list_params =
       @default_records_list_params
       |> merge_query(query)
+      |> merge_order(order)
       |> merge_pagination(params, total_records)
 
     load_and_assign_records(socket, record_list_params)
@@ -154,6 +156,10 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
     Map.put(record_list_params, :query, query)
   end
 
+  defp merge_order(record_list_params, order) do
+    Map.put(record_list_params, :order, order)
+  end
+
   defp merge_pagination(record_list_params, params, total_records) do
     record_list_params
     |> Map.put(:page, parse_int_or_default(params["page"], record_list_params.page))
@@ -168,6 +174,19 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
 
   defp parse_int_or_default(value, _default) when is_binary(value) do
     String.to_integer(value)
+  end
+
+  defp parse_order("alphabetical"), do: :alphabetical
+  defp parse_order("insertion"), do: :insertion
+
+  defp order_path(record_list_params, order) do
+    qs =
+      record_list_params
+      |> Map.take([:query])
+      |> Map.put(:order, order)
+      |> Enum.filter(fn {_, v} -> v not in ["", nil] end)
+
+    ~p"/wishlist?#{qs}"
   end
 
   defp back_path(record_list_params) do

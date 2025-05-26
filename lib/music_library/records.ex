@@ -70,6 +70,13 @@ defmodule MusicLibrary.Records do
             {:desc, r.purchased_at},
             order_alphabetically()
           ])
+
+        :insertion ->
+          initial_search
+          |> order_by([r], [
+            {:desc, r.inserted_at},
+            order_alphabetically()
+          ])
       end
 
     Enum.reduce(parsed_query, search_with_order, fn
