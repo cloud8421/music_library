@@ -338,7 +338,7 @@ defmodule MusicLibraryWeb.RecordComponents do
       release.catalog_number,
       ReleaseSearchResult.format(release),
       release.date,
-      release.country |> country_label()
+      country_label(release.country)
     ]
     |> Enum.reject(fn fragment -> fragment in [nil, ""] end)
     |> Enum.join(" ")
