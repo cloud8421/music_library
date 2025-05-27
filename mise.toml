@@ -42,6 +42,18 @@ description = 'Checks that the Tailwind version is up to date'
 run = 'mix tailwind.check_version'
 hide = true
 
+# ESBUILD DEP
+
+[tasks.esbuild-update]
+description = 'Update the esbuild version configured in the project'
+run = 'mix esbuild.update_version'
+hide = true
+
+[tasks.esbuild-outdated]
+description = 'Checks that the esbuild version is up to date'
+run = 'mix esbuild.check_version'
+hide = true
+
 # MIX DEPS
 
 [tasks.mix-update]
@@ -71,13 +83,19 @@ hide = true
 # DEPENDENCIES
 
 [tasks."deps:outdated"]
-depends = ['npm-outdated', 'tailwind-outdated', 'mix-outdated']
+depends = [
+  'npm-outdated',
+  'tailwind-outdated',
+  'esbuild-outdated',
+  'mix-outdated',
+]
 description = 'Show outdated dependencies'
 
 [tasks."deps:update"]
 depends = [
   'npm-update',
   'tailwind-update',
+  'esbuild-update',
   'mix-update',
   'gh-markdown-preview-extension-update',
 ]
