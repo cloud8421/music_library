@@ -66,7 +66,7 @@ defmodule LastFm.Session do
     doc
   end
 
-  defp first(node, path), do: node |> xpath(path) |> take_one
+  defp first(node, path), do: node |> xpath(path) |> take_one()
 
   defp take_one([head | _]), do: head
   defp take_one(_), do: nil
@@ -77,7 +77,7 @@ defmodule LastFm.Session do
     :xmerl_xpath.string(to_charlist(path), node)
   end
 
-  def text(node), do: node |> xpath(~c"./text()") |> extract_text
+  def text(node), do: node |> xpath(~c"./text()") |> extract_text()
 
   defp extract_text([xmlText(value: value)]), do: List.to_string(value)
   defp extract_text(_x), do: nil
