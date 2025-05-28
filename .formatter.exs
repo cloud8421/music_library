@@ -4,6 +4,6 @@
   plugins: [Phoenix.LiveView.HTMLFormatter, Quokka],
   inputs: ["*.{heex,ex,exs}", "{config,lib,test}/**/*.{heex,ex,exs}", "priv/*/seeds.exs"],
   quokka: [
-    only: [:module_directives, :pipes]
+    only: [:module_directives, :pipes, :single_node]
   ]
 ]

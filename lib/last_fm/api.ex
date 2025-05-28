@@ -37,7 +37,7 @@ defmodule LastFm.API do
           {"#{key}[#{index}]", value}
         end)
       end)
-      |> Enum.into(%{})
+      |> Map.new()
 
     params = Map.merge(params, track_params)
 
@@ -68,7 +68,7 @@ defmodule LastFm.API do
     params =
       config
       |> base_params()
-      |> Keyword.merge(method: "artist.getInfo")
+      |> Keyword.put(:method, "artist.getInfo")
       |> put_musicbrainz_id_or_name(id_or_name_option)
 
     config

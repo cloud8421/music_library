@@ -10,7 +10,7 @@ defmodule DiscogsTest do
       expected_info =
         Fixtures.Artist.get_artist()
 
-      Req.Test.stub(Discogs.API, fn conn = %{request_path: "/artists/discogs_id"} ->
+      Req.Test.stub(Discogs.API, fn %{request_path: "/artists/discogs_id"} = conn ->
         Req.Test.json(conn, Fixtures.Artist.get_artist())
       end)
 
