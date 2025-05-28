@@ -216,7 +216,8 @@ defmodule MusicLibraryWeb.RecordComponents do
   attr :records_count, :integer, required: true
   attr :title, :string, required: true
   attr :id, :string, required: true
-  attr :record_path, :any, required: true
+  attr :record_show_path, :any, required: true
+  attr :record_edit_path, :any, required: true
 
   def record_grid(assigns) do
     ~H"""
@@ -260,14 +261,108 @@ defmodule MusicLibraryWeb.RecordComponents do
             <button
               type="button"
               class="absolute inset-0 focus:outline-hidden"
-              phx-click={JS.navigate(@record_path.(record))}
+              phx-click={JS.navigate(@record_show_path.(record))}
             >
               <span class="sr-only">{gettext("View details")}</span>
             </button>
           </div>
-          <p class="pointer-events-none mt-2 block truncate text-sm font-medium text-zinc-900 dark:text-zinc-300">
-            {record.title}
-          </p>
+          <div class="flex justify-between items-center">
+            <p class="pointer-events-none mt-2 block truncate text-sm font-medium text-zinc-900 dark:text-zinc-300">
+              {record.title}
+            </p>
+            <div class="relative flex-none mt-2">
+              <button
+                type="button"
+                class="text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-300"
+                aria-expanded="false"
+                aria-haspopup="true"
+                phx-click={toggle_actions_menu(record.id)}
+                phx-click-away={close_actions_menu(record.id)}
+              >
+                <span class="sr-only">{gettext("Open options")}</span>
+                <.icon
+                  name="hero-ellipsis-vertical"
+                  class="-mt-1 h-5 w-5"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+              </button>
+              <!--
+              Dropdown menu, show/hide based on menu state.
+
+              Entering: "transition ease-out duration-100"
+                From: "transform opacity-0 scale-95"
+                To: "transform opacity-100 scale-100"
+              Leaving: "transition ease-in duration-75"
+                From: "transform opacity-100 scale-100"
+                To: "transform opacity-0 scale-95"
+            -->
+              <.focus_wrap
+                id={"actions-#{record.id}"}
+                class={[
+                  "hidden pointer-events-auto absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-zinc-800 py-2 shadow-lg ring-1 ring-zinc-900/5 focus:outline-hidden"
+                ]}
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="options-menu-0-button"
+              >
+                <.link
+                  class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
+                  role="menuitem"
+                  tabindex="0"
+                  id={"actions-#{record.id}-show"}
+                  navigate={@record_show_path.(record)}
+                >
+                  {gettext("Show")}
+                </.link>
+                <a
+                  href={MusicBrainz.ReleaseGroup.url(record.musicbrainz_id)}
+                  target=".blank"
+                  class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
+                  role="menuitem"
+                  tabindex="0"
+                  id={"actions-#{record.id}-musicbrainz"}
+                >
+                  {gettext("View on MusicBrainz")}
+                </a>
+
+                <.link
+                  class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
+                  role="menuitem"
+                  tabindex="0"
+                  id={"actions-#{record.id}-edit"}
+                  patch={@record_edit_path.(record)}
+                >
+                  {gettext("Edit")}
+                </.link>
+
+                <.link
+                  :if={!record.purchased_at}
+                  class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
+                  role="menuitem"
+                  tabindex="0"
+                  id={"actions-#{record.id}-purchase"}
+                  phx-click={
+                    JS.dispatch("music_library:confetti")
+                    |> JS.push("add-to-collection", value: %{id: record.id})
+                  }
+                >
+                  {gettext("Purchased")}
+                </.link>
+
+                <.link
+                  class="block px-3 py-1 text-sm leading-6 text-red-900 hover:bg-red-50 dark:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-600"
+                  role="menuitem"
+                  tabindex="0"
+                  id={"actions-#{record.id}-delete"}
+                  phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
+                  data-confirm={gettext("Are you sure?")}
+                >
+                  {gettext("Delete")}
+                </.link>
+              </.focus_wrap>
+            </div>
+          </div>
           <p class="pointer-events-none block text-sm font-medium text-zinc-500">
             {format_label(record.format)} · {type_label(record.type)}
           </p>
