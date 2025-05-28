@@ -1,5 +1,6 @@
 defmodule MusicLibraryWeb.AuthTest do
   use ExUnit.Case, async: true
+
   import Plug.Test
 
   alias MusicLibraryWeb.Auth

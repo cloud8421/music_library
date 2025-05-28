@@ -1,11 +1,11 @@
 defmodule MusicLibraryWeb.ArtistLive.Show do
   use MusicLibraryWeb, :live_view
 
-  alias MusicLibrary.Artists.ArtistInfo
-  alias MusicLibrary.{Artists, Records}
-
   import MusicLibraryWeb.RecordComponents,
     only: [record_grid: 1, toggle_actions_menu: 1, close_actions_menu: 1, country_label: 1]
+
+  alias MusicLibrary.Artists.ArtistInfo
+  alias MusicLibrary.{Artists, Records}
 
   attr :country, :map, required: true
 

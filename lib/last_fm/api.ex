@@ -1,8 +1,8 @@
 defmodule LastFm.API do
-  require Logger
-
-  alias LastFm.{Artist, Session, Track}
   alias LastFm.API.{ErrorResponse, Signature}
+  alias LastFm.{Artist, Session, Track}
+
+  require Logger
 
   def get_session(token, config) do
     params =

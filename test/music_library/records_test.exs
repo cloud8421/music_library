@@ -1,11 +1,12 @@
 defmodule MusicLibrary.RecordsTest do
   use MusicLibrary.DataCase
 
+  import MusicBrainz.Fixtures.Release
+  import MusicBrainz.Fixtures.ReleaseGroup
+  import MusicLibrary.Fixtures.Records
+
   alias MusicLibrary.Records
   alias MusicLibrary.Records.SearchIndex
-  import MusicLibrary.Fixtures.Records
-  import MusicBrainz.Fixtures.ReleaseGroup
-  import MusicBrainz.Fixtures.Release
 
   defp create_records(_) do
     records = [

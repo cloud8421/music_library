@@ -1,8 +1,9 @@
 defmodule MusicLibrary.ArtistsTest do
   use MusicLibrary.DataCase
 
-  alias MusicLibrary.Artists
   import MusicLibrary.Fixtures.Records
+
+  alias MusicLibrary.Artists
 
   describe "get_artist/1" do
     test "it returns records with essential data" do

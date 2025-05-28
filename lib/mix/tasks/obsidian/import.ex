@@ -1,6 +1,4 @@
 defmodule Mix.Tasks.Obsidian.Import do
-  use Mix.Task
-
   @shortdoc "Import records from an Obsidian Vault containing Media entries "
   @moduledoc """
   Import records from an Obsidian Vault containing Media entries.
@@ -9,6 +7,8 @@ defmodule Mix.Tasks.Obsidian.Import do
 
   `mix obsidian.import path/to/vault`
   """
+
+  use Mix.Task
 
   @impl Mix.Task
   def run(args) do

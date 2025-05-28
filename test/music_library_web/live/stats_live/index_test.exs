@@ -1,11 +1,12 @@
 defmodule MusicLibraryWeb.StatsLive.IndexTest do
   use MusicLibraryWeb.ConnCase
 
-  alias MusicLibrary.{Records, Repo, Wishlist}
-  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
-  import MusicLibrary.Fixtures.Records
-  import MusicBrainz.Fixtures.ReleaseGroup
   import MusicBrainz.Fixtures.Release
+  import MusicBrainz.Fixtures.ReleaseGroup
+  import MusicLibrary.Fixtures.Records
+  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
+
+  alias MusicLibrary.{Records, Repo, Wishlist}
 
   defp fill_collection(_) do
     current_time = DateTime.utc_now()

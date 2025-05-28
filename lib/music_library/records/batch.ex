@@ -1,10 +1,11 @@
 defmodule MusicLibrary.Records.Batch do
-  require Logger
+  import Ecto.Query
 
   alias MusicLibrary.Records
   alias MusicLibrary.Records.{Cover, Record}
   alias MusicLibrary.Repo
-  import Ecto.Query
+
+  require Logger
 
   def refresh_musicbrainz_data(opts \\ []) do
     run_on_all_records(fn record ->

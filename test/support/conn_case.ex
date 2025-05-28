@@ -19,21 +19,22 @@ defmodule MusicLibraryWeb.ConnCase do
 
   using do
     quote do
-      # The default endpoint for testing
-      @endpoint MusicLibraryWeb.Endpoint
-
       use MusicLibraryWeb, :verified_routes
 
-      # Import conveniences for testing with connections
-      import Plug.Conn
-      import Phoenix.ConnTest
       import MusicLibraryWeb.ConnCase
-      import PhoenixTest
+      import MusicLibraryWeb.LiveTestHelpers
+      import Phoenix.ConnTest
 
       import Phoenix.LiveViewTest,
+        # The default endpoint for testing
         only: [render: 1, render_async: 1, render_hook: 2, render_hook: 3, element: 2, element: 3]
 
-      import MusicLibraryWeb.LiveTestHelpers
+      import PhoenixTest
+      import Plug.Conn
+
+      @endpoint MusicLibraryWeb.Endpoint
+
+      # Import conveniences for testing with connections
     end
   end
 

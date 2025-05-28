@@ -71,6 +71,7 @@ defmodule MusicLibrary.MixProject do
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:quokka, "~> 2.6", only: [:dev, :test], runtime: false},
       {:live_debugger, "~> 0.2.0", only: :dev},
       {:tidewave, "~> 0.1", only: :dev},
 

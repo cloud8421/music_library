@@ -1,8 +1,8 @@
 defmodule MusicLibrary.BarcodeScan.ResultTest do
   use ExUnit.Case, async: true
 
-  alias MusicLibrary.BarcodeScan.Result
   alias MusicBrainz.{ReleaseGroupSearchResult, ReleaseSearchResult}
+  alias MusicLibrary.BarcodeScan.Result
 
   @release_group %ReleaseGroupSearchResult{
     id: "123",

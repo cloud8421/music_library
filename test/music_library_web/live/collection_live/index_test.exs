@@ -1,10 +1,11 @@
 defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   use MusicLibraryWeb.ConnCase
 
-  import MusicLibrary.Fixtures.Records
-  import MusicBrainz.Fixtures.ReleaseGroup
   import MusicBrainz.Fixtures.Release
+  import MusicBrainz.Fixtures.ReleaseGroup
+  import MusicLibrary.Fixtures.Records
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
+
   alias MusicBrainz.ReleaseGroupSearchResult
   alias MusicLibrary.Records.{Cover, Record}
 

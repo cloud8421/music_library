@@ -2,7 +2,6 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
   use MusicLibraryWeb.ConnCase
 
   import MusicLibrary.Fixtures.Records
-
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
 
   alias MusicBrainz.Fixtures

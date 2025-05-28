@@ -1,7 +1,8 @@
 defmodule MusicLibraryWeb.Auth do
   use Gettext, backend: MusicLibraryWeb.Gettext
-  import Plug.Conn
+
   import Phoenix.Controller, only: [put_flash: 3, redirect: 2]
+  import Plug.Conn
 
   def correct_login_password?(password) do
     Plug.Crypto.secure_compare(login_password(), password)

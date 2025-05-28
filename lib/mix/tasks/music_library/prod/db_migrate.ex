@@ -1,11 +1,12 @@
 defmodule Mix.Tasks.MusicLibrary.Prod.DbMigrate do
-  use Mix.Task
   @shortdoc "Run migrations on the production database"
   @moduledoc """
   Run migrations on the production database.
 
   Requires the `flyctl` CLI to be installed and authenticated.
   """
+
+  use Mix.Task
 
   import Mix.Tasks.MusicLibrary.Prod.Helpers
 

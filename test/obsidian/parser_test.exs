@@ -1,5 +1,6 @@
 defmodule Obsidian.ParserTest do
   use ExUnit.Case, async: true
+
   alias Obsidian.{Entry, Parser}
 
   @marbles_entry_path Path.expand("../support/fixtures/obsidian/marillion-marbles.md", __DIR__)

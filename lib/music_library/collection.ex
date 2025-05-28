@@ -1,11 +1,10 @@
 defmodule MusicLibrary.Collection do
   import Ecto.Query, warn: false
+  import MusicLibrary.Records, only: [order_alphabetically: 0]
 
   alias MusicLibrary.Records
   alias MusicLibrary.Records.{Record, SearchIndex}
   alias MusicLibrary.Repo
-
-  import MusicLibrary.Records, only: [order_alphabetically: 0]
 
   def search_records(query, opts \\ []) do
     limit = Keyword.get(opts, :limit, 20)

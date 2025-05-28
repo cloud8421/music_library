@@ -1,3 +1,5 @@
+import Helpers
+
 defmodule Helpers do
   def debug! do
     Logger.configure(level: :debug)
@@ -11,5 +13,3 @@ defmodule Helpers do
     Logger.configure(level: :warning)
   end
 end
-
-import Helpers

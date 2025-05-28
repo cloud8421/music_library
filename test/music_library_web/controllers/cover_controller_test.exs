@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.CoverControllerTest do
   use MusicLibraryWeb.ConnCase
 
   import MusicLibrary.Fixtures.Records
+
   alias MusicLibrary.Records.Cover
 
   defp create_record(_) do

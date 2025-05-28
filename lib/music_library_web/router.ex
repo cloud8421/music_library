@@ -76,6 +76,7 @@ defmodule MusicLibraryWeb.Router do
 
   if Application.compile_env(:music_library, :monitoring_routes) do
     use ErrorTracker.Web, :router
+
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do

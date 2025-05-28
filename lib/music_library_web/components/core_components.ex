@@ -15,9 +15,9 @@ defmodule MusicLibraryWeb.CoreComponents do
   Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
   """
   use Phoenix.Component
+  use Gettext, backend: MusicLibraryWeb.Gettext
 
   alias Phoenix.LiveView.JS
-  use Gettext, backend: MusicLibraryWeb.Gettext
 
   defdelegate badge(assigns), to: Fluxon.Components.Badge
   defdelegate button(assigns), to: Fluxon.Components.Button

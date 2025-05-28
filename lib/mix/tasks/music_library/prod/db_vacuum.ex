@@ -1,5 +1,4 @@
 defmodule Mix.Tasks.MusicLibrary.Prod.DbVacuum do
-  use Mix.Task
   @shortdoc "Force VACUUM the production database"
   @moduledoc """
   Force VACUUM the production database. This is necessary to make sure that all
@@ -7,6 +6,8 @@ defmodule Mix.Tasks.MusicLibrary.Prod.DbVacuum do
 
   Requires the `flyctl` CLI to be installed and authenticated.
   """
+
+  use Mix.Task
 
   import Mix.Tasks.MusicLibrary.Prod.Helpers
 

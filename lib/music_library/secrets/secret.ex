@@ -1,5 +1,6 @@
 defmodule MusicLibrary.Secrets.Secret do
   use Ecto.Schema
+
   import Ecto.Changeset
 
   @primary_key {:name, :string, autogenerate: false}

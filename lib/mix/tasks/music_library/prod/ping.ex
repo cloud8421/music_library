@@ -1,9 +1,10 @@
 defmodule Mix.Tasks.MusicLibrary.Prod.Ping do
-  use Mix.Task
   @shortdoc "Ping the production instance"
   @moduledoc """
   Ping the production instance - useful to wake it up if suspended.
   """
+
+  use Mix.Task
 
   @impl Mix.Task
   def run(_args) do

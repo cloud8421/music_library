@@ -22,12 +22,12 @@ defmodule MusicLibrary.DataCase do
     quote do
       use Oban.Testing, repo: MusicLibrary.BackgroundRepo
 
-      alias MusicLibrary.Repo
-
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
       import MusicLibrary.DataCase
+
+      alias MusicLibrary.Repo
     end
   end
 

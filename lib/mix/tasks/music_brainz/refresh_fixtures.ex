@@ -1,10 +1,10 @@
 defmodule Mix.Tasks.MusicBrainz.RefreshFixtures do
-  use Mix.Task
-
   @shortdoc "Fetch and recreate test fixtures that depend on network resources."
   @moduledoc """
   Fetch and recreate test fixtures that depend on network resources.
   """
+
+  use Mix.Task
 
   require Logger
 

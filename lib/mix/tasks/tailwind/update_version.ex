@@ -1,10 +1,10 @@
 defmodule Mix.Tasks.Tailwind.UpdateVersion do
-  use Mix.Task
-
   @shortdoc "Update the configured tailwind versino to latest."
   @moduledoc """
   Update the configured tailwind versino to latest.
   """
+
+  use Mix.Task
 
   alias Mix.Tasks.Tailwind.Release
 

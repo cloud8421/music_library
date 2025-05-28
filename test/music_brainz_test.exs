@@ -1,9 +1,10 @@
 defmodule MusicBrainzTest do
   use ExUnit.Case, async: true
 
-  alias MusicBrainz.ReleaseGroupSearchResult
   import MusicBrainz.Fixtures.Release
   import MusicBrainz.Fixtures.ReleaseGroup
+
+  alias MusicBrainz.ReleaseGroupSearchResult
 
   describe "search_release_group/2" do
     test "it returns results with correct limit and offset" do

@@ -1,5 +1,6 @@
 defmodule MusicLibraryWeb.WishlistLive.Index do
   use MusicLibraryWeb, :live_view
+
   import MusicLibraryWeb.PaginationComponent
   import MusicLibraryWeb.RecordComponents
 

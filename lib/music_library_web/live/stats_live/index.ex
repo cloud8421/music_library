@@ -1,8 +1,8 @@
 defmodule MusicLibraryWeb.StatsLive.Index do
   use MusicLibraryWeb, :live_view
 
-  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
   import MusicLibraryWeb.ChartComponents
+  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
 
   alias MusicLibrary.{Collection, Records, ScrobbleActivity, Wishlist}
 

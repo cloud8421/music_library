@@ -1,11 +1,12 @@
 defmodule Mix.Tasks.MusicLibrary.Prod.DbPull do
-  use Mix.Task
   @shortdoc "Pulls the latest database from the production server"
   @moduledoc """
   Pulls the latest database from the production server.
 
   Requires the `flyctl` CLI to be installed and authenticated.
   """
+  use Mix.Task
+
   import Mix.Tasks.MusicLibrary.Prod.Helpers
 
   @impl Mix.Task

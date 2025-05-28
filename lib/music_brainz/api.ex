@@ -6,9 +6,9 @@ defmodule MusicBrainz.API do
   - Extend the metadata associated with existing records
   """
 
-  require Logger
-
   alias MusicBrainz.{Artist, ReleaseGroupSearchResult, ReleaseSearchResult}
+
+  require Logger
 
   @doc """
   Uses the [lookup](https://musicbrainz.org/doc/MusicBrainz_API#Lookups) endpoint with the release group id and include the

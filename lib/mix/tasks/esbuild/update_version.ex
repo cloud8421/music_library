@@ -1,10 +1,10 @@
 defmodule Mix.Tasks.Esbuild.UpdateVersion do
-  use Mix.Task
-
   @shortdoc "Update the configured esbuild versino to latest."
   @moduledoc """
   Update the configured esbuild versino to latest.
   """
+
+  use Mix.Task
 
   alias Mix.Tasks.Esbuild.Release
 

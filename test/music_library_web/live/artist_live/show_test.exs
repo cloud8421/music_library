@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
   use MusicLibraryWeb.ConnCase
 
   import MusicLibrary.Fixtures.Records
+
   alias LastFm.Fixtures
 
   defp fill_collection(_config) do

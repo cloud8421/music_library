@@ -1,5 +1,6 @@
 defmodule MusicLibrary.Records.Record do
   use Ecto.Schema
+
   import Ecto.Changeset
 
   alias MusicBrainz.{Release, ReleaseGroup}

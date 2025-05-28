@@ -1,8 +1,8 @@
 defmodule MusicBrainz.ReleaseSearchResult do
+  alias MusicBrainz.ReleaseGroup
+
   @enforce_keys [:id, :title, :release_group, :artists, :date, :barcode, :media]
   defstruct [:id, :title, :release_group, :artists, :date, :barcode, :media]
-
-  alias MusicBrainz.ReleaseGroup
 
   def from_api_response(r) do
     %__MODULE__{
