@@ -164,14 +164,12 @@ defmodule MusicLibrary.ScrobbleActivity do
         r.release_id == track.album.musicbrainz_id
       end)
 
-    record_id = if matched_release, do: matched_release.record_id, else: nil
+    record_id = if matched_release, do: matched_release.record_id
 
     if record_id do
       Enum.find_value(all_artist_pairs, fn pair ->
-        if pair.record_id == record_id, do: pair.artist_id, else: nil
+        if pair.record_id == record_id, do: pair.artist_id
       end)
-    else
-      nil
     end
   end
 

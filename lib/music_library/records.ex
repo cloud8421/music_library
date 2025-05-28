@@ -181,8 +181,6 @@ defmodule MusicLibrary.Records do
         "selected_release_id" => selected_release_id
       })
       |> create_record()
-    else
-      error -> error
     end
   end
 

@@ -15,14 +15,14 @@ defmodule Mix.Tasks.Tailwind.CheckVersion do
     current_version = Release.fetch_current_version()
     latest_version = Release.fetch_latest_version!()
 
-    if current_version !== latest_version do
+    if current_version === latest_version do
+      Mix.Shell.IO.info("The tailwind version is up to date (#{current_version})")
+    else
       Mix.Shell.IO.info(
         "A new tailwind version is available: #{current_version} ==> #{latest_version}"
       )
 
       System.halt(1)
-    else
-      Mix.Shell.IO.info("The tailwind version is up to date (#{current_version})")
     end
   end
 end

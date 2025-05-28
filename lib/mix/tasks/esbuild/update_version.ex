@@ -13,7 +13,9 @@ defmodule Mix.Tasks.Esbuild.UpdateVersion do
     current_version = Release.fetch_current_version()
     latest_version = Release.fetch_latest_version!()
 
-    if current_version !== latest_version do
+    if current_version === latest_version do
+      Mix.Shell.IO.info("esbuild configuration is up to date (#{current_version})")
+    else
       Mix.Shell.IO.info(
         "Updating esbuild configuration from #{current_version} to #{latest_version}"
       )
@@ -22,8 +24,6 @@ defmodule Mix.Tasks.Esbuild.UpdateVersion do
         Path.expand("config/config.exs", File.cwd!())
 
       Release.update_config_file!(config_file, current_version, latest_version)
-    else
-      Mix.Shell.IO.info("esbuild configuration is up to date (#{current_version})")
     end
   end
 end

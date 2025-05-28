@@ -184,10 +184,10 @@ defmodule MusicLibraryWeb.ReleaseComponent do
   end
 
   defp medium_title(medium) do
-    if medium.title !== "" do
-      medium.title
-    else
+    if medium.title === "" do
       gettext("Disc %{no}", %{no: medium.number})
+    else
+      medium.title
     end
   end
 

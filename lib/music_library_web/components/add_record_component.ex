@@ -165,15 +165,15 @@ defmodule MusicLibraryWeb.AddRecordComponent do
     mb_query = assigns.initial_query || ""
 
     socket =
-      if mb_query != "" do
+      if mb_query == "" do
+        socket
+      else
         {:ok, release_groups} =
           MusicBrainz.search_release_group(mb_query, limit: @batch_size, offset: 0)
 
         socket
         |> assign(:release_groups_count, Enum.count(release_groups))
         |> stream(:release_groups, release_groups, reset: true)
-      else
-        socket
       end
 
     {:ok,
