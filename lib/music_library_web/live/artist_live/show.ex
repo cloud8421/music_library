@@ -164,24 +164,32 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     end
   end
 
+  def handle_event("add-to-collection", %{"id" => id}, socket) do
+    record = Records.get_record!(id)
+    current_time = DateTime.utc_now()
+
+    case Records.update_record(record, %{"purchased_at" => current_time}) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> assign_records(socket.assigns.artist.musicbrainz_id)
+         |> put_flash(:info, gettext("Record added to the collection"))}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, form: to_form(changeset))}
+    end
+  end
+
   defp apply_action(socket, :show, %{"musicbrainz_id" => musicbrainz_id}) do
     artist = Artists.get_artist!(musicbrainz_id)
     artist_info = Artists.get_artist_info!(musicbrainz_id)
 
-    %{collection: collection_records, wishlist: wishlist_records} =
-      musicbrainz_id
-      |> Records.get_artist_records()
-      |> group_and_sort()
-
     socket
+    |> assign_records(musicbrainz_id)
     |> assign(:current_section, :artists)
     |> assign(:artist, artist)
     |> assign(:artist_info, artist_info)
     |> assign(:country, ArtistInfo.country(artist_info))
-    |> stream(:collection_records, collection_records, reset: true)
-    |> stream(:wishlist_records, wishlist_records, reset: true)
-    |> assign(:collection_records_count, Enum.count(collection_records))
-    |> assign(:wishlist_records_count, Enum.count(wishlist_records))
     |> assign_async(:lastfm_artist_info, fn ->
       with {:ok, lastfm_artist_info} <- LastFm.get_artist_info(artist.musicbrainz_id, artist.name) do
         {:ok, %{lastfm_artist_info: lastfm_artist_info}}
@@ -208,6 +216,19 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     |> assign(:page_title, gettext("Add more · Artist"))
     |> assign(:initial_query, "arid:#{socket.assigns.artist.musicbrainz_id}")
     |> assign(:record, nil)
+  end
+
+  defp assign_records(socket, artist_musicbrainz_id) do
+    %{collection: collection_records, wishlist: wishlist_records} =
+      artist_musicbrainz_id
+      |> Records.get_artist_records()
+      |> group_and_sort()
+
+    socket
+    |> stream(:collection_records, collection_records, reset: true)
+    |> stream(:wishlist_records, wishlist_records, reset: true)
+    |> assign(:collection_records_count, Enum.count(collection_records))
+    |> assign(:wishlist_records_count, Enum.count(wishlist_records))
   end
 
   defp page_title(:show, artist) do
