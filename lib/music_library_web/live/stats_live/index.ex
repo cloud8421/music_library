@@ -216,16 +216,6 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     |> DateTime.to_iso8601()
   end
 
-  defp toggle_actions_menu(track_id) do
-    JS.toggle(to: "#actions-#{track_id}")
-    |> JS.toggle_class("pointer-events-none", to: "#scrobble-activity > li")
-  end
-
-  defp close_actions_menu(track_id) do
-    JS.hide(to: "#actions-#{track_id}")
-    |> JS.remove_class("pointer-events-none", to: "#scrobble-activity > li")
-  end
-
   defp resolve_timezone! do
     Application.get_env(:music_library, MusicLibraryWeb)
     |> Keyword.fetch!(:timezone)

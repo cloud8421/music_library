@@ -1,8 +1,7 @@
 defmodule MusicLibraryWeb.AddRecordComponent do
   use MusicLibraryWeb, :live_component
 
-  import MusicLibraryWeb.RecordComponents,
-    only: [toggle_actions_menu: 1, close_actions_menu: 1, format_label: 1, type_label: 1]
+  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
 
   alias MusicBrainz.ReleaseGroupSearchResult
   alias MusicLibrary.Records
@@ -88,37 +87,9 @@ defmodule MusicLibraryWeb.AddRecordComponent do
             )}
           </p>
         </div>
-        <div class="relative flex-none">
-          <button
-            type="button"
-            class="text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-300"
-            aria-expanded="false"
-            aria-haspopup="true"
-            phx-click={toggle_actions_menu(@release_group.id)}
-            phx-click-away={close_actions_menu(@release_group.id)}
-          >
-            <span class="sr-only">{gettext("Choose which format to import")}</span>
-            <.icon name={@icon_name} class="-mt-1 h-5 w-5" aria-hidden="true" data-slot="icon" />
-          </button>
-          <!--
-          Dropdown menu, show/hide based on menu state.
 
-          Entering: "transition ease-out duration-100"
-            From: "transform opacity-0 scale-95"
-            To: "transform opacity-100 scale-100"
-          Leaving: "transition ease-in duration-75"
-            From: "transform opacity-100 scale-100"
-            To: "transform opacity-0 scale-95"
-        -->
-          <.focus_wrap
-            id={"actions-#{@release_group.id}"}
-            class={[
-              "hidden pointer-events-auto absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-zinc-800 py-2 shadow-lg ring-1 ring-zinc-900/5 focus:outline-hidden"
-            ]}
-            role="menu"
-            aria-orientation="vertical"
-            aria-labelledby="options-menu-0-button"
-          >
+        <.actions_menu id={@release_group.id} background_container_target="#records > li">
+          <:links>
             <.link
               :for={format <- Records.Record.formats()}
               class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
@@ -131,8 +102,8 @@ defmodule MusicLibraryWeb.AddRecordComponent do
             >
               {format_label(format)}
             </.link>
-          </.focus_wrap>
-        </div>
+          </:links>
+        </.actions_menu>
       </div>
     </li>
     """

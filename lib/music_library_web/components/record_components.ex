@@ -95,42 +95,8 @@ defmodule MusicLibraryWeb.RecordComponents do
             </p>
           </div>
           <%!-- TODO: replace with OSS version --%>
-          <div class="relative flex-none">
-            <button
-              type="button"
-              class="text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-300"
-              aria-expanded="false"
-              aria-haspopup="true"
-              phx-click={toggle_actions_menu(record.id)}
-              phx-click-away={close_actions_menu(record.id)}
-            >
-              <span class="sr-only">{gettext("Open options")}</span>
-              <.icon
-                name="hero-ellipsis-vertical"
-                class="-mt-1 h-5 w-5"
-                aria-hidden="true"
-                data-slot="icon"
-              />
-            </button>
-            <!--
-              Dropdown menu, show/hide based on menu state.
-
-              Entering: "transition ease-out duration-100"
-                From: "transform opacity-0 scale-95"
-                To: "transform opacity-100 scale-100"
-              Leaving: "transition ease-in duration-75"
-                From: "transform opacity-100 scale-100"
-                To: "transform opacity-0 scale-95"
-            -->
-            <.focus_wrap
-              id={"actions-#{record.id}"}
-              class={[
-                "hidden pointer-events-auto absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-zinc-800 py-2 shadow-lg ring-1 ring-zinc-900/5 focus:outline-hidden"
-              ]}
-              role="menu"
-              aria-orientation="vertical"
-              aria-labelledby="options-menu-0-button"
-            >
+          <.actions_menu id={record.id} background_container_target="#records > li">
+            <:links>
               <.link
                 class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
                 role="menuitem"
@@ -185,8 +151,8 @@ defmodule MusicLibraryWeb.RecordComponents do
               >
                 {gettext("Delete")}
               </.link>
-            </.focus_wrap>
-          </div>
+            </:links>
+          </.actions_menu>
         </div>
       </li>
     </ul>
@@ -270,42 +236,8 @@ defmodule MusicLibraryWeb.RecordComponents do
             <p class="pointer-events-none mt-2 block truncate text-sm font-medium text-zinc-900 dark:text-zinc-300">
               {record.title}
             </p>
-            <div class="relative flex-none mt-2">
-              <button
-                type="button"
-                class="text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-300"
-                aria-expanded="false"
-                aria-haspopup="true"
-                phx-click={toggle_actions_menu(record.id)}
-                phx-click-away={close_actions_menu(record.id)}
-              >
-                <span class="sr-only">{gettext("Open options")}</span>
-                <.icon
-                  name="hero-ellipsis-vertical"
-                  class="-mt-1 h-5 w-5"
-                  aria-hidden="true"
-                  data-slot="icon"
-                />
-              </button>
-              <!--
-              Dropdown menu, show/hide based on menu state.
-
-              Entering: "transition ease-out duration-100"
-                From: "transform opacity-0 scale-95"
-                To: "transform opacity-100 scale-100"
-              Leaving: "transition ease-in duration-75"
-                From: "transform opacity-100 scale-100"
-                To: "transform opacity-0 scale-95"
-            -->
-              <.focus_wrap
-                id={"actions-#{record.id}"}
-                class={[
-                  "hidden pointer-events-auto absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-zinc-800 py-2 shadow-lg ring-1 ring-zinc-900/5 focus:outline-hidden"
-                ]}
-                role="menu"
-                aria-orientation="vertical"
-                aria-labelledby="options-menu-0-button"
-              >
+            <.actions_menu id={record.id} background_container_target="#records > li" class="mt-2">
+              <:links>
                 <.link
                   class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
                   role="menuitem"
@@ -360,8 +292,8 @@ defmodule MusicLibraryWeb.RecordComponents do
                 >
                   {gettext("Delete")}
                 </.link>
-              </.focus_wrap>
-            </div>
+              </:links>
+            </.actions_menu>
           </div>
           <p class="pointer-events-none block text-sm font-medium text-zinc-500">
             {format_label(record.format)} · {type_label(record.type)}
@@ -449,15 +381,5 @@ defmodule MusicLibraryWeb.RecordComponents do
     else
       country_code
     end
-  end
-
-  def toggle_actions_menu(record_id) do
-    JS.toggle(to: "#actions-#{record_id}")
-    |> JS.toggle_class("pointer-events-none", to: "#records > li")
-  end
-
-  def close_actions_menu(record_id) do
-    JS.hide(to: "#actions-#{record_id}")
-    |> JS.remove_class("pointer-events-none", to: "#records > li")
   end
 end

@@ -123,10 +123,7 @@ msgstr ""
 msgid "No results"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex
-#: lib/music_library_web/live/artist_live/show.html.heex
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/components/core_components.ex
 #, elixir-autogen, elixir-format
 msgid "Open options"
 msgstr ""
@@ -283,7 +280,6 @@ msgstr ""
 msgid "Scrobble activity"
 msgstr ""
 
-#: lib/music_library_web/components/add_record_component.ex
 #: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Choose which format to import"
