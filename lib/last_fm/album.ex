@@ -1,9 +1,12 @@
 defmodule LastFm.Album do
-  @enforce_keys [:musicbrainz_id, :title]
-  defstruct [:musicbrainz_id, :title]
+  use Ecto.Schema
 
   @type t :: %__MODULE__{
           musicbrainz_id: String.t(),
           title: String.t()
         }
+  embedded_schema do
+    field :musicbrainz_id, :string
+    field :title, :string
+  end
 end

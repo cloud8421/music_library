@@ -1,6 +1,5 @@
 defmodule LastFm.Artist do
-  @enforce_keys [:musicbrainz_id, :name]
-  defstruct [:musicbrainz_id, :name, :summary, :bio, :image, :play_count, :on_tour, :base_url]
+  use Ecto.Schema
 
   @type t :: %__MODULE__{
           musicbrainz_id: String.t(),
@@ -12,6 +11,17 @@ defmodule LastFm.Artist do
           on_tour: boolean(),
           base_url: String.t()
         }
+
+  embedded_schema do
+    field :musicbrainz_id, :string
+    field :name, :string
+    field :summary, :string
+    field :bio, :string
+    field :image, :string
+    field :play_count, :integer, default: 0
+    field :on_tour, :boolean, default: false
+    field :base_url, :string
+  end
 
   def from_api_response(api_response) do
     %__MODULE__{

@@ -5,28 +5,9 @@ defmodule LastFm.Track do
   - musicbrainz_id can be an empty string
   """
 
-  alias LastFm.{Album, Artist}
+  use Ecto.Schema
 
-  @enforce_keys [
-    :musicbrainz_id,
-    :title,
-    :artist,
-    :album,
-    :cover_url,
-    :scrobbled_at_uts,
-    :scrobbled_at_label,
-    :last_fm_data
-  ]
-  defstruct [
-    :musicbrainz_id,
-    :title,
-    :artist,
-    :album,
-    :cover_url,
-    :scrobbled_at_uts,
-    :scrobbled_at_label,
-    :last_fm_data
-  ]
+  alias LastFm.{Album, Artist}
 
   @type t :: %__MODULE__{
           musicbrainz_id: String.t(),
@@ -38,6 +19,19 @@ defmodule LastFm.Track do
           scrobbled_at_label: String.t(),
           last_fm_data: map()
         }
+
+  embedded_schema do
+    field :musicbrainz_id, :string
+    field :title, :string
+    field :cover_url, :string
+    field :scrobbled_at_uts, :integer
+    field :scrobbled_at_label, :string
+
+    embeds_one :artist, Artist
+    embeds_one :album, Album
+
+    field :last_fm_data, :map, default: %{}
+  end
 
   def from_api_response(raw_tracks) do
     Enum.map(raw_tracks, fn t ->
