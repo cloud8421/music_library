@@ -92,7 +92,8 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         cover_url:
           "https://lastfm.freetls.fastly.net/i/u/64s/b301ac9a72f14eb4ce3ddd785eb562b2.jpg",
         scrobbled_at_uts: 1_730_678_348,
-        scrobbled_at_label: "03 Nov 2024, 23:59"
+        scrobbled_at_label: "03 Nov 2024, 23:59",
+        last_fm_data: %{}
       }
 
       the_last_flight_track = %LastFm.Track{
@@ -109,7 +110,8 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         cover_url:
           "https://lastfm.freetls.fastly.net/i/u/64s/7272b50a02fb3e35c59376d2f96cad97.jpg",
         scrobbled_at_uts: 1_730_582_531,
-        scrobbled_at_label: "02 Nov 2024, 21:22"
+        scrobbled_at_label: "02 Nov 2024, 21:22",
+        last_fm_data: %{}
       }
 
       the_mystery_of_time_track = %LastFm.Track{
@@ -126,7 +128,8 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         cover_url:
           "https://lastfm.freetls.fastly.net/i/u/64s/104b3f466df84b67cbbe8eadf503fba4.jpg",
         scrobbled_at_uts: 1_732_103_695,
-        scrobbled_at_label: "20 Nov 2024, 11:54"
+        scrobbled_at_label: "20 Nov 2024, 11:54",
+        last_fm_data: %{}
       }
 
       in_murmuration_track = %LastFm.Track{
@@ -143,7 +146,8 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         cover_url:
           "https://lastfm.freetls.fastly.net/i/u/64s/f4923850113a5d365b1fd2d04cb4c1c3.jpg",
         scrobbled_at_uts: 1_732_399_832,
-        scrobbled_at_label: "23 Nov 2024, 22:10"
+        scrobbled_at_label: "23 Nov 2024, 22:10",
+        last_fm_data: %{}
       }
 
       LastFm.Feed.update([

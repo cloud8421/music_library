@@ -16,7 +16,8 @@ defmodule LastFm.FeedTest do
     },
     cover_url: "https://lastfm.freetls.fastly.net/i/u/64s/9741e297b9884a4294624f0f90e14749.jpg",
     scrobbled_at_uts: 1_731_318_211,
-    scrobbled_at_label: "11 Nov 2024, 09:43"
+    scrobbled_at_label: "11 Nov 2024, 09:43",
+    last_fm_data: %{}
   }
   @track_two %Track{
     musicbrainz_id: "619cb295-b155-3e35-b65a-396a7cd1fc47",
@@ -31,7 +32,8 @@ defmodule LastFm.FeedTest do
     },
     cover_url: "https://lastfm.freetls.fastly.net/i/u/64s/9741e297b9884a4294624f0f90e14749.jpg",
     scrobbled_at_uts: 1_731_318_945,
-    scrobbled_at_label: "11 Nov 2024, 09:55"
+    scrobbled_at_label: "11 Nov 2024, 09:55",
+    last_fm_data: %{}
   }
 
   describe "update and broadcast" do

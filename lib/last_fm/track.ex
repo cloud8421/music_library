@@ -14,7 +14,8 @@ defmodule LastFm.Track do
     :album,
     :cover_url,
     :scrobbled_at_uts,
-    :scrobbled_at_label
+    :scrobbled_at_label,
+    :last_fm_data
   ]
   defstruct [
     :musicbrainz_id,
@@ -23,7 +24,8 @@ defmodule LastFm.Track do
     :album,
     :cover_url,
     :scrobbled_at_uts,
-    :scrobbled_at_label
+    :scrobbled_at_label,
+    :last_fm_data
   ]
 
   @type t :: %__MODULE__{
@@ -33,7 +35,8 @@ defmodule LastFm.Track do
           album: Album.t(),
           cover_url: String.t(),
           scrobbled_at_uts: integer(),
-          scrobbled_at_label: String.t()
+          scrobbled_at_label: String.t(),
+          last_fm_data: map()
         }
 
   def from_api_response(raw_tracks) do
@@ -55,7 +58,8 @@ defmodule LastFm.Track do
         album: album,
         cover_url: parse_cover_url(t),
         scrobbled_at_uts: parse_scrobble_at_uts(t),
-        scrobbled_at_label: t["date"]["#text"]
+        scrobbled_at_label: t["date"]["#text"],
+        last_fm_data: t
       }
     end)
   end
