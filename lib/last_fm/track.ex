@@ -20,11 +20,11 @@ defmodule LastFm.Track do
           last_fm_data: map()
         }
 
-  embedded_schema do
+  @primary_key {:scrobbled_at_uts, :integer, autogenerate: false}
+  schema "scrobbled_tracks" do
     field :musicbrainz_id, :string
     field :title, :string
     field :cover_url, :string
-    field :scrobbled_at_uts, :integer
     field :scrobbled_at_label, :string
 
     embeds_one :artist, Artist
