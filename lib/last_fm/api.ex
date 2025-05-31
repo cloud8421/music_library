@@ -120,12 +120,12 @@ defmodule LastFm.API do
       # that end up hitting timeouts (at default values),
       # so we make them shorter to leverage retries
       max_retries: 1,
-      pool_timeout: 1000,
+      pool_timeout: 10_000,
       # the maximum number of milliseconds that a pool can be idle before
       # being terminated, Setting it to a low value so that it gets
       # terminated and we don't get failures after the vm resumes.
-      pool_max_idle_time: 1000,
-      receive_timeout: 1000,
+      pool_max_idle_time: 10_000,
+      receive_timeout: 2500,
       connect_options: [
         timeout: 2500
       ],
