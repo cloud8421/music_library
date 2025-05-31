@@ -1,5 +1,6 @@
 defmodule LastFm do
-  alias LastFm.{API, Feed, Refresh, Scrobble}
+  alias LastFm.{API, Feed, Refresh, Scrobble, Track, Worker}
+  alias MusicLibrary.{BackgroundRepo, Repo}
 
   def get_scrobbled_tracks, do: Feed.all_tracks()
 
@@ -7,9 +8,21 @@ defmodule LastFm do
 
   def refresh_scrobbled_tracks, do: Refresh.refresh()
 
-  def get_tracks(to_uts) do
+  def get_tracks(opts) do
     last_fm_config = last_fm_config()
-    API.get_recent_tracks(to_uts, last_fm_config)
+    API.get_recent_tracks(opts, last_fm_config)
+  end
+
+  def lowest_scrobbled_at_uts do
+    Repo.aggregate(Track, :min, :scrobbled_at_uts)
+  end
+
+  def backfill_scrobbled_tracks do
+    to_uts = lowest_scrobbled_at_uts()
+
+    %{"to_uts" => to_uts}
+    |> Worker.BackfillScrobbledTracks.new()
+    |> BackgroundRepo.insert()
   end
 
   def get_artist_info(musicbrainz_id, name) do

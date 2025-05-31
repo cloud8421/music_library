@@ -10,8 +10,8 @@ defmodule LastFm.Import do
     :last_fm_data
   ]
 
-  def batch(uts_to) do
-    with {:ok, tracks} <- LastFm.get_tracks(uts_to) do
+  def batch(opts) do
+    with {:ok, tracks} <- LastFm.get_tracks(opts) do
       track_params =
         tracks
         |> Enum.map(fn t -> Map.take(t, @insertable_fields) end)
