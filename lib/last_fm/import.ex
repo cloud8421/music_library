@@ -17,7 +17,11 @@ defmodule LastFm.Import do
         |> Enum.map(fn t -> Map.take(t, @insertable_fields) end)
         |> Enum.map(&Map.to_list/1)
 
-      MusicLibrary.Repo.insert_all(LastFm.Track, track_params)
+      # HACK: if two tracks happen to have the exact same scrobbled_at_uts,
+      # we move it by a sec.
+      MusicLibrary.Repo.insert_all(LastFm.Track, track_params,
+        on_conflict: [inc: [scrobbled_at_uts: -1]]
+      )
     end
   end
 end
