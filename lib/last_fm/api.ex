@@ -51,11 +51,13 @@ defmodule LastFm.API do
     |> post_request()
   end
 
-  def get_recent_tracks(config) do
+  def get_recent_tracks(to_uts \\ nil, config) do
     params =
       config
       |> base_params()
       |> Keyword.merge(method: "user.getrecenttracks", limit: 50)
+
+    params = if to_uts, do: Keyword.put(params, :to, to_uts), else: params
 
     config
     |> new_request()

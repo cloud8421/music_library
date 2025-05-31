@@ -7,6 +7,11 @@ defmodule LastFm do
 
   def refresh_scrobbled_tracks, do: Refresh.refresh()
 
+  def get_tracks(to_uts) do
+    last_fm_config = last_fm_config()
+    API.get_recent_tracks(to_uts, last_fm_config)
+  end
+
   def get_artist_info(musicbrainz_id, name) do
     last_fm_config = last_fm_config()
 
