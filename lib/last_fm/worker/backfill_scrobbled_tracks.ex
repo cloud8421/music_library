@@ -3,8 +3,8 @@ defmodule LastFm.Worker.BackfillScrobbledTracks do
 
   alias MusicLibrary.BackgroundRepo
 
-  @backfill_delay 5
-  @batch_size 100
+  @backfill_delay 1
+  @batch_size 200
 
   @impl Oban.Worker
   def perform(%{args: %{"to_uts" => to_uts}}) do
