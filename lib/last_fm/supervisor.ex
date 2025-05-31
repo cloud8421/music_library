@@ -7,8 +7,6 @@ defmodule LastFm.Supervisor do
 
   @impl true
   def init(config) do
-    :ok = LastFm.Feed.create_table!()
-
     children = [
       {Phoenix.PubSub, name: LastFm.PubSub},
       {LastFm.Refresh, config}

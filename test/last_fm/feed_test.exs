@@ -1,5 +1,5 @@
 defmodule LastFm.FeedTest do
-  use ExUnit.Case, async: true
+  use MusicLibrary.DataCase
 
   alias LastFm.{Album, Artist, Feed, Track}
 
@@ -46,7 +46,13 @@ defmodule LastFm.FeedTest do
 
     test "it returns tracks in descending order of scrobble" do
       :ok = Feed.update([@track_two, @track_one])
-      assert [@track_two, @track_one] == Feed.all_tracks()
+      track_two_scrobbled_at_uts = @track_two.scrobbled_at_uts
+      track_one_scrobbled_at_uts = @track_one.scrobbled_at_uts
+
+      assert [
+               %{scrobbled_at_uts: ^track_two_scrobbled_at_uts},
+               %{scrobbled_at_uts: ^track_one_scrobbled_at_uts}
+             ] = Feed.all_tracks(10)
     end
   end
 end

@@ -8,34 +8,44 @@ defmodule LastFm.Feed do
   to one track at a time, and the timestamp has second-level precision.
   """
 
-  @spec create_table!() :: :ok | no_return
-  def create_table! do
-    __MODULE__ = :ets.new(__MODULE__, [:ordered_set, :named_table, :public])
-    :ok
-  end
+  import Ecto.Query
+
+  @insertable_fields [
+    :musicbrainz_id,
+    :title,
+    :artist,
+    :album,
+    :cover_url,
+    :scrobbled_at_uts,
+    :scrobbled_at_label,
+    :last_fm_data
+  ]
 
   @spec update([LastFm.Track.t()]) :: :ok | no_return
   def update(tracks) do
-    data = Enum.map(tracks, fn t -> {t.scrobbled_at_uts, t} end)
+    track_params =
+      tracks
+      |> Enum.map(fn t -> Map.take(t, @insertable_fields) end)
+      |> Enum.map(&Map.to_list/1)
 
-    :ets.delete_all_objects(__MODULE__)
-    :ets.insert(__MODULE__, data)
+    # HACK: if two tracks happen to have the exact same scrobbled_at_uts,
+    # we move it by a sec.
+    MusicLibrary.Repo.insert_all(LastFm.Track, track_params,
+      on_conflict: :nothing,
+      conflict_target: [:scrobbled_at_uts, :title]
+    )
 
     Phoenix.PubSub.broadcast(LastFm.PubSub, "feed:update", %{tracks: tracks})
   end
 
-  @spec all_tracks() :: [LastFm.Track.t()]
-  def all_tracks do
-    m = [
-      {
-        {:_, :_},
-        [],
-        [{:element, 2, :"$_"}]
-      }
-    ]
+  @spec all_tracks(non_neg_integer()) :: [LastFm.Track.t()]
+  def all_tracks(limit) do
+    q =
+      from t in LastFm.Track,
+        order_by: {:desc, t.scrobbled_at_uts},
+        limit: ^limit
 
-    # reversing to get tracks in DESC order
-    :ets.select_reverse(__MODULE__, m)
+    MusicLibrary.Repo.all(q)
   end
 
   @spec subscribe() :: :ok
