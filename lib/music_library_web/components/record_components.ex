@@ -323,7 +323,7 @@ defmodule MusicLibraryWeb.RecordComponents do
         <.format_badge release={@release} />
       </div>
       <div class="text-right">
-        <span class="text-xs md:text-sm">{@release.date}</span>
+        <span class="text-xs md:text-sm">{Records.Record.format_release_date(@release.date)}</span>
         <span>{country_label(@release.country)}</span>
       </div>
       <div class="col-span-2">
@@ -364,7 +364,7 @@ defmodule MusicLibraryWeb.RecordComponents do
     [
       release.catalog_number,
       ReleaseSearchResult.format(release),
-      release.date,
+      Records.Record.format_release_date(release.date),
       country_label(release.country)
     ]
     |> Enum.reject(fn fragment -> fragment in [nil, ""] end)
