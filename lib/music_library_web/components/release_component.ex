@@ -10,7 +10,8 @@ defmodule MusicLibraryWeb.ReleaseComponent do
   def mount(socket) do
     {:ok,
      socket
-     |> assign(:can_scrobble?, ScrobbleActivity.can_scrobble?())}
+     |> assign(:can_scrobble?, ScrobbleActivity.can_scrobble?())
+     |> assign(:already_scrobbled, false)}
   end
 
   @impl true
@@ -23,6 +24,10 @@ defmodule MusicLibraryWeb.ReleaseComponent do
          {:ok, %{release_with_tracks: MusicBrainz.Release.from_api_response(release)}}
        end
      end)}
+  end
+
+  def update(%{already_scrobbled: _already_scrobbled} = assigns, socket) do
+    {:ok, assign(socket, assigns)}
   end
 
   @impl true
@@ -40,6 +45,7 @@ defmodule MusicLibraryWeb.ReleaseComponent do
           <.button
             :if={@can_scrobble?}
             size="sm"
+            disabled={@already_scrobbled}
             phx-click="scrobble_release"
             phx-target={@myself}
             phx-disable-with={gettext("Scrobbling...")}
@@ -79,6 +85,7 @@ defmodule MusicLibraryWeb.ReleaseComponent do
                 <.button
                   :if={@can_scrobble?}
                   size="sm"
+                  disabled={@already_scrobbled}
                   phx-click="scrobble_medium"
                   phx-value-number={medium.number}
                   phx-target={@myself}
@@ -135,8 +142,11 @@ defmodule MusicLibraryWeb.ReleaseComponent do
          release_with_tracks_async_result && release_with_tracks_async_result.result do
       case ScrobbleActivity.scrobble_release(release_with_tracks, finished_at: DateTime.utc_now()) do
         {:ok, _} ->
+          send_update_after(socket.assigns.myself, %{already_scrobbled: false}, 3000)
+
           {:noreply,
            socket
+           |> assign(:already_scrobbled, true)
            |> put_flash(:info, gettext("Release scrobbled successfully"))}
 
         {:error, reason} ->
@@ -162,8 +172,11 @@ defmodule MusicLibraryWeb.ReleaseComponent do
              finished_at: DateTime.utc_now()
            ) do
         {:ok, _} ->
+          send_update_after(socket.assigns.myself, %{already_scrobbled: false}, 3000)
+
           {:noreply,
            socket
+           |> assign(:already_scrobbled, true)
            |> put_flash(:info, gettext("Disc scrobbled successfully"))}
 
         {:error, reason} ->
