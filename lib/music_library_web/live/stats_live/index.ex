@@ -143,7 +143,13 @@ defmodule MusicLibraryWeb.StatsLive.Index do
      |> assign(scrobble_activity_mode: String.to_existing_atom(mode))}
   end
 
-  def handle_info(%{tracks: recent_tracks}, socket) do
+  def handle_info(%{track_count: 0}, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_info(%{track_count: _count}, socket) do
+    recent_tracks = LastFm.get_scrobbled_tracks()
+
     {:noreply,
      socket
      |> assign_scrobble_activity(recent_tracks)}

@@ -2,7 +2,7 @@ defmodule LastFm do
   alias LastFm.{API, Feed, Refresh, Scrobble, Track, Worker}
   alias MusicLibrary.{BackgroundRepo, Repo}
 
-  def get_scrobbled_tracks, do: Feed.all_tracks(100)
+  def get_scrobbled_tracks(limit \\ 100), do: Feed.all_tracks(limit)
 
   def subscribe_to_feed, do: Feed.subscribe()
 
