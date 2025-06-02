@@ -53,7 +53,7 @@ defmodule LastFm.API do
 
   def get_recent_tracks(opts \\ [], config) do
     to_uts = Keyword.get(opts, :to_uts)
-    limit = Keyword.get(opts, :limit, 50)
+    limit = Keyword.get(opts, :limit, 100)
 
     params =
       config
