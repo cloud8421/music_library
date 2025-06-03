@@ -251,6 +251,15 @@
             {Records.Record.format_as_date(@record.updated_at)}
           </dd>
         </div>
+        <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+            {gettext("Last listened at")}
+          </dt>
+          <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+            {@last_listened_track &&
+              localize_scrobbled_at(@last_listened_track.scrobbled_at_uts, @timezone)}
+          </dd>
+        </div>
       </dl>
     </div>
   </div>

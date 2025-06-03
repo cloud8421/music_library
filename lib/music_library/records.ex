@@ -211,6 +211,23 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  def get_last_listened_track(record_id) do
+    q =
+      from r in fragment("records, json_each(records.release_ids)"),
+        where: fragment("records.id = ?", ^record_id),
+        select: r.value
+
+    release_ids = Repo.all(q)
+
+    q =
+      from t in LastFm.Track,
+        where: fragment("? ->> '$.musicbrainz_id'", t.album) in ^release_ids,
+        order_by: [desc: t.scrobbled_at_uts],
+        limit: 1
+
+    Repo.one(q)
+  end
+
   def refresh_cover(record) do
     with {:ok, cover_data} <- MusicBrainz.get_cover_art({:url, record.cover_url}) do
       {:ok, thumb_data} = Cover.resize(cover_data)

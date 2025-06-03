@@ -177,7 +177,7 @@ defmodule MusicLibrary.ScrobbleActivity do
     track.artist.musicbrainz_id
   end
 
-  defp localize_scrobbled_at(uts, timezone) do
+  def localize_scrobbled_at(uts, timezone) do
     ldt =
       uts
       |> DateTime.from_unix!()

@@ -879,3 +879,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Insertion"
 msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Last listened at"
+msgstr ""

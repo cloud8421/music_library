@@ -1,6 +1,8 @@
 defmodule MusicLibraryWeb.CollectionLive.Show do
   use MusicLibraryWeb, :live_view
 
+  import MusicLibrary.ScrobbleActivity, only: [localize_scrobbled_at: 2]
+
   import MusicLibraryWeb.RecordComponents,
     only: [
       format_label: 1,
@@ -19,6 +21,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
     {:ok,
      socket
+     |> assign(:timezone, resolve_timezone!())
      |> assign(:can_scrobble?, ScrobbleActivity.can_scrobble?())
      |> assign(:release_with_tracks, nil)}
   end
@@ -26,6 +29,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
     record = Records.get_record!(id)
+    last_listened_track = Records.get_last_listened_track(id)
 
     socket =
       if record.selected_release_id do
@@ -38,7 +42,8 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
      socket
      |> assign(:current_section, :collection)
      |> assign(:page_title, page_title(socket.assigns.live_action, record))
-     |> assign(:record, record)}
+     |> assign(:record, record)
+     |> assign(:last_listened_track, last_listened_track)}
   end
 
   @impl true
@@ -154,4 +159,9 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
   defp title_segment(:show), do: gettext("Show")
   defp title_segment(:edit), do: gettext("Edit")
+
+  defp resolve_timezone! do
+    Application.get_env(:music_library, MusicLibraryWeb)
+    |> Keyword.fetch!(:timezone)
+  end
 end
