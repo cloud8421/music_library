@@ -188,7 +188,8 @@ defmodule MusicLibrary.Records.Record do
           name: artist["name"],
           musicbrainz_id: artist["id"],
           sort_name: artist["sort-name"],
-          disambiguation: artist["disambiguation"]
+          disambiguation: artist["disambiguation"],
+          joinphrase: artist["joinphrase"]
         }
       end)
 

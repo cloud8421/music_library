@@ -8,11 +8,12 @@ defmodule MusicLibrary.Artists.Artist do
     field :name, :string
     field :sort_name, :string
     field :disambiguation, :string
+    field :joinphrase, :string, default: " and "
   end
 
   def changeset(artist, attrs) do
     artist
-    |> cast(attrs, [:name, :sort_name, :disambiguation, :musicbrainz_id])
+    |> cast(attrs, [:name, :sort_name, :disambiguation, :joinphrase, :musicbrainz_id])
     |> validate_required([:name, :sort_name, :musicbrainz_id])
   end
 end

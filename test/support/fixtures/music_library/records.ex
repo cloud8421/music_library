@@ -102,7 +102,8 @@ defmodule MusicLibrary.Fixtures.Records do
       name: name,
       musicbrainz_id: artist_uuid(name),
       sort_name: name,
-      disambiguation: name
+      disambiguation: name,
+      joinphrase: " and "
     }
   end
 
