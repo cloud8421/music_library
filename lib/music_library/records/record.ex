@@ -37,6 +37,13 @@ defmodule MusicLibrary.Records.Record do
     Enum.map_join(record.artists, ", ", fn artist -> artist.name end)
   end
 
+  def main_artist(record) do
+    case record.artists do
+      [] -> nil
+      [main_artist | _] -> main_artist
+    end
+  end
+
   def artist_ids(record) do
     Enum.map(record.artists, fn artist -> artist.musicbrainz_id end)
   end

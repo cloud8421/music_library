@@ -29,7 +29,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
     record = Records.get_record!(id)
-    last_listened_track = Records.get_last_listened_track(id)
+    last_listened_track = Records.get_last_listened_track(record)
 
     socket =
       if record.selected_release_id do
