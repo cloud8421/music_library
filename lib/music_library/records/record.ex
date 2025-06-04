@@ -28,7 +28,7 @@ defmodule MusicLibrary.Records.Record do
     field :release_ids, {:array, :string}, default: []
     field :included_release_group_ids, {:array, :string}, default: []
 
-    embeds_many :artists, Artist
+    embeds_many :artists, Artist, on_replace: :delete
 
     timestamps(type: :utc_datetime)
   end
@@ -134,7 +134,9 @@ defmodule MusicLibrary.Records.Record do
 
   def add_musicbrainz_data(record, musicbrainz_data) do
     record
-    |> change(musicbrainz_data: musicbrainz_data)
+    |> change()
+    |> force_change(:musicbrainz_data, musicbrainz_data)
+    |> update_artists()
     |> update_release_ids()
     |> update_included_release_group_ids()
   end
@@ -163,6 +165,16 @@ defmodule MusicLibrary.Records.Record do
     end
   end
 
+  defp update_artists(changeset) do
+    case get_change(changeset, :musicbrainz_data) do
+      nil ->
+        changeset
+
+      musicbrainz_data ->
+        put_change(changeset, :artists, parse_artists(musicbrainz_data))
+    end
+  end
+
   defp update_included_release_group_ids(changeset) do
     case get_change(changeset, :musicbrainz_data) do
       nil ->
@@ -180,18 +192,7 @@ defmodule MusicLibrary.Records.Record do
   def attrs_from_release_group(release_group) do
     musicbrainz_id = release_group["id"]
 
-    artists_attrs =
-      release_group
-      |> get_in(["artist-credit", Access.all(), "artist"])
-      |> Enum.map(fn artist ->
-        %{
-          name: artist["name"],
-          musicbrainz_id: artist["id"],
-          sort_name: artist["sort-name"],
-          disambiguation: artist["disambiguation"],
-          joinphrase: artist["joinphrase"]
-        }
-      end)
+    artists_attrs = parse_artists(release_group)
 
     %{
       "musicbrainz_id" => musicbrainz_id,
@@ -204,6 +205,20 @@ defmodule MusicLibrary.Records.Record do
       "release_ids" => Enum.map(release_group["releases"], fn r -> r["id"] end),
       "cover_url" => "https://coverartarchive.org/release-group/#{musicbrainz_id}/front"
     }
+  end
+
+  defp parse_artists(musicbrainz_data) do
+    musicbrainz_data
+    |> get_in(["artist-credit", Access.all()])
+    |> Enum.map(fn artist_credit ->
+      %{
+        name: artist_credit["artist"]["name"],
+        musicbrainz_id: artist_credit["artist"]["id"],
+        sort_name: artist_credit["artist"]["sort-name"],
+        disambiguation: artist_credit["artist"]["disambiguation"],
+        joinphrase: artist_credit["joinphrase"]
+      }
+    end)
   end
 
   defp parse_subtype("Album"), do: :album

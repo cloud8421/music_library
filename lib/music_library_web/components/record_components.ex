@@ -46,13 +46,17 @@ defmodule MusicLibraryWeb.RecordComponents do
           </div>
           <div class="min-w-0 flex-auto">
             <h1 class="text-sm leading-6 text-zinc-700">
-              <.link
-                :for={artist <- record.artists}
-                class="text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
-                navigate={~p"/artists/#{artist.musicbrainz_id}"}
-              >
-                {artist.name}
-              </.link>
+              <span :for={artist <- record.artists}>
+                <.link
+                  class="text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
+                  navigate={~p"/artists/#{artist.musicbrainz_id}"}
+                >
+                  {artist.name}
+                </.link>
+                <span class="text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+                  {artist.joinphrase}
+                </span>
+              </span>
             </h1>
             <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
               {record.title}

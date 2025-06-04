@@ -8,7 +8,7 @@ defmodule MusicLibrary.Artists.Artist do
     field :name, :string
     field :sort_name, :string
     field :disambiguation, :string
-    field :joinphrase, :string, default: " and "
+    field :joinphrase, :string, default: ""
   end
 
   def changeset(artist, attrs) do

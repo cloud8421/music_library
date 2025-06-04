@@ -72,7 +72,7 @@ defmodule MusicLibrary.RecordsTest do
   end
 
   describe "refresh_musicbrainz_data/1" do
-    test "updates release_ids and included_release_group_ids" do
+    test "updates release_ids, included_release_group_ids, and artists" do
       release_group_id = release_group_id(:marbles)
 
       record =
@@ -101,6 +101,8 @@ defmodule MusicLibrary.RecordsTest do
 
       assert record.release_ids !== updated_record.release_ids
       assert record.included_release_group_ids !== updated_record.included_release_group_ids
+      assert record.artists !== updated_record.artists
+      assert updated_record.artists !== []
     end
   end
 
