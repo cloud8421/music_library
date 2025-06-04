@@ -5,6 +5,25 @@ defmodule MusicLibraryWeb.RecordComponents do
   alias MusicLibrary.Records
   alias Phoenix.LiveView.JS
 
+  attr :artists, :list, required: true
+  attr :joinphrase_class, :string, default: nil
+
+  def artist_links(assigns) do
+    ~H"""
+    <span :for={artist <- @artists}>
+      <.link
+        class="text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
+        navigate={~p"/artists/#{artist.musicbrainz_id}"}
+      >
+        {artist.name}
+      </.link>
+      <span class={[@joinphrase_class, "leading-5 text-zinc-400 dark:text-zinc-300"]}>
+        {artist.joinphrase}
+      </span>
+    </span>
+    """
+  end
+
   attr :record_show_path, :any, required: true
   attr :record_edit_path, :any, required: true
   attr :records, :list, required: true
@@ -46,17 +65,7 @@ defmodule MusicLibraryWeb.RecordComponents do
           </div>
           <div class="min-w-0 flex-auto">
             <h1 class="text-sm leading-6 text-zinc-700">
-              <span :for={artist <- record.artists}>
-                <.link
-                  class="text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
-                  navigate={~p"/artists/#{artist.musicbrainz_id}"}
-                >
-                  {artist.name}
-                </.link>
-                <span class="text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-                  {artist.joinphrase}
-                </span>
-              </span>
+              <.artist_links joinphrase_class="text-xs" artists={record.artists} />
             </h1>
             <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
               {record.title}

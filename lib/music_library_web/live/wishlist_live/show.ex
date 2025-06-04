@@ -5,7 +5,8 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
     only: [
       format_label: 1,
       type_label: 1,
-      release_summary: 1
+      release_summary: 1,
+      artist_links: 1
     ]
 
   alias MusicLibrary.Records
