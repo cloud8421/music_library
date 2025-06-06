@@ -50,7 +50,7 @@ defmodule MusicLibrary.Records do
   defmacro order_alphabetically do
     quote do
       fragment(
-        "unaccent(json_extract(artists, '$[0].sort_name')) COLLATE NOCASE ASC, unaccent(title) COLLATE NOCASE ASC"
+        "unaccent(artists ->> '$[0].sort_name') COLLATE NOCASE ASC, unaccent(title) COLLATE NOCASE ASC"
       )
     end
   end

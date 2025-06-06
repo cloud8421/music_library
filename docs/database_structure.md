@@ -126,7 +126,7 @@ A view that extracts artist information from the embedded JSON in the records ta
 
 ```sql
 CREATE VIEW artist_records AS
-  SELECT json_extract(json_each.value, '$.musicbrainz_id') AS musicbrainz_id,
+  SELECT json_each.value ->> '$.musicbrainz_id' AS musicbrainz_id,
   records.id AS record_id,
   json_each.value as artist
   FROM records,
@@ -134,6 +134,7 @@ CREATE VIEW artist_records AS
 ```
 
 This view is crucial for querying artist information as it:
+
 - Extracts individual artists from the embedded JSON array in the records table
 - Provides a normalized view of the artist-record relationships
 - Makes it easier to query records by artist

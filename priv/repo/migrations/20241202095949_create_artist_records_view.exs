@@ -4,7 +4,7 @@ defmodule MusicLibrary.Repo.Migrations.CreateArtistRecordsView do
   def up do
     execute """
     CREATE VIEW artist_records AS
-      SELECT json_extract(json_each.value, '$.musicbrainz_id') AS musicbrainz_id, 
+      SELECT json_each.value ->> '$.musicbrainz_id' AS musicbrainz_id, 
       records.id AS record_id,
       json_each.value as artist
       FROM records, 

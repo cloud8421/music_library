@@ -78,11 +78,11 @@ defmodule MusicLibrary.Collection do
     q =
       from r in fragment("records, json_each(records.artists)"),
         where: fragment("records.purchased_at IS NOT NULL"),
-        group_by: fragment("json_extract(?, '$.name')", r.value),
+        group_by: fragment("? ->> '$.name'", r.value),
         order_by: [desc: fragment("count(1)")],
         select: %{
-          id: fragment("json_extract(?, '$.musicbrainz_id')", r.value),
-          name: fragment("json_extract(?, '$.name')", r.value),
+          id: fragment("? ->> '$.musicbrainz_id'", r.value),
+          name: fragment("? ->> '$.name'", r.value),
           count: fragment("count(1)")
         },
         limit: ^limit
