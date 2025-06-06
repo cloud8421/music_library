@@ -1,0 +1,8 @@
+{
+  "enableAllProjectMcpServers": false,
+  "permissions": {
+    "allow": [
+      "mcp__tidewave__get_ecto_schemas"
+    ]
+  }
+}
