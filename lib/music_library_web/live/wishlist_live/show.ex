@@ -6,7 +6,8 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
       format_label: 1,
       type_label: 1,
       release_summary: 1,
-      artist_links: 1
+      artist_links: 1,
+      record_colors: 1
     ]
 
   alias MusicLibrary.Records
@@ -24,12 +25,14 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
     record = Records.get_record!(id)
+    {:ok, dominant_colors} = Records.DominantColors.extract_dominant_colors(record.cover_data)
 
     {:noreply,
      socket
      |> assign(:current_section, :wishlist)
      |> assign(:page_title, page_title(socket.assigns.live_action, record))
-     |> assign(:record, record)}
+     |> assign(:record, record)
+     |> assign(:dominant_colors, dominant_colors)}
   end
 
   @impl true

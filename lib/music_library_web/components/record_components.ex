@@ -395,4 +395,19 @@ defmodule MusicLibraryWeb.RecordComponents do
       country_code
     end
   end
+
+  attr :colors, :list, required: true
+
+  def record_colors(assigns) do
+    ~H"""
+    <span class="flex items-center">
+      <span
+        :for={color <- @colors}
+        class="inline-block w-4 h-4 mr-1"
+        style={"background-color: #{color}"}
+      >
+      </span>
+    </span>
+    """
+  end
 end
