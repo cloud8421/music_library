@@ -3,6 +3,7 @@
 @source "../js";
 @source "../../lib/music_library_web";
 @source "../../deps/fluxon/**/*.*ex";
+@source "../../deps/live_toast/lib/**/*.*ex";
 
 /* A Tailwind plugin that makes "hero-#{ICON}" classes available.
    The heroicons installation itself is managed by your mix.exs */

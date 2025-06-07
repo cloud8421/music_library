@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "barcode-detector": "^3.0.0",
-    "canvas-confetti": "^1.9.3"
+    "canvas-confetti": "^1.9.3",
+    "live_toast": "file:../deps/live_toast"
   }
 }

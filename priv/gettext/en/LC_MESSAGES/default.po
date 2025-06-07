@@ -52,11 +52,6 @@ msgstr ""
 msgid "Error importing record"
 msgstr ""
 
-#: lib/music_library_web/components/core_components.ex
-#, elixir-autogen, elixir-format
-msgid "Error!"
-msgstr ""
-
 #: lib/music_library_web/components/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Format"
@@ -71,11 +66,6 @@ msgstr ""
 #: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Genres"
-msgstr ""
-
-#: lib/music_library_web/components/core_components.ex
-#, elixir-autogen, elixir-format
-msgid "Hang in there while we get back on track"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/show.html.heex
@@ -186,20 +176,10 @@ msgstr ""
 msgid "Show"
 msgstr ""
 
-#: lib/music_library_web/components/core_components.ex
-#, elixir-autogen, elixir-format
-msgid "Something went wrong!"
-msgstr ""
-
 #: lib/music_library_web/components/layouts/app.html.heex
 #: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Stats"
-msgstr ""
-
-#: lib/music_library_web/components/core_components.ex
-#, elixir-autogen, elixir-format
-msgid "Success!"
 msgstr ""
 
 #: lib/music_library_web/hooks/static_assets.ex
@@ -254,11 +234,6 @@ msgstr ""
 #: lib/music_library_web/auth.ex
 #, elixir-autogen, elixir-format
 msgid "You must be logged in to access this page"
-msgstr ""
-
-#: lib/music_library_web/components/core_components.ex
-#, elixir-autogen, elixir-format
-msgid "close"
 msgstr ""
 
 #: lib/music_library_web/live/artist_live/show.html.heex
@@ -803,11 +778,6 @@ msgstr ""
 #: lib/music_library_web/components/release_component.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Scrobble disc"
-msgstr ""
-
-#: lib/music_library_web/components/core_components.ex
-#, elixir-autogen, elixir-format
-msgid "Warning!"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex

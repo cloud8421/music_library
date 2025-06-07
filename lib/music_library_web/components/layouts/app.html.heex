@@ -90,7 +90,12 @@
 </nav>
 <main class="px-4 py-4 max-sm:pb-20 sm:px-6 lg:px-8">
   <div class="mx-auto max-w-screen-xl">
-    <.flash_group flash={@flash} />
+    <LiveToast.toast_group
+      flash={@flash}
+      corner={:top_right}
+      connected={assigns[:socket] != nil}
+      toasts_sync={assigns[:toasts_sync]}
+    />
     {@inner_content}
   </div>
 </main>

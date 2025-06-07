@@ -24,9 +24,11 @@ import topbar from "../vendor/topbar";
 import { Hooks as FluxonHooks, DOM as FluxonDOM } from "fluxon";
 import BarcodeScannerHook from "./barcode-scanner";
 import confetti from "canvas-confetti";
+import { createLiveToastHook } from "live_toast";
 
 let Hooks = FluxonHooks;
 Hooks.BarcodeScanner = BarcodeScannerHook;
+Hooks.LiveToast = createLiveToastHook();
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")

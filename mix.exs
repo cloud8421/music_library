@@ -65,6 +65,7 @@ defmodule MusicLibrary.MixProject do
        depth: 1},
       {:fluxon, "~> 1.1.0", repo: :fluxon},
       {:flagmojis, "~> 1.0"},
+      {:live_toast, "~> 0.8.0"},
 
       # Dev tooling
       {:phoenix_live_reload, "~> 1.2", only: :dev},
