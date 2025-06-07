@@ -49,7 +49,7 @@ defmodule MusicLibrary.Records.DominantColors do
     height = Image.height(image)
 
     # Sample every nth pixel to get a good distribution
-    sample_step = max(1, div(min(width, height), 20))
+    sample_step = max(1, div(min(width, height), 10))
 
     pixels =
       for y <- 0..(height - 1)//sample_step,
