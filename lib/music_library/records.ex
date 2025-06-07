@@ -6,7 +6,7 @@ defmodule MusicLibrary.Records do
   import Ecto.Query, warn: false
 
   alias MusicLibrary.Artists
-  alias MusicLibrary.Records.{ArtistRecord, Cover, Record, SearchParser}
+  alias MusicLibrary.Records.{ArtistRecord, Cover, DominantColors, Record, SearchParser}
   alias MusicLibrary.{BackgroundRepo, Repo, Worker}
 
   def essential_fields do
@@ -251,6 +251,21 @@ defmodule MusicLibrary.Records do
 
     params
     |> Worker.RefreshCover.new(meta: meta)
+    |> BackgroundRepo.insert()
+  end
+
+  def generate_dominant_colors(record) do
+    with {:ok, colors} <- DominantColors.extract_dominant_colors(record.cover_data) do
+      update_record(record, %{"dominant_colors" => colors})
+    end
+  end
+
+  def generate_dominant_colors_async(record) do
+    meta = %{title: record.title, artists: Enum.map(record.artists, & &1.name)}
+    params = %{"id" => record.id}
+
+    params
+    |> Worker.GenerateDominantColors.new(meta: meta)
     |> BackgroundRepo.insert()
   end
 
