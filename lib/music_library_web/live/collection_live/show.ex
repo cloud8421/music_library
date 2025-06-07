@@ -31,6 +31,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   def handle_params(%{"id" => id}, _, socket) do
     record = Records.get_record!(id)
     last_listened_track = Records.get_last_listened_track(record)
+    {:ok, dominant_colors} = Records.DominantColors.extract_dominant_colors(record.cover_data)
 
     socket =
       if record.selected_release_id do
@@ -44,6 +45,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
      |> assign(:current_section, :collection)
      |> assign(:page_title, page_title(socket.assigns.live_action, record))
      |> assign(:record, record)
+     |> assign(:dominant_colors, dominant_colors)
      |> assign(:last_listened_track, last_listened_track)}
   end
 
