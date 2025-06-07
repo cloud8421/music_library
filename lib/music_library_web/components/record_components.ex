@@ -396,13 +396,13 @@ defmodule MusicLibraryWeb.RecordComponents do
     end
   end
 
-  attr :colors, :list, required: true
+  attr :record, Records.Record, required: true
 
   def record_colors(assigns) do
     ~H"""
     <span class="flex items-center">
       <span
-        :for={color <- @colors}
+        :for={color <- @record.dominant_colors}
         class="inline-block w-4 h-4 mr-1"
         style={"background-color: #{color}"}
       >
