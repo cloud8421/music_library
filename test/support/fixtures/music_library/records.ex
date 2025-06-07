@@ -69,7 +69,8 @@ defmodule MusicLibrary.Fixtures.Records do
         selected_release_id: "d3f9b9e2-73f5-4b47-a2a7-2c2199aad608",
         release_date: Enum.random(1969..2024) |> Integer.to_string(),
         purchased_at: current_time,
-        artists: [artist_attrs(artist_name)]
+        artists: [artist_attrs(artist_name)],
+        dominant_colors: ["#000000", "#C0C0C0", "#C08080", "#404000", "#804040"]
       })
       |> MusicLibrary.Records.create_record()
 

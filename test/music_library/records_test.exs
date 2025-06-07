@@ -44,6 +44,14 @@ defmodule MusicLibrary.RecordsTest do
 
       assert record.cover_hash ==
                "599407DDF69907D4A60FE13CCAA824D25CF08DC124FD6AA3E8E7ECD98C885FFE"
+
+      assert record.dominant_colors == [
+               "#000000",
+               "#C0C0C0",
+               "#C08080",
+               "#404000",
+               "#804040"
+             ]
     end
 
     test "it queues a task to retrieve artist info data" do

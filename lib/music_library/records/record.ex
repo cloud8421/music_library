@@ -5,7 +5,7 @@ defmodule MusicLibrary.Records.Record do
 
   alias MusicBrainz.{Release, ReleaseGroup}
   alias MusicLibrary.Artists.Artist
-  alias MusicLibrary.Records.Cover
+  alias MusicLibrary.Records.{Cover, DominantColors}
 
   @formats [:cd, :backup, :vinyl, :blu_ray, :dvd, :multi]
   @types [:album, :ep, :live, :compilation, :single, :other]
@@ -27,6 +27,7 @@ defmodule MusicLibrary.Records.Record do
     field :selected_release_id, :string
     field :release_ids, {:array, :string}, default: []
     field :included_release_group_ids, {:array, :string}, default: []
+    field :dominant_colors, {:array, :string}, default: []
 
     embeds_many :artists, Artist, on_replace: :delete
 
@@ -112,14 +113,26 @@ defmodule MusicLibrary.Records.Record do
       :included_release_group_ids,
       :cover_url,
       :cover_data,
+      :dominant_colors,
       :purchased_at
     ])
     |> cast_embed(:artists)
     |> validate_required([:type, :title, :musicbrainz_id, :genres])
     |> unique_constraint(:musicbrainz_id, name: "records_musicbrainz_id_format_index")
     |> generate_cover_hash()
+    |> maybe_generate_dominant_colors()
     |> update_release_ids()
     |> update_included_release_group_ids()
+  end
+
+  defp maybe_generate_dominant_colors(changeset) do
+    case get_change(changeset, :dominant_colors) do
+      nil ->
+        generate_dominant_colors(changeset)
+
+      _dominant_colors ->
+        changeset
+    end
   end
 
   def add_genres(record, genres) do
@@ -130,6 +143,7 @@ defmodule MusicLibrary.Records.Record do
     record
     |> change(cover_data: cover_data)
     |> generate_cover_hash()
+    |> generate_dominant_colors()
   end
 
   def add_musicbrainz_data(record, musicbrainz_data) do
@@ -152,6 +166,24 @@ defmodule MusicLibrary.Records.Record do
 
       cover_data ->
         put_change(changeset, :cover_hash, Cover.hash(cover_data))
+    end
+  end
+
+  def generate_dominant_colors(%__MODULE__{cover_data: cover_data} = record) do
+    change(record, dominant_colors: DominantColors.extract_dominant_colors!(cover_data))
+  end
+
+  def generate_dominant_colors(changeset) do
+    case get_change(changeset, :cover_data) do
+      nil ->
+        changeset
+
+      cover_data ->
+        put_change(
+          changeset,
+          :dominant_colors,
+          DominantColors.extract_dominant_colors!(cover_data)
+        )
     end
   end
 

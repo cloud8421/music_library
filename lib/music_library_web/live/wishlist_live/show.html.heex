@@ -17,7 +17,7 @@
           {@record.title}
         </h2>
         <p class="flex items-center mt-2 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
-          <.record_colors colors={@dominant_colors} />
+          <.record_colors colors={@record.dominant_colors} />
           {Records.Record.format_release_date(@record.release_date)}
           <span :if={@current_date && !Records.Record.released?(@record, @current_date)}>
             ({gettext("Unreleased")})

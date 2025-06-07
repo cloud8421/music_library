@@ -21,6 +21,17 @@ defmodule MusicLibrary.Records.DominantColors do
     end
   end
 
+  @doc """
+  Same as `extract-dominant_colors/2`, but raises an error if extraction fails.
+  """
+  @spec extract_dominant_colors!(binary(), pos_integer()) :: [String.t()] | no_return
+  def extract_dominant_colors!(image_data, num_colors \\ 5) do
+    case extract_dominant_colors(image_data, num_colors) do
+      {:ok, colors} -> colors
+      {:error, reason} -> raise "Failed to extract dominant colors: #{inspect(reason)}"
+    end
+  end
+
   defp prepare_image_for_analysis(image) do
     with {:ok, resized} <- Operation.thumbnail_image(image, 150) do
       ensure_rgb_channels(resized)
