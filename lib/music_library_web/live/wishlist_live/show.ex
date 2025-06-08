@@ -13,8 +13,12 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
   alias MusicLibrary.Records
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(%{"id" => record_id}, _session, socket) do
     current_date = DateTime.utc_now() |> DateTime.to_date()
+
+    if connected?(socket) do
+      Records.subscribe(record_id)
+    end
 
     {:ok,
      socket
@@ -28,7 +32,6 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
     {:noreply,
      socket
-     |> assign(:current_section, :wishlist)
      |> assign(:page_title, page_title(socket.assigns.live_action, record))
      |> assign(:record, record)}
   end
@@ -140,6 +143,14 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
   @impl true
   def handle_info({MusicLibraryWeb.FormComponent, {:saved, record}}, socket) do
     {:noreply, assign(socket, :record, record)}
+  end
+
+  @impl true
+  def handle_info({:update, record}, socket) do
+    {:noreply,
+     socket
+     |> put_flash(:info, gettext("Record updated in the background"))
+     |> assign(:record, record)}
   end
 
   def page_title(action, record) do
