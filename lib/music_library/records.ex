@@ -6,7 +6,6 @@ defmodule MusicLibrary.Records do
   import Ecto.Query, warn: false
 
   alias MusicLibrary.Artists
-  alias MusicLibrary.Colors.EdgeWeightedExtractor
   alias MusicLibrary.Records.{ArtistRecord, Cover, Record, SearchParser}
   alias MusicLibrary.{BackgroundRepo, Repo, Worker}
 
@@ -255,18 +254,12 @@ defmodule MusicLibrary.Records do
     |> BackgroundRepo.insert()
   end
 
-  def generate_dominant_colors(record) do
-    with {:ok, colors} <- EdgeWeightedExtractor.extract_dominant_colors(record.cover_data) do
-      update_record(record, %{"dominant_colors" => colors})
-    end
-  end
-
-  def generate_dominant_colors_async(record) do
+  def extract_colors_async(record, method) do
     meta = %{title: record.title, artists: Enum.map(record.artists, & &1.name)}
-    params = %{"id" => record.id}
+    params = %{"id" => record.id, "method" => method}
 
     params
-    |> Worker.GenerateDominantColors.new(meta: meta)
+    |> Worker.ExtractColors.new(meta: meta)
     |> BackgroundRepo.insert()
   end
 
@@ -329,7 +322,7 @@ defmodule MusicLibrary.Records do
 
   def create_record(attrs \\ %{}) do
     with {:ok, record} <- do_create_record(attrs) do
-      generate_dominant_colors_async(record)
+      extract_colors_async(record, :fast)
 
       record
       |> Record.artist_ids()

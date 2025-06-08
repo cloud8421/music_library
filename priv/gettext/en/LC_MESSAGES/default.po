@@ -674,6 +674,7 @@ msgid "Meta"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Record updated in the background"
 msgstr ""
@@ -853,4 +854,28 @@ msgstr ""
 #: lib/music_library_web/live/collection_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Last listened at"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Error"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/wishlist_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Extract colors (fast)"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/wishlist_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Extract colors (slow)"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "In progress - record will update automatically"
 msgstr ""

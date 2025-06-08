@@ -117,6 +117,26 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
     end
   end
 
+  def handle_event("extract_colors", %{"id" => id, "method" => method}, socket) do
+    record = Records.get_record!(id)
+    method = String.to_existing_atom(method)
+
+    case Records.extract_colors_async(record, method) do
+      {:ok, _worker} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, gettext("In progress - record will update automatically"))}
+
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           gettext("Error") <> "," <> inspect(reason)
+         )}
+    end
+  end
+
   @impl true
   def handle_info({MusicLibraryWeb.FormComponent, {:saved, record}}, socket) do
     {:noreply, assign(socket, :record, record)}
