@@ -329,6 +329,8 @@ defmodule MusicLibrary.Records do
 
   def create_record(attrs \\ %{}) do
     with {:ok, record} <- do_create_record(attrs) do
+      generate_dominant_colors_async(record)
+
       record
       |> Record.artist_ids()
       |> Enum.each(fn artist_id ->
