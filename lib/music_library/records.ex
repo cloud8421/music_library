@@ -6,7 +6,8 @@ defmodule MusicLibrary.Records do
   import Ecto.Query, warn: false
 
   alias MusicLibrary.Artists
-  alias MusicLibrary.Records.{ArtistRecord, Cover, DominantColors, Record, SearchParser}
+  alias MusicLibrary.Colors.EdgeWeightedExtractor
+  alias MusicLibrary.Records.{ArtistRecord, Cover, Record, SearchParser}
   alias MusicLibrary.{BackgroundRepo, Repo, Worker}
 
   def essential_fields do
@@ -255,7 +256,7 @@ defmodule MusicLibrary.Records do
   end
 
   def generate_dominant_colors(record) do
-    with {:ok, colors} <- DominantColors.extract_dominant_colors(record.cover_data) do
+    with {:ok, colors} <- EdgeWeightedExtractor.extract_dominant_colors(record.cover_data) do
       update_record(record, %{"dominant_colors" => colors})
     end
   end

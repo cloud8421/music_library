@@ -5,7 +5,8 @@ defmodule MusicLibrary.Records.Record do
 
   alias MusicBrainz.{Release, ReleaseGroup}
   alias MusicLibrary.Artists.Artist
-  alias MusicLibrary.Records.{Cover, DominantColors}
+  alias MusicLibrary.Colors.ColorFrequencyExtractor
+  alias MusicLibrary.Records.Cover
 
   @formats [:cd, :backup, :vinyl, :blu_ray, :dvd, :multi]
   @types [:album, :ep, :live, :compilation, :single, :other]
@@ -170,7 +171,7 @@ defmodule MusicLibrary.Records.Record do
   end
 
   def generate_dominant_colors(%__MODULE__{cover_data: cover_data} = record) do
-    change(record, dominant_colors: DominantColors.extract_dominant_colors!(cover_data))
+    change(record, dominant_colors: ColorFrequencyExtractor.extract_dominant_colors!(cover_data))
   end
 
   def generate_dominant_colors(changeset) do
@@ -182,7 +183,7 @@ defmodule MusicLibrary.Records.Record do
         put_change(
           changeset,
           :dominant_colors,
-          DominantColors.extract_dominant_colors!(cover_data)
+          ColorFrequencyExtractor.extract_dominant_colors!(cover_data)
         )
     end
   end
