@@ -23,6 +23,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
     {:ok,
      socket
+     |> assign(:current_section, :collection)
      |> assign(:timezone, resolve_timezone!())
      |> assign(:can_scrobble?, ScrobbleActivity.can_scrobble?())
      |> assign(:release_with_tracks, nil)}
@@ -42,7 +43,6 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
     {:noreply,
      socket
-     |> assign(:current_section, :collection)
      |> assign(:page_title, page_title(socket.assigns.live_action, record))
      |> assign(:record, record)
      |> assign(:last_listened_track, last_listened_track)}
