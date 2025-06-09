@@ -8,7 +8,7 @@ Music Library is an Elixir/Phoenix application for managing a personal music col
 
 - Add records from MusicBrainz, with optional data overrides
 - Manage a collection and wishlist of records with search/filtering capabilities
-- Integrate with Last.fm for scrobbles and record tracking 
+- Integrate with Last.fm for scrobbles and record tracking
 - View statistics about the collection
 - Store all data in a single SQLite database
 
@@ -23,6 +23,7 @@ Music Library is an Elixir/Phoenix application for managing a personal music col
 ### Environment Configuration
 
 Required environment variables:
+
 - `LAST_FM_USER`: Last.fm username for Scrobble Activity
 - `LAST_FM_API_KEY`: Last.fm API key (secret)
 - `OPENAI_KEY`: OpenAI API key (secret)
@@ -70,7 +71,7 @@ mise run deps:update
 ```sh
 # Run all tests
 mix test
-# OR 
+# OR
 mise run test
 
 # Run a specific test file
@@ -142,6 +143,8 @@ The application follows standard Phoenix/Elixir structure:
   - `artists/`: Artist data handling
   - `wishlist/`: Wishlist functionality
   - `barcode_scan/`: Barcode scanning features
+  - `colors/`: Extract colors for images, e.g. album artworks
+  - `secrets/`: Manage encrypted secrets that are stored in the db
 - `lib/music_brainz`, `lib/discogs`, `lib/last_fm`: External API integrations
 - `lib/music_library_web`: Web interface (Phoenix)
   - `live/`: LiveView implementations
@@ -162,3 +165,4 @@ To set up a pre-commit hook:
 ```sh
 mise generate git-pre-commit --write --task=static-checks-hook
 ```
+
