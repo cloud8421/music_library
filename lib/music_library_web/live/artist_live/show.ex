@@ -176,7 +176,12 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
          |> put_flash(:info, gettext("Record added to the collection"))}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           gettext("Error importing record") <> "," <> inspect(changeset.errors)
+         )}
     end
   end
 

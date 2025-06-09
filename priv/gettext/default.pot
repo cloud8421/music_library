@@ -47,6 +47,7 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
+#: lib/music_library_web/live/artist_live/show.ex
 #: lib/music_library_web/live/collection_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Error importing record"
