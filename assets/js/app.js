@@ -66,7 +66,6 @@ window.addEventListener("music_library:confetti", (_event) => {
   confetti({
     particleCount: 100,
     spread: 200,
-    zIndex: 1500,
   });
 });
 

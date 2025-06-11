@@ -97,11 +97,7 @@ defmodule MusicLibraryWeb.AddRecordComponent do
               tabindex="0"
               id={"actions-#{@release_group.id}-#{format}-import"}
               phx-click={
-                JS.dispatch("music_library:confetti")
-                |> JS.push("import",
-                  value: %{id: @release_group.id, format: format},
-                  page_loading: true
-                )
+                JS.push("import", value: %{id: @release_group.id, format: format}, page_loading: true)
               }
             >
               {format_label(format)}
