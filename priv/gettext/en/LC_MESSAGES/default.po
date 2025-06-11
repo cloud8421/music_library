@@ -880,3 +880,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "In progress - record will update automatically"
 msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Record deleted"
+msgstr ""

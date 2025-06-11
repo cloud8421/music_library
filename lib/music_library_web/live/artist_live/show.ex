@@ -185,6 +185,16 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     end
   end
 
+  def handle_event("delete", %{"id" => id}, socket) do
+    record = Records.get_record!(id)
+    {:ok, _} = Records.delete_record(record)
+
+    {:noreply,
+     socket
+     |> assign_records(socket.assigns.artist.musicbrainz_id)
+     |> put_flash(:info, gettext("Record deleted"))}
+  end
+
   defp apply_action(socket, :show, %{"musicbrainz_id" => musicbrainz_id}) do
     artist = Artists.get_artist!(musicbrainz_id)
     artist_info = Artists.get_artist_info!(musicbrainz_id)
