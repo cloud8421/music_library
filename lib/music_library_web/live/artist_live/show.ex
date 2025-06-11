@@ -109,7 +109,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
         {:noreply,
          socket
          |> put_flash(:info, gettext("Record wishlisted successfully"))
-         |> push_navigate(to: ~p"/artists/#{socket.assigns.artist.musicbrainz_id}")}
+         |> push_patch(to: ~p"/artists/#{socket.assigns.artist.musicbrainz_id}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply,
