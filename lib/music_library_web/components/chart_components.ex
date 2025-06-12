@@ -41,27 +41,6 @@ defmodule MusicLibraryWeb.ChartComponents do
         preserveAspectRatio="xMidYMid meet"
         class="w-full h-full"
       >
-        <%!-- X-axis labels and lines --%>
-        <%= for {value, x} <- x_axis_values(@max_value, @chart_width) do %>
-          <text
-            x={x + 150}
-            y={@height - 10}
-            text-anchor="middle"
-            class="text-xs fill-zinc-500 dark:fill-zinc-400"
-          >
-            {value}
-          </text>
-          <line
-            x1={x + 150}
-            y1={@padding / 2}
-            x2={x + 150}
-            y2={@height - @padding / 2}
-            stroke="rgb(228, 228, 231)"
-            stroke-width="1"
-            stroke-dasharray="4,4"
-          />
-        <% end %>
-
         <%!-- Bars and labels --%>
         <%= for {datum, index} <- Enum.with_index(@data) do %>
           <% bar_width = @chart_width * @value_fn.(datum) / @max_value %>
@@ -112,17 +91,6 @@ defmodule MusicLibraryWeb.ChartComponents do
     bar_count = length(data)
     max_height = min(30, (available_height - (bar_count - 1) * 4) / bar_count)
     max(20, max_height) |> trunc()
-  end
-
-  defp x_axis_values(max_value, width) do
-    step = max_value / 5
-
-    0..5
-    |> Enum.map(fn i ->
-      value = i * step
-      x = i * width / 5
-      {trunc(value), trunc(x)}
-    end)
   end
 
   defp truncate_label(label, max_length) when byte_size(label) > max_length do
