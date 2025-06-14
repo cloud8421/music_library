@@ -104,7 +104,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
           class={[
             "flex items-center space-x-3 p-2",
             tracked_record?(@collected_releases ++ @wishlisted_releases, album.album_musicbrainz_id) &&
-              "cursor-pointer"
+              "cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800"
           ]}
         >
           <img
