@@ -203,7 +203,7 @@
             </.link>
           </div>
 
-          <.actions_menu
+          <.dropdown
             :if={
               album.metadata.musicbrainz_id !== "" and
                 !tracked_record?(
@@ -211,19 +211,21 @@
                   album.metadata.musicbrainz_id
                 )
             }
-            id={album.scrobbled_at_uts}
-            background_container_target="#records > li"
+            id={"actions-#{album.scrobbled_at_uts}-albums"}
+            placement="bottom-end"
           >
-            <:button>
+            <:toggle>
               <span class="sr-only">{gettext("Choose which format to import")}</span>
-              <.icon name="hero-star" class="-mt-1 h-5 w-5" aria-hidden="true" data-slot="icon" />
-            </:button>
-            <:links>
-              <.link
+              <.icon
+                name="hero-star"
+                class="-mt-1 h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+            </:toggle>
+            <.focus_wrap id={"actions-#{album.scrobbled_at_uts}-albums-focus-wrap"}>
+              <.dropdown_link
                 :for={format <- Records.Record.formats()}
-                class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-                role="menuitem"
-                tabindex="0"
                 id={"actions-#{album.scrobbled_at_uts}-#{format}-import"}
                 phx-click={
                   JS.push("import",
@@ -233,9 +235,9 @@
                 }
               >
                 {format_label(format)}
-              </.link>
-            </:links>
-          </.actions_menu>
+              </.dropdown_link>
+            </.focus_wrap>
+          </.dropdown>
         </div>
       </div>
     </li>
@@ -304,7 +306,7 @@
             </.link>
           </div>
 
-          <.actions_menu
+          <.dropdown
             :if={
               track.album.musicbrainz_id !== "" and
                 !tracked_record?(
@@ -312,19 +314,21 @@
                   track.album.musicbrainz_id
                 )
             }
-            id={track.scrobbled_at_uts}
-            background_container_target="#records > li"
+            id={"actions-#{track.scrobbled_at_uts}-tracks"}
+            placement="bottom-end"
           >
-            <:button>
+            <:toggle>
               <span class="sr-only">{gettext("Choose which format to import")}</span>
-              <.icon name="hero-star" class="-mt-1 h-5 w-5" aria-hidden="true" data-slot="icon" />
-            </:button>
-            <:links>
-              <.link
+              <.icon
+                name="hero-star"
+                class="-mt-1 h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+            </:toggle>
+            <.focus_wrap id={"actions-#{track.scrobbled_at_uts}-tracks-focus-wrap"}>
+              <.dropdown_link
                 :for={format <- Records.Record.formats()}
-                class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-                role="menuitem"
-                tabindex="0"
                 id={"actions-#{track.scrobbled_at_uts}-#{format}-import"}
                 phx-click={
                   JS.push("import",
@@ -334,9 +338,9 @@
                 }
               >
                 {format_label(format)}
-              </.link>
-            </:links>
-          </.actions_menu>
+              </.dropdown_link>
+            </.focus_wrap>
+          </.dropdown>
         </div>
       </div>
     </li>
