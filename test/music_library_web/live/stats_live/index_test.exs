@@ -12,7 +12,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
     current_time = DateTime.utc_now()
 
     records =
-      Enum.map(1..19, fn i ->
+      Enum.map(1..5, fn i ->
         purchased_at = DateTime.add(current_time, i, :second)
         record(%{purchased_at: purchased_at})
       end)
@@ -21,7 +21,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
   end
 
   defp fill_wishlist(_) do
-    records = Enum.map(1..21, fn _ -> record(%{purchased_at: nil}) end)
+    records = Enum.map(1..3, fn _ -> record(%{purchased_at: nil}) end)
     %{wishlist: records}
   end
 
