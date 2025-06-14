@@ -120,9 +120,27 @@ defmodule MusicLibraryWeb.StatsLive.Index do
               {album.album_title}
             </p>
           </div>
-          <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-300">
+          <.badge :if={album.album_musicbrainz_id == ""}>
             {album.play_count}
-          </div>
+          </.badge>
+          <.badge :if={
+            album.album_musicbrainz_id !== "" and
+              !tracked_record?(
+                @collected_releases ++ @wishlisted_releases,
+                album.album_musicbrainz_id
+              )
+          }>
+            {album.play_count}
+          </.badge>
+          <.badge :if={tracked_record?(@collected_releases, album.album_musicbrainz_id)} color="green">
+            {album.play_count}
+          </.badge>
+          <.badge
+            :if={tracked_record?(@wishlisted_releases, album.album_musicbrainz_id)}
+            color="yellow"
+          >
+            {album.play_count}
+          </.badge>
         </div>
       </div>
     </div>
