@@ -113,9 +113,12 @@ defmodule MusicLibraryWeb.StatsLive.Index do
             alt={album.album_title}
           />
           <div class="flex-1 min-w-0">
-            <p class="text-xs text-zinc-600 dark:text-zinc-400 truncate">
+            <.link
+              class="text-xs text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300 truncate"
+              navigate={~p"/artists/#{album.artist_musicbrainz_id}"}
+            >
               {album.artist_name}
-            </p>
+            </.link>
             <p class="text-sm font-medium text-zinc-900 dark:text-zinc-300 truncate">
               {album.album_title}
             </p>
