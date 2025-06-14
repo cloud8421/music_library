@@ -46,9 +46,18 @@ defmodule MusicLibrary.Fixtures.Records do
   @marbles_thumb_data_path "#{__DIR__}/marillion-marbles-thumb.jpg"
   @raven_cover_data_path "#{__DIR__}/steven-wilson-raven.jpg"
 
+  # Cache image data at module load time to avoid repeated file I/O
+  @marbles_cover_data File.read!(@marbles_cover_data_path)
+  @marbles_thumb_data File.read!(@marbles_thumb_data_path)
+  @raven_cover_data File.read!(@raven_cover_data_path)
+
   def marbles_cover_fixture, do: @marbles_cover_data_path
   def marbles_thumb_fixture, do: @marbles_thumb_data_path
   def raven_cover_fixture, do: @raven_cover_data_path
+
+  def marbles_cover_data, do: @marbles_cover_data
+  def marbles_thumb_data, do: @marbles_thumb_data
+  def raven_cover_data, do: @raven_cover_data
 
   def record(attrs \\ %{}) do
     record_musicbrainz_id = Ecto.UUID.generate()
@@ -60,7 +69,7 @@ defmodule MusicLibrary.Fixtures.Records do
       |> Enum.into(%{
         genres: Enum.take_random(@genres, :rand.uniform(3)),
         cover_url: "https://coverartarchive.org/release-group/#{record_musicbrainz_id}/front",
-        cover_data: File.read!(@marbles_cover_data_path),
+        cover_data: @marbles_cover_data,
         musicbrainz_id: record_musicbrainz_id,
         musicbrainz_data: ReleaseGroup.release_group(:marbles),
         title: Enum.random(@titles),

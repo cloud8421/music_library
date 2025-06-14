@@ -61,7 +61,7 @@ defmodule MusicLibraryWeb.CoverControllerTest do
     test "accepts a size attribute for resizing", %{conn: conn, record: record} do
       conn = get(conn, ~p"/covers/#{record.id}?size=480")
 
-      thumb = File.read!(marbles_thumb_fixture())
+      thumb = marbles_thumb_data()
       hash = Cover.hash(thumb)
 
       assert conn.status == 200

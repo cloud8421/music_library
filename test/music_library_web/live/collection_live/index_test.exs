@@ -217,7 +217,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     end
 
     test "can change the record cover", %{conn: conn} do
-      record = record(cover_data: File.read!(marbles_cover_fixture()))
+      record = record(cover_data: marbles_cover_data())
       cover_url = ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
 
       session =
@@ -258,7 +258,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       release_group = release_group(:marbles)
       release_group_releases = release_group_releases(:marbles)
 
-      cover_data = File.read!(marbles_cover_fixture())
+      cover_data = marbles_cover_data()
 
       Req.Test.stub(MusicBrainz.API, fn conn ->
         case conn.path_info do
@@ -367,7 +367,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     release_group_id = release_group["id"]
     release_group_releases = release_group_releases(:marbles)
 
-    cover_data = File.read!(marbles_cover_fixture())
+    cover_data = marbles_cover_data()
 
     Req.Test.stub(MusicBrainz.API, fn conn ->
       case conn.path_info do

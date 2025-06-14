@@ -226,7 +226,7 @@ defmodule MusicLibrary.RecordsTest do
       release_group_id = release_group_id(:marbles)
       release_group_releases = release_group_releases(:marbles)
 
-      cover_data = File.read!(marbles_cover_fixture())
+      cover_data = marbles_cover_data()
 
       Req.Test.stub(MusicBrainz.API, fn conn ->
         case conn.path_info do
@@ -282,7 +282,7 @@ defmodule MusicLibrary.RecordsTest do
       release_group_id = release_group_id(:marbles)
       release_group_releases = release_group_releases(:marbles)
 
-      cover_data = File.read!(marbles_cover_fixture())
+      cover_data = marbles_cover_data()
 
       Req.Test.stub(MusicBrainz.API, fn conn ->
         case conn.path_info do
@@ -332,9 +332,9 @@ defmodule MusicLibrary.RecordsTest do
 
   describe "refresh cover/1" do
     test "it fetches and stores the updated cover" do
-      record = record(cover_data: File.read!(marbles_cover_fixture()))
+      record = record(cover_data: marbles_cover_data())
 
-      raven_cover_data = File.read!(raven_cover_fixture())
+      raven_cover_data = raven_cover_data()
 
       Req.Test.stub(MusicBrainz.API, fn conn ->
         Plug.Conn.send_resp(conn, 200, raven_cover_data)

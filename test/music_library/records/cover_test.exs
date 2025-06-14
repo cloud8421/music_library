@@ -7,7 +7,8 @@ defmodule MusicLibrary.Records.CoverTest do
 
   describe "resize/1" do
     test "it resizes to the desired size" do
-      cover_data = File.read!(marbles_cover_fixture())
+      # Use the cached cover data which is much faster than reading from disk
+      cover_data = marbles_cover_data()
       {:ok, resized_cover} = Cover.resize(cover_data)
       assert cover_data !== resized_cover
       assert Cover.correct_size?(resized_cover)

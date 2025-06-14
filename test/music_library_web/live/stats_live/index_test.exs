@@ -211,7 +211,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
       release_group_id = release_group_id(:mystery_of_time)
       release_group_releases = release_group_releases(:mystery_of_time)
 
-      cover_data = File.read!(marbles_cover_fixture())
+      cover_data = marbles_cover_data()
 
       Req.Test.stub(MusicBrainz.API, fn conn ->
         case conn.path_info do
