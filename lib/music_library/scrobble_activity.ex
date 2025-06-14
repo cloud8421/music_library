@@ -207,9 +207,9 @@ defmodule MusicLibrary.ScrobbleActivity do
   Gets the top albums by scrobble count for the given number of days.
   Returns a list of maps with album information and play counts.
   """
-  def get_top_albums_by_days(days, limit \\ 10) do
+  def get_top_albums_by_days(days, limit \\ 10, current_time \\ DateTime.utc_now()) do
     cutoff_timestamp =
-      DateTime.utc_now()
+      current_time
       |> DateTime.add(-days, :day)
       |> DateTime.to_unix()
 
