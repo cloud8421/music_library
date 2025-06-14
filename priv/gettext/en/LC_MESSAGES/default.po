@@ -897,11 +897,11 @@ msgid "Last 90 days"
 msgstr ""
 
 #: lib/music_library_web/live/stats_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Last Year"
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Top Albums"
 msgstr ""
 
 #: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format, fuzzy
-msgid "Top Albums"
+msgid "Last year"
 msgstr ""

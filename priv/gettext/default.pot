@@ -898,10 +898,10 @@ msgstr ""
 
 #: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format
-msgid "Last Year"
+msgid "Top Albums"
 msgstr ""
 
 #: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format
-msgid "Top Albums"
+msgid "Last year"
 msgstr ""

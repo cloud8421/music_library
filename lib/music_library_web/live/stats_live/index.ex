@@ -71,6 +71,39 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     """
   end
 
+  attr :albums, :list, required: true
+  attr :title, :string, required: true
+
+  def top_albums_by_period(assigns) do
+    ~H"""
+    <div>
+      <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-200 mb-3">
+        {@title}
+      </h2>
+      <div class="space-y-2">
+        <div :for={album <- @albums} class="flex items-center space-x-3 p-2">
+          <img
+            class="w-12 h-12 rounded-md object-cover"
+            src={album.cover_url}
+            alt={album.album_title}
+          />
+          <div class="flex-1 min-w-0">
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 truncate">
+              {album.artist_name}
+            </p>
+            <p class="text-sm font-medium text-zinc-900 dark:text-zinc-300 truncate">
+              {album.album_title}
+            </p>
+          </div>
+          <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-300">
+            {album.play_count}
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
   def mount(_params, _session, socket) do
     latest_record = Collection.get_latest_record!()
     recent_tracks = LastFm.get_scrobbled_tracks()

@@ -118,83 +118,9 @@
   </h1>
 
   <div class="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-5">
-    <div>
-      <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-200 mb-3">
-        {gettext("Last 30 days")}
-      </h2>
-      <div class="space-y-2">
-        <div :for={album <- @top_albums.last_30_days} class="flex items-center space-x-3 p-2">
-          <img
-            class="w-12 h-12 rounded-md object-cover"
-            src={album.cover_url}
-            alt={album.album_title}
-          />
-          <div class="flex-1 min-w-0">
-            <p class="text-xs text-zinc-600 dark:text-zinc-400 truncate">
-              {album.artist_name}
-            </p>
-            <p class="text-sm font-medium text-zinc-900 dark:text-zinc-300 truncate">
-              {album.album_title}
-            </p>
-          </div>
-          <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-300">
-            {album.play_count}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-200 mb-3">
-        {gettext("Last 90 days")}
-      </h2>
-      <div class="space-y-2">
-        <div :for={album <- @top_albums.last_90_days} class="flex items-center space-x-3 p-2">
-          <img
-            class="w-12 h-12 rounded-md object-cover"
-            src={album.cover_url}
-            alt={album.album_title}
-          />
-          <div class="flex-1 min-w-0">
-            <p class="text-xs text-zinc-600 dark:text-zinc-400 truncate">
-              {album.artist_name}
-            </p>
-            <p class="text-sm font-medium text-zinc-900 dark:text-zinc-300 truncate">
-              {album.album_title}
-            </p>
-          </div>
-          <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-300">
-            {album.play_count}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-200 mb-3">
-        {gettext("Last Year")}
-      </h2>
-      <div class="space-y-2">
-        <div :for={album <- @top_albums.last_365_days} class="flex items-center space-x-3 p-2">
-          <img
-            class="w-12 h-12 rounded-md object-cover"
-            src={album.cover_url}
-            alt={album.album_title}
-          />
-          <div class="flex-1 min-w-0">
-            <p class="text-xs text-zinc-600 dark:text-zinc-400 truncate">
-              {album.artist_name}
-            </p>
-            <p class="text-sm font-medium text-zinc-900 dark:text-zinc-300 truncate">
-              {album.album_title}
-            </p>
-          </div>
-          <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-300">
-            {album.play_count}
-          </div>
-        </div>
-      </div>
-    </div>
+    <.top_albums_by_period albums={@top_albums.last_30_days} title={gettext("Last 30 days")} />
+    <.top_albums_by_period albums={@top_albums.last_90_days} title={gettext("Last 90 days")} />
+    <.top_albums_by_period albums={@top_albums.last_365_days} title={gettext("Last year")} />
   </div>
 </div>
 
