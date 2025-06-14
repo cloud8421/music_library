@@ -98,7 +98,7 @@ defmodule MusicLibrary.MixProject do
       {:oban_web, "~> 2.11"},
 
       # Test tooling
-      {:phoenix_test, "~> 0.6.0", only: :test},
+      {:phoenix_test, "~> 0.7.0", only: :test},
       {:floki, ">= 0.30.0", only: :test},
 
       # Prod error/perf tooling
