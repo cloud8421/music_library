@@ -91,6 +91,14 @@ defmodule MusicLibraryWeb.RecordComponents do
                 />
                 {Records.Record.format_as_date(record.purchased_at)}
               </span>
+              <span :if={!record.purchased_at}>
+                ·
+                <span class="sr-only">
+                  {gettext("Wishlisted on")}
+                </span>
+                <.icon name="hero-star" class="-mt-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
+                {Records.Record.format_as_date(record.inserted_at)}
+              </span>
             </p>
           </div>
         </div>
@@ -105,6 +113,13 @@ defmodule MusicLibraryWeb.RecordComponents do
               </span>
               <.icon name="hero-banknotes" class="-mt-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
               {Records.Record.format_as_date(record.purchased_at)}
+            </p>
+            <p :if={!record.purchased_at} class="text-xs leading-6 text-zinc-900 dark:text-zinc-300">
+              <span class="sr-only">
+                {gettext("Wishlisted on")}
+              </span>
+              <.icon name="hero-star" class="-mt-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
+              {Records.Record.format_as_date(record.inserted_at)}
             </p>
           </div>
           <%!-- TODO: replace with OSS version --%>

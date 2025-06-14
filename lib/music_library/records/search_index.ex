@@ -28,5 +28,7 @@ defmodule MusicLibrary.Records.SearchIndex do
     field :included_release_group_ids, {:array, :string}, default: []
 
     embeds_many :artists, Artist
+
+    timestamps(type: :utc_datetime)
   end
 end

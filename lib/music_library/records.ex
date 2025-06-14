@@ -22,7 +22,9 @@ defmodule MusicLibrary.Records do
       :release_ids,
       :included_release_group_ids,
       :cover_hash,
-      :release_date
+      :release_date,
+      :inserted_at,
+      :updated_at
     ]
   end
 

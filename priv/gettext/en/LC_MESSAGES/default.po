@@ -905,3 +905,8 @@ msgstr ""
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Last year"
 msgstr ""
+
+#: lib/music_library_web/components/record_components.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Wishlisted on"
+msgstr ""
