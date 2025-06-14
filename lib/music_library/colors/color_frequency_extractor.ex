@@ -36,7 +36,7 @@ defmodule MusicLibrary.Colors.ColorFrequencyExtractor do
   end
 
   defp prepare_image_for_analysis(image) do
-    with {:ok, resized} <- Operation.thumbnail_image(image, 150) do
+    with {:ok, resized} <- Operation.thumbnail_image(image, 1000) do
       ensure_rgb_channels(resized)
     end
   end
