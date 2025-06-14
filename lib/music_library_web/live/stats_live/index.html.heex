@@ -68,50 +68,6 @@
   </dl>
 </div>
 
-<div class="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-5">
-  <div>
-    <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
-      {gettext("Top %{n} Artists", %{n: length(@records_by_artist)})}
-    </h1>
-    <div class="mt-5 bg-white dark:bg-zinc-800 rounded-md shadow-sm">
-      <.vertical_bar_chart
-        data={@records_by_artist}
-        width={600}
-        height={35 * length(@records_by_artist)}
-        color_class="fill-red-500"
-        label_fn={fn datum -> datum.name end}
-        value_fn={fn datum -> datum.count end}
-        label_click={
-          fn datum ->
-            JS.navigate(~p"/artists/#{datum.id}")
-          end
-        }
-        class="w-full"
-      />
-    </div>
-  </div>
-
-  <div>
-    <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
-      {gettext("Top %{n} Genres", %{n: length(@records_by_genre)})}
-    </h1>
-    <div class="mt-5 bg-white dark:bg-zinc-800 rounded-md shadow-sm">
-      <.vertical_bar_chart
-        data={@records_by_genre}
-        width={600}
-        height={35 * length(@records_by_genre)}
-        color_class="fill-zinc-500"
-        label_fn={fn {genre, _count} -> genre end}
-        value_fn={fn {_genre, count} -> count end}
-        label_click={
-          fn {genre, _count} -> JS.navigate(~p"/collection?#{%{query: ~s(genre:"#{genre}")}}") end
-        }
-        class="w-full"
-      />
-    </div>
-  </div>
-</div>
-
 <div>
   <h1 class="mt-5 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
     {gettext("Top Albums")}
@@ -370,4 +326,48 @@
       </div>
     </li>
   </ul>
+</div>
+
+<div class="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-5">
+  <div>
+    <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
+      {gettext("Top %{n} Artists", %{n: length(@records_by_artist)})}
+    </h1>
+    <div class="mt-5 bg-white dark:bg-zinc-800 rounded-md shadow-sm">
+      <.vertical_bar_chart
+        data={@records_by_artist}
+        width={600}
+        height={35 * length(@records_by_artist)}
+        color_class="fill-red-500"
+        label_fn={fn datum -> datum.name end}
+        value_fn={fn datum -> datum.count end}
+        label_click={
+          fn datum ->
+            JS.navigate(~p"/artists/#{datum.id}")
+          end
+        }
+        class="w-full"
+      />
+    </div>
+  </div>
+
+  <div>
+    <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
+      {gettext("Top %{n} Genres", %{n: length(@records_by_genre)})}
+    </h1>
+    <div class="mt-5 bg-white dark:bg-zinc-800 rounded-md shadow-sm">
+      <.vertical_bar_chart
+        data={@records_by_genre}
+        width={600}
+        height={35 * length(@records_by_genre)}
+        color_class="fill-zinc-500"
+        label_fn={fn {genre, _count} -> genre end}
+        value_fn={fn {_genre, count} -> count end}
+        label_click={
+          fn {genre, _count} -> JS.navigate(~p"/collection?#{%{query: ~s(genre:"#{genre}")}}") end
+        }
+        class="w-full"
+      />
+    </div>
+  </div>
 </div>
