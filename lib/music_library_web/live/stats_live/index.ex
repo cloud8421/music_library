@@ -134,7 +134,6 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     recent_tracks = LastFm.get_scrobbled_tracks()
     records_by_artists = Collection.count_records_by_artist(limit: 20)
     records_by_genre = Collection.count_records_by_genre(limit: 20)
-    top_albums = ScrobbleActivity.get_top_albums_by_periods(10)
 
     if connected?(socket) do
       LastFm.subscribe_to_feed()
@@ -151,14 +150,14 @@ defmodule MusicLibraryWeb.StatsLive.Index do
      )
      |> assign_counts()
      |> assign_scrobble_activity(recent_tracks)
+     |> assign_top_albums()
      |> assign(
        scrobble_activity_mode: :albums,
        latest_record: latest_record,
        page_title: gettext("Stats"),
        current_section: :stats,
        records_by_artist: records_by_artists,
-       records_by_genre: records_by_genre,
-       top_albums: top_albums
+       records_by_genre: records_by_genre
      )}
   end
 
@@ -212,6 +211,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
     {:noreply,
      socket
+     |> assign_top_albums()
      |> assign_scrobble_activity(recent_tracks)}
   end
 
@@ -250,6 +250,12 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       wishlisted_releases: wishlisted_releases,
       artist_ids: artist_ids
     )
+  end
+
+  defp assign_top_albums(socket) do
+    top_albums = ScrobbleActivity.get_top_albums_by_periods(10)
+
+    assign(socket, top_albums: top_albums)
   end
 
   defp tracked_record?(tracked_releases, release_id) do
