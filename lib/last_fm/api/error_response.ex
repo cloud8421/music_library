@@ -24,12 +24,7 @@ defmodule LastFm.API.ErrorResponse do
   Returns true if the error is retryable, false otherwise.
   """
   def retryable_error?(error)
-      when error in [
-             :transient_error,
-             :service_offline,
-             :rate_limit_exceeded,
-             :operation_failed
-           ],
+      when error in [:transient_error, :service_offline, :rate_limit_exceeded, :operation_failed],
       do: true
 
   def retryable_error?(_error), do: false
