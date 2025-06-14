@@ -71,8 +71,23 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     """
   end
 
+  defp navigate_to_record(collected_releases, wishlisted_releases, musicbrainz_id) do
+    cond do
+      record_id = tracked_record?(collected_releases, musicbrainz_id) ->
+        JS.navigate(~p"/collection/#{record_id}")
+
+      record_id = tracked_record?(wishlisted_releases, musicbrainz_id) ->
+        JS.navigate(~p"/wishlist/#{record_id}")
+
+      true ->
+        nil
+    end
+  end
+
   attr :albums, :list, required: true
   attr :title, :string, required: true
+  attr :collected_releases, :list, required: true
+  attr :wishlisted_releases, :list, required: true
 
   def top_albums_by_period(assigns) do
     ~H"""
@@ -81,7 +96,17 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         {@title}
       </h2>
       <div class="space-y-2">
-        <div :for={album <- @albums} class="flex items-center space-x-3 p-2">
+        <div
+          :for={album <- @albums}
+          phx-click={
+            navigate_to_record(@collected_releases, @wishlisted_releases, album.album_musicbrainz_id)
+          }
+          class={[
+            "flex items-center space-x-3 p-2",
+            tracked_record?(@collected_releases ++ @wishlisted_releases, album.album_musicbrainz_id) &&
+              "cursor-pointer"
+          ]}
+        >
           <img
             class="w-12 h-12 rounded-md object-cover"
             src={album.cover_url}

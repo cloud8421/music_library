@@ -74,9 +74,24 @@
   </h1>
 
   <div class="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-5">
-    <.top_albums_by_period albums={@top_albums.last_30_days} title={gettext("Last 30 days")} />
-    <.top_albums_by_period albums={@top_albums.last_90_days} title={gettext("Last 90 days")} />
-    <.top_albums_by_period albums={@top_albums.last_365_days} title={gettext("Last year")} />
+    <.top_albums_by_period
+      albums={@top_albums.last_30_days}
+      title={gettext("Last 30 days")}
+      collected_releases={@top_albums.collected_releases}
+      wishlisted_releases={@top_albums.wishlisted_releases}
+    />
+    <.top_albums_by_period
+      albums={@top_albums.last_90_days}
+      title={gettext("Last 90 days")}
+      collected_releases={@top_albums.collected_releases}
+      wishlisted_releases={@top_albums.wishlisted_releases}
+    />
+    <.top_albums_by_period
+      albums={@top_albums.last_365_days}
+      title={gettext("Last year")}
+      collected_releases={@top_albums.collected_releases}
+      wishlisted_releases={@top_albums.wishlisted_releases}
+    />
   </div>
 </div>
 

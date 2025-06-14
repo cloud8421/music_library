@@ -223,9 +223,10 @@ defmodule MusicLibrary.ScrobbleActivity do
         select: %{
           album_title: fragment("json_extract(album, '$.title')"),
           artist_name: fragment("json_extract(artist, '$.name')"),
+          artist_musicbrainz_id: fragment("json_extract(artist, '$.musicbrainz_id')"),
           play_count: count(t.scrobbled_at_uts),
           cover_url: fragment("max(?)", t.cover_url),
-          album_mbid: fragment("json_extract(album, '$.musicbrainz_id')")
+          album_musicbrainz_id: fragment("json_extract(album, '$.musicbrainz_id')")
         },
         order_by: [desc: count(t.scrobbled_at_uts)],
         limit: ^limit
@@ -235,10 +236,26 @@ defmodule MusicLibrary.ScrobbleActivity do
 
   @doc """
   Gets top albums for multiple time periods (30, 90, 365 days).
-  Returns a map with the results for each period.
+  Returns a map with the results for each period, along with collected and
+  wishlisted releases.
   """
   def get_top_albums_by_periods(limit \\ 10) do
+    last_30_days = get_top_albums_by_days(30, limit)
+    last_90_days = get_top_albums_by_days(90, limit)
+    last_365_days = get_top_albums_by_days(365, limit)
+
+    all_album_ids =
+      (last_30_days ++ last_90_days ++ last_365_days)
+      |> Enum.map(fn t -> t.album_musicbrainz_id end)
+      |> Enum.uniq()
+      |> Enum.reject(fn musicbrainz_id -> musicbrainz_id == "" end)
+
+    collected_releases = Collection.collected_releases(all_album_ids)
+    wishlisted_releases = Wishlist.wishlisted_releases(all_album_ids)
+
     %{
+      collected_releases: collected_releases,
+      wishlisted_releases: wishlisted_releases,
       last_30_days: get_top_albums_by_days(30, limit),
       last_90_days: get_top_albums_by_days(90, limit),
       last_365_days: get_top_albums_by_days(365, limit)
