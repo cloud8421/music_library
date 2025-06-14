@@ -9,8 +9,9 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   alias MusicBrainz.ReleaseGroupSearchResult
   alias MusicLibrary.Records.{Cover, Record}
 
-  @default_records_page_size 20
-  @total_records @default_records_page_size + 10
+  # make it a multiple of 4 for easier calculations
+  @default_records_page_size 8
+  @total_records @default_records_page_size + div(@default_records_page_size, 2)
 
   defp fill_collection(_) do
     records = Enum.map(1..@total_records, fn _ -> record() end)
@@ -37,12 +38,16 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     end
 
     test "shows purchased records (first page only)", %{conn: conn} do
-      # We fetch collection records to maintain consistent order
-      records = MusicLibrary.Collection.search_records("")
+      limit = div(@default_records_page_size, 2)
+      page_size = div(@default_records_page_size, 4)
 
-      {expected_present, expected_absent} = Enum.split(records, @default_records_page_size)
+      records =
+        MusicLibrary.Collection.search_records("", limit: limit)
 
-      session = visit(conn, ~p"/collection?order=alphabetical")
+      {expected_present, expected_absent} =
+        Enum.split(records, page_size)
+
+      session = visit(conn, ~p"/collection?order=alphabetical&page_size=#{page_size}")
 
       for record <- expected_present do
         cover_url = ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
@@ -75,7 +80,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     test "uses query string params", %{conn: conn} do
       # We fetch collection records to maintain consistent order
       records = MusicLibrary.Collection.search_records("")
-      page_size = 10
+      page_size = div(@default_records_page_size, 4)
 
       {page_1_records, rest_of_records} = Enum.split(records, page_size)
       {page_2_records, rest_of_records} = Enum.split(rest_of_records, page_size)
@@ -101,6 +106,10 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       |> assert_has("#bottom_pagination a", text: "3")
 
       {page_3_records, rest_of_records} = Enum.split(rest_of_records, page_size)
+
+      # Safeguard - make sure we're not testing against empty lists
+      assert length(page_3_records) !== 0
+      assert length(rest_of_records) !== 0
 
       page_3_session =
         visit(conn, ~p"/collection?order=alphabetical&page=3&page_size=#{page_size}")
