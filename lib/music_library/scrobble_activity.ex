@@ -1,7 +1,9 @@
 defmodule MusicLibrary.ScrobbleActivity do
-  alias LastFm.Scrobble
+  import Ecto.Query
+
+  alias LastFm.{Scrobble, Track}
   alias MusicBrainz.Release
-  alias MusicLibrary.{Artists, Collection, Secrets, Wishlist}
+  alias MusicLibrary.{Artists, Collection, Repo, Secrets, Wishlist}
 
   def can_scrobble? do
     Secrets.get("last_fm_session_key") !== nil
@@ -199,5 +201,47 @@ defmodule MusicLibrary.ScrobbleActivity do
     |> Enum.uniq()
     |> Enum.reject(fn musicbrainz_id -> musicbrainz_id == "" end)
     |> MapSet.new()
+  end
+
+  @doc """
+  Gets the top albums by scrobble count for the given number of days.
+  Returns a list of maps with album information and play counts.
+  """
+  def get_top_albums_by_days(days, limit \\ 10) do
+    cutoff_timestamp =
+      DateTime.utc_now()
+      |> DateTime.add(-days, :day)
+      |> DateTime.to_unix()
+
+    query =
+      from t in Track,
+        where: t.scrobbled_at_uts >= ^cutoff_timestamp,
+        group_by: [
+          fragment("json_extract(album, '$.title')"),
+          fragment("json_extract(artist, '$.name')")
+        ],
+        select: %{
+          album_title: fragment("json_extract(album, '$.title')"),
+          artist_name: fragment("json_extract(artist, '$.name')"),
+          play_count: count(t.scrobbled_at_uts),
+          cover_url: fragment("max(?)", t.cover_url),
+          album_mbid: fragment("json_extract(album, '$.musicbrainz_id')")
+        },
+        order_by: [desc: count(t.scrobbled_at_uts)],
+        limit: ^limit
+
+    Repo.all(query)
+  end
+
+  @doc """
+  Gets top albums for multiple time periods (30, 90, 365 days).
+  Returns a map with the results for each period.
+  """
+  def get_top_albums_by_periods(limit \\ 10) do
+    %{
+      last_30_days: get_top_albums_by_days(30, limit),
+      last_90_days: get_top_albums_by_days(90, limit),
+      last_365_days: get_top_albums_by_days(365, limit)
+    }
   end
 end

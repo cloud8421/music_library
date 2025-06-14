@@ -76,6 +76,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     recent_tracks = LastFm.get_scrobbled_tracks()
     records_by_artists = Collection.count_records_by_artist(limit: 20)
     records_by_genre = Collection.count_records_by_genre(limit: 20)
+    top_albums = ScrobbleActivity.get_top_albums_by_periods(10)
 
     if connected?(socket) do
       LastFm.subscribe_to_feed()
@@ -98,7 +99,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        page_title: gettext("Stats"),
        current_section: :stats,
        records_by_artist: records_by_artists,
-       records_by_genre: records_by_genre
+       records_by_genre: records_by_genre,
+       top_albums: top_albums
      )}
   end
 

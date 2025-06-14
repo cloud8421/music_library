@@ -885,3 +885,23 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Record deleted"
 msgstr ""
+
+#: lib/music_library_web/live/stats_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Last 30 days"
+msgstr ""
+
+#: lib/music_library_web/live/stats_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Last 90 days"
+msgstr ""
+
+#: lib/music_library_web/live/stats_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Last Year"
+msgstr ""
+
+#: lib/music_library_web/live/stats_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Top Albums"
+msgstr ""
