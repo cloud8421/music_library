@@ -29,7 +29,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
           {@title}
         </p>
       </dt>
-      <dd class="ml-24 flex items-baseline pb-4 sm:pb-6">
+      <dd class="ml-24 mt-2 flex items-baseline pb-4 sm:pb-6">
         <p class="font-semibold">
           <span class="text-sm md:text-base lg:text-2xl block text-zinc-900 dark:text-zinc-300">
             {@record.title}
