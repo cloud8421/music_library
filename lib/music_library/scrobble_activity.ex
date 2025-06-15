@@ -207,10 +207,16 @@ defmodule MusicLibrary.ScrobbleActivity do
   Gets the top albums by scrobble count for the given number of days.
   Returns a list of maps with album information and play counts.
   """
-  def get_top_albums_by_days(days, limit \\ 10, current_time \\ DateTime.utc_now()) do
+  def get_top_albums_by_days(days, opts) do
+    limit = Keyword.get(opts, :limit, 10)
+    current_time = Keyword.get_lazy(opts, :current_time, &DateTime.utc_now/0)
+    timezone = Keyword.get(opts, :timezone, &resolve_timezone!/0)
+
     cutoff_timestamp =
       current_time
       |> DateTime.add(-days, :day)
+      |> NaiveDateTime.beginning_of_day()
+      |> DateTime.from_naive!(timezone)
       |> DateTime.to_unix()
 
     query =
@@ -239,10 +245,10 @@ defmodule MusicLibrary.ScrobbleActivity do
   Returns a map with the results for each period, along with collected and
   wishlisted releases.
   """
-  def get_top_albums_by_periods(limit \\ 10) do
-    last_30_days = get_top_albums_by_days(30, limit)
-    last_90_days = get_top_albums_by_days(90, limit)
-    last_365_days = get_top_albums_by_days(365, limit)
+  def get_top_albums_by_periods(opts) do
+    last_30_days = get_top_albums_by_days(30, opts)
+    last_90_days = get_top_albums_by_days(90, opts)
+    last_365_days = get_top_albums_by_days(365, opts)
 
     all_album_ids =
       (last_30_days ++ last_90_days ++ last_365_days)
@@ -256,9 +262,14 @@ defmodule MusicLibrary.ScrobbleActivity do
     %{
       collected_releases: collected_releases,
       wishlisted_releases: wishlisted_releases,
-      last_30_days: get_top_albums_by_days(30, limit),
-      last_90_days: get_top_albums_by_days(90, limit),
-      last_365_days: get_top_albums_by_days(365, limit)
+      last_30_days: last_30_days,
+      last_90_days: last_90_days,
+      last_365_days: last_365_days
     }
+  end
+
+  defp resolve_timezone! do
+    Application.get_env(:music_library, MusicLibraryWeb)
+    |> Keyword.fetch!(:timezone)
   end
 end

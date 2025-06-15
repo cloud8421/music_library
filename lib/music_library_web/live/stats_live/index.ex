@@ -287,7 +287,15 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   end
 
   defp assign_top_albums(socket) do
-    top_albums = ScrobbleActivity.get_top_albums_by_periods(10)
+    timezone = socket.assigns.timezone
+    current_time = DateTime.utc_now()
+
+    top_albums =
+      ScrobbleActivity.get_top_albums_by_periods(
+        limit: 10,
+        current_time: current_time,
+        timezone: timezone
+      )
 
     assign(socket, top_albums: top_albums)
   end
