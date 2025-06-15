@@ -281,7 +281,7 @@ msgstr ""
 msgid "MusicBrainz data refreshed successfully"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Refresh LastFm Feed"
 msgstr ""

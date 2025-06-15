@@ -150,6 +150,19 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     """
   end
 
+  defp refresh_lastfm_feed_button(assigns) do
+    ~H"""
+    <button
+      type="button"
+      class="phx-click-loading:animate-spin text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-300"
+      phx-click={JS.push("refresh_lastfm_feed")}
+    >
+      <span class="sr-only">{gettext("Refresh LastFm Feed")}</span>
+      <.icon name="hero-arrow-path" class="-mt-1 h-5 w-5" aria-hidden="true" data-slot="icon" />
+    </button>
+    """
+  end
+
   def mount(_params, _session, socket) do
     latest_record = Collection.get_latest_record!()
     recent_tracks = LastFm.get_scrobbled_tracks()

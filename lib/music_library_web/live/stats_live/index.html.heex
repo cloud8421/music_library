@@ -69,9 +69,12 @@
 </div>
 
 <div>
-  <h1 class="mt-5 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
-    {gettext("Top Albums")}
-  </h1>
+  <div class="mt-5 flex justify-between items-center">
+    <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
+      {gettext("Top Albums")}
+    </h1>
+    <.refresh_lastfm_feed_button />
+  </div>
 
   <div class="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-5">
     <.top_albums_by_period
@@ -100,14 +103,7 @@
     <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
       {gettext("Scrobble activity")}
     </h1>
-    <button
-      type="button"
-      class="phx-click-loading:animate-spin text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-300"
-      phx-click={JS.push("refresh_lastfm_feed")}
-    >
-      <span class="sr-only">{gettext("Refresh LastFm Feed")}</span>
-      <.icon name="hero-arrow-path" class="-mt-1 h-5 w-5" aria-hidden="true" data-slot="icon" />
-    </button>
+    <.refresh_lastfm_feed_button />
   </div>
   <%!-- TODO: replace with OSS version --%>
   <span class="mt-5 isolate inline-flex rounded-md shadow-xs">
