@@ -88,22 +88,28 @@ defmodule MusicLibraryWeb.AddRecordComponent do
           </p>
         </div>
 
-        <.actions_menu id={@release_group.id} background_container_target="#records > li">
-          <:links>
-            <.link
+        <.dropdown id={"actions-#{@release_group.id}"} placement="bottom-end">
+          <:toggle>
+            <span class="sr-only">{gettext("Choose which format to import")}</span>
+            <.icon
+              name="hero-plus"
+              class="-mt-1 h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+          </:toggle>
+          <.focus_wrap id={"actions-#{@release_group.id}-focus-wrap"}>
+            <.dropdown_link
               :for={format <- Records.Record.formats()}
-              class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-              role="menuitem"
-              tabindex="0"
               id={"actions-#{@release_group.id}-#{format}-import"}
               phx-click={
                 JS.push("import", value: %{id: @release_group.id, format: format}, page_loading: true)
               }
             >
               {format_label(format)}
-            </.link>
-          </:links>
-        </.actions_menu>
+            </.dropdown_link>
+          </.focus_wrap>
+        </.dropdown>
       </div>
     </li>
     """

@@ -110,57 +110,6 @@ defmodule MusicLibraryWeb.CoreComponents do
     """
   end
 
-  attr :id, :string, required: true
-  attr :class, :string, default: nil
-  attr :background_container_target, :string, required: true
-  slot :links, required: true
-  slot :button, required: false
-
-  def actions_menu(assigns) do
-    ~H"""
-    <div class={["relative flex-none", @class]}>
-      <button
-        type="button"
-        class="text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-300"
-        aria-expanded="false"
-        aria-haspopup="true"
-        phx-click={toggle_actions_menu(@id, @background_container_target)}
-      >
-        {render_slot(@button) || default_actions_menu_button(%{})}
-      </button>
-      <.focus_wrap
-        id={"actions-#{@id}"}
-        class={[
-          "hidden pointer-events-auto absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-zinc-800 py-2 shadow-lg ring-1 ring-zinc-900/5 focus:outline-hidden"
-        ]}
-        role="menu"
-        aria-orientation="vertical"
-        aria-labelledby="options-menu-0-button"
-        phx-click-away={close_actions_menu(@id, @background_container_target)}
-      >
-        {render_slot(@links)}
-      </.focus_wrap>
-    </div>
-    """
-  end
-
-  defp default_actions_menu_button(assigns) do
-    ~H"""
-    <span class="sr-only">{gettext("Open options")}</span>
-    <.icon name="hero-ellipsis-vertical" class="-mt-1 h-5 w-5" aria-hidden="true" data-slot="icon" />
-    """
-  end
-
-  defp toggle_actions_menu(id, background_container_target) do
-    JS.toggle(to: "#actions-#{id}")
-    |> JS.toggle_class("pointer-events-none", to: background_container_target)
-  end
-
-  defp close_actions_menu(id, background_container_target) do
-    JS.hide(to: "#actions-#{id}")
-    |> JS.remove_class("pointer-events-none", to: background_container_target)
-  end
-
   ## JS Commands
 
   def show(js \\ %JS{}, selector) do

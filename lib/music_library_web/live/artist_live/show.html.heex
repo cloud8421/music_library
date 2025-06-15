@@ -6,12 +6,18 @@
         <.country_flag country={@country} />
       </h1>
 
-      <.actions_menu id={@artist.musicbrainz_id} background_container_target="#records > li">
-        <:links>
-          <.link
-            class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-            role="menuitem"
-            tabindex="0"
+      <.dropdown id={"actions-#{@artist.musicbrainz_id}"} placement="bottom-end">
+        <:toggle>
+          <span class="sr-only">{gettext("Actions")}</span>
+          <.icon
+            name="hero-ellipsis-vertical"
+            class="-mt-1 h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+            aria-hidden="true"
+            data-slot="icon"
+          />
+        </:toggle>
+        <.focus_wrap id={"actions-#{@artist.musicbrainz_id}-focus-wrap"}>
+          <.dropdown_link
             id={"actions-#{@artist.musicbrainz_id}-refresh-image"}
             phx-click={JS.push("refresh_artist_image", value: %{id: @artist.musicbrainz_id})}
           >
@@ -22,12 +28,9 @@
               data-slot="icon"
             />
             {gettext("Refresh image")}
-          </.link>
+          </.dropdown_link>
 
-          <.link
-            class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-            role="menuitem"
-            tabindex="0"
+          <.dropdown_link
             id={"actions-#{@artist.musicbrainz_id}-refresh-artist-info"}
             phx-click={JS.push("refresh_artist_info", value: %{id: @artist.musicbrainz_id})}
           >
@@ -38,9 +41,9 @@
               data-slot="icon"
             />
             {gettext("Refresh info")}
-          </.link>
-        </:links>
-      </.actions_menu>
+          </.dropdown_link>
+        </.focus_wrap>
+      </.dropdown>
     </div>
 
     <div class="mt-4 flex items-center justify-between">

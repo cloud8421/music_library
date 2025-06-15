@@ -123,17 +123,25 @@ defmodule MusicLibraryWeb.RecordComponents do
             </p>
           </div>
           <%!-- TODO: replace with OSS version --%>
-          <.actions_menu id={record.id} background_container_target="#records > li">
-            <:links>
-              <.link
-                class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-                role="menuitem"
-                tabindex="0"
-                id={"actions-#{record.id}-show"}
-                navigate={@record_show_path.(record)}
+          <.dropdown id={"actions-#{record.id}"} placement="bottom-end">
+            <:toggle>
+              <div
+                phx-click={JS.toggle_class("pointer-events-none", to: "#records > li")}
+                phx-click-away={JS.remove_class("pointer-events-none", to: "#records > li")}
               >
+                <span class="sr-only">{gettext("Actions")}</span>
+                <.icon
+                  name="hero-ellipsis-vertical"
+                  class="-mt-1 h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+              </div>
+            </:toggle>
+            <.focus_wrap id={"actions-#{record.id}-focus-wrap"} class="pointer-events-auto">
+              <.dropdown_link id={"actions-#{record.id}-show"} navigate={@record_show_path.(record)}>
                 {gettext("Show")}
-              </.link>
+              </.dropdown_link>
               <a
                 href={MusicBrainz.ReleaseGroup.url(record.musicbrainz_id)}
                 target=".blank"
@@ -145,21 +153,12 @@ defmodule MusicLibraryWeb.RecordComponents do
                 {gettext("View on MusicBrainz")}
               </a>
 
-              <.link
-                class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-                role="menuitem"
-                tabindex="0"
-                id={"actions-#{record.id}-edit"}
-                patch={@record_edit_path.(record)}
-              >
+              <.dropdown_link id={"actions-#{record.id}-edit"} patch={@record_edit_path.(record)}>
                 {gettext("Edit")}
-              </.link>
+              </.dropdown_link>
 
-              <.link
+              <.dropdown_link
                 :if={!record.purchased_at}
-                class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-                role="menuitem"
-                tabindex="0"
                 id={"actions-#{record.id}-purchase"}
                 phx-click={
                   JS.dispatch("music_library:confetti")
@@ -167,20 +166,20 @@ defmodule MusicLibraryWeb.RecordComponents do
                 }
               >
                 {gettext("Purchased")}
-              </.link>
-
-              <.link
-                class="block px-3 py-1 text-sm leading-6 text-red-900 hover:bg-red-50 dark:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-600"
-                role="menuitem"
-                tabindex="0"
+              </.dropdown_link>
+              <.dropdown_separator />
+              <.dropdown_link
                 id={"actions-#{record.id}-delete"}
                 phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
                 data-confirm={gettext("Are you sure?")}
+                class={[
+                  "text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
+                ]}
               >
                 {gettext("Delete")}
-              </.link>
-            </:links>
-          </.actions_menu>
+              </.dropdown_link>
+            </.focus_wrap>
+          </.dropdown>
         </div>
       </li>
     </ul>
@@ -264,17 +263,20 @@ defmodule MusicLibraryWeb.RecordComponents do
             <p class="pointer-events-none mt-2 block truncate text-sm font-medium text-zinc-900 dark:text-zinc-300">
               {record.title}
             </p>
-            <.actions_menu id={record.id} background_container_target="#records > li" class="mt-2">
-              <:links>
-                <.link
-                  class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-                  role="menuitem"
-                  tabindex="0"
-                  id={"actions-#{record.id}-show"}
-                  navigate={@record_show_path.(record)}
-                >
+            <.dropdown id={"actions-#{record.id}"} placement="bottom-end" class="mt-2">
+              <:toggle>
+                <span class="sr-only">{gettext("Actions")}</span>
+                <.icon
+                  name="hero-ellipsis-vertical"
+                  class="-mt-1 h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+              </:toggle>
+              <.focus_wrap id={"actions-#{record.id}-focus-wrap"}>
+                <.dropdown_link id={"actions-#{record.id}-show"} navigate={@record_show_path.(record)}>
                   {gettext("Show")}
-                </.link>
+                </.dropdown_link>
                 <a
                   href={MusicBrainz.ReleaseGroup.url(record.musicbrainz_id)}
                   target=".blank"
@@ -286,21 +288,12 @@ defmodule MusicLibraryWeb.RecordComponents do
                   {gettext("View on MusicBrainz")}
                 </a>
 
-                <.link
-                  class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-                  role="menuitem"
-                  tabindex="0"
-                  id={"actions-#{record.id}-edit"}
-                  patch={@record_edit_path.(record)}
-                >
+                <.dropdown_link id={"actions-#{record.id}-edit"} patch={@record_edit_path.(record)}>
                   {gettext("Edit")}
-                </.link>
+                </.dropdown_link>
 
-                <.link
+                <.dropdown_link
                   :if={!record.purchased_at}
-                  class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-                  role="menuitem"
-                  tabindex="0"
                   id={"actions-#{record.id}-purchase"}
                   phx-click={
                     JS.dispatch("music_library:confetti")
@@ -308,20 +301,18 @@ defmodule MusicLibraryWeb.RecordComponents do
                   }
                 >
                   {gettext("Purchased")}
-                </.link>
+                </.dropdown_link>
 
-                <.link
-                  class="block px-3 py-1 text-sm leading-6 text-red-900 hover:bg-red-50 dark:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-600"
-                  role="menuitem"
-                  tabindex="0"
+                <.dropdown_link
                   id={"actions-#{record.id}-delete"}
                   phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
                   data-confirm={gettext("Are you sure?")}
+                  class="text-red-900 hover:bg-red-50 dark:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-600"
                 >
                   {gettext("Delete")}
-                </.link>
-              </:links>
-            </.actions_menu>
+                </.dropdown_link>
+              </.focus_wrap>
+            </.dropdown>
           </div>
           <p class="pointer-events-none block text-sm font-medium text-zinc-500">
             {format_label(record.format)} · {type_label(record.type)}

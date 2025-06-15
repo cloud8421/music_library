@@ -25,12 +25,18 @@
           </span>
         </p>
       </div>
-      <.actions_menu id={@record.id} background_container_target="#records > li">
-        <:links>
-          <.link
-            class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-            role="menuitem"
-            tabindex="0"
+      <.dropdown id={"actions-#{@record.id}"} placement="bottom-end">
+        <:toggle>
+          <span class="sr-only">{gettext("Actions")}</span>
+          <.icon
+            name="hero-ellipsis-vertical"
+            class="-mt-1 h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+            aria-hidden="true"
+            data-slot="icon"
+          />
+        </:toggle>
+        <.focus_wrap id={"actions-#{@record.id}-focus-wrap"}>
+          <.dropdown_link
             id={"actions-#{@record.id}-edit"}
             patch={~p"/collection/#{@record}/show/edit"}
           >
@@ -41,12 +47,9 @@
               data-slot="icon"
             />
             {gettext("Edit")}
-          </.link>
+          </.dropdown_link>
 
-          <.link
-            class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-            role="menuitem"
-            tabindex="0"
+          <.dropdown_link
             id={"actions-#{@record.id}-refresh-cover"}
             phx-click={JS.push("refresh_cover", value: %{id: @record.id})}
           >
@@ -57,12 +60,9 @@
               data-slot="icon"
             />
             {gettext("Refresh cover")}
-          </.link>
+          </.dropdown_link>
 
-          <.link
-            class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-            role="menuitem"
-            tabindex="0"
+          <.dropdown_link
             id={"actions-#{@record.id}-refresh-mb-data"}
             phx-click={JS.push("refresh_musicbrainz_data", value: %{id: @record.id})}
           >
@@ -73,12 +73,9 @@
               data-slot="icon"
             />
             {gettext("Refresh MB data")}
-          </.link>
+          </.dropdown_link>
 
-          <.link
-            class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-            role="menuitem"
-            tabindex="0"
+          <.dropdown_link
             id={"actions-#{@record.id}-populate-genres"}
             phx-click={JS.push("populate_genres", value: %{id: @record.id})}
           >
@@ -89,12 +86,9 @@
               data-slot="icon"
             />
             {gettext("Populate genres")}
-          </.link>
+          </.dropdown_link>
 
-          <.link
-            class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-            role="menuitem"
-            tabindex="0"
+          <.dropdown_link
             id={"actions-#{@record.id}-extract-colors-fast"}
             phx-click={JS.push("extract_colors", value: %{id: @record.id, method: :fast})}
           >
@@ -105,12 +99,9 @@
               data-slot="icon"
             />
             {gettext("Extract colors (fast)")}
-          </.link>
+          </.dropdown_link>
 
-          <.link
-            class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-            role="menuitem"
-            tabindex="0"
+          <.dropdown_link
             id={"actions-#{@record.id}-extract-colors-slow"}
             phx-click={JS.push("extract_colors", value: %{id: @record.id, method: :slow})}
           >
@@ -121,15 +112,14 @@
               data-slot="icon"
             />
             {gettext("Extract colors (slow)")}
-          </.link>
+          </.dropdown_link>
 
-          <.link
-            class="block px-3 py-1 text-sm leading-6 text-red-900 hover:bg-red-50 dark:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-600"
-            role="menuitem"
-            tabindex="0"
+          <.dropdown_separator />
+          <.dropdown_link
             id={"actions-#{@record.id}-delete"}
             phx-click={JS.push("delete", value: %{id: @record.id})}
             data-confirm={gettext("Are you sure?")}
+            class="text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
           >
             <.icon
               name="hero-trash"
@@ -138,9 +128,9 @@
               data-slot="icon"
             />
             {gettext("Delete")}
-          </.link>
-        </:links>
-      </.actions_menu>
+          </.dropdown_link>
+        </.focus_wrap>
+      </.dropdown>
     </div>
     <div class="mt-4 md:mt-8">
       <%!-- TODO: replace with OSS version --%>
