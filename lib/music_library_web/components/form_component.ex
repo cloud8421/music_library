@@ -19,10 +19,10 @@ defmodule MusicLibraryWeb.FormComponent do
     ~H"""
     <div class="w-82 md:w-2xl">
       <header>
-        <h1 class="text-sm font-medium leading-6 text-zinc-700 dark:text-zinc-400">
+        <h1 class="text-base font-medium leading-6 text-zinc-700">
           {Record.artist_names(@record)}
         </h1>
-        <h2 class="text-base font-medium leading-6 text-zinc-700 dark:text-zinc-400">
+        <h2 class="mt-1 flex font-semibold text-lg md:text-2xl leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
           {@record.title}
         </h2>
       </header>
