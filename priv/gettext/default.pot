@@ -165,7 +165,6 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/collection_live/show.ex
 #: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
@@ -207,11 +206,6 @@ msgstr ""
 #: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Updated at"
-msgstr ""
-
-#: lib/music_library_web/components/record_components.ex
-#, elixir-autogen, elixir-format
-msgid "View on MusicBrainz"
 msgstr ""
 
 #: lib/music_library_web/controllers/session_html/new.html.heex

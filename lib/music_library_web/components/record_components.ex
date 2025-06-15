@@ -139,20 +139,6 @@ defmodule MusicLibraryWeb.RecordComponents do
               </div>
             </:toggle>
             <.focus_wrap id={"actions-#{record.id}-focus-wrap"} class="pointer-events-auto">
-              <.dropdown_link id={"actions-#{record.id}-show"} navigate={@record_show_path.(record)}>
-                {gettext("Show")}
-              </.dropdown_link>
-              <a
-                href={MusicBrainz.ReleaseGroup.url(record.musicbrainz_id)}
-                target=".blank"
-                class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-                role="menuitem"
-                tabindex="0"
-                id={"actions-#{record.id}-musicbrainz"}
-              >
-                {gettext("View on MusicBrainz")}
-              </a>
-
               <.dropdown_link id={"actions-#{record.id}-edit"} patch={@record_edit_path.(record)}>
                 {gettext("Edit")}
               </.dropdown_link>
@@ -274,20 +260,6 @@ defmodule MusicLibraryWeb.RecordComponents do
                 />
               </:toggle>
               <.focus_wrap id={"actions-#{record.id}-focus-wrap"}>
-                <.dropdown_link id={"actions-#{record.id}-show"} navigate={@record_show_path.(record)}>
-                  {gettext("Show")}
-                </.dropdown_link>
-                <a
-                  href={MusicBrainz.ReleaseGroup.url(record.musicbrainz_id)}
-                  target=".blank"
-                  class="block px-3 py-1 text-sm leading-6 text-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:text-zinc-300 dark:hover:bg-zinc-700"
-                  role="menuitem"
-                  tabindex="0"
-                  id={"actions-#{record.id}-musicbrainz"}
-                >
-                  {gettext("View on MusicBrainz")}
-                </a>
-
                 <.dropdown_link id={"actions-#{record.id}-edit"} patch={@record_edit_path.(record)}>
                   {gettext("Edit")}
                 </.dropdown_link>
@@ -302,12 +274,12 @@ defmodule MusicLibraryWeb.RecordComponents do
                 >
                   {gettext("Purchased")}
                 </.dropdown_link>
-
+                <.dropdown_separator />
                 <.dropdown_link
                   id={"actions-#{record.id}-delete"}
                   phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
                   data-confirm={gettext("Are you sure?")}
-                  class="text-red-900 hover:bg-red-50 dark:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-600"
+                  class="text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
                 >
                   {gettext("Delete")}
                 </.dropdown_link>
