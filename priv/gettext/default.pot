@@ -908,3 +908,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr ""
+
+#: lib/music_library_web/live/stats_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Top Artists"
+msgstr ""

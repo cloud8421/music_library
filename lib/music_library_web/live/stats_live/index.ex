@@ -150,6 +150,54 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     """
   end
 
+  attr :artists, :list, required: true
+  attr :title, :string, required: true
+
+  def top_artists_by_period(assigns) do
+    ~H"""
+    <div>
+      <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-200 mb-3">
+        {@title}
+      </h2>
+      <div class="space-y-2">
+        <div :for={artist <- @artists} class="flex items-center space-x-3 p-2">
+          <img
+            :if={artist.artist_musicbrainz_id != ""}
+            class="w-12 h-12 rounded-md object-cover"
+            src={~p"/artists/#{artist.artist_musicbrainz_id}/image"}
+            alt={artist.artist_name}
+            onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
+          />
+          <div
+            :if={artist.artist_musicbrainz_id == ""}
+            class="w-12 h-12 rounded-md bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center"
+          >
+            <.icon name="hero-user" class="w-6 h-6 text-zinc-400" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <.link
+              :if={artist.artist_musicbrainz_id != ""}
+              class="text-sm font-medium text-zinc-900 dark:text-zinc-300 hover:text-zinc-700 dark:hover:text-zinc-400 truncate"
+              navigate={~p"/artists/#{artist.artist_musicbrainz_id}"}
+            >
+              {artist.artist_name}
+            </.link>
+            <p
+              :if={artist.artist_musicbrainz_id == ""}
+              class="text-sm font-medium text-zinc-500 dark:text-zinc-400 truncate"
+            >
+              {artist.artist_name}
+            </p>
+          </div>
+          <.badge>
+            {artist.play_count}
+          </.badge>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
   defp refresh_lastfm_feed_button(assigns) do
     ~H"""
     <button
@@ -185,6 +233,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
      |> assign_counts()
      |> assign_scrobble_activity(recent_tracks)
      |> assign_top_albums()
+     |> assign_top_artists()
      |> assign(
        scrobble_activity_mode: :albums,
        latest_record: latest_record,
@@ -246,6 +295,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     {:noreply,
      socket
      |> assign_top_albums()
+     |> assign_top_artists()
      |> assign_scrobble_activity(recent_tracks)}
   end
 
@@ -298,6 +348,20 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       )
 
     assign(socket, top_albums: top_albums)
+  end
+
+  defp assign_top_artists(socket) do
+    timezone = socket.assigns.timezone
+    current_time = DateTime.utc_now()
+
+    top_artists =
+      ScrobbleActivity.get_top_artists_by_periods(
+        limit: 10,
+        current_time: current_time,
+        timezone: timezone
+      )
+
+    assign(socket, top_artists: top_artists)
   end
 
   defp tracked_record?(tracked_releases, release_id) do

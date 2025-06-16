@@ -98,6 +98,21 @@
   </div>
 </div>
 
+<div>
+  <div class="mt-5 flex justify-between items-center">
+    <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
+      {gettext("Top Artists")}
+    </h1>
+    <.refresh_lastfm_feed_button />
+  </div>
+
+  <div class="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-5">
+    <.top_artists_by_period artists={@top_artists.last_30_days} title={gettext("Last 30 days")} />
+    <.top_artists_by_period artists={@top_artists.last_90_days} title={gettext("Last 90 days")} />
+    <.top_artists_by_period artists={@top_artists.last_365_days} title={gettext("Last year")} />
+  </div>
+</div>
+
 <div class="flow-root">
   <div class="mt-5 flex justify-between items-center">
     <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
