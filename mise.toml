@@ -4,6 +4,7 @@ LAST_FM_API_KEY = 'change-me'
 OPENAI_KEY = 'change-me'
 FLUXON_KEY_FINGERPRINT = 'change-me'
 FLUXON_LICENSE_KEY = 'change-me'
+DBUI_URL = 'sqlite:data/music_library_dev.db'
 
 [tools]
 hurl = 'latest'
