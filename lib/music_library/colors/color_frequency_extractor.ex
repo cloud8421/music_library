@@ -94,11 +94,11 @@ defmodule MusicLibrary.Colors.ColorFrequencyExtractor do
           true
       end)
 
-    if length(pixels) > 0 do
+    if Enum.empty?(pixels) do
+      {:error, "No valid pixels found for color extraction"}
+    else
       colors = analyze_color_histogram(pixels, num_colors)
       {:ok, colors}
-    else
-      {:error, "No valid pixels found for color extraction"}
     end
   end
 

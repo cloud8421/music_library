@@ -86,11 +86,11 @@ defmodule MusicLibrary.Colors.EdgeWeightedExtractor do
         brightness < 15 || brightness > 240
       end)
 
-    if length(weighted_pixels) > 0 do
+    if Enum.empty?(weighted_pixels) do
+      {:error, "No valid edge-weighted pixels found"}
+    else
       colors = cluster_weighted_colors(weighted_pixels, num_colors)
       {:ok, colors}
-    else
-      {:error, "No valid edge-weighted pixels found"}
     end
   end
 
