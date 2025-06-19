@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "mcp__tidewave__get_ecto_schemas",
-      "Bash(mix test:*)"
+      "Bash(mix test:*)",
+      "mcp__tidewave__get_source_location"
     ]
   },
   "enableAllProjectMcpServers": false

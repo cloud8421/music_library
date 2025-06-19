@@ -241,6 +241,57 @@ defmodule MusicLibrary.ScrobbleActivity do
   end
 
   @doc """
+  Gets the top albums by scrobble count across all time.
+  Returns a list of maps with album information and play counts.
+  """
+  def get_top_albums(opts) do
+    limit = Keyword.get(opts, :limit, 10)
+
+    query =
+      from t in Track,
+        group_by: [
+          fragment("json_extract(album, '$.title')"),
+          fragment("json_extract(artist, '$.name')")
+        ],
+        select: %{
+          album_title: fragment("json_extract(album, '$.title')"),
+          artist_name: fragment("json_extract(artist, '$.name')"),
+          artist_musicbrainz_id: fragment("json_extract(artist, '$.musicbrainz_id')"),
+          play_count: count(t.scrobbled_at_uts),
+          cover_url: fragment("max(?)", t.cover_url),
+          album_musicbrainz_id: fragment("json_extract(album, '$.musicbrainz_id')")
+        },
+        order_by: [desc: count(t.scrobbled_at_uts)],
+        limit: ^limit
+
+    Repo.all(query)
+  end
+
+  @doc """
+  Gets the top artists by scrobble count across all time.
+  Returns a list of maps with artist information and play counts.
+  """
+  def get_top_artists(opts) do
+    limit = Keyword.get(opts, :limit, 10)
+
+    query =
+      from t in Track,
+        group_by: [
+          fragment("json_extract(artist, '$.name')"),
+          fragment("json_extract(artist, '$.musicbrainz_id')")
+        ],
+        select: %{
+          artist_name: fragment("json_extract(artist, '$.name')"),
+          artist_musicbrainz_id: fragment("json_extract(artist, '$.musicbrainz_id')"),
+          play_count: count(t.scrobbled_at_uts)
+        },
+        order_by: [desc: count(t.scrobbled_at_uts)],
+        limit: ^limit
+
+    Repo.all(query)
+  end
+
+  @doc """
   Gets the top artists by scrobble count for the given number of days.
   Returns a list of maps with artist information and play counts.
   """
@@ -275,7 +326,7 @@ defmodule MusicLibrary.ScrobbleActivity do
   end
 
   @doc """
-  Gets top albums for multiple time periods (30, 90, 365 days).
+  Gets top albums for multiple time periods (30, 90, 365 days) and all time.
   Returns a map with the results for each period, along with collected and
   wishlisted releases.
   """
@@ -283,9 +334,10 @@ defmodule MusicLibrary.ScrobbleActivity do
     last_30_days = get_top_albums_by_days(30, opts)
     last_90_days = get_top_albums_by_days(90, opts)
     last_365_days = get_top_albums_by_days(365, opts)
+    all_time = get_top_albums(opts)
 
     all_album_ids =
-      (last_30_days ++ last_90_days ++ last_365_days)
+      (last_30_days ++ last_90_days ++ last_365_days ++ all_time)
       |> Enum.map(fn t -> t.album_musicbrainz_id end)
       |> Enum.uniq()
       |> Enum.reject(fn musicbrainz_id -> musicbrainz_id == "" end)
@@ -298,23 +350,26 @@ defmodule MusicLibrary.ScrobbleActivity do
       wishlisted_releases: wishlisted_releases,
       last_30_days: last_30_days,
       last_90_days: last_90_days,
-      last_365_days: last_365_days
+      last_365_days: last_365_days,
+      all_time: all_time
     }
   end
 
   @doc """
-  Gets top artists for multiple time periods (30, 90, 365 days).
+  Gets top artists for multiple time periods (30, 90, 365 days) and all time.
   Returns a map with the results for each period.
   """
   def get_top_artists_by_periods(opts) do
     last_30_days = get_top_artists_by_days(30, opts)
     last_90_days = get_top_artists_by_days(90, opts)
     last_365_days = get_top_artists_by_days(365, opts)
+    all_time = get_top_artists(opts)
 
     %{
       last_30_days: last_30_days,
       last_90_days: last_90_days,
-      last_365_days: last_365_days
+      last_365_days: last_365_days,
+      all_time: all_time
     }
   end
 
