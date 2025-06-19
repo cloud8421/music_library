@@ -37,6 +37,6 @@ hard_limit = 1000
 soft_limit = 1000
 
 [[vm]]
-memory = '1024mb'
+memory = '2048mb'
 cpu_kind = 'shared'
 cpus = 2
