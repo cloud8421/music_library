@@ -31,6 +31,16 @@ defmodule MusicLibrary.Artists do
     end
   end
 
+  def name_id_pairs(names) do
+    q =
+      from ar in ArtistRecord,
+        distinct: true,
+        where: fragment("artist ->> '$.name'") in ^names,
+        select: {fragment("artist ->> '$.name'"), ar.musicbrainz_id}
+
+    Repo.all(q)
+  end
+
   def get_all_artist_ids do
     q = from ar in ArtistRecord, distinct: true, select: ar.musicbrainz_id
 
