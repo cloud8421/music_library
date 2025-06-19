@@ -222,6 +222,7 @@ defmodule MusicLibrary.ScrobbleActivity do
     query =
       from t in Track,
         where: t.scrobbled_at_uts >= ^cutoff_timestamp,
+        where: fragment("json_extract(album, '$.title') != ''"),
         group_by: [
           fragment("json_extract(album, '$.title')"),
           fragment("json_extract(artist, '$.name')")
@@ -249,6 +250,7 @@ defmodule MusicLibrary.ScrobbleActivity do
 
     query =
       from t in Track,
+        where: fragment("json_extract(album, '$.title') != ''"),
         group_by: [
           fragment("json_extract(album, '$.title')"),
           fragment("json_extract(artist, '$.name')")
