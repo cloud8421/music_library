@@ -16,7 +16,7 @@
         <h2 class="mt-1 flex font-semibold text-lg md:text-2xl leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
           {@record.title}
         </h2>
-        <p class="mt-2 flex items-center text-sm leading-5 text-zinc-500 dark:text-zinc-400">
+        <p class="mt-2 flex items-center text-sm text-zinc-500 dark:text-zinc-400">
           <.record_colors record={@record} />
           <span class="ml-1">
             {Records.Record.format_release_date(@record.release_date)} · {format_label(
