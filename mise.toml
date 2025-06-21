@@ -17,19 +17,16 @@ gh = 'latest'
 # NPM DEPS
 
 [tasks.npm-install]
-run = 'npm install'
+run = 'npm install --prefix assets'
 hide = true
-dir = 'assets'
 
 [tasks.npm-update]
-run = 'npm update'
+run = 'npm update --prefix assets'
 hide = true
-dir = 'assets'
 
 [tasks.npm-outdated]
-run = 'npm outdated'
+run = 'npm outdated --prefix assets'
 hide = true
-dir = 'assets'
 
 # TAILWIND DEP
 
