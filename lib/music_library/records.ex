@@ -84,25 +84,25 @@ defmodule MusicLibrary.Records do
     Enum.reduce(parsed_query, search_with_order, fn
       {:artist, artist}, search ->
         search
-        |> where(fragment("records_search_index match 'artists : ?*'", literal(^artist)))
+        |> where(fragment("records_search_index match 'artists : ?*'", identifier(^artist)))
         |> or_where(
-          fragment("records_search_index match 'normalized_artists : ?*'", literal(^artist))
+          fragment("records_search_index match 'normalized_artists : ?*'", identifier(^artist))
         )
 
       {:album, album}, search ->
         search
-        |> where(fragment("records_search_index match 'title : ?*'", literal(^album)))
+        |> where(fragment("records_search_index match 'title : ?*'", identifier(^album)))
         |> or_where(
-          fragment("records_search_index match 'normalized_title : ?*'", literal(^album))
+          fragment("records_search_index match 'normalized_title : ?*'", identifier(^album))
         )
 
       {:genre, genre}, search ->
         search
-        |> where(fragment("records_search_index match 'genres : ?*'", literal(^genre)))
+        |> where(fragment("records_search_index match 'genres : ?*'", identifier(^genre)))
 
       {:mbid, mbid}, search ->
         search
-        |> where(fragment("records_search_index = '?*'", literal(^mbid)))
+        |> where(fragment("records_search_index = '?*'", identifier(^mbid)))
 
       {:format, format}, search ->
         search |> where([r], r.format == ^format)
@@ -115,7 +115,7 @@ defmodule MusicLibrary.Records do
 
       {:query, raw_query}, search ->
         search
-        |> where(fragment("records_search_index = '?*'", literal(^raw_query)))
+        |> where(fragment("records_search_index = '?*'", identifier(^raw_query)))
     end)
   end
 
