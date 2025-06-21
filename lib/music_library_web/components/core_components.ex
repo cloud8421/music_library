@@ -33,6 +33,7 @@ defmodule MusicLibraryWeb.CoreComponents do
   defdelegate select(assigns), to: Fluxon.Components.Select
   defdelegate separator(assigns), to: Fluxon.Components.Separator
   defdelegate sheet(assigns), to: Fluxon.Components.Sheet
+  defdelegate tooltip(assigns), to: Fluxon.Components.Tooltip
 
   @doc """
   Renders a simple form.
