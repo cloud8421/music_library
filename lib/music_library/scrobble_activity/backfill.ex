@@ -3,20 +3,21 @@ defmodule MusicLibrary.ScrobbleActivity.Backfill do
   alias MusicLibrary.Repo
 
   @allowed_artists [
-    "IQ",
-    "Riverside",
     "Airbag",
     "Arena",
-    "Fish",
-    "Marillion",
-    "Porcupine Tree",
-    "Steven Wilson",
-    "Gazpacho",
-    "Sylvan",
     "Dream Theater",
-    "Pink Floyd",
+    "Fish",
+    "Gazpacho",
+    "IQ",
+    "Marillion",
+    "Meer",
     "Muse",
-    "Opeth"
+    "Opeth",
+    "Pink Floyd",
+    "Porcupine Tree",
+    "Riverside",
+    "Steven Wilson",
+    "Sylvan"
   ]
 
   def fill_missing_artist_ids do
