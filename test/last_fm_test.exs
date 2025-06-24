@@ -50,18 +50,10 @@ defmodule LastFmTest do
       }
 
       Req.Test.stub(LastFm.API, fn conn ->
-        assert conn.body_params == %{
-                 "album" => %{"0" => "Dominion"},
-                 "api_key" => "change me",
-                 "api_sig" => "f3c0644ba671654aafb2396806c4b96f",
-                 "artist" => %{"0" => "IQ"},
-                 "format" => "json",
-                 "mbid" => %{"0" => "aefaaf73-b52c-4b0d-91df-f8e4321db2bd"},
-                 "method" => "track.scrobble",
-                 "sk" => "session_key",
-                 "timestamp" => %{"0" => "1746561301"},
-                 "track" => %{"0" => "Wonderland"}
-               }
+        body = Req.Test.raw_body(conn)
+
+        assert body ==
+                 "album%5B0%5D=Dominion&api_key=change+me&api_sig=f3c0644ba671654aafb2396806c4b96f&artist%5B0%5D=IQ&format=json&mbid%5B0%5D=aefaaf73-b52c-4b0d-91df-f8e4321db2bd&method=track.scrobble&sk=session_key&timestamp%5B0%5D=1746561301&track%5B0%5D=Wonderland"
 
         Req.Test.json(conn, response_body)
       end)
