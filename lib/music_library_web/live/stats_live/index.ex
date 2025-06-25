@@ -85,16 +85,12 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   end
 
   attr :albums, :list, required: true
-  attr :title, :string, required: true
   attr :collected_releases, :list, required: true
   attr :wishlisted_releases, :list, required: true
 
   def top_albums_by_period(assigns) do
     ~H"""
-    <div>
-      <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-200 mb-3">
-        {@title}
-      </h2>
+    <div class="mt-4">
       <div class="space-y-2">
         <div
           :for={album <- @albums}
@@ -151,14 +147,10 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   end
 
   attr :artists, :list, required: true
-  attr :title, :string, required: true
 
   def top_artists_by_period(assigns) do
     ~H"""
-    <div>
-      <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-200 mb-3">
-        {@title}
-      </h2>
+    <div class="mt-4">
       <div class="space-y-2">
         <div :for={artist <- @artists} class="flex items-center space-x-3 p-2">
           <img

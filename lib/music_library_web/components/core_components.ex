@@ -34,6 +34,9 @@ defmodule MusicLibraryWeb.CoreComponents do
   defdelegate separator(assigns), to: Fluxon.Components.Separator
   defdelegate sheet(assigns), to: Fluxon.Components.Sheet
   defdelegate tooltip(assigns), to: Fluxon.Components.Tooltip
+  defdelegate tabs(assigns), to: Fluxon.Components.Tabs
+  defdelegate tabs_list(assigns), to: Fluxon.Components.Tabs
+  defdelegate tabs_panel(assigns), to: Fluxon.Components.Tabs
 
   @doc """
   Renders a simple form.
