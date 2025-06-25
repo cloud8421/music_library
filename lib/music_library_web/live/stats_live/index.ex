@@ -227,7 +227,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
      |> assign_top_albums()
      |> assign_top_artists()
      |> assign(
-       scrobble_activity_mode: :albums,
+       scrobble_activity_mode: "albums",
        latest_record: latest_record,
        page_title: gettext("Stats"),
        current_section: :stats,
@@ -274,7 +274,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     {:noreply,
      socket
      |> assign_scrobble_activity(recent_tracks)
-     |> assign(scrobble_activity_mode: String.to_existing_atom(mode))}
+     |> assign(scrobble_activity_mode: mode)}
   end
 
   def handle_info(%{track_count: 0}, socket) do
