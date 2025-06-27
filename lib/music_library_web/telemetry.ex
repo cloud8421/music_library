@@ -24,18 +24,7 @@ defmodule MusicLibraryWeb.Telemetry do
   def metrics do
     [
       # Phoenix Metrics
-      summary("phoenix.endpoint.start.system_time",
-        unit: {:native, :millisecond}
-      ),
       summary("phoenix.endpoint.stop.duration",
-        unit: {:native, :millisecond}
-      ),
-      summary("phoenix.router_dispatch.start.system_time",
-        tags: [:route],
-        unit: {:native, :millisecond}
-      ),
-      summary("phoenix.router_dispatch.exception.duration",
-        tags: [:route],
         unit: {:native, :millisecond}
       ),
       summary("phoenix.router_dispatch.stop.duration",
@@ -51,6 +40,36 @@ defmodule MusicLibraryWeb.Telemetry do
       summary("phoenix.channel_handled_in.duration",
         tags: [:event],
         unit: {:native, :millisecond}
+      ),
+
+      # LiveView Metrics
+      summary("phoenix.live_view.mount.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:view]
+      ),
+      summary("phoenix.live_view.handle_params.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:view]
+      ),
+      summary("phoenix.live_view.handle_event.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:view, :event]
+      ),
+      summary("phoenix.live_view.render.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:view]
+      ),
+
+      # LiveComponent Metrics
+      summary("phoenix.live_component.update.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:component],
+        drop: &drop_live_dashboard_events/1
+      ),
+      summary("phoenix.live_component.handle_event.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:component, :event],
+        drop: &drop_live_dashboard_events/1
       ),
 
       # Database Metrics
@@ -123,5 +142,12 @@ defmodule MusicLibraryWeb.Telemetry do
 
   defp drop_archive_requests(metadata) do
     metadata.request.host =~ "archive.org"
+  end
+
+  defp drop_live_dashboard_events(metadata) do
+    case Module.split(metadata.component) do
+      ["Phoenix" | _rest] -> true
+      _ -> false
+    end
   end
 end
