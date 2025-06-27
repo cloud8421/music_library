@@ -3,7 +3,8 @@
     "allow": [
       "mcp__tidewave__get_ecto_schemas",
       "Bash(mix test:*)",
-      "mcp__tidewave__get_source_location"
+      "mcp__tidewave__get_source_location",
+      "WebFetch(domain:hexdocs.pm)"
     ]
   },
   "enableAllProjectMcpServers": false
