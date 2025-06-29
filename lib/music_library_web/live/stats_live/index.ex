@@ -73,11 +73,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
   def handle_event("set_scrobble_activity_mode", %{"mode" => mode}, socket)
       when mode in ["tracks", "albums"] do
-    recent_tracks = LastFm.get_scrobbled_tracks()
-
     {:noreply,
      socket
-     |> assign_scrobble_activity(recent_tracks)
      |> assign(scrobble_activity_mode: mode)}
   end
 
