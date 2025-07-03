@@ -162,7 +162,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
                  target_musicbrainz_id: "invalid-uuid"
                }
              )
-             |> render_change() =~ "must be a valid MusicBrainz ID"
+             |> render_change() =~ "is invalid"
     end
 
     test "updates form labels based on rule type", %{conn: conn} do

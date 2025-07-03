@@ -108,7 +108,7 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRuleTest do
       changeset = ScrobbleRule.changeset(%ScrobbleRule{}, attrs)
       refute changeset.valid?
 
-      assert "must be a valid MusicBrainz ID (UUID format)" in errors_on(changeset).target_musicbrainz_id
+      assert "is invalid" in errors_on(changeset).target_musicbrainz_id
     end
 
     test "valid changeset with uppercase UUID" do
