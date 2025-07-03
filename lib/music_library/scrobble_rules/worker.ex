@@ -19,7 +19,6 @@ defmodule MusicLibrary.ScrobbleRules.Worker do
     case ScrobbleRules.apply_all_rules() do
       {:ok, results} ->
         log_results(results)
-        :ok
 
       {:error, reason} ->
         Logger.error("Failed to apply scrobble rules: #{inspect(reason)}")
@@ -63,27 +62,5 @@ defmodule MusicLibrary.ScrobbleRules.Worker do
         error: reason
       })
     end)
-  end
-
-  @doc """
-  Schedules the worker to run periodically.
-
-  This should be called during application startup to ensure
-  the worker runs automatically.
-  """
-  def schedule_periodic do
-    # Schedule to run every 30 minutes
-    __MODULE__.new(%{})
-    |> Oban.insert(schedule_in: {30, :minute})
-  end
-
-  @doc """
-  Triggers the worker to run immediately.
-
-  Useful for manual rule application or testing.
-  """
-  def run_now do
-    __MODULE__.new(%{})
-    |> Oban.insert()
   end
 end

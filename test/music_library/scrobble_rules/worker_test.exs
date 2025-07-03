@@ -86,10 +86,4 @@ defmodule MusicLibrary.ScrobbleRules.WorkerTest do
       assert :ok = Worker.perform(%Oban.Job{args: %{}})
     end
   end
-
-  describe "run_now/0" do
-    test "enqueues job for immediate execution" do
-      assert {:ok, %Oban.Job{}} = Worker.run_now()
-    end
-  end
 end
