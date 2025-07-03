@@ -87,7 +87,9 @@ config :music_library, Oban,
     {Oban.Plugins.Cron,
      crontab: [
        # every hour
-       {"0 * * * *", MusicLibrary.Worker.PolyfillScrobbledTracks}
+       {"0 * * * *", MusicLibrary.Worker.PolyfillScrobbledTracks},
+       # every 30 minutes
+       {"*/30 * * * *", MusicLibrary.ScrobbleRules.Worker}
      ]}
   ]
 

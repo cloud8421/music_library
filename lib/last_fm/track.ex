@@ -7,6 +7,8 @@ defmodule LastFm.Track do
 
   use Ecto.Schema
 
+  import Ecto.Changeset
+
   alias LastFm.{Album, Artist}
 
   @type t :: %__MODULE__{
@@ -67,5 +69,20 @@ defmodule LastFm.Track do
   defp parse_scrobble_at_uts(track) do
     track["date"]["uts"]
     |> String.to_integer()
+  end
+
+  def changeset(track, attrs) do
+    track
+    |> cast(attrs, [
+      :scrobbled_at_uts,
+      :musicbrainz_id,
+      :title,
+      :cover_url,
+      :scrobbled_at_label,
+      :last_fm_data
+    ])
+    |> cast_embed(:artist)
+    |> cast_embed(:album)
+    |> validate_required([:scrobbled_at_uts])
   end
 end

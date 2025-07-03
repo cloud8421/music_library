@@ -60,6 +60,10 @@ defmodule MusicLibraryWeb.Router do
 
         live "/artists/:musicbrainz_id", ArtistLive.Show, :show
         live "/artists/:musicbrainz_id/import", ArtistLive.Show, :import
+
+        live "/scrobble-rules", ScrobbleRulesLive.Index, :index
+        live "/scrobble-rules/new", ScrobbleRulesLive.Index, :new
+        live "/scrobble-rules/:id/edit", ScrobbleRulesLive.Index, :edit
       end
     end
   end

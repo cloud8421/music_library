@@ -1,6 +1,8 @@
 defmodule LastFm.Artist do
   use Ecto.Schema
 
+  import Ecto.Changeset
+
   @type t :: %__MODULE__{
           musicbrainz_id: String.t(),
           name: String.t(),
@@ -34,6 +36,20 @@ defmodule LastFm.Artist do
       on_tour: api_response["ontour"] == "1",
       base_url: api_response["url"]
     }
+  end
+
+  def changeset(artist, attrs) do
+    artist
+    |> cast(attrs, [
+      :musicbrainz_id,
+      :name,
+      :summary,
+      :bio,
+      :image,
+      :play_count,
+      :on_tour,
+      :base_url
+    ])
   end
 
   def events_url(artist) do

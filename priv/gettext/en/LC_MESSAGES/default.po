@@ -156,6 +156,7 @@ msgid "Save"
 msgstr ""
 
 #: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr ""
@@ -193,6 +194,7 @@ msgid "Total wishlist"
 msgstr ""
 
 #: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Type"
 msgstr ""
@@ -428,6 +430,7 @@ msgid "Unreleased"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Album"
 msgstr ""
@@ -905,6 +908,7 @@ msgstr ""
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/artist_live/show.html.heex
 #: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Actions"
@@ -948,4 +952,173 @@ msgstr ""
 #: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Track ID:"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Add a description to help identify this rule"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Album Title"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "All rules applied successfully. Updated %{count} tracks total."
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Apply All Rules"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Are you sure you want to delete this rule?"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Artist"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Artist Name"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Create a new rule to transform scrobbled track data"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Created"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Description"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Description (optional)"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Edit Scrobble Rule"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Edit the rule to change how it transforms data"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Enable this rule"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Enter the value to match"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Error applying rule: %{reason}"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Error applying rules: %{reason}"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Manage rules to fix data in scrobbled tracks"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Match Value"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "New Rule"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "New Scrobble Rule"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Rule Type"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Rule applied successfully. Updated %{count} tracks."
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Rules are applied automatically by the background worker, or you can apply them manually."
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Save Rule"
+msgstr ""
+
+#: lib/music_library_web/components/layouts/app.html.heex
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Scrobble Rules"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Scrobble rule created successfully"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Scrobble rule updated successfully"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Select a rule type"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Status"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Target MusicBrainz ID"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "e.g. Pink Floyd"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "e.g. The Dark Side of the Moon"
 msgstr ""

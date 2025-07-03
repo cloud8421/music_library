@@ -4,7 +4,17 @@
       "mcp__tidewave__get_ecto_schemas",
       "Bash(mix test:*)",
       "mcp__tidewave__get_source_location",
-      "WebFetch(domain:hexdocs.pm)"
+      "WebFetch(domain:hexdocs.pm)",
+      "mcp__tidewave__execute_sql_query",
+      "Bash(mix ecto.gen.migration:*)",
+      "Bash(mkdir:*)",
+      "Bash(mix ecto.migrate:*)",
+      "Bash(grep:*)",
+      "Bash(mix ecto.rollback:*)",
+      "Bash(mix format)",
+      "Bash(mix credo:*)",
+      "Bash(mix do:*)",
+      "Bash(mix gettext.extract:*)"
     ]
   },
   "enableAllProjectMcpServers": false
