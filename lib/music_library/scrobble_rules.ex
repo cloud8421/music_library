@@ -19,18 +19,28 @@ defmodule MusicLibrary.ScrobbleRules do
 
   """
   def list_scrobble_rules(opts \\ []) do
-    query = from(r in ScrobbleRule, order_by: [desc: r.inserted_at])
+    query =
+      from r in ScrobbleRule,
+        order_by: [desc: r.inserted_at]
 
     query =
       case Keyword.get(opts, :type) do
-        nil -> query
-        type -> from(r in query, where: r.type == ^type)
+        nil ->
+          query
+
+        type ->
+          from r in query,
+            where: r.type == ^type
       end
 
     query =
       case Keyword.get(opts, :enabled) do
-        nil -> query
-        enabled -> from(r in query, where: r.enabled == ^enabled)
+        nil ->
+          query
+
+        enabled ->
+          from r in query,
+            where: r.enabled == ^enabled
       end
 
     Repo.all(query)
@@ -164,10 +174,6 @@ defmodule MusicLibrary.ScrobbleRules do
     end
   end
 
-  def apply_album_rule(%ScrobbleRule{type: type}) do
-    {:error, "Invalid rule type: #{type}. Expected 'album'"}
-  end
-
   @doc """
   Applies an artist rule to all matching scrobbled tracks.
 
@@ -202,10 +208,6 @@ defmodule MusicLibrary.ScrobbleRules do
     end
   end
 
-  def apply_artist_rule(%ScrobbleRule{type: type}) do
-    {:error, "Invalid rule type: #{type}. Expected 'artist'"}
-  end
-
   @doc """
   Applies a single rule based on its type.
 
@@ -226,10 +228,6 @@ defmodule MusicLibrary.ScrobbleRules do
     apply_artist_rule(rule)
   end
 
-  def apply_rule(%ScrobbleRule{type: type}) do
-    {:error, "Invalid rule type: #{type}"}
-  end
-
   @doc """
   Applies all enabled rules.
 
@@ -242,17 +240,12 @@ defmodule MusicLibrary.ScrobbleRules do
   def apply_all_rules do
     rules = list_enabled_rules()
 
-    results =
-      Enum.map(rules, fn rule ->
-        case apply_rule(rule) do
-          {:ok, count} -> {:ok, {rule.type, rule.match_value, count}}
-          {:error, reason} -> {:error, {rule.type, rule.match_value, reason}}
-        end
-      end)
-
-    {:ok, results}
-  rescue
-    e -> {:error, "Failed to apply rules: #{Exception.message(e)}"}
+    Enum.map(rules, fn rule ->
+      case apply_rule(rule) do
+        {:ok, count} -> {:ok, {rule.type, rule.match_value, count}}
+        {:error, reason} -> {:error, {rule.type, rule.match_value, reason}}
+      end
+    end)
   end
 
   @doc """
@@ -274,10 +267,6 @@ defmodule MusicLibrary.ScrobbleRules do
     Repo.one(query) || 0
   end
 
-  def count_album_matches(%ScrobbleRule{type: type}) do
-    {:error, "Invalid rule type: #{type}. Expected 'album'"}
-  end
-
   @doc """
   Counts how many tracks would be affected by an artist rule.
 
@@ -297,10 +286,6 @@ defmodule MusicLibrary.ScrobbleRules do
     Repo.one(query) || 0
   end
 
-  def count_artist_matches(%ScrobbleRule{type: type}) do
-    {:error, "Invalid rule type: #{type}. Expected 'artist'"}
-  end
-
   @doc """
   Counts how many tracks would be affected by a rule.
 
@@ -316,9 +301,5 @@ defmodule MusicLibrary.ScrobbleRules do
 
   def count_rule_matches(%ScrobbleRule{type: "artist"} = rule) do
     count_artist_matches(rule)
-  end
-
-  def count_rule_matches(%ScrobbleRule{type: type}) do
-    {:error, "Invalid rule type: #{type}"}
   end
 end

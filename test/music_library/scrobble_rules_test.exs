@@ -188,16 +188,6 @@ defmodule MusicLibrary.ScrobbleRulesTest do
       assert updated_track.artist.musicbrainz_id == rule.target_musicbrainz_id
     end
 
-    test "apply_album_rule/1 with wrong type returns error" do
-      rule = scrobble_rule_fixture(@valid_artist_attrs)
-      assert {:error, _reason} = ScrobbleRules.apply_album_rule(rule)
-    end
-
-    test "apply_artist_rule/1 with wrong type returns error" do
-      rule = scrobble_rule_fixture(@valid_album_attrs)
-      assert {:error, _reason} = ScrobbleRules.apply_artist_rule(rule)
-    end
-
     test "apply_rule/1 delegates to correct function based on type" do
       album_rule = scrobble_rule_fixture(@valid_album_attrs)
       artist_rule = scrobble_rule_fixture(@valid_artist_attrs)
@@ -239,7 +229,7 @@ defmodule MusicLibrary.ScrobbleRulesTest do
           album: %{musicbrainz_id: "", title: "Different Album"}
         })
 
-      assert {:ok, results} = ScrobbleRules.apply_all_rules()
+      assert results = ScrobbleRules.apply_all_rules()
       assert length(results) == 2
 
       # Verify all results are successful

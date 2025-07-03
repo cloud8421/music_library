@@ -16,14 +16,8 @@ defmodule MusicLibrary.ScrobbleRules.Worker do
   def perform(%Oban.Job{args: _}) do
     Logger.info("Starting scrobble rules application")
 
-    case ScrobbleRules.apply_all_rules() do
-      {:ok, results} ->
-        log_results(results)
-
-      {:error, reason} ->
-        Logger.error("Failed to apply scrobble rules: #{inspect(reason)}")
-        {:error, reason}
-    end
+    results = ScrobbleRules.apply_all_rules()
+    log_results(results)
   end
 
   defp log_results(results) do

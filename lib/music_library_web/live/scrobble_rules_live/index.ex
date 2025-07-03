@@ -77,25 +77,20 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
 
   @impl true
   def handle_event("apply_all_rules", _params, socket) do
-    case ScrobbleRules.apply_all_rules() do
-      {:ok, results} ->
-        total_updated =
-          results
-          |> Enum.filter(fn {status, _} -> status == :ok end)
-          |> Enum.map(fn {:ok, {_, _, count}} -> count end)
-          |> Enum.sum()
+    results = ScrobbleRules.apply_all_rules()
 
-        message =
-          gettext("All rules applied successfully. Updated %{count} tracks total.",
-            count: total_updated
-          )
+    total_updated =
+      results
+      |> Enum.filter(fn {status, _} -> status == :ok end)
+      |> Enum.map(fn {:ok, {_, _, count}} -> count end)
+      |> Enum.sum()
 
-        {:noreply, put_flash(socket, :info, message)}
+    message =
+      gettext("All rules applied successfully. Updated %{count} tracks total.",
+        count: total_updated
+      )
 
-      {:error, reason} ->
-        message = gettext("Error applying rules: %{reason}", reason: reason)
-        {:noreply, put_flash(socket, :error, message)}
-    end
+    {:noreply, put_flash(socket, :info, message)}
   end
 
   defp rule_type_badge(type) do
