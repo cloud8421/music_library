@@ -88,7 +88,7 @@ defmodule MusicLibrary.ScrobbleRulesTest do
       assert {:ok, %ScrobbleRule{} = scrobble_rule} =
                ScrobbleRules.create_scrobble_rule(valid_attrs)
 
-      assert scrobble_rule.type == "album"
+      assert scrobble_rule.type == :album
       assert scrobble_rule.match_value == "Dark Side of the Moon"
       assert scrobble_rule.target_musicbrainz_id == "12345678-1234-1234-1234-123456789012"
       assert scrobble_rule.enabled == true

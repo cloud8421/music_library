@@ -152,7 +152,7 @@ defmodule MusicLibrary.ScrobbleRules do
       {:error, :invalid_rule_type}
 
   """
-  def apply_album_rule(%ScrobbleRule{type: "album"} = rule) do
+  def apply_album_rule(%ScrobbleRule{type: :album} = rule) do
     update_query =
       from(t in Track,
         where: fragment("json_extract(?, '$.title') = ?", t.album, ^rule.match_value),
@@ -186,7 +186,7 @@ defmodule MusicLibrary.ScrobbleRules do
       {:error, :invalid_rule_type}
 
   """
-  def apply_artist_rule(%ScrobbleRule{type: "artist"} = rule) do
+  def apply_artist_rule(%ScrobbleRule{type: :artist} = rule) do
     update_query =
       from(t in Track,
         where: fragment("json_extract(?, '$.name') = ?", t.artist, ^rule.match_value),
@@ -220,11 +220,11 @@ defmodule MusicLibrary.ScrobbleRules do
       {:error, "Invalid rule type"}
 
   """
-  def apply_rule(%ScrobbleRule{type: "album"} = rule) do
+  def apply_rule(%ScrobbleRule{type: :album} = rule) do
     apply_album_rule(rule)
   end
 
-  def apply_rule(%ScrobbleRule{type: "artist"} = rule) do
+  def apply_rule(%ScrobbleRule{type: :artist} = rule) do
     apply_artist_rule(rule)
   end
 
@@ -234,7 +234,7 @@ defmodule MusicLibrary.ScrobbleRules do
   ## Examples
 
       iex> apply_all_rules()
-      {:ok, [{"album", 5}, {"artist", 10}]}
+      {:ok, [{:album, 5}, {:artist, 10}]}
 
   """
   def apply_all_rules do
@@ -257,7 +257,7 @@ defmodule MusicLibrary.ScrobbleRules do
       5
 
   """
-  def count_album_matches(%ScrobbleRule{type: "album"} = rule) do
+  def count_album_matches(%ScrobbleRule{type: :album} = rule) do
     query =
       from(t in Track,
         where: fragment("json_extract(?, '$.title') = ?", t.album, ^rule.match_value),
@@ -276,7 +276,7 @@ defmodule MusicLibrary.ScrobbleRules do
       10
 
   """
-  def count_artist_matches(%ScrobbleRule{type: "artist"} = rule) do
+  def count_artist_matches(%ScrobbleRule{type: :artist} = rule) do
     query =
       from(t in Track,
         where: fragment("json_extract(?, '$.name') = ?", t.artist, ^rule.match_value),
@@ -295,11 +295,11 @@ defmodule MusicLibrary.ScrobbleRules do
       5
 
   """
-  def count_rule_matches(%ScrobbleRule{type: "album"} = rule) do
+  def count_rule_matches(%ScrobbleRule{type: :album} = rule) do
     count_album_matches(rule)
   end
 
-  def count_rule_matches(%ScrobbleRule{type: "artist"} = rule) do
+  def count_rule_matches(%ScrobbleRule{type: :artist} = rule) do
     count_artist_matches(rule)
   end
 end

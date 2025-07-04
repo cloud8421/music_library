@@ -9,14 +9,14 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
   # Test data
   @invalid_attrs %{type: "", match_value: "", target_musicbrainz_id: ""}
   @valid_attrs %{
-    type: "album",
+    type: :album,
     match_value: "some match_value",
     target_musicbrainz_id: "12345678-1234-1234-1234-123456789012",
     description: "some description",
     enabled: "true"
   }
   @update_attrs %{
-    type: "artist",
+    type: :artist,
     match_value: "some updated match_value",
     target_musicbrainz_id: "87654321-4321-4321-4321-210987654321",
     description: "some updated description"
@@ -157,7 +157,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
       assert index_live
              |> form("#scrobble_rule-form",
                scrobble_rule: %{
-                 type: "album",
+                 type: :album,
                  match_value: "Test Album",
                  target_musicbrainz_id: "invalid-uuid"
                }
@@ -173,7 +173,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
       # Select album type
       html =
         index_live
-        |> form("#scrobble_rule-form", scrobble_rule: %{type: "album"})
+        |> form("#scrobble_rule-form", scrobble_rule: %{type: :album})
         |> render_change()
 
       assert html =~ "Album Title"
@@ -181,7 +181,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
       # Select artist type
       html =
         index_live
-        |> form("#scrobble_rule-form", scrobble_rule: %{type: "artist"})
+        |> form("#scrobble_rule-form", scrobble_rule: %{type: :artist})
         |> render_change()
 
       assert html =~ "Artist Name"

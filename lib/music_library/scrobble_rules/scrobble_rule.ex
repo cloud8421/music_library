@@ -5,7 +5,7 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRule do
 
   @type t :: %__MODULE__{
           id: integer() | nil,
-          type: String.t(),
+          type: :album | :artist,
           match_value: String.t(),
           target_musicbrainz_id: String.t(),
           enabled: boolean(),
@@ -14,10 +14,8 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRule do
           updated_at: NaiveDateTime.t() | nil
         }
 
-  @valid_types ~w(album artist)
-
   schema "scrobble_rules" do
-    field :type, :string
+    field :type, Ecto.Enum, values: [:album, :artist]
     field :match_value, :string
     field :target_musicbrainz_id, Ecto.UUID
     field :enabled, :boolean, default: true
@@ -31,6 +29,5 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRule do
     scrobble_rule
     |> cast(attrs, [:type, :match_value, :target_musicbrainz_id, :enabled, :description])
     |> validate_required([:type, :match_value, :target_musicbrainz_id])
-    |> validate_inclusion(:type, @valid_types)
   end
 end

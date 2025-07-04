@@ -11,7 +11,7 @@ defmodule MusicLibrary.ScrobbleRulesFixtures do
   """
   def scrobble_rule_fixture(attrs \\ %{}) do
     default_attrs = %{
-      type: "album",
+      type: :album,
       match_value: "Dark Side of the Moon",
       target_musicbrainz_id: "12345678-1234-1234-1234-123456789012",
       enabled: true,

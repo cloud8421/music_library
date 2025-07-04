@@ -6,7 +6,7 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRuleTest do
   describe "changeset/2" do
     test "valid changeset with all required fields" do
       attrs = %{
-        type: "album",
+        type: :album,
         match_value: "Dark Side of the Moon",
         target_musicbrainz_id: "12345678-1234-1234-1234-123456789012",
         enabled: true,
@@ -19,7 +19,7 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRuleTest do
 
     test "valid changeset with minimal required fields" do
       attrs = %{
-        type: "artist",
+        type: :artist,
         match_value: "Pink Floyd",
         target_musicbrainz_id: "12345678-1234-1234-1234-123456789012"
       }
@@ -42,7 +42,7 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRuleTest do
 
     test "invalid changeset when match_value is missing" do
       attrs = %{
-        type: "artist",
+        type: :artist,
         target_musicbrainz_id: "12345678-1234-1234-1234-123456789012"
       }
 
@@ -53,7 +53,7 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRuleTest do
 
     test "invalid changeset when target_musicbrainz_id is missing" do
       attrs = %{
-        type: "artist",
+        type: :artist,
         match_value: "Pink Floyd"
       }
 
@@ -64,7 +64,7 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRuleTest do
 
     test "invalid changeset when type is not album or artist" do
       attrs = %{
-        type: "invalid_type",
+        type: :invalid_type,
         match_value: "Pink Floyd",
         target_musicbrainz_id: "12345678-1234-1234-1234-123456789012"
       }
@@ -76,7 +76,7 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRuleTest do
 
     test "invalid changeset when match_value is empty" do
       attrs = %{
-        type: "artist",
+        type: :artist,
         match_value: "",
         target_musicbrainz_id: "12345678-1234-1234-1234-123456789012"
       }
@@ -88,7 +88,7 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRuleTest do
 
     test "invalid changeset when target_musicbrainz_id is empty" do
       attrs = %{
-        type: "artist",
+        type: :artist,
         match_value: "Pink Floyd",
         target_musicbrainz_id: ""
       }
@@ -100,7 +100,7 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRuleTest do
 
     test "invalid changeset when target_musicbrainz_id is not a valid UUID" do
       attrs = %{
-        type: "artist",
+        type: :artist,
         match_value: "Pink Floyd",
         target_musicbrainz_id: "invalid-uuid"
       }
@@ -113,7 +113,7 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRuleTest do
 
     test "valid changeset with uppercase UUID" do
       attrs = %{
-        type: "artist",
+        type: :artist,
         match_value: "Pink Floyd",
         target_musicbrainz_id: "12345678-1234-1234-1234-123456789012"
       }
@@ -124,7 +124,7 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRuleTest do
 
     test "valid changeset with lowercase UUID" do
       attrs = %{
-        type: "artist",
+        type: :artist,
         match_value: "Pink Floyd",
         target_musicbrainz_id: "abcdefab-abcd-abcd-abcd-abcdefabcdef"
       }

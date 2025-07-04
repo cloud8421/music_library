@@ -24,8 +24,8 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.FormComponent do
           field={@form[:type]}
           label={gettext("Rule Type")}
           options={[
-            {gettext("Album"), "album"},
-            {gettext("Artist"), "artist"}
+            {gettext("Album"), :album},
+            {gettext("Artist"), :artist}
           ]}
           placeholder={gettext("Select a rule type")}
         />
@@ -119,17 +119,17 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.FormComponent do
 
   defp match_value_label(type) do
     case type do
-      "album" -> gettext("Album Title")
-      "artist" -> gettext("Artist Name")
-      _ -> gettext("Match Value")
+      :album -> gettext("Album Title")
+      :artist -> gettext("Artist Name")
+      _other -> gettext("Match Value")
     end
   end
 
   defp match_value_placeholder(type) do
     case type do
-      "album" -> gettext("e.g. The Dark Side of the Moon")
-      "artist" -> gettext("e.g. Pink Floyd")
-      _ -> gettext("Enter the value to match")
+      :album -> gettext("e.g. The Dark Side of the Moon")
+      :artist -> gettext("e.g. Pink Floyd")
+      _other -> gettext("Enter the value to match")
     end
   end
 end
