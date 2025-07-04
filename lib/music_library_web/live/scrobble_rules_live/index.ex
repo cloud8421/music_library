@@ -112,11 +112,12 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
     """
   end
 
-  defp enabled_badge(enabled) do
-    if enabled do
-      "Enabled"
-    else
-      "Disabled"
-    end
+  attr :enabled, :boolean, required: true
+
+  defp status_badge(assigns) do
+    ~H"""
+    <.badge :if={@enabled} color="green">{gettext("Enabled")}</.badge>
+    <.badge :if={!@enabled} color="yellow">{gettext("Disabled")}</.badge>
+    """
   end
 end

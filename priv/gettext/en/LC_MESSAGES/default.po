@@ -1117,3 +1117,13 @@ msgstr ""
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Enable rule"
 msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Disabled"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Enabled"
+msgstr ""

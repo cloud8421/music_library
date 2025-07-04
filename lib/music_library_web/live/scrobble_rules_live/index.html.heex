@@ -41,7 +41,9 @@
         </:cell>
         <:cell>{scrobble_rule.match_value}</:cell>
         <:cell class="whitespace-nowrap font-mono">{scrobble_rule.target_musicbrainz_id}</:cell>
-        <:cell>{enabled_badge(scrobble_rule.enabled)}</:cell>
+        <:cell>
+          <.status_badge enabled={scrobble_rule.enabled} />
+        </:cell>
         <:cell>{scrobble_rule.description}</:cell>
         <:cell>{Calendar.strftime(scrobble_rule.inserted_at, "%Y-%m-%d")}</:cell>
         <:cell>
