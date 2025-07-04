@@ -27,7 +27,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.FormComponent do
             {gettext("Album"), "album"},
             {gettext("Artist"), "artist"}
           ]}
-          prompt={gettext("Select a rule type")}
+          placeholder={gettext("Select a rule type")}
         />
 
         <.input
