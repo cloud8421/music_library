@@ -118,20 +118,4 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
       "Disabled"
     end
   end
-
-  defp enabled_badge_class(enabled) do
-    if enabled do
-      "text-green-800 bg-green-100 dark:bg-green-900 dark:text-green-300"
-    else
-      "text-red-800 bg-red-100 dark:bg-red-900 dark:text-red-300"
-    end
-  end
-
-  defp type_badge_class(type) do
-    case type do
-      "album" -> "text-blue-800 bg-blue-100 dark:bg-blue-900 dark:text-blue-300"
-      "artist" -> "text-purple-800 bg-purple-100 dark:bg-purple-900 dark:text-purple-300"
-      _ -> "text-gray-800 bg-gray-100 dark:bg-gray-900 dark:text-gray-300"
-    end
-  end
 end

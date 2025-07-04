@@ -13,6 +13,7 @@ msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Are you sure?"
@@ -33,6 +34,7 @@ msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Delete"
@@ -41,6 +43,7 @@ msgstr ""
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/collection_live/show.ex
 #: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #: lib/music_library_web/live/wishlist_live/show.ex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format
@@ -974,11 +977,6 @@ msgstr ""
 msgid "Apply All Rules"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Are you sure you want to delete this rule?"
-msgstr ""
-
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Artist"
@@ -1055,11 +1053,6 @@ msgstr ""
 msgid "Rule applied successfully. Updated %{count} tracks."
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Rules are applied automatically by the background worker, or you can apply them manually."
-msgstr ""
-
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Save Rule"
@@ -1106,4 +1099,19 @@ msgstr ""
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "e.g. The Dark Side of the Moon"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Apply rule"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Disable rule"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Enable rule"
 msgstr ""
