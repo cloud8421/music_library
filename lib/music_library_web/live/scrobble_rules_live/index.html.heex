@@ -34,7 +34,7 @@
       <:col>{gettext("Created")}</:col>
       <:col></:col>
     </.table_head>
-    <.table_body>
+    <.table_body phx-update="stream" id="scrobble-rules">
       <.table_row :for={{dom_id, scrobble_rule} <- @streams.scrobble_rules} id={dom_id}>
         <:cell>{rule_type_badge(scrobble_rule.type)}</:cell>
         <:cell>{scrobble_rule.match_value}</:cell>
