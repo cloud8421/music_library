@@ -103,12 +103,13 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
     {:noreply, put_flash(socket, :info, message)}
   end
 
-  defp rule_type_badge(type) do
-    case type do
-      "album" -> "Album"
-      "artist" -> "Artist"
-      _ -> type
-    end
+  attr :type, :atom, required: true, values: [:album, :artist]
+
+  defp type_badge(assigns) do
+    ~H"""
+    <.badge :if={@type == :album} color="green">{gettext("Album")}</.badge>
+    <.badge :if={@type == :artist} color="blue">{gettext("Artist")}</.badge>
+    """
   end
 
   defp enabled_badge(enabled) do

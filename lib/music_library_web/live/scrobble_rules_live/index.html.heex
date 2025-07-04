@@ -36,7 +36,9 @@
     </.table_head>
     <.table_body phx-update="stream" id="scrobble-rules">
       <.table_row :for={{dom_id, scrobble_rule} <- @streams.scrobble_rules} id={dom_id}>
-        <:cell>{rule_type_badge(scrobble_rule.type)}</:cell>
+        <:cell>
+          <.type_badge type={scrobble_rule.type} />
+        </:cell>
         <:cell>{scrobble_rule.match_value}</:cell>
         <:cell class="whitespace-nowrap font-mono">{scrobble_rule.target_musicbrainz_id}</:cell>
         <:cell>{enabled_badge(scrobble_rule.enabled)}</:cell>

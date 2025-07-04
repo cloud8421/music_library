@@ -434,6 +434,7 @@ msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Album"
 msgstr ""
@@ -978,6 +979,7 @@ msgid "Apply All Rules"
 msgstr ""
 
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Artist"
 msgstr ""
