@@ -19,27 +19,6 @@ defmodule MusicLibraryWeb.CoreComponents do
 
   alias Phoenix.LiveView.JS
 
-  defdelegate badge(assigns), to: Fluxon.Components.Badge
-  defdelegate button(assigns), to: Fluxon.Components.Button
-  defdelegate date_time_picker(assigns), to: Fluxon.Components.DatePicker
-  defdelegate dropdown(assigns), to: Fluxon.Components.Dropdown
-  defdelegate dropdown_button(assigns), to: Fluxon.Components.Dropdown
-  defdelegate dropdown_link(assigns), to: Fluxon.Components.Dropdown
-  defdelegate dropdown_separator(assigns), to: Fluxon.Components.Dropdown
-  defdelegate input(assigns), to: Fluxon.Components.Input
-  defdelegate label(assigns), to: Fluxon.Components.Form
-  defdelegate loading(assigns), to: Fluxon.Components.Loading
-  defdelegate modal(assigns), to: Fluxon.Components.Modal
-  defdelegate select(assigns), to: Fluxon.Components.Select
-  defdelegate separator(assigns), to: Fluxon.Components.Separator
-  defdelegate sheet(assigns), to: Fluxon.Components.Sheet
-  defdelegate switch(assigns), to: Fluxon.Components.Switch
-  defdelegate tooltip(assigns), to: Fluxon.Components.Tooltip
-  defdelegate tabs(assigns), to: Fluxon.Components.Tabs
-  defdelegate tabs_list(assigns), to: Fluxon.Components.Tabs
-  defdelegate tabs_panel(assigns), to: Fluxon.Components.Tabs
-  defdelegate textarea(assigns), to: Fluxon.Components.Textarea
-
   @doc """
   Renders a simple form.
 
