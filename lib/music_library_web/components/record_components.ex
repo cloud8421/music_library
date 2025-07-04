@@ -122,7 +122,6 @@ defmodule MusicLibraryWeb.RecordComponents do
               {Records.Record.format_as_date(record.inserted_at)}
             </p>
           </div>
-          <%!-- TODO: replace with OSS version --%>
           <.dropdown id={"actions-#{record.id}"} placement="bottom-end">
             <:toggle>
               <div
