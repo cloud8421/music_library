@@ -52,9 +52,8 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.FormComponent do
           class="font-mono"
         />
 
-        <.input
+        <.textarea
           field={@form[:description]}
-          type="textarea"
           label={gettext("Description (optional)")}
           placeholder={gettext("Add a description to help identify this rule")}
         />

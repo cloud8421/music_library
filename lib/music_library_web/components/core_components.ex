@@ -38,6 +38,7 @@ defmodule MusicLibraryWeb.CoreComponents do
   defdelegate tabs(assigns), to: Fluxon.Components.Tabs
   defdelegate tabs_list(assigns), to: Fluxon.Components.Tabs
   defdelegate tabs_panel(assigns), to: Fluxon.Components.Tabs
+  defdelegate textarea(assigns), to: Fluxon.Components.Textarea
 
   @doc """
   Renders a simple form.
