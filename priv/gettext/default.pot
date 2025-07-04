@@ -1024,11 +1024,6 @@ msgstr ""
 msgid "Error applying rule: %{reason}"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Manage rules to fix data in scrobbled tracks"
-msgstr ""
-
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
 #: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #, elixir-autogen, elixir-format

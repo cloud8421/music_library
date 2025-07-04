@@ -4,21 +4,29 @@
       <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
         {gettext("Scrobble Rules")}
       </h1>
-      <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-        {gettext("Manage rules to fix data in scrobbled tracks")}
-      </p>
     </div>
     <div>
-      <.link patch={~p"/scrobble-rules/new"}>
-        <.button>
-          <.icon name="hero-plus" class="h-4 w-4 mr-2" />
+      <nav class="isolate inline-flex rounded-md shadow-xs">
+        <.button
+          class="rounded-l-md rounded-r-none"
+          variant="solid"
+          as="link"
+          size="sm"
+          patch={~p"/scrobble-rules/new"}
+        >
+          <.icon name="hero-plus" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
           {gettext("New Rule")}
         </.button>
-        <.button phx-click="apply_all_rules" class="!bg-green-600 hover:!bg-green-700">
+        <.button
+          class="-ml-px rounded-r-md rounded-l-none"
+          variant="solid"
+          size="sm"
+          phx-click="apply_all_rules"
+        >
           <.icon name="hero-play" class="h-4 w-4 mr-2" />
           {gettext("Apply All Rules")}
         </.button>
-      </.link>
+      </nav>
     </div>
   </div>
 </header>
