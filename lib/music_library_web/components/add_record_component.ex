@@ -52,7 +52,7 @@ defmodule MusicLibraryWeb.AddRecordComponent do
       <div
         :if={@release_groups_count == 0}
         id="release-groups-empty"
-        class="flex items-center h-full justify-center h-32 text-md text-zinc-500"
+        class="flex items-center justify-center h-32 md:h-64 text-md text-zinc-500"
       >
         {gettext("No results")}
       </div>
