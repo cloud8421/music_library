@@ -148,6 +148,7 @@
 
 <.modal
   :if={@live_action in [:new, :edit]}
+  class="min-w-sm md:min-w-2xl max-w-3xl"
   id="scrobble_rule-modal"
   open
   on_close={JS.patch(~p"/scrobble-rules")}
