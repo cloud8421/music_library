@@ -11,13 +11,6 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.FormComponent do
         <h1 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
           {@title}
         </h1>
-        <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-          <%= if @action == :new do %>
-            {gettext("Create a new rule to transform scrobbled track data")}
-          <% else %>
-            {gettext("Edit the rule to change how it transforms data")}
-          <% end %>
-        </p>
       </header>
 
       <.simple_form

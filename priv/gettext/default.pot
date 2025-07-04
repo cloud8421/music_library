@@ -989,11 +989,6 @@ msgstr ""
 msgid "Artist Name"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
-#, elixir-autogen, elixir-format
-msgid "Create a new rule to transform scrobbled track data"
-msgstr ""
-
 #: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Created"
@@ -1012,11 +1007,6 @@ msgstr ""
 #: lib/music_library_web/live/scrobble_rules_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Edit Scrobble Rule"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
-#, elixir-autogen, elixir-format
-msgid "Edit the rule to change how it transforms data"
 msgstr ""
 
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
