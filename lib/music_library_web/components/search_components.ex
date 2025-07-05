@@ -5,6 +5,8 @@ defmodule MusicLibraryWeb.SearchComponents do
 
   use MusicLibraryWeb, :html
 
+  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
+
   alias MusicLibrary.Records.Record
 
   @doc """
@@ -23,10 +25,10 @@ defmodule MusicLibraryWeb.SearchComponents do
       type="button"
       class={[
         "flex items-center justify-center h-9 w-9 rounded-lg",
-        "text-gray-500 dark:text-gray-400",
-        "hover:text-gray-700 dark:hover:text-gray-300",
-        "hover:bg-gray-100 dark:hover:bg-gray-800",
-        "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900",
+        "text-zinc-500 dark:text-zinc-400",
+        "hover:text-zinc-700 dark:hover:text-zinc-300",
+        "hover:bg-zinc-100 dark:hover:bg-zinc-800",
+        "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-900",
         "transition-colors duration-200",
         @class
       ]}
@@ -55,7 +57,7 @@ defmodule MusicLibraryWeb.SearchComponents do
     <div
       class={[
         "p-3 rounded-lg cursor-pointer transition-colors",
-        "hover:bg-gray-50 dark:hover:bg-gray-700",
+        "hover:bg-zinc-50 dark:hover:bg-zinc-700",
         if(@selected, do: "bg-blue-50 dark:bg-blue-900", else: "")
       ]}
       {@rest}
@@ -69,11 +71,16 @@ defmodule MusicLibraryWeb.SearchComponents do
           />
         </div>
         <div class="min-w-0 flex-1">
-          <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+          <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
             {@record.title}
           </p>
-          <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+          <p class="text-sm text-zinc-500 font-medium dark:text-zinc-400 truncate">
             {Record.artist_names(@record)}
+          </p>
+          <p class="pointer-events-none block text-sm text-zinc-500">
+            {format_label(@record.format)} · {type_label(@record.type)} · {Record.format_release_date(
+              @record.release_date
+            )}
           </p>
         </div>
       </div>
@@ -97,7 +104,7 @@ defmodule MusicLibraryWeb.SearchComponents do
     <div
       class={[
         "p-3 rounded-lg cursor-pointer transition-colors",
-        "hover:bg-gray-50 dark:hover:bg-gray-700",
+        "hover:bg-zinc-50 dark:hover:bg-zinc-700",
         if(@selected, do: "bg-blue-50 dark:bg-blue-900", else: "")
       ]}
       {@rest}
@@ -112,10 +119,10 @@ defmodule MusicLibraryWeb.SearchComponents do
           />
         </div>
         <div class="min-w-0 flex-1">
-          <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+          <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
             {@artist.name}
           </p>
-          <p :if={@artist.disambiguation} class="text-sm text-gray-500 dark:text-gray-400 truncate">
+          <p :if={@artist.disambiguation} class="text-sm text-zinc-500 dark:text-zinc-400 truncate">
             {@artist.disambiguation}
           </p>
         </div>
@@ -147,11 +154,14 @@ defmodule MusicLibraryWeb.SearchComponents do
   def search_result_group(assigns) do
     ~H"""
     <div class={["p-4", @class]}>
-      <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wide">
-        {@title} ({@count}
+      <h3 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3 uppercase tracking-wide">
+        {@title}
         <span :if={@total_count && @total_count > @count}>
-          of <%= @total_count %>
-        </span>)
+          {gettext("(%{count} of %{total})", count: @count, total: @total_count)}
+        </span>
+        <span :if={@total_count && @total_count <= @count}>
+          ({@count})
+        </span>
       </h3>
 
       <div class="space-y-2">
@@ -182,7 +192,7 @@ defmodule MusicLibraryWeb.SearchComponents do
       class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
       {@rest}
     >
-      View all {@count} {@target} results →
+      {gettext("View all %{count} %{target} results →", count: @count, target: @target)}
     </button>
     """
   end
@@ -198,24 +208,24 @@ defmodule MusicLibraryWeb.SearchComponents do
 
   def keyboard_shortcuts(assigns) do
     ~H"""
-    <div class="p-4 bg-gray-50 dark:bg-gray-900 rounded-b-lg border-t border-gray-200 dark:border-gray-700">
-      <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+    <div class="p-4 bg-zinc-50 dark:bg-zinc-900 rounded-b-lg border-t border-zinc-200 dark:border-zinc-700">
+      <div class="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
         <div class="flex items-center space-x-4">
           <div class="flex items-center">
-            <kbd class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">↑↓</kbd>
-            <span class="ml-1">Navigate</span>
+            <kbd class="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded">↑↓</kbd>
+            <span class="ml-1">{gettext("Navigate")}</span>
           </div>
           <div class="flex items-center">
-            <kbd class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">↵</kbd>
-            <span class="ml-1">Select</span>
+            <kbd class="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded">↵</kbd>
+            <span class="ml-1">{gettext("Select")}</span>
           </div>
           <div class="flex items-center">
-            <kbd class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">Esc</kbd>
-            <span class="ml-1">Close</span>
+            <kbd class="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded">Esc</kbd>
+            <span class="ml-1">{gettext("Close")}</span>
           </div>
         </div>
-        <div :if={@total_results > 0} class="text-gray-500 dark:text-gray-400">
-          {@total_results} results
+        <div :if={@total_results > 0} class="text-zinc-500 dark:text-zinc-400">
+          {ngettext("1 result", "%{count} results", @total_results)}
         </div>
       </div>
     </div>
@@ -232,11 +242,10 @@ defmodule MusicLibraryWeb.SearchComponents do
   def empty_state(assigns) do
     ~H"""
     <div class="p-8 text-center">
-      <.icon name="hero-magnifying-glass" class="h-12 w-12 text-gray-400 mx-auto mb-4" />
-      <p class="text-gray-600 dark:text-gray-400">Start typing to search your records and artists</p>
-      <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">
-        Use <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">Ctrl+K</kbd>
-        to open this search
+      <.icon name="hero-magnifying-glass" class="h-12 w-12 text-zinc-400 mx-auto mb-4" />
+      <p class="text-sm text-zinc-500 dark:text-zinc-500 mt-2">
+        <kbd class="px-2 py-1 bg-zinc-100 dark:bg-zinc-700 rounded text-xs">Ctrl+K</kbd>
+        {gettext("to open this search")}
       </p>
     </div>
     """
@@ -254,10 +263,9 @@ defmodule MusicLibraryWeb.SearchComponents do
   def no_results(assigns) do
     ~H"""
     <div class="p-8 text-center">
-      <.icon name="hero-face-frown" class="h-12 w-12 text-gray-400 mx-auto mb-4" />
-      <p class="text-gray-600 dark:text-gray-400">No results found for "{@query}"</p>
-      <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">
-        Try a different search term or check your spelling
+      <.icon name="hero-face-frown" class="h-12 w-12 text-zinc-400 mx-auto mb-4" />
+      <p class="text-zinc-600 dark:text-zinc-400">
+        {gettext("No results found for '%{query}'", query: @query)}
       </p>
     </div>
     """
@@ -274,7 +282,7 @@ defmodule MusicLibraryWeb.SearchComponents do
     ~H"""
     <div class="p-8 text-center">
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-      <p class="mt-4 text-gray-600 dark:text-gray-400">Searching...</p>
+      <p class="mt-4 text-zinc-600 dark:text-zinc-400">{gettext("Searching...")}</p>
     </div>
     """
   end

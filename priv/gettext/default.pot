@@ -1122,3 +1122,50 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Enabled"
 msgstr ""
+
+#: lib/music_library_web/components/search_components.ex
+#, elixir-autogen, elixir-format
+msgid "No results found for '%{query}'"
+msgstr ""
+
+#: lib/music_library_web/components/search_components.ex
+#, elixir-autogen, elixir-format
+msgid "Searching..."
+msgstr ""
+
+#: lib/music_library_web/components/search_components.ex
+#, elixir-autogen, elixir-format
+msgid "View all %{count} %{target} results →"
+msgstr ""
+
+#: lib/music_library_web/components/search_components.ex
+#, elixir-autogen, elixir-format
+msgid "(%{count} of %{total})"
+msgstr ""
+
+#: lib/music_library_web/components/search_components.ex
+#, elixir-autogen, elixir-format
+msgid "1 result"
+msgid_plural "%{count} results"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/music_library_web/components/search_components.ex
+#, elixir-autogen, elixir-format
+msgid "Close"
+msgstr ""
+
+#: lib/music_library_web/components/search_components.ex
+#, elixir-autogen, elixir-format
+msgid "Navigate"
+msgstr ""
+
+#: lib/music_library_web/components/search_components.ex
+#, elixir-autogen, elixir-format
+msgid "Select"
+msgstr ""
+
+#: lib/music_library_web/components/search_components.ex
+#, elixir-autogen, elixir-format
+msgid "to open this search"
+msgstr ""
