@@ -2,10 +2,10 @@ defmodule MusicLibraryWeb.SearchComponents do
   @moduledoc """
   Universal search modal and related components.
   """
-  use Phoenix.Component
-  use Gettext, backend: MusicLibraryWeb.Gettext
 
-  import MusicLibraryWeb.CoreComponents, only: [icon: 1]
+  use MusicLibraryWeb, :html
+
+  alias MusicLibrary.Records.Record
 
   @doc """
   Renders a search trigger button that opens the universal search modal.
@@ -62,9 +62,10 @@ defmodule MusicLibraryWeb.SearchComponents do
     >
       <div class="flex items-center space-x-3">
         <div class="flex-shrink-0">
-          <.icon
-            name={if @type == :collection, do: "hero-musical-note", else: "hero-heart"}
-            class={"h-5 w-5 #{if @type == :collection, do: "text-green-500", else: "text-red-500"}"}
+          <img
+            class="w-12 h-12 rounded-md aspect-square object-cover"
+            alt={@record.title}
+            src={~p"/covers/#{@record.id}?vsn=#{@record.cover_hash}"}
           />
         </div>
         <div class="min-w-0 flex-1">
@@ -72,7 +73,7 @@ defmodule MusicLibraryWeb.SearchComponents do
             {@record.title}
           </p>
           <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-            {@record.artists |> Enum.map(& &1.name) |> Enum.join(", ")}
+            {Record.artist_names(@record)}
           </p>
         </div>
       </div>
@@ -103,7 +104,12 @@ defmodule MusicLibraryWeb.SearchComponents do
     >
       <div class="flex items-center space-x-3">
         <div class="flex-shrink-0">
-          <.icon name="hero-user" class="h-5 w-5 text-blue-500" />
+          <img
+            class="w-12 h-12 rounded-md aspect-square object-cover"
+            src={~p"/artists/#{@artist.musicbrainz_id}/image"}
+            alt={@artist.name}
+            onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
+          />
         </div>
         <div class="min-w-0 flex-1">
           <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
