@@ -97,6 +97,8 @@ config :music_library, MusicLibrary.ErrorRepo, priv: "priv/error_repo"
 
 config :music_library, MusicLibrary.BackgroundRepo, priv: "priv/background_repo"
 
+config :fluxon, :translate_function, &MusicLibraryWeb.CoreComponents.translate_error/1
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
