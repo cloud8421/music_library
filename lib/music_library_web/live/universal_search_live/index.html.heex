@@ -1,0 +1,147 @@
+<div phx-window-keydown="global_key_handler" phx-key="keydown" id="universal-search-root">
+  <div
+    :if={@show_modal}
+    class="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 pb-6 sm:pt-24"
+    phx-window-keydown="key_navigation"
+    phx-key="keydown"
+    phx-hook="Search"
+    id="search-modal"
+  >
+    <!-- Modal backdrop -->
+    <div
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+      phx-click="close_modal"
+    >
+    </div>
+    
+<!-- Modal content -->
+    <div class="relative w-full max-w-2xl bg-white dark:bg-gray-800 rounded-lg shadow-2xl">
+      <!-- Search input -->
+      <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+        <form phx-change="search" phx-submit="search">
+          <div class="relative">
+            <.icon
+              name="hero-magnifying-glass"
+              class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
+            />
+            <input
+              type="text"
+              name="query"
+              placeholder="Search records and artists..."
+              value={@search_query}
+              phx-debounce="300"
+              class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg
+                   bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100
+                   focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400
+                   placeholder-gray-500 dark:placeholder-gray-400"
+              phx-hook="SearchInput"
+              id="universal-search-input"
+            />
+            <button
+              :if={@search_query != ""}
+              type="button"
+              phx-click="search"
+              phx-value-query=""
+              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              <.icon name="hero-x-mark" class="h-5 w-5" />
+            </button>
+          </div>
+        </form>
+      </div>
+      
+<!-- Loading state -->
+      <MusicLibraryWeb.SearchComponents.loading_state :if={@loading} />
+      
+<!-- Empty state -->
+      <MusicLibraryWeb.SearchComponents.empty_state :if={@search_query == "" and not @loading} />
+      
+<!-- No results -->
+      <MusicLibraryWeb.SearchComponents.no_results
+        :if={@search_query != "" and @total_results == 0 and not @loading}
+        query={@search_query}
+      />
+      
+<!-- Search results -->
+      <div :if={@total_results > 0 and not @loading} class="max-h-96 overflow-y-auto">
+        <!-- Collection results -->
+        <MusicLibraryWeb.SearchComponents.search_result_group
+          :if={length(@search_results.collection) > 0}
+          title="Collection"
+          count={length(@search_results.collection)}
+          total_count={@search_counts.collection_count}
+        >
+          <MusicLibraryWeb.SearchComponents.search_result_record
+            :for={{record, index} <- Enum.with_index(@search_results.collection)}
+            record={record}
+            type={:collection}
+            selected={@selected_index == index}
+            phx-click="navigate_to_record"
+            phx-value-id={record.id}
+            phx-value-type="collection"
+          />
+          <:actions>
+            <MusicLibraryWeb.SearchComponents.view_all_button
+              :if={@search_counts.collection_count > length(@search_results.collection)}
+              count={@search_counts.collection_count}
+              target="collection"
+              phx-click="navigate_to_collection"
+              phx-value-query={@search_query}
+            />
+          </:actions>
+        </MusicLibraryWeb.SearchComponents.search_result_group>
+        
+<!-- Wishlist results -->
+        <MusicLibraryWeb.SearchComponents.search_result_group
+          :if={length(@search_results.wishlist) > 0}
+          title="Wishlist"
+          count={length(@search_results.wishlist)}
+          total_count={@search_counts.wishlist_count}
+          class="border-t border-gray-200 dark:border-gray-700"
+        >
+          <MusicLibraryWeb.SearchComponents.search_result_record
+            :for={{record, index} <- Enum.with_index(@search_results.wishlist)}
+            record={record}
+            type={:wishlist}
+            selected={@selected_index == length(@search_results.collection) + index}
+            phx-click="navigate_to_record"
+            phx-value-id={record.id}
+            phx-value-type="wishlist"
+          />
+          <:actions>
+            <MusicLibraryWeb.SearchComponents.view_all_button
+              :if={@search_counts.wishlist_count > length(@search_results.wishlist)}
+              count={@search_counts.wishlist_count}
+              target="wishlist"
+              phx-click="navigate_to_wishlist"
+              phx-value-query={@search_query}
+            />
+          </:actions>
+        </MusicLibraryWeb.SearchComponents.search_result_group>
+        
+<!-- Artists results -->
+        <MusicLibraryWeb.SearchComponents.search_result_group
+          :if={length(@search_results.artists) > 0}
+          title="Artists"
+          count={length(@search_results.artists)}
+          total_count={@search_counts.artists_count}
+          class="border-t border-gray-200 dark:border-gray-700"
+        >
+          <MusicLibraryWeb.SearchComponents.search_result_artist
+            :for={{artist, index} <- Enum.with_index(@search_results.artists)}
+            artist={artist}
+            selected={
+              @selected_index ==
+                length(@search_results.collection) + length(@search_results.wishlist) + index
+            }
+            phx-click="navigate_to_artist"
+            phx-value-id={artist.musicbrainz_id}
+          />
+        </MusicLibraryWeb.SearchComponents.search_result_group>
+      </div>
+      
+<!-- Footer with keyboard shortcuts -->
+      <MusicLibraryWeb.SearchComponents.keyboard_shortcuts total_results={@total_results} />
+    </div>
+  </div>
+</div>

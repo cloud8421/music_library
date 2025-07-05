@@ -14,7 +14,13 @@
       "Bash(mix format)",
       "Bash(mix credo:*)",
       "Bash(mix do:*)",
-      "Bash(mix gettext.extract:*)"
+      "Bash(mix gettext.extract:*)",
+      "Bash(mv:*)",
+      "Bash(mix compile)",
+      "Bash(mix phx.routes:*)",
+      "Bash(mix assets.deploy:*)",
+      "mcp__tidewave__get_logs",
+      "mcp__tidewave__project_eval"
     ]
   },
   "enableAllProjectMcpServers": false

@@ -23,11 +23,14 @@ import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 import { Hooks as FluxonHooks, DOM as FluxonDOM } from "fluxon";
 import BarcodeScannerHook from "./barcode-scanner";
+import { SearchHook, SearchInputHook } from "./search";
 import confetti from "canvas-confetti";
 import { createLiveToastHook } from "live_toast";
 
 let Hooks = FluxonHooks;
 Hooks.BarcodeScanner = BarcodeScannerHook;
+Hooks.Search = SearchHook;
+Hooks.SearchInput = SearchInputHook;
 Hooks.LiveToast = createLiveToastHook();
 
 let csrfToken = document

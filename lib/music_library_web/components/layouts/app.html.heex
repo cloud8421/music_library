@@ -38,6 +38,10 @@
         </div>
       </div>
       <div class="flex space-x-2 md:space-x-4 items-center">
+        <MusicLibraryWeb.SearchComponents.search_trigger
+          phx-click="open_modal"
+          phx-target="#universal-search"
+        />
         <.dropdown placement="bottom-end">
           <:toggle>
             <button class="flex items-center gap-x-2">
@@ -108,3 +112,10 @@
     {@inner_content}
   </div>
 </main>
+
+<div phx-hook="Search" id="search-global-hook">
+  {live_render(@socket, MusicLibraryWeb.UniversalSearchLive.Index,
+    id: "universal-search",
+    session: %{}
+  )}
+</div>
