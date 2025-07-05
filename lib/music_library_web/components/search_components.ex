@@ -10,37 +10,6 @@ defmodule MusicLibraryWeb.SearchComponents do
   alias MusicLibrary.Records.Record
 
   @doc """
-  Renders a search trigger button that opens the universal search modal.
-
-  ## Examples
-
-      <.search_trigger />
-  """
-  attr :class, :string, default: ""
-  attr :rest, :global, include: ~w(phx-click phx-target)
-
-  def search_trigger(assigns) do
-    ~H"""
-    <button
-      type="button"
-      class={[
-        "flex items-center justify-center h-9 w-9 rounded-lg",
-        "text-zinc-500 dark:text-zinc-400",
-        "hover:text-zinc-700 dark:hover:text-zinc-300",
-        "hover:bg-zinc-100 dark:hover:bg-zinc-800",
-        "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-900",
-        "transition-colors duration-200",
-        @class
-      ]}
-      title="Search (Ctrl+K)"
-      {@rest}
-    >
-      <.icon name="hero-magnifying-glass" class="h-5 w-5" />
-    </button>
-    """
-  end
-
-  @doc """
   Renders a search result item for records.
 
   ## Examples
