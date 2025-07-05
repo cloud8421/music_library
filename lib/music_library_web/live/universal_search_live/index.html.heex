@@ -46,13 +46,13 @@
       </div>
       
 <!-- Loading state -->
-      <MusicLibraryWeb.SearchComponents.loading_state :if={@loading} />
+      <.loading_state :if={@loading} />
       
 <!-- Empty state -->
-      <MusicLibraryWeb.SearchComponents.empty_state :if={@search_query == "" and not @loading} />
+      <.empty_state :if={@search_query == "" and not @loading} />
       
 <!-- No results -->
-      <MusicLibraryWeb.SearchComponents.no_results
+      <.no_results
         :if={@search_query != "" and @total_results == 0 and not @loading}
         query={@search_query}
       />
@@ -60,13 +60,13 @@
 <!-- Search results -->
       <div :if={@total_results > 0 and not @loading} class="max-h-96 overflow-y-auto">
         <!-- Collection results -->
-        <MusicLibraryWeb.SearchComponents.search_result_group
+        <.search_result_group
           :if={length(@search_results.collection) > 0}
           title="Collection"
           count={length(@search_results.collection)}
           total_count={@search_counts.collection_count}
         >
-          <MusicLibraryWeb.SearchComponents.search_result_record
+          <.search_result_record
             :for={{record, index} <- Enum.with_index(@search_results.collection)}
             record={record}
             type={:collection}
@@ -76,7 +76,7 @@
             phx-value-type="collection"
           />
           <:actions>
-            <MusicLibraryWeb.SearchComponents.view_all_button
+            <.view_all_button
               :if={@search_counts.collection_count > length(@search_results.collection)}
               count={@search_counts.collection_count}
               target="collection"
@@ -84,17 +84,17 @@
               phx-value-query={@search_query}
             />
           </:actions>
-        </MusicLibraryWeb.SearchComponents.search_result_group>
+        </.search_result_group>
         
 <!-- Wishlist results -->
-        <MusicLibraryWeb.SearchComponents.search_result_group
+        <.search_result_group
           :if={length(@search_results.wishlist) > 0}
           title="Wishlist"
           count={length(@search_results.wishlist)}
           total_count={@search_counts.wishlist_count}
           class="border-t border-gray-200 dark:border-gray-700"
         >
-          <MusicLibraryWeb.SearchComponents.search_result_record
+          <.search_result_record
             :for={{record, index} <- Enum.with_index(@search_results.wishlist)}
             record={record}
             type={:wishlist}
@@ -104,7 +104,7 @@
             phx-value-type="wishlist"
           />
           <:actions>
-            <MusicLibraryWeb.SearchComponents.view_all_button
+            <.view_all_button
               :if={@search_counts.wishlist_count > length(@search_results.wishlist)}
               count={@search_counts.wishlist_count}
               target="wishlist"
@@ -112,17 +112,17 @@
               phx-value-query={@search_query}
             />
           </:actions>
-        </MusicLibraryWeb.SearchComponents.search_result_group>
+        </.search_result_group>
         
 <!-- Artists results -->
-        <MusicLibraryWeb.SearchComponents.search_result_group
+        <.search_result_group
           :if={length(@search_results.artists) > 0}
           title="Artists"
           count={length(@search_results.artists)}
           total_count={@search_counts.artists_count}
           class="border-t border-gray-200 dark:border-gray-700"
         >
-          <MusicLibraryWeb.SearchComponents.search_result_artist
+          <.search_result_artist
             :for={{artist, index} <- Enum.with_index(@search_results.artists)}
             artist={artist}
             selected={
@@ -132,11 +132,11 @@
             phx-click="navigate_to_artist"
             phx-value-id={artist.musicbrainz_id}
           />
-        </MusicLibraryWeb.SearchComponents.search_result_group>
+        </.search_result_group>
       </div>
       
 <!-- Footer with keyboard shortcuts -->
-      <MusicLibraryWeb.SearchComponents.keyboard_shortcuts total_results={@total_results} />
+      <.keyboard_shortcuts total_results={@total_results} />
     </div>
   </div>
 </div>

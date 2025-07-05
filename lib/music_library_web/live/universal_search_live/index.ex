@@ -1,6 +1,8 @@
 defmodule MusicLibraryWeb.UniversalSearchLive.Index do
   use MusicLibraryWeb, :live_view
 
+  import MusicLibraryWeb.SearchComponents
+
   alias MusicLibrary.Search
 
   @impl true
