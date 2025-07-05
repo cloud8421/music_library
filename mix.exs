@@ -64,7 +64,7 @@ defmodule MusicLibrary.MixProject do
        app: false,
        compile: false,
        depth: 1},
-      {:fluxon, "~> 1.1.0", repo: :fluxon},
+      {:fluxon, "~> 1.2.0", repo: :fluxon},
       {:flagmojis, "~> 1.0"},
       {:live_toast, "~> 0.8.0"},
 
@@ -78,7 +78,7 @@ defmodule MusicLibrary.MixProject do
       {:tidewave, "~> 0.1", only: :dev},
 
       # HTTP Clients
-      {:finch, "~> 0.19.0"},
+      {:finch, "~> 0.20.0"},
       {:req, "~> 0.5.8"},
 
       # Parsing
