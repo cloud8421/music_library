@@ -28,17 +28,28 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
 
   @impl true
   def handle_event("search", %{"query" => query}, socket) do
-    socket = assign(socket, :search_query, query)
-
     case String.trim(query) do
       "" ->
         {:noreply,
          socket
+         |> assign(:search_query, "")
          |> reset()}
 
-      _query ->
-        send(self(), {:perform_search, query})
-        {:noreply, socket}
+      query ->
+        search_results = Search.universal_search(query, limit: 5)
+        search_counts = Search.search_counts(query)
+
+        total_results =
+          length(search_results.collection) +
+            length(search_results.wishlist) +
+            length(search_results.artists)
+
+        {:noreply,
+         socket
+         |> assign(:search_query, query)
+         |> assign(:search_results, search_results)
+         |> assign(:search_counts, search_counts)
+         |> assign(:total_results, total_results)}
     end
   end
 
@@ -103,27 +114,5 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
     |> assign(:search_results, %{collection: [], wishlist: [], artists: []})
     |> assign(:search_counts, %{collection_count: 0, wishlist_count: 0, artists_count: 0})
     |> assign(:total_results, 0)
-  end
-
-  @impl true
-  def handle_info({:perform_search, query}, socket) do
-    # Only search if the query hasn't changed (debouncing)
-    if query == socket.assigns.search_query do
-      search_results = Search.universal_search(query, limit: 5)
-      search_counts = Search.search_counts(query)
-
-      total_results =
-        length(search_results.collection) +
-          length(search_results.wishlist) +
-          length(search_results.artists)
-
-      {:noreply,
-       socket
-       |> assign(:search_results, search_results)
-       |> assign(:search_counts, search_counts)
-       |> assign(:total_results, total_results)}
-    else
-      {:noreply, socket}
-    end
   end
 end
