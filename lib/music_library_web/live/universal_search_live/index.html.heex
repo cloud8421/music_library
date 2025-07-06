@@ -1,9 +1,7 @@
-<div phx-window-keydown="global_key_handler" phx-key="keydown" id="universal-search-root">
+<div id="universal-search-root">
   <div
     :if={@show_modal}
     class="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 pb-6 sm:pt-24"
-    phx-window-keydown="key_navigation"
-    phx-key="keydown"
   >
     <!-- Modal backdrop -->
     <div

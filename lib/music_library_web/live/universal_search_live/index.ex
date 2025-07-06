@@ -24,21 +24,6 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
   end
 
   @impl true
-  def handle_event("global_key_handler", %{"key" => "k", "ctrlKey" => true}, socket) do
-    {:noreply, assign(socket, :show_modal, true)}
-  end
-
-  @impl true
-  def handle_event("global_key_handler", %{"key" => "k", "metaKey" => true}, socket) do
-    {:noreply, assign(socket, :show_modal, true)}
-  end
-
-  @impl true
-  def handle_event("global_key_handler", _params, socket) do
-    {:noreply, socket}
-  end
-
-  @impl true
   def handle_event("close_modal", _params, socket) do
     {:noreply,
      socket
