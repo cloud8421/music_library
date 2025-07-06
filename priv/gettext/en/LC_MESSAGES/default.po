@@ -41,6 +41,8 @@ msgid "Delete"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
+#: lib/music_library_web/live/artist_live/show.ex
+#: lib/music_library_web/live/artist_live/show.html.heex
 #: lib/music_library_web/live/collection_live/show.ex
 #: lib/music_library_web/live/collection_live/show.html.heex
 #: lib/music_library_web/live/scrobble_rules_live/index.html.heex
@@ -154,11 +156,13 @@ msgid "Record updated successfully"
 msgstr ""
 
 #: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/live/artist_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr ""
 
 #: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/live/artist_live/form_component.ex
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Saving..."
@@ -565,16 +569,19 @@ msgid "Similar artists"
 msgstr ""
 
 #: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/live/artist_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "PNG, JPG, WEBP up to 8MB"
 msgstr ""
 
 #: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/live/artist_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Upload a file"
 msgstr ""
 
 #: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/live/artist_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "or drag and drop"
 msgstr ""
@@ -1158,4 +1165,14 @@ msgstr ""
 #: lib/music_library_web/components/search_components.ex
 #, elixir-autogen, elixir-format
 msgid "Search records and artists..."
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/form_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Artist image"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/form_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Artist updated successfully"
 msgstr ""

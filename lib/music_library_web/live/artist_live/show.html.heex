@@ -18,6 +18,18 @@
         </:toggle>
         <.focus_wrap id={"actions-#{@artist.musicbrainz_id}-focus-wrap"}>
           <.dropdown_link
+            id={"actions-#{@artist.musicbrainz_id}-edit"}
+            patch={~p"/artists/#{@artist.musicbrainz_id}/edit"}
+          >
+            <.icon
+              name="hero-pencil-square"
+              class="h-4 w-4 mr-1 phx-click-loading:animate-bounce"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+            {gettext("Edit")}
+          </.dropdown_link>
+          <.dropdown_link
             id={"actions-#{@artist.musicbrainz_id}-refresh-image"}
             phx-click={JS.push("refresh_artist_image", value: %{id: @artist.musicbrainz_id})}
           >
@@ -221,5 +233,21 @@
     patch={~p"/artists/#{@artist.musicbrainz_id}"}
     initial_query={"arid:#{@artist.musicbrainz_id}"}
     icon_name="hero-plus"
+  />
+</.modal>
+
+<.modal
+  :if={@live_action == :edit}
+  id="artist-info-modal"
+  open
+  on_close={JS.patch(~p"/artists/#{@artist.musicbrainz_id}")}
+>
+  <.live_component
+    module={MusicLibraryWeb.ArtistLive.FormComponent}
+    id={@artist_info.id}
+    action={@live_action}
+    artist_info={@artist_info}
+    artist={@artist}
+    patch={~p"/artists/#{@artist.musicbrainz_id}"}
   />
 </.modal>

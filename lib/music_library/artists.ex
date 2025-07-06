@@ -151,6 +151,16 @@ defmodule MusicLibrary.Artists do
     Repo.one(q)
   end
 
+  def change_artist_info(artist_info, attrs \\ %{}) do
+    ArtistInfo.changeset(artist_info, attrs)
+  end
+
+  def update_artist_info(artist_info, attrs) do
+    artist_info
+    |> ArtistInfo.changeset(attrs)
+    |> Repo.update()
+  end
+
   defp get_collected_artist_ids do
     q =
       from ar in ArtistRecord,

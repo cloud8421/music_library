@@ -230,7 +230,19 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     socket
     |> assign(:page_title, gettext("Add more · Artist"))
     |> assign(:initial_query, "arid:#{socket.assigns.artist.musicbrainz_id}")
-    |> assign(:record, nil)
+  end
+
+  defp apply_action(socket, :edit, params) do
+    socket =
+      if get_in(socket.assigns, [:streams, :collection_records]) == nil do
+        socket
+        |> apply_action(:show, params)
+      else
+        socket
+      end
+
+    socket
+    |> assign(:page_title, gettext("Add more · Artist"))
   end
 
   defp assign_records(socket, artist_musicbrainz_id) do
@@ -252,6 +264,17 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
         artist.name,
         "·",
         gettext("Details")
+      ],
+      " "
+    )
+  end
+
+  defp page_title(:edit, artist) do
+    Enum.join(
+      [
+        artist.name,
+        "·",
+        gettext("Edit")
       ],
       " "
     )
