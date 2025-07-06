@@ -9,11 +9,8 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(:search_query, "")
-     |> assign(:search_results, %{collection: [], wishlist: [], artists: []})
-     |> assign(:search_counts, %{collection_count: 0, wishlist_count: 0, artists_count: 0})
      |> assign(:show_modal, false)
-     |> assign(:total_results, 0)}
+     |> reset()}
   end
 
   @impl true
@@ -26,10 +23,7 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
     {:noreply,
      socket
      |> assign(:show_modal, false)
-     |> assign(:search_query, "")
-     |> assign(:search_results, %{collection: [], wishlist: [], artists: []})
-     |> assign(:search_counts, %{collection_count: 0, wishlist_count: 0, artists_count: 0})
-     |> assign(:total_results, 0)}
+     |> reset()}
   end
 
   @impl true
@@ -40,9 +34,7 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
       "" ->
         {:noreply,
          socket
-         |> assign(:search_results, %{collection: [], wishlist: [], artists: []})
-         |> assign(:search_counts, %{collection_count: 0, wishlist_count: 0, artists_count: 0})
-         |> assign(:total_results, 0)}
+         |> reset()}
 
       _query ->
         send(self(), {:perform_search, query})
@@ -103,6 +95,14 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
      socket
      |> assign(:show_modal, false)
      |> push_navigate(to: ~p"/wishlist?query=#{query}")}
+  end
+
+  defp reset(socket) do
+    socket
+    |> assign(:search_query, "")
+    |> assign(:search_results, %{collection: [], wishlist: [], artists: []})
+    |> assign(:search_counts, %{collection_count: 0, wishlist_count: 0, artists_count: 0})
+    |> assign(:total_results, 0)
   end
 
   @impl true
