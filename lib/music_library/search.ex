@@ -64,7 +64,8 @@ defmodule MusicLibrary.Search do
 
         q =
           from ar in ArtistRecord,
-            where: fragment("lower(artist ->> '$.name') LIKE ?", ^"%#{normalized_query}%"),
+            where:
+              fragment("lower(unaccent(artist ->> '$.name')) LIKE ?", ^"%#{normalized_query}%"),
             group_by: ar.musicbrainz_id,
             select: ar.artist,
             limit: ^limit,
