@@ -177,14 +177,6 @@ defmodule MusicLibraryWeb.SearchComponents do
       <div class="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
         <div class="flex items-center space-x-4">
           <div class="flex items-center">
-            <kbd class="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded">↑↓</kbd>
-            <span class="ml-1">{gettext("Navigate")}</span>
-          </div>
-          <div class="flex items-center">
-            <kbd class="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded">↵</kbd>
-            <span class="ml-1">{gettext("Select")}</span>
-          </div>
-          <div class="flex items-center">
             <kbd class="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded">Esc</kbd>
             <span class="ml-1">{gettext("Close")}</span>
           </div>
@@ -209,8 +201,7 @@ defmodule MusicLibraryWeb.SearchComponents do
     <div class="p-8 text-center">
       <.icon name="hero-magnifying-glass" class="h-12 w-12 text-zinc-400 mx-auto mb-4" />
       <p class="text-sm text-zinc-500 dark:text-zinc-500 mt-2">
-        <kbd class="px-2 py-1 bg-zinc-100 dark:bg-zinc-700 rounded text-xs">Ctrl+K</kbd>
-        {gettext("to open this search")}
+        {gettext("Search records and artists...")}
       </p>
     </div>
     """

@@ -1150,22 +1150,12 @@ msgstr[1] ""
 msgid "Close"
 msgstr ""
 
-#: lib/music_library_web/components/search_components.ex
-#, elixir-autogen, elixir-format
-msgid "Navigate"
-msgstr ""
-
-#: lib/music_library_web/components/search_components.ex
-#, elixir-autogen, elixir-format
-msgid "Select"
-msgstr ""
-
-#: lib/music_library_web/components/search_components.ex
-#, elixir-autogen, elixir-format
-msgid "to open this search"
-msgstr ""
-
 #: lib/music_library_web/components/layouts/app.html.heex
 #, elixir-autogen, elixir-format
 msgid "Search (Ctrl+K)"
+msgstr ""
+
+#: lib/music_library_web/components/search_components.ex
+#, elixir-autogen, elixir-format
+msgid "Search records and artists..."
 msgstr ""
