@@ -4,8 +4,6 @@
     class="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 pb-6 sm:pt-24"
     phx-window-keydown="key_navigation"
     phx-key="keydown"
-    phx-hook="Search"
-    id="search-modal"
   >
     <!-- Modal backdrop -->
     <div
@@ -26,11 +24,11 @@
             />
             <.input
               name="query"
+              id="universal-search-input"
               placeholder="Search records and artists..."
               value={@search_query}
               phx-debounce="300"
-              phx-hook="SearchInput"
-              id="universal-search-input"
+              autofocus
             />
             <button
               :if={@search_query != ""}
