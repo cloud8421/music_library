@@ -44,10 +44,9 @@
       total_count={@search_counts.collection_count}
     >
       <.search_result_record
-        :for={{record, index} <- Enum.with_index(@search_results.collection)}
+        :for={record <- @search_results.collection}
         record={record}
         type={:collection}
-        selected={@selected_index == index}
         phx-click="navigate_to_record"
         phx-value-id={record.id}
         phx-value-type="collection"
@@ -72,10 +71,9 @@
       class="border-t border-zinc-200 dark:border-zinc-700"
     >
       <.search_result_record
-        :for={{record, index} <- Enum.with_index(@search_results.wishlist)}
+        :for={record <- @search_results.wishlist}
         record={record}
         type={:wishlist}
-        selected={@selected_index == length(@search_results.collection) + index}
         phx-click="navigate_to_record"
         phx-value-id={record.id}
         phx-value-type="wishlist"
@@ -100,12 +98,8 @@
       class="border-t border-zinc-200 dark:border-zinc-700"
     >
       <.search_result_artist
-        :for={{artist, index} <- Enum.with_index(@search_results.artists)}
+        :for={artist <- @search_results.artists}
         artist={artist}
-        selected={
-          @selected_index ==
-            length(@search_results.collection) + length(@search_results.wishlist) + index
-        }
         phx-click="navigate_to_artist"
         phx-value-id={artist.musicbrainz_id}
       />

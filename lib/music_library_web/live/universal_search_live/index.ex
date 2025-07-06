@@ -14,7 +14,6 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
      |> assign(:search_counts, %{collection_count: 0, wishlist_count: 0, artists_count: 0})
      |> assign(:show_modal, false)
      |> assign(:loading, false)
-     |> assign(:selected_index, -1)
      |> assign(:total_results, 0)}
   end
 
@@ -31,7 +30,6 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
      |> assign(:search_query, "")
      |> assign(:search_results, %{collection: [], wishlist: [], artists: []})
      |> assign(:search_counts, %{collection_count: 0, wishlist_count: 0, artists_count: 0})
-     |> assign(:selected_index, -1)
      |> assign(:total_results, 0)}
   end
 
@@ -46,7 +44,6 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
          |> assign(:search_results, %{collection: [], wishlist: [], artists: []})
          |> assign(:search_counts, %{collection_count: 0, wishlist_count: 0, artists_count: 0})
          |> assign(:loading, false)
-         |> assign(:selected_index, -1)
          |> assign(:total_results, 0)}
 
       _query ->
@@ -111,28 +108,6 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
   end
 
   @impl true
-  def handle_event("key_navigation", %{"key" => key}, socket) do
-    case key do
-      "Escape" ->
-        {:noreply, assign(socket, :show_modal, false)}
-
-      "ArrowDown" ->
-        new_index = min(socket.assigns.selected_index + 1, socket.assigns.total_results - 1)
-        {:noreply, assign(socket, :selected_index, new_index)}
-
-      "ArrowUp" ->
-        new_index = max(socket.assigns.selected_index - 1, -1)
-        {:noreply, assign(socket, :selected_index, new_index)}
-
-      "Enter" ->
-        handle_enter_key(socket)
-
-      _ ->
-        {:noreply, socket}
-    end
-  end
-
-  @impl true
   def handle_info({:perform_search, query}, socket) do
     # Only search if the query hasn't changed (debouncing)
     if query == socket.assigns.search_query do
@@ -149,55 +124,7 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
        |> assign(:search_results, search_results)
        |> assign(:search_counts, search_counts)
        |> assign(:loading, false)
-       |> assign(:selected_index, -1)
        |> assign(:total_results, total_results)}
-    else
-      {:noreply, socket}
-    end
-  end
-
-  defp handle_enter_key(socket) do
-    selected_index = socket.assigns.selected_index
-
-    if selected_index >= 0 do
-      results = socket.assigns.search_results
-
-      # Calculate which section and item the selected index corresponds to
-      collection_count = length(results.collection)
-      wishlist_count = length(results.wishlist)
-      artists_count = length(results.artists)
-
-      cond do
-        selected_index < collection_count ->
-          # Selected item is in collection
-          record = Enum.at(results.collection, selected_index)
-
-          {:noreply,
-           socket
-           |> assign(:show_modal, false)
-           |> push_navigate(to: ~p"/collection/#{record.id}")}
-
-        selected_index < collection_count + wishlist_count ->
-          # Selected item is in wishlist
-          record = Enum.at(results.wishlist, selected_index - collection_count)
-
-          {:noreply,
-           socket
-           |> assign(:show_modal, false)
-           |> push_navigate(to: ~p"/wishlist/#{record.id}")}
-
-        selected_index < collection_count + wishlist_count + artists_count ->
-          # Selected item is in artists
-          artist = Enum.at(results.artists, selected_index - collection_count - wishlist_count)
-
-          {:noreply,
-           socket
-           |> assign(:show_modal, false)
-           |> push_navigate(to: ~p"/artists/#{artist.musicbrainz_id}")}
-
-        true ->
-          {:noreply, socket}
-      end
     else
       {:noreply, socket}
     end

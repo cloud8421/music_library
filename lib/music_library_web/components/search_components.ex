@@ -14,10 +14,9 @@ defmodule MusicLibraryWeb.SearchComponents do
 
   ## Examples
 
-      <.search_result_record record={record} selected={false} />
+      <.search_result_record record={record} />
   """
   attr :record, :map, required: true
-  attr :selected, :boolean, default: false
   attr :type, :atom, required: true, values: [:collection, :wishlist]
   attr :rest, :global, include: ~w(phx-click phx-value-id)
 
@@ -26,8 +25,7 @@ defmodule MusicLibraryWeb.SearchComponents do
     <div
       class={[
         "p-3 rounded-lg cursor-pointer transition-colors",
-        "hover:bg-zinc-50 dark:hover:bg-zinc-700",
-        if(@selected, do: "bg-blue-50 dark:bg-blue-900", else: "")
+        "hover:bg-zinc-50 dark:hover:bg-zinc-700"
       ]}
       {@rest}
     >
@@ -62,10 +60,9 @@ defmodule MusicLibraryWeb.SearchComponents do
 
   ## Examples
 
-      <.search_result_artist artist={artist} selected={false} />
+      <.search_result_artist artist={artist} />
   """
   attr :artist, :map, required: true
-  attr :selected, :boolean, default: false
   attr :rest, :global, include: ~w(phx-click phx-value-id)
 
   def search_result_artist(assigns) do
@@ -73,8 +70,7 @@ defmodule MusicLibraryWeb.SearchComponents do
     <div
       class={[
         "p-3 rounded-lg cursor-pointer transition-colors",
-        "hover:bg-zinc-50 dark:hover:bg-zinc-700",
-        if(@selected, do: "bg-blue-50 dark:bg-blue-900", else: "")
+        "hover:bg-zinc-50 dark:hover:bg-zinc-700"
       ]}
       {@rest}
     >
