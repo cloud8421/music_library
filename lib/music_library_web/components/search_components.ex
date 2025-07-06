@@ -235,20 +235,4 @@ defmodule MusicLibraryWeb.SearchComponents do
     </div>
     """
   end
-
-  @doc """
-  Renders a loading state.
-
-  ## Examples
-
-      <.loading_state />
-  """
-  def loading_state(assigns) do
-    ~H"""
-    <div class="p-8 text-center">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-      <p class="mt-4 text-zinc-600 dark:text-zinc-400">{gettext("Searching...")}</p>
-    </div>
-    """
-  end
 end

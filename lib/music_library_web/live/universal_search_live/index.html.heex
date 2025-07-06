@@ -22,20 +22,14 @@
     </div>
   </form>
   
-<!-- Loading state -->
-  <.loading_state :if={@loading} />
-  
 <!-- Empty state -->
-  <.empty_state :if={@search_query == "" and not @loading} />
+  <.empty_state :if={@search_query == ""} />
   
 <!-- No results -->
-  <.no_results
-    :if={@search_query != "" and @total_results == 0 and not @loading}
-    query={@search_query}
-  />
+  <.no_results :if={@search_query != "" and @total_results == 0} query={@search_query} />
   
 <!-- Search results -->
-  <div :if={@total_results > 0 and not @loading} class="max-h-96 overflow-y-auto">
+  <div :if={@total_results > 0} class="max-h-96 overflow-y-auto">
     <!-- Collection results -->
     <.search_result_group
       :if={length(@search_results.collection) > 0}

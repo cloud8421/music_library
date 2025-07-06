@@ -13,7 +13,6 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
      |> assign(:search_results, %{collection: [], wishlist: [], artists: []})
      |> assign(:search_counts, %{collection_count: 0, wishlist_count: 0, artists_count: 0})
      |> assign(:show_modal, false)
-     |> assign(:loading, false)
      |> assign(:total_results, 0)}
   end
 
@@ -43,12 +42,11 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
          socket
          |> assign(:search_results, %{collection: [], wishlist: [], artists: []})
          |> assign(:search_counts, %{collection_count: 0, wishlist_count: 0, artists_count: 0})
-         |> assign(:loading, false)
          |> assign(:total_results, 0)}
 
       _query ->
         send(self(), {:perform_search, query})
-        {:noreply, assign(socket, :loading, true)}
+        {:noreply, socket}
     end
   end
 
@@ -123,7 +121,6 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
        socket
        |> assign(:search_results, search_results)
        |> assign(:search_counts, search_counts)
-       |> assign(:loading, false)
        |> assign(:total_results, total_results)}
     else
       {:noreply, socket}

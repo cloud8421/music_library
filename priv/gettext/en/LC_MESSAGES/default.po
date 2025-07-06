@@ -1129,11 +1129,6 @@ msgid "No results found for '%{query}'"
 msgstr ""
 
 #: lib/music_library_web/components/search_components.ex
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Searching..."
-msgstr ""
-
-#: lib/music_library_web/components/search_components.ex
 #, elixir-autogen, elixir-format
 msgid "View all %{count} %{target} results →"
 msgstr ""
