@@ -201,7 +201,8 @@ defmodule MusicLibraryWeb.SearchComponents do
     <div class="p-8 text-center">
       <.icon name="hero-magnifying-glass" class="h-12 w-12 text-zinc-400 mx-auto mb-4" />
       <p class="text-sm text-zinc-500 dark:text-zinc-500 mt-2">
-        {gettext("Search records and artists...")}
+        <kbd class="px-2 py-1 bg-zinc-100 dark:bg-zinc-700 rounded text-xs">Ctrl+K</kbd>
+        {gettext("to open this search")}
       </p>
     </div>
     """

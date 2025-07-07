@@ -1162,11 +1162,6 @@ msgstr ""
 msgid "Search (Ctrl+K)"
 msgstr ""
 
-#: lib/music_library_web/components/search_components.ex
-#, elixir-autogen, elixir-format
-msgid "Search records and artists..."
-msgstr ""
-
 #: lib/music_library_web/live/artist_live/form_component.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Artist image"
@@ -1175,4 +1170,9 @@ msgstr ""
 #: lib/music_library_web/live/artist_live/form_component.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Artist updated successfully"
+msgstr ""
+
+#: lib/music_library_web/components/search_components.ex
+#, elixir-autogen, elixir-format
+msgid "to open this search"
 msgstr ""
