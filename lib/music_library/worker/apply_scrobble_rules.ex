@@ -1,4 +1,4 @@
-defmodule MusicLibrary.ScrobbleRules.Worker do
+defmodule MusicLibrary.Worker.ApplyScrobbleRules do
   @moduledoc """
   Oban worker that periodically applies all enabled scrobble rules.
 

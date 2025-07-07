@@ -1,9 +1,9 @@
-defmodule MusicLibrary.ScrobbleRules.WorkerTest do
+defmodule MusicLibrary.Worker.ApplyScrobbleRulesTest do
   use MusicLibrary.DataCase
 
   alias LastFm.Track
   alias MusicLibrary.ScrobbleRules
-  alias MusicLibrary.ScrobbleRules.Worker
+  alias MusicLibrary.Worker.ApplyScrobbleRules
 
   describe "perform/1" do
     test "successfully applies all enabled rules" do
@@ -61,7 +61,7 @@ defmodule MusicLibrary.ScrobbleRules.WorkerTest do
       |> Repo.insert!()
 
       # Execute the worker
-      assert :ok = Worker.perform(%Oban.Job{args: %{}})
+      assert :ok = ApplyScrobbleRules.perform(%Oban.Job{args: %{}})
 
       # Verify rules were applied
       updated_track1 = Repo.get_by(Track, musicbrainz_id: "track-mbid-1")
@@ -78,12 +78,12 @@ defmodule MusicLibrary.ScrobbleRules.WorkerTest do
     test "handles errors gracefully" do
       # Since we can't easily mock here, let's test with no rules
       # which should still return :ok
-      assert :ok = Worker.perform(%Oban.Job{args: %{}})
+      assert :ok = ApplyScrobbleRules.perform(%Oban.Job{args: %{}})
     end
 
     test "handles empty rules list" do
       # No rules exist
-      assert :ok = Worker.perform(%Oban.Job{args: %{}})
+      assert :ok = ApplyScrobbleRules.perform(%Oban.Job{args: %{}})
     end
   end
 end
