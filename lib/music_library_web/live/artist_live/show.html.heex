@@ -229,7 +229,6 @@
     id={:search}
     title={@page_title}
     action={@live_action}
-    record={@record}
     patch={~p"/artists/#{@artist.musicbrainz_id}"}
     initial_query={"arid:#{@artist.musicbrainz_id}"}
     icon_name="hero-plus"
