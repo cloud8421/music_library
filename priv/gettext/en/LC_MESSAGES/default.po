@@ -1176,3 +1176,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "to open this search"
 msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Copy record selected release ID to clipboard"
+msgstr ""

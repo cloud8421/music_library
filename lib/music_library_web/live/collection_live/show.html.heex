@@ -238,6 +238,33 @@
               :if={@record.selected_release_id}
               release={Records.Record.selected_release(@record)}
             />
+            <span
+              :if={@record.selected_release_id}
+              id={"record-selected-release-" <> @record.id}
+              class="hidden"
+            >
+              {@record.selected_release_id}
+            </span>
+
+            <button
+              :if={@record.selected_release_id}
+              phx-click={
+                JS.dispatch("music_library:clipcopy",
+                  to: "#record-selected-release-" <> @record.id
+                )
+                |> JS.transition("animate-shake")
+              }
+            >
+              <span class="sr-only">
+                {gettext("Copy record selected release ID to clipboard")}
+              </span>
+              <.icon
+                name="hero-clipboard-document"
+                class="-mt-1 h-5 w-5"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+            </button>
           </dd>
         </div>
         <div
