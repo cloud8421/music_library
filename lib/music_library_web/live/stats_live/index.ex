@@ -133,28 +133,32 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     timezone = socket.assigns.timezone
     current_time = DateTime.utc_now()
 
-    top_albums =
-      ScrobbleActivity.get_top_albums_by_periods(
-        limit: 10,
-        current_time: current_time,
-        timezone: timezone
-      )
+    assign_async(socket, :top_albums, fn ->
+      top_albums =
+        ScrobbleActivity.get_top_albums_by_periods(
+          limit: 10,
+          current_time: current_time,
+          timezone: timezone
+        )
 
-    assign(socket, top_albums: top_albums)
+      {:ok, %{top_albums: top_albums}}
+    end)
   end
 
   defp assign_top_artists(socket) do
     timezone = socket.assigns.timezone
     current_time = DateTime.utc_now()
 
-    top_artists =
-      ScrobbleActivity.get_top_artists_by_periods(
-        limit: 10,
-        current_time: current_time,
-        timezone: timezone
-      )
+    assign_async(socket, :top_artists, fn ->
+      top_artists =
+        ScrobbleActivity.get_top_artists_by_periods(
+          limit: 10,
+          current_time: current_time,
+          timezone: timezone
+        )
 
-    assign(socket, top_artists: top_artists)
+      {:ok, %{top_artists: top_artists}}
+    end)
   end
 
   # The Tailwind build step requires all needed classes to be explicitly referenced
