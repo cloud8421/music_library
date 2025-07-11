@@ -58,6 +58,29 @@ defmodule MusicLibraryWeb.FormComponent do
             label={gettext("Purchased at")}
           />
         </div>
+        <div class="space-y-4">
+          <fieldset>
+            <legend class="text-sm font-medium leading-6 text-zinc-700 dark:text-zinc-300">
+              {gettext("Dominant Colors")}
+            </legend>
+            <div class="mt-2 grid grid-cols-5 gap-2">
+              <div
+                :for={{color, index} <- Enum.with_index(@record.dominant_colors, 0)}
+                class="flex flex-col items-center"
+              >
+                <input
+                  type="color"
+                  name={"record[dominant_colors][#{index}]"}
+                  value={color}
+                  class="size-8 rounded border border-zinc-300 cursor-pointer"
+                />
+                <span class="text-xs mt-1 text-zinc-600 dark:text-zinc-400">
+                  {String.upcase(color)}
+                </span>
+              </div>
+            </div>
+          </fieldset>
+        </div>
         <div class="col-span-full">
           <.label for={@uploads.cover_data.ref}>
             {gettext("Cover art")}
@@ -145,6 +168,9 @@ defmodule MusicLibraryWeb.FormComponent do
 
   @impl true
   def handle_event("validate", %{"record" => record_params}, socket) do
+    record_params =
+      Map.update!(record_params, "dominant_colors", fn colors -> Map.values(colors) end)
+
     changeset = Records.change_record(socket.assigns.record, record_params)
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
@@ -163,6 +189,9 @@ defmodule MusicLibraryWeb.FormComponent do
   end
 
   defp save_record(socket, record_params, uploaded_covers) do
+    record_params =
+      Map.update!(record_params, "dominant_colors", fn colors -> Map.values(colors) end)
+
     params =
       case uploaded_covers do
         [] ->
