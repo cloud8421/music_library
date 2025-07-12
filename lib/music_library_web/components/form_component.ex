@@ -65,7 +65,7 @@ defmodule MusicLibraryWeb.FormComponent do
             </legend>
             <div class="mt-2 grid grid-cols-5 gap-2">
               <div
-                :for={{color, index} <- Enum.with_index(@record.dominant_colors, 0)}
+                :for={{color, index} <- Enum.with_index(@form[:dominant_colors].value, 0)}
                 class="flex flex-col items-center"
               >
                 <input
