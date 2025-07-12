@@ -59,27 +59,25 @@ defmodule MusicLibraryWeb.FormComponent do
           />
         </div>
         <div class="space-y-4">
-          <fieldset>
-            <legend class="text-sm font-medium leading-6 text-zinc-700 dark:text-zinc-300">
-              {gettext("Dominant Colors")}
-            </legend>
-            <div class="mt-2 grid grid-cols-5 gap-2">
-              <div
-                :for={{color, index} <- Enum.with_index(@form[:dominant_colors].value, 0)}
-                class="flex flex-col items-center"
-              >
-                <input
-                  type="color"
-                  name={"record[dominant_colors][#{index}]"}
-                  value={color}
-                  class="size-8 rounded border border-zinc-300 cursor-pointer"
-                />
-                <span class="text-xs mt-1 text-zinc-600 dark:text-zinc-400">
-                  {String.upcase(color)}
-                </span>
-              </div>
+          <.label for="dominant_colors">
+            {gettext("Dominant Colors")}
+          </.label>
+          <div class="mt-2 grid grid-cols-5 gap-2">
+            <div
+              :for={{color, index} <- Enum.with_index(@form[:dominant_colors].value, 0)}
+              class="flex flex-col items-center"
+            >
+              <input
+                type="color"
+                name={"record[dominant_colors][#{index}]"}
+                value={color}
+                class="size-8 rounded border border-zinc-300 cursor-pointer"
+              />
+              <span class="text-xs mt-1 text-zinc-600 dark:text-zinc-400">
+                {String.upcase(color)}
+              </span>
             </div>
-          </fieldset>
+          </div>
         </div>
         <div class="col-span-full">
           <.label for={@uploads.cover_data.ref}>
