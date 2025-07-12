@@ -94,7 +94,7 @@ defmodule MusicLibraryWeb.FormComponent do
             <div class="text-center">
               <img
                 :if={@uploads.cover_data.entries == []}
-                class="rounded-lg mx-auto w-24"
+                class="rounded-lg mx-auto w-full"
                 alt={@record.title}
                 src={~p"/covers/#{@record.id}?vsn=#{@record.cover_hash}"}
               />
@@ -108,11 +108,11 @@ defmodule MusicLibraryWeb.FormComponent do
                   <span>{entry.progress}%</span>
                 <% end %>
               </div>
-              <div class="mt-4 flex text-sm/6 text-zinc-600 dark:text-zinc-300">
+              <div class="mt-4 text-sm/6 text-zinc-600 dark:text-zinc-300">
                 <label
                   for={@uploads.cover_data.ref}
                   class={[
-                    "relative cursor-pointer rounded-md font-semibold",
+                    "cursor-pointer rounded-md font-semibold",
                     "focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2",
                     "hover:text-zinc-200"
                   ]}
