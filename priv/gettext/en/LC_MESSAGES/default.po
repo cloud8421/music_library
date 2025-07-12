@@ -980,11 +980,6 @@ msgstr ""
 msgid "All rules applied successfully. Updated %{count} tracks total."
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Apply All Rules"
-msgstr ""
-
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
 #: lib/music_library_web/live/scrobble_rules_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
@@ -1185,4 +1180,9 @@ msgstr ""
 #: lib/music_library_web/components/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Dominant Colors"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Apply All"
 msgstr ""
