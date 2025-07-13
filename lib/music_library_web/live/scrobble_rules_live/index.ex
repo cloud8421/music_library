@@ -49,7 +49,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
         {MusicLibraryWeb.ScrobbleRulesLive.FormComponent, {:saved, scrobble_rule}},
         socket
       ) do
-    {:noreply, stream_insert(socket, :scrobble_rules, scrobble_rule)}
+    {:noreply, stream_insert(socket, :scrobble_rules, scrobble_rule, at: 0)}
   end
 
   @impl true
