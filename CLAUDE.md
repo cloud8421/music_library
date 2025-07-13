@@ -210,6 +210,7 @@ UI and Styling
 - Use Phoenix LiveView for dynamic, real-time interactions.
 - Implement responsive design with Tailwind CSS.
 - Use Phoenix view helpers and templates to keep views DRY.
+- **Responsive Design**: When screen space is limited, prefer content-focused flexible layouts over rigid tabular structures. Reorganize information hierarchically within each item, grouping related data visually while maintaining scanability and preserving all functionality.
 
 Performance Optimization
 
