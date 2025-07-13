@@ -86,7 +86,7 @@ defmodule MusicLibrary.MixProject do
       {:nimble_parsec, "~> 1.4"},
 
       # Image manipulation
-      {:vix, "~> 0.34.0"},
+      {:vix, "~> 0.35.0"},
 
       # Time-zone support - requires mint and castore
       {:time_zone_info, "~> 0.7.8"},
