@@ -63,13 +63,10 @@ defmodule MusicLibraryWeb.FormComponent do
             {gettext("Dominant Colors")}
           </.label>
           <div class="mt-2 grid grid-cols-5 gap-2">
-            <div
-              :for={{color, index} <- Enum.with_index(@form[:dominant_colors].value, 0)}
-              class="flex flex-col items-center"
-            >
+            <div :for={color <- @form[:dominant_colors].value} class="flex flex-col items-center">
               <input
                 type="color"
-                name={"record[dominant_colors][#{index}]"}
+                name="record[dominant_colors][]"
                 value={color}
                 class="size-8 rounded border border-zinc-300 cursor-pointer"
               />
@@ -166,9 +163,6 @@ defmodule MusicLibraryWeb.FormComponent do
 
   @impl true
   def handle_event("validate", %{"record" => record_params}, socket) do
-    record_params =
-      Map.update!(record_params, "dominant_colors", fn colors -> Map.values(colors) end)
-
     changeset = Records.change_record(socket.assigns.record, record_params)
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
@@ -187,9 +181,6 @@ defmodule MusicLibraryWeb.FormComponent do
   end
 
   defp save_record(socket, record_params, uploaded_covers) do
-    record_params =
-      Map.update!(record_params, "dominant_colors", fn colors -> Map.values(colors) end)
-
     params =
       case uploaded_covers do
         [] ->
