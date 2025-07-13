@@ -1168,3 +1168,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Apply All"
 msgstr ""
+
+#: lib/music_library_web/components/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Title"
+msgstr ""

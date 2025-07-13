@@ -35,6 +35,7 @@ defmodule MusicLibraryWeb.FormComponent do
         phx-auto-recover="recover_form"
         phx-submit="save"
       >
+        <.input field={@form[:title]} label={gettext("Title")} />
         <div class="sm:columns-2 space-y-2">
           <.select field={@form[:type]} label={gettext("Type")} options={types_with_labels()} />
           <.select field={@form[:format]} label={gettext("Format")} options={formats_with_labels()} />
