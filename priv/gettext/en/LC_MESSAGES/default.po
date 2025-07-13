@@ -704,7 +704,6 @@ msgid "Release Date"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Collected release"
 msgstr ""
@@ -1172,4 +1171,9 @@ msgstr ""
 #: lib/music_library_web/components/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Title"
+msgstr ""
+
+#: lib/music_library_web/live/wishlist_live/show.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Wishlisted release"
 msgstr ""
