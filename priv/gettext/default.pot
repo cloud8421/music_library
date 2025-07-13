@@ -201,7 +201,6 @@ msgid "Total wishlist"
 msgstr ""
 
 #: lib/music_library_web/components/form_component.ex
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Type"
 msgstr ""
@@ -991,16 +990,6 @@ msgstr ""
 msgid "Artist Name"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Created"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Description"
-msgstr ""
-
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Description (optional)"
@@ -1027,7 +1016,6 @@ msgid "Error applying rule: %{reason}"
 msgstr ""
 
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Match Value"
 msgstr ""
@@ -1079,13 +1067,7 @@ msgstr ""
 msgid "Select a rule type"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Status"
-msgstr ""
-
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Target MusicBrainz ID"
 msgstr ""
