@@ -11,7 +11,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
   @default_records_list_params %{
     query: "",
     page: 1,
-    page_size: 20,
+    page_size: 50,
     order: :alphabetical
   }
 
