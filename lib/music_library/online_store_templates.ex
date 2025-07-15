@@ -13,7 +13,7 @@ defmodule MusicLibrary.OnlineStoreTemplates do
   def list_enabled_templates do
     OnlineStoreTemplate
     |> where([t], t.enabled == true)
-    |> order_by([t], asc: t.name)
+    |> order_by([t], fragment("? COLLATE NOCASE ASC", t.name))
     |> Repo.all()
   end
 
@@ -22,7 +22,7 @@ defmodule MusicLibrary.OnlineStoreTemplates do
   """
   def list_templates do
     OnlineStoreTemplate
-    |> order_by([t], asc: t.name)
+    |> order_by([t], fragment("? COLLATE NOCASE ASC", t.name))
     |> Repo.all()
   end
 
