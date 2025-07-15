@@ -13,6 +13,7 @@ msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/online_store_template_live/index.html.heex
 #: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format
@@ -921,6 +922,7 @@ msgstr ""
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/artist_live/show.html.heex
 #: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/online_store_template_live/index.html.heex
 #: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format
@@ -1256,16 +1258,6 @@ msgstr ""
 msgid "e.g. https://www.amazon.co.uk/s?k={artist}+{title}+vinyl"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/index.html.heex
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Add Template"
-msgstr ""
-
-#: lib/music_library_web/live/online_store_template_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Manage templates for generating links to online record stores."
-msgstr ""
-
 #: lib/music_library_web/live/online_store_template_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Record format"
@@ -1274,4 +1266,19 @@ msgstr ""
 #: lib/music_library_web/live/online_store_template_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Preview not available"
+msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Disable template"
+msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/index.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Enable template"
+msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/index.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "New Template"
 msgstr ""
