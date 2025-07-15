@@ -1,7 +1,9 @@
 defmodule MusicLibraryWeb.OnlineStoreTemplateLive.FormComponent do
   use MusicLibraryWeb, :live_component
 
+  alias MusicLibrary.Artists.Artist
   alias MusicLibrary.OnlineStoreTemplates
+  alias MusicLibrary.Records.Record
 
   @impl true
   def render(assigns) do
@@ -33,6 +35,7 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.FormComponent do
           label={gettext("URL Template")}
           placeholder={gettext("e.g. https://www.amazon.co.uk/s?k={artist}+{title}+vinyl")}
           class="font-mono"
+          help_text={@generated_url_preview}
         />
 
         <.textarea
@@ -71,9 +74,13 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.FormComponent do
 
   @impl true
   def update(%{template: template} = assigns, socket) do
+    test_record = %Record{title: "Dark Side of the Moon", artists: [%Artist{name: "Pink Floyd"}]}
+
     {:ok,
      socket
      |> assign(assigns)
+     |> assign(:test_record, test_record)
+     |> assign(:generated_url_preview, OnlineStoreTemplates.generate_url(template, test_record))
      |> assign_new(:form, fn ->
        to_form(OnlineStoreTemplates.change_template(template))
      end)}
@@ -84,7 +91,15 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.FormComponent do
     changeset =
       OnlineStoreTemplates.change_template(socket.assigns.template, template_params)
 
-    {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
+    new_template = Ecto.Changeset.apply_changes(changeset)
+
+    generated_url_preview =
+      OnlineStoreTemplates.generate_url(new_template, socket.assigns.test_record)
+
+    {:noreply,
+     socket
+     |> assign(:generated_url_preview, generated_url_preview)
+     |> assign(form: to_form(changeset, action: :validate))}
   end
 
   def handle_event("save", %{"online_store_template" => template_params}, socket) do
