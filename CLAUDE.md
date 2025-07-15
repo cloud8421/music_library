@@ -180,6 +180,10 @@ Code Style and Structure
 - Structure files according to Phoenix conventions (controllers, contexts, views, etc.).
 - Where possible use Fluxon components instead of rolling your own
 
+Database design
+
+- Do not add columns for properties that are not specified in the requirements. Keep database changes to a minimum.
+
 Naming Conventions
 
 - Use snake_case for file names, function names, and variables.
@@ -208,9 +212,12 @@ Error Handling and Validation
 UI and Styling
 
 - Use Phoenix LiveView for dynamic, real-time interactions.
-- Implement responsive design with Tailwind CSS.
+- Implement responsive design with Tailwind CSS. When screen space is limited,
+  prefer content-focused flexible layouts over rigid tabular structures.
+  Reorganize information hierarchically within each item, grouping related data
+  visually while maintaining scanability and preserving all functionality.
 - Use Phoenix view helpers and templates to keep views DRY.
-- **Responsive Design**: When screen space is limited, prefer content-focused flexible layouts over rigid tabular structures. Reorganize information hierarchically within each item, grouping related data visually while maintaining scanability and preserving all functionality.
+- Use minimal markup and avoid nesting DIVs unnecessarily.
 
 Performance Optimization
 
