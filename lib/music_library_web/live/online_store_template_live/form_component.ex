@@ -88,7 +88,7 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.FormComponent do
      socket
      |> assign(assigns)
      |> assign(:test_record, test_record)
-     |> assign(:generated_url_preview, OnlineStoreTemplates.generate_url(template, test_record))
+     |> assign(:generated_url_preview, generate_preview(template, test_record))
      |> assign_new(:form, fn ->
        to_form(OnlineStoreTemplates.change_template(template))
      end)}
@@ -101,12 +101,9 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.FormComponent do
 
     new_template = Ecto.Changeset.apply_changes(changeset)
 
-    generated_url_preview =
-      OnlineStoreTemplates.generate_url(new_template, socket.assigns.test_record)
-
     {:noreply,
      socket
-     |> assign(:generated_url_preview, generated_url_preview)
+     |> assign(:generated_url_preview, generate_preview(new_template, socket.assigns.test_record))
      |> assign(form: to_form(changeset, action: :validate))}
   end
 
@@ -145,4 +142,11 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.FormComponent do
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
+
+  defp generate_preview(template, _record) when is_nil(template.url_template),
+    do: gettext("Preview not available")
+
+  defp generate_preview(template, record) do
+    OnlineStoreTemplates.generate_url(template, record)
+  end
 end
