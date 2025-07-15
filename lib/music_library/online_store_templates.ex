@@ -68,9 +68,11 @@ defmodule MusicLibrary.OnlineStoreTemplates do
   """
   def generate_url(template, record) do
     artists_string = Enum.map_join(record.artists, " ", & &1.name)
+    format_string = Atom.to_string(record.format)
 
     template.url_template
     |> String.replace("{artist}", URI.encode(artists_string))
     |> String.replace("{title}", URI.encode(record.title))
+    |> String.replace("{format}", URI.encode(format_string))
   end
 end

@@ -59,6 +59,10 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.FormComponent do
               <code class="bg-gray-200 dark:bg-gray-700 px-1 rounded">{"{title}"}</code>
               - {gettext("Record title")}
             </p>
+            <p>
+              <code class="bg-gray-200 dark:bg-gray-700 px-1 rounded">{"{format}"}</code>
+              - {gettext("Record format")}
+            </p>
           </div>
         </div>
 
@@ -74,7 +78,11 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.FormComponent do
 
   @impl true
   def update(%{template: template} = assigns, socket) do
-    test_record = %Record{title: "Dark Side of the Moon", artists: [%Artist{name: "Pink Floyd"}]}
+    test_record = %Record{
+      title: "Dark Side of the Moon",
+      artists: [%Artist{name: "Pink Floyd"}],
+      format: :vinyl
+    }
 
     {:ok,
      socket

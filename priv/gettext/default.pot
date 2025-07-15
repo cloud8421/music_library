@@ -1265,3 +1265,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Manage templates for generating links to online record stores."
 msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Record format"
+msgstr ""
