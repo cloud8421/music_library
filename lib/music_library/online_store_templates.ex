@@ -75,4 +75,9 @@ defmodule MusicLibrary.OnlineStoreTemplates do
     |> String.replace("{title}", URI.encode_www_form(record.title))
     |> String.replace("{format}", URI.encode_www_form(format_string))
   end
+
+  def favicon_url(template) do
+    uri = URI.parse(template.url_template)
+    "https://www.google.com/s2/favicons?domain=#{uri.host}&sz=16"
+  end
 end

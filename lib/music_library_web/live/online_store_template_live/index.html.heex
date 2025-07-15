@@ -29,7 +29,12 @@
       class="flex items-center justify-between py-5"
     >
       <div class="min-w-0">
-        <div class="flex items-start gap-x-3">
+        <div class="flex items-center gap-x-2">
+          <img
+            src={MusicLibrary.OnlineStoreTemplates.favicon_url(template)}
+            alt={template.name}
+            loading="lazy"
+          />
           <p class="text-sm font-semibold text-gray-900 dark:text-white">
             {template.name}
           </p>
