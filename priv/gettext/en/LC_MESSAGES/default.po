@@ -34,6 +34,7 @@ msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/online_store_template_live/index.html.heex
 #: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format
@@ -45,6 +46,7 @@ msgstr ""
 #: lib/music_library_web/live/artist_live/show.html.heex
 #: lib/music_library_web/live/collection_live/show.ex
 #: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/online_store_template_live/index.html.heex
 #: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #: lib/music_library_web/live/wishlist_live/show.ex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
@@ -163,12 +165,14 @@ msgstr ""
 
 #: lib/music_library_web/components/form_component.ex
 #: lib/music_library_web/live/artist_live/form_component.ex
+#: lib/music_library_web/live/online_store_template_live/form_component.ex
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
+#: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Search"
 msgstr ""
@@ -989,6 +993,7 @@ msgstr ""
 msgid "Artist Name"
 msgstr ""
 
+#: lib/music_library_web/live/online_store_template_live/form_component.ex
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Description (optional)"
@@ -1096,11 +1101,13 @@ msgstr ""
 msgid "Enable rule"
 msgstr ""
 
+#: lib/music_library_web/live/online_store_template_live/index.html.heex
 #: lib/music_library_web/live/scrobble_rules_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Disabled"
 msgstr ""
 
+#: lib/music_library_web/live/online_store_template_live/index.html.heex
 #: lib/music_library_web/live/scrobble_rules_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Enabled"
@@ -1176,4 +1183,85 @@ msgstr ""
 #: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Wishlisted release"
+msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Add a description to help identify this template"
+msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Artist name(s)"
+msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Available Variables"
+msgstr ""
+
+#: lib/music_library_web/live/wishlist_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Check Online Stores"
+msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Enable this template"
+msgstr ""
+
+#: lib/music_library_web/components/layouts/app.html.heex
+#: lib/music_library_web/live/online_store_template_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Online Store Templates"
+msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Online store template created successfully"
+msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Online store template updated successfully"
+msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Record title"
+msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Save Template"
+msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Template Name"
+msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "URL Template"
+msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "e.g. Amazon UK"
+msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "e.g. https://www.amazon.co.uk/s?k={artist}+{title}+vinyl"
+msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/index.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Add Template"
+msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Manage templates for generating links to online record stores."
 msgstr ""

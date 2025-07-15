@@ -10,6 +10,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
       record_colors: 1
     ]
 
+  alias MusicLibrary.OnlineStoreTemplates
   alias MusicLibrary.Records
 
   @impl true
@@ -29,11 +30,13 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
     record = Records.get_record!(id)
+    online_store_templates = OnlineStoreTemplates.list_enabled_templates()
 
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, record))
-     |> assign(:record, record)}
+     |> assign(:record, record)
+     |> assign(:online_store_templates, online_store_templates)}
   end
 
   @impl true
