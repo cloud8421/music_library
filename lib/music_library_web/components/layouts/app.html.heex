@@ -58,23 +58,6 @@
               <.icon name="hero-chevron-down" class="h-4 w-4" />
             </button>
           </:toggle>
-          <.dropdown_link href={~p"/dev/dashboard"}>
-            <.icon name="hero-chart-bar" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
-            {gettext("Live Dashboard")}
-          </.dropdown_link>
-          <.dropdown_link href={~p"/dev/errors"}>
-            <.icon
-              name="hero-exclamation-circle"
-              class="h-4 w-4 mr-2"
-              aria-hidden="true"
-              data-slot="icon"
-            />
-            {gettext("Errors")}
-          </.dropdown_link>
-          <.dropdown_link href={~p"/dev/oban"}>
-            <.icon name="hero-cog" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
-            {gettext("Oban")}
-          </.dropdown_link>
           <.dropdown_link href={~p"/scrobble-rules"}>
             <.icon
               name="hero-adjustments-horizontal"
@@ -101,6 +84,24 @@
               data-slot="icon"
             />
             {gettext("Backup")}
+          </.dropdown_link>
+          <.dropdown_separator />
+          <.dropdown_link href={~p"/dev/dashboard"}>
+            <.icon name="hero-chart-bar" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
+            {gettext("Live Dashboard")}
+          </.dropdown_link>
+          <.dropdown_link href={~p"/dev/errors"}>
+            <.icon
+              name="hero-exclamation-circle"
+              class="h-4 w-4 mr-2"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+            {gettext("Errors")}
+          </.dropdown_link>
+          <.dropdown_link href={~p"/dev/oban"}>
+            <.icon name="hero-cog" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
+            {gettext("Oban")}
           </.dropdown_link>
           <.dropdown_separator />
           <.dropdown_link href={~p"/login"}>
