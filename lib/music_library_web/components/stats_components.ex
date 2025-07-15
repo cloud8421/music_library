@@ -134,7 +134,18 @@ defmodule MusicLibraryWeb.StatsComponents do
     ~H"""
     <div class="mt-4">
       <div class="space-y-2">
-        <div :for={artist <- @artists} class="flex items-center space-x-3 p-2">
+        <div
+          :for={artist <- @artists}
+          phx-click={
+            artist.artist_musicbrainz_id != "" &&
+              JS.navigate(~p"/artists/#{artist.artist_musicbrainz_id}")
+          }
+          class={[
+            "flex items-center space-x-3 p-2",
+            artist.artist_musicbrainz_id != "" &&
+              "cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800"
+          ]}
+        >
           <img
             :if={artist.artist_musicbrainz_id != ""}
             class="w-12 h-12 rounded-md object-cover"
@@ -149,17 +160,7 @@ defmodule MusicLibraryWeb.StatsComponents do
             <.icon name="hero-user" class="w-6 h-6 text-zinc-400" />
           </div>
           <div class="flex-1 min-w-0">
-            <.link
-              :if={artist.artist_musicbrainz_id != ""}
-              class="text-sm font-medium text-zinc-900 dark:text-zinc-300 hover:text-zinc-700 dark:hover:text-zinc-400 truncate"
-              navigate={~p"/artists/#{artist.artist_musicbrainz_id}"}
-            >
-              {artist.artist_name}
-            </.link>
-            <p
-              :if={artist.artist_musicbrainz_id == ""}
-              class="text-sm font-medium text-zinc-500 dark:text-zinc-400 truncate"
-            >
+            <p class="text-sm font-medium text-zinc-900 dark:text-zinc-300 hover:text-zinc-700 dark:hover:text-zinc-400 truncate">
               {artist.artist_name}
             </p>
           </div>
