@@ -100,13 +100,13 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
       {:ok, record} ->
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Record wishlisted successfully"))
+         |> put_toast(:info, gettext("Record wishlisted successfully"))
          |> push_navigate(to: ~p"/wishlist/#{record.id}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply,
          socket
-         |> put_flash(
+         |> put_toast(
            :error,
            gettext("Error wishlisting record") <> "," <> inspect(changeset.errors)
          )
@@ -115,7 +115,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(:error, gettext("Error wishlisting record") <> "," <> inspect(reason))
+         |> put_toast(:error, gettext("Error wishlisting record") <> "," <> inspect(reason))
          |> push_patch(to: ~p"/wishlist")}
     end
   end
@@ -128,7 +128,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
       {:ok, _} ->
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Record added to the collection"))
+         |> put_toast(:info, gettext("Record added to the collection"))
          |> push_patch(to: ~p"/wishlist")}
 
       {:error, %Ecto.Changeset{} = changeset} ->

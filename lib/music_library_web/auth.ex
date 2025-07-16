@@ -1,7 +1,8 @@
 defmodule MusicLibraryWeb.Auth do
   use Gettext, backend: MusicLibraryWeb.Gettext
 
-  import Phoenix.Controller, only: [put_flash: 3, redirect: 2]
+  import LiveToast, only: [put_toast: 3]
+  import Phoenix.Controller, only: [redirect: 2]
   import Plug.Conn
 
   def correct_login_password?(password) do
@@ -35,7 +36,7 @@ defmodule MusicLibraryWeb.Auth do
       conn
     else
       conn
-      |> put_flash(:error, gettext("You must be logged in to access this page"))
+      |> put_toast(:error, gettext("You must be logged in to access this page"))
       |> redirect(to: "/login")
       |> halt()
     end

@@ -118,7 +118,7 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.FormComponent do
 
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Online store template updated successfully"))
+         |> put_toast(:info, gettext("Online store template updated successfully"))
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -133,7 +133,7 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.FormComponent do
 
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Online store template created successfully"))
+         |> put_toast(:info, gettext("Online store template created successfully"))
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->

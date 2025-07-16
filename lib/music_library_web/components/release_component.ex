@@ -147,12 +147,12 @@ defmodule MusicLibraryWeb.ReleaseComponent do
           {:noreply,
            socket
            |> assign(:already_scrobbled, true)
-           |> put_flash(:info, gettext("Release scrobbled successfully"))}
+           |> put_toast(:info, gettext("Release scrobbled successfully"))}
 
         {:error, reason} ->
           {:noreply,
            socket
-           |> put_flash(
+           |> put_toast(
              :error,
              gettext("Error scrobbling release") <> "," <> inspect(reason)
            )}
@@ -177,12 +177,12 @@ defmodule MusicLibraryWeb.ReleaseComponent do
           {:noreply,
            socket
            |> assign(:already_scrobbled, true)
-           |> put_flash(:info, gettext("Disc scrobbled successfully"))}
+           |> put_toast(:info, gettext("Disc scrobbled successfully"))}
 
         {:error, reason} ->
           {:noreply,
            socket
-           |> put_flash(
+           |> put_toast(
              :error,
              gettext("Error scrobbling disc") <> "," <> inspect(reason)
            )}

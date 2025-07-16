@@ -92,7 +92,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.FormComponent do
 
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Scrobble rule updated successfully"))
+         |> put_toast(:info, gettext("Scrobble rule updated successfully"))
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -107,7 +107,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.FormComponent do
 
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Scrobble rule created successfully"))
+         |> put_toast(:info, gettext("Scrobble rule created successfully"))
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->

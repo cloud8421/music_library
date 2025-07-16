@@ -63,13 +63,13 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
       {:ok, updated_record} ->
         {:noreply,
          socket
-         |> put_flash(:info, gettext("MusicBrainz data refreshed successfully"))
+         |> put_toast(:info, gettext("MusicBrainz data refreshed successfully"))
          |> assign(:record, updated_record)}
 
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(
+         |> put_toast(
            :error,
            gettext("Error refreshing MusicBrainz data") <> "," <> inspect(reason)
          )}
@@ -83,13 +83,13 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
       {:ok, updated_record} ->
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Genres populated successfully"))
+         |> put_toast(:info, gettext("Genres populated successfully"))
          |> assign(:record, updated_record)}
 
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(
+         |> put_toast(
            :error,
            gettext("Error populating genres") <> "," <> inspect(reason)
          )}
@@ -104,12 +104,12 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
         {:noreply,
          socket
          |> assign(:record, record)
-         |> put_flash(:info, gettext("Cover refreshed successfully"))}
+         |> put_toast(:info, gettext("Cover refreshed successfully"))}
 
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(
+         |> put_toast(
            :error,
            gettext("Error refreshing cover") <> "," <> inspect(reason)
          )}
@@ -124,12 +124,12 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
       {:ok, _worker} ->
         {:noreply,
          socket
-         |> put_flash(:info, gettext("In progress - record will update automatically"))}
+         |> put_toast(:info, gettext("In progress - record will update automatically"))}
 
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(
+         |> put_toast(
            :error,
            gettext("Error") <> "," <> inspect(reason)
          )}
@@ -145,7 +145,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   def handle_info({:update, record}, socket) do
     {:noreply,
      socket
-     |> put_flash(:info, gettext("Record updated in the background"))
+     |> put_toast(:info, gettext("Record updated in the background"))
      |> assign(:record, record)}
   end
 

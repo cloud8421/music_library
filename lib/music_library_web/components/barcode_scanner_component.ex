@@ -323,7 +323,7 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
             "Failed to search release for barcode #{number}: #{inspect(reason)}"
           end)
 
-          put_flash(
+          put_toast(
             socket,
             :error,
             gettext("Failed to search release for barcode %{number}", number: number)
@@ -339,7 +339,7 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
     socket =
       case BarcodeScan.import_results(socket.assigns.scan_results, current_time) do
         [] ->
-          put_flash(socket, :info, gettext("Records imported successfully"))
+          put_toast(socket, :info, gettext("Records imported successfully"))
 
         errors ->
           errors_summary =
@@ -347,7 +347,7 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
               "#{number}: #{inspect(reason)}"
             end)
 
-          put_flash(
+          put_toast(
             socket,
             :error,
             gettext("Some records could not be imported: %{summary}", summary: errors_summary)

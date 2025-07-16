@@ -198,7 +198,7 @@ defmodule MusicLibraryWeb.FormComponent do
 
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Record updated successfully"))
+         |> put_toast(:info, gettext("Record updated successfully"))
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->

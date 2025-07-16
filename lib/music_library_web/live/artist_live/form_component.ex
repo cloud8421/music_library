@@ -145,7 +145,7 @@ defmodule MusicLibraryWeb.ArtistLive.FormComponent do
 
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Artist updated successfully"))
+         |> put_toast(:info, gettext("Artist updated successfully"))
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->

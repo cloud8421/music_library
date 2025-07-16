@@ -104,13 +104,13 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
       {:ok, record} ->
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Record imported successfully"))
+         |> put_toast(:info, gettext("Record imported successfully"))
          |> push_navigate(to: ~p"/collection/#{record.id}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply,
          socket
-         |> put_flash(
+         |> put_toast(
            :error,
            gettext("Error importing record") <> "," <> inspect(changeset.errors)
          )
@@ -119,7 +119,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(:error, gettext("Error importing record") <> "," <> inspect(reason))
+         |> put_toast(:error, gettext("Error importing record") <> "," <> inspect(reason))
          |> push_patch(to: ~p"/collection")}
     end
   end

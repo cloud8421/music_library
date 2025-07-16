@@ -22,7 +22,7 @@ defmodule MusicLibraryWeb.SessionController do
       |> redirect(to: ~p"/")
     else
       conn
-      |> put_flash(:error, gettext("Invalid password"))
+      |> put_toast(:error, gettext("Invalid password"))
       |> redirect(to: ~p"/login")
     end
   end

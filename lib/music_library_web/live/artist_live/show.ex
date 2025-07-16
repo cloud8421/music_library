@@ -108,13 +108,13 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
       {:ok, _record} ->
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Record wishlisted successfully"))
+         |> put_toast(:info, gettext("Record wishlisted successfully"))
          |> push_patch(to: ~p"/artists/#{socket.assigns.artist.musicbrainz_id}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply,
          socket
-         |> put_flash(
+         |> put_toast(
            :error,
            gettext("Error wishlisting record") <> "," <> inspect(changeset.errors)
          )
@@ -123,7 +123,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(:error, gettext("Error wishlisting record") <> "," <> inspect(reason))
+         |> put_toast(:error, gettext("Error wishlisting record") <> "," <> inspect(reason))
          |> push_patch(to: ~p"/artists/#{socket.assigns.artist.musicbrainz_id}")}
     end
   end
@@ -134,12 +134,12 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
         {:noreply,
          socket
          |> assign(:artist_info, artist_info)
-         |> put_flash(:info, gettext("Artist info refreshed successfully"))}
+         |> put_toast(:info, gettext("Artist info refreshed successfully"))}
 
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(
+         |> put_toast(
            :error,
            gettext("Error refreshing artist info") <> "," <> inspect(reason)
          )}
@@ -152,12 +152,12 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
         {:noreply,
          socket
          |> assign(:artist_info, artist_info)
-         |> put_flash(:info, gettext("Artist image refreshed successfully"))}
+         |> put_toast(:info, gettext("Artist image refreshed successfully"))}
 
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(
+         |> put_toast(
            :error,
            gettext("Error refreshing artist image") <> "," <> inspect(reason)
          )}
@@ -173,12 +173,12 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
         {:noreply,
          socket
          |> assign_records(socket.assigns.artist.musicbrainz_id)
-         |> put_flash(:info, gettext("Record added to the collection"))}
+         |> put_toast(:info, gettext("Record added to the collection"))}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply,
          socket
-         |> put_flash(
+         |> put_toast(
            :error,
            gettext("Error importing record") <> "," <> inspect(changeset.errors)
          )}
@@ -192,7 +192,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     {:noreply,
      socket
      |> assign_records(socket.assigns.artist.musicbrainz_id)
-     |> put_flash(:info, gettext("Record deleted"))}
+     |> put_toast(:info, gettext("Record deleted"))}
   end
 
   defp apply_action(socket, :show, %{"musicbrainz_id" => musicbrainz_id}) do

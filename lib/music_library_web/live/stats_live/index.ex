@@ -53,13 +53,13 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       {:ok, record} ->
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Record wishlisted successfully"))
+         |> put_toast(:info, gettext("Record wishlisted successfully"))
          |> push_navigate(to: ~p"/wishlist/#{record.id}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply,
          socket
-         |> put_flash(
+         |> put_toast(
            :error,
            gettext("Error wishlisting record") <> "," <> inspect(changeset.errors)
          )}
@@ -67,7 +67,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(:error, gettext("Error wishlisting record") <> "," <> inspect(reason))}
+         |> put_toast(:error, gettext("Error wishlisting record") <> "," <> inspect(reason))}
     end
   end
 

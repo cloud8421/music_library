@@ -4,7 +4,7 @@ defmodule MusicLibraryWeb.Hooks.StaticAssets do
   def on_mount(:default, _params, _session, socket) do
     socket =
       if static_changed?(socket) do
-        put_flash(socket, :warning, gettext("The application has been updated, please reload."))
+        put_toast(socket, :warning, gettext("The application has been updated, please reload."))
       else
         socket
       end

@@ -77,11 +77,11 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
     case ScrobbleRules.apply_rule(scrobble_rule) do
       {:ok, count} ->
         message = gettext("Rule applied successfully. Updated %{count} tracks.", count: count)
-        {:noreply, put_flash(socket, :info, message)}
+        {:noreply, put_toast(socket, :info, message)}
 
       {:error, reason} ->
         message = gettext("Error applying rule: %{reason}", reason: reason)
-        {:noreply, put_flash(socket, :error, message)}
+        {:noreply, put_toast(socket, :error, message)}
     end
   end
 
@@ -100,7 +100,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
         count: total_updated
       )
 
-    {:noreply, put_flash(socket, :info, message)}
+    {:noreply, put_toast(socket, :info, message)}
   end
 
   attr :type, :atom, required: true, values: [:album, :artist]

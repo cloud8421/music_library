@@ -47,6 +47,7 @@ defmodule MusicLibraryWeb do
 
       use Gettext, backend: MusicLibraryWeb.Gettext
 
+      import LiveToast, only: [put_toast: 3]
       import Plug.Conn
 
       unquote(verified_routes())
@@ -95,6 +96,7 @@ defmodule MusicLibraryWeb do
       use Gettext, backend: MusicLibraryWeb.Gettext
       use Fluxon
 
+      import LiveToast, only: [put_toast: 3]
       # Core UI components and translation
       import MusicLibraryWeb.CoreComponents
       # HTML escaping functionality
