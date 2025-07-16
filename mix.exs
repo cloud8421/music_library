@@ -10,7 +10,9 @@ defmodule MusicLibrary.MixProject do
       start_permanent: Mix.env() == :prod,
       gettext: [write_reference_line_numbers: false],
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      compilers: [:phoenix_live_view] ++ Mix.compilers(),
+      listeners: [Phoenix.CodeReloader]
     ]
   end
 
@@ -44,7 +46,7 @@ defmodule MusicLibrary.MixProject do
       # Web Server
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
-      {:phoenix, "~> 1.7.14"},
+      {:phoenix, "~> 1.8.0-rc.4", override: true},
 
       # Database
       {:phoenix_ecto, "~> 4.5"},
@@ -55,7 +57,7 @@ defmodule MusicLibrary.MixProject do
 
       # UI
       {:phoenix_html, "~> 4.2"},
-      {:phoenix_live_view, "~> 1.0.0"},
+      {:phoenix_live_view, "~> 1.1.0-rc.3"},
       {:phoenix_html_helpers, "~> 1.0"},
       {:heroicons,
        github: "tailwindlabs/heroicons",
@@ -100,7 +102,7 @@ defmodule MusicLibrary.MixProject do
 
       # Test tooling
       {:phoenix_test, "~> 0.7.0", only: :test},
-      {:floki, ">= 0.30.0", only: :test},
+      {:lazy_html, ">= 0.1.0", only: :test},
 
       # Prod error/perf tooling
       {:phoenix_live_dashboard, "~> 0.8.3"},
