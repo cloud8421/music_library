@@ -271,15 +271,21 @@
   </div>
 </div>
 
-<div :if={@online_store_templates != []} class="mt-8">
+<div :if={@online_store_templates != []} class="mt-4">
   <details class="px-4 text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300">
     <summary class="text-sm font-medium cursor-pointer">
       {gettext("Check Online Stores")}
     </summary>
     <div class="mt-4 space-y-2">
-      <div
+      <.button
         :for={template <- @online_store_templates}
-        class="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
+        as="link"
+        href={OnlineStoreTemplates.generate_url(template, @record)}
+        target="_blank"
+        rel="noopener noreferrer"
+        variant="ghost"
+        size="sm"
+        class="ml-2"
       >
         <img
           class="mr-2"
@@ -287,22 +293,10 @@
           alt={template.name}
           loading="lazy"
         />
-        <span class="text-sm font-medium text-gray-900 dark:text-white grow">
+        <span class="text-sm font-medium text-zinc-900 dark:text-white">
           {template.name}
         </span>
-        <.button
-          as="link"
-          href={OnlineStoreTemplates.generate_url(template, @record)}
-          target="_blank"
-          rel="noopener noreferrer"
-          variant="ghost"
-          size="sm"
-          class="ml-2"
-        >
-          <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4" />
-          {gettext("Search")}
-        </.button>
-      </div>
+      </.button>
     </div>
   </details>
 </div>

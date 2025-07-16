@@ -173,7 +173,6 @@ msgid "Saving..."
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Search"
 msgstr ""
