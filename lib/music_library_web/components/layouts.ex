@@ -10,6 +10,8 @@ defmodule MusicLibraryWeb.Layouts do
   """
   use MusicLibraryWeb, :html
 
+  alias Phoenix.LiveView.ColocatedHook
+
   embed_templates "layouts/*"
 
   attr :current_section, :atom, required: true
