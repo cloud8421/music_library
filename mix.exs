@@ -71,6 +71,7 @@ defmodule MusicLibrary.MixProject do
       {:live_toast, "~> 0.8.0"},
 
       # Dev tooling
+      {:igniter, "~> 0.6", only: [:dev, :test]},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
