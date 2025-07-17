@@ -20,6 +20,7 @@ import "phoenix_html";
 // Establish Phoenix Socket and LiveView configuration.
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
+import { hooks as colocatedHooks } from "phoenix-colocated/music_library";
 import topbar from "../vendor/topbar";
 import { Hooks as FluxonHooks, DOM as FluxonDOM } from "fluxon";
 import BarcodeScannerHook from "./barcode-scanner";
@@ -38,7 +39,7 @@ let csrfToken = document
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: { _csrf_token: csrfToken },
-  hooks: Hooks,
+  hooks: { ...Hooks, ...colocatedHooks },
   dom: {
     onBeforeElUpdated(from, to) {
       FluxonDOM.onBeforeElUpdated(from, to);
