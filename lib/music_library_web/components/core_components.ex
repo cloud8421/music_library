@@ -89,7 +89,7 @@ defmodule MusicLibraryWeb.CoreComponents do
   def json_viewer(assigns) do
     ~H"""
     <details class="mt-4 px-4 text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300">
-      <summary class="text-xs sm:text-sm cursor-pointer">{@title}</summary>
+      <summary class="text-xs sm:text-sm font-medium cursor-pointer">{@title}</summary>
       <pre><code class="text-xs sm:text-sm"><%= Jason.encode!(@data, pretty: true) %></code></pre>
     </details>
     """
