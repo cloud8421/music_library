@@ -67,11 +67,8 @@ COPY assets assets
 
 RUN cd assets && npm install && cd ..
 
-# compile assets
-RUN mix assets.deploy
-
-# Compile the release
-RUN mix compile
+# Compile the release and assets
+RUN mix do compile, assets.deploy
 
 # Changes to config/runtime.exs don't require recompiling the code
 COPY config/runtime.exs config/
