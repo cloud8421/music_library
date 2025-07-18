@@ -98,7 +98,7 @@ defmodule MusicLibraryWeb.FormComponent do
               />
               <.live_img_preview
                 :for={entry <- @uploads.cover_data.entries}
-                class="mx-auto size-24"
+                class="mx-auto w-full"
                 entry={entry}
               />
               <div class="mt-4 text-sm/6 text-zinc-600 dark:text-zinc-400">
