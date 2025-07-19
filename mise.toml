@@ -118,6 +118,16 @@ depends = [
 description = 'Install dependencies and setup the database'
 run = ['mix setup']
 
+# AI
+
+[tasks."usage-rules:sync"]
+run = """
+mix usage_rules.sync CLAUDE.md --all \
+  --inline usage_rules:all \
+  --link-to-folder deps \
+  --remove-missing
+"""
+
 # PRODUCTION
 
 [tasks."prod:console"]
