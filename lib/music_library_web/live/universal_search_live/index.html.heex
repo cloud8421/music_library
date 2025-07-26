@@ -1,12 +1,12 @@
 <.modal
   :if={@show_modal}
   id="universal-search-root"
-  class="md:min-w-2xl max-w-sm md:max-w-3xl"
+  class="md:min-w-2xl max-w-sm md:max-w-3xl mt-8"
   placement="top"
   open={@show_modal}
   on_close={JS.push("close_modal", value: %{})}
 >
-  <form class="mt-4" phx-change="search" phx-submit="search">
+  <form class="mt-4 text-sm" phx-change="search" phx-submit="search">
     <div class="relative">
       <.icon
         name="hero-magnifying-glass"
@@ -30,7 +30,7 @@
   <.no_results :if={@search_query != "" and @total_results == 0} query={@search_query} />
   
 <!-- Search results -->
-  <div :if={@total_results > 0} class="max-h-128 overflow-y-auto">
+  <div :if={@total_results > 0} class="max-h-148 md:max-h-164 overflow-y-auto">
     <!-- Collection results -->
     <.search_result_group
       :if={length(@search_results.collection) > 0}
