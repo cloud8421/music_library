@@ -1281,3 +1281,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "New Template"
 msgstr ""
+
+#: lib/music_library_web/components/layouts/root.html.heex
+#, elixir-autogen, elixir-format
+msgid "Data sourced from"
+msgstr ""
