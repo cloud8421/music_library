@@ -57,7 +57,7 @@ defmodule MusicLibrary.MixProject do
 
       # UI
       {:phoenix_html, "~> 4.2"},
-      {:phoenix_live_view, "~> 1.1.0-rc.3"},
+      {:phoenix_live_view, "~> 1.1"},
       {:phoenix_html_helpers, "~> 1.0"},
       {:heroicons,
        github: "tailwindlabs/heroicons",
