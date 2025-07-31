@@ -108,6 +108,7 @@ mix hex.repo add fluxon https://repo.fluxonui.com \
   --fetch-public-key $FLUXON_KEY_FINGERPRINT \
   --auth-key $FLUXON_LICENSE_KEY
 """
+hide = true
 
 [tasks."dev:setup"]
 depends = [
@@ -121,6 +122,7 @@ run = ['mix setup']
 # AI
 
 [tasks."usage-rules:sync"]
+description = 'Sync usage rules from dependencies to CLAUDE.md'
 run = """
 mix usage_rules.sync CLAUDE.md --all \
   --inline usage_rules:all \
