@@ -34,6 +34,8 @@ defmodule LastFm.Feed do
         conflict_target: [:scrobbled_at_uts, :title]
       )
 
+    MusicLibrary.ScrobbleRules.apply_all_rules()
+
     Phoenix.PubSub.broadcast(LastFm.PubSub, "feed:update", %{track_count: count})
   end
 
