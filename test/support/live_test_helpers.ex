@@ -1,8 +1,6 @@
 defmodule MusicLibraryWeb.LiveTestHelpers do
   def escape(string) do
-    string
-    |> Phoenix.HTML.html_escape()
-    |> Phoenix.HTML.safe_to_string()
+    LazyHTML.html_escape(string)
   end
 
   def trigger_hook(session, selector, hook, params \\ %{}) do
