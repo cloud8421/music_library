@@ -44,13 +44,13 @@ defmodule MusicLibraryWeb.ArtistLive.FormComponent do
             <div class="text-center">
               <img
                 :if={@uploads.image_data.entries == []}
-                class="rounded-lg mx-auto w-24"
+                class="rounded-lg mx-auto w-full"
                 alt={@artist.name}
                 src={~p"/artists/#{@artist_info.id}/image?vsn=#{@artist_info.image_data_hash || ""}"}
               />
               <.live_img_preview
                 :for={entry <- @uploads.image_data.entries}
-                class="mx-auto w-24"
+                class="mx-auto w-full"
                 entry={entry}
               />
               <div class="mt-4 text-sm/6 text-zinc-600 dark:text-zinc-400">
@@ -58,7 +58,7 @@ defmodule MusicLibraryWeb.ArtistLive.FormComponent do
                   <span>{entry.progress}%</span>
                 <% end %>
               </div>
-              <div class="mt-4 flex text-sm/6 text-zinc-600 dark:text-zinc-300">
+              <div class="mt-4 text-sm/6 text-zinc-600 dark:text-zinc-300">
                 <label
                   for={@uploads.image_data.ref}
                   class={[
