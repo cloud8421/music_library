@@ -88,7 +88,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.FormComponent do
   defp save_scrobble_rule(socket, :edit, scrobble_rule_params) do
     case ScrobbleRules.update_scrobble_rule(socket.assigns.scrobble_rule, scrobble_rule_params) do
       {:ok, scrobble_rule} ->
-        notify_parent({:saved, scrobble_rule})
+        notify_parent({:updated, scrobble_rule})
 
         {:noreply,
          socket
@@ -103,7 +103,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.FormComponent do
   defp save_scrobble_rule(socket, :new, scrobble_rule_params) do
     case ScrobbleRules.create_scrobble_rule(scrobble_rule_params) do
       {:ok, scrobble_rule} ->
-        notify_parent({:saved, scrobble_rule})
+        notify_parent({:created, scrobble_rule})
 
         {:noreply,
          socket

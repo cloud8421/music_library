@@ -32,7 +32,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
     socket
     |> assign(:page_title, gettext("Scrobble Rules"))
     |> assign(:scrobble_rule, nil)
-    |> stream(:scrobble_rules, ScrobbleRules.list_scrobble_rules())
+    |> stream(:scrobble_rules, ScrobbleRules.list_scrobble_rules(), reset: true)
   end
 
   def apply_fallback_index(socket, params) do
@@ -46,10 +46,17 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
 
   @impl true
   def handle_info(
-        {MusicLibraryWeb.ScrobbleRulesLive.FormComponent, {:saved, scrobble_rule}},
+        {MusicLibraryWeb.ScrobbleRulesLive.FormComponent, {:created, scrobble_rule}},
         socket
       ) do
     {:noreply, stream_insert(socket, :scrobble_rules, scrobble_rule, at: 0)}
+  end
+
+  def handle_info(
+        {MusicLibraryWeb.ScrobbleRulesLive.FormComponent, {:updated, scrobble_rule}},
+        socket
+      ) do
+    {:noreply, stream_insert(socket, :scrobble_rules, scrobble_rule)}
   end
 
   @impl true
