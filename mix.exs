@@ -46,7 +46,7 @@ defmodule MusicLibrary.MixProject do
       # Web Server
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
-      {:phoenix, "~> 1.8.0", override: true},
+      {:phoenix, "~> 1.8.0"},
 
       # Database
       {:phoenix_ecto, "~> 4.5"},
