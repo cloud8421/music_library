@@ -27,7 +27,7 @@ defmodule OpenAI.API do
 
       case Finch.stream(finch_request, finch_name, Req.Response.new(), fun, finch_options) do
         {:ok, response} -> {request, response}
-        {:error, exception} -> {request, exception}
+        {:error, exception, _response} -> {request, exception}
       end
     end
 
