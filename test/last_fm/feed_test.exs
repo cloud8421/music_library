@@ -40,16 +40,16 @@ defmodule LastFm.FeedTest do
     test "it stores the track and broadcasts the updated track count" do
       :ok = Feed.subscribe()
 
-      :ok = Feed.update([@track_two, @track_one])
+      assert {:ok, 2} == Feed.update([@track_two, @track_one])
       assert_receive %{track_count: 2}
 
       # Tracks have already been inserted, count of new tracks is 0
-      :ok = Feed.update([@track_two, @track_one])
+      assert {:ok, 0} == Feed.update([@track_two, @track_one])
       assert_receive %{track_count: 0}
     end
 
     test "it returns tracks in descending order of scrobble" do
-      :ok = Feed.update([@track_two, @track_one])
+      assert {:ok, 2} == Feed.update([@track_two, @track_one])
       track_two_scrobbled_at_uts = @track_two.scrobbled_at_uts
       track_one_scrobbled_at_uts = @track_one.scrobbled_at_uts
 

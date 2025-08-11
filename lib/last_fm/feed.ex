@@ -21,7 +21,7 @@ defmodule LastFm.Feed do
     :last_fm_data
   ]
 
-  @spec update([LastFm.Track.t()]) :: :ok | no_return
+  @spec update([LastFm.Track.t()]) :: {:ok, non_neg_integer()} | no_return
   def update(tracks) do
     track_params =
       tracks
@@ -37,6 +37,8 @@ defmodule LastFm.Feed do
     MusicLibrary.ScrobbleRules.apply_all_rules()
 
     Phoenix.PubSub.broadcast(LastFm.PubSub, "feed:update", %{track_count: count})
+
+    {:ok, count}
   end
 
   @spec all_tracks(non_neg_integer()) :: [LastFm.Track.t()]

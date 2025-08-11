@@ -12,14 +12,14 @@ defmodule LastFm.Worker.BackfillScrobbledTracks do
     # use the returning count to determine if we reached the end of the backfilling
     # process.
     case LastFm.Import.batch(to_uts: to_uts, limit: @batch_size) do
-      {@batch_size, nil} ->
+      {:ok, @batch_size} ->
         next_to_uts = LastFm.lowest_scrobbled_at_uts()
 
         %{"to_uts" => next_to_uts}
         |> new(schedule_in: @backfill_delay)
         |> BackgroundRepo.insert()
 
-      {other_count, nil} when is_integer(other_count) ->
+      {:ok, _other_count} ->
         :ok
 
       error ->
