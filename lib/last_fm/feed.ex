@@ -28,13 +28,16 @@ defmodule LastFm.Feed do
       |> Enum.map(fn t -> Map.take(t, @insertable_fields) end)
       |> Enum.map(&Map.to_list/1)
 
-    {count, nil} =
+    {count, tracks} =
       MusicLibrary.Repo.insert_all(LastFm.Track, track_params,
         on_conflict: :nothing,
-        conflict_target: [:scrobbled_at_uts, :title]
+        conflict_target: [:scrobbled_at_uts, :title],
+        returning: true
       )
 
-    MusicLibrary.ScrobbleRules.apply_all_rules()
+    tracks
+    |> MusicLibrary.ScrobbleRules.apply_all_rules()
+    |> MusicLibrary.ScrobbleRules.log_apply_results()
 
     Phoenix.PubSub.broadcast(LastFm.PubSub, "feed:update", %{track_count: count})
 

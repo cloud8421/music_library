@@ -10,42 +10,9 @@ defmodule MusicLibrary.Worker.ApplyScrobbleRules do
 
   alias MusicLibrary.ScrobbleRules
 
-  require Logger
-
   @impl Oban.Worker
   def perform(%Oban.Job{args: _}) do
-    results = ScrobbleRules.apply_all_rules()
-    log_results(results)
-  end
-
-  defp log_results(results) do
-    {applied, errors} =
-      Enum.split_with(results, fn
-        {:ok, _} -> true
-        {:error, _} -> false
-      end)
-
-    total_applied = length(applied)
-    total_errors = length(errors)
-
-    total_tracks_updated =
-      applied
-      |> Enum.map(fn {:ok, {_, _, count}} -> count end)
-      |> Enum.sum()
-
-    Logger.info(fn ->
-      "Scrobble rules application completed: " <>
-        "applied #{total_applied} rules, " <>
-        "#{total_errors} errors, " <>
-        "#{total_tracks_updated} tracks updated"
-    end)
-
-    Enum.each(errors, fn {:error, {type, match_value, reason}} ->
-      Logger.error(fn ->
-        "failed to apply #{type} rule " <>
-          "with match #{match_value} " <>
-          "with reason #{inspect(reason)}"
-      end)
-    end)
+    ScrobbleRules.apply_all_rules()
+    |> ScrobbleRules.log_apply_results()
   end
 end

@@ -5,6 +5,8 @@ defmodule MusicLibrary.ScrobbleRules do
 
   import Ecto.Query, warn: false
 
+  require Logger
+
   alias LastFm.Track
   alias MusicLibrary.Repo
   alias MusicLibrary.ScrobbleRules.ScrobbleRule
@@ -175,6 +177,44 @@ defmodule MusicLibrary.ScrobbleRules do
   end
 
   @doc """
+  Applies an album rule to a specific set of scrobbled tracks.
+
+  ## Examples
+
+      iex> apply_album_rule(rule, tracks)
+      {:ok, 3}
+
+      iex> apply_album_rule(rule, tracks)
+      {:error, :invalid_rule_type}
+
+  """
+  def apply_album_rule(%ScrobbleRule{type: :album} = rule, tracks) do
+    track_scrobbled_at_uts = Enum.map(tracks, & &1.scrobbled_at_uts)
+
+    update_query =
+      from(t in Track,
+        where:
+          fragment("json_extract(?, '$.title') = ?", t.album, ^rule.match_value) and
+            t.scrobbled_at_uts in ^track_scrobbled_at_uts,
+        update: [
+          set: [
+            album:
+              fragment(
+                "json_set(?, '$.musicbrainz_id', ?)",
+                t.album,
+                ^rule.target_musicbrainz_id
+              )
+          ]
+        ]
+      )
+
+    case Repo.update_all(update_query, []) do
+      {count, _} -> {:ok, count}
+      error -> {:error, error}
+    end
+  end
+
+  @doc """
   Applies an artist rule to all matching scrobbled tracks.
 
   ## Examples
@@ -190,6 +230,44 @@ defmodule MusicLibrary.ScrobbleRules do
     update_query =
       from(t in Track,
         where: fragment("json_extract(?, '$.name') = ?", t.artist, ^rule.match_value),
+        update: [
+          set: [
+            artist:
+              fragment(
+                "json_set(?, '$.musicbrainz_id', ?)",
+                t.artist,
+                ^rule.target_musicbrainz_id
+              )
+          ]
+        ]
+      )
+
+    case Repo.update_all(update_query, []) do
+      {count, _} -> {:ok, count}
+      error -> {:error, error}
+    end
+  end
+
+  @doc """
+  Applies an artist rule to a specific set of scrobbled tracks.
+
+  ## Examples
+
+      iex> apply_artist_rule(rule, tracks)
+      {:ok, 7}
+
+      iex> apply_artist_rule(rule, tracks)
+      {:error, :invalid_rule_type}
+
+  """
+  def apply_artist_rule(%ScrobbleRule{type: :artist} = rule, tracks) do
+    track_scrobbled_at_uts = Enum.map(tracks, & &1.scrobbled_at_uts)
+
+    update_query =
+      from(t in Track,
+        where:
+          fragment("json_extract(?, '$.name') = ?", t.artist, ^rule.match_value) and
+            t.scrobbled_at_uts in ^track_scrobbled_at_uts,
         update: [
           set: [
             artist:
@@ -229,6 +307,26 @@ defmodule MusicLibrary.ScrobbleRules do
   end
 
   @doc """
+  Applies a single rule to a specific set of tracks based on its type.
+
+  ## Examples
+
+      iex> apply_rule(rule, tracks)
+      {:ok, 3}
+
+      iex> apply_rule(rule, tracks)
+      {:error, "Invalid rule type"}
+
+  """
+  def apply_rule(%ScrobbleRule{type: :album} = rule, tracks) do
+    apply_album_rule(rule, tracks)
+  end
+
+  def apply_rule(%ScrobbleRule{type: :artist} = rule, tracks) do
+    apply_artist_rule(rule, tracks)
+  end
+
+  @doc """
   Applies all enabled rules.
 
   ## Examples
@@ -238,10 +336,35 @@ defmodule MusicLibrary.ScrobbleRules do
 
   """
   def apply_all_rules do
-    rules = list_enabled_rules()
-
-    Enum.map(rules, fn rule ->
+    list_enabled_rules()
+    |> Enum.map(fn rule ->
       case apply_rule(rule) do
+        {:ok, count} -> {:ok, {rule.type, rule.match_value, count}}
+        {:error, reason} -> {:error, {rule.type, rule.match_value, reason}}
+      end
+    end)
+  end
+
+  @doc """
+  Applies all enabled rules to a specific set of tracks.
+
+  ## Examples
+
+      iex> apply_all_rules(tracks)
+      [{:ok, {:album, "Some Album", 5}}, {:error, {:artist, "Some Artist", "reason"}}]
+
+  """
+  def apply_all_rules([]) do
+    list_enabled_rules()
+    |> Enum.map(fn rule ->
+      {:ok, {rule.type, rule.match_value, 0}}
+    end)
+  end
+
+  def apply_all_rules(tracks) do
+    list_enabled_rules()
+    |> Enum.map(fn rule ->
+      case apply_rule(rule, tracks) do
         {:ok, count} -> {:ok, {rule.type, rule.match_value, count}}
         {:error, reason} -> {:error, {rule.type, rule.match_value, reason}}
       end
@@ -301,5 +424,48 @@ defmodule MusicLibrary.ScrobbleRules do
 
   def count_rule_matches(%ScrobbleRule{type: :artist} = rule) do
     count_artist_matches(rule)
+  end
+
+  @doc """
+  Logs the results of applying scrobble rules.
+
+  Takes a list of results from rule application and logs summary statistics
+  and any errors that occurred.
+
+  ## Examples
+
+      iex> log_apply_results([{:ok, {:album, "Album", 5}}, {:error, {:artist, "Artist", "reason"}}])
+      :ok
+
+  """
+  def log_apply_results(results) do
+    {applied, errors} =
+      Enum.split_with(results, fn
+        {:ok, _} -> true
+        {:error, _} -> false
+      end)
+
+    total_applied = length(applied)
+    total_errors = length(errors)
+
+    total_tracks_updated =
+      applied
+      |> Enum.map(fn {:ok, {_, _, count}} -> count end)
+      |> Enum.sum()
+
+    Logger.info(fn ->
+      "Scrobble rules application completed: " <>
+        "applied #{total_applied} rules, " <>
+        "#{total_errors} errors, " <>
+        "#{total_tracks_updated} tracks updated"
+    end)
+
+    Enum.each(errors, fn {:error, {type, match_value, reason}} ->
+      Logger.error(fn ->
+        "failed to apply #{type} rule " <>
+          "with match #{match_value} " <>
+          "with reason #{inspect(reason)}"
+      end)
+    end)
   end
 end
