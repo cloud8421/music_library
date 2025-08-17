@@ -70,38 +70,7 @@
 
 <div>
   <div class="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-5">
-    <div>
-      <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
-        {gettext("Top Artists")}
-      </h1>
-      <.async_result :let={top_artists} assign={@top_artists}>
-        <:loading>
-          <div class="h-192 flex items-center justify-center">
-            <.loading />
-          </div>
-        </:loading>
-        <.tabs class="mt-4">
-          <.tabs_list active_tab="top_artists_last_30_days" variant="segmented">
-            <:tab class="flex-1" name="top_artists_last_30_days">{gettext("Last 30 days")}</:tab>
-            <:tab class="flex-1" name="top_artists_last_90_days">{gettext("Last 90 days")}</:tab>
-            <:tab class="flex-1" name="top_artists_last_365_days">{gettext("Last year")}</:tab>
-            <:tab class="flex-1" name="top_artists_all_time">{gettext("All time")}</:tab>
-          </.tabs_list>
-          <.tabs_panel active name="top_artists_last_30_days">
-            <.top_artists_by_period artists={top_artists.last_30_days} />
-          </.tabs_panel>
-          <.tabs_panel name="top_artists_last_90_days">
-            <.top_artists_by_period artists={top_artists.last_90_days} />
-          </.tabs_panel>
-          <.tabs_panel name="top_artists_last_365_days">
-            <.top_artists_by_period artists={top_artists.last_365_days} />
-          </.tabs_panel>
-          <.tabs_panel name="top_artists_all_time">
-            <.top_artists_by_period artists={top_artists.all_time} />
-          </.tabs_panel>
-        </.tabs>
-      </.async_result>
-    </div>
+    <TopArtists.live id="top-artists" timezone={@timezone} />
     <TopAlbums.live id="top-albums" timezone={@timezone} />
   </div>
 </div>

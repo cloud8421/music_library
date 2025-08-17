@@ -66,51 +66,6 @@ defmodule MusicLibraryWeb.StatsComponents do
     """
   end
 
-  attr :artists, :list, required: true
-
-  def top_artists_by_period(assigns) do
-    ~H"""
-    <div class="mt-4">
-      <div class="space-y-2">
-        <div
-          :for={artist <- @artists}
-          phx-click={
-            artist.artist_musicbrainz_id != "" &&
-              JS.navigate(~p"/artists/#{artist.artist_musicbrainz_id}")
-          }
-          class={[
-            "flex items-center space-x-3 p-2",
-            artist.artist_musicbrainz_id != "" &&
-              "cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800"
-          ]}
-        >
-          <img
-            :if={artist.artist_musicbrainz_id != ""}
-            class="w-12 h-12 rounded-md object-cover"
-            src={~p"/artists/#{artist.artist_musicbrainz_id}/image"}
-            alt={artist.artist_name}
-            onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
-          />
-          <div
-            :if={artist.artist_musicbrainz_id == ""}
-            class="w-12 h-12 rounded-md bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center"
-          >
-            <.icon name="hero-user" class="w-6 h-6 text-zinc-400" />
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-zinc-900 dark:text-zinc-300 hover:text-zinc-700 dark:hover:text-zinc-400 truncate">
-              {artist.artist_name}
-            </p>
-          </div>
-          <.badge>
-            {artist.play_count}
-          </.badge>
-        </div>
-      </div>
-    </div>
-    """
-  end
-
   def refresh_lastfm_feed_button(assigns) do
     ~H"""
     <button

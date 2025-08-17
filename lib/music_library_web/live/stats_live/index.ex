@@ -6,7 +6,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   import MusicLibraryWeb.StatsComponents
 
   alias MusicLibrary.{Collection, Records, ScrobbleActivity, Wishlist}
-  alias MusicLibraryWeb.StatsLive.TopAlbums
+  alias MusicLibraryWeb.StatsLive.{TopAlbums, TopArtists}
 
   def mount(_params, _session, socket) do
     latest_record = Collection.get_latest_record!()
@@ -29,7 +29,6 @@ defmodule MusicLibraryWeb.StatsLive.Index do
      )
      |> assign_counts()
      |> assign_scrobble_activity(recent_tracks)
-     |> assign_top_artists()
      |> assign(
        scrobble_activity_mode: "albums",
        latest_record: latest_record,
@@ -87,7 +86,6 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
     {:noreply,
      socket
-     |> assign_top_artists()
      |> assign_scrobble_activity(recent_tracks)}
   end
 
@@ -126,22 +124,6 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       wishlisted_releases: wishlisted_releases,
       artist_ids: artist_ids
     )
-  end
-
-  defp assign_top_artists(socket) do
-    timezone = socket.assigns.timezone
-    current_time = DateTime.utc_now()
-
-    assign_async(socket, :top_artists, fn ->
-      top_artists =
-        ScrobbleActivity.get_top_artists_by_periods(
-          limit: 10,
-          current_time: current_time,
-          timezone: timezone
-        )
-
-      {:ok, %{top_artists: top_artists}}
-    end)
   end
 
   # The Tailwind build step requires all needed classes to be explicitly referenced

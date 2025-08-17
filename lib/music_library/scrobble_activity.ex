@@ -360,21 +360,17 @@ defmodule MusicLibrary.ScrobbleActivity do
   end
 
   @doc """
-  Gets top artists for multiple time periods (30, 90, 365 days) and all time.
-  Returns a map with the results for each period.
+  Gets top artists for a time period (30, 90, 365 days) and all time.
   """
-  def get_top_artists_by_periods(opts) do
-    last_30_days = get_top_artists_by_days(30, opts)
-    last_90_days = get_top_artists_by_days(90, opts)
-    last_365_days = get_top_artists_by_days(365, opts)
-    all_time = get_top_artists(opts)
+  def get_top_artists_by_period(opts) do
+    period = Keyword.get(opts, :period, :last_30_days)
 
-    %{
-      last_30_days: last_30_days,
-      last_90_days: last_90_days,
-      last_365_days: last_365_days,
-      all_time: all_time
-    }
+    case period do
+      :all_time -> get_top_artists(opts)
+      :last_30_days -> get_top_artists_by_days(30, opts)
+      :last_90_days -> get_top_artists_by_days(90, opts)
+      :last_365_days -> get_top_artists_by_days(365, opts)
+    end
   end
 
   defp resolve_timezone! do
