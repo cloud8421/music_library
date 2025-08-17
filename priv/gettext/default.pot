@@ -894,21 +894,24 @@ msgid "Record deleted"
 msgstr ""
 
 #: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/stats_live/top_albums.ex
 #, elixir-autogen, elixir-format
 msgid "Last 30 days"
 msgstr ""
 
 #: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/stats_live/top_albums.ex
 #, elixir-autogen, elixir-format
 msgid "Last 90 days"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/stats_live/top_albums.ex
 #, elixir-autogen, elixir-format
 msgid "Top Albums"
 msgstr ""
 
 #: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/stats_live/top_albums.ex
 #, elixir-autogen, elixir-format
 msgid "Last year"
 msgstr ""
@@ -934,6 +937,7 @@ msgid "Top Artists"
 msgstr ""
 
 #: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/stats_live/top_albums.ex
 #, elixir-autogen, elixir-format
 msgid "All time"
 msgstr ""

@@ -66,68 +66,6 @@ defmodule MusicLibraryWeb.StatsComponents do
     """
   end
 
-  attr :albums, :list, required: true
-  attr :collected_releases, :list, required: true
-  attr :wishlisted_releases, :list, required: true
-
-  def top_albums_by_period(assigns) do
-    ~H"""
-    <div class="mt-4">
-      <div class="space-y-2">
-        <div
-          :for={album <- @albums}
-          phx-click={
-            navigate_to_record(@collected_releases, @wishlisted_releases, album.album_musicbrainz_id)
-          }
-          class={[
-            "flex items-center space-x-3 p-2",
-            tracked_record?(@collected_releases ++ @wishlisted_releases, album.album_musicbrainz_id) &&
-              "cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800"
-          ]}
-        >
-          <img
-            class="w-12 h-12 rounded-md object-cover"
-            src={album.cover_url}
-            alt={album.album_title}
-          />
-          <div class="flex-1 min-w-0">
-            <.link
-              class="text-xs text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300 truncate"
-              navigate={~p"/artists/#{album.artist_musicbrainz_id}"}
-            >
-              {album.artist_name}
-            </.link>
-            <p class="text-sm font-medium text-zinc-900 dark:text-zinc-300 truncate">
-              {album.album_title}
-            </p>
-          </div>
-          <.badge :if={album.album_musicbrainz_id == ""}>
-            {album.play_count}
-          </.badge>
-          <.badge :if={
-            album.album_musicbrainz_id !== "" and
-              !tracked_record?(
-                @collected_releases ++ @wishlisted_releases,
-                album.album_musicbrainz_id
-              )
-          }>
-            {album.play_count}
-          </.badge>
-          <.badge :if={tracked_record?(@collected_releases, album.album_musicbrainz_id)} color="green">
-            {album.play_count}
-          </.badge>
-          <.badge
-            :if={tracked_record?(@wishlisted_releases, album.album_musicbrainz_id)}
-            color="yellow"
-          >
-            {album.play_count}
-          </.badge>
-        </div>
-      </div>
-    </div>
-    """
-  end
-
   attr :artists, :list, required: true
 
   def top_artists_by_period(assigns) do
@@ -190,18 +128,5 @@ defmodule MusicLibraryWeb.StatsComponents do
     Enum.find_value(tracked_releases, fn tracked_release ->
       if tracked_release.release_id == release_id, do: tracked_release.record_id
     end)
-  end
-
-  defp navigate_to_record(collected_releases, wishlisted_releases, musicbrainz_id) do
-    cond do
-      record_id = tracked_record?(collected_releases, musicbrainz_id) ->
-        JS.navigate(~p"/collection/#{record_id}")
-
-      record_id = tracked_record?(wishlisted_releases, musicbrainz_id) ->
-        JS.navigate(~p"/wishlist/#{record_id}")
-
-      true ->
-        nil
-    end
   end
 end

@@ -6,6 +6,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   import MusicLibraryWeb.StatsComponents
 
   alias MusicLibrary.{Collection, Records, ScrobbleActivity, Wishlist}
+  alias MusicLibraryWeb.StatsLive.TopAlbums
 
   def mount(_params, _session, socket) do
     latest_record = Collection.get_latest_record!()
@@ -28,7 +29,6 @@ defmodule MusicLibraryWeb.StatsLive.Index do
      )
      |> assign_counts()
      |> assign_scrobble_activity(recent_tracks)
-     |> assign_top_albums()
      |> assign_top_artists()
      |> assign(
        scrobble_activity_mode: "albums",
@@ -87,7 +87,6 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
     {:noreply,
      socket
-     |> assign_top_albums()
      |> assign_top_artists()
      |> assign_scrobble_activity(recent_tracks)}
   end
@@ -127,22 +126,6 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       wishlisted_releases: wishlisted_releases,
       artist_ids: artist_ids
     )
-  end
-
-  defp assign_top_albums(socket) do
-    timezone = socket.assigns.timezone
-    current_time = DateTime.utc_now()
-
-    assign_async(socket, :top_albums, fn ->
-      top_albums =
-        ScrobbleActivity.get_top_albums_by_periods(
-          limit: 10,
-          current_time: current_time,
-          timezone: timezone
-        )
-
-      {:ok, %{top_albums: top_albums}}
-    end)
   end
 
   defp assign_top_artists(socket) do
