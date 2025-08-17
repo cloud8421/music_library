@@ -328,18 +328,23 @@ defmodule MusicLibrary.ScrobbleActivity do
   end
 
   @doc """
-  Gets top albums for multiple time periods (30, 90, 365 days) and all time.
-  Returns a map with the results for each period, along with collected and
-  wishlisted releases.
+  Gets top albums for the specified time periods (30, 90, 365 days) and all
+  time. Returns a map with the results, along with collected and wishlisted
+  releases.
   """
-  def get_top_albums_by_periods(opts) do
-    last_30_days = get_top_albums_by_days(30, opts)
-    last_90_days = get_top_albums_by_days(90, opts)
-    last_365_days = get_top_albums_by_days(365, opts)
-    all_time = get_top_albums(opts)
+  def get_top_albums_by_period(opts) do
+    period = Keyword.get(opts, :period, :last_30_days)
+
+    albums =
+      case period do
+        :all_time -> get_top_albums(opts)
+        :last_30_days -> get_top_albums_by_days(30, opts)
+        :last_90_days -> get_top_albums_by_days(90, opts)
+        :last_365_days -> get_top_albums_by_days(365, opts)
+      end
 
     all_album_ids =
-      (last_30_days ++ last_90_days ++ last_365_days ++ all_time)
+      albums
       |> Enum.map(fn t -> t.album_musicbrainz_id end)
       |> Enum.uniq()
       |> Enum.reject(fn musicbrainz_id -> musicbrainz_id == "" end)
@@ -350,10 +355,7 @@ defmodule MusicLibrary.ScrobbleActivity do
     %{
       collected_releases: collected_releases,
       wishlisted_releases: wishlisted_releases,
-      last_30_days: last_30_days,
-      last_90_days: last_90_days,
-      last_365_days: last_365_days,
-      all_time: all_time
+      albums: albums
     }
   end
 

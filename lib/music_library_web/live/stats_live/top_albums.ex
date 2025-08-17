@@ -18,51 +18,65 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
       <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
         {gettext("Top Albums")}
       </h1>
-      <.async_result :let={top_albums} assign={@top_albums}>
-        <:loading>
-          <div class="h-192 flex items-center justify-center">
-            <.loading />
-          </div>
-        </:loading>
-        <.tabs class="mt-4">
-          <.tabs_list active_tab="top_albums_last_30_days" variant="segmented">
-            <:tab class="flex-1" name="top_albums_last_30_days">{gettext("Last 30 days")}</:tab>
-            <:tab class="flex-1" name="top_albums_last_90_days">{gettext("Last 90 days")}</:tab>
-            <:tab class="flex-1" name="top_albums_last_365_days">{gettext("Last year")}</:tab>
-            <:tab class="flex-1" name="top_albums_all_time">{gettext("All time")}</:tab>
-          </.tabs_list>
-          <.tabs_panel active name="top_albums_last_30_days">
-            <.top_albums_by_period
-              albums={top_albums.last_30_days}
-              collected_releases={top_albums.collected_releases}
-              wishlisted_releases={top_albums.wishlisted_releases}
-            />
-          </.tabs_panel>
-          <.tabs_panel name="top_albums_last_90_days">
-            <.top_albums_by_period
-              albums={top_albums.last_90_days}
-              collected_releases={top_albums.collected_releases}
-              wishlisted_releases={top_albums.wishlisted_releases}
-            />
-          </.tabs_panel>
-          <.tabs_panel name="top_albums_last_365_days">
-            <.top_albums_by_period
-              albums={top_albums.last_365_days}
-              collected_releases={top_albums.collected_releases}
-              wishlisted_releases={top_albums.wishlisted_releases}
-            />
-          </.tabs_panel>
-          <.tabs_panel name="top_albums_all_time">
-            <.top_albums_by_period
-              albums={top_albums.all_time}
-              collected_releases={top_albums.collected_releases}
-              wishlisted_releases={top_albums.wishlisted_releases}
-            />
-          </.tabs_panel>
-        </.tabs>
-      </.async_result>
+      <.tabs class="mt-4">
+        <.tabs_list active_tab={name_from_period(@period)} variant="segmented">
+          <:tab
+            class="flex-1"
+            name="top_albums_last_30_days"
+            phx-click={JS.push("set_period", value: %{period: "last_30_days"})}
+            phx-target={@myself}
+          >
+            {gettext("Last 30 days")}
+          </:tab>
+          <:tab
+            class="flex-1"
+            name="top_albums_last_90_days"
+            phx-click={JS.push("set_period", value: %{period: "last_90_days"})}
+            phx-target={@myself}
+          >
+            {gettext("Last 90 days")}
+          </:tab>
+          <:tab
+            class="flex-1"
+            name="top_albums_last_365_days"
+            phx-click={JS.push("set_period", value: %{period: "last_365_days"})}
+            phx-target={@myself}
+          >
+            {gettext("Last year")}
+          </:tab>
+          <:tab
+            class="flex-1"
+            name="top_albums_all_time"
+            phx-click={JS.push("set_period", value: %{period: "all_time"})}
+            phx-target={@myself}
+          >
+            {gettext("All time")}
+          </:tab>
+        </.tabs_list>
+        <.async_result :let={top_albums} assign={@top_albums}>
+          <:loading>
+            <div class="h-182 flex items-center justify-center">
+              <.loading />
+            </div>
+          </:loading>
+          <.top_albums_by_period
+            albums={top_albums.albums}
+            collected_releases={top_albums.collected_releases}
+            wishlisted_releases={top_albums.wishlisted_releases}
+          />
+        </.async_result>
+      </.tabs>
     </div>
     """
+  end
+
+  defp name_from_period(period), do: "top_albums_#{period}"
+
+  @impl true
+  def mount(socket) do
+    {:ok,
+     socket
+     |> assign(:period, :last_30_days)}
   end
 
   @impl true
@@ -70,6 +84,14 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
     {:ok,
      socket
      |> assign(assigns)
+     |> assign_top_albums()}
+  end
+
+  @impl true
+  def handle_event("set_period", %{"period" => period}, socket) do
+    {:noreply,
+     socket
+     |> assign(:period, String.to_existing_atom(period))
      |> assign_top_albums()}
   end
 
@@ -136,19 +158,25 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
   end
 
   defp assign_top_albums(socket) do
-    timezone = socket.assigns.timezone
+    %{timezone: timezone, period: period} = socket.assigns
     current_time = DateTime.utc_now()
 
-    assign_async(socket, :top_albums, fn ->
-      top_albums =
-        ScrobbleActivity.get_top_albums_by_periods(
-          limit: 10,
-          current_time: current_time,
-          timezone: timezone
-        )
+    assign_async(
+      socket,
+      :top_albums,
+      fn ->
+        top_albums =
+          ScrobbleActivity.get_top_albums_by_period(
+            limit: 10,
+            current_time: current_time,
+            timezone: timezone,
+            period: period
+          )
 
-      {:ok, %{top_albums: top_albums}}
-    end)
+        {:ok, %{top_albums: top_albums}}
+      end,
+      reset: true
+    )
   end
 
   defp navigate_to_record(collected_releases, wishlisted_releases, musicbrainz_id) do
