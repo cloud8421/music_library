@@ -8,7 +8,7 @@
           size="sm"
           patch={~p"/collection/import"}
         >
-          <.icon name="hero-plus" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
+          <.icon name="hero-plus" class="icon" aria-hidden="true" data-slot="icon" />
           {gettext("Add")}
         </.button>
         <.button
@@ -16,7 +16,7 @@
           size="sm"
           patch={~p"/collection/scan"}
         >
-          <.barcode_icon class="mr-2 fill-current" />
+          <.barcode_icon class="icon fill-current" />
           {gettext("Scan")}
         </.button>
       </.button_group>
@@ -34,7 +34,7 @@
       >
         <.icon
           name="hero-banknotes-solid"
-          class="mr-1 h-4 w-4"
+          class="icon"
           aria-hidden="true"
           data-slot="icon"
         />
@@ -47,7 +47,7 @@
           @record_list_params.order == :alphabetical && "!bg-zinc-100 dark:!bg-zinc-700"
         ]}
       >
-        <.icon name="hero-user-solid" class="mr-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
+        <.icon name="hero-user-solid" class="icon" aria-hidden="true" data-slot="icon" />
         {gettext("A->Z")}
       </.button>
     </.button_group>
