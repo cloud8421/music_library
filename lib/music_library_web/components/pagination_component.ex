@@ -1,8 +1,5 @@
 defmodule MusicLibraryWeb.PaginationComponent do
-  use Phoenix.Component
-  use Gettext, backend: MusicLibraryWeb.Gettext
-
-  alias Phoenix.LiveView.JS
+  use MusicLibraryWeb, :html
 
   attr :pagination_params, :map, required: true
   attr :id, :atom, required: true
@@ -23,38 +20,24 @@ defmodule MusicLibraryWeb.PaginationComponent do
         "flex flex-1 sm:hidden",
         justify_content(@page_links.prev_page, @page_links.next_page)
       ]}>
-        <.link
+        <.button
           :if={@page_links.prev_page}
           patch={"?" <> encode_query(page: @page_links.prev_page, page_size: @pagination_params.page_size, query: @pagination_params.query, order: @pagination_params.order)}
           phx-click={JS.dispatch("music_library:scroll_top")}
-          class={[
-            "relative inline-flex items-center rounded-md border",
-            "px-3 py-2 text-sm font-medium",
-            "bg-zinc-900 hover:bg-zinc-700 dark:bg-zinc-100 dark:hover:bg-zinc-400",
-            "text-white active:text-white/80 dark:text-zinc-900 dark:active:text-zinc-900/80",
-            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
-          ]}
         >
           {gettext("Previous")}
-        </.link>
-        <.link
+        </.button>
+        <.button
           :if={@page_links.next_page}
           patch={"?" <> encode_query(page: @page_links.next_page, page_size: @pagination_params.page_size, query: @pagination_params.query, order: @pagination_params.order)}
           phx-click={JS.dispatch("music_library:scroll_top")}
-          class={[
-            "relative ml-3 inline-flex items-center rounded-md border",
-            "px-3 py-2 text-sm font-medium",
-            "bg-zinc-900 hover:bg-zinc-700 dark:bg-zinc-100 dark:hover:bg-zinc-400",
-            "text-white active:text-white/80 dark:text-zinc-900 dark:active:text-zinc-900/80",
-            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
-          ]}
         >
           {gettext("Next")}
-        </.link>
+        </.button>
       </div>
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-items-center sm:justify-center">
         <div>
-          <nav class="isolate inline-flex -space-x-px rounded-md shadow-xs" aria-label="Pagination">
+          <.button_group>
             <.prev_link
               :if={@page_links.prev_page}
               page_number={@page_links.prev_page}
@@ -69,7 +52,7 @@ defmodule MusicLibraryWeb.PaginationComponent do
               query={@pagination_params.query}
               order={@pagination_params.order}
             />
-            <.separator :if={@page_links.left_separator} />
+            <.ellipsis :if={@page_links.left_ellipsis} />
             <.numbered_link
               :for={page_number <- @page_links.middle_pages}
               page_number={page_number}
@@ -78,7 +61,7 @@ defmodule MusicLibraryWeb.PaginationComponent do
               query={@pagination_params.query}
               order={@pagination_params.order}
             />
-            <.separator :if={@page_links.right_separator} />
+            <.ellipsis :if={@page_links.right_ellipsis} />
             <.numbered_link
               :for={page_number <- @page_links.visible_right_pages}
               page_number={page_number}
@@ -93,7 +76,7 @@ defmodule MusicLibraryWeb.PaginationComponent do
               query={@pagination_params.query}
               order={@pagination_params.order}
             />
-          </nav>
+          </.button_group>
         </div>
       </div>
     </div>
@@ -111,23 +94,13 @@ defmodule MusicLibraryWeb.PaginationComponent do
 
   defp next_link(assigns) do
     ~H"""
-    <.link
-      class={[
-        "relative inline-flex items-center rounded-r-md px-2 py-2",
-        "text-zinc-400 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 focus:z-20 focus:outline-offset-0"
-      ]}
+    <.button
       phx-click={JS.dispatch("music_library:scroll_top")}
       patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query, order: @order)}
     >
       <span class="sr-only">{gettext("Next")}</span>
-      <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-        <path
-          fill-rule="evenodd"
-          d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-          clip-rule="evenodd"
-        />
-      </svg>
-    </.link>
+      <.icon name="hero-chevron-right" class="icon" aria-hidden="true" data-slot="icon" />
+    </.button>
     """
   end
 
@@ -138,28 +111,21 @@ defmodule MusicLibraryWeb.PaginationComponent do
 
   defp prev_link(assigns) do
     ~H"""
-    <.link
-      class="relative inline-flex items-center rounded-l-md px-2 py-2 text-zinc-400 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 focus:z-20 focus:outline-offset-0"
+    <.button
       phx-click={JS.dispatch("music_library:scroll_top")}
       patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query, order: @order)}
     >
       <span class="sr-only">{gettext("Previous")}</span>
-      <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-        <path
-          fill-rule="evenodd"
-          d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
-          clip-rule="evenodd"
-        />
-      </svg>
-    </.link>
+      <.icon name="hero-chevron-left" class="icon" aria-hidden="true" data-slot="icon" />
+    </.button>
     """
   end
 
-  defp separator(assigns) do
+  defp ellipsis(assigns) do
     ~H"""
-    <span class="relative hidden items-center px-4 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-400 ring-1 ring-inset ring-zinc-300 focus:z-20 focus:outline-offset-0 md:inline-flex">
+    <.button disabled>
       ...
-    </span>
+    </.button>
     """
   end
 
@@ -171,21 +137,20 @@ defmodule MusicLibraryWeb.PaginationComponent do
 
   defp numbered_link(assigns) when assigns.active do
     ~H"""
-    <span class="relative z-10 inline-flex items-center first:rounded-l-md last:rounded-r-md bg-zinc-600 dark:bg-zinc-300 px-4 py-2 text-sm font-semibold text-white dark:text-zinc-700 focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600">
+    <.button class="!bg-zinc-100 dark:!bg-zinc-700">
       {@page_number}
-    </span>
+    </.button>
     """
   end
 
   defp numbered_link(assigns) do
     ~H"""
-    <.link
-      class="relative hidden items-center first:rounded-l-md last:rounded-r-md px-4 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-400 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-300 hover:text-zinc-500 focus:z-20 focus:outline-offset-0 md:inline-flex"
+    <.button
       phx-click={JS.dispatch("music_library:scroll_top")}
       patch={"?" <> encode_query(page: @page_number, page_size: @page_size, query: @query, order: @order)}
     >
       {@page_number}
-    </.link>
+    </.button>
     """
   end
 
@@ -244,8 +209,8 @@ defmodule MusicLibraryWeb.PaginationComponent do
     prev_page = if page > 1, do: page - 1
     next_page = if page < total_pages, do: page + 1
 
-    left_separator = if Enum.count(left_pages) > @visible_left_pages, do: @middle
-    right_separator = if Enum.count(right_pages) > @visible_right_pages, do: @middle
+    left_ellipsis = if Enum.count(left_pages) > @visible_left_pages, do: @middle
+    right_ellipsis = if Enum.count(right_pages) > @visible_right_pages, do: @middle
 
     visible_left_pages = Enum.take(left_pages, @visible_left_pages)
     visible_right_pages = Enum.take(right_pages, -@visible_right_pages)
@@ -255,9 +220,9 @@ defmodule MusicLibraryWeb.PaginationComponent do
       total_pages: total_pages,
       prev_page: prev_page,
       visible_left_pages: visible_left_pages,
-      left_separator: left_separator,
+      left_ellipsis: left_ellipsis,
       middle_pages: middle_pages,
-      right_separator: right_separator,
+      right_ellipsis: right_ellipsis,
       visible_right_pages: visible_right_pages,
       next_page: next_page
     }
