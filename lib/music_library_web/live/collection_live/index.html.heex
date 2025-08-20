@@ -2,9 +2,8 @@
   <header class="gap-6 mb-2">
     <div class="flex items-center justify-between gap-6 mb-2 mt-2">
       <.search_form query={@record_list_params.query} />
-      <nav class="isolate inline-flex rounded-md shadow-xs">
+      <.button_group>
         <.button
-          class="rounded-l-md rounded-r-none"
           variant="solid"
           size="sm"
           patch={~p"/collection/import"}
@@ -13,7 +12,6 @@
           {gettext("Add")}
         </.button>
         <.button
-          class="-ml-px rounded-r-md rounded-l-none"
           variant="solid"
           size="sm"
           patch={~p"/collection/scan"}
@@ -21,17 +19,16 @@
           <.barcode_icon class="mr-2 fill-current" />
           {gettext("Scan")}
         </.button>
-      </nav>
+      </.button_group>
     </div>
   </header>
 
   <div class="flex items-end justify-between gap-6 mt-8">
-    <span class="isolate inline-flex rounded-md shadow-xs">
+    <.button_group>
       <.button
         patch={order_path(@record_list_params, :purchase)}
         size="sm"
         class={[
-          "rounded-l-md rounded-r-none",
           @record_list_params.order == :purchase && "!bg-zinc-100 dark:!bg-zinc-700"
         ]}
       >
@@ -47,14 +44,13 @@
         patch={order_path(@record_list_params, :alphabetical)}
         size="sm"
         class={[
-          "-ml-px rounded-r-md rounded-l-none",
           @record_list_params.order == :alphabetical && "!bg-zinc-100 dark:!bg-zinc-700"
         ]}
       >
         <.icon name="hero-user-solid" class="mr-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
         {gettext("A->Z")}
       </.button>
-    </span>
+    </.button_group>
   </div>
 </div>
 

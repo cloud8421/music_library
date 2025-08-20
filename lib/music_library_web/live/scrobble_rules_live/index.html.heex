@@ -6,9 +6,8 @@
       </h1>
     </div>
     <div>
-      <nav class="isolate inline-flex rounded-md shadow-xs">
+      <.button_group>
         <.button
-          class="rounded-l-md rounded-r-none"
           variant="solid"
           size="sm"
           patch={~p"/scrobble-rules/new"}
@@ -17,7 +16,6 @@
           {gettext("New Rule")}
         </.button>
         <.button
-          class="-ml-px rounded-r-md rounded-l-none"
           variant="solid"
           size="sm"
           phx-click="apply_all_rules"
@@ -25,7 +23,7 @@
           <.icon name="hero-play" class="h-4 w-4 mr-2" />
           {gettext("Apply All")}
         </.button>
-      </nav>
+      </.button_group>
     </div>
   </div>
 </header>
