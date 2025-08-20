@@ -279,7 +279,6 @@
     <div class="mt-4 space-y-2">
       <.button
         :for={template <- @online_store_templates}
-        as="link"
         href={OnlineStoreTemplates.generate_url(template, @record)}
         target="_blank"
         rel="noopener noreferrer"

@@ -78,7 +78,7 @@
         <.on_tour_link lastfm_artist_info={lastfm_artist_info} />
         <.play_count play_count={lastfm_artist_info.play_count} />
       </.async_result>
-      <.button variant="solid" as="link" patch={~p"/artists/#{@artist.musicbrainz_id}/import"}>
+      <.button variant="solid" patch={~p"/artists/#{@artist.musicbrainz_id}/import"}>
         <.icon name="hero-plus" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
         {gettext("Add more")}
       </.button>

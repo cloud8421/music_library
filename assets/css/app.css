@@ -3,6 +3,7 @@
 @source "../js";
 @source "../../lib/music_library_web";
 @source "../../deps/fluxon/**/*.*ex";
+@import "../../deps/fluxon/priv/static/theme";
 @source "../../deps/live_toast/lib/**/*.*ex";
 
 /* A Tailwind plugin that makes "hero-#{ICON}" classes available.

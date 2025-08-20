@@ -290,12 +290,12 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
         {gettext("New")}
       </.badge>
       <.link :if={@status == :wishlisted} navigate={~p"/wishlist/#{@record_id}"}>
-        <.badge color="yellow">
+        <.badge color="warning">
           {gettext("Wishlisted")}
         </.badge>
       </.link>
       <.link :if={@status == :collected} navigate={~p"/collection/#{@record_id}"}>
-        <.badge color="green">
+        <.badge color="success">
           {gettext("Collected")}
         </.badge>
       </.link>

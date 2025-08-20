@@ -142,12 +142,15 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
           }>
             {album.play_count}
           </.badge>
-          <.badge :if={tracked_record?(@collected_releases, album.album_musicbrainz_id)} color="green">
+          <.badge
+            :if={tracked_record?(@collected_releases, album.album_musicbrainz_id)}
+            color="success"
+          >
             {album.play_count}
           </.badge>
           <.badge
             :if={tracked_record?(@wishlisted_releases, album.album_musicbrainz_id)}
-            color="yellow"
+            color="warning"
           >
             {album.play_count}
           </.badge>

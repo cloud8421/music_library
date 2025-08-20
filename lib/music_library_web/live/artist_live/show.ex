@@ -26,7 +26,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
       href={LastFm.Artist.events_url(@lastfm_artist_info)}
       target="_blank"
     >
-      <.badge variant="pill" class="mr-2">{gettext("On Tour")}</.badge>
+      <.badge variant="soft" class="mr-2">{gettext("On Tour")}</.badge>
     </a>
     """
   end

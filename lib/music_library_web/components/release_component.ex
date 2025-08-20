@@ -52,7 +52,7 @@ defmodule MusicLibraryWeb.ReleaseComponent do
           >
             {gettext("Scrobble release")}
           </.button>
-          <.button :if={!@can_scrobble?} as="link" size="sm" href={LastFm.auth_url()}>
+          <.button :if={!@can_scrobble?} size="sm" href={LastFm.auth_url()}>
             {gettext("Connect your Last.fm account")}
           </.button>
         </div>

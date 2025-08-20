@@ -114,8 +114,8 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
 
   defp type_badge(assigns) do
     ~H"""
-    <.badge :if={@type == :album} color="red">{gettext("Album")}</.badge>
-    <.badge :if={@type == :artist} color="cyan">{gettext("Artist")}</.badge>
+    <.badge :if={@type == :album} color="danger">{gettext("Album")}</.badge>
+    <.badge :if={@type == :artist} color="info">{gettext("Artist")}</.badge>
     """
   end
 
@@ -123,8 +123,8 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
 
   defp status_badge(assigns) do
     ~H"""
-    <.badge :if={@enabled} color="green">{gettext("Enabled")}</.badge>
-    <.badge :if={!@enabled} color="yellow">{gettext("Disabled")}</.badge>
+    <.badge :if={@enabled} color="success">{gettext("Enabled")}</.badge>
+    <.badge :if={!@enabled} color="warning">{gettext("Disabled")}</.badge>
     """
   end
 end

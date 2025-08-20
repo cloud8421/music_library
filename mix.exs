@@ -66,7 +66,7 @@ defmodule MusicLibrary.MixProject do
        app: false,
        compile: false,
        depth: 1},
-      {:fluxon, "~> 1.2.0", repo: :fluxon},
+      {:fluxon, "~> 2.0.0", repo: :fluxon},
       {:flagmojis, "~> 1.0"},
       {:live_toast, "~> 0.8.0"},
 

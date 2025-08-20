@@ -222,7 +222,7 @@
                   }
                   navigate={~p"/collection/#{record_id}"}
                 >
-                  <.badge color="green">
+                  <.badge color="success">
                     {gettext("Collected")}
                   </.badge>
                 </.link>
@@ -233,7 +233,7 @@
                   }
                   navigate={~p"/wishlist/#{record_id}"}
                 >
-                  <.badge color="yellow">
+                  <.badge color="warning">
                     {gettext("Wishlisted")}
                   </.badge>
                 </.link>
@@ -432,7 +432,7 @@
                   }
                   navigate={~p"/collection/#{record_id}"}
                 >
-                  <.badge color="green">{gettext("Collected")}</.badge>
+                  <.badge color="success">{gettext("Collected")}</.badge>
                 </.link>
                 <.link
                   :if={
@@ -440,7 +440,7 @@
                   }
                   navigate={~p"/wishlist/#{record_id}"}
                 >
-                  <.badge color="yellow">{gettext("Wishlisted")}</.badge>
+                  <.badge color="warning">{gettext("Wishlisted")}</.badge>
                 </.link>
               </div>
 

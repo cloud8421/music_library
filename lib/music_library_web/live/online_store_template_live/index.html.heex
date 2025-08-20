@@ -7,7 +7,7 @@
     </div>
     <div>
       <nav class="isolate inline-flex rounded-md shadow-xs">
-        <.button variant="solid" as="link" size="sm" patch={~p"/online-store-templates/new"}>
+        <.button variant="solid" size="sm" patch={~p"/online-store-templates/new"}>
           <.icon name="hero-plus" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
           {gettext("New Template")}
         </.button>
@@ -38,10 +38,10 @@
           <p class="text-sm font-semibold text-gray-900 dark:text-white">
             {template.name}
           </p>
-          <.badge :if={template.enabled} color="green">
+          <.badge :if={template.enabled} color="success">
             {gettext("Enabled")}
           </.badge>
-          <.badge :if={!template.enabled} color="yellow">
+          <.badge :if={!template.enabled} color="warning">
             {gettext("Disabled")}
           </.badge>
         </div>
