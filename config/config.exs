@@ -86,8 +86,8 @@ config :music_library, Oban,
   plugins: [
     {Oban.Plugins.Cron,
      crontab: [
-       # every 2 hours
-       {"0 */2 * * *", MusicLibrary.Worker.ApplyScrobbleRules}
+       # every 12 hours
+       {"0 */12 * * *", MusicLibrary.Worker.ApplyScrobbleRules}
      ]}
   ]
 
