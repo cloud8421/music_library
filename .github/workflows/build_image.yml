@@ -25,6 +25,7 @@ jobs:
         with:
           platforms: linux/amd64
           tags: fullyforged/music_library:latest
+          push: true
           secrets: |
             "FLUXON_LICENSE_KEY=${{ secrets.FLUXON_LICENSE_KEY }}"
             "FLUXON_KEY_FINGERPRINT=${{ secrets.FLUXON_KEY_FINGERPRINT }}"
