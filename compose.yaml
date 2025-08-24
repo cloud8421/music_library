@@ -1,6 +1,8 @@
 services:
   web:
     image: fullyforged/music_library:latest
+    ports:
+      - 8080
     environment:
       - API_TOKEN
       - BACKGROUND_DATABASE_PATH
