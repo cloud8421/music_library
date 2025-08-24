@@ -76,9 +76,10 @@ if config_env() == :prod do
 
   config :music_library, MusicLibrary.Repo,
     database: database_path,
-    # 32MB * pool_size = base memory usage
-    cache_size: -32_000,
+    # 128MB * pool_size = base memory usage
+    cache_size: -128_000,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5"),
+    temp_store: :memory,
     show_sensitive_data_on_connection_error: true
 
   error_database_path =
