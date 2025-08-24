@@ -1,7 +1,7 @@
 # Make sure application enforces https
 
 GET http://music-library.claudio-ortolina.org
-HTTP 301
+HTTP 302
 Location: https://music-library.claudio-ortolina.org/
 
 # API requires a valid token
