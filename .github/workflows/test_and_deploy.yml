@@ -74,24 +74,36 @@ jobs:
           CLOAK_ENCRYPTION_KEY: f5ol1dJROsm9yi/tvtHiblN8aLH1FUN/obEvUcASx3U=
 
   deploy:
-    name: Deploy
-    needs: test
-    runs-on: ubuntu-24.04
-    environment: production
-    if: github.ref == 'refs/heads/main'
-    concurrency: deploy-group # optional: ensure only one action runs at a time
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - name: Deploy
-        run: |
-          flyctl deploy --remote-only \
-            --build-secret FLUXON_LICENSE_KEY=$FLUXON_LICENSE_KEY \
-            --build-secret FLUXON_KEY_FINGERPRINT=$FLUXON_KEY_FINGERPRINT
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-          FLUXON_LICENSE_KEY: ${{ secrets.FLUXON_LICENSE_KEY }}
-          FLUXON_KEY_FINGERPRINT: ${{ secrets.FLUXON_KEY_FINGERPRINT }}
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          tags: fullyforged/music_library:latest
+          push: true
+          cache-from: type=registry,ref=fullyforged/music_library:latest
+          cache-to: type=inline
+          secrets: |
+            "FLUXON_LICENSE_KEY=${{ secrets.FLUXON_LICENSE_KEY }}"
+            "FLUXON_KEY_FINGERPRINT=${{ secrets.FLUXON_KEY_FINGERPRINT }}"
+
+      - name: Deploy to Coolify
+        run: | 
+         curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
 
   verify:
     name: Verify
