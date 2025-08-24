@@ -29,3 +29,7 @@ jobs:
           secrets: |
             "FLUXON_LICENSE_KEY=${{ secrets.FLUXON_LICENSE_KEY }}"
             "FLUXON_KEY_FINGERPRINT=${{ secrets.FLUXON_KEY_FINGERPRINT }}"
+
+      - name: Deploy to Coolify
+        run: | 
+         curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
