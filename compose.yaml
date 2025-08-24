@@ -1,0 +1,25 @@
+services:
+  web:
+    image: fullyforged/music_library:latest
+    ports:
+      - "4000:4000"
+    environment:
+      - API_TOKEN
+      - BACKGROUND_DATABASE_PATH
+      - CLOAK_ENCRIPTION_KEY
+      - DATABASE_PATH
+      - DISCOGS_PERSONAL_ACCESS_TOKEN
+      - ERROR_DATABASE_PATH
+      - LAST_FM_API_KEY
+      - LAST_FM_SHARED_SECRET
+      - LAST_FM_USER
+      - LOGIN_PASSWORD
+      - MIX_ENV
+      - OPENAI_KEY
+      - PHX_HOST
+      - POOL_SIZE
+      - PORT
+      - SECRET_KEY_BASE
+      - TIMEZONE
+
+
