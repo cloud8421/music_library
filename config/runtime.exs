@@ -78,7 +78,8 @@ if config_env() == :prod do
     database: database_path,
     # 32MB * pool_size = base memory usage
     cache_size: -32_000,
-    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5"),
+    show_sensitive_data_on_connection_error: true
 
   error_database_path =
     System.get_env("ERROR_DATABASE_PATH") ||
@@ -91,7 +92,8 @@ if config_env() == :prod do
     database: error_database_path,
     # 16MB * pool_size = base memory usage
     cache_size: -8000,
-    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5"),
+    show_sensitive_data_on_connection_error: true
 
   background_database_path =
     System.get_env("BACKGROUND_DATABASE_PATH") ||
@@ -104,7 +106,8 @@ if config_env() == :prod do
     database: background_database_path,
     # 16MB * pool_size = base memory usage
     cache_size: -8000,
-    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5"),
+    show_sensitive_data_on_connection_error: true
 
   # The secret key base is used to sign/encrypt cookies and other secrets.
   # A default value is used in config/dev.exs and config/test.exs but you
