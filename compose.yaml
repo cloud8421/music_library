@@ -21,5 +21,7 @@ services:
       - PORT
       - SECRET_KEY_BASE
       - TIMEZONE
+    volumes:
+      - /data/coolify/applications/music-library:/mnt/music_library
 
 
