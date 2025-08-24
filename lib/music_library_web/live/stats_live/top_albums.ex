@@ -19,14 +19,14 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
         {gettext("Top Albums")}
       </h1>
       <.tabs class="mt-4">
-        <.tabs_list active_tab={name_from_period(@period)} variant="segmented">
+        <.tabs_list active_tab={name_from_period(@period)} variant="segmented" size="xs">
           <:tab
             class="flex-1"
             name="top_albums_last_30_days"
             phx-click={JS.push("set_period", value: %{period: "last_30_days"})}
             phx-target={@myself}
           >
-            {gettext("Last 30 days")}
+            {gettext("30 days")}
           </:tab>
           <:tab
             class="flex-1"
@@ -34,7 +34,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
             phx-click={JS.push("set_period", value: %{period: "last_90_days"})}
             phx-target={@myself}
           >
-            {gettext("Last 90 days")}
+            {gettext("90 days")}
           </:tab>
           <:tab
             class="flex-1"
