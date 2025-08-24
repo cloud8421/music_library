@@ -1,8 +1,6 @@
 services:
   web:
     image: fullyforged/music_library:latest
-    ports:
-      - "4000:4000"
     environment:
       - API_TOKEN
       - BACKGROUND_DATABASE_PATH
