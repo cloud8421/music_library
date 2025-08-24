@@ -23,5 +23,8 @@ services:
       - TIMEZONE
     volumes:
       - /data/coolify/applications/music-library:/mnt/music_library
-
-
+    healthcheck:
+      test: ["CMD-SHELL", "bin/music_library pid"]
+      interval: 10s
+      timeout: 20s
+      retries: 10
