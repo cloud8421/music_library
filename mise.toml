@@ -8,7 +8,6 @@ DBUI_URL = 'sqlite:data/music_library_dev.db'
 
 [tools]
 hurl = 'latest'
-flyctl = 'latest'
 sqlite = 'latest'
 gh = 'latest'
 
@@ -134,15 +133,17 @@ mix usage_rules.sync CLAUDE.md --all \
 
 [tasks."prod:console"]
 description = 'Open an ssh console to the production env'
-run = 'fly ssh console'
-
-[tasks."prod:migrate"]
-description = 'Run migrations against production'
-run = 'mix music_library.prod.db_migrate'
+run = 'ssh music-library-prod'
 
 [tasks."prod:backup"]
 description = 'Backup the production database to the local development env'
-run = 'mix music_library.prod.db_backup'
+run = """
+current_date=$(date +%s)
+dest_file="data/music_library_prod_$current_date.db"
+scp music-library-prod:/data/coolify/applications/music-library/music_library_prod.db "$dest_file"
+rm data/music_library_dev.db*
+cp "$dest_file" data/music_library_dev.db
+"""
 
 [tasks."prod:prune-backups"]
 confirm = 'Are you sure you want to delete all downloaded database backups?'

@@ -139,11 +139,6 @@ defmodule MusicLibrary.MixProject do
         "tailwind music_library --minify",
         "esbuild music_library --minify",
         "phx.digest"
-      ],
-      "music_library.prod.db_backup": [
-        "music_library.prod.ping",
-        "music_library.prod.db_vacuum",
-        "music_library.prod.db_pull"
       ]
     ]
   end
