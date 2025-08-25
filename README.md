@@ -111,8 +111,8 @@ The default password for development is `change me`.
 
 ## Deployment
 
-The application is setup for deployment on Fly.io - just make sure you edit
-`fly.toml` to match your app name, domain, etc.
+The application provides a Dockerfile suitable for production use. You can
+build a working image using `mise run docker:build`.
 
 ## CI
 
