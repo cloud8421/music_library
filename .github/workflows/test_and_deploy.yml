@@ -97,7 +97,9 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64
-          tags: fullyforged/music_library:latest
+          tags: |
+            fullyforged/music_library:latest
+            fullyforged/music_library:${{ github.sha }}
           push: true
           cache-from: type=registry,ref=fullyforged/music_library:latest
           cache-to: type=inline
