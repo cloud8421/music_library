@@ -157,6 +157,8 @@ defmodule MusicLibraryWeb.ReleaseComponent do
              gettext("Error scrobbling release") <> "," <> inspect(reason)
            )}
       end
+    else
+      {:noreply, socket |> put_toast(:error, gettext("Error scrobbling release"))}
     end
   end
 
@@ -187,6 +189,8 @@ defmodule MusicLibraryWeb.ReleaseComponent do
              gettext("Error scrobbling disc") <> "," <> inspect(reason)
            )}
       end
+    else
+      {:noreply, socket |> put_toast(:error, gettext("Error scrobbling disc"))}
     end
   end
 
