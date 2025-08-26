@@ -187,14 +187,8 @@ run = 'gh gfm-preview README.md'
 
 [tasks."docker:build"]
 description = 'Builds and tags the application Docker image'
-run = """
-docker build \
-  -t fullyforged/music_library \
-  --secret id=FLUXON_KEY_FINGERPRINT \
-  --secret id=FLUXON_LICENSE_KEY \
-  .
-"""
+run = 'docker compose build'
 
 [tasks."docker:push"]
 description = 'Push the image to the registry'
-run = 'docker push fullyforged/music_library'
+run = 'docker compose push'
