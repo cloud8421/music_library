@@ -219,8 +219,9 @@
 
 <.modal
   :if={@live_action == :import}
-  class="md:min-w-2xl max-w-sm md:max-w-3xl"
   id="record-modal"
+  class="md:min-w-2xl max-w-sm md:max-w-3xl mt-8"
+  placement="top"
   open
   on_close={JS.patch(~p"/artists/#{@artist.musicbrainz_id}")}
 >
@@ -238,6 +239,8 @@
 <.modal
   :if={@live_action == :edit}
   id="artist-info-modal"
+  class="md:min-w-2xl max-w-sm md:max-w-3xl mt-8"
+  placement="top"
   open
   on_close={JS.patch(~p"/artists/#{@artist.musicbrainz_id}")}
 >

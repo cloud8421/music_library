@@ -62,8 +62,9 @@
 
 <.modal
   :if={@live_action == :edit}
-  class="md:min-w-2xl"
   id="record-modal"
+  class="md:min-w-2xl max-w-sm md:max-w-3xl mt-8"
+  placement="top"
   open
   on_close={JS.patch(back_path(@record_list_params))}
 >
@@ -79,8 +80,9 @@
 
 <.modal
   :if={@live_action == :import}
-  class="md:min-w-2xl max-w-sm md:max-w-3xl"
   id="record-modal"
+  class="md:min-w-2xl max-w-sm md:max-w-3xl mt-8"
+  placement="top"
   open
   on_close={JS.patch(back_path(@record_list_params))}
 >
@@ -98,8 +100,9 @@
 
 <.modal
   :if={@live_action == :barcode_scan}
-  class="min-w-sm md:min-w-2xl max-w-3xl"
   id="barcode-scanner-modal"
+  class="md:min-w-2xl max-w-sm md:max-w-3xl mt-8"
+  placement="top"
   open
   on_close={JS.patch(back_path(@record_list_params))}
 >
