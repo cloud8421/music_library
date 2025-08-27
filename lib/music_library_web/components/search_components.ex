@@ -167,11 +167,11 @@ defmodule MusicLibraryWeb.SearchComponents do
 
   ## Examples
 
-      <.keyboard_shortcuts />
+      <.results_footer />
   """
   attr :total_results, :integer, default: 0
 
-  def keyboard_shortcuts(assigns) do
+  def results_footer(assigns) do
     ~H"""
     <div class="p-4 bg-zinc-50 dark:bg-zinc-900 rounded-b-lg border-t border-zinc-200 dark:border-zinc-700">
       <div class="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">

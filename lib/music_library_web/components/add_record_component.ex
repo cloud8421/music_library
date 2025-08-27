@@ -2,7 +2,7 @@ defmodule MusicLibraryWeb.AddRecordComponent do
   use MusicLibraryWeb, :live_component
 
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
-  import MusicLibraryWeb.SearchComponents, only: [keyboard_shortcuts: 1]
+  import MusicLibraryWeb.SearchComponents, only: [results_footer: 1]
 
   alias MusicBrainz.ReleaseGroupSearchResult
   alias MusicLibrary.Records
@@ -57,7 +57,7 @@ defmodule MusicLibraryWeb.AddRecordComponent do
       >
         {gettext("No results")}
       </div>
-      <.keyboard_shortcuts total_results={@release_groups_total_count} />
+      <.results_footer total_results={@release_groups_total_count} />
     </div>
     """
   end
