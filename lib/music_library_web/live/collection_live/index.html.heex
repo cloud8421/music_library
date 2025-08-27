@@ -60,12 +60,9 @@
   record_edit_path={fn record -> ~p"/collection/#{record}/edit" end}
 />
 
-<.modal
+<.structured_modal
   :if={@live_action == :edit}
   id="record-modal"
-  class="md:min-w-2xl max-w-sm md:max-w-3xl mt-8"
-  placement="top"
-  open
   on_close={JS.patch(back_path(@record_list_params))}
 >
   <.live_component
@@ -76,7 +73,7 @@
     record={@record}
     patch={back_path(@record_list_params)}
   />
-</.modal>
+</.structured_modal>
 
 <.modal
   :if={@live_action == :import}

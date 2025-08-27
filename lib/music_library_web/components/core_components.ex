@@ -95,6 +95,26 @@ defmodule MusicLibraryWeb.CoreComponents do
     """
   end
 
+  attr :id, :string, required: true
+  attr :on_close, :any, required: false, default: nil
+  attr :open, :boolean, required: false, default: true
+
+  slot :inner_block, required: true
+
+  def structured_modal(assigns) do
+    ~H"""
+    <Fluxon.Components.Modal.modal
+      id={@id}
+      class="md:min-w-2xl max-w-sm md:max-w-3xl mt-8"
+      placement="top"
+      open={@open}
+      on_close={@on_close}
+    >
+      {render_slot(@inner_block)}
+    </Fluxon.Components.Modal.modal>
+    """
+  end
+
   ## JS Commands
 
   def show(js \\ %JS{}, selector) do
