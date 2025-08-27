@@ -321,12 +321,9 @@
   record={@record}
 />
 
-<.modal
+<.structured_modal
   :if={@live_action == :edit}
   id="record-modal"
-  class="md:min-w-2xl max-w-sm md:max-w-3xl mt-8"
-  placement="top"
-  open
   on_close={JS.patch(~p"/collection/#{@record}")}
 >
   <.live_component
@@ -337,4 +334,4 @@
     record={@record}
     patch={~p"/collection/#{@record}"}
   />
-</.modal>
+</.structured_modal>

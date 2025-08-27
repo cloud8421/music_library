@@ -217,12 +217,9 @@
   />
 </div>
 
-<.modal
+<.structured_modal
   :if={@live_action == :import}
   id="record-modal"
-  class="md:min-w-2xl max-w-sm md:max-w-3xl mt-8"
-  placement="top"
-  open
   on_close={JS.patch(~p"/artists/#{@artist.musicbrainz_id}")}
 >
   <.live_component
@@ -234,14 +231,11 @@
     initial_query={"arid:#{@artist.musicbrainz_id}"}
     icon_name="hero-plus"
   />
-</.modal>
+</.structured_modal>
 
-<.modal
+<.structured_modal
   :if={@live_action == :edit}
   id="artist-info-modal"
-  class="md:min-w-2xl max-w-sm md:max-w-3xl mt-8"
-  placement="top"
-  open
   on_close={JS.patch(~p"/artists/#{@artist.musicbrainz_id}")}
 >
   <.live_component
@@ -252,4 +246,4 @@
     artist={@artist}
     patch={~p"/artists/#{@artist.musicbrainz_id}"}
   />
-</.modal>
+</.structured_modal>

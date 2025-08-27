@@ -1,8 +1,6 @@
-<.modal
+<.structured_modal
   :if={@show_modal}
   id="universal-search-root"
-  class="md:min-w-2xl max-w-sm md:max-w-3xl mt-8"
-  placement="top"
   open={@show_modal}
   on_close={JS.push("close_modal", value: %{})}
 >
@@ -103,4 +101,4 @@
   
 <!-- Footer with keyboard shortcuts -->
   <.keyboard_shortcuts total_results={@total_results} />
-</.modal>
+</.structured_modal>
