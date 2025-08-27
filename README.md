@@ -34,7 +34,6 @@
   - scrobble a record
 - Some basic stats
 - All data stored in a single SQLite database for portability and ease of backup/restore
-- Ideal for deployment on a server with limited resources (1CPU, 512MB RAM)
 
 ## Screenshots
 
