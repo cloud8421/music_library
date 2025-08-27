@@ -117,4 +117,24 @@ defmodule MusicLibrary.Records.RecordTest do
              ]
     end
   end
+
+  describe "rotate_dominant_colors/1" do
+    test "rotates dominant colors" do
+      record = %Record{dominant_colors: []}
+      changeset = Record.rotate_dominant_colors(record)
+      assert Ecto.Changeset.get_change(changeset, :dominant_colors) == nil
+
+      record = %Record{dominant_colors: ["#FFF"]}
+      changeset = Record.rotate_dominant_colors(record)
+      assert Ecto.Changeset.get_change(changeset, :dominant_colors) == nil
+
+      record = %Record{dominant_colors: ["#FFF", "#CCC"]}
+      changeset = Record.rotate_dominant_colors(record)
+      assert Ecto.Changeset.get_change(changeset, :dominant_colors) == ["#CCC", "#FFF"]
+
+      record = %Record{dominant_colors: ["#FFF", "#CCC", "#000"]}
+      changeset = Record.rotate_dominant_colors(record)
+      assert Ecto.Changeset.get_change(changeset, :dominant_colors) == ["#CCC", "#000", "#FFF"]
+    end
+  end
 end

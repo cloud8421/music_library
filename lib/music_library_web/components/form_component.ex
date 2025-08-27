@@ -60,9 +60,15 @@ defmodule MusicLibraryWeb.FormComponent do
           />
         </div>
         <div class="space-y-4">
-          <.label for="dominant_colors">
-            {gettext("Dominant Colors")}
-          </.label>
+          <div class="flex items-center gap-x-2">
+            <.label for="dominant_colors">
+              {gettext("Dominant Colors")}
+            </.label>
+            <.button type="button" size="sm" phx-click="rotate_dominant_colors" phx-target={@myself}>
+              <.icon name="hero-arrows-right-left" class="icon" aria-hidden="true" data-slot="icon" />
+              {gettext("Rotate colors")}
+            </.button>
+          </div>
           <div class="mt-2 grid grid-cols-5 gap-2">
             <div :for={color <- @form[:dominant_colors].value} class="flex flex-col items-center">
               <input
@@ -179,6 +185,11 @@ defmodule MusicLibraryWeb.FormComponent do
 
   def handle_event("recover_form", params, socket) do
     handle_event("validate", params, socket)
+  end
+
+  def handle_event("rotate_dominant_colors", _params, socket) do
+    changeset = Record.rotate_dominant_colors(socket.assigns.form.source)
+    {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
   defp save_record(socket, record_params, uploaded_covers) do

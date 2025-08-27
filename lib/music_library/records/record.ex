@@ -188,6 +188,18 @@ defmodule MusicLibrary.Records.Record do
     end
   end
 
+  def rotate_dominant_colors(%__MODULE__{dominant_colors: dominant_colors} = record) do
+    change(record, dominant_colors: rotate(dominant_colors))
+  end
+
+  def rotate_dominant_colors(changeset) do
+    dominant_colors = get_field(changeset, :dominant_colors)
+    put_change(changeset, :dominant_colors, rotate(dominant_colors))
+  end
+
+  defp rotate([]), do: []
+  defp rotate([first | rest]), do: rest ++ [first]
+
   defp update_release_ids(changeset) do
     case get_change(changeset, :musicbrainz_data) do
       nil ->
