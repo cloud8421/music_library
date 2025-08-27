@@ -105,7 +105,7 @@ defmodule MusicLibraryWeb.CoreComponents do
     ~H"""
     <Fluxon.Components.Modal.modal
       id={@id}
-      class="md:min-w-2xl max-w-sm md:max-w-3xl mt-8"
+      class="mx-auto sm:min-w-2xl max-w-sm md:max-w-3xl mt-8"
       placement="top"
       open={@open}
       on_close={@on_close}
