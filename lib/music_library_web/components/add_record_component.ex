@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.AddRecordComponent do
   use MusicLibraryWeb, :live_component
 
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
+  import MusicLibraryWeb.SearchComponents, only: [keyboard_shortcuts: 1]
 
   alias MusicBrainz.ReleaseGroupSearchResult
   alias MusicLibrary.Records
@@ -56,6 +57,7 @@ defmodule MusicLibraryWeb.AddRecordComponent do
       >
         {gettext("No results")}
       </div>
+      <.keyboard_shortcuts total_results={@release_groups_total_count} />
     </div>
     """
   end
@@ -133,6 +135,7 @@ defmodule MusicLibraryWeb.AddRecordComponent do
        dom_id: fn rg -> "musicbrainz_#{rg.id}" end
      )
      |> assign(:release_groups_count, 0)
+     |> assign(:release_groups_total_count, 0)
      |> stream(:release_groups, [])
      |> assign(:loaded_all_results?, false)}
   end
@@ -145,12 +148,13 @@ defmodule MusicLibraryWeb.AddRecordComponent do
       if mb_query == "" do
         socket
       else
-        {:ok, release_groups} =
+        {:ok, result} =
           MusicBrainz.search_release_group(mb_query, limit: @batch_size, offset: 0)
 
         socket
-        |> assign(:release_groups_count, Enum.count(release_groups))
-        |> stream(:release_groups, release_groups, reset: true)
+        |> assign(:release_groups_count, Enum.count(result.release_groups))
+        |> assign(:release_groups_total_count, result.total_count)
+        |> stream(:release_groups, result.release_groups, reset: true)
       end
 
     {:ok,
@@ -163,14 +167,15 @@ defmodule MusicLibraryWeb.AddRecordComponent do
 
   @impl true
   def handle_event("search", %{"mb_query" => mb_query}, socket) do
-    {:ok, release_groups} =
+    {:ok, result} =
       MusicBrainz.search_release_group(mb_query, limit: @batch_size, offset: 0)
 
     {:noreply,
      socket
      |> assign(:offset, 0)
-     |> assign(:release_groups_count, length(release_groups))
-     |> stream(:release_groups, release_groups, reset: true)
+     |> assign(:release_groups_count, length(result.release_groups))
+     |> assign(:release_groups_total_count, result.total_count)
+     |> stream(:release_groups, result.release_groups, reset: true)
      |> assign(:form, to_form(%{"mb_query" => mb_query}))}
   end
 
@@ -179,13 +184,14 @@ defmodule MusicLibraryWeb.AddRecordComponent do
     offset = socket.assigns.offset + @batch_size
 
     case MusicBrainz.search_release_group(mb_query, limit: @batch_size, offset: offset) do
-      {:ok, release_groups} ->
+      {:ok, result} ->
         {:noreply,
          socket
          |> assign(:offset, offset)
-         |> assign(:loaded_all_results?, length(release_groups) < @batch_size)
-         |> assign(:release_groups_count, length(release_groups))
-         |> stream(:release_groups, release_groups)}
+         |> assign(:loaded_all_results?, length(result.release_groups) < @batch_size)
+         |> assign(:release_groups_count, length(result.release_groups))
+         |> assign(:release_groups_total_count, result.total_count)
+         |> stream(:release_groups, result.release_groups)}
 
       {:error, _reason} ->
         {:noreply, socket}

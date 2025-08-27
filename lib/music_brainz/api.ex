@@ -534,10 +534,13 @@ defmodule MusicBrainz.API do
   end
 
   defp parse_release_group_search_results({request, response}) do
-    releases =
-      Enum.map(response.body["release-groups"], &ReleaseGroupSearchResult.from_api_response/1)
+    body = %{
+      total_count: response.body["count"],
+      release_groups:
+        Enum.map(response.body["release-groups"], &ReleaseGroupSearchResult.from_api_response/1)
+    }
 
-    {request, Map.put(response, :body, releases)}
+    {request, Map.put(response, :body, body)}
   end
 
   defp parse_artist({request, response}) do

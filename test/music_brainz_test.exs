@@ -17,8 +17,11 @@ defmodule MusicBrainzTest do
         Req.Test.json(conn, results)
       end)
 
-      assert {:ok, expected_results} ==
+      assert {:ok, result} =
                MusicBrainz.search_release_group("Marillion", limit: 20, offset: 10)
+
+      assert result.release_groups == expected_results
+      assert result.total_count == 437
     end
   end
 
