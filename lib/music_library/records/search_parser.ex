@@ -86,6 +86,8 @@ defmodule MusicLibrary.Records.SearchParser do
     {:ok, %{query: ""}}
     iex> MusicLibrary.Records.SearchParser.parse("type:album")
     {:ok, %{type: :album}}
+    iex> MusicLibrary.Records.SearchParser.parse("Spock's Beard")
+    {:ok, %{query: "Spock''s Beard"}}
   """
   def parse(""), do: {:ok, %{query: ""}}
 
@@ -108,16 +110,26 @@ defmodule MusicLibrary.Records.SearchParser do
   defp normalize(result) do
     Enum.reduce(result, %{}, fn
       {:artist, [{:query, [value]}]}, acc ->
-        Map.update(acc, :artist, value, &(&1 <> " " <> value))
+        Map.update(
+          acc,
+          :artist,
+          escape_special_characters(value),
+          &(&1 <> " " <> escape_special_characters(value))
+        )
 
       {:album, [{:query, [value]}]}, acc ->
-        Map.update(acc, :album, value, &(&1 <> " " <> value))
+        Map.update(
+          acc,
+          :album,
+          escape_special_characters(value),
+          &(&1 <> " " <> escape_special_characters(value))
+        )
 
       {:mbid, [{:query, [value]}]}, acc ->
         Map.put(acc, :mbid, value)
 
       {:genre, [{:query, [value]}]}, acc ->
-        Map.put(acc, :genre, value)
+        Map.put(acc, :genre, escape_special_characters(value))
 
       {:format, [value]}, acc ->
         Map.put(acc, :format, value)
@@ -126,7 +138,12 @@ defmodule MusicLibrary.Records.SearchParser do
         Map.put(acc, :type, value)
 
       {:query, [value]}, acc ->
-        Map.update(acc, :query, value, &(&1 <> " " <> value))
+        Map.update(
+          acc,
+          :query,
+          escape_special_characters(value),
+          &(&1 <> " " <> escape_special_characters(value))
+        )
 
       _, %{} ->
         %{query: ""}
@@ -134,5 +151,9 @@ defmodule MusicLibrary.Records.SearchParser do
       _, acc ->
         acc
     end)
+  end
+
+  defp escape_special_characters(value) do
+    String.replace(value, "'", "''")
   end
 end
