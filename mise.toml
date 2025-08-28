@@ -154,6 +154,12 @@ run = 'rm data/music_library_prod*'
 description = 'Run HTTP tests against production'
 run = 'hurl --test test/prod.hurl'
 
+[tasks."prod:trigger-deploy"]
+description = 'Trigger a deploy on production infra'
+run = """
+curl --request GET "$COOLIFY_WEBHOOK" --header "Authorization: Bearer $COOLIFY_TOKEN"
+"""
+
 # GIT TOOLING
 
 [tasks.static-checks-hook]
