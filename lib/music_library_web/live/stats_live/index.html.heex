@@ -18,26 +18,28 @@
   </dl>
 </div>
 
-<div>
-  <h1 class="mt-5 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
-    {gettext("Formats")}
-  </h1>
-  <.counters_by_category
-    categories_with_counts={@collection_count_by_format}
-    category_format_fn={&format_label/1}
-    category_path_fn={fn format -> ~p"/collection?query=format:#{format}" end}
-  />
-</div>
+<div class="grid lg:grid-cols-2 gap-x-5">
+  <div>
+    <h1 class="mt-5 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
+      {gettext("Formats")}
+    </h1>
+    <.counters_by_category
+      categories_with_counts={@collection_count_by_format}
+      category_format_fn={&format_label/1}
+      category_path_fn={fn format -> ~p"/collection?query=format:#{format}" end}
+    />
+  </div>
 
-<div>
-  <h1 class="mt-5 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
-    {gettext("Types")}
-  </h1>
-  <.counters_by_category
-    categories_with_counts={@collection_count_by_type}
-    category_format_fn={&type_label/1}
-    category_path_fn={fn type -> ~p"/collection?query=type:#{type}" end}
-  />
+  <div>
+    <h1 class="mt-5 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
+      {gettext("Types")}
+    </h1>
+    <.counters_by_category
+      categories_with_counts={@collection_count_by_type}
+      category_format_fn={&type_label/1}
+      category_path_fn={fn type -> ~p"/collection?query=type:#{type}" end}
+    />
+  </div>
 </div>
 
 <div>
