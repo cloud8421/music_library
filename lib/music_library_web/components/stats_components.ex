@@ -70,6 +70,34 @@ defmodule MusicLibraryWeb.StatsComponents do
     """
   end
 
+  attr :categories_with_counts, :list, required: true
+  attr :category_format_fn, :any, required: true
+  attr :category_path_fn, :any, required: true
+
+  def counters_by_category(assigns) do
+    ~H"""
+    <%!-- TODO: replace with OSS version --%>
+    <dl class={[
+      "mt-5 grid divide-zinc-200 dark:divide-zinc-900 overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow-sm divide-x-2",
+      stats_class(@categories_with_counts)
+    ]}>
+      <div :for={{category, count} <- @categories_with_counts} class="px-2 py-5 sm:px-4">
+        <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center max-sm:text-xs break-keep">
+          {@category_format_fn.(category)}
+        </dt>
+        <dd class="mt-1 text-center">
+          <.link
+            class="text-xl lg:text-2xl font-semibold hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
+            navigate={@category_path_fn.(category)}
+          >
+            {count}
+          </.link>
+        </dd>
+      </div>
+    </dl>
+    """
+  end
+
   def refresh_lastfm_feed_button(assigns) do
     ~H"""
     <button
@@ -194,5 +222,23 @@ defmodule MusicLibraryWeb.StatsComponents do
     Enum.find_value(tracked_releases, fn tracked_release ->
       if tracked_release.release_id == release_id, do: tracked_release.record_id
     end)
+  end
+
+  # The Tailwind build step requires all needed classes to be explicitly referenced
+  # in the source code, and not dynamically generated. This implies that one cannot
+  # (for example) interpolate a number in a class name.
+  defp stats_class(collection) do
+    case Enum.count(collection) do
+      1 -> "grid-cols-1"
+      2 -> "grid-cols-2"
+      3 -> "grid-cols-3"
+      4 -> "grid-cols-4"
+      5 -> "grid-cols-5"
+      6 -> "grid-cols-6"
+      7 -> "grid-cols-7"
+      8 -> "grid-cols-8"
+      9 -> "grid-cols-9"
+      _other -> ""
+    end
   end
 end

@@ -22,50 +22,22 @@
   <h1 class="mt-5 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
     {gettext("Formats")}
   </h1>
-  <%!-- TODO: replace with OSS version --%>
-  <dl class={[
-    "mt-5 grid divide-zinc-200 dark:divide-zinc-900 overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow-sm divide-x-2",
-    stats_class(@collection_count_by_format)
-  ]}>
-    <div :for={{format, count} <- @collection_count_by_format} class="px-2 py-5 sm:px-4">
-      <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center max-sm:text-xs break-keep">
-        {format_label(format)}
-      </dt>
-      <dd class="mt-1 text-center">
-        <.link
-          class="text-xl lg:text-2xl font-semibold hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
-          navigate={~p"/collection?query=format:#{format}"}
-        >
-          {count}
-        </.link>
-      </dd>
-    </div>
-  </dl>
+  <.counters_by_category
+    categories_with_counts={@collection_count_by_format}
+    category_format_fn={&format_label/1}
+    category_path_fn={fn format -> ~p"/collection?query=format:#{format}" end}
+  />
 </div>
 
 <div>
   <h1 class="mt-5 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
     {gettext("Types")}
   </h1>
-  <%!-- TODO: replace with OSS version --%>
-  <dl class={[
-    "mt-5 grid divide-zinc-200 dark:divide-zinc-900 overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow-sm divide-x-2",
-    stats_class(@collection_count_by_type)
-  ]}>
-    <div :for={{type, count} <- @collection_count_by_type} class="px-2 py-5 sm:px-4">
-      <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center max-sm:text-xs break-keep">
-        {type_label(type)}
-      </dt>
-      <dd class="mt-1 text-center">
-        <.link
-          class="text-xl lg:text-2xl font-semibold hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
-          navigate={~p"/collection?query=type:#{type}"}
-        >
-          {count}
-        </.link>
-      </dd>
-    </div>
-  </dl>
+  <.counters_by_category
+    categories_with_counts={@collection_count_by_type}
+    category_format_fn={&type_label/1}
+    category_path_fn={fn type -> ~p"/collection?query=type:#{type}" end}
+  />
 </div>
 
 <div>
