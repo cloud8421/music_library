@@ -80,7 +80,7 @@
         phx-update="stream"
       >
         <li :for={{id, album} <- @streams.recent_albums} id={id} class="group">
-          <div class="relative pb-8 group-last:pb-0">
+          <div class="relative pb-4 group-last:pb-0">
             <span
               class="group-last:hidden absolute left-6 top-6 -ml-px h-full w-0.5 bg-zinc-200"
               aria-hidden="true"
@@ -261,7 +261,7 @@
         phx-update="stream"
       >
         <li :for={{id, track} <- @streams.recent_tracks} id={id} class="group">
-          <div class="relative pb-8 group-last:pb-0">
+          <div class="relative pb-4 group-last:pb-0">
             <span
               class="group-last:hidden absolute left-6 top-6 -ml-px h-full w-0.5 bg-zinc-200"
               aria-hidden="true"
