@@ -81,6 +81,21 @@ defmodule MusicLibraryWeb.StatsLive.Index do
      |> assign(scrobble_activity_mode: mode)}
   end
 
+  def handle_event("set_current_date", %{"current_date" => current_date}, socket) do
+    case Date.from_iso8601(current_date) do
+      {:ok, date} ->
+        records_on_this_day = Collection.get_records_on_this_day(date)
+
+        {:noreply,
+         socket
+         |> assign(:current_date, date)
+         |> stream(:records_on_this_day, records_on_this_day, reset: true)}
+
+      {:error, _reason} ->
+        {:noreply, socket}
+    end
+  end
+
   def handle_info(%{track_count: 0}, socket) do
     {:noreply, socket}
   end
