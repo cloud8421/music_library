@@ -11,7 +11,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   def mount(_params, _session, socket) do
     current_date = Date.utc_today()
     latest_record = Collection.get_latest_record!()
-    recent_tracks = LastFm.get_scrobbled_tracks()
+    recent_tracks = LastFm.get_scrobbled_tracks(50)
     records_by_artists = Collection.count_records_by_artist(limit: 20)
     records_by_genre = Collection.count_records_by_genre(limit: 20)
     records_on_this_day = Collection.get_records_on_this_day(current_date)
