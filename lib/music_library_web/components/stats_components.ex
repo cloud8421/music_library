@@ -128,13 +128,7 @@ defmodule MusicLibraryWeb.StatsComponents do
             <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
               {record.title}
             </h2>
-            <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-              {ngettext(
-                "1 year ago",
-                "%{count} years ago",
-                Records.Record.released_how_long_ago?(record, @current_date)
-              )}
-            </p>
+            <.released_how_long_ago record={record} current_date={@current_date} />
             <p class="sm:hidden mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
               {format_label(record.format)} · {type_label(record.type)}
               <span :if={record.purchased_at}>
@@ -165,6 +159,36 @@ defmodule MusicLibraryWeb.StatsComponents do
     </ul>
     """
   end
+
+  attr :record, Records.Record, required: true
+  attr :current_date, Date, required: true
+
+  defp released_how_long_ago(assigns) do
+    assigns =
+      assign(
+        assigns,
+        :years,
+        Records.Record.released_how_long_ago?(assigns.record, assigns.current_date)
+      )
+
+    ~H"""
+    <p class={[
+      "mt-1 text-xs leading-5",
+      !special_year?(@years) && "text-zinc-500 dark:text-zinc-400",
+      special_year?(@years) &&
+        "font-semibold bg-gradient-to-r bg-clip-text text-transparent from-yellow-200 via-yellow-500 to-yellow-700 animate-shine"
+    ]}>
+      {ngettext(
+        "1 year ago",
+        "%{count} years ago",
+        @years
+      )}
+    </p>
+    """
+  end
+
+  defp special_year?(year) when year in [5, 10, 25, 50, 75], do: true
+  defp special_year?(_year), do: false
 
   def tracked_record?(tracked_releases, release_id) do
     Enum.find_value(tracked_releases, fn tracked_release ->

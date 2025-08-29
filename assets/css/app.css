@@ -26,6 +26,7 @@
     "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --animate-shake: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  --animate-shine: shine 3s ease infinite;
 
   @keyframes shake {
     10%,
@@ -44,6 +45,18 @@
     40%,
     60% {
       transform: translate3d(4px, 0, 0);
+    }
+  }
+
+  @keyframes shine {
+    0%,
+    100% {
+      background-size: 200% 200%;
+      background-position: left center;
+    }
+    50% {
+      background-size: 200% 200%;
+      background-position: right center;
     }
   }
 }
