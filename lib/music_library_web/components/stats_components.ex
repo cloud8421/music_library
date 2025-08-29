@@ -1,7 +1,11 @@
 defmodule MusicLibraryWeb.StatsComponents do
   use MusicLibraryWeb, :live_component
 
-  attr :record, MusicLibrary.Records.Record, required: true
+  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1, artist_links: 1]
+
+  alias MusicLibrary.Records
+
+  attr :record, Records.Record, required: true
   attr :title, :string, required: true
   attr :class, :string
 
@@ -76,6 +80,88 @@ defmodule MusicLibraryWeb.StatsComponents do
       <span class="sr-only">{gettext("Refresh LastFm Feed")}</span>
       <.icon name="hero-arrow-path" class="-mt-1 h-5 w-5" aria-hidden="true" data-slot="icon" />
     </button>
+    """
+  end
+
+  attr :record_show_path, :any, required: true
+  attr :records, :list, required: true
+  attr :current_date, Date, required: false, default: nil
+
+  def records_on_this_day(assigns) do
+    ~H"""
+    <ul
+      class="mt-5"
+      role="list"
+      id="records"
+      phx-update="stream"
+    >
+      <li
+        :for={{id, record} <- @records}
+        phx-click={JS.navigate(@record_show_path.(record))}
+        class="flex justify-between gap-x-6 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 px-2 -mx-2 md:px-4 md:-mx-4 cursor-pointer"
+        id={id}
+      >
+        <div class="flex min-w-0 gap-x-4 items-center">
+          <div class="relative w-12 flex-none">
+            <img
+              class="rounded-lg"
+              alt={record.title}
+              src={~p"/covers/#{record.id}?vsn=#{record.cover_hash}"}
+            />
+            <span
+              :if={Records.Record.included_release_groups_count(record) > 0}
+              class={[
+                "absolute right-0 bottom-0 rounded-br-lg rounded-tl-lg px-1",
+                "text-xs font-medium",
+                "bg-zinc-200/80 dark:bg-zinc-500/70",
+                "text-zinc-700 dark:text-zinc-200",
+                "border-1 border-zinc-600/20 dark:border-zinc-500/20"
+              ]}
+            >
+              {Records.Record.included_release_groups_count(record)}
+            </span>
+          </div>
+          <div class="min-w-0 flex-auto">
+            <h1 class="text-sm leading-6 text-zinc-700">
+              <.artist_links joinphrase_class="text-xs" artists={record.artists} />
+            </h1>
+            <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+              {record.title}
+            </h2>
+            <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+              {Records.Record.format_release_date(record.release_date)}
+              <span :if={@current_date && !Records.Record.released?(record, @current_date)}>
+                ({gettext("Unreleased")})
+              </span>
+            </p>
+            <p class="sm:hidden mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+              {format_label(record.format)} · {type_label(record.type)}
+              <span :if={record.purchased_at}>
+                ·
+                <span class="sr-only">
+                  {gettext("Purchased on")}
+                </span>
+                <.icon
+                  name="hero-banknotes"
+                  class="-mt-1 h-4 w-4"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+                {Records.Record.format_as_date(record.purchased_at)}
+              </span>
+              <span :if={!record.purchased_at}>
+                ·
+                <span class="sr-only">
+                  {gettext("Wishlisted on")}
+                </span>
+                <.icon name="hero-star" class="-mt-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
+                {Records.Record.format_as_date(record.inserted_at)}
+              </span>
+            </p>
+          </div>
+        </div>
+      </li>
+    </ul>
     """
   end
 

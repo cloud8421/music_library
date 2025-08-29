@@ -143,6 +143,7 @@ msgid "Purchased at"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
+#: lib/music_library_web/components/stats_components.ex
 #: lib/music_library_web/live/collection_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Purchased on"
@@ -434,6 +435,7 @@ msgid "ID"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
+#: lib/music_library_web/components/stats_components.ex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Unreleased"
@@ -905,6 +907,7 @@ msgid "Last year"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
+#: lib/music_library_web/components/stats_components.ex
 #, elixir-autogen, elixir-format
 msgid "Wishlisted on"
 msgstr ""
@@ -1294,4 +1297,9 @@ msgstr ""
 #: lib/music_library_web/components/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Rotate colors"
+msgstr ""
+
+#: lib/music_library_web/live/stats_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "On This day"
 msgstr ""

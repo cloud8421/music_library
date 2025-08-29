@@ -13,6 +13,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     recent_tracks = LastFm.get_scrobbled_tracks()
     records_by_artists = Collection.count_records_by_artist(limit: 20)
     records_by_genre = Collection.count_records_by_genre(limit: 20)
+    records_on_this_day = Collection.get_records_on_this_day()
 
     if connected?(socket) do
       LastFm.subscribe_to_feed()
@@ -27,6 +28,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
      |> stream_configure(:recent_albums,
        dom_id: fn album -> "album-#{album.scrobbled_at_uts}" end
      )
+     |> stream(:records_on_this_day, records_on_this_day, reset: true)
      |> assign_counts()
      |> assign_scrobble_activity(recent_tracks)
      |> assign(

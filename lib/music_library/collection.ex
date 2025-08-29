@@ -40,6 +40,19 @@ defmodule MusicLibrary.Collection do
     Repo.all(q)
   end
 
+  def get_records_on_this_day(date \\ Date.utc_today()) do
+    month_day = Calendar.strftime(date, "%m-%d")
+
+    q =
+      from r in Record,
+        where: not is_nil(r.purchased_at),
+        where: fragment("strftime('%m-%d', ?) = ?", r.release_date, ^month_day),
+        order_by: [desc: r.release_date],
+        select: ^Records.essential_fields()
+
+    Repo.all(q)
+  end
+
   def get_latest_record! do
     q =
       from r in Record,
