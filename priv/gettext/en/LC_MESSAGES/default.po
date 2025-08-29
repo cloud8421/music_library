@@ -435,7 +435,6 @@ msgid "ID"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
-#: lib/music_library_web/components/stats_components.ex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Unreleased"
@@ -1303,3 +1302,10 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "On This day"
 msgstr ""
+
+#: lib/music_library_web/components/stats_components.ex
+#, elixir-autogen, elixir-format
+msgid "1 year ago"
+msgid_plural "%{count} years ago"
+msgstr[0] ""
+msgstr[1] ""

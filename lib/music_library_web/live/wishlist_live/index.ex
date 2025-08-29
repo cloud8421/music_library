@@ -17,7 +17,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    current_date = DateTime.utc_now() |> DateTime.to_date()
+    current_date = Date.utc_today()
 
     {:ok,
      socket

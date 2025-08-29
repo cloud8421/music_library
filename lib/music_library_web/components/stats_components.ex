@@ -85,7 +85,7 @@ defmodule MusicLibraryWeb.StatsComponents do
 
   attr :record_show_path, :any, required: true
   attr :records, :list, required: true
-  attr :current_date, Date, required: false, default: nil
+  attr :current_date, Date, required: true
 
   def records_on_this_day(assigns) do
     ~H"""
@@ -129,10 +129,11 @@ defmodule MusicLibraryWeb.StatsComponents do
               {record.title}
             </h2>
             <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-              {Records.Record.format_release_date(record.release_date)}
-              <span :if={@current_date && !Records.Record.released?(record, @current_date)}>
-                ({gettext("Unreleased")})
-              </span>
+              {ngettext(
+                "1 year ago",
+                "%{count} years ago",
+                Records.Record.released_how_long_ago?(record, @current_date)
+              )}
             </p>
             <p class="sm:hidden mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
               {format_label(record.format)} · {type_label(record.type)}

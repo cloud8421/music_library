@@ -82,6 +82,21 @@ defmodule MusicLibrary.Records.Record do
     end
   end
 
+  def released_how_long_ago?(%{release_date: nil}, _current_day), do: nil
+
+  def released_how_long_ago?(record, current_day) do
+    case Date.from_iso8601(record.release_date) do
+      {:ok, release_date} ->
+        # approximate calculation of "how many years ago",
+        # we don't really care about leap years
+        diff_days = Date.diff(current_day, release_date)
+        div(diff_days, 365)
+
+      _error ->
+        nil
+    end
+  end
+
   def releases(record) do
     record.musicbrainz_data
     |> ReleaseGroup.releases()
