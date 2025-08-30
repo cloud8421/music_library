@@ -115,6 +115,7 @@
       corner={:top_right}
       connected={assigns[:socket] != nil}
       toasts_sync={assigns[:toasts_sync]}
+      toast_class_fn={&toast_class_fn/1}
     />
     {@inner_content}
   </div>
