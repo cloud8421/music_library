@@ -1,9 +1,8 @@
 <div class="md:flex mt-4 px-4 md:gap-x-4">
   <div class="drop-shadow-sm md:max-w-[38rem]">
-    <img
+    <.record_cover
+      record={@record}
       class="w-full rounded-lg drop-shadow-sm"
-      src={~p"/covers/#{@record.id}?vsn=#{@record.cover_hash}"}
-      alt={@record.title}
     />
   </div>
 

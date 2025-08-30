@@ -1,7 +1,8 @@
 defmodule MusicLibraryWeb.StatsComponents do
   use MusicLibraryWeb, :live_component
 
-  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1, artist_links: 1]
+  import MusicLibraryWeb.RecordComponents,
+    only: [format_label: 1, type_label: 1, artist_links: 1, record_cover: 1]
 
   alias MusicLibrary.Records
 
@@ -19,10 +20,9 @@ defmodule MusicLibraryWeb.StatsComponents do
       phx-click={JS.navigate(~p"/collection/#{@record}")}
     >
       <dt>
-        <img
+        <.record_cover
+          record={@record}
           class="absolute w-20 rounded-md shadow-sm"
-          src={~p"/covers/#{@record.id}?vsn=#{@record.cover_hash}"}
-          alt={@record.title}
         />
         <p class="ml-24 truncate text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400">
           {@title}
@@ -131,11 +131,7 @@ defmodule MusicLibraryWeb.StatsComponents do
       >
         <div class="flex min-w-0 gap-x-4 items-center">
           <div class="relative w-12 flex-none">
-            <img
-              class="rounded-lg"
-              alt={record.title}
-              src={~p"/covers/#{record.id}?vsn=#{record.cover_hash}"}
-            />
+            <.record_cover record={record} />
             <span
               :if={Records.Record.included_release_groups_count(record) > 0}
               class={[

@@ -5,6 +5,19 @@ defmodule MusicLibraryWeb.RecordComponents do
   alias MusicLibrary.Records
   alias Phoenix.LiveView.JS
 
+  attr :record, :map, required: true
+  attr :class, :string, required: false, default: "rounded-lg"
+
+  def record_cover(assigns) do
+    ~H"""
+    <img
+      class={@class}
+      alt={@record.title}
+      src={~p"/covers/#{@record.id}?vsn=#{@record.cover_hash}"}
+    />
+    """
+  end
+
   attr :artists, :list, required: true
   attr :joinphrase_class, :string, default: nil
 
@@ -45,11 +58,7 @@ defmodule MusicLibraryWeb.RecordComponents do
       >
         <div class="flex min-w-0 gap-x-4 items-center">
           <div class="relative w-20 flex-none">
-            <img
-              class="rounded-lg"
-              alt={record.title}
-              src={~p"/covers/#{record.id}?vsn=#{record.cover_hash}"}
-            />
+            <.record_cover record={record} />
             <span
               :if={Records.Record.included_release_groups_count(record) > 0}
               class={[
@@ -218,9 +227,8 @@ defmodule MusicLibraryWeb.RecordComponents do
         <li :for={{id, record} <- @records} id={id} class="relative">
           <div class="group overflow-hidden rounded-lg bg-zinc-100 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:ring-offset-2 focus-within:ring-offset-zinc-100">
             <div class="relative">
-              <img
-                alt={record.title}
-                src={~p"/covers/#{record.id}?vsn=#{record.cover_hash}"}
+              <.record_cover
+                record={record}
                 class="pointer-events-none aspect-square object-cover group-hover:opacity-75"
               />
               <span

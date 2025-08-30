@@ -2,7 +2,7 @@ defmodule MusicLibraryWeb.FormComponent do
   use MusicLibraryWeb, :live_component
 
   import MusicLibraryWeb.RecordComponents,
-    only: [format_label: 1, type_label: 1, release_label: 1, release_summary: 1]
+    only: [format_label: 1, type_label: 1, release_label: 1, release_summary: 1, record_cover: 1]
 
   alias MusicLibrary.Records
   alias MusicLibrary.Records.{Cover, Record}
@@ -96,11 +96,9 @@ defmodule MusicLibraryWeb.FormComponent do
             ]}
           >
             <div class="text-center">
-              <img
+              <.record_cover
                 :if={@uploads.cover_data.entries == []}
-                class="rounded-lg mx-auto w-full"
-                alt={@record.title}
-                src={~p"/covers/#{@record.id}?vsn=#{@record.cover_hash}"}
+                record={@record}
               />
               <.live_img_preview
                 :for={entry <- @uploads.cover_data.entries}

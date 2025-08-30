@@ -5,7 +5,7 @@ defmodule MusicLibraryWeb.SearchComponents do
 
   use MusicLibraryWeb, :html
 
-  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
+  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1, record_cover: 1]
 
   alias MusicLibrary.Records.Record
 
@@ -31,10 +31,9 @@ defmodule MusicLibraryWeb.SearchComponents do
     >
       <div class="flex items-center space-x-3">
         <div class="flex-shrink-0">
-          <img
+          <.record_cover
+            record={@record}
             class="w-12 h-12 rounded-md aspect-square object-cover"
-            alt={@record.title}
-            src={~p"/covers/#{@record.id}?vsn=#{@record.cover_hash}"}
           />
         </div>
         <div class="min-w-0 flex-1">
