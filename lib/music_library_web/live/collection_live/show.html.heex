@@ -326,7 +326,7 @@
   on_close={JS.patch(~p"/collection/#{@record}")}
 >
   <.live_component
-    module={MusicLibraryWeb.FormComponent}
+    module={MusicLibraryWeb.RecordFormComponent}
     id={@record.id}
     action={@live_action}
     show_purchased_at={true}

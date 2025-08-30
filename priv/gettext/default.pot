@@ -28,7 +28,7 @@ msgstr ""
 msgid "Collection"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/components/record_form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Cover art"
 msgstr ""
@@ -61,7 +61,7 @@ msgstr ""
 msgid "Error importing record"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/components/record_form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Format"
 msgstr ""
@@ -104,7 +104,7 @@ msgstr ""
 msgid "Logout"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/components/record_form_component.ex
 #: lib/music_library_web/live/artist_live/show.html.heex
 #: lib/music_library_web/live/collection_live/show.html.heex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
@@ -137,7 +137,7 @@ msgstr ""
 msgid "Purchase"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/components/record_form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Purchased at"
 msgstr ""
@@ -154,18 +154,18 @@ msgstr ""
 msgid "Record imported successfully"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/components/record_form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Record updated successfully"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/components/record_form_component.ex
 #: lib/music_library_web/live/artist_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/components/record_form_component.ex
 #: lib/music_library_web/live/artist_live/form_component.ex
 #: lib/music_library_web/live/online_store_template_live/form_component.ex
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
@@ -205,7 +205,7 @@ msgstr ""
 msgid "Total wishlist"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/components/record_form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Type"
 msgstr ""
@@ -572,19 +572,19 @@ msgstr ""
 msgid "Similar artists"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/components/record_form_component.ex
 #: lib/music_library_web/live/artist_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "PNG, JPG, WEBP up to 8MB"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/components/record_form_component.ex
 #: lib/music_library_web/live/artist_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Upload a file"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/components/record_form_component.ex
 #: lib/music_library_web/live/artist_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "or drag and drop"
@@ -703,7 +703,7 @@ msgstr ""
 msgid "Top %{n} Genres"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/components/record_form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Release Date"
 msgstr ""
@@ -719,7 +719,7 @@ msgstr ""
 msgid "No release selected"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/components/record_form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Selected Release"
 msgstr ""
@@ -1160,7 +1160,7 @@ msgstr ""
 msgid "Copy record selected release ID to clipboard"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/components/record_form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Dominant Colors"
 msgstr ""
@@ -1170,7 +1170,7 @@ msgstr ""
 msgid "Apply All"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/components/record_form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Title"
 msgstr ""
@@ -1293,7 +1293,7 @@ msgstr ""
 msgid "90 days"
 msgstr ""
 
-#: lib/music_library_web/components/form_component.ex
+#: lib/music_library_web/components/record_form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Rotate colors"
 msgstr ""
