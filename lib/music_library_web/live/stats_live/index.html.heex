@@ -76,7 +76,7 @@
       <ul
         id="scrobble-activity-albums"
         role="list"
-        class="rounded-md px-4 py-5 shadow-sm"
+        class="mt-5 rounded-md px-4 py-5 shadow-sm"
         phx-update="stream"
       >
         <li :for={{id, album} <- @streams.recent_albums} id={id} class="group">
@@ -257,7 +257,7 @@
       <ul
         id="scrobble-activity-tracks"
         role="list"
-        class="rounded-md px-4 py-5 shadow-sm"
+        class="mt-5 rounded-md px-4 py-5 shadow-sm"
         phx-update="stream"
       >
         <li :for={{id, track} <- @streams.recent_tracks} id={id} class="group">
