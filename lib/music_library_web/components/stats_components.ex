@@ -78,7 +78,7 @@ defmodule MusicLibraryWeb.StatsComponents do
     ~H"""
     <%!-- TODO: replace with OSS version --%>
     <dl class={[
-      "mt-5 grid divide-zinc-200 dark:divide-zinc-900 overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow-sm divide-x-2",
+      "mt-5 grid divide-zinc-200 dark:divide-zinc-900 overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow-sm divide-x-1",
       stats_class(@categories_with_counts)
     ]}>
       <div :for={{category, count} <- @categories_with_counts} class="px-2 py-5 sm:px-4">
