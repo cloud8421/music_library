@@ -10,7 +10,7 @@ defmodule MusicLibraryWeb.Layouts do
   """
   use MusicLibraryWeb, :html
 
-  alias Phoenix.LiveView.ColocatedHook
+  import MusicLibraryWeb.UniversalSearchLive.Index, only: [universal_search_trigger: 1]
 
   embed_templates "layouts/*"
 

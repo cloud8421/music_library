@@ -4,6 +4,47 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
   import MusicLibraryWeb.SearchComponents
 
   alias MusicLibrary.Search
+  alias Phoenix.LiveView.ColocatedHook
+
+  def live(socket) do
+    live_render(socket, __MODULE__, id: "universal-search", session: %{})
+  end
+
+  def universal_search_trigger(assigns) do
+    ~H"""
+    <script :type={ColocatedHook} name=".SearchGlobalShortcut">
+      export default {
+        mounted() {
+          const universalSearchButton = document.querySelector("#universal-search-button");
+
+          document.addEventListener("keydown", (event) => {
+            switch (event.key) {
+              case "k":
+                if (event.metaKey || event.ctrlKey) {
+                  event.preventDefault();
+                  universalSearchButton.click();
+                }
+                break;
+              default:
+                break;
+            }
+          });
+        },
+      };
+    </script>
+    <.button
+      id="universal-search-button"
+      variant="ghost"
+      title={gettext("Search (Ctrl+K)")}
+      phx-click="open_modal"
+      phx-target="#universal-search"
+      phx-hook=".SearchGlobalShortcut"
+    >
+      <span class="sr-only">{gettext("Search (Ctrl+K)")}</span>
+      <.icon name="hero-magnifying-glass" class="h-5 w-5" />
+    </.button>
+    """
+  end
 
   @impl true
   def mount(_params, _session, socket) do
