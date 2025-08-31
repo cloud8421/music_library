@@ -89,7 +89,7 @@ defmodule MusicLibraryWeb.ChartComponents do
 
   defp calculate_bar_height(data, available_height) do
     bar_count = length(data)
-    max_height = min(30, (available_height - (bar_count - 1) * 4) / bar_count)
+    max_height = min(15, (available_height - (bar_count - 1) * 4) / bar_count)
     max(20, max_height) |> trunc()
   end
 

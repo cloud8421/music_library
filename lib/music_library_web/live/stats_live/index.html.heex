@@ -489,7 +489,7 @@
       <.vertical_bar_chart
         data={@records_by_artist}
         width={600}
-        height={35 * length(@records_by_artist)}
+        height={26 * length(@records_by_artist)}
         color_class="fill-red-500"
         label_fn={fn datum -> datum.name end}
         value_fn={fn datum -> datum.count end}
@@ -511,7 +511,7 @@
       <.vertical_bar_chart
         data={@records_by_genre}
         width={600}
-        height={35 * length(@records_by_genre)}
+        height={26 * length(@records_by_genre)}
         color_class="fill-zinc-500"
         label_fn={fn {genre, _count} -> genre end}
         value_fn={fn {_genre, count} -> count end}
