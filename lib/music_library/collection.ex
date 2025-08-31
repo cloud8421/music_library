@@ -109,6 +109,8 @@ defmodule MusicLibrary.Collection do
     q =
       from r in fragment("records, json_each(records.genres)"),
         where: fragment("records.purchased_at IS NOT NULL"),
+        # we remove rock as it's really generic and dwarfs other genres
+        where: fragment("? != 'rock'", r.value),
         group_by: r.value,
         order_by: [desc: fragment("count(1)")],
         select: {r.value, fragment("count(1)")},
