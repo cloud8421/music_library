@@ -1135,11 +1135,6 @@ msgstr[1] ""
 msgid "Close"
 msgstr ""
 
-#: lib/music_library_web/live/universal_search_live/index.ex
-#, elixir-autogen, elixir-format
-msgid "Search (Ctrl+K)"
-msgstr ""
-
 #: lib/music_library_web/live/artist_live/form_component.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Artist image"
@@ -1309,3 +1304,8 @@ msgid "1 year ago"
 msgid_plural "%{count} years ago"
 msgstr[0] ""
 msgstr[1] ""
+
+#: lib/music_library_web/live/universal_search_live/index.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Search (Cmd/Ctrl+K)"
+msgstr ""

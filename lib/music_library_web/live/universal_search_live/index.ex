@@ -35,12 +35,12 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
     <.button
       id="universal-search-button"
       variant="ghost"
-      title={gettext("Search (Ctrl+K)")}
+      title={gettext("Search (Cmd/Ctrl+K)")}
       phx-click="open_modal"
       phx-target="#universal-search"
       phx-hook=".SearchGlobalShortcut"
     >
-      <span class="sr-only">{gettext("Search (Ctrl+K)")}</span>
+      <span class="sr-only">{gettext("Search (Cmd/Ctrl+K)")}</span>
       <.icon name="hero-magnifying-glass" class="h-5 w-5" />
     </.button>
     """
