@@ -93,7 +93,7 @@ defmodule MusicLibraryWeb.StatsLive.TopArtists do
 
   def top_artists_by_period(assigns) do
     ~H"""
-    <div class="mt-4 p-4 rounded-md shadow-sm">
+    <div class="mt-4 p-4 bg-white dark:bg-zinc-800 rounded-md shadow-sm">
       <div class="space-y-2">
         <div
           :for={artist <- @artists}

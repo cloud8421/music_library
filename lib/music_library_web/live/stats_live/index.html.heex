@@ -76,7 +76,7 @@
       <ul
         id="scrobble-activity-albums"
         role="list"
-        class="mt-5 rounded-md px-4 py-5 shadow-sm"
+        class="mt-5 p-6 bg-white dark:bg-zinc-800 rounded-md shadow-sm"
         phx-update="stream"
       >
         <li :for={{id, album} <- @streams.recent_albums} id={id} class="group">
@@ -475,7 +475,7 @@
         <.date_picker size="xs" field={f[:current_date]} />
       </.form>
     </div>
-    <div class="rounded-md shadow-sm">
+    <div class="bg-white dark:bg-zinc-800 rounded-md shadow-sm">
       <.records_on_this_day
         current_date={@current_date}
         records={@streams.records_on_this_day}
