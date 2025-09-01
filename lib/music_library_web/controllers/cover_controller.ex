@@ -1,6 +1,7 @@
 defmodule MusicLibraryWeb.CoverController do
   use MusicLibraryWeb, :controller
 
+  alias MusicLibrary.Assets
   alias MusicLibrary.Records
   alias MusicLibrary.Records.Cover
 
@@ -29,10 +30,12 @@ defmodule MusicLibraryWeb.CoverController do
       nil ->
         not_found(conn)
 
-      %{cover_data: cover_data, cover_hash: etag} ->
+      %{cover_hash: etag} ->
+        asset = Assets.get(etag)
+
         case get_req_header(conn, "if-none-match") do
           [^etag] -> extend_cache(conn)
-          _ -> respond_with_cache(conn, cover_data, etag)
+          _ -> respond_with_cache(conn, asset)
         end
     end
   end
@@ -47,6 +50,14 @@ defmodule MusicLibraryWeb.CoverController do
     conn
     |> put_resp_header("cache-control", "public, max-age=#{@cache_duration}")
     |> send_resp(304, "")
+  end
+
+  defp respond_with_cache(conn, asset) do
+    conn
+    |> put_resp_content_type(asset.format, "utf-8")
+    |> put_resp_header("cache-control", "public, max-age=#{@cache_duration}")
+    |> put_resp_header("etag", asset.hash)
+    |> send_resp(200, asset.content)
   end
 
   defp respond_with_cache(conn, cover_data, etag) do

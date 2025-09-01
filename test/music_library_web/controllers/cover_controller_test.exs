@@ -3,14 +3,21 @@ defmodule MusicLibraryWeb.CoverControllerTest do
 
   import MusicLibrary.Fixtures.Records
 
+  alias MusicLibrary.Assets
   alias MusicLibrary.Records.Cover
 
   defp create_record(_) do
     %{record: record()}
   end
 
+  defp create_asset(%{record: record}) do
+    {:ok, asset} = Assets.store(%{content: record.cover_data, format: "image/jpeg"})
+
+    %{asset: asset}
+  end
+
   describe "GET /covers/:record_id" do
-    setup [:create_record]
+    setup [:create_record, :create_asset]
 
     test "404s when record doesn't exist", %{conn: conn} do
       id = Ecto.UUID.generate()

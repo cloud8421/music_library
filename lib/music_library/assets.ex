@@ -20,4 +20,8 @@ defmodule MusicLibrary.Assets do
     |> Asset.image_changeset(params)
     |> Repo.insert()
   end
+
+  def get(hash) do
+    Repo.get!(Asset, hash)
+  end
 end
