@@ -13,6 +13,7 @@ defmodule MusicLibraryWeb.RecordComponents do
     <img
       class={@class}
       alt={@record.title}
+      loading="lazy"
       src={~p"/covers/#{@record.id}?vsn=#{@record.cover_hash}"}
     />
     """

@@ -116,6 +116,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
         >
           <img
             class="w-12 h-12 rounded-md object-cover"
+            loading="lazy"
             src={album.cover_url}
             alt={album.album_title}
           />
