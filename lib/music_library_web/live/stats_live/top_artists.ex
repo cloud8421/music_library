@@ -110,7 +110,6 @@ defmodule MusicLibraryWeb.StatsLive.TopArtists do
           <img
             :if={artist.artist_musicbrainz_id != ""}
             class="w-12 h-12 rounded-md object-cover"
-            loading="lazy"
             src={~p"/artists/#{artist.artist_musicbrainz_id}/image"}
             alt={artist.artist_name}
             onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
