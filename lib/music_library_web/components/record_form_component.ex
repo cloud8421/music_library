@@ -4,8 +4,8 @@ defmodule MusicLibraryWeb.RecordFormComponent do
   import MusicLibraryWeb.RecordComponents,
     only: [format_label: 1, type_label: 1, release_label: 1, release_summary: 1, record_cover: 1]
 
-  alias MusicLibrary.Records
-  alias MusicLibrary.Records.{Cover, Record}
+  alias MusicLibrary.{Assets, Records}
+  alias MusicLibrary.Records.Record
 
   @impl true
   def mount(socket) do
@@ -174,8 +174,9 @@ defmodule MusicLibraryWeb.RecordFormComponent do
 
   def handle_event("save", %{"record" => record_params}, socket) do
     uploaded_covers =
-      consume_uploaded_entries(socket, :cover_data, fn %{path: path}, _entry ->
-        {:ok, File.read!(path)}
+      consume_uploaded_entries(socket, :cover_data, fn %{path: path}, entry ->
+        params = %{content: File.read!(path), format: entry.client_type}
+        {:ok, params}
       end)
 
     save_record(socket, record_params, uploaded_covers)
@@ -196,9 +197,9 @@ defmodule MusicLibraryWeb.RecordFormComponent do
         [] ->
           record_params
 
-        [cover_data] ->
-          {:ok, thumb_data} = Cover.resize(cover_data)
-          Map.put(record_params, "cover_data", thumb_data)
+        [cover_params] ->
+          {:ok, asset} = Assets.store_image(cover_params)
+          Map.put(record_params, "cover_data", asset.content)
       end
 
     case Records.update_record(socket.assigns.record, params) do
