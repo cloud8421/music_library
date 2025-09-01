@@ -369,22 +369,4 @@ defmodule MusicLibrary.Records do
       {:update, record}
     )
   end
-
-  def backfill_all_record_assets do
-    stream = Record |> Repo.stream()
-
-    Repo.transact(fn ->
-      count =
-        stream
-        |> Enum.map(fn record ->
-          Assets.store_image(%{
-            content: record.cover_data,
-            format: "image/jpeg"
-          })
-        end)
-        |> Enum.count(fn result -> match?({:ok, _asset}, result) end)
-
-      {:ok, count}
-    end)
-  end
 end
