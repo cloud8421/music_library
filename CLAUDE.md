@@ -669,4 +669,10 @@ And **never** do this:
 - `Phoenix.View` no longer is needed or included with Phoenix, don't use it
 
 <!-- phoenix:phoenix-end -->
+<!-- fluxon-start -->
+## fluxon usage
+_Fluxon UI Components_
+
+[fluxon usage rules](deps/fluxon/usage-rules.md)
+<!-- fluxon-end -->
 <!-- usage-rules-end -->
