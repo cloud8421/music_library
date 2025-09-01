@@ -2,20 +2,19 @@ defmodule MusicLibraryWeb.CoverController do
   use MusicLibraryWeb, :controller
 
   alias MusicLibrary.Assets
-  alias MusicLibrary.Records
   alias MusicLibrary.Records.Cover
 
   # 1 year in seconds
   @cache_duration 60 * 60 * 24 * 365
 
-  def show(conn, %{"record_id" => record_id, "size" => size}) do
-    case Records.get_cover(record_id) do
+  def show(conn, %{"hash" => hash, "size" => size}) do
+    case Assets.get(hash) do
       nil ->
         not_found(conn)
 
-      %{cover_data: cover_data} ->
+      %{content: content} ->
         # TODO: find a way to cache computation, or pre-compute thumb and store it
-        {:ok, thumb_data} = Cover.resize(cover_data, String.to_integer(size))
+        {:ok, thumb_data} = Cover.resize(content, String.to_integer(size))
         hash = Cover.hash(thumb_data)
 
         case get_req_header(conn, "if-none-match") do
@@ -25,16 +24,14 @@ defmodule MusicLibraryWeb.CoverController do
     end
   end
 
-  def show(conn, %{"record_id" => record_id}) do
-    case Records.get_cover(record_id) do
+  def show(conn, %{"hash" => hash}) do
+    case Assets.get(hash) do
       nil ->
         not_found(conn)
 
-      %{cover_hash: etag} ->
-        asset = Assets.get(etag)
-
+      asset ->
         case get_req_header(conn, "if-none-match") do
-          [^etag] -> extend_cache(conn)
+          [^hash] -> extend_cache(conn)
           _ -> respond_with_cache(conn, asset)
         end
     end

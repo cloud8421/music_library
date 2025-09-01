@@ -22,6 +22,10 @@ defmodule MusicLibrary.Assets do
   end
 
   def get(hash) do
+    Repo.get(Asset, hash)
+  end
+
+  def get!(hash) do
     Repo.get!(Asset, hash)
   end
 end
