@@ -462,7 +462,7 @@
 </div>
 
 <div class="mt-5 grid grid-cols-1 lg:grid-cols-11 gap-4">
-  <div class="lg:col-span-3 px-4 shadow-sm">
+  <div class="lg:col-span-3">
     <div class="flex justify-between items-center">
       <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
         {gettext("On This day")}
@@ -475,11 +475,13 @@
         <.date_picker size="xs" field={f[:current_date]} />
       </.form>
     </div>
-    <.records_on_this_day
-      current_date={@current_date}
-      records={@streams.records_on_this_day}
-      record_show_path={fn record -> ~p"/collection/#{record}" end}
-    />
+    <div class="rounded-md shadow-sm">
+      <.records_on_this_day
+        current_date={@current_date}
+        records={@streams.records_on_this_day}
+        record_show_path={fn record -> ~p"/collection/#{record}" end}
+      />
+    </div>
   </div>
   <div class="lg:col-span-4">
     <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">

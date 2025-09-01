@@ -118,7 +118,7 @@ defmodule MusicLibraryWeb.StatsComponents do
   def records_on_this_day(assigns) do
     ~H"""
     <ul
-      class="mt-5"
+      class="mt-5 p-4"
       role="list"
       id="records"
       phx-update="stream"

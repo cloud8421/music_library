@@ -101,7 +101,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
 
   defp top_albums_by_period(assigns) do
     ~H"""
-    <div class="mt-4">
+    <div class="mt-4 p-4 rounded-md shadow-sm">
       <div class="space-y-2">
         <div
           :for={album <- @albums}
