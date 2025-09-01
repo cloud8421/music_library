@@ -6,6 +6,7 @@ defmodule MusicLibrary.Records do
   import Ecto.Query, warn: false
 
   alias MusicLibrary.Artists
+  alias MusicLibrary.Assets
   alias MusicLibrary.Records.{ArtistRecord, Cover, Record, SearchParser}
   alias MusicLibrary.{BackgroundRepo, Repo, Worker}
 
@@ -374,5 +375,23 @@ defmodule MusicLibrary.Records do
       "records:#{record.id}",
       {:update, record}
     )
+  end
+
+  def backfill_all_record_assets do
+    stream = Record |> Repo.stream()
+
+    Repo.transact(fn ->
+      count =
+        stream
+        |> Enum.map(fn record ->
+          Assets.store_image(%{
+            content: record.cover_data,
+            format: "image/jpeg"
+          })
+        end)
+        |> Enum.count(fn result -> match?({:ok, _asset}, result) end)
+
+      {:ok, count}
+    end)
   end
 end
