@@ -2,6 +2,7 @@ defmodule MusicLibrary.AssetsTest do
   use MusicLibrary.DataCase
 
   alias MusicLibrary.Assets
+  alias MusicLibrary.Fixtures
 
   describe "store/1" do
     test "stores using the hash as key" do
@@ -29,6 +30,21 @@ defmodule MusicLibrary.AssetsTest do
       assert {:error, changeset} = Assets.store(params)
 
       assert [hash: {"has already been taken", _}] = changeset.errors
+    end
+  end
+
+  describe "store_image/1" do
+    test "computes properties automatically" do
+      params = %{
+        content: Fixtures.Records.marbles_cover_data(),
+        format: "image/jpeg"
+      }
+
+      assert {:ok, asset} = Assets.store_image(params)
+      assert asset.hash == "599407DDF69907D4A60FE13CCAA824D25CF08DC124FD6AA3E8E7ECD98C885FFE"
+      assert asset.properties == %{"width" => 400, "height" => 396}
+      assert asset.content == Fixtures.Records.marbles_cover_data()
+      assert asset.format == "image/jpeg"
     end
   end
 end
