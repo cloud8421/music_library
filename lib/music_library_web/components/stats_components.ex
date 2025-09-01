@@ -22,13 +22,13 @@ defmodule MusicLibraryWeb.StatsComponents do
       <dt>
         <.record_cover
           record={@record}
-          class="absolute w-20 rounded-md shadow-sm"
+          class="absolute aspect-square size-16 md:size-20 rounded-md shadow-sm"
         />
-        <p class="ml-24 truncate text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400">
+        <p class="ml-20 md:ml-24 truncate text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400">
           {@title}
         </p>
       </dt>
-      <dd class="ml-24 mt-2 flex items-baseline pb-4 sm:pb-6">
+      <dd class="ml-20 md:ml-24 mt-2 flex items-baseline">
         <p class="font-semibold">
           <span class="text-sm md:text-base lg:text-2xl block text-zinc-900 dark:text-zinc-300">
             {@record.title}
