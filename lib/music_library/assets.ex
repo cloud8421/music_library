@@ -9,7 +9,7 @@ defmodule MusicLibrary.Assets do
   def store(params) do
     %Asset{}
     |> Asset.changeset(params)
-    |> Repo.insert()
+    |> Repo.insert(on_conflict: :nothing, returning: true)
   end
 
   @doc """
@@ -18,7 +18,7 @@ defmodule MusicLibrary.Assets do
   def store_image(params) do
     %Asset{}
     |> Asset.image_changeset(params)
-    |> Repo.insert()
+    |> Repo.insert(on_conflict: :nothing, returning: true)
   end
 
   def get(hash) do

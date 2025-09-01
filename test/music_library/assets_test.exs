@@ -9,7 +9,7 @@ defmodule MusicLibrary.AssetsTest do
       params = %{
         content: "some content",
         format: "text/plain",
-        properties: %{language: "english"}
+        properties: %{"language" => "english"}
       }
 
       assert {:ok, asset} = Assets.store(params)
@@ -19,17 +19,15 @@ defmodule MusicLibrary.AssetsTest do
       assert asset.format == "text/plain"
     end
 
-    test "prevents duplicates" do
+    test "prevents duplicates returning the same asset" do
       params = %{
         content: "some content",
         format: "text/plain",
-        properties: %{language: "english"}
+        properties: %{"language" => "english"}
       }
 
-      assert {:ok, _asset} = Assets.store(params)
-      assert {:error, changeset} = Assets.store(params)
-
-      assert [hash: {"has already been taken", _}] = changeset.errors
+      assert {:ok, asset} = Assets.store(params)
+      assert {:ok, asset} == Assets.store(params)
     end
   end
 
