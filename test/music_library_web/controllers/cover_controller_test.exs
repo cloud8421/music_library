@@ -4,7 +4,6 @@ defmodule MusicLibraryWeb.CoverControllerTest do
   import MusicLibrary.Fixtures.Records
 
   alias MusicLibrary.Assets
-  alias MusicLibrary.Records.Cover
 
   defp create_asset(_config) do
     {:ok, asset} = Assets.store(%{content: marbles_cover_data(), format: "image/jpeg"})
@@ -65,7 +64,7 @@ defmodule MusicLibraryWeb.CoverControllerTest do
       conn = get(conn, ~p"/covers/#{asset.hash}?size=480")
 
       thumb = marbles_thumb_data()
-      hash = Cover.hash(thumb)
+      hash = Assets.Asset.hash(thumb)
 
       assert conn.status == 200
       assert get_resp_header(conn, "content-type") == ["image/jpeg; charset=utf-8"]

@@ -3,7 +3,7 @@ defmodule MusicLibrary.Artists.ArtistInfo do
 
   import Ecto.Changeset
 
-  alias MusicLibrary.Records.Cover
+  alias MusicLibrary.Assets.Asset
 
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "artist_infos" do
@@ -49,7 +49,7 @@ defmodule MusicLibrary.Artists.ArtistInfo do
   end
 
   def generate_image_hash(%__MODULE__{image_data: image_data} = artist_info) do
-    change(artist_info, image_data_hash: Cover.hash(image_data))
+    change(artist_info, image_data_hash: Asset.hash(image_data))
   end
 
   def generate_image_hash(changeset) do
@@ -58,7 +58,7 @@ defmodule MusicLibrary.Artists.ArtistInfo do
         changeset
 
       image_data ->
-        put_change(changeset, :image_data_hash, Cover.hash(image_data))
+        put_change(changeset, :image_data_hash, Asset.hash(image_data))
     end
   end
 

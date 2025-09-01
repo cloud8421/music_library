@@ -60,7 +60,7 @@ defmodule MusicLibrary.Assets.Asset do
     }
   end
 
-  defp hash(content) do
+  def hash(content) do
     :crypto.hash(:sha256, content) |> Base.encode16()
   end
 end

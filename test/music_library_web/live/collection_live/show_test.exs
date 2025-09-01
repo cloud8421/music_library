@@ -29,7 +29,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
   describe "Show record" do
     test "it includes all needed information", %{conn: conn} do
       record = record()
-      cover_url = ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+      cover_url = ~p"/covers/#{record.cover_hash}"
 
       release_response = Fixtures.Release.release(:marbles)
 

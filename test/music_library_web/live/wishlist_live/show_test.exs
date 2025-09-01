@@ -21,7 +21,7 @@ defmodule MusicLibraryWeb.WishlistLive.ShowTest do
   describe "Show record" do
     test "it includes all needed information", %{conn: conn} do
       record = record(purchased_at: nil)
-      cover_url = ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+      cover_url = ~p"/covers/#{record.cover_hash}"
 
       session =
         conn

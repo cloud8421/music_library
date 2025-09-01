@@ -2,7 +2,7 @@ defmodule MusicLibrary.Records.Batch do
   import Ecto.Query
 
   alias MusicLibrary.Records
-  alias MusicLibrary.Records.{Cover, Record}
+  alias MusicLibrary.Records.Record
   alias MusicLibrary.Repo
 
   require Logger
@@ -19,18 +19,6 @@ defmodule MusicLibrary.Records.Batch do
     run_on_all_records(fn record ->
       Records.refresh_musicbrainz_data_async(record)
     end)
-  end
-
-  def refresh_old_artwork do
-    run_on_all_records(&refresh_old_artwork/1)
-  end
-
-  def refresh_old_artwork(record) do
-    if Cover.correct_size?(record.cover_data) do
-      :ok
-    else
-      MusicLibrary.Records.refresh_cover(record)
-    end
   end
 
   defp run_on_all_records(fun) do

@@ -199,7 +199,7 @@ defmodule MusicLibraryWeb.RecordFormComponent do
 
         [cover_params] ->
           {:ok, asset} = Assets.store_image(cover_params)
-          Map.put(record_params, "cover_data", asset.content)
+          Map.put(record_params, "cover_hash", asset.hash)
       end
 
     case Records.update_record(socket.assigns.record, params) do

@@ -148,15 +148,6 @@ defmodule MusicLibrary.Records do
     Repo.all(q)
   end
 
-  def get_cover(id) do
-    q =
-      from r in Record,
-        where: r.id == ^id,
-        select: %{cover_data: r.cover_data, cover_hash: r.cover_hash}
-
-    Repo.one(q)
-  end
-
   def import_from_musicbrainz_release(musicbrainz_id, opts \\ []) do
     case MusicBrainz.get_release(musicbrainz_id) do
       {:ok, release} ->
@@ -175,10 +166,11 @@ defmodule MusicLibrary.Records do
 
     with {:ok, release_group} <- MusicBrainz.get_release_group(musicbrainz_id),
          {:ok, release_group_with_releases} <- merge_releases(musicbrainz_id, release_group),
-         {:ok, cover_data} <- get_cover_art_or_default(musicbrainz_id) do
+         {:ok, cover_data} <- get_cover_art_or_default(musicbrainz_id),
+         {:ok, asset} <- Assets.store_image(%{content: cover_data, format: "image/jpeg"}) do
       release_group_with_releases
       |> build_record_attrs(%{
-        "cover_data" => cover_data,
+        "cover_hash" => asset.hash,
         "format" => format,
         "purchased_at" => purchased_at,
         "selected_release_id" => selected_release_id
@@ -239,11 +231,11 @@ defmodule MusicLibrary.Records do
   end
 
   def refresh_cover(record) do
-    with {:ok, cover_data} <- MusicBrainz.get_cover_art({:url, record.cover_url}) do
-      {:ok, thumb_data} = Cover.resize(cover_data)
-
+    with {:ok, cover_data} <- MusicBrainz.get_cover_art({:url, record.cover_url}),
+         {:ok, thumb_data} <- Cover.resize(cover_data),
+         {:ok, asset} <- Assets.store_image(%{content: thumb_data, format: "image/jpeg"}) do
       record
-      |> Record.add_cover_data(thumb_data)
+      |> Record.set_cover_hash(asset.hash)
       |> Repo.update()
     end
   end
@@ -267,11 +259,12 @@ defmodule MusicLibrary.Records do
   end
 
   def resize_cover(record) do
-    {:ok, thumb_data} = Cover.resize(record.cover_data)
-
-    record
-    |> Record.add_cover_data(thumb_data)
-    |> Repo.update()
+    with {:ok, thumb_data} <- Cover.resize(record.cover_data),
+         {:ok, asset} <- Assets.store_image(%{content: thumb_data, format: "image/jpeg"}) do
+      record
+      |> Record.set_cover_hash(asset.hash)
+      |> Repo.update()
+    end
   end
 
   def refresh_musicbrainz_data(record) do

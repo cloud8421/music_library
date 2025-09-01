@@ -5,8 +5,9 @@ defmodule MusicLibrary.RecordsTest do
   import MusicBrainz.Fixtures.ReleaseGroup
   import MusicLibrary.Fixtures.Records
 
+  alias MusicLibrary.Assets
   alias MusicLibrary.Records
-  alias MusicLibrary.Records.SearchIndex
+  alias MusicLibrary.Records.{Cover, SearchIndex}
 
   defp create_records(_) do
     records = [
@@ -208,16 +209,6 @@ defmodule MusicLibrary.RecordsTest do
     end
   end
 
-  describe "get_cover/1" do
-    test "it returns the record cover by id" do
-      # while this test may seem redundant, it implicitely checks that ALL record fields are returned,
-      # as opposed to other code paths where we only return essential ones.
-      expected = record()
-
-      assert Map.take(expected, [:cover_hash, :cover_data]) == Records.get_cover(expected.id)
-    end
-  end
-
   describe "import_from_musicbrainz_release_group/2" do
     test "it saves a record with its cover art" do
       current_time = DateTime.utc_now()
@@ -342,10 +333,12 @@ defmodule MusicLibrary.RecordsTest do
 
       assert {:ok, updated_record} = Records.refresh_cover(record)
 
-      assert updated_record.cover_data !== record.cover_data
-
       assert updated_record.cover_hash ==
                "6E0D25D1FD1019D771D7EB3F777E2C7C1B06A73A92E56A584D674D86DD8AF441"
+
+      {:ok, expected_content} = Cover.resize(raven_cover_data())
+
+      assert Assets.get(updated_record.cover_hash).content == expected_content
     end
   end
 end

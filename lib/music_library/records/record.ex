@@ -5,8 +5,6 @@ defmodule MusicLibrary.Records.Record do
 
   alias MusicBrainz.{Release, ReleaseGroup}
   alias MusicLibrary.Artists.Artist
-  alias MusicLibrary.Colors.ColorFrequencyExtractor
-  alias MusicLibrary.Records.Cover
 
   @formats [:cd, :backup, :vinyl, :blu_ray, :dvd, :multi]
   @types [:album, :ep, :live, :compilation, :single, :other]
@@ -18,7 +16,6 @@ defmodule MusicLibrary.Records.Record do
     field :format, Ecto.Enum, values: @formats
     field :title, :string
     field :cover_url, :string
-    field :cover_data, :binary
     field :cover_hash, :string
     field :musicbrainz_id, Ecto.UUID
     field :musicbrainz_data, :map, default: %{}
@@ -128,38 +125,24 @@ defmodule MusicLibrary.Records.Record do
       :selected_release_id,
       :included_release_group_ids,
       :cover_url,
-      :cover_data,
+      :cover_hash,
       :dominant_colors,
       :purchased_at
     ])
     |> cast_embed(:artists)
     |> validate_required([:type, :title, :musicbrainz_id, :genres])
     |> unique_constraint(:musicbrainz_id, name: "records_musicbrainz_id_format_index")
-    |> generate_cover_hash()
-    |> maybe_generate_dominant_colors()
     |> update_release_ids()
     |> update_included_release_group_ids()
-  end
-
-  defp maybe_generate_dominant_colors(changeset) do
-    case get_change(changeset, :dominant_colors) do
-      nil ->
-        generate_dominant_colors(changeset)
-
-      _dominant_colors ->
-        changeset
-    end
   end
 
   def add_genres(record, genres) do
     change(record, genres: genres)
   end
 
-  def add_cover_data(record, cover_data) do
+  def set_cover_hash(record, cover_hash) do
     record
-    |> change(cover_data: cover_data)
-    |> generate_cover_hash()
-    |> generate_dominant_colors()
+    |> change(cover_hash: cover_hash)
   end
 
   def add_musicbrainz_data(record, musicbrainz_data) do
@@ -169,38 +152,6 @@ defmodule MusicLibrary.Records.Record do
     |> update_artists()
     |> update_release_ids()
     |> update_included_release_group_ids()
-  end
-
-  def generate_cover_hash(%__MODULE__{cover_data: cover_data} = record) do
-    change(record, cover_hash: Cover.hash(cover_data))
-  end
-
-  def generate_cover_hash(changeset) do
-    case get_change(changeset, :cover_data) do
-      nil ->
-        changeset
-
-      cover_data ->
-        put_change(changeset, :cover_hash, Cover.hash(cover_data))
-    end
-  end
-
-  def generate_dominant_colors(%__MODULE__{cover_data: cover_data} = record) do
-    change(record, dominant_colors: ColorFrequencyExtractor.extract_dominant_colors!(cover_data))
-  end
-
-  def generate_dominant_colors(changeset) do
-    case get_change(changeset, :cover_data) do
-      nil ->
-        changeset
-
-      cover_data ->
-        put_change(
-          changeset,
-          :dominant_colors,
-          ColorFrequencyExtractor.extract_dominant_colors!(cover_data)
-        )
-    end
   end
 
   def rotate_dominant_colors(%__MODULE__{dominant_colors: dominant_colors} = record) do

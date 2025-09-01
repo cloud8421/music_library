@@ -31,11 +31,11 @@ defmodule MusicLibraryWeb.ArtistController do
     |> send_resp(304, "")
   end
 
-  defp respond_with_cache(conn, cover_data, etag) do
+  defp respond_with_cache(conn, image_data, etag) do
     conn
     |> put_resp_content_type("image/jpeg", "utf-8")
     |> put_resp_header("cache-control", "public, max-age=#{@cache_duration}")
     |> put_resp_header("etag", etag)
-    |> send_resp(200, cover_data)
+    |> send_resp(200, image_data)
   end
 end

@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.CoverController do
   use MusicLibraryWeb, :controller
 
   alias MusicLibrary.Assets
+  alias MusicLibrary.Assets.Asset
   alias MusicLibrary.Records.Cover
 
   # 1 year in seconds
@@ -15,7 +16,7 @@ defmodule MusicLibraryWeb.CoverController do
       %{content: content} ->
         # TODO: find a way to cache computation, or pre-compute thumb and store it
         {:ok, thumb_data} = Cover.resize(content, String.to_integer(size))
-        hash = Cover.hash(thumb_data)
+        hash = Asset.hash(thumb_data)
 
         case get_req_header(conn, "if-none-match") do
           [^hash] -> extend_cache(conn)
@@ -57,11 +58,11 @@ defmodule MusicLibraryWeb.CoverController do
     |> send_resp(200, asset.content)
   end
 
-  defp respond_with_cache(conn, cover_data, etag) do
+  defp respond_with_cache(conn, data, etag) do
     conn
     |> put_resp_content_type("image/jpeg", "utf-8")
     |> put_resp_header("cache-control", "public, max-age=#{@cache_duration}")
     |> put_resp_header("etag", etag)
-    |> send_resp(200, cover_data)
+    |> send_resp(200, data)
   end
 end

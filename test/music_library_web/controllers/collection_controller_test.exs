@@ -31,10 +31,8 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
                "id" => record.id,
                "artists" => ["Steven Wilson"],
                "title" => record.title,
-               "cover_url" =>
-                 "http://localhost:4002/api/covers/#{record.id}?vsn=#{record.cover_hash}",
-               "thumb_url" =>
-                 "http://localhost:4002/api/covers/#{record.id}?vsn=#{record.cover_hash}&size=480"
+               "cover_url" => "http://localhost:4002/api/covers/#{record.cover_hash}",
+               "thumb_url" => "http://localhost:4002/api/covers/#{record.cover_hash}?size=480"
              }
     end
   end
@@ -59,10 +57,8 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
                "id" => record.id,
                "artists" => ["Steven Wilson"],
                "title" => record.title,
-               "cover_url" =>
-                 "http://localhost:4002/api/covers/#{record.id}?vsn=#{record.cover_hash}",
-               "thumb_url" =>
-                 "http://localhost:4002/api/covers/#{record.id}?vsn=#{record.cover_hash}&size=480"
+               "cover_url" => "http://localhost:4002/api/covers/#{record.cover_hash}",
+               "thumb_url" => "http://localhost:4002/api/covers/#{record.cover_hash}?size=480"
              }
     end
   end
@@ -91,10 +87,8 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
                    "id" => record.id,
                    "artists" => ["Steven Wilson"],
                    "title" => record.title,
-                   "cover_url" =>
-                     "http://localhost:4002/api/covers/#{record.id}?vsn=#{record.cover_hash}",
-                   "thumb_url" =>
-                     "http://localhost:4002/api/covers/#{record.id}?vsn=#{record.cover_hash}&size=480"
+                   "cover_url" => "http://localhost:4002/api/covers/#{record.cover_hash}",
+                   "thumb_url" => "http://localhost:4002/api/covers/#{record.cover_hash}?size=480"
                  }
                ]
              }

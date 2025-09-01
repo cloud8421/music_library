@@ -5,6 +5,8 @@ defmodule MusicLibrary.Fixtures.Records do
   """
 
   alias MusicBrainz.Fixtures.ReleaseGroup
+  alias MusicLibrary.Assets
+  alias MusicLibrary.Assets.Asset
   alias MusicLibrary.Records.Record
 
   @genres [
@@ -51,6 +53,10 @@ defmodule MusicLibrary.Fixtures.Records do
   @marbles_thumb_data File.read!(@marbles_thumb_data_path)
   @raven_cover_data File.read!(@raven_cover_data_path)
 
+  @marbles_cover_hash Asset.hash(@marbles_cover_data)
+  @marbles_thumb_hash Asset.hash(@marbles_thumb_data)
+  @raven_cover_hash Asset.hash(@raven_cover_data)
+
   def marbles_cover_fixture, do: @marbles_cover_data_path
   def marbles_thumb_fixture, do: @marbles_thumb_data_path
   def raven_cover_fixture, do: @raven_cover_data_path
@@ -59,17 +65,27 @@ defmodule MusicLibrary.Fixtures.Records do
   def marbles_thumb_data, do: @marbles_thumb_data
   def raven_cover_data, do: @raven_cover_data
 
+  def marbles_cover_hash, do: @marbles_cover_hash
+  def marbles_thumb_hash, do: @marbles_thumb_hash
+  def raven_cover_hash, do: @raven_cover_hash
+
   def record(attrs \\ %{}) do
     record_musicbrainz_id = Ecto.UUID.generate()
     artist_name = Enum.random(@artists)
     current_time = DateTime.utc_now()
+
+    {:ok, asset} =
+      Assets.store(%{
+        content: @marbles_cover_data,
+        format: "image/jpeg"
+      })
 
     {:ok, record} =
       attrs
       |> Enum.into(%{
         genres: Enum.take_random(@genres, :rand.uniform(3)),
         cover_url: "https://coverartarchive.org/release-group/#{record_musicbrainz_id}/front",
-        cover_data: @marbles_cover_data,
+        cover_hash: asset.hash,
         musicbrainz_id: record_musicbrainz_id,
         musicbrainz_data: ReleaseGroup.release_group(:marbles),
         title: Enum.random(@titles),

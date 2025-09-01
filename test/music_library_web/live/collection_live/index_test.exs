@@ -7,6 +7,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
 
   alias MusicBrainz.ReleaseGroupSearchResult
+  alias MusicLibrary.Assets
   alias MusicLibrary.Records.{Cover, Record}
 
   # make it a multiple of 4 for easier calculations
@@ -50,7 +51,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       session = visit(conn, ~p"/collection?order=alphabetical&page_size=#{page_size}")
 
       for record <- expected_present do
-        cover_url = ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+        cover_url = ~p"/covers/#{record.cover_hash}"
 
         session
         |> assert_has("#records-#{record.id}")
@@ -139,7 +140,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       session =
         visit(conn, ~p"/collection?#{qs}")
 
-      cover_url = ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+      cover_url = ~p"/covers/#{record.cover_hash}"
 
       session
       |> assert_has("#records-#{record.id}")
@@ -181,7 +182,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         visit(conn, ~p"/collection?#{qs}")
 
       for record <- present do
-        cover_url = ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+        cover_url = ~p"/covers/#{record.cover_hash}"
 
         session
         |> assert_has("#records-#{record.id}")
@@ -217,8 +218,8 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     end
 
     test "can change the record cover", %{conn: conn} do
-      record = record(cover_data: marbles_cover_data())
-      cover_url = ~p"/covers/#{record.id}?vsn=#{record.cover_hash}"
+      record = record()
+      cover_url = ~p"/covers/#{record.cover_hash}"
 
       session =
         conn
@@ -231,10 +232,10 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         |> click_button("Save")
         |> assert_has("p", text: "Record updated successfully")
 
-      updated_cover = MusicLibrary.Records.get_cover(record.id)
-      updated_cover_url = ~p"/covers/#{record.id}?vsn=#{updated_cover.cover_hash}"
+      updated_record = MusicLibrary.Records.get_record!(record.id)
+      updated_cover_url = ~p"/covers/#{updated_record.cover_hash}"
 
-      assert updated_cover.cover_hash !== record.cover_hash
+      assert updated_record.cover_hash !== record.cover_hash
       assert_has(session, "img[src='#{updated_cover_url}']")
     end
   end
@@ -317,7 +318,9 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
       {:ok, resized_cover_data} = Cover.resize(cover_data)
 
-      assert record.cover_data == resized_cover_data
+      assets = Assets.get(record.cover_hash)
+
+      assert assets.content == resized_cover_data
 
       assert record.inserted_at !== nil
       assert record.updated_at !== nil
@@ -420,9 +423,10 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     assert record.cover_hash ==
              "E7238C742E5B8711FC5BFF01A4A1F727D9E404A4D1420429A6B37ABFFC0B5960"
 
+    asset = Assets.get(record.cover_hash)
     {:ok, resized_cover_data} = Cover.resize(cover_data)
 
-    assert record.cover_data == resized_cover_data
+    assert asset.content == resized_cover_data
 
     assert record.inserted_at !== nil
     assert record.updated_at !== nil

@@ -14,7 +14,7 @@ defmodule MusicLibraryWeb.RecordComponents do
       class={@class}
       alt={@record.title}
       loading="lazy"
-      src={~p"/covers/#{@record.id}?vsn=#{@record.cover_hash}"}
+      src={~p"/covers/#{@record.cover_hash}"}
     />
     """
   end
