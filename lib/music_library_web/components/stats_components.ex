@@ -14,21 +14,21 @@ defmodule MusicLibraryWeb.StatsComponents do
     ~H"""
     <div
       class={[
-        "relative overflow-hidden rounded-md bg-white dark:bg-zinc-800 px-4 pb-5 pt-5 shadow-sm sm:px-6 sm:pt-6 cursor-pointer",
+        "flex items-center rounded-md bg-white dark:bg-zinc-800 px-4 pb-5 pt-5 shadow-sm sm:px-6 sm:pt-6 cursor-pointer",
         @class
       ]}
       phx-click={JS.navigate(~p"/collection/#{@record}")}
     >
-      <dt>
+      <div>
         <.record_cover
           record={@record}
-          class="absolute aspect-square size-16 md:size-20 rounded-md shadow-sm"
+          class="w-16 md:w-20 rounded-md shadow-sm"
         />
-        <p class="ml-20 md:ml-24 truncate text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400">
+      </div>
+      <div class="ml-4">
+        <p class="truncate text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400">
           {@title}
         </p>
-      </dt>
-      <dd class="ml-20 md:ml-24 mt-2 flex items-baseline">
         <p class="font-semibold">
           <span class="text-sm md:text-base lg:text-2xl block text-zinc-900 dark:text-zinc-300">
             {@record.title}
@@ -41,7 +41,7 @@ defmodule MusicLibraryWeb.StatsComponents do
             {artist.name}
           </.link>
         </p>
-      </dd>
+      </div>
     </div>
     """
   end
