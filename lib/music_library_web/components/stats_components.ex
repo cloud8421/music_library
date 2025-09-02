@@ -49,6 +49,7 @@ defmodule MusicLibraryWeb.StatsComponents do
   attr :title, :string, required: true
   attr :count, :integer, required: true
   attr :path, :string, required: false, default: nil
+  attr :tooltip, :any, required: false, default: nil
 
   def counter(assigns) do
     ~H"""
@@ -58,7 +59,7 @@ defmodule MusicLibraryWeb.StatsComponents do
           {@title}
         </p>
       </dt>
-      <dd class="mt-1">
+      <dd :if={!@tooltip} class="mt-1">
         <.link
           :if={@path}
           navigate={@path}
@@ -68,10 +69,27 @@ defmodule MusicLibraryWeb.StatsComponents do
         </.link>
         <p
           :if={!@path}
-          class="block text-2xl sm:text-3xl font-semibold text-center text-zinc-900 dark:text-zinc-300"
+          class="block cursor-default text-2xl sm:text-3xl font-semibold text-center text-zinc-900 dark:text-zinc-300"
         >
           {@count}
         </p>
+      </dd>
+      <dd :if={@tooltip} class="mt-1">
+        <.tooltip value={@tooltip}>
+          <.link
+            :if={@path}
+            navigate={@path}
+            class="block text-2xl sm:text-3xl font-semibold text-center text-zinc-900 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
+          >
+            {@count}
+          </.link>
+          <p
+            :if={!@path}
+            class="block cursor-default text-2xl sm:text-3xl font-semibold text-center text-zinc-900 dark:text-zinc-300"
+          >
+            {@count}
+          </p>
+        </.tooltip>
       </dd>
     </div>
     """
