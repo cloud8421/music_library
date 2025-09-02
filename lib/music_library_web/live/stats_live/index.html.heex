@@ -15,7 +15,7 @@
       path={~p"/collection"}
     />
     <.counter title={gettext("Total wishlist")} count={@wishlist_count} path={~p"/wishlist"} />
-    <.counter title={gettext("Total scrobbles")} count={@scrobble_count} />
+    <.counter title={gettext("Total scrobbles")} count={to_compact(@scrobble_count)} />
   </dl>
 </div>
 

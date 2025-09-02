@@ -1,6 +1,7 @@
 defmodule MusicLibraryWeb.StatsLive.Index do
   use MusicLibraryWeb, :live_view
 
+  import MusicLibrary.FormatNumber, only: [to_compact: 1]
   import MusicLibraryWeb.ChartComponents
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
   import MusicLibraryWeb.StatsComponents
