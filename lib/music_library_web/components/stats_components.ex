@@ -152,9 +152,9 @@ defmodule MusicLibraryWeb.StatsComponents do
             <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
               {record.title}
             </h2>
-            <.released_how_long_ago record={record} current_date={@current_date} />
-            <p class="sm:hidden mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-              {format_label(record.format)} · {type_label(record.type)}
+            <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+              <.released_how_long_ago record={record} current_date={@current_date} />
+              · {format_label(record.format)} · {type_label(record.type)}
               <span :if={record.purchased_at}>
                 ·
                 <span class="sr-only">
@@ -167,14 +167,6 @@ defmodule MusicLibraryWeb.StatsComponents do
                   data-slot="icon"
                 />
                 {Records.Record.format_as_date(record.purchased_at)}
-              </span>
-              <span :if={!record.purchased_at}>
-                ·
-                <span class="sr-only">
-                  {gettext("Wishlisted on")}
-                </span>
-                <.icon name="hero-star" class="-mt-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
-                {Records.Record.format_as_date(record.inserted_at)}
               </span>
             </p>
           </div>
@@ -196,8 +188,8 @@ defmodule MusicLibraryWeb.StatsComponents do
       )
 
     ~H"""
-    <p class={[
-      "mt-1 text-xs leading-5",
+    <span class={[
+      "text-xs leading-5",
       !special_year?(@years) && "text-zinc-500 dark:text-zinc-400",
       special_year?(@years) &&
         "font-semibold bg-gradient-to-r bg-clip-text text-transparent from-yellow-200 via-yellow-500 to-yellow-700 animate-shine"
@@ -207,7 +199,7 @@ defmodule MusicLibraryWeb.StatsComponents do
         "%{count} years ago",
         @years
       )}
-    </p>
+    </span>
     """
   end
 
