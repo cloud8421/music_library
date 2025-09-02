@@ -75,7 +75,20 @@ defmodule MusicLibraryWeb.StatsComponents do
         </p>
       </dd>
       <dd :if={@tooltip} class="mt-1">
-        <.tooltip value={@tooltip}>
+        <.tooltip>
+          <:content>
+            <script :type={Phoenix.LiveView.ColocatedHook} name=".FormatNumber">
+              export default {
+                mounted() {
+                  this.el.innerText = parseInt(this.el.innerText).toLocaleString();
+                },
+                updated() {
+                  this.el.innerText = parseInt(this.el.innerText).toLocaleString();
+                }
+              }
+            </script>
+            <span id={"#{@title}-counter-tooltip"} phx-hook=".FormatNumber">{@tooltip}</span>
+          </:content>
           <.link
             :if={@path}
             navigate={@path}
