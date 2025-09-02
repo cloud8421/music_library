@@ -33,6 +33,8 @@ if timezone = System.get_env("TIMEZONE") do
 end
 
 config :music_library, MusicLibrary.Repo,
+  auto_vacuum: :incremental,
+  temp_store: :memory,
   load_extensions: [
     MusicLibrary.Repo.extension_path("unicode")
   ]
