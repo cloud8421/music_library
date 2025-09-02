@@ -135,6 +135,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       artist_ids: artist_ids
     } = ScrobbleActivity.from_recent_tracks(recent_tracks, socket.assigns.timezone)
 
+    scrobble_count = ScrobbleActivity.scrobble_count()
+
     last_updated_uts =
       if track = List.first(localized_recent_tracks) do
         track.scrobbled_at_uts
@@ -142,6 +144,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
     socket
     |> assign(:last_updated_uts, last_updated_uts)
+    |> assign(:scrobble_count, scrobble_count)
     |> stream(:recent_tracks, localized_recent_tracks, reset: true)
     |> stream(:recent_albums, recent_albums, reset: true)
     |> assign(

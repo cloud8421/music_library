@@ -107,6 +107,10 @@ defmodule MusicLibrary.ScrobbleActivity do
   defp main_artist_name([]), do: nil
   defp main_artist_name([artist | _rest]), do: artist.name
 
+  def scrobble_count do
+    Repo.aggregate(Track, :count, :scrobbled_at_uts)
+  end
+
   def from_recent_tracks(recent_tracks, timezone) do
     all_artist_pairs = Artists.get_all_artist_pairs()
     recent_release_ids = recent_release_ids(recent_tracks)

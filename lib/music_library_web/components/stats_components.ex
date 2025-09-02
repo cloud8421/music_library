@@ -48,7 +48,7 @@ defmodule MusicLibraryWeb.StatsComponents do
 
   attr :title, :string, required: true
   attr :count, :integer, required: true
-  attr :path, :string, required: true
+  attr :path, :string, required: false, default: nil
 
   def counter(assigns) do
     ~H"""
@@ -60,11 +60,18 @@ defmodule MusicLibraryWeb.StatsComponents do
       </dt>
       <dd class="mt-1">
         <.link
+          :if={@path}
           navigate={@path}
           class="block text-2xl sm:text-3xl font-semibold text-center text-zinc-900 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
         >
           {@count}
         </.link>
+        <p
+          :if={!@path}
+          class="block text-2xl sm:text-3xl font-semibold text-center text-zinc-900 dark:text-zinc-300"
+        >
+          {@count}
+        </p>
       </dd>
     </div>
     """

@@ -3,11 +3,11 @@
     {gettext("Records")}
   </h1>
   <%!-- TODO: replace with OSS version --%>
-  <dl class="mt-5 grid grid-cols-2 gap-5 sm:grid-cols-5">
+  <dl class="mt-5 grid grid-cols-3 gap-5 sm:grid-cols-5">
     <.album_preview
       record={@latest_record}
       title={gettext("Latest purchase")}
-      class="col-span-2 sm:col-span-3"
+      class="col-span-3 sm:col-span-2"
     />
     <.counter
       title={gettext("Total collection")}
@@ -15,6 +15,7 @@
       path={~p"/collection"}
     />
     <.counter title={gettext("Total wishlist")} count={@wishlist_count} path={~p"/wishlist"} />
+    <.counter title={gettext("Total scrobbles")} count={@scrobble_count} />
   </dl>
 </div>
 
