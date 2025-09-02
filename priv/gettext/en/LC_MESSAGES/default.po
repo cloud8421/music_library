@@ -24,6 +24,7 @@ msgstr ""
 #: lib/music_library_web/live/artist_live/show.html.heex
 #: lib/music_library_web/live/collection_live/index.ex
 #: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Collection"
 msgstr ""
@@ -195,16 +196,6 @@ msgstr ""
 msgid "The application has been updated, please reload."
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Total collection"
-msgstr ""
-
-#: lib/music_library_web/live/stats_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Total wishlist"
-msgstr ""
-
 #: lib/music_library_web/components/record_form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Type"
@@ -228,6 +219,7 @@ msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex
 #: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/stats_live/index.html.heex
 #: lib/music_library_web/live/wishlist_live/index.ex
 #: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
@@ -1310,6 +1302,6 @@ msgid "Search (Cmd/Ctrl+K)"
 msgstr ""
 
 #: lib/music_library_web/live/stats_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Total scrobbles"
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Scrobbles"
 msgstr ""

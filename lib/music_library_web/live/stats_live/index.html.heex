@@ -10,13 +10,13 @@
       class="col-span-3 sm:col-span-2"
     />
     <.counter
-      title={gettext("Total collection")}
+      title={gettext("Collection")}
       count={@collection_count}
       path={~p"/collection"}
     />
-    <.counter title={gettext("Total wishlist")} count={@wishlist_count} path={~p"/wishlist"} />
+    <.counter title={gettext("Wishlist")} count={@wishlist_count} path={~p"/wishlist"} />
     <.counter
-      title={gettext("Total scrobbles")}
+      title={gettext("Scrobbles")}
       count={to_compact(@scrobble_count)}
       tooltip={@scrobble_count}
     />
