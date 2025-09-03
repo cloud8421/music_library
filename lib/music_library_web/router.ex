@@ -69,6 +69,9 @@ defmodule MusicLibraryWeb.Router do
         live "/online-store-templates", OnlineStoreTemplateLive.Index, :index
         live "/online-store-templates/new", OnlineStoreTemplateLive.Index, :new
         live "/online-store-templates/:id/edit", OnlineStoreTemplateLive.Index, :edit
+
+        live "/scrobbled-tracks", ScrobbledTracksLive.Index, :index
+        live "/scrobbled-tracks/:scrobbled_at_uts/edit", ScrobbledTracksLive.Index, :edit
       end
     end
   end

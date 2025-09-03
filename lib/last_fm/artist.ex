@@ -50,6 +50,7 @@ defmodule LastFm.Artist do
       :on_tour,
       :base_url
     ])
+    |> validate_required([:name])
   end
 
   def events_url(artist) do

@@ -29,8 +29,8 @@ defmodule LastFm.Track do
     field :cover_url, :string
     field :scrobbled_at_label, :string
 
-    embeds_one :artist, Artist
-    embeds_one :album, Album
+    embeds_one :artist, Artist, on_replace: :update
+    embeds_one :album, Album, on_replace: :update
 
     field :last_fm_data, :map, default: %{}
   end
@@ -89,6 +89,6 @@ defmodule LastFm.Track do
     ])
     |> cast_embed(:artist)
     |> cast_embed(:album)
-    |> validate_required([:scrobbled_at_uts])
+    |> validate_required([:scrobbled_at_uts, :title])
   end
 end

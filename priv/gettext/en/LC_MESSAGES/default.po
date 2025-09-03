@@ -173,6 +173,7 @@ msgstr ""
 #: lib/music_library_web/live/artist_live/form_component.ex
 #: lib/music_library_web/live/online_store_template_live/form_component.ex
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr ""
@@ -438,6 +439,7 @@ msgstr ""
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
 #: lib/music_library_web/live/scrobble_rules_live/index.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Album"
 msgstr ""
@@ -962,6 +964,7 @@ msgid "Add a description to help identify this rule"
 msgstr ""
 
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Album Title"
 msgstr ""
@@ -973,11 +976,13 @@ msgstr ""
 
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
 #: lib/music_library_web/live/scrobble_rules_live/index.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Artist"
 msgstr ""
 
 #: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Artist Name"
 msgstr ""
@@ -1160,6 +1165,7 @@ msgid "Apply All"
 msgstr ""
 
 #: lib/music_library_web/components/record_form_component.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Title"
 msgstr ""
@@ -1314,15 +1320,102 @@ msgstr ""
 msgid "No records released on this day."
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
-#: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
 #, elixir-autogen, elixir-format
-msgid "Open Notes"
+msgid "1 track"
+msgid_plural "%{count} tracks"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Album name"
 msgstr ""
 
-#: lib/music_library_web/components/notes_component.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Are you sure you want to delete this scrobbled track?"
+msgstr ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
 #, elixir-autogen, elixir-format, fuzzy
-msgid "Read"
+msgid "Artist name"
+msgstr ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Cover Image URL (optional)"
+msgstr ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Delete track"
+msgstr ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Edit Scrobbled Track"
+msgstr ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Edit Track"
+msgstr ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Edit track"
+msgstr ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Format: DD/MM/YYYY HH:MM:SS"
+msgstr ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "No scrobbled tracks found"
+msgstr ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Scrobbled"
+msgstr ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Scrobbled Date/Time"
+msgstr ""
+
+#: lib/music_library_web/components/layouts/app.html.heex
+#: lib/music_library_web/live/scrobbled_tracks_live/index.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Scrobbled Tracks"
+msgstr ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Track Title"
+msgstr ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#, elixir-autogen, elixir-format
+msgid "Track name"
+msgstr ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Track updated successfully"
+msgstr ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Try adjusting your search or clearing the filter"
+msgstr ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Update Track"
 msgstr ""
 
 #: lib/music_library_web/components/notes_component.ex
@@ -1333,4 +1426,15 @@ msgstr ""
 #: lib/music_library_web/components/notes_component.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Note updated successfully"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Open Notes"
+msgstr ""
+
+#: lib/music_library_web/components/notes_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Read"
 msgstr ""

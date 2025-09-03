@@ -15,5 +15,6 @@ defmodule LastFm.Album do
   def changeset(album, attrs) do
     album
     |> cast(attrs, [:musicbrainz_id, :title])
+    |> validate_required([:title])
   end
 end

@@ -192,6 +192,13 @@ run = 'iex -S mix phx.server'
 description = 'Preview the README file via a GH flavoured markdown rendered'
 run = 'gh gfm-preview README.md'
 
+[tasks."dev:fix-translations-conflict"]
+run = [
+  'git co --theirs  priv/gettext/default.pot',
+  'git co --theirs  priv/gettext/en/LC_MESSAGES/default.po',
+  'mix gettext.extract --merge',
+]
+
 # DOCKER
 
 [tasks."docker:build"]

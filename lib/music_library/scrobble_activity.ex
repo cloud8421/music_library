@@ -376,4 +376,100 @@ defmodule MusicLibrary.ScrobbleActivity do
       :last_365_days -> get_top_artists_by_days(365, opts)
     end
   end
+
+  @doc """
+  Lists scrobbled tracks with pagination and search support.
+  """
+  def list_tracks(params \\ %{}) do
+    query = Map.get(params, :query, "")
+    page = Map.get(params, :page, 1)
+    page_size = Map.get(params, :page_size, 200)
+    order = Map.get(params, :order, :scrobbled_at)
+
+    base_query = from(t in Track)
+
+    search_query =
+      if query == "" do
+        base_query
+      else
+        query_term = "%#{String.downcase(query)}%"
+
+        from t in base_query,
+          where:
+            like(fragment("lower(?)", t.title), ^query_term) or
+              like(fragment("lower(json_extract(artist, '$.name'))"), ^query_term) or
+              like(fragment("lower(json_extract(album, '$.title'))"), ^query_term)
+      end
+
+    ordered_query =
+      case order do
+        :scrobbled_at ->
+          from t in search_query, order_by: [desc: t.scrobbled_at_uts]
+
+        :title ->
+          from t in search_query, order_by: [asc: t.title]
+
+        :artist ->
+          from t in search_query, order_by: [asc: fragment("json_extract(artist, '$.name')")]
+
+        :album ->
+          from t in search_query, order_by: [asc: fragment("json_extract(album, '$.title')")]
+      end
+
+    offset = (page - 1) * page_size
+
+    from(t in ordered_query, limit: ^page_size, offset: ^offset)
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets a single track by scrobbled_at_uts.
+  """
+  def get_track!(scrobbled_at_uts) when is_integer(scrobbled_at_uts) do
+    Repo.get!(Track, scrobbled_at_uts)
+  end
+
+  def get_track!(scrobbled_at_uts) when is_binary(scrobbled_at_uts) do
+    case Integer.parse(scrobbled_at_uts) do
+      {id, ""} -> get_track!(id)
+      _ -> raise Ecto.NoResultsError, queryable: Track
+    end
+  end
+
+  @doc """
+  Updates a track with the given attributes.
+  """
+  def update_track(%Track{} = track, attrs) do
+    changeset = Track.changeset(track, attrs)
+    Repo.update(changeset)
+  end
+
+  @doc """
+  Deletes a track.
+  """
+  def delete_track(%Track{} = track) do
+    Repo.delete(track)
+  end
+
+  @doc """
+  Counts tracks matching the search query.
+  """
+  def search_tracks_count(query \\ "") do
+    base_query = from(t in Track)
+
+    search_query =
+      if query == "" do
+        base_query
+      else
+        query_term = "%#{String.downcase(query)}%"
+
+        from t in base_query,
+          where:
+            like(fragment("lower(?)", t.title), ^query_term) or
+              like(fragment("lower(json_extract(artist, '$.name'))"), ^query_term) or
+              like(fragment("lower(json_extract(album, '$.title'))"), ^query_term)
+      end
+
+    Repo.aggregate(search_query, :count, :scrobbled_at_uts)
+  end
 end

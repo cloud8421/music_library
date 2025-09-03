@@ -48,6 +48,15 @@
               <.icon name="hero-chevron-down" class="h-4 w-4" />
             </button>
           </:toggle>
+          <.dropdown_link href={~p"/scrobbled-tracks"}>
+            <.icon
+              name="hero-musical-note"
+              class="h-4 w-4 mr-2"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+            {gettext("Scrobbled Tracks")}
+          </.dropdown_link>
           <.dropdown_link href={~p"/scrobble-rules"}>
             <.icon
               name="hero-adjustments-horizontal"

@@ -21,7 +21,8 @@
       "Bash(mix assets.deploy:*)",
       "mcp__tidewave__get_logs",
       "mcp__tidewave__project_eval",
-      "Bash(mix format:*)"
+      "Bash(mix format:*)",
+      "Bash(mise run dev:static-checks:*)"
     ]
   },
   "enableAllProjectMcpServers": false
