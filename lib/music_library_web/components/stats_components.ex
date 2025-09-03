@@ -53,42 +53,14 @@ defmodule MusicLibraryWeb.StatsComponents do
 
   def counter(assigns) do
     ~H"""
-    <div class="overflow-hidden rounded-md bg-white dark:bg-zinc-800 px-4 pb-3 pt-5 shadow-sm sm:px-6 sm:pt-6">
-      <dt class="sm:mt-3">
-        <p class="truncate text-sm font-medium text-center text-zinc-500 dark:text-zinc-400">
-          {@title}
-        </p>
-      </dt>
-      <dd :if={!@tooltip} class="mt-1">
-        <.link
-          :if={@path}
-          navigate={@path}
-          class="block text-2xl sm:text-3xl font-semibold text-center text-zinc-900 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
-        >
-          {@count}
-        </.link>
-        <p
-          :if={!@path}
-          class="block cursor-default text-2xl sm:text-3xl font-semibold text-center text-zinc-900 dark:text-zinc-300"
-        >
-          {@count}
-        </p>
-      </dd>
-      <dd :if={@tooltip} class="mt-1">
-        <.tooltip>
-          <:content>
-            <script :type={Phoenix.LiveView.ColocatedHook} name=".FormatNumber">
-              export default {
-                mounted() {
-                  this.el.innerText = parseInt(this.el.innerText).toLocaleString();
-                },
-                updated() {
-                  this.el.innerText = parseInt(this.el.innerText).toLocaleString();
-                }
-              }
-            </script>
-            <span id={"#{@title}-counter-tooltip"} phx-hook=".FormatNumber">{@tooltip}</span>
-          </:content>
+    <div class="overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow-sm flex justify-center items-center">
+      <div class="p-4 md:p-0">
+        <dt>
+          <p class="truncate text-sm font-medium text-center text-zinc-500 dark:text-zinc-400">
+            {@title}
+          </p>
+        </dt>
+        <dd :if={!@tooltip} class="mt-1">
           <.link
             :if={@path}
             navigate={@path}
@@ -102,8 +74,38 @@ defmodule MusicLibraryWeb.StatsComponents do
           >
             {@count}
           </p>
-        </.tooltip>
-      </dd>
+        </dd>
+        <dd :if={@tooltip} class="mt-1">
+          <.tooltip>
+            <:content>
+              <script :type={Phoenix.LiveView.ColocatedHook} name=".FormatNumber">
+                export default {
+                  mounted() {
+                    this.el.innerText = parseInt(this.el.innerText).toLocaleString();
+                  },
+                  updated() {
+                    this.el.innerText = parseInt(this.el.innerText).toLocaleString();
+                  }
+                }
+              </script>
+              <span id={"#{@title}-counter-tooltip"} phx-hook=".FormatNumber">{@tooltip}</span>
+            </:content>
+            <.link
+              :if={@path}
+              navigate={@path}
+              class="block text-2xl sm:text-3xl font-semibold text-center text-zinc-900 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
+            >
+              {@count}
+            </.link>
+            <p
+              :if={!@path}
+              class="block cursor-default text-2xl sm:text-3xl font-semibold text-center text-zinc-900 dark:text-zinc-300"
+            >
+              {@count}
+            </p>
+          </.tooltip>
+        </dd>
+      </div>
     </div>
     """
   end
