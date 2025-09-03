@@ -262,7 +262,7 @@
       <ul
         id="scrobble-activity-tracks"
         role="list"
-        class="mt-5 rounded-md px-4 py-5 shadow-sm"
+        class="mt-5 p-6 bg-white dark:bg-zinc-800 rounded-md shadow-sm"
         phx-update="stream"
       >
         <li :for={{id, track} <- @streams.recent_tracks} id={id} class="group">
