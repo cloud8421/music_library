@@ -12,25 +12,21 @@ defmodule Mix.Tasks.Sqlean.Release do
   end
 
   def fetch_current_version do
+    version_file()
+    |> File.read!()
+    |> String.trim()
+  end
+
+  def version_file do
     Application.app_dir(:music_library, [
       "priv",
       "sqlite_extensions",
       "VERSION"
     ])
-    |> File.read!()
-    |> String.trim()
   end
 
-  def update_config_file!(config_file, current_version, latest_version) do
-    config_contents = File.read!(config_file)
-
-    new_config_contents =
-      String.replace(
-        config_contents,
-        ~s(version: "#{current_version}"),
-        "version: \"#{latest_version}\""
-      )
-
-    File.write!(config_file, new_config_contents)
+  def update_version_file!(version) do
+    version_file()
+    |> File.write!(version)
   end
 end
