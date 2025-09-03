@@ -162,6 +162,12 @@ defmodule MusicLibraryWeb.StatsComponents do
       phx-update="stream"
     >
       <li
+        id="no-records-on-this-day"
+        class="hidden py-8 only:flex items-center justify-center text-sm text-zinc-500 dark:text-zinc-400"
+      >
+        {gettext("No records released on this day.")}
+      </li>
+      <li
         :for={{id, record} <- @records}
         phx-click={JS.navigate(@record_show_path.(record))}
         class="flex justify-between gap-x-6 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 px-2 -mx-2 md:px-4 md:-mx-4 cursor-pointer"

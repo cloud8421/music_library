@@ -1305,3 +1305,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Scrobbles"
 msgstr ""
+
+#: lib/music_library_web/components/stats_components.ex
+#, elixir-autogen, elixir-format
+msgid "No records released on this day."
+msgstr ""
