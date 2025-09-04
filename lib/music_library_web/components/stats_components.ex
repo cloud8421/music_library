@@ -249,8 +249,7 @@ defmodule MusicLibraryWeb.StatsComponents do
     """
   end
 
-  defp special_year?(year) when year in [5, 10, 25, 50, 75], do: true
-  defp special_year?(_year), do: false
+  defp special_year?(year), do: rem(year, 10) == 0
 
   def tracked_record?(tracked_releases, release_id) do
     Enum.find_value(tracked_releases, fn tracked_release ->
