@@ -26,6 +26,7 @@ defmodule MusicLibrary.Records.Record do
     field :release_ids, {:array, :string}, default: []
     field :included_release_group_ids, {:array, :string}, default: []
     field :dominant_colors, {:array, :string}, default: []
+    field :notes, :string
 
     embeds_many :artists, Artist, on_replace: :delete
 
@@ -127,7 +128,8 @@ defmodule MusicLibrary.Records.Record do
       :cover_url,
       :cover_hash,
       :dominant_colors,
-      :purchased_at
+      :purchased_at,
+      :notes
     ])
     |> cast_embed(:artists)
     |> validate_required([:type, :title, :musicbrainz_id, :genres])
