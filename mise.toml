@@ -63,6 +63,18 @@ description = 'Show outdated mix dependencies'
 run = ['mix hex.outdated --all']
 hide = true
 
+# SQLEAN EXTENSIONS
+
+[tasks.sqlean-update]
+description = 'Update the sqlite3 extensions configured in the project'
+run = ['mix sqlean.update_version']
+hide = true
+
+[tasks.sqlean-outdated]
+description = 'Checks the sqlite extensions version is up to date'
+run = ['mix sqlean.check_version']
+hide = true
+
 # TOOLING
 
 [tasks.gh-markdown-preview-extension-install]
@@ -84,6 +96,7 @@ depends = [
   'npm-outdated',
   'tailwind-outdated',
   'esbuild-outdated',
+  'sqlean-outdated',
   'mix-outdated',
 ]
 description = 'Show outdated dependencies'
@@ -93,6 +106,7 @@ depends = [
   'npm-update',
   'tailwind-update',
   'esbuild-update',
+  'sqlean-update',
   'mix-update',
   'gh-markdown-preview-extension-update',
 ]
