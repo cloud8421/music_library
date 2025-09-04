@@ -229,6 +229,20 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       session =
         session
         |> upload("Cover art", raven_cover_fixture())
+        # Shows a range warning
+        #
+        # warning: Range.new/2 and first..last default to a step of -1 when last < first. Use Range.new(first, last, -1) or first..last//-1, or pass 1 if that was your intention
+        # (phoenix_live_view 1.1.10) lib/phoenix_live_view/test/diff.ex:80: Phoenix.LiveViewTest.Diff.deep_merge_diff/2
+        # (stdlib 7.0.2) maps.erl:405: :maps.merge_with_1/3
+        # (phoenix_live_view 1.1.10) lib/phoenix_live_view/test/diff.ex:62: Phoenix.LiveViewTest.Diff.find_component/5
+        # (phoenix_live_view 1.1.10) lib/phoenix_live_view/test/diff.ex:30: anonymous fn/4 in Phoenix.LiveViewTest.Diff.merge_diff/2
+        # (stdlib 7.0.2) maps.erl:894: :maps.fold_1/4
+        # (phoenix_live_view 1.1.10) lib/phoenix_live_view/test/diff.ex:29: Phoenix.LiveViewTest.Diff.merge_diff/2
+        # (phoenix_live_view 1.1.10) lib/phoenix_live_view/test/client_proxy.ex:864: Phoenix.LiveViewTest.ClientProxy.merge_rendered/3
+        # (phoenix_live_view 1.1.10) lib/phoenix_live_view/test/client_proxy.ex:488: Phoenix.LiveViewTest.ClientProxy.handle_info/2
+        # (stdlib 7.0.2) gen_server.erl:2434: :gen_server.try_handle_info/3
+        # (stdlib 7.0.2) gen_server.erl:2420: :gen_server.handle_msg/3
+        # (stdlib 7.0.2) proc_lib.erl:333: :proc_lib.init_p_do_apply/3
         |> click_button("Save")
         |> assert_has("p", text: "Record updated successfully")
 
