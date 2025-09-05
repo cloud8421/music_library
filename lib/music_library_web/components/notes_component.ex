@@ -14,6 +14,7 @@ defmodule MusicLibraryWeb.NotesComponent do
     {:ok,
      socket
      |> assign(assigns)
+     |> assign(:mode, "read")
      |> assign(:form, to_form(changeset))}
   end
 
@@ -27,16 +28,20 @@ defmodule MusicLibraryWeb.NotesComponent do
         class="min-w-xs max-w-lg sm:min-w-lg lg:min-w-2xl py-16"
       >
         <.tabs>
-          <.tabs_list variant="segmented">
-            <:tab name="read">{gettext("Read")}</:tab>
-            <:tab name="edit">{gettext("Edit")}</:tab>
+          <.tabs_list variant="segmented" active_tab={@mode}>
+            <:tab name="read" phx-click="set_mode" phx-value-mode="read" phx-target={@myself}>
+              {gettext("Read")}
+            </:tab>
+            <:tab name="edit" phx-click="set_mode" phx-value-mode="edit" phx-target={@myself}>
+              {gettext("Edit")}
+            </:tab>
           </.tabs_list>
-          <.tabs_panel active name="read">
+          <.tabs_panel active={@mode == "read"} name="read">
             <div class="w-full mt-10 text-sm/8">
               {Earmark.as_html!(@form[:notes].value || "", %Earmark.Options{gfm: true}) |> raw()}
             </div>
           </.tabs_panel>
-          <.tabs_panel name="edit">
+          <.tabs_panel active={@mode == "edit"} name="edit">
             <.simple_form
               for={@form}
               id="record-notes-form"
@@ -86,5 +91,9 @@ defmodule MusicLibraryWeb.NotesComponent do
 
   def handle_event("recover_form", params, socket) do
     handle_event("validate", params, socket)
+  end
+
+  def handle_event("set_mode", %{"mode" => mode}, socket) when mode in ["read", "edit"] do
+    {:noreply, assign(socket, :mode, mode)}
   end
 end
