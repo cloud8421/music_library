@@ -92,6 +92,9 @@ defmodule MusicLibrary.MixProject do
       # Image manipulation
       {:vix, "~> 0.35.0"},
 
+      # Notes
+      {:earmark, "~> 1.4"},
+
       # Time-zone support - requires mint and castore
       {:time_zone_info, "~> 0.7.8"},
 

@@ -24,29 +24,43 @@ defmodule MusicLibraryWeb.NotesComponent do
       <.sheet
         id={@sheet_id}
         placement="right"
-        class="min-w-xs sm:min-w-lg lg:min-w-2xl"
+        class="min-w-xs max-w-lg sm:min-w-lg lg:min-w-2xl py-16"
       >
-        <.simple_form
-          for={@form}
-          id="record-notes-form"
-          phx-target={@myself}
-          phx-change="validate"
-          phx-auto-recover="recover_form"
-          phx-submit="save"
-        >
-          <.textarea class="w-full h-96 font-mono" field={@form[:notes]} label={gettext("Notes")} />
-          <:actions>
-            <div class="w-full md:flex md:justify-center">
-              <.button
-                variant="solid"
-                class="w-full md:w-auto"
-                phx-disable-with={gettext("Saving...")}
-              >
-                {gettext("Save")}
-              </.button>
+        <.tabs>
+          <.tabs_list variant="segmented">
+            <:tab name="read">{gettext("Read")}</:tab>
+            <:tab name="edit">{gettext("Edit")}</:tab>
+          </.tabs_list>
+          <.tabs_panel active name="read">
+            <div class="w-full mt-10 text-sm/8">
+              {Earmark.as_html!(@form[:notes].value || "", %Earmark.Options{gfm: true}) |> raw()}
             </div>
-          </:actions>
-        </.simple_form>
+          </.tabs_panel>
+          <.tabs_panel name="edit">
+            <.simple_form
+              for={@form}
+              id="record-notes-form"
+              phx-target={@myself}
+              phx-change="validate"
+              phx-auto-recover="recover_form"
+              phx-submit="save"
+            >
+              <.textarea class="w-full h-96 font-mono text-sm/8" field={@form[:notes]} />
+
+              <:actions>
+                <div class="w-full md:flex md:justify-center">
+                  <.button
+                    variant="solid"
+                    class="w-full md:w-auto"
+                    phx-disable-with={gettext("Saving...")}
+                  >
+                    {gettext("Save")}
+                  </.button>
+                </div>
+              </:actions>
+            </.simple_form>
+          </.tabs_panel>
+        </.tabs>
       </.sheet>
     </div>
     """
