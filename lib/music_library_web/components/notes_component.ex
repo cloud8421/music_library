@@ -24,7 +24,7 @@ defmodule MusicLibraryWeb.NotesComponent do
       <.sheet
         id={@sheet_id}
         placement="right"
-        class="min-w-xs sm:min-w-sm"
+        class="min-w-xs sm:min-w-lg lg:min-w-2xl"
       >
         <.simple_form
           for={@form}
@@ -34,7 +34,7 @@ defmodule MusicLibraryWeb.NotesComponent do
           phx-auto-recover="recover_form"
           phx-submit="save"
         >
-          <.textarea class="w-full h-96" field={@form[:notes]} label={gettext("Notes")} />
+          <.textarea class="w-full h-96 font-mono" field={@form[:notes]} label={gettext("Notes")} />
           <:actions>
             <div class="w-full md:flex md:justify-center">
               <.button
