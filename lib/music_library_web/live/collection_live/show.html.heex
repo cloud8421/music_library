@@ -26,6 +26,18 @@
       </div>
       <div class="min-w-12 text-right">
         <button
+          class="text-xs md:text-sm text-zinc-700 dark:text-zinc-300"
+          phx-click={MusicLibraryWeb.NotesComponent.open("record-notes-sheet")}
+        >
+          <span class="sr-only">{gettext("Open Notes")}</span>
+          <.icon
+            name="hero-pencil-square"
+            class="-mt-1 h-5 w-5"
+            aria-hidden="true"
+            data-slot="icon"
+          />
+        </button>
+        <button
           :if={@record.selected_release_id}
           class="text-xs md:text-sm text-zinc-700 dark:text-zinc-300"
           phx-click={MusicLibraryWeb.ReleaseComponent.open("release-with-tracks-sheet")}
@@ -317,6 +329,13 @@
   id="release-with-tracks"
   sheet_id="release-with-tracks-sheet"
   module={MusicLibraryWeb.ReleaseComponent}
+  record={@record}
+/>
+
+<.live_component
+  id="record-notes"
+  sheet_id="record-notes-sheet"
+  module={MusicLibraryWeb.NotesComponent}
   record={@record}
 />
 

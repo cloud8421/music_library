@@ -155,17 +155,20 @@ msgstr ""
 msgid "Record imported successfully"
 msgstr ""
 
+#: lib/music_library_web/components/notes_component.ex
 #: lib/music_library_web/components/record_form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Record updated successfully"
 msgstr ""
 
+#: lib/music_library_web/components/notes_component.ex
 #: lib/music_library_web/components/record_form_component.ex
 #: lib/music_library_web/live/artist_live/form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr ""
 
+#: lib/music_library_web/components/notes_component.ex
 #: lib/music_library_web/components/record_form_component.ex
 #: lib/music_library_web/live/artist_live/form_component.ex
 #: lib/music_library_web/live/online_store_template_live/form_component.ex
@@ -1309,4 +1312,14 @@ msgstr ""
 #: lib/music_library_web/components/stats_components.ex
 #, elixir-autogen, elixir-format
 msgid "No records released on this day."
+msgstr ""
+
+#: lib/music_library_web/components/notes_component.ex
+#, elixir-autogen, elixir-format
+msgid "Notes"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Open Notes"
 msgstr ""
