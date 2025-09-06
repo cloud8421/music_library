@@ -16,6 +16,7 @@ defmodule MusicLibrary.Repo do
         {:darwin, "x86_64"} -> "darwin-amd64"
         {:darwin, "aarch64"} -> "darwin-aarch64"
         {:linux, "x86_64"} -> "linux-amd64"
+        {:linux, "aarch64"} -> "linux-arm64"
         _other -> raise "Unsupported OS or platform"
       end
 
