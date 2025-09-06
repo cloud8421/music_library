@@ -14,7 +14,7 @@ defmodule MusicLibraryWeb.NotesComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:mode, "read")
+     |> assign(:mode, initial_mode(assigns.record))
      |> assign(:form, to_form(changeset))}
   end
 
@@ -96,4 +96,7 @@ defmodule MusicLibraryWeb.NotesComponent do
   def handle_event("set_mode", %{"mode" => mode}, socket) when mode in ["read", "edit"] do
     {:noreply, assign(socket, :mode, mode)}
   end
+
+  defp initial_mode(record) when record.notes in [nil, ""], do: "edit"
+  defp initial_mode(_record), do: "read"
 end
