@@ -38,7 +38,7 @@ defmodule MusicLibraryWeb.NotesComponent do
           </.tabs_list>
           <.tabs_panel active={@mode == "read"} name="read">
             <div class="w-full mt-10 text-sm/8">
-              {Earmark.as_html!(@form[:notes].value || "", %Earmark.Options{gfm: true}) |> raw()}
+              {render_notes(@form[:notes].value)}
             </div>
           </.tabs_panel>
           <.tabs_panel active={@mode == "edit"} name="edit">
@@ -99,4 +99,18 @@ defmodule MusicLibraryWeb.NotesComponent do
 
   defp initial_mode(record) when record.notes in [nil, ""], do: "edit"
   defp initial_mode(_record), do: "read"
+
+  defp render_notes(notes) do
+    add_a_classes =
+      &Earmark.AstTools.merge_atts_in_node(&1,
+        class:
+          "underline text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
+      )
+
+    tsp = Earmark.TagSpecificProcessors.new([{"a", add_a_classes}])
+
+    (notes || "")
+    |> Earmark.as_html!(%Earmark.Options{gfm: true, registered_processors: [tsp]})
+    |> raw()
+  end
 end
