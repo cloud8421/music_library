@@ -28,7 +28,7 @@ defmodule MusicLibraryWeb.NotesComponent do
         class="min-w-xs max-w-lg sm:min-w-lg lg:min-w-2xl py-16"
       >
         <.tabs>
-          <.tabs_list variant="segmented" active_tab={@mode}>
+          <.tabs_list variant="segmented" class="w-32" active_tab={@mode}>
             <:tab name="read" phx-click="set_mode" phx-value-mode="read" phx-target={@myself}>
               {gettext("Read")}
             </:tab>
@@ -37,7 +37,7 @@ defmodule MusicLibraryWeb.NotesComponent do
             </:tab>
           </.tabs_list>
           <.tabs_panel active={@mode == "read"} name="read">
-            <div class="w-full mt-10 text-sm/8">
+            <div class="w-full mt-5 text-sm/8">
               {render_notes(@form[:notes].value)}
             </div>
           </.tabs_panel>
