@@ -1314,6 +1314,7 @@ msgstr ""
 msgid "No records released on this day."
 msgstr ""
 
+#: lib/music_library_web/live/artist_live/show.html.heex
 #: lib/music_library_web/live/collection_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Open Notes"
