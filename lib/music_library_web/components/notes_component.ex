@@ -50,9 +50,9 @@ defmodule MusicLibraryWeb.NotesComponent do
             </:tab>
           </.tabs_list>
           <.tabs_panel active={@mode == "read"} name="read">
-            <div class="w-full mt-5 text-sm/8">
+            <article class="w-full mt-5 prose dark:prose-invert prose-zinc prose-sm prose-h1:text-sm">
               {render_notes(@form[:content].value)}
-            </div>
+            </article>
           </.tabs_panel>
           <.tabs_panel active={@mode == "edit"} name="edit">
             <.simple_form
@@ -144,16 +144,8 @@ defmodule MusicLibraryWeb.NotesComponent do
   end
 
   defp render_notes(notes) do
-    add_a_classes =
-      &Earmark.AstTools.merge_atts_in_node(&1,
-        class:
-          "underline text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
-      )
-
-    tsp = Earmark.TagSpecificProcessors.new([{"a", add_a_classes}])
-
     (notes || "")
-    |> Earmark.as_html!(%Earmark.Options{gfm: true, registered_processors: [tsp]})
+    |> Earmark.as_html!(%Earmark.Options{gfm: true})
     |> raw()
   end
 end
