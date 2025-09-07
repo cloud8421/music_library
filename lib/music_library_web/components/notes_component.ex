@@ -38,10 +38,10 @@ defmodule MusicLibraryWeb.NotesComponent do
       <.sheet
         id={@sheet_id}
         placement="right"
-        class="min-w-xs max-w-lg sm:min-w-lg lg:min-w-2xl py-16"
+        class="w-md sm:min-w-lg lg:min-w-2xl py-16"
       >
         <.tabs>
-          <.tabs_list variant="segmented" class="w-32" active_tab={@mode}>
+          <.tabs_list variant="segmented" class="w-48 mx-auto md:mx-0" active_tab={@mode}>
             <:tab name="read" phx-click="set_mode" phx-value-mode="read" phx-target={@myself}>
               {gettext("Read")}
             </:tab>
