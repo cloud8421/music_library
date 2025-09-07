@@ -156,7 +156,6 @@ msgstr ""
 msgid "Record imported successfully"
 msgstr ""
 
-#: lib/music_library_web/components/notes_component.ex
 #: lib/music_library_web/components/record_form_component.ex
 #, elixir-autogen, elixir-format
 msgid "Record updated successfully"
@@ -1323,4 +1322,14 @@ msgstr ""
 #: lib/music_library_web/components/notes_component.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Read"
+msgstr ""
+
+#: lib/music_library_web/components/notes_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Note created successfully"
+msgstr ""
+
+#: lib/music_library_web/components/notes_component.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Note updated successfully"
 msgstr ""

@@ -1,21 +1,34 @@
 defmodule MusicLibraryWeb.NotesComponent do
   use MusicLibraryWeb, :live_component
 
-  alias MusicLibrary.Records
+  alias MusicLibrary.Notes
+  alias MusicLibrary.Notes.Note
 
   def open(id), do: Fluxon.open_dialog(id)
 
   @impl true
   def update(assigns, socket) do
+    note = find_or_initialize_note(assigns)
+
     changeset =
-      assigns.record
-      |> Records.change_record()
+      Note.changeset(note, %{})
 
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:mode, initial_mode(assigns.record))
+     |> assign(:note, note)
+     |> assign(:mode, initial_mode(changeset))
      |> assign(:form, to_form(changeset))}
+  end
+
+  defp find_or_initialize_note(%{entity: entity, musicbrainz_id: musicbrainz_id}) do
+    case Notes.get_note(entity, musicbrainz_id) do
+      nil ->
+        %Note{entity: entity, musicbrainz_id: musicbrainz_id, content: ""}
+
+      note ->
+        note
+    end
   end
 
   @impl true
@@ -38,19 +51,19 @@ defmodule MusicLibraryWeb.NotesComponent do
           </.tabs_list>
           <.tabs_panel active={@mode == "read"} name="read">
             <div class="w-full mt-5 text-sm/8">
-              {render_notes(@form[:notes].value)}
+              {render_notes(@form[:content].value)}
             </div>
           </.tabs_panel>
           <.tabs_panel active={@mode == "edit"} name="edit">
             <.simple_form
               for={@form}
-              id="record-notes-form"
+              id="notes-form"
               phx-target={@myself}
               phx-change="validate"
               phx-auto-recover="recover_form"
               phx-submit="save"
             >
-              <.textarea class="w-full h-96 font-mono text-sm/8" field={@form[:notes]} />
+              <.textarea class="w-full h-96 font-mono text-sm/8" field={@form[:content]} />
 
               <:actions>
                 <div class="w-full md:flex md:justify-center">
@@ -72,20 +85,16 @@ defmodule MusicLibraryWeb.NotesComponent do
   end
 
   @impl true
-  def handle_event("validate", %{"record" => record_params}, socket) do
-    changeset = Records.change_record(socket.assigns.record, record_params)
+  def handle_event("validate", %{"note" => note_params}, socket) do
+    changeset = Notes.change_note(socket.assigns.note, note_params)
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
-  def handle_event("save", %{"record" => record_params}, socket) do
-    case Records.update_record(socket.assigns.record, record_params) do
-      {:ok, _record} ->
-        {:noreply,
-         socket
-         |> put_toast(:info, gettext("Record updated successfully"))}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
+  def handle_event("save", %{"note" => note_params}, socket) do
+    if socket.assigns.note.id do
+      update_note(note_params, socket)
+    else
+      create_note(note_params, socket)
     end
   end
 
@@ -97,8 +106,37 @@ defmodule MusicLibraryWeb.NotesComponent do
     {:noreply, assign(socket, :mode, mode)}
   end
 
-  defp initial_mode(record) when record.notes in [nil, ""], do: "edit"
-  defp initial_mode(_record), do: "read"
+  defp update_note(note_params, socket) do
+    case Notes.update_note(socket.assigns.note, note_params) do
+      {:ok, _record} ->
+        {:noreply,
+         socket
+         |> put_toast(:info, gettext("Note updated successfully"))}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, form: to_form(changeset))}
+    end
+  end
+
+  defp create_note(note_params, socket) do
+    case Notes.create_note(socket.assigns.note, note_params) do
+      {:ok, _record} ->
+        {:noreply,
+         socket
+         |> put_toast(:info, gettext("Note created successfully"))}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, form: to_form(changeset))}
+    end
+  end
+
+  defp initial_mode(changeset) do
+    if Ecto.Changeset.get_field(changeset, :content) in [nil, ""] do
+      "edit"
+    else
+      "read"
+    end
+  end
 
   defp render_notes(notes) do
     add_a_classes =

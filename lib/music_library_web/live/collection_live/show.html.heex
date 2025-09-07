@@ -336,7 +336,8 @@
   id="record-notes"
   sheet_id="record-notes-sheet"
   module={MusicLibraryWeb.NotesComponent}
-  record={@record}
+  entity={:record}
+  musicbrainz_id={@record.musicbrainz_id}
 />
 
 <.structured_modal
