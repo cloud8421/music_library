@@ -120,9 +120,14 @@ defmodule MusicLibraryWeb.NotesComponent do
 
   defp create_note(note_params, socket) do
     case Notes.create_note(socket.assigns.note, note_params) do
-      {:ok, _record} ->
+      {:ok, note} ->
+        changeset =
+          Note.changeset(note, %{})
+
         {:noreply,
          socket
+         |> assign(:note, note)
+         |> assign(:form, to_form(changeset))
          |> put_toast(:info, gettext("Note created successfully"))}
 
       {:error, %Ecto.Changeset{} = changeset} ->
