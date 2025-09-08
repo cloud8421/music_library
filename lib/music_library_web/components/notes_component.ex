@@ -63,7 +63,7 @@ defmodule MusicLibraryWeb.NotesComponent do
               phx-auto-recover="recover_form"
               phx-submit="save"
             >
-              <.textarea class="w-full h-96 font-mono text-sm/8" field={@form[:content]} />
+              <.textarea class="w-full h-96 font-mono text-sm/4" field={@form[:content]} />
 
               <:actions>
                 <div class="w-full md:flex md:justify-center">
