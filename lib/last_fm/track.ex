@@ -36,7 +36,9 @@ defmodule LastFm.Track do
   end
 
   def from_api_response(raw_tracks) do
-    Enum.map(raw_tracks, fn t ->
+    raw_tracks
+    |> Enum.reject(&now_playing?/1)
+    |> Enum.map(fn t ->
       album = %Album{
         musicbrainz_id: t["album"]["mbid"],
         title: t["album"]["#text"]
@@ -58,6 +60,10 @@ defmodule LastFm.Track do
         last_fm_data: t
       }
     end)
+  end
+
+  defp now_playing?(raw_track) do
+    get_in(raw_track, ["@attr", "nowplaying"]) == "true"
   end
 
   defp parse_cover_url(track) do
