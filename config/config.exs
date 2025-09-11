@@ -15,10 +15,11 @@ config :music_library,
   ecto_repos: [MusicLibrary.BackgroundRepo, MusicLibrary.Repo, MusicLibrary.ErrorRepo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 
+config :music_library, timezone: "Europe/London"
+
 config :music_library, MusicLibraryWeb,
   login_password: "change me",
-  api_token: "change me",
-  timezone: "Europe/London"
+  api_token: "change me"
 
 # Configures the endpoint
 config :music_library, MusicLibraryWeb.Endpoint,

@@ -26,4 +26,6 @@ defmodule MusicLibrary do
   - `MusicLibrary.OnlineStoreTemplates` - Configurable templates for generating online store URLs
   - `MusicLibrary.Secrets` - Encrypted storage for API keys and sensitive configuration
   """
+
+  def timezone, do: Application.fetch_env!(:music_library, :timezone)
 end

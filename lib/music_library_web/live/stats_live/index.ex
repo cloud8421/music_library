@@ -23,7 +23,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
     {:ok,
      socket
-     |> assign(:timezone, resolve_timezone!())
+     |> assign(:timezone, MusicLibrary.timezone())
      |> stream_configure(:recent_tracks,
        dom_id: fn track -> "track-#{track.scrobbled_at_uts}" end
      )
@@ -159,10 +159,5 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     uts
     |> DateTime.from_unix!()
     |> DateTime.to_iso8601()
-  end
-
-  defp resolve_timezone! do
-    Application.get_env(:music_library, MusicLibraryWeb)
-    |> Keyword.fetch!(:timezone)
   end
 end

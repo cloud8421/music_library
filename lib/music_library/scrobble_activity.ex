@@ -214,7 +214,7 @@ defmodule MusicLibrary.ScrobbleActivity do
   def get_top_albums_by_days(days, opts) do
     limit = Keyword.get(opts, :limit, 10)
     current_time = Keyword.get_lazy(opts, :current_time, &DateTime.utc_now/0)
-    timezone = Keyword.get(opts, :timezone, &resolve_timezone!/0)
+    timezone = Keyword.get(opts, :timezone, &MusicLibrary.timezone/0)
 
     cutoff_timestamp =
       current_time
@@ -304,7 +304,7 @@ defmodule MusicLibrary.ScrobbleActivity do
   def get_top_artists_by_days(days, opts) do
     limit = Keyword.get(opts, :limit, 10)
     current_time = Keyword.get_lazy(opts, :current_time, &DateTime.utc_now/0)
-    timezone = Keyword.get(opts, :timezone, &resolve_timezone!/0)
+    timezone = Keyword.get(opts, :timezone, &MusicLibrary.timezone/0)
 
     cutoff_timestamp =
       current_time
@@ -375,10 +375,5 @@ defmodule MusicLibrary.ScrobbleActivity do
       :last_90_days -> get_top_artists_by_days(90, opts)
       :last_365_days -> get_top_artists_by_days(365, opts)
     end
-  end
-
-  defp resolve_timezone! do
-    Application.get_env(:music_library, MusicLibraryWeb)
-    |> Keyword.fetch!(:timezone)
   end
 end

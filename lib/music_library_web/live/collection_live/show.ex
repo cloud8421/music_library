@@ -25,7 +25,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     {:ok,
      socket
      |> assign(:current_section, :collection)
-     |> assign(:timezone, resolve_timezone!())
+     |> assign(:timezone, MusicLibrary.timezone())
      |> assign(:can_scrobble?, ScrobbleActivity.can_scrobble?())
      |> assign(:release_with_tracks, nil)}
   end
@@ -182,9 +182,4 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
   defp title_segment(:show), do: gettext("Show")
   defp title_segment(:edit), do: gettext("Edit")
-
-  defp resolve_timezone! do
-    Application.get_env(:music_library, MusicLibraryWeb)
-    |> Keyword.fetch!(:timezone)
-  end
 end
