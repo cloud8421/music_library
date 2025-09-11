@@ -32,6 +32,7 @@
   - display latest scrobbles, and where possible
     connect them with records in the collection or wishlist
   - scrobble a record
+  - store a local copy of the complete scrobble history, and setup rules to fix its data as needed
 - Some basic stats
 - All data stored in a single SQLite database for portability and ease of backup/restore
 
