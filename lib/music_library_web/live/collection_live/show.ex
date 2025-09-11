@@ -25,7 +25,6 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     {:ok,
      socket
      |> assign(:current_section, :collection)
-     |> assign(:timezone, MusicLibrary.timezone())
      |> assign(:can_scrobble?, ScrobbleActivity.can_scrobble?())
      |> assign(:release_with_tracks, nil)}
   end

@@ -15,7 +15,7 @@ config :music_library,
   ecto_repos: [MusicLibrary.BackgroundRepo, MusicLibrary.Repo, MusicLibrary.ErrorRepo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 
-config :music_library, timezone: "Europe/London"
+config :music_library, default_timezone: "Europe/London"
 
 config :music_library, MusicLibraryWeb,
   login_password: "change me",

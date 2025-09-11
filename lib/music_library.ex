@@ -27,5 +27,5 @@ defmodule MusicLibrary do
   - `MusicLibrary.Secrets` - Encrypted storage for API keys and sensitive configuration
   """
 
-  def timezone, do: Application.fetch_env!(:music_library, :timezone)
+  def default_timezone, do: Application.fetch_env!(:music_library, :default_timezone)
 end

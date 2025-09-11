@@ -40,7 +40,7 @@ defmodule MusicLibraryWeb.Router do
       get "/artists/:musicbrainz_id/image", ArtistController, :image
 
       live_session :default,
-        on_mount: MusicLibraryWeb.Hooks.StaticAssets do
+        on_mount: [MusicLibraryWeb.Hooks.StaticAssets, MusicLibraryWeb.Hooks.GetTimezone] do
         live "/", StatsLive.Index, :index
 
         live "/collection", CollectionLive.Index, :index

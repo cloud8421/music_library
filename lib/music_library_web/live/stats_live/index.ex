@@ -23,7 +23,6 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
     {:ok,
      socket
-     |> assign(:timezone, MusicLibrary.timezone())
      |> stream_configure(:recent_tracks,
        dom_id: fn track -> "track-#{track.scrobbled_at_uts}" end
      )
