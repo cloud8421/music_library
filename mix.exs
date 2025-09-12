@@ -41,7 +41,7 @@ defmodule MusicLibrary.MixProject do
       {:circular_buffer, "~> 1.0", override: true},
 
       # Translations
-      {:gettext, "~> 0.20"},
+      {:gettext, "~> 1.0"},
 
       # Web Server
       {:dns_cluster, "~> 0.2.0"},
