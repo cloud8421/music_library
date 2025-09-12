@@ -21,7 +21,6 @@ services:
       - LOGIN_PASSWORD
       - MIX_ENV
       - OPENAI_KEY
-      - PHX_HOST
       - POOL_SIZE
       - PORT
       - SECRET_KEY_BASE

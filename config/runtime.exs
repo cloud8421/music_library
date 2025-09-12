@@ -136,7 +136,7 @@ if config_env() == :prod do
       environment variable API_TOKEN is missing.
       """
 
-  host = System.get_env("PHX_HOST") || "example.com"
+  host = System.get_env("SERVICE_FQDN_WEB") || "example.com"
   port = String.to_integer(System.get_env("PORT") || "4000")
 
   config :music_library, MusicLibraryWeb, login_password: login_password, api_token: api_token
