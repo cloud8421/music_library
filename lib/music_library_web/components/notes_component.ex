@@ -3,6 +3,7 @@ defmodule MusicLibraryWeb.NotesComponent do
 
   alias MusicLibrary.Notes
   alias MusicLibrary.Notes.Note
+  alias MusicLibraryWeb.Markdown
 
   def open(id), do: Fluxon.open_dialog(id)
 
@@ -148,7 +149,7 @@ defmodule MusicLibraryWeb.NotesComponent do
 
   defp render_notes(notes) do
     (notes || "")
-    |> Earmark.as_html!(%Earmark.Options{gfm: true})
+    |> Markdown.to_html()
     |> raw()
   end
 end
