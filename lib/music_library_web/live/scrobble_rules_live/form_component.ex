@@ -1,6 +1,8 @@
 defmodule MusicLibraryWeb.ScrobbleRulesLive.FormComponent do
   use MusicLibraryWeb, :live_component
 
+  import Ecto.Changeset, only: [get_field: 2]
+
   alias MusicLibrary.ScrobbleRules
 
   @impl true
@@ -33,8 +35,8 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.FormComponent do
         <.input
           field={@form[:match_value]}
           type="text"
-          label={match_value_label(@form[:type].value)}
-          placeholder={match_value_placeholder(@form[:type].value)}
+          label={match_value_label(@form)}
+          placeholder={match_value_placeholder(@form)}
         />
 
         <.input
@@ -117,7 +119,9 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.FormComponent do
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
 
-  defp match_value_label(type) do
+  defp match_value_label(form) do
+    type = get_form_type_value(form)
+
     case type do
       :album -> gettext("Album Title")
       :artist -> gettext("Artist Name")
@@ -125,11 +129,28 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.FormComponent do
     end
   end
 
-  defp match_value_placeholder(type) do
+  defp match_value_placeholder(form) do
+    type = get_form_type_value(form)
+
     case type do
       :album -> gettext("e.g. The Dark Side of the Moon")
       :artist -> gettext("e.g. Pink Floyd")
       _other -> gettext("Enter the value to match")
     end
   end
+
+  defp get_form_type_value(form) do
+    if type = form[:type].value do
+      cast_type(type)
+    else
+      form.source
+      |> get_field(:type)
+      |> cast_type()
+    end
+  end
+
+  defp cast_type(type) when type in [:album, :artist], do: type
+  defp cast_type("artist"), do: :artist
+  defp cast_type("album"), do: :album
+  defp cast_type(_), do: nil
 end
