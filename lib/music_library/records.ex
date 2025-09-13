@@ -60,7 +60,7 @@ defmodule MusicLibrary.Records do
 
   defp fts_escape(term) do
     # For FTS5, if the term contains special characters, we need to wrap it in double quotes
-    if String.contains?(term, ["'", " ", "\"", "(", ")", "^", "-", ":"]) do
+    if String.contains?(term, ["'", " ", "\"", "(", ")", "^", "-", ":", "?"]) do
       # Escape internal double quotes and wrap in double quotes
       escaped = String.replace(term, "\"", "\"\"")
       "\"#{escaped}\"*"
@@ -70,20 +70,9 @@ defmodule MusicLibrary.Records do
   end
 
   defp fts_query_escape(query) do
-    # For general queries, split terms and combine with AND
-    # First undo SearchParser's quote doubling
-    clean_query = String.replace(query, "''", "'")
-
-    clean_query
+    query
     |> String.split(~r/\s+/, trim: true)
-    |> Enum.map_join(" AND ", fn term ->
-      if String.contains?(term, ["'", " ", "\"", "(", ")", "^", "-", ":"]) do
-        escaped = String.replace(term, "\"", "\"\"")
-        "\"#{escaped}\""
-      else
-        term
-      end
-    end)
+    |> Enum.map_join(" AND ", &fts_escape/1)
   end
 
   defp build_search(initial_search, query, order \\ :alphabetical) do
