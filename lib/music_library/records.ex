@@ -58,6 +58,39 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  defp fts_escape(term) do
+    # The SearchParser may have already doubled single quotes
+    # For FTS5, we need to wrap special terms in double quotes instead
+    # First, undo the SearchParser's quote doubling
+    clean_term = String.replace(term, "''", "'")
+
+    # For FTS5, if the term contains special characters, we need to wrap it in double quotes
+    if String.contains?(clean_term, ["'", " ", "\"", "(", ")", "^", "-", ":"]) do
+      # Escape internal double quotes and wrap in double quotes
+      escaped = String.replace(clean_term, "\"", "\"\"")
+      "\"#{escaped}\"*"
+    else
+      "#{clean_term}*"
+    end
+  end
+
+  defp fts_query_escape(query) do
+    # For general queries, split terms and combine with AND
+    # First undo SearchParser's quote doubling
+    clean_query = String.replace(query, "''", "'")
+
+    clean_query
+    |> String.split(~r/\s+/, trim: true)
+    |> Enum.map_join(" AND ", fn term ->
+      if String.contains?(term, ["'", " ", "\"", "(", ")", "^", "-", ":"]) do
+        escaped = String.replace(term, "\"", "\"\"")
+        "\"#{escaped}\""
+      else
+        term
+      end
+    end)
+  end
+
   defp build_search(initial_search, query, order \\ :alphabetical) do
     {:ok, parsed_query} = SearchParser.parse(query)
 
@@ -84,26 +117,34 @@ defmodule MusicLibrary.Records do
 
     Enum.reduce(parsed_query, search_with_order, fn
       {:artist, artist}, search ->
+        escaped_artist = fts_escape(artist)
+
         search
-        |> where(fragment("records_search_index match 'artists : ?*'", identifier(^artist)))
+        |> where(fragment("records_search_index MATCH 'artists : ' || ?", ^escaped_artist))
         |> or_where(
-          fragment("records_search_index match 'normalized_artists : ?*'", identifier(^artist))
+          fragment("records_search_index MATCH 'normalized_artists : ' || ?", ^escaped_artist)
         )
 
       {:album, album}, search ->
+        escaped_album = fts_escape(album)
+
         search
-        |> where(fragment("records_search_index match 'title : ?*'", identifier(^album)))
+        |> where(fragment("records_search_index MATCH 'title : ' || ?", ^escaped_album))
         |> or_where(
-          fragment("records_search_index match 'normalized_title : ?*'", identifier(^album))
+          fragment("records_search_index MATCH 'normalized_title : ' || ?", ^escaped_album)
         )
 
       {:genre, genre}, search ->
+        escaped_genre = fts_escape(genre)
+
         search
-        |> where(fragment("records_search_index match 'genres : ?*'", identifier(^genre)))
+        |> where(fragment("records_search_index MATCH 'genres : ' || ?", ^escaped_genre))
 
       {:mbid, mbid}, search ->
+        escaped_mbid = fts_escape(mbid)
+
         search
-        |> where(fragment("records_search_index = '?*'", identifier(^mbid)))
+        |> where(fragment("records_search_index MATCH ?", ^escaped_mbid))
 
       {:format, format}, search ->
         search |> where([r], r.format == ^format)
@@ -115,8 +156,10 @@ defmodule MusicLibrary.Records do
         search
 
       {:query, raw_query}, search ->
+        escaped_query = fts_query_escape(raw_query)
+
         search
-        |> where(fragment("records_search_index = '?*'", identifier(^raw_query)))
+        |> where(fragment("records_search_index MATCH ?", ^escaped_query))
     end)
   end
 
