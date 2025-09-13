@@ -59,18 +59,13 @@ defmodule MusicLibrary.Records do
   end
 
   defp fts_escape(term) do
-    # The SearchParser may have already doubled single quotes
-    # For FTS5, we need to wrap special terms in double quotes instead
-    # First, undo the SearchParser's quote doubling
-    clean_term = String.replace(term, "''", "'")
-
     # For FTS5, if the term contains special characters, we need to wrap it in double quotes
-    if String.contains?(clean_term, ["'", " ", "\"", "(", ")", "^", "-", ":"]) do
+    if String.contains?(term, ["'", " ", "\"", "(", ")", "^", "-", ":"]) do
       # Escape internal double quotes and wrap in double quotes
-      escaped = String.replace(clean_term, "\"", "\"\"")
+      escaped = String.replace(term, "\"", "\"\"")
       "\"#{escaped}\"*"
     else
-      "#{clean_term}*"
+      "#{term}*"
     end
   end
 
