@@ -81,6 +81,10 @@ jobs:
     if: github.ref == 'refs/heads/main'
     concurrency: deploy-group
     steps:
-      - name: Notify Coolify
-        run: | 
-         curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
+      - uses: actions/checkout@v4
+      - uses: gacts/install-hurl@v1
+      - run: hurl --test --progress-bar scripts/deploy.hurl
+        env:
+          HURL_coolify_token: ${{ secrets.COOLIFY_TOKEN }}
+          HURL_coolify_host: ${{ vars.COOLIFY_HOST }}
+          HURL_coolify_app_uuid: ${{ vars.COOLIFY_APP_UUID }}
