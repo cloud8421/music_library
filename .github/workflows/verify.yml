@@ -9,6 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: gacts/install-hurl@v1
-      - run: hurl --test test/prod.hurl
+      - run: hurl --test --report-tap prod.tap test/prod.hurl
         env:
           HURL_api_token: ${{ secrets.API_TOKEN }}
+      - uses: pcolby/tap-summary@v1
