@@ -19,7 +19,7 @@ defmodule MusicLibraryWeb.BarcodeScannerComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div id="barcode-scanner" phx-hook="BarcodeScanner" phx-target={@myself}>
+    <div class="min-w-72" id="barcode-scanner" phx-hook="BarcodeScanner" phx-target={@myself}>
       <header>
         <h1 class="text-sm font-medium leading-6 text-zinc-700 dark:text-zinc-400">
           {gettext("Scan one or more barcodes")}
