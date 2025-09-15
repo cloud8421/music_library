@@ -84,14 +84,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: gacts/install-hurl@v1
       - name: Deploy to production
-        run: hurl --test scripts/deploy.hurl
+        run: hurl --test --report-tap deploy.tap scripts/deploy.hurl
         env:
           HURL_coolify_token: ${{ secrets.COOLIFY_TOKEN }}
           HURL_coolify_host: ${{ vars.COOLIFY_HOST }}
           HURL_coolify_app_uuid: ${{ vars.COOLIFY_APP_UUID }}
       - name: Wait for container to start
-        run: hurl --test test/healthcheck.hurl
+        run: hurl --test --report-tap healthcheck.tap test/healthcheck.hurl
       - name: Run verification tests
-        run: hurl --test test/prod.hurl
+        run: hurl --test --report-tap verification.tap test/prod.hurl
         env:
           HURL_api_token: ${{ secrets.API_TOKEN }}
+      - uses: pcolby/tap-summary@v1
