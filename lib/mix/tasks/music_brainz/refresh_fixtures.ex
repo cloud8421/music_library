@@ -11,16 +11,21 @@ defmodule Mix.Tasks.MusicBrainz.RefreshFixtures do
   @fixtures_folder Path.join([File.cwd!(), "test/support/fixtures/music_brainz"])
 
   @fixture_files %{
-    "release_group - marillion - marbles.json" =>
-      "https://musicbrainz.org/ws/2/release-group/20790e26-98e4-3ad3-a67f-b674758b942d?fmt=json&inc=artists+genres+releases+release-group-rels",
-    "release_group - avantasia - the mystery of time.json" =>
-      "https://musicbrainz.org/ws/2/release-group/a40fdacb-2f29-4385-8177-e6b72c93a442?fmt=json&inc=artists+genres+releases+release-group-rels",
-    "release_group_with_includes - mariusz duda - lockdown trilogy.json" =>
-      "https://musicbrainz.org/ws/2/release-group/5db72bc0-6ce3-4beb-bd51-86b58ed8cf71?fmt=json&inc=artists+genres+releases+release-group-rels",
+    "artist - steven wilson.json" =>
+      "https://musicbrainz.org/ws/2/artist/3a51b862-0144-40f6-aa17-6aaeefea29d9?fmt=json&inc=url-rels",
+    "release - avantasia - the mystery of time.json" =>
+      "https://musicbrainz.org/ws/2/release/003d1505-b3ac-4acf-bed1-02e2c8134a26?fmt=json&inc=release-groups",
     "release - marillion - marbles.json" =>
       "https://musicbrainz.org/ws/2/release/d3f9b9e2-73f5-4b47-a2a7-2c2199aad608?fmt=json&inc=release-groups",
-    "release - avantasia - the mystery of time.json" =>
-      "https://musicbrainz.org/ws/2/release/003d1505-b3ac-4acf-bed1-02e2c8134a26?fmt=json&inc=release-groups"
+    "release_group - avantasia - the mystery of time.json" =>
+      "https://musicbrainz.org/ws/2/release-group/a40fdacb-2f29-4385-8177-e6b72c93a442?fmt=json&inc=artists+genres+releases+release-group-rels",
+    "release_group - marillion - marbles.json" =>
+      "https://musicbrainz.org/ws/2/release-group/20790e26-98e4-3ad3-a67f-b674758b942d?fmt=json&inc=artists+genres+releases+release-group-rels",
+    "release_group_search_results - marillion - marbles.json" => "TODO",
+    "release_group_with_includes - mariusz duda - lockdown trilogy.json" =>
+      "https://musicbrainz.org/ws/2/release-group/5db72bc0-6ce3-4beb-bd51-86b58ed8cf71?fmt=json&inc=artists+genres+releases+release-group-rels",
+    "releases - marillion - marbles.json" => "TODO",
+    "releases - queen - greatest hits.json" => "TODO"
   }
 
   @impl Mix.Task
@@ -28,7 +33,9 @@ defmodule Mix.Tasks.MusicBrainz.RefreshFixtures do
     Application.ensure_all_started(:finch)
     Finch.start_link(name: __MODULE__)
 
-    Enum.each(@fixture_files, fn {filename, url} ->
+    @fixture_files
+    |> Enum.reject(fn {_filename, url} -> url == "TODO" end)
+    |> Enum.each(fn {filename, url} ->
       case get(url) do
         {:ok, body} ->
           # store the fixture pretty printed
