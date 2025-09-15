@@ -215,11 +215,6 @@ msgstr ""
 msgid "Updated at"
 msgstr ""
 
-#: lib/music_library_web/controllers/session_html/new.html.heex
-#, elixir-autogen, elixir-format
-msgid "Welcome to your Music Library"
-msgstr ""
-
 #: lib/music_library_web/components/layouts/app.html.heex
 #: lib/music_library_web/live/artist_live/show.html.heex
 #: lib/music_library_web/live/stats_live/index.html.heex
@@ -1333,4 +1328,9 @@ msgstr ""
 #: lib/music_library_web/components/notes_component.ex
 #, elixir-autogen, elixir-format
 msgid "Note updated successfully"
+msgstr ""
+
+#: lib/music_library_web/controllers/session_html/new.html.heex
+#, elixir-autogen, elixir-format
+msgid "Music Library"
 msgstr ""
