@@ -2,6 +2,7 @@
   "artist-credit": [
     {
       "artist": {
+        "country": "PL",
         "disambiguation": "",
         "genres": [
           {
@@ -47,6 +48,7 @@
         "artist-credit": [
           {
             "artist": {
+              "country": "PL",
               "disambiguation": "",
               "id": "641716a3-ae21-4c5f-bdef-dfca90df27f3",
               "name": "Mariusz Duda",
@@ -86,6 +88,7 @@
         "artist-credit": [
           {
             "artist": {
+              "country": "PL",
               "disambiguation": "",
               "id": "641716a3-ae21-4c5f-bdef-dfca90df27f3",
               "name": "Mariusz Duda",
@@ -125,6 +128,7 @@
         "artist-credit": [
           {
             "artist": {
+              "country": "PL",
               "disambiguation": "",
               "id": "641716a3-ae21-4c5f-bdef-dfca90df27f3",
               "name": "Mariusz Duda",
@@ -164,6 +168,7 @@
         "artist-credit": [
           {
             "artist": {
+              "country": "PL",
               "disambiguation": "",
               "id": "641716a3-ae21-4c5f-bdef-dfca90df27f3",
               "name": "Mariusz Duda",
@@ -194,7 +199,30 @@
   ],
   "releases": [
     {
-      "barcode": null,
+      "artist-credit": [
+        {
+          "artist": {
+            "country": "PL",
+            "disambiguation": "",
+            "genres": [
+              {
+                "count": 1,
+                "disambiguation": "",
+                "id": "0e3fc579-2d24-4f20-9dae-736e1ec78798",
+                "name": "rock"
+              }
+            ],
+            "id": "641716a3-ae21-4c5f-bdef-dfca90df27f3",
+            "name": "Mariusz Duda",
+            "sort-name": "Duda, Mariusz",
+            "type": "Person",
+            "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+          },
+          "joinphrase": "",
+          "name": "Mariusz Duda"
+        }
+      ],
+      "barcode": "802644858326",
       "country": "GB",
       "date": "2022-05-20",
       "disambiguation": "",
