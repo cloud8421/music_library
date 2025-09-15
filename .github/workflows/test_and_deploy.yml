@@ -90,7 +90,7 @@ jobs:
           HURL_coolify_host: ${{ vars.COOLIFY_HOST }}
           HURL_coolify_app_uuid: ${{ vars.COOLIFY_APP_UUID }}
       - name: Wait for container to start
-        run: sleep 10s
+        run: hurl --test test/healthcheck.hurl
       - name: Run verification tests
         run: hurl --test test/prod.hurl
         env:
