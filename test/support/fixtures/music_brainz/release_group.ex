@@ -2,7 +2,7 @@ defmodule MusicBrainz.Fixtures.ReleaseGroup do
   @fixtures_folder Path.join([File.cwd!(), "test/support/fixtures/music_brainz"])
 
   def release_group_search_results do
-    Path.join([@fixtures_folder, "release_group_search_results - marillion marbles.json"])
+    Path.join([@fixtures_folder, "release_group_search_results - marillion - marbles.json"])
     |> File.read!()
     |> JSON.decode!()
   end
