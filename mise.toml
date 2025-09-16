@@ -132,15 +132,6 @@ depends = [
 description = 'Install dependencies and setup the database'
 run = ['mix setup']
 
-[tasks."usage-rules:sync"]
-description = 'Sync usage rules from dependencies to CLAUDE.md'
-run = """
-mix usage_rules.sync CLAUDE.md --all \
-  --inline usage_rules:all \
-  --link-to-folder deps \
-  --remove-missing
-"""
-
 # CI
 
 [tasks."ci:watch"]
