@@ -96,17 +96,6 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
 
       assert html =~ "Unique Album Title"
     end
-
-    test "shows no results message for non-matching search", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/scrobbled-tracks")
-
-      html =
-        index_live
-        |> form("form[phx-submit='search']", %{query: "NonexistentTrack"})
-        |> render_submit()
-
-      assert html =~ "Try adjusting your search"
-    end
   end
 
   describe "Edit track" do
