@@ -8,11 +8,11 @@
     </div>
   </header>
 
-  <div class="flex items-end justify-between gap-6 mt-8">
+  <div class="flex items-end gap-6 mt-8 justify-center sm:justify-start">
     <.button_group>
       <.button
         patch={order_path(@track_list_params, :scrobbled_at)}
-        size="sm"
+        size="xs"
         class={[
           @track_list_params.order == :scrobbled_at && "!bg-zinc-100 dark:!bg-zinc-700"
         ]}
@@ -27,7 +27,7 @@
       </.button>
       <.button
         patch={order_path(@track_list_params, :title)}
-        size="sm"
+        size="xs"
         class={[
           @track_list_params.order == :title && "!bg-zinc-100 dark:!bg-zinc-700"
         ]}
@@ -37,7 +37,7 @@
       </.button>
       <.button
         patch={order_path(@track_list_params, :artist)}
-        size="sm"
+        size="xs"
         class={[
           @track_list_params.order == :artist && "!bg-zinc-100 dark:!bg-zinc-700"
         ]}
@@ -47,7 +47,7 @@
       </.button>
       <.button
         patch={order_path(@track_list_params, :album)}
-        size="sm"
+        size="xs"
         class={[
           @track_list_params.order == :album && "!bg-zinc-100 dark:!bg-zinc-700"
         ]}
