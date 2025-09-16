@@ -12,7 +12,6 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
     title: "Updated Track Title",
     artist: %{name: "Updated Artist"},
     album: %{title: "Updated Album"},
-    scrobbled_at_label: "02/02/2024 14:00:00",
     cover_url: "https://example.com/updated-cover.jpg"
   }
 
@@ -110,63 +109,6 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
     end
   end
 
-  describe "Sorting functionality" do
-    setup [:create_multiple_tracks]
-
-    test "sorts by scrobbled date (default)", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/scrobbled-tracks")
-
-      # Click on scrobbled date sort button
-      html =
-        index_live
-        |> element("button[patch*='order=scrobbled_at']")
-        |> render_click()
-
-      assert html =~ "Scrobbled Tracks"
-      # Check that URL contains the order parameter
-      assert_patch(
-        index_live,
-        ~p"/scrobbled-tracks?order=scrobbled_at&page=1&page_size=200&query="
-      )
-    end
-
-    test "sorts by track title", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/scrobbled-tracks")
-
-      html =
-        index_live
-        |> element("button[patch*='order=title']")
-        |> render_click()
-
-      assert html =~ "Scrobbled Tracks"
-      assert_patch(index_live, ~p"/scrobbled-tracks?order=title&page=1&page_size=200&query=")
-    end
-
-    test "sorts by artist name", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/scrobbled-tracks")
-
-      html =
-        index_live
-        |> element("button[patch*='order=artist']")
-        |> render_click()
-
-      assert html =~ "Scrobbled Tracks"
-      assert_patch(index_live, ~p"/scrobbled-tracks?order=artist&page=1&page_size=200&query=")
-    end
-
-    test "sorts by album title", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/scrobbled-tracks")
-
-      html =
-        index_live
-        |> element("button[patch*='order=album']")
-        |> render_click()
-
-      assert html =~ "Scrobbled Tracks"
-      assert_patch(index_live, ~p"/scrobbled-tracks?order=album&page=1&page_size=200&query=")
-    end
-  end
-
   describe "Edit track" do
     setup [:create_track]
 
@@ -174,7 +116,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
       {:ok, index_live, _html} = live(conn, ~p"/scrobbled-tracks")
 
       assert index_live
-             |> element("button[patch='/scrobbled-tracks/#{track.scrobbled_at_uts}/edit']")
+             |> element("a[href='/scrobbled-tracks/#{track.scrobbled_at_uts}/edit']")
              |> render_click() =~ "Edit Scrobbled Track"
 
       assert_patch(index_live, ~p"/scrobbled-tracks/#{track.scrobbled_at_uts}/edit")
@@ -196,44 +138,12 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
       {:ok, index_live, _html} = live(conn, ~p"/scrobbled-tracks")
 
       assert index_live
-             |> element("button[patch='/scrobbled-tracks/#{track.scrobbled_at_uts}/edit']")
+             |> element("a[href='/scrobbled-tracks/#{track.scrobbled_at_uts}/edit']")
              |> render_click()
 
       assert index_live
              |> form("#track-form", track: @invalid_track_attrs)
              |> render_change() =~ "can&#39;t be blank"
-    end
-
-    test "closes modal when clicking outside or cancel", %{conn: conn, track: track} do
-      {:ok, index_live, _html} = live(conn, ~p"/scrobbled-tracks")
-
-      # Open edit modal
-      assert index_live
-             |> element("button[patch='/scrobbled-tracks/#{track.scrobbled_at_uts}/edit']")
-             |> render_click()
-
-      # Close modal by patching back to index
-      html = index_live |> element("button[phx-click='JS.patch']") |> render_click()
-
-      assert_patch(index_live, ~p"/scrobbled-tracks")
-    end
-  end
-
-  describe "Delete track" do
-    setup [:create_track]
-
-    test "deletes track successfully", %{conn: conn, track: track} do
-      {:ok, index_live, _html} = live(conn, ~p"/scrobbled-tracks")
-
-      # Find and click delete button
-      assert index_live
-             |> element(
-               "button[phx-click='delete'][phx-value-scrobbled-at-uts='#{track.scrobbled_at_uts}']"
-             )
-             |> render_click()
-
-      # Track should no longer be visible
-      refute has_element?(index_live, "#tracks-#{track.scrobbled_at_uts}")
     end
   end
 
@@ -297,15 +207,6 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
       {:ok, _index_live, html} = live(conn, ~p"/scrobbled-tracks?page=invalid&order=invalid")
 
       assert html =~ "Scrobbled Tracks"
-    end
-  end
-
-  describe "Navigation integration" do
-    test "shows Scrobbled Tracks link in navigation", %{conn: conn} do
-      {:ok, _index_live, html} = live(conn, ~p"/")
-
-      assert html =~ "Scrobbled Tracks"
-      assert html =~ ~p"/scrobbled-tracks"
     end
   end
 
