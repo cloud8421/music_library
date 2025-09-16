@@ -10,7 +10,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
   @default_tracks_list_params %{
     query: "",
     page: 1,
-    page_size: 200,
+    page_size: 20,
     order: :scrobbled_at
   }
 
