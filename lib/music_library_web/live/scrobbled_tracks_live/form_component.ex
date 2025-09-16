@@ -46,24 +46,27 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.FormComponent do
           />
         </.inputs_for>
 
-        <.input
-          field={@form[:scrobbled_at_label]}
-          type="text"
-          label={gettext("Scrobbled Date/Time")}
-          placeholder={gettext("Format: DD/MM/YYYY HH:MM:SS")}
-        />
+        <div class="flex gap-x-2">
+          <img
+            class="size-16 rounded-md"
+            alt={@form[:title].value}
+            src={@form[:cover_url].value}
+          />
 
-        <.input
-          field={@form[:cover_url]}
-          type="url"
-          label={gettext("Cover Image URL (optional)")}
-          placeholder="https://example.com/cover.jpg"
-        />
+          <.input
+            field={@form[:cover_url]}
+            type="url"
+            label={gettext("Cover Image URL (optional)")}
+            placeholder="https://example.com/cover.jpg"
+          />
+        </div>
 
         <:actions>
-          <.button phx-disable-with={gettext("Saving...")}>
-            {gettext("Update Track")}
-          </.button>
+          <div class="w-full md:flex md:justify-center">
+            <.button variant="solid" class="w-full md:w-auto" phx-disable-with={gettext("Saving...")}>
+              {gettext("Update Track")}
+            </.button>
+          </div>
         </:actions>
       </.simple_form>
     </div>

@@ -1367,11 +1367,6 @@ msgstr ""
 msgid "Edit track"
 msgstr ""
 
-#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
-#, elixir-autogen, elixir-format
-msgid "Format: DD/MM/YYYY HH:MM:SS"
-msgstr ""
-
 #: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "No scrobbled tracks found"
@@ -1380,11 +1375,6 @@ msgstr ""
 #: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Scrobbled"
-msgstr ""
-
-#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
-#, elixir-autogen, elixir-format
-msgid "Scrobbled Date/Time"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex
