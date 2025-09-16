@@ -239,24 +239,19 @@ usage rules to understand the correct patterns, conventions, and best practices.
 <!-- usage-rules-header-end -->
 
 <!-- igniter-start -->
-
 ## igniter usage
-
 _A code generation and project patching framework_
 
 [igniter usage rules](deps/igniter/usage-rules.md)
-
 <!-- igniter-end -->
 <!-- usage_rules-start -->
-
 ## usage_rules usage
-
 _A dev tool for Elixir projects to gather LLM usage rules from dependencies_
 
 ## Using Usage Rules
 
-Many packages have usage rules, which you should _thoroughly_ consult before taking any
-action. These usage rules contain guidelines and rules _directly from the package authors_.
+Many packages have usage rules, which you should *thoroughly* consult before taking any
+action. These usage rules contain guidelines and rules *directly from the package authors*.
 They are your best source of knowledge for making decisions.
 
 ## Modules & functions in the current app and dependencies
@@ -275,9 +270,10 @@ mix usage_rules.docs Enum.zip
 mix usage_rules.docs Enum.zip/1
 ```
 
+
 ## Searching Documentation
 
-You should also consult the documentation of any tools you are using, early and often. The best
+You should also consult the documentation of any tools you are using, early and often. The best 
 way to accomplish this is to use the `usage_rules.search_docs` mix task. Once you have
 found what you are looking for, use the links in the search results to get more detail. For example:
 
@@ -295,27 +291,23 @@ mix usage_rules.search_docs "making requests" -p req
 mix usage_rules.search_docs "Enum.zip" --query-by title
 ```
 
+
 <!-- usage_rules-end -->
 <!-- usage_rules:elixir-start -->
-
 ## usage_rules:elixir usage
-
 # Elixir Core Usage Rules
 
 ## Pattern Matching
-
 - Use pattern matching over conditional logic when possible
 - Prefer to match on function heads instead of using `if`/`else` or `case` in function bodies
 - `%{}` matches ANY map, not just empty maps. Use `map_size(map) == 0` guard to check for truly empty maps
 
 ## Error Handling
-
 - Use `{:ok, result}` and `{:error, reason}` tuples for operations that can fail
 - Avoid raising exceptions for control flow
 - Use `with` for chaining operations that return `{:ok, _}` or `{:error, _}`
 
 ## Common Mistakes to Avoid
-
 - Elixir has no `return` statement, nor early returns. The last expression in a block is always returned.
 - Don't use `Enum` functions on large collections when `Stream` is more appropriate
 - Avoid nested `case` statements - refactor to a single `case`, `with` or separate functions
@@ -328,7 +320,6 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 - There are many useful standard library functions, prefer to use them where possible
 
 ## Function Design
-
 - Use guard clauses: `when is_binary(name) and byte_size(name) > 0`
 - Prefer multiple function clauses over complex conditional logic
 - Name functions descriptively: `calculate_total_price/2` not `calc/2`
@@ -336,7 +327,6 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 - Names like `is_thing` should be reserved for guards
 
 ## Data Structures
-
 - Use structs over maps when the shape is known: `defstruct [:name, :age]`
 - Prefer keyword lists for options: `[timeout: 5000, retries: 3]`
 - Use maps for dynamic key-value data
@@ -349,7 +339,6 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 - Read the docs and options fully before using tasks
 
 ## Testing
-
 - Run tests in a specific file with `mix test test/my_test.exs` and a specific test with the line number `mix test path/to/test.exs:123`
 - Limit the number of failed tests with `mix test --max-failures n`
 - Use `@tag` to tag specific tests, and `mix test --only tag` to run only those tests
@@ -362,32 +351,26 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 
 <!-- usage_rules:elixir-end -->
 <!-- usage_rules:otp-start -->
-
 ## usage_rules:otp usage
-
 # OTP Usage Rules
 
 ## GenServer Best Practices
-
 - Keep state simple and serializable
 - Handle all expected messages explicitly
 - Use `handle_continue/2` for post-init work
 - Implement proper cleanup in `terminate/2` when necessary
 
 ## Process Communication
-
 - Use `GenServer.call/3` for synchronous requests expecting replies
 - Use `GenServer.cast/2` for fire-and-forget messages.
 - When in doubt, use `call` over `cast`, to ensure back-pressure
 - Set appropriate timeouts for `call/3` operations
 
 ## Fault Tolerance
-
 - Set up processes such that they can handle crashing and being restarted by supervisors
 - Use `:max_restarts` and `:max_seconds` to prevent restart loops
 
 ## Task and Async
-
 - Use `Task.Supervisor` for better fault tolerance
 - Handle task failures with `Task.yield/2` or `Task.shutdown/2`
 - Set appropriate task timeouts
@@ -395,9 +378,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 
 <!-- usage_rules:otp-end -->
 <!-- phoenix:ecto-start -->
-
 ## phoenix:ecto usage
-
 ## Ecto Guidelines
 
 - **Always** preload Ecto associations in queries when they'll be accessed in templates, ie a message that needs to reference the `message.user.email`
@@ -409,9 +390,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 
 <!-- phoenix:ecto-end -->
 <!-- phoenix:elixir-start -->
-
 ## phoenix:elixir usage
-
 ## Elixir guidelines
 
 - Elixir lists **do not support index based access via the access syntax**
@@ -429,7 +408,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
       Enum.at(mylist, i)
 
 - Elixir variables are immutable, but can be rebound, so for block expressions like `if`, `case`, `cond`, etc
-  you _must_ bind the result of the expression to a variable if you want to use it and you CANNOT rebind the result inside the expression, ie:
+  you *must* bind the result of the expression to a variable if you want to use it and you CANNOT rebind the result inside the expression, ie:
 
       # INVALID: we are rebinding inside the `if` and the result never gets assigned
       if connected?(socket) do
@@ -458,9 +437,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 
 <!-- phoenix:elixir-end -->
 <!-- phoenix:html-start -->
-
 ## phoenix:html usage
-
 ## Phoenix HTML guidelines
 
 - Phoenix templates **always** use `~H` or .html.heex files (known as HEEx), **never** use `~E`
@@ -469,7 +446,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 - **Always** add unique DOM IDs to key elements (like forms, buttons, etc) when writing templates, these IDs can later be used in tests (`<.form for={@form} id="product-form">`)
 - For "app wide" template imports, you can import/alias into the `my_app_web.ex`'s `html_helpers` block, so they will be available to all LiveViews, LiveComponent's, and all modules that do `use MyAppWeb, :html` (replace "my_app" by the actual app name)
 
-- Elixir supports `if/else` but **does NOT support `if/else if` or `if/elsif`. **Never use `else if` or `elseif` in Elixir**,**always\*\* use `cond` or `case` for multiple conditionals.
+- Elixir supports `if/else` but **does NOT support `if/else if` or `if/elsif`. **Never use `else if` or `elseif` in Elixir**, **always** use `cond` or `case` for multiple conditionals.
 
   **Never do this (invalid)**:
 
@@ -490,7 +467,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
           ...
       <% end %>
 
-- HEEx require special tag annotation if you want to insert literal curly's like `{` or `}`. If you want to show a textual code snippet on the page in a `<pre>` or `<code>` block you _must_ annotate the parent tag with `phx-no-curly-interpolation`:
+- HEEx require special tag annotation if you want to insert literal curly's like `{` or `}`. If you want to show a textual code snippet on the page in a `<pre>` or `<code>` block you *must* annotate the parent tag with `phx-no-curly-interpolation`:
 
       <code phx-no-curly-interpolation>
         let obj = {key: "val"}
@@ -540,12 +517,10 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 
 <!-- phoenix:html-end -->
 <!-- phoenix:liveview-start -->
-
 ## phoenix:liveview usage
-
 ## Phoenix LiveView guidelines
 
-- **Never** use the deprecated `live_redirect` and `live_patch` functions, instead **always** use the `<.link navigate={href}>` and `<.link patch={href}>` in templates, and `push_navigate` and `push_patch` functions LiveViews
+- **Never** use the deprecated `live_redirect` and `live_patch` functions, instead **always** use the `<.link navigate={href}>` and  `<.link patch={href}>` in templates, and `push_navigate` and `push_patch` functions LiveViews
 - **Avoid LiveComponent's** unless you have a strong, specific need for them
 - LiveViews should be named like `AppWeb.WeatherLive`, with a `Live` suffix. When you go to add LiveView routes to the router, the default `:browser` scope is **already aliased** with the `AppWeb` module, so you can just do `live "/weather", WeatherLive`
 - Remember anytime you use `phx-hook="MyHook"` and that js hook manages its own DOM, you **must** also set the `phx-update="ignore"` attribute
@@ -567,7 +542,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
         </div>
       </div>
 
-- LiveView streams are _not_ enumerable, so you cannot use `Enum.filter/2` or `Enum.reject/2` on them. Instead, if you want to filter, prune, or refresh a list of items on the UI, you **must refetch the data and re-stream the entire stream collection, passing reset: true**:
+- LiveView streams are *not* enumerable, so you cannot use `Enum.filter/2` or `Enum.reject/2` on them. Instead, if you want to filter, prune, or refresh a list of items on the UI, you **must refetch the data and re-stream the entire stream collection, passing reset: true**:
 
       def handle_event("filter", %{"filter" => filter}, socket) do
         # re-fetch the messages based on the filter
@@ -580,7 +555,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
         |> stream(:messages, messages, reset: true)}
       end
 
-- LiveView streams _do not support counting or empty states_. If you need to display a count, you must track it using a separate assign. For empty states, you can use Tailwind classes:
+- LiveView streams *do not support counting or empty states*. If you need to display a count, you must track it using a separate assign. For empty states, you can use Tailwind classes:
 
       <div id="tasks" phx-update="stream">
         <div class="hidden only:block">No tasks yet</div>
@@ -674,9 +649,7 @@ And **never** do this:
 
 <!-- phoenix:liveview-end -->
 <!-- phoenix:phoenix-start -->
-
 ## phoenix:phoenix usage
-
 ## Phoenix guidelines
 
 - Remember Phoenix router `scope` blocks include an optional alias which is prefixed for all routes within the scope. **Always** be mindful of this when creating routes within a scope to avoid duplicate module prefixes.
@@ -695,12 +668,9 @@ And **never** do this:
 
 <!-- phoenix:phoenix-end -->
 <!-- fluxon-start -->
-
 ## fluxon usage
-
 _Fluxon UI Components_
 
 [fluxon usage rules](deps/fluxon/usage-rules.md)
-
 <!-- fluxon-end -->
 <!-- usage-rules-end -->
