@@ -11,4 +11,4 @@ scp music-library-prod:/data/coolify/applications/music-library/music_library_pr
 rm "$data_dir/music_library_dev.db" || true
 rm "$data_dir/music_library_dev.db-shm" || true
 rm "$data_dir/music_library_dev.db-wal" || true
-cp "$dest_file" "$data_dir/music_library_dev.db
+cp "$dest_file" "$data_dir/music_library_dev.db"
