@@ -4,15 +4,15 @@ defmodule MusicLibrary.ScrobbledTracksFixtures do
   scrobbled track entities via the database.
   """
 
-  alias MusicLibrary.Repo
   alias LastFm.Track
+  alias MusicLibrary.Repo
 
   @doc """
   Generate a scrobbled track.
   """
   def track_fixture(attrs \\ %{}) do
     scrobbled_at_uts =
-      attrs[:scrobbled_at_uts] || System.system_time(:second) - Enum.random(0..86400)
+      attrs[:scrobbled_at_uts] || System.system_time(:second) - Enum.random(0..86_400)
 
     # Create map attributes for embedded schemas
     artist_attrs = %{

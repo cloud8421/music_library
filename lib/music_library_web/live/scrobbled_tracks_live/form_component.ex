@@ -1,8 +1,8 @@
 defmodule MusicLibraryWeb.ScrobbledTracksLive.FormComponent do
   use MusicLibraryWeb, :live_component
 
-  alias MusicLibrary.ScrobbleActivity
   alias LastFm.Track
+  alias MusicLibrary.ScrobbleActivity
 
   @impl true
   def render(assigns) do

@@ -4,8 +4,8 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
   import MusicLibraryWeb.PaginationComponent
   import MusicLibraryWeb.RecordComponents, only: [search_form: 1]
 
-  alias MusicLibrary.ScrobbleActivity
   alias LastFm.Track
+  alias MusicLibrary.ScrobbleActivity
 
   @default_tracks_list_params %{
     query: "",
