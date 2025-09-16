@@ -13,6 +13,12 @@ defmodule MusicLibrary.Release do
     end
   end
 
+  def vacuum do
+    load_app()
+
+    Ecto.Migrator.with_repo(MusicLibrary.Repo, fn repo -> repo.vacuum() end)
+  end
+
   def rollback(repo, version) do
     load_app()
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
