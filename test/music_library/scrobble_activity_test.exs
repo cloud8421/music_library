@@ -4,12 +4,12 @@ defmodule MusicLibrary.ScrobbleActivityTest do
   import MusicLibrary.ScrobbledTracksFixtures
 
   alias LastFm.Track
-  alias MusicLibrary.{Repo, ScrobbleActivity}
+  alias MusicLibrary.ScrobbleActivity
 
   describe "list_tracks/1" do
     test "returns all tracks when no parameters provided" do
-      track1 = track_fixture(%{title: "First Track"})
-      track2 = track_fixture(%{title: "Second Track"})
+      _track1 = track_fixture(%{title: "First Track"})
+      _track2 = track_fixture(%{title: "Second Track"})
 
       tracks = ScrobbleActivity.list_tracks()
 
@@ -20,13 +20,13 @@ defmodule MusicLibrary.ScrobbleActivityTest do
     end
 
     test "returns tracks ordered by scrobbled_at_uts by default" do
-      older_track =
+      _older_track =
         track_fixture(%{
           title: "Older Track",
           scrobbled_at_uts: System.system_time(:second) - 3600
         })
 
-      newer_track =
+      _newer_track =
         track_fixture(%{
           title: "Newer Track",
           scrobbled_at_uts: System.system_time(:second)
