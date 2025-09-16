@@ -132,8 +132,6 @@ depends = [
 description = 'Install dependencies and setup the database'
 run = ['mix setup']
 
-# AI
-
 [tasks."usage-rules:sync"]
 description = 'Sync usage rules from dependencies to CLAUDE.md'
 run = """
@@ -142,6 +140,12 @@ mix usage_rules.sync CLAUDE.md --all \
   --link-to-folder deps \
   --remove-missing
 """
+
+# CI
+
+[tasks."ci:watch"]
+description = "Monitor CI status"
+run = "gh run watch"
 
 # PRODUCTION
 
