@@ -477,7 +477,19 @@
         for={to_form(%{"current_date" => @current_date})}
         phx-change="set_current_date"
       >
-        <.date_picker size="xs" field={f[:current_date]} />
+        <.date_picker size="xs" field={f[:current_date]}>
+          <:outer_suffix>
+            <.button
+              size="xs"
+              type="button"
+              phx-click={
+                JS.push("set_current_date", value: %{"current_date" => Date.utc_today()})
+              }
+            >
+              Today
+            </.button>
+          </:outer_suffix>
+        </.date_picker>
       </.form>
     </div>
     <div class="bg-white dark:bg-zinc-800 rounded-md shadow-sm">
