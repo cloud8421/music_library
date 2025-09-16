@@ -114,16 +114,16 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
 
   defp parse_page(_), do: 1
 
-  defp parse_page_size(nil), do: 200
+  defp parse_page_size(nil), do: 20
 
   defp parse_page_size(page_size) when is_binary(page_size) do
     case Integer.parse(page_size) do
-      {num, ""} when num in [50, 100, 200, 500] -> num
-      _ -> 200
+      {num, ""} when num in [20, 50, 100, 200, 500] -> num
+      _ -> 20
     end
   end
 
-  defp parse_page_size(_), do: 200
+  defp parse_page_size(_), do: 20
 
   defp load_and_assign_tracks(socket, track_list_params) do
     tracks = ScrobbleActivity.list_tracks(track_list_params)
