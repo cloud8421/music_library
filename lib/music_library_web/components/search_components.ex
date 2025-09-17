@@ -34,6 +34,7 @@ defmodule MusicLibraryWeb.SearchComponents do
           <.record_cover
             record={@record}
             class="w-12 h-12 rounded-md aspect-square object-cover"
+            width={96}
           />
         </div>
         <div class="min-w-0 flex-1">

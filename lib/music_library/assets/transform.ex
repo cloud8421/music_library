@@ -37,3 +37,9 @@ defmodule MusicLibrary.Assets.Transform do
     })
   end
 end
+
+defimpl Phoenix.Param, for: MusicLibrary.Assets.Transform do
+  def to_param(transform) do
+    MusicLibrary.Assets.Transform.encode!(transform)
+  end
+end

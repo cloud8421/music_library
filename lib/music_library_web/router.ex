@@ -36,7 +36,7 @@ defmodule MusicLibraryWeb.Router do
 
       get "/backup", ArchiveController, :backup
 
-      get "/covers/:hash", CoverController, :show
+      get "/covers/:transform_payload", CoverController, :show
       get "/artists/:musicbrainz_id/image", ArtistController, :image
 
       live_session :default,

@@ -8,6 +8,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
   alias MusicBrainz.ReleaseGroupSearchResult
   alias MusicLibrary.Assets
+  alias MusicLibrary.Assets.Transform
   alias MusicLibrary.Records.{Cover, Record}
 
   # make it a multiple of 4 for easier calculations
@@ -51,7 +52,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       session = visit(conn, ~p"/collection?order=alphabetical&page_size=#{page_size}")
 
       for record <- expected_present do
-        cover_url = ~p"/covers/#{record.cover_hash}"
+        cover_url = cover_url(record, 160)
 
         session
         |> assert_has("#records-#{record.id}")
@@ -140,7 +141,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       session =
         visit(conn, ~p"/collection?#{qs}")
 
-      cover_url = ~p"/covers/#{record.cover_hash}"
+      cover_url = cover_url(record, 160)
 
       session
       |> assert_has("#records-#{record.id}")
@@ -182,7 +183,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         visit(conn, ~p"/collection?#{qs}")
 
       for record <- present do
-        cover_url = ~p"/covers/#{record.cover_hash}"
+        cover_url = cover_url(record, 160)
 
         session
         |> assert_has("#records-#{record.id}")
@@ -219,7 +220,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
     test "can change the record cover", %{conn: conn} do
       record = record()
-      cover_url = ~p"/covers/#{record.cover_hash}"
+      cover_url = cover_url(record, nil)
 
       session =
         conn
@@ -229,25 +230,11 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       session =
         session
         |> upload("Cover art", raven_cover_fixture())
-        # Shows a range warning
-        #
-        # warning: Range.new/2 and first..last default to a step of -1 when last < first. Use Range.new(first, last, -1) or first..last//-1, or pass 1 if that was your intention
-        # (phoenix_live_view 1.1.10) lib/phoenix_live_view/test/diff.ex:80: Phoenix.LiveViewTest.Diff.deep_merge_diff/2
-        # (stdlib 7.0.2) maps.erl:405: :maps.merge_with_1/3
-        # (phoenix_live_view 1.1.10) lib/phoenix_live_view/test/diff.ex:62: Phoenix.LiveViewTest.Diff.find_component/5
-        # (phoenix_live_view 1.1.10) lib/phoenix_live_view/test/diff.ex:30: anonymous fn/4 in Phoenix.LiveViewTest.Diff.merge_diff/2
-        # (stdlib 7.0.2) maps.erl:894: :maps.fold_1/4
-        # (phoenix_live_view 1.1.10) lib/phoenix_live_view/test/diff.ex:29: Phoenix.LiveViewTest.Diff.merge_diff/2
-        # (phoenix_live_view 1.1.10) lib/phoenix_live_view/test/client_proxy.ex:864: Phoenix.LiveViewTest.ClientProxy.merge_rendered/3
-        # (phoenix_live_view 1.1.10) lib/phoenix_live_view/test/client_proxy.ex:488: Phoenix.LiveViewTest.ClientProxy.handle_info/2
-        # (stdlib 7.0.2) gen_server.erl:2434: :gen_server.try_handle_info/3
-        # (stdlib 7.0.2) gen_server.erl:2420: :gen_server.handle_msg/3
-        # (stdlib 7.0.2) proc_lib.erl:333: :proc_lib.init_p_do_apply/3
         |> click_button("Save")
         |> assert_has("p", text: "Record updated successfully")
 
       updated_record = MusicLibrary.Records.get_record!(record.id)
-      updated_cover_url = ~p"/covers/#{updated_record.cover_hash}"
+      updated_cover_url = cover_url(updated_record, 160)
 
       assert updated_record.cover_hash !== record.cover_hash
       assert_has(session, "img[src='#{updated_cover_url}']")
@@ -454,5 +441,11 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
              disambiguation: "British progressive rock band",
              musicbrainz_id: "1932f5b6-0b7b-4050-b1df-833ca89e5f44"
            } = marillion
+  end
+
+  defp cover_url(record, width) do
+    transform = %Transform{hash: record.cover_hash, width: width}
+    payload = Transform.encode!(transform)
+    ~p"/covers/#{payload}"
   end
 end

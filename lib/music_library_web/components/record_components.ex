@@ -2,18 +2,26 @@ defmodule MusicLibraryWeb.RecordComponents do
   use MusicLibraryWeb, :html
 
   alias MusicBrainz.ReleaseSearchResult
+  alias MusicLibrary.Assets.Transform
   alias MusicLibrary.Records
   alias Phoenix.LiveView.JS
 
   attr :record, :map, required: true
   attr :class, :string, required: false, default: "rounded-lg"
+  attr :width, :integer, default: nil
 
   def record_cover(assigns) do
+    payload =
+      %Transform{hash: assigns.record.cover_hash, width: assigns.width}
+      |> Transform.encode!()
+
+    assigns = assign(assigns, :payload, payload)
+
     ~H"""
     <img
       class={@class}
       alt={@record.title}
-      src={~p"/covers/#{@record.cover_hash}"}
+      src={~p"/covers/#{@payload}"}
     />
     """
   end
@@ -58,7 +66,7 @@ defmodule MusicLibraryWeb.RecordComponents do
       >
         <div class="flex min-w-0 gap-x-4 items-center">
           <div class="relative w-20 flex-none">
-            <.record_cover record={record} />
+            <.record_cover record={record} width={160} />
             <span
               :if={Records.Record.included_release_groups_count(record) > 0}
               class={[
@@ -230,6 +238,7 @@ defmodule MusicLibraryWeb.RecordComponents do
               <.record_cover
                 record={record}
                 class="pointer-events-none aspect-square object-cover group-hover:opacity-75"
+                width={460}
               />
               <span
                 :if={Records.Record.included_release_groups_count(record) > 0}

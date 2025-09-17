@@ -23,6 +23,7 @@ defmodule MusicLibraryWeb.StatsComponents do
         <.record_cover
           record={@record}
           class="w-16 md:w-20 rounded-md shadow-sm"
+          width={160}
         />
       </div>
       <div class="ml-4">
@@ -167,7 +168,7 @@ defmodule MusicLibraryWeb.StatsComponents do
       >
         <div class="flex min-w-0 gap-x-4 items-center">
           <div class="relative w-12 flex-none">
-            <.record_cover record={record} />
+            <.record_cover record={record} width={96} />
             <span
               :if={Records.Record.included_release_groups_count(record) > 0}
               class={[

@@ -5,6 +5,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
 
   alias MusicBrainz.Fixtures
+  alias MusicLibrary.Assets.Transform
   alias MusicLibrary.Records.Record
 
   describe "Edit record from show page" do
@@ -29,7 +30,9 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
   describe "Show record" do
     test "it includes all needed information", %{conn: conn} do
       record = record()
-      cover_url = ~p"/covers/#{record.cover_hash}"
+      transform = %Transform{hash: record.cover_hash, width: nil}
+      payload = Transform.encode!(transform)
+      cover_url = ~p"/covers/#{payload}"
 
       release_response = Fixtures.Release.release(:marbles)
 

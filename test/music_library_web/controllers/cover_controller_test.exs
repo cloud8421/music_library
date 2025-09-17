@@ -4,6 +4,7 @@ defmodule MusicLibraryWeb.CoverControllerTest do
   import MusicLibrary.Fixtures.Records
 
   alias MusicLibrary.Assets
+  alias MusicLibrary.Assets.Transform
 
   defp create_asset(_config) do
     {:ok, asset} = Assets.store(%{content: marbles_cover_data(), format: "image/jpeg"})
@@ -15,42 +16,51 @@ defmodule MusicLibraryWeb.CoverControllerTest do
     setup [:create_asset]
 
     test "404s when asset doesn't exist", %{conn: conn} do
-      id = Ecto.UUID.generate()
+      transform = %Transform{hash: Ecto.UUID.generate()}
+      payload = Transform.encode!(transform)
 
-      conn = get(conn, ~p"/covers/#{id}")
+      conn = get(conn, ~p"/covers/#{payload}")
       assert text_response(conn, 404) == "Not found"
     end
 
     test "serves the cover without etag", %{conn: conn, asset: asset} do
-      conn = get(conn, ~p"/covers/#{asset.hash}")
+      transform = %Transform{hash: asset.hash}
+      payload = Transform.encode!(transform)
+      conn = get(conn, ~p"/covers/#{payload}")
 
       assert conn.status == 200
       assert get_resp_header(conn, "content-type") == ["image/jpeg; charset=utf-8"]
       assert get_resp_header(conn, "cache-control") == ["public, max-age=31536000"]
-      assert get_resp_header(conn, "etag") == [asset.hash]
+      assert get_resp_header(conn, "etag") == [payload]
 
       assert conn.resp_body == asset.content
     end
 
     test "serves the cover when etag doesn't match", %{conn: conn, asset: asset} do
+      transform = %Transform{hash: asset.hash}
+      payload = Transform.encode!(transform)
+
       conn =
         conn
         |> put_req_header("if-none-match", "invalid-etag")
-        |> get(~p"/covers/#{asset.hash}")
+        |> get(~p"/covers/#{payload}")
 
       assert conn.status == 200
       assert get_resp_header(conn, "content-type") == ["image/jpeg; charset=utf-8"]
       assert get_resp_header(conn, "cache-control") == ["public, max-age=31536000"]
-      assert get_resp_header(conn, "etag") == [asset.hash]
+      assert get_resp_header(conn, "etag") == [payload]
 
       assert conn.resp_body == asset.content
     end
 
     test "serves a 304 when etag matches", %{conn: conn, asset: asset} do
+      transform = %Transform{hash: asset.hash}
+      payload = Transform.encode!(transform)
+
       conn =
         conn
-        |> put_req_header("if-none-match", asset.hash)
-        |> get(~p"/covers/#{asset.hash}")
+        |> put_req_header("if-none-match", payload)
+        |> get(~p"/covers/#{payload}")
 
       assert conn.status == 304
       assert get_resp_header(conn, "content-type") == []
@@ -60,18 +70,18 @@ defmodule MusicLibraryWeb.CoverControllerTest do
       assert conn.resp_body == <<>>
     end
 
-    test "accepts a size attribute for resizing", %{conn: conn, asset: asset} do
-      conn = get(conn, ~p"/covers/#{asset.hash}?size=480")
+    test "it handles transforms with width", %{conn: conn, asset: asset} do
+      transform = %Transform{hash: asset.hash, width: 480}
+      payload = Transform.encode!(transform)
 
-      thumb = marbles_thumb_data()
-      hash = Assets.Asset.hash(thumb)
+      conn = get(conn, ~p"/covers/#{payload}")
 
       assert conn.status == 200
       assert get_resp_header(conn, "content-type") == ["image/jpeg; charset=utf-8"]
       assert get_resp_header(conn, "cache-control") == ["public, max-age=31536000"]
-      assert get_resp_header(conn, "etag") == [hash]
+      assert get_resp_header(conn, "etag") == [payload]
 
-      assert conn.resp_body == thumb
+      assert conn.resp_body == marbles_thumb_data()
     end
   end
 end
