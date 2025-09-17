@@ -24,11 +24,13 @@ import { hooks as colocatedHooks } from "phoenix-colocated/music_library";
 import topbar from "../vendor/topbar";
 import { Hooks as FluxonHooks, DOM as FluxonDOM } from "fluxon";
 import BarcodeScannerHook from "./hooks/barcode-scanner";
+import FormatNumberHook from "./hooks/format-number";
 import confetti from "canvas-confetti";
 import { createLiveToastHook } from "live_toast";
 
 let Hooks = FluxonHooks;
 Hooks.BarcodeScanner = BarcodeScannerHook;
+Hooks.FormatNumber = FormatNumberHook;
 Hooks.LiveToast = createLiveToastHook();
 
 const csrfToken = document
