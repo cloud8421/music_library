@@ -82,7 +82,7 @@ defmodule MusicLibraryWeb.Router do
     get "/collection/latest", CollectionController, :latest
     get "/collection/random", CollectionController, :random
     get "/collection", CollectionController, :index
-    get "/covers/:hash", CoverController, :show
+    get "/covers/:transform_payload", CoverController, :show
     get "/backup", ArchiveController, :backup
   end
 

@@ -1,6 +1,8 @@
 defmodule MusicLibraryWeb.CollectionJSON do
   use MusicLibraryWeb, :json
 
+  alias MusicLibrary.Assets.Transform
+
   def show(%{record: record}) do
     record(record)
   end
@@ -19,8 +21,8 @@ defmodule MusicLibraryWeb.CollectionJSON do
       id: record.id,
       artists: Enum.map(record.artists, & &1.name),
       title: record.title,
-      cover_url: url(~p"/api/covers/#{record.cover_hash}"),
-      thumb_url: url(~p"/api/covers/#{record.cover_hash}?#{[size: 480]}")
+      cover_url: url(~p"/api/covers/#{%Transform{hash: record.cover_hash}}"),
+      thumb_url: url(~p"/api/covers/#{%Transform{hash: record.cover_hash, width: 480}}")
     }
   end
 end
