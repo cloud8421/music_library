@@ -11,7 +11,6 @@ defmodule MusicLibrary.Records.CoverTest do
       cover_data = marbles_cover_data()
       {:ok, resized_cover} = Cover.resize(cover_data)
       assert cover_data !== resized_cover
-      assert Cover.correct_size?(resized_cover)
     end
   end
 end

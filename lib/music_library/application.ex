@@ -5,8 +5,12 @@ defmodule MusicLibrary.Application do
 
   use Application
 
+  alias MusicLibrary.Assets
+
   @impl true
   def start(_type, _args) do
+    _ = Assets.Cache.new()
+
     children = [
       MusicLibraryWeb.Telemetry,
       MusicLibrary.Vault,

@@ -12,7 +12,7 @@ defmodule MusicLibraryWeb.CoverControllerTest do
     %{asset: asset}
   end
 
-  describe "GET /covers/:hash" do
+  describe "GET /covers/:payload" do
     setup [:create_asset]
 
     test "404s when asset doesn't exist", %{conn: conn} do
