@@ -1324,13 +1324,6 @@ msgstr ""
 msgid "No records released on this day."
 msgstr ""
 
-#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "1 track"
-msgid_plural "%{count} tracks"
-msgstr[0] ""
-msgstr[1] ""
-
 #: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Album name"

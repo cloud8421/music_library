@@ -45,14 +45,6 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
 
       assert html =~ "No scrobbled tracks found"
     end
-
-    test "displays track count", %{conn: conn} do
-      create_test_tracks(3)
-
-      {:ok, _index_live, html} = live(conn, ~p"/scrobbled-tracks")
-
-      assert html =~ ~r/\d+ tracks?/
-    end
   end
 
   describe "Search functionality" do
