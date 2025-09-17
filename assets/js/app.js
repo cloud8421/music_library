@@ -23,7 +23,7 @@ import { LiveSocket } from "phoenix_live_view";
 import { hooks as colocatedHooks } from "phoenix-colocated/music_library";
 import topbar from "../vendor/topbar";
 import { Hooks as FluxonHooks, DOM as FluxonDOM } from "fluxon";
-import BarcodeScannerHook from "./barcode-scanner";
+import BarcodeScannerHook from "./hooks/barcode-scanner";
 import confetti from "canvas-confetti";
 import { createLiveToastHook } from "live_toast";
 
