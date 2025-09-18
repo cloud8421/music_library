@@ -1,6 +1,7 @@
 defmodule MusicLibraryWeb.StatsLive.TopArtists do
   use MusicLibraryWeb, :live_component
 
+  alias MusicLibrary.Assets.Transform
   alias MusicLibrary.ScrobbleActivity
 
   def live(assigns) do
@@ -110,7 +111,7 @@ defmodule MusicLibraryWeb.StatsLive.TopArtists do
           <img
             :if={artist.artist_musicbrainz_id != ""}
             class="w-12 h-12 rounded-md object-cover"
-            src={~p"/artists/#{artist.artist_musicbrainz_id}/image"}
+            src={artist_image_path(artist)}
             alt={artist.artist_name}
             onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
           />
@@ -132,6 +133,14 @@ defmodule MusicLibraryWeb.StatsLive.TopArtists do
       </div>
     </div>
     """
+  end
+
+  defp artist_image_path(artist) do
+    payload =
+      %Transform{hash: artist.image_hash, width: 96}
+      |> Transform.encode!()
+
+    ~p"/assets/#{payload}"
   end
 
   defp assign_top_artists(socket) do
