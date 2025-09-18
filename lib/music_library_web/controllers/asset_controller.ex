@@ -48,9 +48,16 @@ defmodule MusicLibraryWeb.AssetController do
   end
 
   defp pick_format(conn) do
-    case get_req_header(conn, "accept") do
-      ["image/webp" <> _] -> "image/webp"
-      _ -> "image/jpeg"
+    accept =
+      case get_req_header(conn, "accept") do
+        [] -> ""
+        [value] -> value
+      end
+
+    if String.contains?(accept, "image/webp") do
+      "image/webp"
+    else
+      "image/jpeg"
     end
   end
 
