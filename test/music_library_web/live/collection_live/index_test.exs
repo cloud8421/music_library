@@ -446,6 +446,6 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   defp cover_url(record, width) do
     transform = %Transform{hash: record.cover_hash, width: width}
     payload = Transform.encode!(transform)
-    ~p"/covers/#{payload}"
+    ~p"/assets/#{payload}"
   end
 end

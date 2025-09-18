@@ -21,8 +21,8 @@ defmodule MusicLibraryWeb.CollectionJSON do
       id: record.id,
       artists: Enum.map(record.artists, & &1.name),
       title: record.title,
-      cover_url: url(~p"/api/covers/#{%Transform{hash: record.cover_hash}}"),
-      thumb_url: url(~p"/api/covers/#{%Transform{hash: record.cover_hash, width: 480}}")
+      cover_url: url(~p"/api/assets/#{%Transform{hash: record.cover_hash}}"),
+      thumb_url: url(~p"/api/assets/#{%Transform{hash: record.cover_hash, width: 480}}")
     }
   end
 end

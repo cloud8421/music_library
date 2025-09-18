@@ -3,7 +3,7 @@ defmodule MusicLibraryWeb.ArtistController do
 
   alias MusicLibrary.Artists
   alias MusicLibrary.Assets.Transform
-  alias MusicLibraryWeb.CoverController
+  alias MusicLibraryWeb.AssetController
 
   def image(conn, %{"musicbrainz_id" => artist_id}) do
     case Artists.get_image(artist_id) do
@@ -15,7 +15,7 @@ defmodule MusicLibraryWeb.ArtistController do
           %Transform{hash: hash}
           |> Transform.encode!()
 
-        CoverController.show(conn, %{"transform_payload" => payload})
+        AssetController.show(conn, %{"transform_payload" => payload})
     end
   end
 

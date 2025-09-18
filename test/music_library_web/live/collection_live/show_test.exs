@@ -32,7 +32,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
       record = record()
       transform = %Transform{hash: record.cover_hash, width: nil}
       payload = Transform.encode!(transform)
-      cover_url = ~p"/covers/#{payload}"
+      cover_url = ~p"/assets/#{payload}"
 
       release_response = Fixtures.Release.release(:marbles)
 

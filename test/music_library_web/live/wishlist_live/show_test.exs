@@ -24,7 +24,7 @@ defmodule MusicLibraryWeb.WishlistLive.ShowTest do
       record = record(purchased_at: nil)
       transform = %Transform{hash: record.cover_hash, width: nil}
       payload = Transform.encode!(transform)
-      cover_url = ~p"/covers/#{payload}"
+      cover_url = ~p"/assets/#{payload}"
 
       session =
         conn

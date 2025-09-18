@@ -21,7 +21,7 @@ defmodule MusicLibraryWeb.RecordComponents do
     <img
       class={@class}
       alt={@record.title}
-      src={~p"/covers/#{@payload}"}
+      src={~p"/assets/#{@payload}"}
     />
     """
   end

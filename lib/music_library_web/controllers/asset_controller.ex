@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.CoverController do
+defmodule MusicLibraryWeb.AssetController do
   use MusicLibraryWeb, :controller
 
   alias MusicLibrary.Assets

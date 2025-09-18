@@ -36,7 +36,7 @@ defmodule MusicLibraryWeb.Router do
 
       get "/backup", ArchiveController, :backup
 
-      get "/covers/:transform_payload", CoverController, :show
+      get "/assets/:transform_payload", AssetController, :show
       get "/artists/:musicbrainz_id/image", ArtistController, :image
 
       live_session :default,
@@ -82,7 +82,7 @@ defmodule MusicLibraryWeb.Router do
     get "/collection/latest", CollectionController, :latest
     get "/collection/random", CollectionController, :random
     get "/collection", CollectionController, :index
-    get "/covers/:transform_payload", CoverController, :show
+    get "/assets/:transform_payload", AssetController, :show
     get "/backup", ArchiveController, :backup
   end
 

@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.CoverControllerTest do
+defmodule MusicLibraryWeb.AssetControllerTest do
   use MusicLibraryWeb.ConnCase
 
   import MusicLibrary.Fixtures.Records
@@ -12,21 +12,21 @@ defmodule MusicLibraryWeb.CoverControllerTest do
     %{asset: asset}
   end
 
-  describe "GET /covers/:payload" do
+  describe "GET /assets/:payload" do
     setup [:create_asset]
 
     test "404s when asset doesn't exist", %{conn: conn} do
       transform = %Transform{hash: Ecto.UUID.generate()}
       payload = Transform.encode!(transform)
 
-      conn = get(conn, ~p"/covers/#{payload}")
+      conn = get(conn, ~p"/assets/#{payload}")
       assert text_response(conn, 404) == "Not found"
     end
 
-    test "serves the cover without etag", %{conn: conn, asset: asset} do
+    test "serves the asset without etag", %{conn: conn, asset: asset} do
       transform = %Transform{hash: asset.hash}
       payload = Transform.encode!(transform)
-      conn = get(conn, ~p"/covers/#{payload}")
+      conn = get(conn, ~p"/assets/#{payload}")
 
       assert conn.status == 200
       assert get_resp_header(conn, "content-type") == ["image/jpeg; charset=utf-8"]
@@ -36,14 +36,14 @@ defmodule MusicLibraryWeb.CoverControllerTest do
       assert conn.resp_body == asset.content
     end
 
-    test "serves the cover when etag doesn't match", %{conn: conn, asset: asset} do
+    test "serves the asset when etag doesn't match", %{conn: conn, asset: asset} do
       transform = %Transform{hash: asset.hash}
       payload = Transform.encode!(transform)
 
       conn =
         conn
         |> put_req_header("if-none-match", "invalid-etag")
-        |> get(~p"/covers/#{payload}")
+        |> get(~p"/assets/#{payload}")
 
       assert conn.status == 200
       assert get_resp_header(conn, "content-type") == ["image/jpeg; charset=utf-8"]
@@ -60,7 +60,7 @@ defmodule MusicLibraryWeb.CoverControllerTest do
       conn =
         conn
         |> put_req_header("if-none-match", payload)
-        |> get(~p"/covers/#{payload}")
+        |> get(~p"/assets/#{payload}")
 
       assert conn.status == 304
       assert get_resp_header(conn, "content-type") == []
@@ -74,7 +74,7 @@ defmodule MusicLibraryWeb.CoverControllerTest do
       transform = %Transform{hash: asset.hash, width: 480}
       payload = Transform.encode!(transform)
 
-      conn = get(conn, ~p"/covers/#{payload}")
+      conn = get(conn, ~p"/assets/#{payload}")
 
       assert conn.status == 200
       assert get_resp_header(conn, "content-type") == ["image/jpeg; charset=utf-8"]
