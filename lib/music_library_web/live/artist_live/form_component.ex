@@ -2,8 +2,8 @@ defmodule MusicLibraryWeb.ArtistLive.FormComponent do
   use MusicLibraryWeb, :live_component
 
   alias MusicLibrary.Artists
+  alias MusicLibrary.Assets
   alias MusicLibrary.Assets.Transform
-  alias Vix.Vips.Image
 
   @impl true
   def mount(socket) do
@@ -112,8 +112,9 @@ defmodule MusicLibraryWeb.ArtistLive.FormComponent do
     artist_info_params = params["artist_info"] || %{}
 
     uploaded_images =
-      consume_uploaded_entries(socket, :image_data, fn %{path: path}, _entry ->
-        {:ok, File.read!(path)}
+      consume_uploaded_entries(socket, :image_data, fn %{path: path}, entry ->
+        params = %{content: File.read!(path), format: entry.client_type}
+        {:ok, params}
       end)
 
     save_artist_info(socket, artist_info_params, uploaded_images)
@@ -129,15 +130,9 @@ defmodule MusicLibraryWeb.ArtistLive.FormComponent do
         [] ->
           artist_info_params
 
-        [image_data] ->
-          {:ok, image} = Image.new_from_buffer(image_data)
-
-          image_width = Image.width(image)
-
-          Map.merge(artist_info_params, %{
-            "image_data" => image_data,
-            "image_data_width" => image_width
-          })
+        [image_params] ->
+          {:ok, asset} = Assets.store_image(image_params)
+          Map.put(artist_info_params, "image_data_hash", asset.hash)
       end
 
     case Artists.update_artist_info(socket.assigns.artist_info, params) do
@@ -158,7 +153,7 @@ defmodule MusicLibraryWeb.ArtistLive.FormComponent do
 
   defp artist_image_path(artist_info) do
     payload =
-      %Transform{hash: artist_info.image_hash, width: 96}
+      %Transform{hash: artist_info.image_data_hash}
       |> Transform.encode!()
 
     ~p"/assets/#{payload}"

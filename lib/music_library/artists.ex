@@ -2,6 +2,7 @@ defmodule MusicLibrary.Artists do
   import Ecto.Query, warn: false
 
   alias MusicLibrary.Artists.ArtistInfo
+  alias MusicLibrary.Assets
   alias MusicLibrary.Records.{ArtistRecord, Record}
   alias MusicLibrary.Repo
   alias MusicLibrary.{BackgroundRepo, Worker}
@@ -114,11 +115,11 @@ defmodule MusicLibrary.Artists do
     artist_info = get_artist_info!(artist_id)
 
     with {:ok, image} <- ArtistInfo.extract_image(artist_info),
-         {:ok, image_data} <- Discogs.get_artist_image(image.url) do
+         {:ok, image_data} <- Discogs.get_artist_image(image.url),
+         {:ok, asset} <- Assets.store_image(%{content: image_data, format: "image/jpeg"}) do
       artist_info
       |> ArtistInfo.changeset(%{
-        image_data: image_data,
-        image_data_width: image.width
+        image_data_hash: asset.hash
       })
       |> Repo.update()
     end
