@@ -151,19 +151,6 @@ defmodule MusicLibrary.Artists do
     |> BackgroundRepo.insert()
   end
 
-  def get_image(artist_id) do
-    q =
-      from ai in ArtistInfo,
-        where: ai.id == ^artist_id and not is_nil(ai.image_data),
-        select: %{
-          image_data: ai.image_data,
-          image_data_width: ai.image_data_width,
-          image_data_hash: ai.image_data_hash
-        }
-
-    Repo.one(q)
-  end
-
   def change_artist_info(artist_info, attrs \\ %{}) do
     ArtistInfo.changeset(artist_info, attrs)
   end
