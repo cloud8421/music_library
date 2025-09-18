@@ -282,6 +282,8 @@ defmodule MusicLibrary.ScrobbleActivity do
 
     query =
       from t in Track,
+        join: ai in Artists.ArtistInfo,
+        on: ai.id == fragment("json_extract(?, '$.musicbrainz_id')", t.artist),
         group_by: [
           fragment("json_extract(artist, '$.name')"),
           fragment("json_extract(artist, '$.musicbrainz_id')")
@@ -289,6 +291,7 @@ defmodule MusicLibrary.ScrobbleActivity do
         select: %{
           artist_name: fragment("json_extract(artist, '$.name')"),
           artist_musicbrainz_id: fragment("json_extract(artist, '$.musicbrainz_id')"),
+          image_hash: ai.image_data_hash,
           play_count: count(t.scrobbled_at_uts)
         },
         order_by: [desc: count(t.scrobbled_at_uts)],
@@ -315,6 +318,8 @@ defmodule MusicLibrary.ScrobbleActivity do
 
     query =
       from t in Track,
+        join: ai in Artists.ArtistInfo,
+        on: ai.id == fragment("json_extract(?, '$.musicbrainz_id')", t.artist),
         where: t.scrobbled_at_uts >= ^cutoff_timestamp,
         group_by: [
           fragment("json_extract(artist, '$.name')"),
@@ -323,6 +328,7 @@ defmodule MusicLibrary.ScrobbleActivity do
         select: %{
           artist_name: fragment("json_extract(artist, '$.name')"),
           artist_musicbrainz_id: fragment("json_extract(artist, '$.musicbrainz_id')"),
+          image_hash: ai.image_data_hash,
           play_count: count(t.scrobbled_at_uts)
         },
         order_by: [desc: count(t.scrobbled_at_uts)],
