@@ -11,7 +11,8 @@ defmodule LastFm.Artist do
           image: String.t(),
           play_count: non_neg_integer(),
           on_tour: boolean(),
-          base_url: String.t()
+          base_url: String.t(),
+          image_data_hash: String.t() | nil
         }
 
   embedded_schema do
@@ -23,6 +24,7 @@ defmodule LastFm.Artist do
     field :play_count, :integer, default: 0
     field :on_tour, :boolean, default: false
     field :base_url, :string
+    field :image_data_hash, :string
   end
 
   def from_api_response(api_response) do

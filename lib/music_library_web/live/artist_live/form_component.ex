@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.ArtistLive.FormComponent do
   use MusicLibraryWeb, :live_component
 
   alias MusicLibrary.Artists
+  alias MusicLibrary.Assets.Transform
   alias Vix.Vips.Image
 
   @impl true
@@ -46,7 +47,7 @@ defmodule MusicLibraryWeb.ArtistLive.FormComponent do
                 :if={@uploads.image_data.entries == []}
                 class="rounded-lg mx-auto w-full"
                 alt={@artist.name}
-                src={~p"/artists/#{@artist_info.id}/image?vsn=#{@artist_info.image_data_hash || ""}"}
+                src={artist_image_path(@artist_info)}
               />
               <.live_img_preview
                 :for={entry <- @uploads.image_data.entries}
@@ -154,4 +155,12 @@ defmodule MusicLibraryWeb.ArtistLive.FormComponent do
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
+
+  defp artist_image_path(artist_info) do
+    payload =
+      %Transform{hash: artist_info.image_hash, width: 96}
+      |> Transform.encode!()
+
+    ~p"/assets/#{payload}"
+  end
 end

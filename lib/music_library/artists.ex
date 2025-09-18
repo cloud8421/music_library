@@ -56,6 +56,19 @@ defmodule MusicLibrary.Artists do
     q |> Repo.all()
   end
 
+  def get_image_hashes(lastfm_artists) do
+    musicbrainz_ids = Enum.map(lastfm_artists, & &1.musicbrainz_id)
+
+    q =
+      from ai in ArtistInfo,
+        where: ai.id in ^musicbrainz_ids,
+        select: {ai.id, ai.image_data_hash}
+
+    q
+    |> Repo.all()
+    |> Enum.into(%{})
+  end
+
   def exists?(artist_id) do
     q =
       from ar in ArtistRecord,

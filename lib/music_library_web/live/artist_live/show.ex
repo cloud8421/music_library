@@ -6,6 +6,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
 
   alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibrary.{Artists, Records}
+  alias(MusicLibrary.Assets.Transform)
 
   attr :country, :map, required: true
 
@@ -63,7 +64,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
           <div class="group overflow-hidden rounded-lg bg-zinc-100 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:ring-offset-2 focus-within:ring-offset-zinc-100">
             <div class="relative">
               <img
-                src={~p"/artists/#{artist.musicbrainz_id}/image"}
+                src={artist_thumb_path(artist)}
                 alt={artist.name}
                 class="pointer-events-none aspect-square object-cover group-hover:opacity-75"
                 onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
@@ -212,6 +213,13 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     end)
     |> assign_async(:similar_artists, fn ->
       with {:ok, similar_artists} <- Artists.get_similar_artists(artist) do
+        artist_image_hashes = Artists.get_image_hashes(similar_artists)
+
+        similar_artists =
+          Enum.map(similar_artists, fn artist ->
+            %{artist | image_data_hash: Map.get(artist_image_hashes, artist.musicbrainz_id)}
+          end)
+
         {:ok, %{similar_artists: similar_artists}}
       end
     end)
@@ -353,5 +361,21 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
       escape: false,
       attributes: [class: "mt-2 text-sm/7"]
     )
+  end
+
+  defp artist_image_path(artist_info) do
+    payload =
+      %Transform{hash: artist_info.image_data_hash}
+      |> Transform.encode!()
+
+    ~p"/assets/#{payload}"
+  end
+
+  defp artist_thumb_path(artist_info) do
+    payload =
+      %Transform{hash: artist_info.image_data_hash, width: 300}
+      |> Transform.encode!()
+
+    ~p"/assets/#{payload}"
   end
 end

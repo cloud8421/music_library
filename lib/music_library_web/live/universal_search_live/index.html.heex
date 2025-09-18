@@ -91,8 +91,9 @@
       class="border-t border-zinc-200 dark:border-zinc-700"
     >
       <.search_result_artist
-        :for={artist <- @search_results.artists}
+        :for={%{artist: artist, image_data_hash: image_data_hash} <- @search_results.artists}
         artist={artist}
+        image_data_hash={image_data_hash}
         phx-click="navigate_to_artist"
         phx-value-id={artist.musicbrainz_id}
       />

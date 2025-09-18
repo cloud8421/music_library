@@ -37,7 +37,6 @@ defmodule MusicLibraryWeb.Router do
       get "/backup", ArchiveController, :backup
 
       get "/assets/:transform_payload", AssetController, :show
-      get "/artists/:musicbrainz_id/image", ArtistController, :image
 
       live_session :default,
         on_mount: [MusicLibraryWeb.Hooks.StaticAssets, MusicLibraryWeb.Hooks.GetTimezone] do

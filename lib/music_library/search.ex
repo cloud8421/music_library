@@ -10,6 +10,7 @@ defmodule MusicLibrary.Search do
 
   import Ecto.Query, warn: false
 
+  alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibrary.Records.ArtistRecord
   alias MusicLibrary.{Collection, Repo, Wishlist}
 
@@ -64,10 +65,12 @@ defmodule MusicLibrary.Search do
 
         q =
           from ar in ArtistRecord,
+            join: ai in ArtistInfo,
+            on: ar.musicbrainz_id == ai.id,
             where:
               fragment("lower(unaccent(artist ->> '$.name')) LIKE ?", ^"%#{normalized_query}%"),
             group_by: ar.musicbrainz_id,
-            select: ar.artist,
+            select: %{artist: ar.artist, image_data_hash: ai.image_data_hash},
             limit: ^limit,
             order_by: fragment("artist ->> '$.name'")
 
