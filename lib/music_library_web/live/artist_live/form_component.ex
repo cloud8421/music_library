@@ -1,9 +1,10 @@
 defmodule MusicLibraryWeb.ArtistLive.FormComponent do
   use MusicLibraryWeb, :live_component
 
+  import MusicLibraryWeb.ArtistComponents, only: [artist_image: 1]
+
   alias MusicLibrary.Artists
   alias MusicLibrary.Assets
-  alias MusicLibrary.Assets.Transform
 
   @impl true
   def mount(socket) do
@@ -43,11 +44,11 @@ defmodule MusicLibraryWeb.ArtistLive.FormComponent do
             ]}
           >
             <div class="text-center">
-              <img
+              <.artist_image
                 :if={@uploads.image_data.entries == []}
                 class="rounded-lg mx-auto w-full"
-                alt={@artist.name}
-                src={artist_image_path(@artist_info)}
+                artist={@artist}
+                image_hash={@artist_info.image_data_hash}
               />
               <.live_img_preview
                 :for={entry <- @uploads.image_data.entries}
@@ -150,12 +151,4 @@ defmodule MusicLibraryWeb.ArtistLive.FormComponent do
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
-
-  defp artist_image_path(artist_info) do
-    payload =
-      %Transform{hash: artist_info.image_data_hash}
-      |> Transform.encode!()
-
-    ~p"/assets/#{payload}"
-  end
 end

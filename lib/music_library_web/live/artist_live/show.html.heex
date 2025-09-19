@@ -104,11 +104,10 @@
       <h2 class="font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300">
         {gettext("Meta")}
       </h2>
-      <img
+      <.artist_image
         class="w-full rounded-md shadow-sm mt-4"
-        src={artist_image_path(@artist_info)}
-        alt={@artist.name}
-        onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
+        artist={@artist}
+        image_hash={@artist_info.image_data_hash}
       />
       <dl>
         <dt class="mt-4 text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">

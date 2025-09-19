@@ -289,8 +289,8 @@ defmodule MusicLibrary.ScrobbleActivity do
           fragment("json_extract(artist, '$.musicbrainz_id')")
         ],
         select: %{
-          artist_name: fragment("json_extract(artist, '$.name')"),
-          artist_musicbrainz_id: fragment("json_extract(artist, '$.musicbrainz_id')"),
+          name: fragment("json_extract(artist, '$.name')"),
+          musicbrainz_id: fragment("json_extract(artist, '$.musicbrainz_id')"),
           image_hash: ai.image_data_hash,
           play_count: count(t.scrobbled_at_uts)
         },
@@ -326,8 +326,8 @@ defmodule MusicLibrary.ScrobbleActivity do
           fragment("json_extract(artist, '$.musicbrainz_id')")
         ],
         select: %{
-          artist_name: fragment("json_extract(artist, '$.name')"),
-          artist_musicbrainz_id: fragment("json_extract(artist, '$.musicbrainz_id')"),
+          name: fragment("json_extract(artist, '$.name')"),
+          musicbrainz_id: fragment("json_extract(artist, '$.musicbrainz_id')"),
           image_hash: ai.image_data_hash,
           play_count: count(t.scrobbled_at_uts)
         },

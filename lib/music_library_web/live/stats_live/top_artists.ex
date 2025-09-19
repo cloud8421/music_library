@@ -1,7 +1,8 @@
 defmodule MusicLibraryWeb.StatsLive.TopArtists do
   use MusicLibraryWeb, :live_component
 
-  alias MusicLibrary.Assets.Transform
+  import MusicLibraryWeb.ArtistComponents, only: [artist_image: 1]
+
   alias MusicLibrary.ScrobbleActivity
 
   def live(assigns) do
@@ -99,31 +100,31 @@ defmodule MusicLibraryWeb.StatsLive.TopArtists do
         <div
           :for={artist <- @artists}
           phx-click={
-            artist.artist_musicbrainz_id != "" &&
-              JS.navigate(~p"/artists/#{artist.artist_musicbrainz_id}")
+            artist.musicbrainz_id != "" &&
+              JS.navigate(~p"/artists/#{artist.musicbrainz_id}")
           }
           class={[
             "flex items-center space-x-3 p-2",
-            artist.artist_musicbrainz_id != "" &&
+            artist.musicbrainz_id != "" &&
               "cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800"
           ]}
         >
-          <img
-            :if={artist.artist_musicbrainz_id != ""}
+          <.artist_image
+            :if={artist.musicbrainz_id != ""}
             class="w-12 h-12 rounded-md object-cover"
-            src={artist_image_path(artist)}
-            alt={artist.artist_name}
-            onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
+            artist={artist}
+            width={96}
+            image_hash={artist.image_hash}
           />
           <div
-            :if={artist.artist_musicbrainz_id == ""}
+            :if={artist.musicbrainz_id == ""}
             class="w-12 h-12 rounded-md bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center"
           >
             <.icon name="hero-user" class="w-6 h-6 text-zinc-400" />
           </div>
           <div class="flex-1 min-w-0">
             <p class="text-sm font-medium text-zinc-900 dark:text-zinc-300 hover:text-zinc-700 dark:hover:text-zinc-400 truncate">
-              {artist.artist_name}
+              {artist.name}
             </p>
           </div>
           <.badge>
@@ -133,14 +134,6 @@ defmodule MusicLibraryWeb.StatsLive.TopArtists do
       </div>
     </div>
     """
-  end
-
-  defp artist_image_path(artist) do
-    payload =
-      %Transform{hash: artist.image_hash, width: 96}
-      |> Transform.encode!()
-
-    ~p"/assets/#{payload}"
   end
 
   defp assign_top_artists(socket) do

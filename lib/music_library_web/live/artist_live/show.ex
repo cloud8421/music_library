@@ -4,9 +4,10 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
   import MusicLibraryWeb.RecordComponents,
     only: [record_grid: 1, country_label: 1]
 
+  import MusicLibraryWeb.ArtistComponents, only: [artist_image: 1]
+
   alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibrary.{Artists, Records}
-  alias(MusicLibrary.Assets.Transform)
 
   attr :country, :map, required: true
 
@@ -63,11 +64,10 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
         <li :for={artist <- @artists} class="relative">
           <div class="group overflow-hidden rounded-lg bg-zinc-100 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:ring-offset-2 focus-within:ring-offset-zinc-100">
             <div class="relative">
-              <img
-                src={artist_thumb_path(artist)}
-                alt={artist.name}
+              <.artist_image
                 class="pointer-events-none aspect-square object-cover group-hover:opacity-75"
-                onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
+                artist={artist}
+                image_hash={artist.image_data_hash}
               />
             </div>
             <button
@@ -361,21 +361,5 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
       escape: false,
       attributes: [class: "mt-2 text-sm/7"]
     )
-  end
-
-  defp artist_image_path(artist_info) do
-    payload =
-      %Transform{hash: artist_info.image_data_hash}
-      |> Transform.encode!()
-
-    ~p"/assets/#{payload}"
-  end
-
-  defp artist_thumb_path(artist_info) do
-    payload =
-      %Transform{hash: artist_info.image_data_hash, width: 300}
-      |> Transform.encode!()
-
-    ~p"/assets/#{payload}"
   end
 end

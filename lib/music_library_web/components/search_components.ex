@@ -6,8 +6,8 @@ defmodule MusicLibraryWeb.SearchComponents do
   use MusicLibraryWeb, :html
 
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1, record_cover: 1]
+  import MusicLibraryWeb.ArtistComponents, only: [artist_image: 1]
 
-  alias MusicLibrary.Assets.Transform
   alias MusicLibrary.Records.Record
 
   @doc """
@@ -78,12 +78,7 @@ defmodule MusicLibraryWeb.SearchComponents do
     >
       <div class="flex items-center space-x-3">
         <div class="flex-shrink-0">
-          <img
-            class="w-12 h-12 rounded-md aspect-square object-cover"
-            src={artist_image_path(@image_data_hash)}
-            alt={@artist.name}
-            onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
-          />
+          <.artist_image artist={@artist} width={96} image_hash={@image_data_hash} />
         </div>
         <div class="min-w-0 flex-1">
           <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
@@ -96,14 +91,6 @@ defmodule MusicLibraryWeb.SearchComponents do
       </div>
     </div>
     """
-  end
-
-  defp artist_image_path(image_data_hash) do
-    payload =
-      %Transform{hash: image_data_hash, width: 96}
-      |> Transform.encode!()
-
-    ~p"/assets/#{payload}"
   end
 
   @doc """
