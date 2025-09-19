@@ -12,7 +12,7 @@ defmodule MusicLibraryWeb.RecordComponents do
 
   def record_cover(assigns) do
     payload =
-      %Transform{hash: assigns.record.cover_hash, width: assigns.width}
+      Transform.new(hash: assigns.record.cover_hash, width: assigns.width)
       |> Transform.encode!()
 
     assigns = assign(assigns, :payload, payload)

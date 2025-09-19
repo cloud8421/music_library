@@ -10,7 +10,7 @@ defmodule MusicLibraryWeb.ArtistComponents do
 
   def artist_image(assigns) do
     payload =
-      %Transform{hash: assigns.image_hash, width: assigns.width}
+      Transform.new(hash: assigns.image_hash, width: assigns.width)
       |> Transform.encode!()
 
     assigns = assign(assigns, :payload, payload)

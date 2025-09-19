@@ -5,6 +5,8 @@ defmodule MusicLibrary.Assets.Transform do
   @type t :: %__MODULE__{}
   @type payload :: String.t()
 
+  def new(attrs \\ %{}), do: struct!(__MODULE__, attrs)
+
   @doc """
     iex> alias MusicLibrary.Assets.Transform
     iex> transform = %Transform{hash: "abc123", width: 300}
