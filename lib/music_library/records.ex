@@ -7,7 +7,7 @@ defmodule MusicLibrary.Records do
 
   alias MusicLibrary.Artists
   alias MusicLibrary.Assets
-  alias MusicLibrary.Records.{ArtistRecord, Cover, Record, SearchParser}
+  alias MusicLibrary.Records.{ArtistRecord, Record, SearchParser}
   alias MusicLibrary.{BackgroundRepo, Repo, Worker}
 
   def essential_fields do
@@ -228,8 +228,8 @@ defmodule MusicLibrary.Records do
 
   defp get_cover_art_or_default(musicbrainz_id) do
     case MusicBrainz.get_cover_art({:musicbrainz_id, musicbrainz_id}) do
-      {:error, :cover_not_available} -> {:ok, Cover.fallback_data()}
-      {:ok, cover_data} -> Cover.resize(cover_data)
+      {:error, :cover_not_available} -> {:ok, Assets.Image.fallback_data()}
+      {:ok, cover_data} -> Assets.Image.resize(cover_data)
     end
   end
 
@@ -259,7 +259,7 @@ defmodule MusicLibrary.Records do
 
   def refresh_cover(record) do
     with {:ok, cover_data} <- MusicBrainz.get_cover_art({:url, record.cover_url}),
-         {:ok, thumb_data} <- Cover.resize(cover_data),
+         {:ok, thumb_data} <- Assets.Image.resize(cover_data),
          {:ok, asset} <- Assets.store_image(%{content: thumb_data, format: "image/jpeg"}) do
       record
       |> Record.set_cover_hash(asset.hash)
@@ -286,7 +286,7 @@ defmodule MusicLibrary.Records do
   end
 
   def resize_cover(record) do
-    with {:ok, thumb_data} <- Cover.resize(record.cover_data),
+    with {:ok, thumb_data} <- Assets.Image.resize(record.cover_data),
          {:ok, asset} <- Assets.store_image(%{content: thumb_data, format: "image/jpeg"}) do
       record
       |> Record.set_cover_hash(asset.hash)

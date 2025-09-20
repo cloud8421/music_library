@@ -8,8 +8,8 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
   alias MusicBrainz.ReleaseGroupSearchResult
   alias MusicLibrary.Assets
-  alias MusicLibrary.Assets.Transform
-  alias MusicLibrary.Records.{Cover, Record}
+  alias MusicLibrary.Assets.{Image, Transform}
+  alias MusicLibrary.Records.Record
 
   # make it a multiple of 4 for easier calculations
   @default_records_page_size 8
@@ -317,7 +317,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       assert record.cover_hash ==
                "E7238C742E5B8711FC5BFF01A4A1F727D9E404A4D1420429A6B37ABFFC0B5960"
 
-      {:ok, resized_cover_data} = Cover.resize(cover_data)
+      {:ok, resized_cover_data} = Image.resize(cover_data)
 
       assets = Assets.get(record.cover_hash)
 
@@ -425,7 +425,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
              "E7238C742E5B8711FC5BFF01A4A1F727D9E404A4D1420429A6B37ABFFC0B5960"
 
     asset = Assets.get(record.cover_hash)
-    {:ok, resized_cover_data} = Cover.resize(cover_data)
+    {:ok, resized_cover_data} = Image.resize(cover_data)
 
     assert asset.content == resized_cover_data
 

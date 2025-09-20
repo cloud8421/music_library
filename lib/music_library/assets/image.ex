@@ -1,7 +1,7 @@
-defmodule MusicLibrary.Records.Cover do
+defmodule MusicLibrary.Assets.Image do
   alias Vix.Vips.{Image, Operation}
 
-  fallback_path = Application.app_dir(:music_library, ["priv", "cover-not-found.jpg"])
+  fallback_path = Application.app_dir(:music_library, ["priv", "image-not-found.jpg"])
   fallback_data = File.read!(fallback_path)
 
   @external_resource fallback_path

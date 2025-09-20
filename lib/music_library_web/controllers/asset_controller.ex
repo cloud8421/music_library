@@ -2,8 +2,7 @@ defmodule MusicLibraryWeb.AssetController do
   use MusicLibraryWeb, :controller
 
   alias MusicLibrary.Assets
-  alias MusicLibrary.Assets.{Cache, Transform}
-  alias MusicLibrary.Records.Cover
+  alias MusicLibrary.Assets.{Cache, Image, Transform}
 
   # 1 year in seconds
   @cache_duration 60 * 60 * 24 * 365
@@ -31,10 +30,10 @@ defmodule MusicLibraryWeb.AssetController do
           image_data =
             if transform.width do
               # TODO: find a way to cache computation, or pre-compute thumb and store it
-              {:ok, data} = Cover.resize(asset.content, transform.width, format)
+              {:ok, data} = Image.resize(asset.content, transform.width, format)
               data
             else
-              {:ok, data} = Cover.convert(asset.content, asset.format, format)
+              {:ok, data} = Image.convert(asset.content, asset.format, format)
               data
             end
 

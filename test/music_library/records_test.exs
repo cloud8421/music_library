@@ -7,7 +7,7 @@ defmodule MusicLibrary.RecordsTest do
 
   alias MusicLibrary.Assets
   alias MusicLibrary.Records
-  alias MusicLibrary.Records.{Cover, SearchIndex}
+  alias MusicLibrary.Records.SearchIndex
 
   defp create_records(_) do
     records = [
@@ -336,7 +336,7 @@ defmodule MusicLibrary.RecordsTest do
       assert updated_record.cover_hash ==
                "6E0D25D1FD1019D771D7EB3F777E2C7C1B06A73A92E56A584D674D86DD8AF441"
 
-      {:ok, expected_content} = Cover.resize(raven_cover_data())
+      {:ok, expected_content} = Assets.Image.resize(raven_cover_data())
 
       assert Assets.get(updated_record.cover_hash).content == expected_content
     end
