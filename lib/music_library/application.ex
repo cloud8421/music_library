@@ -20,7 +20,6 @@ defmodule MusicLibrary.Application do
       {Oban, Application.fetch_env!(:music_library, Oban)},
       {Ecto.Migrator,
        repos: Application.fetch_env!(:music_library, :ecto_repos), skip: skip_migrations?()},
-      {DNSCluster, query: Application.get_env(:music_library, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: MusicLibrary.PubSub},
       {LastFm.Supervisor, LastFm.Config.resolve(:music_library)},
       # Start a worker by calling: MusicLibrary.Worker.start_link(arg)

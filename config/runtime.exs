@@ -141,8 +141,6 @@ if config_env() == :prod do
 
   config :music_library, MusicLibraryWeb, login_password: login_password, api_token: api_token
 
-  config :music_library, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
-
   config :music_library, MusicLibraryWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
     http: [
