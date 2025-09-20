@@ -23,6 +23,14 @@ defmodule MusicLibrary.Assets.Cache do
     )
   end
 
+  def track_total_content_size do
+    :telemetry.execute(
+      [:music_library, :assets, :cache],
+      %{total_content_size: total_content_size()},
+      %{}
+    )
+  end
+
   def prune(older_than_seconds) do
     threshold =
       DateTime.utc_now()
