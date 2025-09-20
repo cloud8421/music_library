@@ -24,7 +24,7 @@ FROM ${BUILDER_IMAGE} AS builder
 RUN apt-get update -y && apt-get install -y build-essential git curl
 
 # Add Node.js 20 repo
-RUN curl -sL https://deb.nodesource.com/setup_20.x | bash
+RUN curl -sL https://deb.nodesource.com/setup_24.x | bash
 
 # install Node.js and cleanup
 RUN apt-get install -y nodejs \
