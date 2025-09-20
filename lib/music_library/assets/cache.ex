@@ -14,4 +14,24 @@ defmodule MusicLibrary.Assets.Cache do
       [] -> :not_found
     end
   end
+
+  def total_content_size do
+    :ets.foldl(
+      fn {_key, _inserted_at, content}, acc -> acc + byte_size(content) end,
+      0,
+      __MODULE__
+    )
+  end
+
+  def prune(older_than_seconds) do
+    threshold =
+      DateTime.utc_now()
+      |> DateTime.add(older_than_seconds * -1, :second)
+      |> DateTime.to_unix()
+
+    :ets.select_delete(
+      __MODULE__,
+      [{{:"$1", :"$2", :"$3"}, [{:<, :"$2", threshold}], [true]}]
+    )
+  end
 end

@@ -1,0 +1,18 @@
+defmodule MusicLibrary.Worker.PruneAssetCache do
+  use Oban.Worker, queue: :default, max_attempts: 3
+
+  require Logger
+
+  alias MusicLibrary.Assets.Cache
+
+  @one_week_seconds 60 * 60 * 24 * 7
+
+  @impl Oban.Worker
+  def perform(_) do
+    prune_count = Cache.prune(@one_week_seconds)
+
+    Logger.info(fn ->
+      "Pruned #{prune_count} old cached assets. Cache size now #{Cache.total_content_size()} bytes."
+    end)
+  end
+end
