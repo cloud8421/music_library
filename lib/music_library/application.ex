@@ -43,6 +43,10 @@ defmodule MusicLibrary.Application do
     :ok
   end
 
+  def version do
+    System.get_env("SOURCE_COMMIT") || "development"
+  end
+
   defp skip_migrations? do
     # By default, sqlite migrations are run when using a release
     System.get_env("RELEASE_NAME") != nil
