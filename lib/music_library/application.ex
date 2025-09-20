@@ -12,11 +12,11 @@ defmodule MusicLibrary.Application do
     _ = Assets.Cache.new()
 
     children = [
-      MusicLibraryWeb.Telemetry,
       MusicLibrary.Vault,
       MusicLibrary.Repo,
       MusicLibrary.ErrorRepo,
       MusicLibrary.BackgroundRepo,
+      MusicLibraryWeb.Telemetry,
       {Oban, Application.fetch_env!(:music_library, Oban)},
       {Ecto.Migrator,
        repos: Application.fetch_env!(:music_library, :ecto_repos), skip: skip_migrations?()},

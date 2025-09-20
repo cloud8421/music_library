@@ -116,7 +116,8 @@ defmodule MusicLibraryWeb.Telemetry do
       ),
 
       # Assets
-      summary("music_library.assets.cache.total_content_size", unit: {:byte, :kilobyte}),
+      summary("music_library.assets.cache_size", unit: {:byte, :kilobyte}),
+      summary("music_library.assets.content_size", unit: {:byte, :megabyte}),
 
       # VM Metrics
       summary("vm.memory.total", unit: {:byte, :megabyte}),
@@ -128,7 +129,8 @@ defmodule MusicLibraryWeb.Telemetry do
 
   defp periodic_measurements do
     [
-      {MusicLibrary.Assets.Cache, :track_total_content_size, []}
+      {MusicLibrary.Assets, :track_total_cache_size, []},
+      {MusicLibrary.Assets, :track_total_content_size, []}
       # A module, function and arguments to be invoked periodically.
       # This function must call :telemetry.execute/3 and a metric must be added above.
       # {MusicLibraryWeb, :count_users, []}
