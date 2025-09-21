@@ -227,9 +227,11 @@ defmodule MusicLibraryWeb.StatsComponents do
     ~H"""
     <span class={[
       "text-xs leading-5",
-      !special_year?(@years) && "text-zinc-500 dark:text-zinc-400",
-      special_year?(@years) &&
-        "font-semibold bg-gradient-to-r bg-clip-text text-transparent from-yellow-200 via-yellow-500 to-yellow-700 animate-shine"
+      normal_year?(@years) && "text-zinc-500 dark:text-zinc-400",
+      gold_year?(@years) &&
+        "font-semibold bg-gradient-to-r bg-clip-text text-transparent from-yellow-200 via-yellow-500 to-yellow-700 animate-shine",
+      silver_year?(@years) &&
+        "font-semibold bg-gradient-to-r bg-clip-text text-transparent from-gray-200 via-gray-500 to-gray-700 animate-shine"
     ]}>
       {ngettext(
         "1 year ago",
@@ -240,7 +242,9 @@ defmodule MusicLibraryWeb.StatsComponents do
     """
   end
 
-  defp special_year?(year), do: rem(year, 10) == 0
+  defp gold_year?(year), do: rem(year, 10) == 0
+  defp silver_year?(year), do: rem(year, 5) == 0
+  defp normal_year?(year), do: !gold_year?(year) && !silver_year?(year)
 
   def tracked_record?(tracked_releases, release_id) do
     Enum.find_value(tracked_releases, fn tracked_release ->
