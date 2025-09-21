@@ -1,14 +1,10 @@
 defmodule MusicLibraryWeb.UniversalSearchLive.Index do
-  use MusicLibraryWeb, :live_view
+  use MusicLibraryWeb, :live_component
 
   import MusicLibraryWeb.SearchComponents
 
   alias MusicLibrary.Search
   alias Phoenix.LiveView.ColocatedHook
-
-  def live(socket) do
-    live_render(socket, __MODULE__, id: "universal-search", session: %{})
-  end
 
   def universal_search_trigger(assigns) do
     ~H"""
@@ -47,7 +43,7 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(socket) do
     {:ok,
      socket
      |> assign(:show_modal, false)

@@ -1,105 +1,112 @@
-<.structured_modal
-  :if={@show_modal}
-  id="universal-search-root"
-  open={@show_modal}
-  on_close={JS.push("close_modal", value: %{})}
->
-  <form class="mt-4 text-sm" phx-change="search" phx-submit="search">
-    <div class="relative">
-      <.icon
-        name="hero-magnifying-glass"
-        class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-zinc-400"
-      />
-      <.input
-        name="query"
-        id="universal-search-input"
-        placeholder="Search records and artists..."
-        value={@search_query}
-        phx-debounce="300"
-        autofocus
-      />
-    </div>
-  </form>
-  
+<div id={@id}>
+  <.structured_modal
+    :if={@show_modal}
+    id="universal-search-root"
+    open={@show_modal}
+    on_close={JS.push("close_modal", value: %{}, target: "#universal-search")}
+  >
+    <form class="mt-4 text-sm" phx-change="search" phx-submit="search" phx-target={@myself}>
+      <div class="relative">
+        <.icon
+          name="hero-magnifying-glass"
+          class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-zinc-400"
+        />
+        <.input
+          name="query"
+          id="universal-search-input"
+          placeholder="Search records and artists..."
+          value={@search_query}
+          phx-debounce="300"
+          autofocus
+        />
+      </div>
+    </form>
+    
 <!-- Empty state -->
-  <.empty_state :if={@search_query == ""} />
-  
+    <.empty_state :if={@search_query == ""} />
+    
 <!-- No results -->
-  <.no_results :if={@search_query != "" and @total_results == 0} query={@search_query} />
-  
+    <.no_results :if={@search_query != "" and @total_results == 0} query={@search_query} />
+    
 <!-- Search results -->
-  <div :if={@total_results > 0} class="max-h-148 md:max-h-164 overflow-y-auto">
-    <!-- Collection results -->
-    <.search_result_group
-      :if={length(@search_results.collection) > 0}
-      title="Collection"
-      count={length(@search_results.collection)}
-      total_count={@search_counts.collection_count}
-    >
-      <.search_result_record
-        :for={record <- @search_results.collection}
-        record={record}
-        type={:collection}
-        phx-click="navigate_to_record"
-        phx-value-id={record.id}
-        phx-value-type="collection"
-      />
-      <:actions>
-        <.view_all_button
-          :if={@search_counts.collection_count > length(@search_results.collection)}
-          count={@search_counts.collection_count}
-          target="collection"
-          phx-click="navigate_to_collection"
-          phx-value-query={@search_query}
+    <div :if={@total_results > 0} class="max-h-148 md:max-h-164 overflow-y-auto">
+      <!-- Collection results -->
+      <.search_result_group
+        :if={length(@search_results.collection) > 0}
+        title="Collection"
+        count={length(@search_results.collection)}
+        total_count={@search_counts.collection_count}
+      >
+        <.search_result_record
+          :for={record <- @search_results.collection}
+          record={record}
+          type={:collection}
+          phx-click="navigate_to_record"
+          phx-value-id={record.id}
+          phx-value-type="collection"
+          phx-target={@myself}
         />
-      </:actions>
-    </.search_result_group>
-    
+        <:actions>
+          <.view_all_button
+            :if={@search_counts.collection_count > length(@search_results.collection)}
+            count={@search_counts.collection_count}
+            target="collection"
+            phx-click="navigate_to_collection"
+            phx-value-query={@search_query}
+            phx-target={@myself}
+          />
+        </:actions>
+      </.search_result_group>
+      
 <!-- Wishlist results -->
-    <.search_result_group
-      :if={length(@search_results.wishlist) > 0}
-      title="Wishlist"
-      count={length(@search_results.wishlist)}
-      total_count={@search_counts.wishlist_count}
-      class="border-t border-zinc-200 dark:border-zinc-700"
-    >
-      <.search_result_record
-        :for={record <- @search_results.wishlist}
-        record={record}
-        type={:wishlist}
-        phx-click="navigate_to_record"
-        phx-value-id={record.id}
-        phx-value-type="wishlist"
-      />
-      <:actions>
-        <.view_all_button
-          :if={@search_counts.wishlist_count > length(@search_results.wishlist)}
-          count={@search_counts.wishlist_count}
-          target="wishlist"
-          phx-click="navigate_to_wishlist"
-          phx-value-query={@search_query}
+      <.search_result_group
+        :if={length(@search_results.wishlist) > 0}
+        title="Wishlist"
+        count={length(@search_results.wishlist)}
+        total_count={@search_counts.wishlist_count}
+        class="border-t border-zinc-200 dark:border-zinc-700"
+      >
+        <.search_result_record
+          :for={record <- @search_results.wishlist}
+          record={record}
+          type={:wishlist}
+          phx-click="navigate_to_record"
+          phx-value-id={record.id}
+          phx-value-type="wishlist"
+          phx-target={@myself}
         />
-      </:actions>
-    </.search_result_group>
-    
+        <:actions>
+          <.view_all_button
+            :if={@search_counts.wishlist_count > length(@search_results.wishlist)}
+            count={@search_counts.wishlist_count}
+            target="wishlist"
+            phx-click="navigate_to_wishlist"
+            phx-value-query={@search_query}
+            phx-target={@myself}
+          />
+        </:actions>
+      </.search_result_group>
+      
 <!-- Artists results -->
-    <.search_result_group
-      :if={length(@search_results.artists) > 0}
-      title="Artists"
-      count={length(@search_results.artists)}
-      total_count={@search_counts.artists_count}
-      class="border-t border-zinc-200 dark:border-zinc-700"
-    >
-      <.search_result_artist
-        :for={%{artist: artist, image_data_hash: image_data_hash} <- @search_results.artists}
-        artist={artist}
-        image_data_hash={image_data_hash}
-        phx-click="navigate_to_artist"
-        phx-value-id={artist.musicbrainz_id}
-      />
-    </.search_result_group>
-  </div>
-  
+      <.search_result_group
+        :if={length(@search_results.artists) > 0}
+        title="Artists"
+        count={length(@search_results.artists)}
+        total_count={@search_counts.artists_count}
+        class="border-t border-zinc-200 dark:border-zinc-700"
+      >
+        <.search_result_artist
+          :for={%{artist: artist, image_data_hash: image_data_hash} <- @search_results.artists}
+          artist={artist}
+          image_data_hash={image_data_hash}
+          phx-click="navigate_to_artist"
+          phx-value-id={artist.musicbrainz_id}
+          phx-target={@myself}
+        />
+      </.search_result_group>
+    </div>
+    
 <!-- Footer with keyboard shortcuts -->
-  <.results_footer total_results={@total_results} />
-</.structured_modal>
+    <.results_footer total_results={@total_results} />
+  </.structured_modal>
+</div>
