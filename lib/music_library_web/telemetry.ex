@@ -46,6 +46,15 @@ defmodule MusicLibraryWeb.Telemetry do
         ]
       ),
 
+      # Oban
+      summary("oban.job.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:state],
+        reporter_options: [
+          nav: "Oban"
+        ]
+      ),
+
       # HTTP Metrics
       summary("finch.request.stop.duration",
         unit: {:native, :millisecond},
