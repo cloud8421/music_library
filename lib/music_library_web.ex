@@ -62,8 +62,7 @@ defmodule MusicLibraryWeb do
 
   def live_view do
     quote do
-      use Phoenix.LiveView,
-        layout: {MusicLibraryWeb.Layouts, :app}
+      use Phoenix.LiveView
 
       unquote(html_helpers())
     end
@@ -102,6 +101,7 @@ defmodule MusicLibraryWeb do
       # HTML escaping functionality
       import Phoenix.HTML
 
+      alias MusicLibraryWeb.Layouts
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
 

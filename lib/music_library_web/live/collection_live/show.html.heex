@@ -1,356 +1,360 @@
-<div class="md:flex mt-4 px-4 md:gap-x-4">
-  <div class="drop-shadow-sm md:max-w-[38rem]">
-    <.record_cover
-      record={@record}
-      class="w-full rounded-lg drop-shadow-sm"
-    />
-  </div>
+<Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
+  <div class="md:flex mt-4 px-4 md:gap-x-4">
+    <div class="drop-shadow-sm md:max-w-[38rem]">
+      <.record_cover
+        record={@record}
+        class="w-full rounded-lg drop-shadow-sm"
+      />
+    </div>
 
-  <div class="grow">
-    <div class="mt-4 md:mt-0 flex justify-between">
-      <div>
-        <h1 class="text-base font-medium leading-6 text-zinc-700">
-          <.artist_links joinphrase_class="text-sm" artists={@record.artists} />
-        </h1>
-        <h2 class="mt-1 flex font-semibold text-lg md:text-2xl text-zinc-700 dark:text-zinc-300 text-wrap">
-          {@record.title}
-        </h2>
-        <p class="mt-2 flex items-center text-sm text-zinc-500 dark:text-zinc-400">
-          <.record_colors record={@record} />
-          <span class="ml-1">
-            {Records.Record.format_release_date(@record.release_date)} · {format_label(
-              @record.format
-            )} · {type_label(@record.type)}
-          </span>
-        </p>
-      </div>
-      <div class="min-w-12 text-right">
-        <button
-          class="text-xs md:text-sm text-zinc-700 dark:text-zinc-300"
-          phx-click={MusicLibraryWeb.NotesComponent.open("record-notes-sheet")}
-        >
-          <span class="sr-only">{gettext("Open Notes")}</span>
-          <.icon
-            name="hero-pencil-square"
-            class="-mt-1 h-5 w-5"
-            aria-hidden="true"
-            data-slot="icon"
-          />
-        </button>
-        <button
-          :if={@record.selected_release_id}
-          class="text-xs md:text-sm text-zinc-700 dark:text-zinc-300"
-          phx-click={MusicLibraryWeb.ReleaseComponent.open("release-with-tracks-sheet")}
-        >
-          <span class="sr-only">{gettext("Show Tracks")}</span>
-          <.icon
-            name="hero-numbered-list"
-            class="-mt-1 h-5 w-5"
-            aria-hidden="true"
-            data-slot="icon"
-          />
-        </button>
-        <.dropdown id={"actions-#{@record.id}"} placement="bottom-end">
-          <:toggle class="h-5 block">
-            <span class="sr-only">{gettext("Actions")}</span>
+    <div class="grow">
+      <div class="mt-4 md:mt-0 flex justify-between">
+        <div>
+          <h1 class="text-base font-medium leading-6 text-zinc-700">
+            <.artist_links joinphrase_class="text-sm" artists={@record.artists} />
+          </h1>
+          <h2 class="mt-1 flex font-semibold text-lg md:text-2xl text-zinc-700 dark:text-zinc-300 text-wrap">
+            {@record.title}
+          </h2>
+          <p class="mt-2 flex items-center text-sm text-zinc-500 dark:text-zinc-400">
+            <.record_colors record={@record} />
+            <span class="ml-1">
+              {Records.Record.format_release_date(@record.release_date)} · {format_label(
+                @record.format
+              )} · {type_label(@record.type)}
+            </span>
+          </p>
+        </div>
+        <div class="min-w-12 text-right">
+          <button
+            class="text-xs md:text-sm text-zinc-700 dark:text-zinc-300"
+            phx-click={MusicLibraryWeb.NotesComponent.open("record-notes-sheet")}
+          >
+            <span class="sr-only">{gettext("Open Notes")}</span>
             <.icon
-              name="hero-ellipsis-vertical"
-              class="-mt-1 h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+              name="hero-pencil-square"
+              class="-mt-1 h-5 w-5"
               aria-hidden="true"
               data-slot="icon"
             />
-          </:toggle>
-          <.focus_wrap id={"actions-#{@record.id}-focus-wrap"}>
-            <.dropdown_link
-              id={"actions-#{@record.id}-edit"}
-              patch={~p"/collection/#{@record}/show/edit"}
-            >
+          </button>
+          <button
+            :if={@record.selected_release_id}
+            class="text-xs md:text-sm text-zinc-700 dark:text-zinc-300"
+            phx-click={MusicLibraryWeb.ReleaseComponent.open("release-with-tracks-sheet")}
+          >
+            <span class="sr-only">{gettext("Show Tracks")}</span>
+            <.icon
+              name="hero-numbered-list"
+              class="-mt-1 h-5 w-5"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+          </button>
+          <.dropdown id={"actions-#{@record.id}"} placement="bottom-end">
+            <:toggle class="h-5 block">
+              <span class="sr-only">{gettext("Actions")}</span>
               <.icon
-                name="hero-pencil-square"
-                class="h-4 w-4 mr-1 phx-click-loading:animate-bounce"
+                name="hero-ellipsis-vertical"
+                class="-mt-1 h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
                 aria-hidden="true"
                 data-slot="icon"
               />
-              {gettext("Edit")}
-            </.dropdown_link>
+            </:toggle>
+            <.focus_wrap id={"actions-#{@record.id}-focus-wrap"}>
+              <.dropdown_link
+                id={"actions-#{@record.id}-edit"}
+                patch={~p"/collection/#{@record}/show/edit"}
+              >
+                <.icon
+                  name="hero-pencil-square"
+                  class="h-4 w-4 mr-1 phx-click-loading:animate-bounce"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+                {gettext("Edit")}
+              </.dropdown_link>
 
-            <.dropdown_link
-              id={"actions-#{@record.id}-refresh-cover"}
-              phx-click={JS.push("refresh_cover", value: %{id: @record.id})}
-            >
-              <.icon
-                name="hero-photo"
-                class="h-4 w-4 mr-1 phx-click-loading:animate-bounce"
-                aria-hidden="true"
-                data-slot="icon"
-              />
-              {gettext("Refresh cover")}
-            </.dropdown_link>
+              <.dropdown_link
+                id={"actions-#{@record.id}-refresh-cover"}
+                phx-click={JS.push("refresh_cover", value: %{id: @record.id})}
+              >
+                <.icon
+                  name="hero-photo"
+                  class="h-4 w-4 mr-1 phx-click-loading:animate-bounce"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+                {gettext("Refresh cover")}
+              </.dropdown_link>
 
-            <.dropdown_link
-              id={"actions-#{@record.id}-refresh-mb-data"}
-              phx-click={JS.push("refresh_musicbrainz_data", value: %{id: @record.id})}
-            >
-              <.icon
-                name="hero-arrow-path"
-                class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
-                aria-hidden="true"
-                data-slot="icon"
-              />
-              {gettext("Refresh MB data")}
-            </.dropdown_link>
+              <.dropdown_link
+                id={"actions-#{@record.id}-refresh-mb-data"}
+                phx-click={JS.push("refresh_musicbrainz_data", value: %{id: @record.id})}
+              >
+                <.icon
+                  name="hero-arrow-path"
+                  class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+                {gettext("Refresh MB data")}
+              </.dropdown_link>
 
-            <.dropdown_link
-              id={"actions-#{@record.id}-populate-genres"}
-              phx-click={JS.push("populate_genres", value: %{id: @record.id})}
-            >
-              <.icon
-                name="hero-sparkles"
-                class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
-                aria-hidden="true"
-                data-slot="icon"
-              />
-              {gettext("Populate genres")}
-            </.dropdown_link>
+              <.dropdown_link
+                id={"actions-#{@record.id}-populate-genres"}
+                phx-click={JS.push("populate_genres", value: %{id: @record.id})}
+              >
+                <.icon
+                  name="hero-sparkles"
+                  class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+                {gettext("Populate genres")}
+              </.dropdown_link>
 
-            <.dropdown_link
-              id={"actions-#{@record.id}-extract-colors-fast"}
-              phx-click={JS.push("extract_colors", value: %{id: @record.id, method: :fast})}
-            >
-              <.icon
-                name="hero-paint-brush"
-                class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
-                aria-hidden="true"
-                data-slot="icon"
-              />
-              {gettext("Extract colors (fast)")}
-            </.dropdown_link>
+              <.dropdown_link
+                id={"actions-#{@record.id}-extract-colors-fast"}
+                phx-click={JS.push("extract_colors", value: %{id: @record.id, method: :fast})}
+              >
+                <.icon
+                  name="hero-paint-brush"
+                  class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+                {gettext("Extract colors (fast)")}
+              </.dropdown_link>
 
-            <.dropdown_link
-              id={"actions-#{@record.id}-extract-colors-slow"}
-              phx-click={JS.push("extract_colors", value: %{id: @record.id, method: :slow})}
-            >
-              <.icon
-                name="hero-paint-brush"
-                class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
-                aria-hidden="true"
-                data-slot="icon"
-              />
-              {gettext("Extract colors (slow)")}
-            </.dropdown_link>
+              <.dropdown_link
+                id={"actions-#{@record.id}-extract-colors-slow"}
+                phx-click={JS.push("extract_colors", value: %{id: @record.id, method: :slow})}
+              >
+                <.icon
+                  name="hero-paint-brush"
+                  class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+                {gettext("Extract colors (slow)")}
+              </.dropdown_link>
 
-            <.dropdown_separator />
-            <.dropdown_link
-              id={"actions-#{@record.id}-delete"}
-              phx-click={JS.push("delete", value: %{id: @record.id})}
-              data-confirm={gettext("Are you sure?")}
-              class="text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
-            >
-              <.icon
-                name="hero-trash"
-                class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
-                aria-hidden="true"
-                data-slot="icon"
+              <.dropdown_separator />
+              <.dropdown_link
+                id={"actions-#{@record.id}-delete"}
+                phx-click={JS.push("delete", value: %{id: @record.id})}
+                data-confirm={gettext("Are you sure?")}
+                class="text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
+              >
+                <.icon
+                  name="hero-trash"
+                  class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+                {gettext("Delete")}
+              </.dropdown_link>
+            </.focus_wrap>
+          </.dropdown>
+        </div>
+      </div>
+      <div class="mt-4 md:mt-8">
+        <%!-- TODO: replace with OSS version --%>
+        <dl class="divide-y divide-zinc-100 dark:divide-slate-300/30">
+          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+              {gettext("ID")}
+            </dt>
+            <dd class="mt-1 text-xs md:text-sm flex justify-between leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+              <code id={"record-#{@record.id}"}>{@record.id}</code>
+              <button phx-click={
+                JS.dispatch("music_library:clipcopy", to: "#record-" <> @record.id)
+                |> JS.transition("animate-shake")
+              }>
+                <span class="sr-only">{gettext("Copy record ID to clipboard")}</span>
+                <.icon
+                  name="hero-clipboard-document"
+                  class="-mt-1 h-5 w-5"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+              </button>
+            </dd>
+          </div>
+          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+              {gettext("Genres")}
+            </dt>
+            <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+              <.link
+                :for={genre <- @record.genres}
+                class="mr-2 text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
+                patch={~p"/collection?#{%{query: ~s(genre:"#{genre}")}}"}
+              >
+                {genre}
+              </.link>
+            </dd>
+          </div>
+          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+              {gettext("MusicBrainz ID")}
+            </dt>
+            <dd class="mt-1 text-xs md:text-sm flex justify-between leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+              <a href={MusicBrainz.ReleaseGroup.url(@record.musicbrainz_id)}>
+                <code id={"mb-#{@record.musicbrainz_id}"}>{@record.musicbrainz_id}</code>
+              </a>
+              <button phx-click={
+                JS.dispatch("music_library:clipcopy", to: "#mb-" <> @record.musicbrainz_id)
+                |> JS.transition("animate-shake")
+              }>
+                <span class="sr-only">{gettext("Copy MusicBrainz ID to clipboard")}</span>
+                <.icon
+                  name="hero-clipboard-document"
+                  class="-mt-1 h-5 w-5"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+              </button>
+            </dd>
+          </div>
+          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+              {gettext("Purchased on")}
+            </dt>
+            <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+              {Records.Record.format_as_date(@record.purchased_at)}
+            </dd>
+          </div>
+          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+              {gettext("Published releases")}
+            </dt>
+            <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+              {Records.Record.release_count(@record)}
+            </dd>
+          </div>
+          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+              {gettext("Collected release")}
+            </dt>
+            <dd class="mt-1 flex justify-between space-x-2 leading-6 sm:col-span-2 sm:mt-0">
+              <span
+                :if={!@record.selected_release_id}
+                class="text-xs md:text-sm text-zinc-700 dark:text-zinc-300"
+              >
+                {gettext("No release selected")}
+              </span>
+
+              <.release_summary
+                :if={@record.selected_release_id}
+                release={Records.Record.selected_release(@record)}
               />
-              {gettext("Delete")}
-            </.dropdown_link>
-          </.focus_wrap>
-        </.dropdown>
+              <span
+                :if={@record.selected_release_id}
+                id={"record-selected-release-" <> @record.id}
+                class="hidden"
+              >
+                {@record.selected_release_id}
+              </span>
+
+              <button
+                :if={@record.selected_release_id}
+                phx-click={
+                  JS.dispatch("music_library:clipcopy",
+                    to: "#record-selected-release-" <> @record.id
+                  )
+                  |> JS.transition("animate-shake")
+                }
+              >
+                <span class="sr-only">
+                  {gettext("Copy record selected release ID to clipboard")}
+                </span>
+                <.icon
+                  name="hero-clipboard-document"
+                  class="-mt-1 h-5 w-5"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+              </button>
+            </dd>
+          </div>
+          <div
+            :if={Records.Record.included_release_groups_count(@record) > 0}
+            class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+          >
+            <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+              {gettext("Includes")}
+            </dt>
+            <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+              <ul>
+                <li :for={
+                  included_release_group <- Records.Record.included_release_groups(@record)
+                }>
+                  {included_release_group.artists} - {included_release_group.title}
+                </li>
+              </ul>
+            </dd>
+          </div>
+          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+              {gettext("Inserted at")}
+            </dt>
+            <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+              {Records.Record.format_as_date(@record.inserted_at)}
+            </dd>
+          </div>
+          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+              {gettext("Updated at")}
+            </dt>
+            <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+              {Records.Record.format_as_date(@record.updated_at)}
+            </dd>
+          </div>
+          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+              {gettext("Last listened at")}
+            </dt>
+            <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+              {@last_listened_track &&
+                localize_scrobbled_at(@last_listened_track.scrobbled_at_uts, @timezone)}
+            </dd>
+          </div>
+        </dl>
       </div>
     </div>
-    <div class="mt-4 md:mt-8">
-      <%!-- TODO: replace with OSS version --%>
-      <dl class="divide-y divide-zinc-100 dark:divide-slate-300/30">
-        <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-            {gettext("ID")}
-          </dt>
-          <dd class="mt-1 text-xs md:text-sm flex justify-between leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
-            <code id={"record-#{@record.id}"}>{@record.id}</code>
-            <button phx-click={
-              JS.dispatch("music_library:clipcopy", to: "#record-" <> @record.id)
-              |> JS.transition("animate-shake")
-            }>
-              <span class="sr-only">{gettext("Copy record ID to clipboard")}</span>
-              <.icon
-                name="hero-clipboard-document"
-                class="-mt-1 h-5 w-5"
-                aria-hidden="true"
-                data-slot="icon"
-              />
-            </button>
-          </dd>
-        </div>
-        <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-            {gettext("Genres")}
-          </dt>
-          <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
-            <.link
-              :for={genre <- @record.genres}
-              class="mr-2 text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
-              patch={~p"/collection?#{%{query: ~s(genre:"#{genre}")}}"}
-            >
-              {genre}
-            </.link>
-          </dd>
-        </div>
-        <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-            {gettext("MusicBrainz ID")}
-          </dt>
-          <dd class="mt-1 text-xs md:text-sm flex justify-between leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
-            <a href={MusicBrainz.ReleaseGroup.url(@record.musicbrainz_id)}>
-              <code id={"mb-#{@record.musicbrainz_id}"}>{@record.musicbrainz_id}</code>
-            </a>
-            <button phx-click={
-              JS.dispatch("music_library:clipcopy", to: "#mb-" <> @record.musicbrainz_id)
-              |> JS.transition("animate-shake")
-            }>
-              <span class="sr-only">{gettext("Copy MusicBrainz ID to clipboard")}</span>
-              <.icon
-                name="hero-clipboard-document"
-                class="-mt-1 h-5 w-5"
-                aria-hidden="true"
-                data-slot="icon"
-              />
-            </button>
-          </dd>
-        </div>
-        <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-            {gettext("Purchased on")}
-          </dt>
-          <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
-            {Records.Record.format_as_date(@record.purchased_at)}
-          </dd>
-        </div>
-        <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-            {gettext("Published releases")}
-          </dt>
-          <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
-            {Records.Record.release_count(@record)}
-          </dd>
-        </div>
-        <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-            {gettext("Collected release")}
-          </dt>
-          <dd class="mt-1 flex justify-between space-x-2 leading-6 sm:col-span-2 sm:mt-0">
-            <span
-              :if={!@record.selected_release_id}
-              class="text-xs md:text-sm text-zinc-700 dark:text-zinc-300"
-            >
-              {gettext("No release selected")}
-            </span>
-
-            <.release_summary
-              :if={@record.selected_release_id}
-              release={Records.Record.selected_release(@record)}
-            />
-            <span
-              :if={@record.selected_release_id}
-              id={"record-selected-release-" <> @record.id}
-              class="hidden"
-            >
-              {@record.selected_release_id}
-            </span>
-
-            <button
-              :if={@record.selected_release_id}
-              phx-click={
-                JS.dispatch("music_library:clipcopy",
-                  to: "#record-selected-release-" <> @record.id
-                )
-                |> JS.transition("animate-shake")
-              }
-            >
-              <span class="sr-only">
-                {gettext("Copy record selected release ID to clipboard")}
-              </span>
-              <.icon
-                name="hero-clipboard-document"
-                class="-mt-1 h-5 w-5"
-                aria-hidden="true"
-                data-slot="icon"
-              />
-            </button>
-          </dd>
-        </div>
-        <div
-          :if={Records.Record.included_release_groups_count(@record) > 0}
-          class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
-        >
-          <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-            {gettext("Includes")}
-          </dt>
-          <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
-            <ul>
-              <li :for={included_release_group <- Records.Record.included_release_groups(@record)}>
-                {included_release_group.artists} - {included_release_group.title}
-              </li>
-            </ul>
-          </dd>
-        </div>
-        <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-            {gettext("Inserted at")}
-          </dt>
-          <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
-            {Records.Record.format_as_date(@record.inserted_at)}
-          </dd>
-        </div>
-        <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-            {gettext("Updated at")}
-          </dt>
-          <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
-            {Records.Record.format_as_date(@record.updated_at)}
-          </dd>
-        </div>
-        <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-            {gettext("Last listened at")}
-          </dt>
-          <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
-            {@last_listened_track &&
-              localize_scrobbled_at(@last_listened_track.scrobbled_at_uts, @timezone)}
-          </dd>
-        </div>
-      </dl>
-    </div>
   </div>
-</div>
 
-<.json_viewer title={gettext("MusicBrainz data")} data={@record.musicbrainz_data} />
+  <.json_viewer title={gettext("MusicBrainz data")} data={@record.musicbrainz_data} />
 
-<.live_component
-  id="release-with-tracks"
-  sheet_id="release-with-tracks-sheet"
-  module={MusicLibraryWeb.ReleaseComponent}
-  record={@record}
-/>
-
-<.live_component
-  id="record-notes"
-  sheet_id="record-notes-sheet"
-  module={MusicLibraryWeb.NotesComponent}
-  entity={:record}
-  musicbrainz_id={@record.musicbrainz_id}
-/>
-
-<.structured_modal
-  :if={@live_action == :edit}
-  id="record-modal"
-  on_close={JS.patch(~p"/collection/#{@record}")}
->
   <.live_component
-    module={MusicLibraryWeb.RecordFormComponent}
-    id={@record.id}
-    action={@live_action}
-    show_purchased_at={true}
+    id="release-with-tracks"
+    sheet_id="release-with-tracks-sheet"
+    module={MusicLibraryWeb.ReleaseComponent}
     record={@record}
-    patch={~p"/collection/#{@record}"}
   />
-</.structured_modal>
+
+  <.live_component
+    id="record-notes"
+    sheet_id="record-notes-sheet"
+    module={MusicLibraryWeb.NotesComponent}
+    entity={:record}
+    musicbrainz_id={@record.musicbrainz_id}
+  />
+
+  <.structured_modal
+    :if={@live_action == :edit}
+    id="record-modal"
+    on_close={JS.patch(~p"/collection/#{@record}")}
+  >
+    <.live_component
+      module={MusicLibraryWeb.RecordFormComponent}
+      id={@record.id}
+      action={@live_action}
+      show_purchased_at={true}
+      record={@record}
+      patch={~p"/collection/#{@record}"}
+    />
+  </.structured_modal>
+</Layouts.app>

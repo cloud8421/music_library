@@ -1,83 +1,85 @@
-<div>
-  <header class="gap-6 mb-2">
-    <div class="flex items-center justify-between gap-6 mb-2 mt-2">
-      <.search_form query={@record_list_params.query} />
-      <.button
-        variant="solid"
-        size="sm"
-        patch={~p"/wishlist/import"}
-      >
-        <.icon name="hero-plus" class="icon" aria-hidden="true" data-slot="icon" />
-        {gettext("Add")}
-      </.button>
+<Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
+  <div>
+    <header class="gap-6 mb-2">
+      <div class="flex items-center justify-between gap-6 mb-2 mt-2">
+        <.search_form query={@record_list_params.query} />
+        <.button
+          variant="solid"
+          size="sm"
+          patch={~p"/wishlist/import"}
+        >
+          <.icon name="hero-plus" class="icon" aria-hidden="true" data-slot="icon" />
+          {gettext("Add")}
+        </.button>
+      </div>
+    </header>
+
+    <div class="flex items-end justify-between gap-6 mt-8">
+      <.button_group>
+        <.button
+          patch={order_path(@record_list_params, :insertion)}
+          size="sm"
+          class={[
+            "rounded-l-md rounded-r-none",
+            @record_list_params.order == :insertion && "!bg-zinc-100 dark:!bg-zinc-700"
+          ]}
+        >
+          <.icon name="hero-star" class="icon" aria-hidden="true" data-slot="icon" />
+          {gettext("Insertion")}
+        </.button>
+        <.button
+          patch={order_path(@record_list_params, :alphabetical)}
+          size="sm"
+          class={[
+            "-ml-px rounded-r-md rounded-l-none",
+            @record_list_params.order == :alphabetical && "!bg-zinc-100 dark:!bg-zinc-700"
+          ]}
+        >
+          <.icon name="hero-user-solid" class="icon" aria-hidden="true" data-slot="icon" />
+          {gettext("A->Z")}
+        </.button>
+      </.button_group>
     </div>
-  </header>
-
-  <div class="flex items-end justify-between gap-6 mt-8">
-    <.button_group>
-      <.button
-        patch={order_path(@record_list_params, :insertion)}
-        size="sm"
-        class={[
-          "rounded-l-md rounded-r-none",
-          @record_list_params.order == :insertion && "!bg-zinc-100 dark:!bg-zinc-700"
-        ]}
-      >
-        <.icon name="hero-star" class="icon" aria-hidden="true" data-slot="icon" />
-        {gettext("Insertion")}
-      </.button>
-      <.button
-        patch={order_path(@record_list_params, :alphabetical)}
-        size="sm"
-        class={[
-          "-ml-px rounded-r-md rounded-l-none",
-          @record_list_params.order == :alphabetical && "!bg-zinc-100 dark:!bg-zinc-700"
-        ]}
-      >
-        <.icon name="hero-user-solid" class="icon" aria-hidden="true" data-slot="icon" />
-        {gettext("A->Z")}
-      </.button>
-    </.button_group>
   </div>
-</div>
 
-<.record_list
-  current_date={@current_date}
-  records={@streams.records}
-  record_show_path={fn record -> ~p"/wishlist/#{record}" end}
-  record_edit_path={fn record -> ~p"/wishlist/#{record}/edit" end}
-/>
-
-<.structured_modal
-  :if={@live_action == :edit}
-  id="record-modal"
-  on_close={JS.patch(back_path(@record_list_params))}
->
-  <.live_component
-    module={MusicLibraryWeb.RecordFormComponent}
-    id={@record.id}
-    action={@live_action}
-    show_purchased_at={false}
-    record={@record}
-    patch={back_path(@record_list_params)}
+  <.record_list
+    current_date={@current_date}
+    records={@streams.records}
+    record_show_path={fn record -> ~p"/wishlist/#{record}" end}
+    record_edit_path={fn record -> ~p"/wishlist/#{record}/edit" end}
   />
-</.structured_modal>
 
-<.structured_modal
-  :if={@live_action == :import}
-  id="record-modal"
-  on_close={JS.patch(back_path(@record_list_params))}
->
-  <.live_component
-    module={MusicLibraryWeb.AddRecordComponent}
-    id={:search}
-    title={@page_title}
-    action={@live_action}
-    record={@record}
-    patch={back_path(@record_list_params)}
-    initial_query=""
-    icon_name="hero-plus"
-  />
-</.structured_modal>
+  <.structured_modal
+    :if={@live_action == :edit}
+    id="record-modal"
+    on_close={JS.patch(back_path(@record_list_params))}
+  >
+    <.live_component
+      module={MusicLibraryWeb.RecordFormComponent}
+      id={@record.id}
+      action={@live_action}
+      show_purchased_at={false}
+      record={@record}
+      patch={back_path(@record_list_params)}
+    />
+  </.structured_modal>
 
-<.pagination id={:bottom_pagination} pagination_params={@record_list_params} />
+  <.structured_modal
+    :if={@live_action == :import}
+    id="record-modal"
+    on_close={JS.patch(back_path(@record_list_params))}
+  >
+    <.live_component
+      module={MusicLibraryWeb.AddRecordComponent}
+      id={:search}
+      title={@page_title}
+      action={@live_action}
+      record={@record}
+      patch={back_path(@record_list_params)}
+      initial_query=""
+      icon_name="hero-plus"
+    />
+  </.structured_modal>
+
+  <.pagination id={:bottom_pagination} pagination_params={@record_list_params} />
+</Layouts.app>
