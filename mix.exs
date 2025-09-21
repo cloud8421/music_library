@@ -22,7 +22,7 @@ defmodule MusicLibrary.MixProject do
   def application do
     [
       mod: {MusicLibrary.Application, []},
-      extra_applications: [:logger, :runtime_tools, :xmerl, :os_mon]
+      extra_applications: [:logger, :runtime_tools, :xmerl]
     ]
   end
 
