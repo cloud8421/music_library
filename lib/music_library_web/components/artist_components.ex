@@ -5,7 +5,7 @@ defmodule MusicLibraryWeb.ArtistComponents do
 
   attr :artist, :map, required: true
   attr :image_hash, :string, required: true
-  attr :class, :string, required: false
+  attr :class, :string, required: false, default: nil
   attr :width, :integer, default: nil
 
   def artist_image(assigns) do

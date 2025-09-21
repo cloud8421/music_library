@@ -78,7 +78,12 @@ defmodule MusicLibraryWeb.SearchComponents do
     >
       <div class="flex items-center space-x-3">
         <div class="flex-shrink-0">
-          <.artist_image artist={@artist} width={96} image_hash={@image_data_hash} />
+          <.artist_image
+            class="w-12 h-12 rounded-md aspect-square object-cover"
+            artist={@artist}
+            width={96}
+            image_hash={@image_data_hash}
+          />
         </div>
         <div class="min-w-0 flex-1">
           <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
