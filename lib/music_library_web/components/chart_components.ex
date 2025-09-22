@@ -21,7 +21,7 @@ defmodule MusicLibraryWeb.ChartComponents do
   attr :height, :integer, default: 300
   attr :color_class, :string, required: true
   attr :class, :string, default: ""
-  attr :label_click, :any, default: nil, doc: "the function for handling phx-click on each label"
+  attr :datum_click, :any, default: nil, doc: "the function for handling phx-click on each datum"
 
   def vertical_bar_chart(assigns) do
     assigns =
@@ -51,8 +51,11 @@ defmodule MusicLibraryWeb.ChartComponents do
             x="140"
             y={y + @bar_height / 2 + 4}
             text-anchor="end"
-            class={["text-xs fill-zinc-500 dark:fill-zinc-400", @label_click && "cursor-pointer"]}
-            phx-click={@label_click && @label_click.(datum)}
+            class={[
+              "text-xs font-medium fill-zinc-500 hover:fill-zinc-700 dark:fill-zinc-400 dark:hover:fill-zinc-200",
+              @datum_click && "cursor-pointer"
+            ]}
+            phx-click={@datum_click && @datum_click.(datum)}
           >
             {truncate_label(@label_fn.(datum), 20)}
           </text>
@@ -63,7 +66,12 @@ defmodule MusicLibraryWeb.ChartComponents do
             y={y}
             width={bar_width}
             height={@bar_height}
-            class={["opacity-80 hover:opacity-100 transition-opacity", @color_class]}
+            class={[
+              "opacity-80 hover:opacity-100 transition-opacity",
+              @color_class,
+              @datum_click && "cursor-pointer"
+            ]}
+            phx-click={@datum_click && @datum_click.(datum)}
           >
             <title>{@label_fn.(datum)}: {@value_fn.(datum)}</title>
           </rect>
@@ -72,7 +80,11 @@ defmodule MusicLibraryWeb.ChartComponents do
           <text
             x={150 + bar_width + 5}
             y={y + @bar_height / 2 + 4}
-            class="text-xs fill-zinc-500 dark:fill-zinc-400"
+            class={[
+              "text-xs font-semibold fill-zinc-500 dark:fill-zinc-400",
+              @datum_click && "cursor-pointer"
+            ]}
+            phx-click={@datum_click && @datum_click.(datum)}
           >
             {@value_fn.(datum)}
           </text>

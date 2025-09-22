@@ -514,7 +514,7 @@
           color_class="fill-red-500"
           label_fn={fn datum -> datum.name end}
           value_fn={fn datum -> datum.count end}
-          label_click={
+          datum_click={
             fn datum ->
               JS.navigate(~p"/artists/#{datum.id}")
             end
@@ -536,7 +536,7 @@
           color_class="fill-zinc-500"
           label_fn={fn {genre, _count} -> genre end}
           value_fn={fn {_genre, count} -> count end}
-          label_click={
+          datum_click={
             fn {genre, _count} ->
               JS.navigate(~p"/collection?#{%{query: ~s(genre:"#{genre}")}}")
             end
