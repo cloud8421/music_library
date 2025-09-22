@@ -28,6 +28,7 @@
 /test/
 /tmp/
 .elixir_ls
+.iex.exs
 
 # Mix artifacts
 /_build/
