@@ -226,6 +226,15 @@ defmodule MusicLibrary.Records do
     |> Repo.update()
   end
 
+  def populate_genres_async(record) do
+    meta = %{title: record.title, artists: Enum.map(record.artists, & &1.name)}
+    params = %{"id" => record.id}
+
+    params
+    |> Worker.PopulateGenres.new(meta: meta)
+    |> BackgroundRepo.insert()
+  end
+
   defp get_cover_art_or_default(musicbrainz_id) do
     case MusicBrainz.get_cover_art({:musicbrainz_id, musicbrainz_id}) do
       {:error, :cover_not_available} -> {:ok, Assets.Image.fallback_data()}

@@ -79,19 +79,18 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   def handle_event("populate_genres", %{"id" => id}, socket) do
     record = Records.get_record!(id)
 
-    case Records.populate_genres(record) do
-      {:ok, updated_record} ->
+    case Records.populate_genres_async(record) do
+      {:ok, _worker} ->
         {:noreply,
          socket
-         |> put_toast(:info, gettext("Genres populated successfully"))
-         |> assign(:record, updated_record)}
+         |> put_toast(:info, gettext("In progress - record will update automatically"))}
 
       {:error, reason} ->
         {:noreply,
          socket
          |> put_toast(
            :error,
-           gettext("Error populating genres") <> "," <> inspect(reason)
+           gettext("Error") <> "," <> inspect(reason)
          )}
     end
   end
