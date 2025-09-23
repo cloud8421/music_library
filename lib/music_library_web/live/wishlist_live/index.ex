@@ -1,7 +1,7 @@
 defmodule MusicLibraryWeb.WishlistLive.Index do
   use MusicLibraryWeb, :live_view
 
-  import MusicLibraryWeb.PaginationComponent
+  import MusicLibraryWeb.Components.Pagination
   import MusicLibraryWeb.RecordComponents
 
   alias MusicLibrary.Records
@@ -70,7 +70,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
   end
 
   @impl true
-  def handle_info({MusicLibraryWeb.RecordForm, {:saved, _record}}, socket) do
+  def handle_info({MusicLibraryWeb.Components.RecordForm, {:saved, _record}}, socket) do
     {:noreply, load_and_assign_records(socket, socket.assigns.record_list_params)}
   end
 

@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.PaginationComponent do
+defmodule MusicLibraryWeb.Components.Pagination do
   use MusicLibraryWeb, :html
 
   attr :pagination_params, :map, required: true

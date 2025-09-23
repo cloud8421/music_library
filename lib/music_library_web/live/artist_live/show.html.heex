@@ -10,7 +10,7 @@
         <div class="flex items-center">
           <button
             class="text-xs md:text-sm text-zinc-700 dark:text-zinc-300"
-            phx-click={MusicLibraryWeb.NotesComponent.open("artist-notes-sheet")}
+            phx-click={MusicLibraryWeb.Components.Notes.open("artist-notes-sheet")}
           >
             <span class="sr-only">{gettext("Open Notes")}</span>
             <.icon
@@ -237,7 +237,7 @@
     on_close={JS.patch(~p"/artists/#{@artist.musicbrainz_id}")}
   >
     <.live_component
-      module={MusicLibraryWeb.AddRecordComponent}
+      module={MusicLibraryWeb.Components.AddRecord}
       id={:search}
       title={@page_title}
       action={@live_action}
@@ -250,7 +250,7 @@
   <.live_component
     id="artist-notes"
     sheet_id="artist-notes-sheet"
-    module={MusicLibraryWeb.NotesComponent}
+    module={MusicLibraryWeb.Components.Notes}
     entity={:artist}
     musicbrainz_id={@artist.musicbrainz_id}
   />

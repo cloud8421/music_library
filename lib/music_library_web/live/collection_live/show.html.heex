@@ -28,7 +28,7 @@
         <div class="min-w-12 text-right">
           <button
             class="text-xs md:text-sm text-zinc-700 dark:text-zinc-300"
-            phx-click={MusicLibraryWeb.NotesComponent.open("record-notes-sheet")}
+            phx-click={MusicLibraryWeb.Components.Notes.open("record-notes-sheet")}
           >
             <span class="sr-only">{gettext("Open Notes")}</span>
             <.icon
@@ -41,7 +41,7 @@
           <button
             :if={@record.selected_release_id}
             class="text-xs md:text-sm text-zinc-700 dark:text-zinc-300"
-            phx-click={MusicLibraryWeb.ReleaseComponent.open("release-with-tracks-sheet")}
+            phx-click={MusicLibraryWeb.Components.Release.open("release-with-tracks-sheet")}
           >
             <span class="sr-only">{gettext("Show Tracks")}</span>
             <.icon
@@ -331,14 +331,14 @@
   <.live_component
     id="release-with-tracks"
     sheet_id="release-with-tracks-sheet"
-    module={MusicLibraryWeb.ReleaseComponent}
+    module={MusicLibraryWeb.Components.Release}
     record={@record}
   />
 
   <.live_component
     id="record-notes"
     sheet_id="record-notes-sheet"
-    module={MusicLibraryWeb.NotesComponent}
+    module={MusicLibraryWeb.Components.Notes}
     entity={:record}
     musicbrainz_id={@record.musicbrainz_id}
   />
@@ -349,7 +349,7 @@
     on_close={JS.patch(~p"/collection/#{@record}")}
   >
     <.live_component
-      module={MusicLibraryWeb.RecordForm}
+      module={MusicLibraryWeb.Components.RecordForm}
       id={@record.id}
       action={@live_action}
       show_purchased_at={true}

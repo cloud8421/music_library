@@ -1,8 +1,8 @@
 defmodule MusicLibraryWeb.CollectionLive.Index do
   use MusicLibraryWeb, :live_view
 
-  import MusicLibraryWeb.BarcodeScannerComponent, only: [barcode_icon: 1]
-  import MusicLibraryWeb.PaginationComponent
+  import MusicLibraryWeb.Components.BarcodeScanner, only: [barcode_icon: 1]
+  import MusicLibraryWeb.Components.Pagination
   import MusicLibraryWeb.RecordComponents
 
   alias MusicLibrary.Collection
@@ -73,7 +73,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
   end
 
   @impl true
-  def handle_info({MusicLibraryWeb.RecordForm, {:saved, _record}}, socket) do
+  def handle_info({MusicLibraryWeb.Components.RecordForm, {:saved, _record}}, socket) do
     {:noreply, load_and_assign_records(socket, socket.assigns.record_list_params)}
   end
 

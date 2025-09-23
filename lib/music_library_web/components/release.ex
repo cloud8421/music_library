@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.ReleaseComponent do
+defmodule MusicLibraryWeb.Components.Release do
   use MusicLibraryWeb, :live_component
   use Gettext, backend: MusicLibraryWeb.Gettext
 

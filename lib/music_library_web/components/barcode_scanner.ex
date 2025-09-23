@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.BarcodeScannerComponent do
+defmodule MusicLibraryWeb.Components.BarcodeScanner do
   use MusicLibraryWeb, :live_component
 
   alias MusicBrainz.ReleaseGroupSearchResult

@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.RecordForm do
+defmodule MusicLibraryWeb.Components.RecordForm do
   use MusicLibraryWeb, :live_component
 
   import MusicLibraryWeb.RecordComponents,

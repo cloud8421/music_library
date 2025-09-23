@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.NotesComponent do
+defmodule MusicLibraryWeb.Components.Notes do
   use MusicLibraryWeb, :live_component
 
   alias MusicLibrary.Notes

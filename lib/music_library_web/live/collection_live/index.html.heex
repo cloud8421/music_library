@@ -67,7 +67,7 @@
     on_close={JS.patch(back_path(@record_list_params))}
   >
     <.live_component
-      module={MusicLibraryWeb.RecordForm}
+      module={MusicLibraryWeb.Components.RecordForm}
       id={@record.id}
       action={@live_action}
       show_purchased_at={true}
@@ -82,7 +82,7 @@
     on_close={JS.patch(back_path(@record_list_params))}
   >
     <.live_component
-      module={MusicLibraryWeb.AddRecordComponent}
+      module={MusicLibraryWeb.Components.AddRecord}
       id={:search}
       title={@page_title}
       action={@live_action}
@@ -99,7 +99,7 @@
     on_close={JS.patch(back_path(@record_list_params))}
   >
     <.live_component
-      module={MusicLibraryWeb.BarcodeScannerComponent}
+      module={MusicLibraryWeb.Components.BarcodeScanner}
       id={:barcode_scanner}
       title={@page_title}
       action={@live_action}

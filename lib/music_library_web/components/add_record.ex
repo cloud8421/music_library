@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.AddRecordComponent do
+defmodule MusicLibraryWeb.Components.AddRecord do
   use MusicLibraryWeb, :live_component
 
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]

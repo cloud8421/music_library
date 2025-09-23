@@ -84,7 +84,7 @@ Add to `LastFm` module (`lib/last_fm.ex`):
   - Album title
   - Scrobbled date/time
   - Edit/Delete action buttons
-- Pagination component at bottom using `MusicLibraryWeb.PaginationComponent`
+- Pagination component at bottom using `MusicLibraryWeb.Components.Pagination`
 - Empty state message when no tracks found
 
 ### Form Component Template
@@ -127,7 +127,7 @@ Add to the "More" dropdown menu (after line 58):
 ### Pagination Integration
 
 - **Pattern**: Follow `CollectionLive.Index` pagination approach
-- **Component**: Reuse `MusicLibraryWeb.PaginationComponent`
+- **Component**: Reuse `MusicLibraryWeb.Components.Pagination`
 - **Parameters**: Support `query`, `page`, `page_size`, and `order`
 - **URL Structure**: `/scrobbled-tracks?page=2&query=artist&page_size=50`
 

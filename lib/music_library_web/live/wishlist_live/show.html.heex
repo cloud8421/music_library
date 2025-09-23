@@ -310,7 +310,7 @@
     on_close={JS.patch(~p"/wishlist/#{@record}")}
   >
     <.live_component
-      module={MusicLibraryWeb.RecordForm}
+      module={MusicLibraryWeb.Components.RecordForm}
       id={@record.id}
       action={@live_action}
       show_purchased_at={false}

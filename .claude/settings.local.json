@@ -22,7 +22,9 @@
       "mcp__tidewave__get_logs",
       "mcp__tidewave__project_eval",
       "Bash(mix format:*)",
-      "Bash(mise run dev:static-checks:*)"
+      "Bash(mise run dev:static-checks:*)",
+      "Bash(find:*)",
+      "Bash(xargs sed:*)"
     ]
   },
   "enableAllProjectMcpServers": false
