@@ -65,7 +65,11 @@ defmodule MusicLibraryWeb.NotesComponent do
               phx-submit="save"
             >
               <.textarea
-                class="w-full min-h-128 md:min-h-164 overflow-scroll font-mono text-sm/4"
+                class={[
+                  "w-full min-h-128 md:min-h-164 overflow-scroll font-mono",
+                  @form[:content].value != @note.content &&
+                    "border-amber-300 focus-visible:border-amber-300"
+                ]}
                 field={@form[:content]}
               />
 
