@@ -6,7 +6,7 @@ defmodule MusicLibrary.Notes.Note do
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "notes" do
     field :entity, Ecto.Enum, values: [:record, :artist]
-    field :content, :string
+    field :content, :string, default: ""
     field :musicbrainz_id, Ecto.UUID
 
     timestamps(type: :utc_datetime)
@@ -19,6 +19,6 @@ defmodule MusicLibrary.Notes.Note do
       :content,
       :musicbrainz_id
     ])
-    |> validate_required([:entity, :content, :musicbrainz_id])
+    |> validate_required([:entity, :musicbrainz_id])
   end
 end

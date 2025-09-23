@@ -25,7 +25,7 @@ defmodule MusicLibraryWeb.NotesComponent do
   defp find_or_initialize_note(%{entity: entity, musicbrainz_id: musicbrainz_id}) do
     case Notes.get_note(entity, musicbrainz_id) do
       nil ->
-        %Note{entity: entity, musicbrainz_id: musicbrainz_id, content: ""}
+        %Note{entity: entity, musicbrainz_id: musicbrainz_id}
 
       note ->
         note
@@ -52,7 +52,7 @@ defmodule MusicLibraryWeb.NotesComponent do
           </.tabs_list>
           <.tabs_panel active={@mode == "read"} name="read">
             <article class="w-full mt-5 prose dark:prose-invert prose-zinc prose-sm prose-h1:text-sm">
-              {render_notes(@form[:content].value)}
+              {render_content(@form[:content].value)}
             </article>
           </.tabs_panel>
           <.tabs_panel active={@mode == "edit"} name="edit">
@@ -156,8 +156,8 @@ defmodule MusicLibraryWeb.NotesComponent do
     end
   end
 
-  defp render_notes(notes) do
-    (notes || "")
+  defp render_content(content) do
+    content
     |> Markdown.to_html()
     |> raw()
   end
