@@ -22,11 +22,19 @@ defmodule MusicLibraryWeb.StatsLive.TopArtists do
         <.tabs_list active_tab={name_from_period(@period)} variant="segmented" size="xs">
           <:tab
             class="flex-1"
+            name="top_artists_last_7_days"
+            phx-click={JS.push("set_period", value: %{period: "last_7_days"})}
+            phx-target={@myself}
+          >
+            {gettext("7d")}
+          </:tab>
+          <:tab
+            class="flex-1"
             name="top_artists_last_30_days"
             phx-click={JS.push("set_period", value: %{period: "last_30_days"})}
             phx-target={@myself}
           >
-            {gettext("30 days")}
+            {gettext("30d")}
           </:tab>
           <:tab
             class="flex-1"
@@ -34,7 +42,7 @@ defmodule MusicLibraryWeb.StatsLive.TopArtists do
             phx-click={JS.push("set_period", value: %{period: "last_90_days"})}
             phx-target={@myself}
           >
-            {gettext("90 days")}
+            {gettext("90d")}
           </:tab>
           <:tab
             class="flex-1"
@@ -42,7 +50,7 @@ defmodule MusicLibraryWeb.StatsLive.TopArtists do
             phx-click={JS.push("set_period", value: %{period: "last_365_days"})}
             phx-target={@myself}
           >
-            {gettext("Last year")}
+            {gettext("1y")}
           </:tab>
           <:tab
             class="flex-1"
@@ -72,7 +80,7 @@ defmodule MusicLibraryWeb.StatsLive.TopArtists do
   def mount(socket) do
     {:ok,
      socket
-     |> assign(:period, :last_30_days)}
+     |> assign(:period, :last_7_days)}
   end
 
   @impl true

@@ -343,11 +343,12 @@ defmodule MusicLibrary.ScrobbleActivity do
   releases.
   """
   def get_top_albums_by_period(opts) do
-    period = Keyword.get(opts, :period, :last_30_days)
+    period = Keyword.get(opts, :period, :last_7_days)
 
     albums =
       case period do
         :all_time -> get_top_albums(opts)
+        :last_7_days -> get_top_albums_by_days(7, opts)
         :last_30_days -> get_top_albums_by_days(30, opts)
         :last_90_days -> get_top_albums_by_days(90, opts)
         :last_365_days -> get_top_albums_by_days(365, opts)
@@ -373,10 +374,11 @@ defmodule MusicLibrary.ScrobbleActivity do
   Gets top artists for a time period (30, 90, 365 days) and all time.
   """
   def get_top_artists_by_period(opts) do
-    period = Keyword.get(opts, :period, :last_30_days)
+    period = Keyword.get(opts, :period, :last_7_days)
 
     case period do
       :all_time -> get_top_artists(opts)
+      :last_7_days -> get_top_artists_by_days(7, opts)
       :last_30_days -> get_top_artists_by_days(30, opts)
       :last_90_days -> get_top_artists_by_days(90, opts)
       :last_365_days -> get_top_artists_by_days(365, opts)

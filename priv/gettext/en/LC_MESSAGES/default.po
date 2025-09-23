@@ -887,12 +887,6 @@ msgstr ""
 msgid "Top Albums"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/top_albums.ex
-#: lib/music_library_web/live/stats_live/top_artists.ex
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Last year"
-msgstr ""
-
 #: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Wishlisted on"
@@ -1268,18 +1262,6 @@ msgstr ""
 msgid "Data sourced from"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/top_albums.ex
-#: lib/music_library_web/live/stats_live/top_artists.ex
-#, elixir-autogen, elixir-format
-msgid "30 days"
-msgstr ""
-
-#: lib/music_library_web/live/stats_live/top_albums.ex
-#: lib/music_library_web/live/stats_live/top_artists.ex
-#, elixir-autogen, elixir-format
-msgid "90 days"
-msgstr ""
-
 #: lib/music_library_web/components/record_form.ex
 #, elixir-autogen, elixir-format
 msgid "Rotate colors"
@@ -1392,4 +1374,28 @@ msgstr ""
 #: lib/music_library_web/components/notes.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Read"
+msgstr ""
+
+#: lib/music_library_web/live/stats_live/top_albums.ex
+#: lib/music_library_web/live/stats_live/top_artists.ex
+#, elixir-autogen, elixir-format
+msgid "1y"
+msgstr ""
+
+#: lib/music_library_web/live/stats_live/top_albums.ex
+#: lib/music_library_web/live/stats_live/top_artists.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "30d"
+msgstr ""
+
+#: lib/music_library_web/live/stats_live/top_albums.ex
+#: lib/music_library_web/live/stats_live/top_artists.ex
+#, elixir-autogen, elixir-format
+msgid "7d"
+msgstr ""
+
+#: lib/music_library_web/live/stats_live/top_albums.ex
+#: lib/music_library_web/live/stats_live/top_artists.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "90d"
 msgstr ""
