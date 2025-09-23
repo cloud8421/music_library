@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.ScrobbledTracksLive.FormComponent do
+defmodule MusicLibraryWeb.ScrobbledTracksLive.Form do
   use MusicLibraryWeb, :live_component
 
   alias LastFm.Track

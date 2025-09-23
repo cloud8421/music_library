@@ -261,7 +261,7 @@
     on_close={JS.patch(~p"/artists/#{@artist.musicbrainz_id}")}
   >
     <.live_component
-      module={MusicLibraryWeb.ArtistLive.FormComponent}
+      module={MusicLibraryWeb.ArtistLive.Form}
       id={@artist_info.id}
       action={@live_action}
       artist_info={@artist_info}

@@ -30,7 +30,7 @@ msgstr ""
 msgid "Collection"
 msgstr ""
 
-#: lib/music_library_web/components/record_form_component.ex
+#: lib/music_library_web/components/record_form.ex
 #, elixir-autogen, elixir-format
 msgid "Cover art"
 msgstr ""
@@ -66,7 +66,7 @@ msgstr ""
 msgid "Error importing record"
 msgstr ""
 
-#: lib/music_library_web/components/record_form_component.ex
+#: lib/music_library_web/components/record_form.ex
 #, elixir-autogen, elixir-format
 msgid "Format"
 msgstr ""
@@ -109,7 +109,7 @@ msgstr ""
 msgid "Logout"
 msgstr ""
 
-#: lib/music_library_web/components/record_form_component.ex
+#: lib/music_library_web/components/record_form.ex
 #: lib/music_library_web/live/artist_live/show.html.heex
 #: lib/music_library_web/live/collection_live/show.html.heex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
@@ -142,7 +142,7 @@ msgstr ""
 msgid "Purchase"
 msgstr ""
 
-#: lib/music_library_web/components/record_form_component.ex
+#: lib/music_library_web/components/record_form.ex
 #, elixir-autogen, elixir-format
 msgid "Purchased at"
 msgstr ""
@@ -159,24 +159,24 @@ msgstr ""
 msgid "Record imported successfully"
 msgstr ""
 
-#: lib/music_library_web/components/record_form_component.ex
+#: lib/music_library_web/components/record_form.ex
 #, elixir-autogen, elixir-format
 msgid "Record updated successfully"
 msgstr ""
 
 #: lib/music_library_web/components/notes_component.ex
-#: lib/music_library_web/components/record_form_component.ex
-#: lib/music_library_web/live/artist_live/form_component.ex
+#: lib/music_library_web/components/record_form.ex
+#: lib/music_library_web/live/artist_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr ""
 
 #: lib/music_library_web/components/notes_component.ex
-#: lib/music_library_web/components/record_form_component.ex
-#: lib/music_library_web/live/artist_live/form_component.ex
-#: lib/music_library_web/live/online_store_template_live/form_component.ex
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
-#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#: lib/music_library_web/components/record_form.ex
+#: lib/music_library_web/live/artist_live/form.ex
+#: lib/music_library_web/live/online_store_template_live/form.ex
+#: lib/music_library_web/live/scrobble_rules_live/form.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr ""
@@ -203,7 +203,7 @@ msgstr ""
 msgid "The application has been updated, please reload."
 msgstr ""
 
-#: lib/music_library_web/components/record_form_component.ex
+#: lib/music_library_web/components/record_form.ex
 #, elixir-autogen, elixir-format
 msgid "Type"
 msgstr ""
@@ -428,7 +428,7 @@ msgid "Unreleased"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/form.ex
 #: lib/music_library_web/live/scrobble_rules_live/index.ex
 #: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
 #, elixir-autogen, elixir-format
@@ -560,20 +560,20 @@ msgstr ""
 msgid "Similar artists"
 msgstr ""
 
-#: lib/music_library_web/components/record_form_component.ex
-#: lib/music_library_web/live/artist_live/form_component.ex
+#: lib/music_library_web/components/record_form.ex
+#: lib/music_library_web/live/artist_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "PNG, JPG, WEBP up to 8MB"
 msgstr ""
 
-#: lib/music_library_web/components/record_form_component.ex
-#: lib/music_library_web/live/artist_live/form_component.ex
+#: lib/music_library_web/components/record_form.ex
+#: lib/music_library_web/live/artist_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Upload a file"
 msgstr ""
 
-#: lib/music_library_web/components/record_form_component.ex
-#: lib/music_library_web/live/artist_live/form_component.ex
+#: lib/music_library_web/components/record_form.ex
+#: lib/music_library_web/live/artist_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "or drag and drop"
 msgstr ""
@@ -691,7 +691,7 @@ msgstr ""
 msgid "Top %{n} Genres"
 msgstr ""
 
-#: lib/music_library_web/components/record_form_component.ex
+#: lib/music_library_web/components/record_form.ex
 #, elixir-autogen, elixir-format
 msgid "Release Date"
 msgstr ""
@@ -707,7 +707,7 @@ msgstr ""
 msgid "No release selected"
 msgstr ""
 
-#: lib/music_library_web/components/record_form_component.ex
+#: lib/music_library_web/components/record_form.ex
 #, elixir-autogen, elixir-format
 msgid "Selected Release"
 msgstr ""
@@ -950,13 +950,13 @@ msgstr ""
 msgid "Track ID:"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Add a description to help identify this rule"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
-#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/form.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Album Title"
 msgstr ""
@@ -966,21 +966,21 @@ msgstr ""
 msgid "All rules applied successfully. Updated %{count} tracks total."
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/form.ex
 #: lib/music_library_web/live/scrobble_rules_live/index.ex
 #: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Artist"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
-#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/form.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Artist Name"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/form_component.ex
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/online_store_template_live/form.ex
+#: lib/music_library_web/live/scrobble_rules_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Description (optional)"
 msgstr ""
@@ -990,12 +990,12 @@ msgstr ""
 msgid "Edit Scrobble Rule"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Enable this rule"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Enter the value to match"
 msgstr ""
@@ -1005,7 +1005,7 @@ msgstr ""
 msgid "Error applying rule: %{reason}"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Match Value"
 msgstr ""
@@ -1020,7 +1020,7 @@ msgstr ""
 msgid "New Scrobble Rule"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Rule Type"
 msgstr ""
@@ -1030,7 +1030,7 @@ msgstr ""
 msgid "Rule applied successfully. Updated %{count} tracks."
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Save Rule"
 msgstr ""
@@ -1042,32 +1042,32 @@ msgstr ""
 msgid "Scrobble Rules"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Scrobble rule created successfully"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Scrobble rule updated successfully"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Select a rule type"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Target MusicBrainz ID"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "e.g. Pink Floyd"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/form_component.ex
+#: lib/music_library_web/live/scrobble_rules_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "e.g. The Dark Side of the Moon"
 msgstr ""
@@ -1126,12 +1126,12 @@ msgstr[1] ""
 msgid "Close"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/form_component.ex
+#: lib/music_library_web/live/artist_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Artist image"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/form_component.ex
+#: lib/music_library_web/live/artist_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Artist updated successfully"
 msgstr ""
@@ -1146,7 +1146,7 @@ msgstr ""
 msgid "Copy record selected release ID to clipboard"
 msgstr ""
 
-#: lib/music_library_web/components/record_form_component.ex
+#: lib/music_library_web/components/record_form.ex
 #, elixir-autogen, elixir-format
 msgid "Dominant Colors"
 msgstr ""
@@ -1156,7 +1156,7 @@ msgstr ""
 msgid "Apply All"
 msgstr ""
 
-#: lib/music_library_web/components/record_form_component.ex
+#: lib/music_library_web/components/record_form.ex
 #: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Title"
@@ -1167,17 +1167,17 @@ msgstr ""
 msgid "Wishlisted release"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#: lib/music_library_web/live/online_store_template_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Add a description to help identify this template"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#: lib/music_library_web/live/online_store_template_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Artist name(s)"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#: lib/music_library_web/live/online_store_template_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Available Variables"
 msgstr ""
@@ -1187,7 +1187,7 @@ msgstr ""
 msgid "Check Online Stores"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#: lib/music_library_web/live/online_store_template_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Enable this template"
 msgstr ""
@@ -1198,52 +1198,52 @@ msgstr ""
 msgid "Online Store Templates"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#: lib/music_library_web/live/online_store_template_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Online store template created successfully"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#: lib/music_library_web/live/online_store_template_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Online store template updated successfully"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#: lib/music_library_web/live/online_store_template_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Record title"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#: lib/music_library_web/live/online_store_template_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Save Template"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#: lib/music_library_web/live/online_store_template_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Template Name"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#: lib/music_library_web/live/online_store_template_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "URL Template"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#: lib/music_library_web/live/online_store_template_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "e.g. Amazon UK"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#: lib/music_library_web/live/online_store_template_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "e.g. https://www.amazon.co.uk/s?k={artist}+{title}+vinyl"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#: lib/music_library_web/live/online_store_template_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Record format"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/form_component.ex
+#: lib/music_library_web/live/online_store_template_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Preview not available"
 msgstr ""
@@ -1280,7 +1280,7 @@ msgstr ""
 msgid "90 days"
 msgstr ""
 
-#: lib/music_library_web/components/record_form_component.ex
+#: lib/music_library_web/components/record_form.ex
 #, elixir-autogen, elixir-format
 msgid "Rotate colors"
 msgstr ""
@@ -1312,22 +1312,22 @@ msgstr ""
 msgid "No records released on this day."
 msgstr ""
 
-#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Album name"
 msgstr ""
 
-#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Artist name"
 msgstr ""
 
-#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Cover Image URL (optional)"
 msgstr ""
 
-#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Edit Scrobbled Track"
 msgstr ""
@@ -1353,22 +1353,22 @@ msgstr ""
 msgid "Scrobbled Tracks"
 msgstr ""
 
-#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Track Title"
 msgstr ""
 
-#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Track name"
 msgstr ""
 
-#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Track updated successfully"
 msgstr ""
 
-#: lib/music_library_web/live/scrobbled_tracks_live/form_component.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Update Track"
 msgstr ""

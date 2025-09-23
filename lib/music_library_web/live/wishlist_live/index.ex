@@ -70,7 +70,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
   end
 
   @impl true
-  def handle_info({MusicLibraryWeb.RecordFormComponent, {:saved, _record}}, socket) do
+  def handle_info({MusicLibraryWeb.RecordForm, {:saved, _record}}, socket) do
     {:noreply, load_and_assign_records(socket, socket.assigns.record_list_params)}
   end
 

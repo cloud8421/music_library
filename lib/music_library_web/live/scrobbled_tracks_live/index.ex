@@ -63,7 +63,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
   end
 
   @impl true
-  def handle_info({MusicLibraryWeb.ScrobbledTracksLive.FormComponent, {:saved, _track}}, socket) do
+  def handle_info({MusicLibraryWeb.ScrobbledTracksLive.Form, {:saved, _track}}, socket) do
     {:noreply, load_and_assign_tracks(socket, socket.assigns.track_list_params)}
   end
 

@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.ScrobbleRulesLive.FormComponent do
+defmodule MusicLibraryWeb.ScrobbleRulesLive.Form do
   use MusicLibraryWeb, :live_component
 
   import Ecto.Changeset, only: [get_field: 2]

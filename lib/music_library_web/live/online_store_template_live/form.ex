@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.OnlineStoreTemplateLive.FormComponent do
+defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Form do
   use MusicLibraryWeb, :live_component
 
   alias MusicLibrary.Artists.Artist

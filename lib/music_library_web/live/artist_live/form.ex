@@ -1,4 +1,4 @@
-defmodule MusicLibraryWeb.ArtistLive.FormComponent do
+defmodule MusicLibraryWeb.ArtistLive.Form do
   use MusicLibraryWeb, :live_component
 
   import MusicLibraryWeb.ArtistComponents, only: [artist_image: 1]

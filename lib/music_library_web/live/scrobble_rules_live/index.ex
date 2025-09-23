@@ -46,14 +46,14 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
 
   @impl true
   def handle_info(
-        {MusicLibraryWeb.ScrobbleRulesLive.FormComponent, {:created, scrobble_rule}},
+        {MusicLibraryWeb.ScrobbleRulesLive.Form, {:created, scrobble_rule}},
         socket
       ) do
     {:noreply, stream_insert(socket, :scrobble_rules, scrobble_rule, at: 0)}
   end
 
   def handle_info(
-        {MusicLibraryWeb.ScrobbleRulesLive.FormComponent, {:updated, scrobble_rule}},
+        {MusicLibraryWeb.ScrobbleRulesLive.Form, {:updated, scrobble_rule}},
         socket
       ) do
     {:noreply, stream_insert(socket, :scrobble_rules, scrobble_rule)}

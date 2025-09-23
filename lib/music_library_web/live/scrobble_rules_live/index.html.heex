@@ -106,7 +106,7 @@
     on_close={JS.patch(~p"/scrobble-rules")}
   >
     <.live_component
-      module={MusicLibraryWeb.ScrobbleRulesLive.FormComponent}
+      module={MusicLibraryWeb.ScrobbleRulesLive.Form}
       id={@scrobble_rule.id || :new}
       title={@page_title}
       action={@live_action}

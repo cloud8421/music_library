@@ -37,7 +37,7 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
 
   @impl true
   def handle_info(
-        {MusicLibraryWeb.OnlineStoreTemplateLive.FormComponent, {:saved, template}},
+        {MusicLibraryWeb.OnlineStoreTemplateLive.Form, {:saved, template}},
         socket
       ) do
     {:noreply, stream_insert(socket, :templates, template)}

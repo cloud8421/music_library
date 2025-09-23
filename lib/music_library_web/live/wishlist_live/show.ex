@@ -144,7 +144,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
   end
 
   @impl true
-  def handle_info({MusicLibraryWeb.RecordFormComponent, {:saved, record}}, socket) do
+  def handle_info({MusicLibraryWeb.RecordForm, {:saved, record}}, socket) do
     {:noreply, assign(socket, :record, record)}
   end
 
