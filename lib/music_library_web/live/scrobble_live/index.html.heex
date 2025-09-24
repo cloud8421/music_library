@@ -73,8 +73,16 @@
                   navigate={~p"/scrobble/#{release.id}"}
                   class="block p-4"
                 >
-                  <div class="flex justify-between items-start">
-                    <div class="flex-1">
+                  <div class="flex justify-start">
+                    <div>
+                      <img
+                        class="w-20 flex-none rounded-lg mr-4"
+                        alt={release.title}
+                        src={Release.thumb_url(release)}
+                        onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
+                      />
+                    </div>
+                    <div>
                       <h4 class="font-medium text-gray-900 dark:text-gray-100">
                         {release.title}
                       </h4>
@@ -98,7 +106,6 @@
                         <% end %>
                       </div>
                     </div>
-                    <.icon name="hero-chevron-right" class="h-4 w-4 text-gray-400" />
                   </div>
                 </.link>
               </div>

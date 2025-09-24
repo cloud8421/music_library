@@ -67,6 +67,10 @@ defmodule MusicBrainz.Release do
     }
   end
 
+  def thumb_url(release) do
+    "https://coverartarchive.org/release/#{release.id}/front-250"
+  end
+
   defp parse_media(media) do
     Enum.map(media, fn m ->
       %Medium{
