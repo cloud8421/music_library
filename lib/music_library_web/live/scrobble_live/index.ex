@@ -3,7 +3,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
 
   import MusicLibraryWeb.RecordComponents, only: [type_label: 1]
 
-  alias MusicBrainz.ReleaseGroupSearchResult
+  alias MusicBrainz.{Release, ReleaseGroupSearchResult}
   alias MusicLibrary.Records
   alias MusicLibrary.ScrobbleActivity
 

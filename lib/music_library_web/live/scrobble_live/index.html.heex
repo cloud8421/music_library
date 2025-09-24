@@ -93,9 +93,7 @@
                         <% end %>
                         <%= if release.media != [] do %>
                           <p>
-                            {length(release.media)} medium(s) • {release.media
-                            |> Enum.map(&length(&1.tracks))
-                            |> Enum.sum()} tracks
+                            {ngettext("1 disc", "%{count} discs", Release.media_count(release))}
                           </p>
                         <% end %>
                       </div>

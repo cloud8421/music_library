@@ -1424,5 +1424,12 @@ msgstr ""
 
 #: lib/music_library_web/live/scrobble_live/index.html.heex
 #, elixir-autogen, elixir-format
+msgid "1 disc"
+msgid_plural "%{count} discs"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/music_library_web/live/scrobble_live/index.html.heex
+#, elixir-autogen, elixir-format
 msgid "Releases for \"%{title}\""
 msgstr ""
