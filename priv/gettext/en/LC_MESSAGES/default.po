@@ -1416,3 +1416,8 @@ msgstr ""
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Failed to search for release groups"
 msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Release Groups"
+msgstr ""

@@ -1,6 +1,10 @@
 defmodule MusicLibraryWeb.ScrobbleLive.Index do
   use MusicLibraryWeb, :live_view
 
+  import MusicLibraryWeb.RecordComponents, only: [type_label: 1]
+
+  alias MusicBrainz.ReleaseGroupSearchResult
+  alias MusicLibrary.Records
   alias MusicLibrary.ScrobbleActivity
 
   @impl true
