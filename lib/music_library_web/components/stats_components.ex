@@ -229,9 +229,9 @@ defmodule MusicLibraryWeb.StatsComponents do
       "text-xs leading-5",
       normal_year?(@years) && "text-zinc-500 dark:text-zinc-400",
       gold_year?(@years) &&
-        "font-semibold bg-gradient-to-r bg-clip-text text-transparent from-yellow-200 via-yellow-500 to-yellow-700 animate-shine",
+        "font-semibold bg-gradient-to-r bg-clip-text text-transparent from-yellow-500 via-yellow-200 to-yellow-700 animate-shine",
       silver_year?(@years) &&
-        "font-semibold bg-gradient-to-r bg-clip-text text-transparent from-gray-200 via-gray-500 to-gray-700 animate-shine"
+        "font-semibold bg-gradient-to-r bg-clip-text text-transparent from-gray-500 via-gray-200 to-gray-700 animate-shine"
     ]}>
       {ngettext(
         "1 year ago",
