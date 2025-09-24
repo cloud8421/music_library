@@ -1,0 +1,165 @@
+<Layouts.app flash={@flash} current_section={:scrobble} socket={@socket}>
+  <div>
+    <h1 class="mt-5 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
+      {gettext("Scrobble to Last.fm")}
+    </h1>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+      Search for MusicBrainz releases and scrobble them to Last.fm
+    </p>
+
+    <%= if not @can_scrobble do %>
+      <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mt-4">
+        <div class="flex">
+          <.icon name="hero-exclamation-triangle" class="h-5 w-5 text-yellow-400" />
+          <div class="ml-3">
+            <p class="text-sm text-yellow-800 dark:text-yellow-200">
+              You need to connect your Last.fm account to scrobble. Please set up your Last.fm session key in the settings.
+            </p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="mt-6 space-y-6">
+      <.form for={%{}} as={:search} phx-submit="search" class="space-y-4">
+        <div class="flex gap-3">
+          <.input
+            type="text"
+            name="query"
+            value={@search_query}
+            placeholder="Search for release groups (e.g., artist name, album title)..."
+            class="flex-1"
+            phx-debounce="300"
+          />
+          <.button type="submit" disabled={@loading}>
+            <%= if @loading do %>
+              <.icon name="hero-arrow-path" class="h-4 w-4 animate-spin mr-2" /> Searching...
+            <% else %>
+              <.icon name="hero-magnifying-glass" class="h-4 w-4 mr-2" /> Search
+            <% end %>
+          </.button>
+        </div>
+      </.form>
+
+      <%= if @search_results != [] && @selected_release_group == nil do %>
+        <div class="space-y-3">
+          <h3 class="text-lg font-semibold">Release Groups</h3>
+          <div class="grid gap-3">
+            <%= for release_group <- @search_results do %>
+              <div class="bg-white dark:bg-zinc-800 shadow rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors">
+                <div
+                  class="p-4"
+                  phx-click="select_release_group"
+                  phx-value-release_group_id={release_group.id}
+                >
+                  <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                      <h4 class="font-medium text-gray-900 dark:text-gray-100">
+                        {release_group.title}
+                      </h4>
+                      <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        {release_group.artists}
+                      </p>
+                      <%= if release_group.release_date do %>
+                        <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                          First released: {release_group.release_date}
+                        </p>
+                      <% end %>
+                    </div>
+                    <.icon name="hero-chevron-right" class="h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <%= if @selected_release_group && @releases != [] do %>
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <.button
+              variant="ghost"
+              size="sm"
+              phx-click="clear_selection"
+            >
+              <.icon name="hero-arrow-left" class="h-4 w-4" />
+            </.button>
+            <h3 class="text-lg font-semibold">
+              Releases for "{@selected_release_group.title}"
+            </h3>
+          </div>
+
+          <div class="grid gap-3">
+            <%= for release <- @releases do %>
+              <div class="bg-white dark:bg-zinc-800 shadow rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                <.link
+                  navigate={~p"/scrobble/#{release.id}"}
+                  class="block p-4"
+                >
+                  <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                      <h4 class="font-medium text-gray-900 dark:text-gray-100">
+                        {release.title}
+                      </h4>
+                      <div class="text-sm text-gray-600 dark:text-gray-400 mt-1 space-y-1">
+                        <%= if release.date do %>
+                          <p>Released: {release.date}</p>
+                        <% end %>
+                        <%= if release.country do %>
+                          <p>Country: {release.country}</p>
+                        <% end %>
+                        <%= if release.barcode do %>
+                          <p>Barcode: {release.barcode}</p>
+                        <% end %>
+                        <%= if release.catalog_number do %>
+                          <p>Catalog: {release.catalog_number}</p>
+                        <% end %>
+                        <%= if release.media != [] do %>
+                          <p>
+                            {length(release.media)} medium(s) • {release.media
+                            |> Enum.map(&length(&1.tracks))
+                            |> Enum.sum()} tracks
+                          </p>
+                        <% end %>
+                      </div>
+                    </div>
+                    <.icon name="hero-chevron-right" class="h-4 w-4 text-gray-400" />
+                  </div>
+                </.link>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <%= if @loading && @search_query != "" do %>
+        <div class="text-center py-8">
+          <.icon name="hero-arrow-path" class="h-8 w-8 animate-spin mx-auto text-gray-400" />
+          <p class="text-gray-600 dark:text-gray-400 mt-2">
+            <%= if @selected_release_group do %>
+              Loading releases...
+            <% else %>
+              Searching...
+            <% end %>
+          </p>
+        </div>
+      <% end %>
+
+      <%= if @search_query != "" && @search_results == [] && not @loading do %>
+        <div class="text-center py-8">
+          <.icon
+            name="hero-magnifying-glass"
+            class="h-12 w-12 mx-auto text-gray-300 dark:text-gray-600"
+          />
+          <p class="text-gray-600 dark:text-gray-400 mt-3">
+            No release groups found for "{@search_query}"
+          </p>
+          <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">
+            Try a different search term or check the spelling
+          </p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</Layouts.app>

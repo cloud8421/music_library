@@ -1399,3 +1399,13 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "90d"
 msgstr ""
+
+#: lib/music_library_web/components/layouts/app.html.heex
+#, elixir-autogen, elixir-format
+msgid "Scrobble"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Scrobble to Last.fm"
+msgstr ""
