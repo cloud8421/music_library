@@ -1401,6 +1401,7 @@ msgid "90d"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex
+#: lib/music_library_web/live/scrobble_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Scrobble"
 msgstr ""
@@ -1408,4 +1409,14 @@ msgstr ""
 #: lib/music_library_web/live/scrobble_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Scrobble to Last.fm"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Failed to fetch releases for this release group"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Failed to search for release groups"
 msgstr ""

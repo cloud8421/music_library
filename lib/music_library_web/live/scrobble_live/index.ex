@@ -24,7 +24,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Scrobble")
+    |> assign(:page_title, gettext("Scrobble"))
   end
 
   @impl true
@@ -74,7 +74,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
       {:error, _reason} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Failed to search for release groups")
+         |> put_flash(:error, gettext("Failed to search for release groups"))
          |> assign(loading: false)}
     end
   end
@@ -91,7 +91,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
       {:error, _reason} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Failed to fetch releases for this release group")
+         |> put_flash(:error, gettext("Failed to fetch releases for this release group"))
          |> assign(loading: false)}
     end
   end
