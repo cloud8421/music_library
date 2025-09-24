@@ -3,22 +3,15 @@
     <h1 class="mt-5 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
       {gettext("Scrobble to Last.fm")}
     </h1>
-    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-      Search for MusicBrainz releases and scrobble them to Last.fm
-    </p>
 
-    <%= if not @can_scrobble do %>
-      <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mt-4">
-        <div class="flex">
-          <.icon name="hero-exclamation-triangle" class="h-5 w-5 text-yellow-400" />
-          <div class="ml-3">
-            <p class="text-sm text-yellow-800 dark:text-yellow-200">
-              You need to connect your Last.fm account to scrobble. Please set up your Last.fm session key in the settings.
-            </p>
-          </div>
-        </div>
-      </div>
-    <% end %>
+    <div
+      :if={!@can_scrobble?}
+      class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mt-4"
+    >
+      <.button :if={!@can_scrobble?} size="sm" href={LastFm.auth_url()}>
+        {gettext("Connect your Last.fm account")}
+      </.button>
+    </div>
 
     <div class="mt-6 space-y-6">
       <.form for={%{}} as={:search} phx-submit="search" class="space-y-4">
