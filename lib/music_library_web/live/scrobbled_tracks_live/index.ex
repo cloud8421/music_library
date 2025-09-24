@@ -2,7 +2,6 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
   use MusicLibraryWeb, :live_view
 
   import MusicLibraryWeb.Components.Pagination
-  import MusicLibraryWeb.RecordComponents, only: [search_form: 1]
 
   alias LastFm.Track
   alias MusicLibrary.ScrobbleActivity

@@ -181,8 +181,7 @@ msgstr ""
 msgid "Saving..."
 msgstr ""
 
-#: lib/music_library_web/components/record_components.ex
-#: lib/music_library_web/live/scrobble_live/index.html.heex
+#: lib/music_library_web/components/core_components.ex
 #, elixir-autogen, elixir-format
 msgid "Search"
 msgstr ""
@@ -1408,11 +1407,6 @@ msgstr ""
 msgid "Scrobble"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Scrobble to Last.fm"
-msgstr ""
-
 #: lib/music_library_web/live/scrobble_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Failed to fetch releases for this release group"
@@ -1421,9 +1415,4 @@ msgstr ""
 #: lib/music_library_web/live/scrobble_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Failed to search for release groups"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Searching..."
 msgstr ""

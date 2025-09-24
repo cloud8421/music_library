@@ -188,25 +188,6 @@ defmodule MusicLibraryWeb.RecordComponents do
     """
   end
 
-  attr :query, :string, required: true
-
-  def search_form(assigns) do
-    ~H"""
-    <form class="w-full sm:w-1/3" for={@query} phx-submit="search" phx-change="search">
-      <.input
-        type="search"
-        size="sm"
-        id={:query}
-        name={:query}
-        value={@query}
-        placeholder={gettext("Search")}
-        phx-debounce="500"
-        autocomplete="off"
-      />
-    </form>
-    """
-  end
-
   attr :records, :list, required: true
   attr :records_count, :integer, required: true
   attr :title, :string, required: true

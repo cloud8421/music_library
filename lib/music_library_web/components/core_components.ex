@@ -19,6 +19,8 @@ defmodule MusicLibraryWeb.CoreComponents do
 
   alias Phoenix.LiveView.JS
 
+  import Fluxon.Components.Input
+
   @doc """
   Renders a simple form.
 
@@ -52,6 +54,25 @@ defmodule MusicLibraryWeb.CoreComponents do
         </div>
       </div>
     </.form>
+    """
+  end
+
+  attr :query, :string, required: true
+
+  def search_form(assigns) do
+    ~H"""
+    <form class="w-full sm:w-1/3" for={@query} phx-submit="search" phx-change="search">
+      <.input
+        type="search"
+        size="sm"
+        id={:query}
+        name={:query}
+        value={@query}
+        placeholder={gettext("Search")}
+        phx-debounce="500"
+        autocomplete="off"
+      />
+    </form>
     """
   end
 
