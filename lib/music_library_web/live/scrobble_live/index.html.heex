@@ -1,9 +1,5 @@
 <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
   <div>
-    <h1 class="mt-5 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
-      {gettext("Scrobble to Last.fm")}
-    </h1>
-
     <div
       :if={!@can_scrobble?}
       class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mt-4"
