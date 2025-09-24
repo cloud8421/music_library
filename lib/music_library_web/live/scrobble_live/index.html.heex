@@ -24,12 +24,8 @@
             class="flex-1"
             phx-debounce="300"
           />
-          <.button type="submit" disabled={@loading}>
-            <%= if @loading do %>
-              <.icon name="hero-arrow-path" class="h-4 w-4 animate-spin mr-2" /> Searching...
-            <% else %>
-              <.icon name="hero-magnifying-glass" class="h-4 w-4 mr-2" /> Search
-            <% end %>
+          <.button type="submit" disabled={@loading} phx-disable-with={gettext("Searching...")}>
+            <.icon name="hero-magnifying-glass" class="size-4" />{gettext("Search")}
           </.button>
         </div>
       </.form>
