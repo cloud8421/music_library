@@ -13,8 +13,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
        selected_release_group: nil,
        releases: [],
        loading: false,
-       can_scrobble: ScrobbleActivity.can_scrobble?(),
-       page_title: "Scrobble"
+       can_scrobble: ScrobbleActivity.can_scrobble?()
      )}
   end
 
