@@ -10,21 +10,7 @@
     </div>
 
     <div class="mt-6 space-y-6">
-      <.form for={%{}} as={:search} phx-submit="search" class="space-y-4">
-        <div class="flex gap-3">
-          <.input
-            type="text"
-            name="query"
-            value={@search_query}
-            placeholder="Search for release groups (e.g., artist name, album title)..."
-            class="flex-1"
-            phx-debounce="300"
-          />
-          <.button type="submit" disabled={@loading} phx-disable-with={gettext("Searching...")}>
-            <.icon name="hero-magnifying-glass" class="size-4" />{gettext("Search")}
-          </.button>
-        </div>
-      </.form>
+      <.search_form query={@search_query} />
 
       <%= if @search_results != [] && @selected_release_group == nil do %>
         <div class="space-y-3">
