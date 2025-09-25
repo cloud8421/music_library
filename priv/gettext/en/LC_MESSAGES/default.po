@@ -630,6 +630,7 @@ msgid "Albums"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
+#: lib/music_library_web/live/scrobble_live/show.html.heex
 #: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Tracks"
@@ -1432,4 +1433,99 @@ msgstr[1] ""
 #: lib/music_library_web/live/scrobble_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Releases for \"%{title}\""
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Back to Search"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Barcode:"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Catalog Number:"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Country:"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Finished Date"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Finished Time"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Just finished listening"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Loading release details..."
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Release Date:"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Release Information"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Scrobble Entire Release"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Scrobble Medium"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Scrobble Options"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Scrobble timing"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Started Date"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Started Time"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Started listening at"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "This will scrobble all tracks from all media in sequence"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "You need to connect your Last.fm account to scrobble. Please set up your Last.fm session key in the settings."
 msgstr ""
