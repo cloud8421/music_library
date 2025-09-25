@@ -47,35 +47,51 @@
             <div class="bg-white dark:bg-zinc-800 shadow rounded-lg">
               <div class="p-6">
                 <h3 class="text-lg font-semibold mb-4">Release Information</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                  <%= if @release.date do %>
-                    <div>
-                      <span class="font-medium text-gray-600 dark:text-gray-400">
-                        Release Date:
-                      </span>
-                      <br />{@release.date}
+                <div class="flex gap-6">
+                  <div class="flex-shrink-0">
+                    <img
+                      src={MusicBrainz.Release.thumb_url(@release)}
+                      alt={"Cover art for #{@release.title}"}
+                      class="w-32 h-32 object-cover rounded-lg shadow-sm"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div class="flex-1">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                      <%= if @release.date do %>
+                        <div>
+                          <span class="font-medium text-gray-600 dark:text-gray-400">
+                            Release Date:
+                          </span>
+                          <br />{@release.date}
+                        </div>
+                      <% end %>
+                      <%= if @release.country do %>
+                        <div>
+                          <span class="font-medium text-gray-600 dark:text-gray-400">
+                            Country:
+                          </span>
+                          <br />{@release.country}
+                        </div>
+                      <% end %>
+                      <%= if @release.barcode do %>
+                        <div>
+                          <span class="font-medium text-gray-600 dark:text-gray-400">
+                            Barcode:
+                          </span>
+                          <br />{@release.barcode}
+                        </div>
+                      <% end %>
+                      <%= if @release.catalog_number do %>
+                        <div>
+                          <span class="font-medium text-gray-600 dark:text-gray-400">
+                            Catalog Number:
+                          </span>
+                          <br />{@release.catalog_number}
+                        </div>
+                      <% end %>
                     </div>
-                  <% end %>
-                  <%= if @release.country do %>
-                    <div>
-                      <span class="font-medium text-gray-600 dark:text-gray-400">Country:</span>
-                      <br />{@release.country}
-                    </div>
-                  <% end %>
-                  <%= if @release.barcode do %>
-                    <div>
-                      <span class="font-medium text-gray-600 dark:text-gray-400">Barcode:</span>
-                      <br />{@release.barcode}
-                    </div>
-                  <% end %>
-                  <%= if @release.catalog_number do %>
-                    <div>
-                      <span class="font-medium text-gray-600 dark:text-gray-400">
-                        Catalog Number:
-                      </span>
-                      <br />{@release.catalog_number}
-                    </div>
-                  <% end %>
+                  </div>
                 </div>
               </div>
             </div>
