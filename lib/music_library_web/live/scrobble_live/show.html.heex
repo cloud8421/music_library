@@ -23,7 +23,7 @@
                 by {@release.artists |> Enum.map(& &1.name) |> Enum.join(", ")}
               <% end %>
               <%= if @release.date do %>
-                • Released {Date.from_iso8601!(@release.date) |> Calendar.strftime("%Y")}
+                {@release.date}
               <% end %>
             </p>
           </div>
