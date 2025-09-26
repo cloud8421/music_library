@@ -29,21 +29,24 @@ defmodule MusicLibraryWeb.Telemetry do
         description: "The sum of the other measurements",
         reporter_options: [
           nav: "Repo"
-        ]
+        ],
+        tags: [:source]
       ),
       summary("music_library.repo.query.query_time",
         unit: {:native, :millisecond},
         description: "The time spent executing the query",
         reporter_options: [
           nav: "Repo"
-        ]
+        ],
+        tags: [:source]
       ),
       summary("music_library.repo.query.queue_time",
         unit: {:native, :millisecond},
         description: "The time spent waiting for a database connection",
         reporter_options: [
           nav: "Repo"
-        ]
+        ],
+        tags: [:source]
       ),
 
       # Oban
