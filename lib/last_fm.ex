@@ -76,5 +76,11 @@ defmodule LastFm do
     "https://www.last.fm/api/auth/?api_key=" <> last_fm_config.api_key
   end
 
+  @last_fm_fallback_cover_url "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png"
+
+  def fallback_cover?(cover_url) do
+    cover_url == @last_fm_fallback_cover_url
+  end
+
   defp last_fm_config, do: LastFm.Config.resolve(:music_library)
 end

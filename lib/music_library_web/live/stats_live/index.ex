@@ -150,10 +150,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     |> DateTime.to_iso8601()
   end
 
-  @last_fm_fallback_cover_url "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png"
-
   defp track_or_album_cover_url(track_or_album, cover_hash) do
-    if track_or_album.cover_url == @last_fm_fallback_cover_url do
+    if LastFm.fallback_cover?(track_or_album.cover_url) do
       payload =
         Transform.new(hash: cover_hash, width: 96)
         |> Transform.encode!()

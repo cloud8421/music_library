@@ -191,10 +191,8 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
     end
   end
 
-  @last_fm_fallback_cover_url "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png"
-
   defp cover_url(album) do
-    if album.cover_url == @last_fm_fallback_cover_url do
+    if LastFm.fallback_cover?(album.cover_url) do
       payload =
         Transform.new(hash: album.cover_hash, width: 96)
         |> Transform.encode!()
