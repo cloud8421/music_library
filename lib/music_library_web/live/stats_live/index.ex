@@ -6,13 +6,13 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
   import MusicLibraryWeb.StatsComponents
 
+  alias MusicLibrary.Assets.Transform
   alias MusicLibrary.{Collection, Records, ScrobbleActivity, Wishlist}
   alias MusicLibraryWeb.StatsLive.{TopAlbums, TopArtists}
 
   def mount(_params, _session, socket) do
     current_date = Date.utc_today()
     latest_record = Collection.get_latest_record!()
-    recent_tracks = LastFm.get_scrobbled_tracks(50)
     records_by_artists = Collection.count_records_by_artist(limit: 20)
     records_by_genre = Collection.count_records_by_genre(limit: 20)
     records_on_this_day = Collection.get_records_on_this_day(current_date)
@@ -24,14 +24,14 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     {:ok,
      socket
      |> stream_configure(:recent_tracks,
-       dom_id: fn track -> "track-#{track.scrobbled_at_uts}" end
+       dom_id: fn %{track: track} -> "track-#{track.scrobbled_at_uts}" end
      )
      |> stream_configure(:recent_albums,
-       dom_id: fn album -> "album-#{album.scrobbled_at_uts}" end
+       dom_id: fn %{album: album} -> "album-#{album.scrobbled_at_uts}" end
      )
      |> stream(:records_on_this_day, records_on_this_day, reset: true)
      |> assign_counts()
-     |> assign_scrobble_activity(recent_tracks)
+     |> assign_scrobble_activity()
      |> assign(
        current_date: current_date,
        scrobble_activity_mode: "albums",
@@ -101,11 +101,9 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   end
 
   def handle_info(%{track_count: _count}, socket) do
-    recent_tracks = LastFm.get_scrobbled_tracks()
-
     {:noreply,
      socket
-     |> assign_scrobble_activity(recent_tracks)}
+     |> assign_scrobble_activity()}
   end
 
   defp assign_counts(socket) do
@@ -126,37 +124,43 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     )
   end
 
-  defp assign_scrobble_activity(socket, recent_tracks) do
+  defp assign_scrobble_activity(socket) do
     %{
-      localized_recent_tracks: localized_recent_tracks,
-      localized_recent_albums: recent_albums,
-      collected_releases: collected_releases,
-      wishlisted_releases: wishlisted_releases,
-      artist_ids: artist_ids
-    } = ScrobbleActivity.from_recent_tracks(recent_tracks, socket.assigns.timezone)
+      recent_tracks: recent_tracks,
+      recent_albums: recent_albums
+    } = ScrobbleActivity.recent_activity(socket.assigns.timezone)
 
     scrobble_count = ScrobbleActivity.scrobble_count()
 
     last_updated_uts =
-      if track = List.first(localized_recent_tracks) do
-        track.scrobbled_at_uts
+      if rt = List.first(recent_tracks) do
+        rt.track.scrobbled_at_uts
       end
 
     socket
     |> assign(:last_updated_uts, last_updated_uts)
     |> assign(:scrobble_count, scrobble_count)
-    |> stream(:recent_tracks, localized_recent_tracks, reset: true)
+    |> stream(:recent_tracks, recent_tracks, reset: true)
     |> stream(:recent_albums, recent_albums, reset: true)
-    |> assign(
-      collected_releases: collected_releases,
-      wishlisted_releases: wishlisted_releases,
-      artist_ids: artist_ids
-    )
   end
 
   defp format_scrobbled_at_uts(uts) do
     uts
     |> DateTime.from_unix!()
     |> DateTime.to_iso8601()
+  end
+
+  @last_fm_fallback_cover_url "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png"
+
+  defp track_or_album_cover_url(track_or_album, cover_hash) do
+    if track_or_album.cover_url == @last_fm_fallback_cover_url do
+      payload =
+        Transform.new(hash: cover_hash, width: 96)
+        |> Transform.encode!()
+
+      ~p"/assets/#{payload}"
+    else
+      track_or_album.cover_url
+    end
   end
 end

@@ -3,7 +3,7 @@ defmodule MusicLibrary.ScrobbleActivity do
 
   alias LastFm.{Scrobble, Track}
   alias MusicBrainz.Release
-  alias MusicLibrary.{Artists, Collection, Repo, Secrets, Wishlist}
+  alias MusicLibrary.{Artists, Collection, Records.ArtistRecord, Repo, Secrets, Wishlist}
 
   def can_scrobble? do
     Secrets.get("last_fm_session_key") !== nil
@@ -111,76 +111,100 @@ defmodule MusicLibrary.ScrobbleActivity do
     Repo.aggregate(Track, :count, :scrobbled_at_uts)
   end
 
-  def from_recent_tracks(recent_tracks, timezone) do
-    all_artist_pairs = Artists.get_all_artist_pairs()
-    recent_release_ids = recent_release_ids(recent_tracks)
-    collected_releases = Collection.collected_releases(recent_release_ids)
-    wishlisted_releases = Wishlist.wishlisted_releases(recent_release_ids)
-
-    localized_recent_tracks =
-      Enum.map(recent_tracks, fn t ->
-        %{
-          t
-          | scrobbled_at_label: localize_scrobbled_at(t.scrobbled_at_uts, timezone),
-            artist: polyfill_artist(t, collected_releases, wishlisted_releases, all_artist_pairs)
+  def recent_activity(timezone, limit \\ 100) do
+    # When we get recent tracks, we need to:
+    #
+    # - Map each track to a record in the collection (if it exists)
+    # - Map each track to a record in the wishlist (if it exists)
+    # - Map each track to an artist, knowing that sometimes track artists do
+    #   not have the necessary information. In that case we can go from
+    #   track -> album -> record -> artist
+    collected_releases_query =
+      from r in fragment("records, json_each(records.release_ids)"),
+        where: fragment("records.purchased_at IS NOT NULL"),
+        select: %{
+          record_id: fragment("records.id"),
+          cover_hash: fragment("records.cover_hash"),
+          release_id: r.value
         }
-      end)
 
-    all_artist_ids = Artists.get_all_artist_ids()
-    recent_artist_ids = recent_artist_ids(localized_recent_tracks)
-    artist_ids = MapSet.intersection(all_artist_ids, recent_artist_ids)
+    wishlisted_releases_query =
+      from r in fragment("records, json_each(records.release_ids)"),
+        where: fragment("records.purchased_at IS NULL"),
+        select: %{
+          record_id: fragment("records.id"),
+          cover_hash: fragment("records.cover_hash"),
+          release_id: r.value
+        }
+
+    all_artists_query =
+      from ar in ArtistRecord,
+        distinct: true
+
+    tracks_query =
+      from t in Track,
+        left_join: cr in subquery(collected_releases_query),
+        on: cr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
+        left_join: wr in subquery(wishlisted_releases_query),
+        on: wr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
+        left_join: ar in subquery(all_artists_query),
+        on: wr.record_id == ar.record_id or cr.record_id == ar.record_id,
+        order_by: [desc: t.scrobbled_at_uts],
+        limit: ^limit,
+        select: %{
+          track: t,
+          collected_record_id: cr.record_id,
+          wishlisted_record_id: wr.record_id,
+          artist_id: ar.musicbrainz_id,
+          cover_hash: coalesce(cr.cover_hash, wr.cover_hash)
+        }
+
+    recent_tracks = Repo.all(tracks_query)
+
+    recent_tracks =
+      recent_tracks
+      |> Enum.map(fn %{track: track, artist_id: artist_id} = rt ->
+        %{rt | track: polifyll_track(track, timezone, artist_id)}
+      end)
 
     recent_albums =
-      localized_recent_tracks
-      |> Enum.dedup_by(fn t -> t.album end)
-      |> Enum.map(fn t ->
-        %{
-          scrobbled_at_uts: t.scrobbled_at_uts,
-          scrobbled_at_label: t.scrobbled_at_label,
-          metadata: t.album,
-          artist: t.artist,
-          cover_url: t.cover_url
-        }
+      recent_tracks
+      |> Enum.dedup_by(fn %{track: track} -> track.album end)
+      |> Enum.map(fn %{track: track} = tr ->
+        tr
+        |> Map.delete(:track)
+        |> Map.put(
+          :album,
+          %{
+            scrobbled_at_uts: track.scrobbled_at_uts,
+            scrobbled_at_label: track.scrobbled_at_label,
+            metadata: track.album,
+            artist: track.artist,
+            cover_url: track.cover_url
+          }
+        )
       end)
 
     %{
-      localized_recent_tracks: localized_recent_tracks,
-      localized_recent_albums: recent_albums,
-      collected_releases: collected_releases,
-      wishlisted_releases: wishlisted_releases,
-      artist_ids: artist_ids
+      recent_tracks: recent_tracks,
+      recent_albums: recent_albums
     }
   end
 
-  defp polyfill_artist(track, collected_releases, wishlisted_releases, all_artist_pairs) do
+  defp polifyll_track(track, timezone, artist_id) do
     %{
-      track.artist
-      | musicbrainz_id:
-          find_artist_id(track, collected_releases, wishlisted_releases, all_artist_pairs)
+      track
+      | scrobbled_at_label: localize_scrobbled_at(track.scrobbled_at_uts, timezone),
+        artist: polyfill_artist(track.artist, artist_id)
     }
   end
 
-  defguardp has_no_artist_id(track)
-            when is_nil(track.artist.musicbrainz_id) or track.artist.musicbrainz_id == ""
-
-  defp find_artist_id(track, collected_releases, wishlisted_releases, all_artist_pairs)
-       when has_no_artist_id(track) do
-    matched_release =
-      Enum.find(collected_releases ++ wishlisted_releases, fn r ->
-        r.release_id == track.album.musicbrainz_id
-      end)
-
-    record_id = if matched_release, do: matched_release.record_id
-
-    if record_id do
-      Enum.find_value(all_artist_pairs, fn pair ->
-        if pair.record_id == record_id, do: pair.artist_id
-      end)
+  defp polyfill_artist(artist, musicbrainz_id) do
+    if is_nil(artist.musicbrainz_id) or artist.musicbrainz_id == "" do
+      %{artist | musicbrainz_id: musicbrainz_id}
+    else
+      artist
     end
-  end
-
-  defp find_artist_id(track, _collected_releases, _wishlisted_releases, _all_artist_pairs) do
-    track.artist.musicbrainz_id
   end
 
   def localize_scrobbled_at(uts, timezone) do
@@ -190,21 +214,6 @@ defmodule MusicLibrary.ScrobbleActivity do
       |> DateTime.shift_zone!(timezone)
 
     Calendar.strftime(ldt, "%d/%m/%Y %X")
-  end
-
-  defp recent_release_ids(recent_tracks) do
-    recent_tracks
-    |> Enum.map(fn t -> t.album.musicbrainz_id end)
-    |> Enum.uniq()
-    |> Enum.reject(fn musicbrainz_id -> musicbrainz_id == "" end)
-  end
-
-  defp recent_artist_ids(recent_tracks) do
-    recent_tracks
-    |> Enum.map(fn t -> t.artist.musicbrainz_id end)
-    |> Enum.uniq()
-    |> Enum.reject(fn musicbrainz_id -> musicbrainz_id == "" end)
-    |> MapSet.new()
   end
 
   @doc """
