@@ -1,146 +1,141 @@
 <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
   <div>
-    <div
-      :if={!@can_scrobble?}
-      class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mt-4"
-    >
-      <.button :if={!@can_scrobble?} size="sm" href={LastFm.auth_url()}>
-        {gettext("Connect your Last.fm account")}
-      </.button>
-    </div>
-
-    <div class="mt-6 space-y-6">
-      <.search_form query={@search_query} />
-
-      <%= if @search_results != [] && @selected_release_group == nil do %>
-        <div class="space-y-3">
-          <h3 class="text-lg font-semibold">{gettext("Release Groups")}</h3>
-          <ul class={[
-            "mt-5 divide-y divide-zinc-100 dark:divide-slate-300/30",
-            "max-h-[500px] overflow-y-auto"
-          ]}>
-            <li
-              :for={release_group <- @search_results}
-              phx-click="select_release_group"
-              phx-value-release_group_id={release_group.id}
-              class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700 cursor-pointer"
-            >
-              <div class="shrink-0 flex items-center justify-between w-full px-4">
-                <img
-                  class="w-20 flex-none rounded-lg mr-4"
-                  alt={release_group.title}
-                  src={ReleaseGroupSearchResult.thumb_url(release_group)}
-                  onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
-                />
-                <div class="min-w-0 flex-auto">
-                  <h1 class="truncate text-sm leading-6 text-zinc-700 dark:text-zinc-400">
-                    {release_group.artists}
-                  </h1>
-                  <h2 class="truncate mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
-                    {release_group.title}
-                  </h2>
-                  <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-                    {Records.Record.format_release_date(release_group.release_date)} · {type_label(
-                      release_group.type
-                    )}
-                  </p>
-                </div>
+    <header class="gap-6 mb-2">
+      <div class="flex items-center justify-between gap-6 mb-2 mt-2">
+        <.search_form query={@search_query} />
+        <.button :if={!@can_scrobble?} size="sm" href={LastFm.auth_url()}>
+          {gettext("Connect your Last.fm account")}
+        </.button>
+      </div>
+    </header>
+    <%= if @search_results != [] && @selected_release_group == nil do %>
+      <div class="space-y-3">
+        <h3 class="text-lg font-semibold">{gettext("Release Groups")}</h3>
+        <ul class={[
+          "mt-5 divide-y divide-zinc-100 dark:divide-slate-300/30",
+          "max-h-[500px] overflow-y-auto"
+        ]}>
+          <li
+            :for={release_group <- @search_results}
+            phx-click="select_release_group"
+            phx-value-release_group_id={release_group.id}
+            class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700 cursor-pointer"
+          >
+            <div class="shrink-0 flex items-center justify-between w-full px-4">
+              <img
+                class="w-20 flex-none rounded-lg mr-4"
+                alt={release_group.title}
+                src={ReleaseGroupSearchResult.thumb_url(release_group)}
+                onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
+              />
+              <div class="min-w-0 flex-auto">
+                <h1 class="truncate text-sm leading-6 text-zinc-700 dark:text-zinc-400">
+                  {release_group.artists}
+                </h1>
+                <h2 class="truncate mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+                  {release_group.title}
+                </h2>
+                <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+                  {Records.Record.format_release_date(release_group.release_date)} · {type_label(
+                    release_group.type
+                  )}
+                </p>
               </div>
-            </li>
-          </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= if @selected_release_group && @releases != [] do %>
+      <div class="space-y-3">
+        <div class="flex items-center gap-2">
+          <.button
+            variant="ghost"
+            size="sm"
+            phx-click="clear_selection"
+          >
+            <.icon name="hero-arrow-left" class="h-4 w-4" />
+          </.button>
+          <h3 class="text-lg font-semibold">
+            {gettext("Releases for \"%{title}\"", title: @selected_release_group.title)}
+          </h3>
         </div>
-      <% end %>
 
-      <%= if @selected_release_group && @releases != [] do %>
-        <div class="space-y-3">
-          <div class="flex items-center gap-2">
-            <.button
-              variant="ghost"
-              size="sm"
-              phx-click="clear_selection"
-            >
-              <.icon name="hero-arrow-left" class="h-4 w-4" />
-            </.button>
-            <h3 class="text-lg font-semibold">
-              {gettext("Releases for \"%{title}\"", title: @selected_release_group.title)}
-            </h3>
-          </div>
-
-          <div class="grid gap-3">
-            <%= for release <- @releases do %>
-              <div class="bg-white dark:bg-zinc-800 shadow rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                <.link
-                  navigate={~p"/scrobble/#{release.id}"}
-                  class="block p-4"
-                >
-                  <div class="flex justify-start">
-                    <div>
-                      <img
-                        class="w-20 flex-none rounded-lg mr-4"
-                        alt={release.title}
-                        src={Release.thumb_url(release)}
-                        onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
-                      />
-                    </div>
-                    <div>
-                      <h4 class="font-medium text-gray-900 dark:text-gray-100">
-                        {release.title}
-                      </h4>
-                      <div class="text-sm text-gray-600 dark:text-gray-400 mt-1 space-y-1">
-                        <%= if release.date do %>
-                          <p>Released: {release.date}</p>
-                        <% end %>
-                        <%= if release.country do %>
-                          <p>Country: {release.country}</p>
-                        <% end %>
-                        <%= if release.barcode do %>
-                          <p>Barcode: {release.barcode}</p>
-                        <% end %>
-                        <%= if release.catalog_number do %>
-                          <p>Catalog: {release.catalog_number}</p>
-                        <% end %>
-                        <%= if release.media != [] do %>
-                          <p>
-                            {ngettext("1 disc", "%{count} discs", Release.media_count(release))}
-                          </p>
-                        <% end %>
-                      </div>
+        <div class="grid gap-3">
+          <%= for release <- @releases do %>
+            <div class="bg-white dark:bg-zinc-800 shadow rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+              <.link
+                navigate={~p"/scrobble/#{release.id}"}
+                class="block p-4"
+              >
+                <div class="flex justify-start">
+                  <div>
+                    <img
+                      class="w-20 flex-none rounded-lg mr-4"
+                      alt={release.title}
+                      src={Release.thumb_url(release)}
+                      onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
+                    />
+                  </div>
+                  <div>
+                    <h4 class="font-medium text-gray-900 dark:text-gray-100">
+                      {release.title}
+                    </h4>
+                    <div class="text-sm text-gray-600 dark:text-gray-400 mt-1 space-y-1">
+                      <%= if release.date do %>
+                        <p>Released: {release.date}</p>
+                      <% end %>
+                      <%= if release.country do %>
+                        <p>Country: {release.country}</p>
+                      <% end %>
+                      <%= if release.barcode do %>
+                        <p>Barcode: {release.barcode}</p>
+                      <% end %>
+                      <%= if release.catalog_number do %>
+                        <p>Catalog: {release.catalog_number}</p>
+                      <% end %>
+                      <%= if release.media != [] do %>
+                        <p>
+                          {ngettext("1 disc", "%{count} discs", Release.media_count(release))}
+                        </p>
+                      <% end %>
                     </div>
                   </div>
-                </.link>
-              </div>
-            <% end %>
-          </div>
+                </div>
+              </.link>
+            </div>
+          <% end %>
         </div>
-      <% end %>
+      </div>
+    <% end %>
 
-      <%= if @loading && @search_query != "" do %>
-        <div class="text-center py-8">
-          <.icon name="hero-arrow-path" class="h-8 w-8 animate-spin mx-auto text-gray-400" />
-          <p class="text-gray-600 dark:text-gray-400 mt-2">
-            <%= if @selected_release_group do %>
-              Loading releases...
-            <% else %>
-              Searching...
-            <% end %>
-          </p>
-        </div>
-      <% end %>
+    <%= if @loading && @search_query != "" do %>
+      <div class="text-center py-8">
+        <.icon name="hero-arrow-path" class="h-8 w-8 animate-spin mx-auto text-gray-400" />
+        <p class="text-gray-600 dark:text-gray-400 mt-2">
+          <%= if @selected_release_group do %>
+            Loading releases...
+          <% else %>
+            Searching...
+          <% end %>
+        </p>
+      </div>
+    <% end %>
 
-      <%= if @search_query != "" && @search_results == [] && not @loading do %>
-        <div class="text-center py-8">
-          <.icon
-            name="hero-magnifying-glass"
-            class="h-12 w-12 mx-auto text-gray-300 dark:text-gray-600"
-          />
-          <p class="text-gray-600 dark:text-gray-400 mt-3">
-            No release groups found for "{@search_query}"
-          </p>
-          <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">
-            Try a different search term or check the spelling
-          </p>
-        </div>
-      <% end %>
-    </div>
+    <%= if @search_query != "" && @search_results == [] && not @loading do %>
+      <div class="text-center py-8">
+        <.icon
+          name="hero-magnifying-glass"
+          class="h-12 w-12 mx-auto text-gray-300 dark:text-gray-600"
+        />
+        <p class="text-gray-600 dark:text-gray-400 mt-3">
+          No release groups found for "{@search_query}"
+        </p>
+        <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">
+          Try a different search term or check the spelling
+        </p>
+      </div>
+    <% end %>
   </div>
 </Layouts.app>
