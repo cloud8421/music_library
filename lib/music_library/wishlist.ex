@@ -21,6 +21,16 @@ defmodule MusicLibrary.Wishlist do
     Repo.aggregate(base_search(), :count)
   end
 
+  def wishlisted_releases_query do
+    from r in fragment("records, json_each(records.release_ids)"),
+      where: fragment("records.purchased_at IS NULL"),
+      select: %{
+        record_id: fragment("records.id"),
+        cover_hash: fragment("records.cover_hash"),
+        release_id: r.value
+      }
+  end
+
   defp base_search do
     from r in SearchIndex,
       where: is_nil(r.purchased_at)

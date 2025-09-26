@@ -3,7 +3,7 @@ defmodule MusicLibrary.ScrobbleActivity do
 
   alias LastFm.{Scrobble, Track}
   alias MusicBrainz.Release
-  alias MusicLibrary.{Artists, Records.ArtistRecord, Repo, Secrets}
+  alias MusicLibrary.{Artists, Collection, Records.ArtistRecord, Repo, Secrets, Wishlist}
 
   def can_scrobble? do
     Secrets.get("last_fm_session_key") !== nil
@@ -119,23 +119,6 @@ defmodule MusicLibrary.ScrobbleActivity do
     # - Map each track to an artist, knowing that sometimes track artists do
     #   not have the necessary information. In that case we can go from
     #   track -> album -> record -> artist
-    collected_releases_query =
-      from r in fragment("records, json_each(records.release_ids)"),
-        where: fragment("records.purchased_at IS NOT NULL"),
-        select: %{
-          record_id: fragment("records.id"),
-          cover_hash: fragment("records.cover_hash"),
-          release_id: r.value
-        }
-
-    wishlisted_releases_query =
-      from r in fragment("records, json_each(records.release_ids)"),
-        where: fragment("records.purchased_at IS NULL"),
-        select: %{
-          record_id: fragment("records.id"),
-          cover_hash: fragment("records.cover_hash"),
-          release_id: r.value
-        }
 
     all_artists_query =
       from ar in ArtistRecord,
@@ -143,9 +126,9 @@ defmodule MusicLibrary.ScrobbleActivity do
 
     tracks_query =
       from t in Track,
-        left_join: cr in subquery(collected_releases_query),
+        left_join: cr in subquery(Collection.collected_releases_query()),
         on: cr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
-        left_join: wr in subquery(wishlisted_releases_query),
+        left_join: wr in subquery(Wishlist.wishlisted_releases_query()),
         on: wr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
         left_join: ar in subquery(all_artists_query),
         on: wr.record_id == ar.record_id or cr.record_id == ar.record_id,
@@ -232,29 +215,11 @@ defmodule MusicLibrary.ScrobbleActivity do
       |> DateTime.from_naive!(timezone)
       |> DateTime.to_unix()
 
-    collected_releases_query =
-      from r in fragment("records, json_each(records.release_ids)"),
-        where: fragment("records.purchased_at IS NOT NULL"),
-        select: %{
-          record_id: fragment("records.id"),
-          cover_hash: fragment("records.cover_hash"),
-          release_id: r.value
-        }
-
-    wishlisted_releases_query =
-      from r in fragment("records, json_each(records.release_ids)"),
-        where: fragment("records.purchased_at IS NULL"),
-        select: %{
-          record_id: fragment("records.id"),
-          cover_hash: fragment("records.cover_hash"),
-          release_id: r.value
-        }
-
     query =
       from t in Track,
-        left_join: cr in subquery(collected_releases_query),
+        left_join: cr in subquery(Collection.collected_releases_query()),
         on: cr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
-        left_join: wr in subquery(wishlisted_releases_query),
+        left_join: wr in subquery(Wishlist.wishlisted_releases_query()),
         on: wr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
         where: t.scrobbled_at_uts >= ^cutoff_timestamp,
         where: fragment("json_extract(album, '$.title') != ''"),
@@ -286,29 +251,11 @@ defmodule MusicLibrary.ScrobbleActivity do
   def get_top_albums(opts) do
     limit = Keyword.get(opts, :limit, 10)
 
-    collected_releases_query =
-      from r in fragment("records, json_each(records.release_ids)"),
-        where: fragment("records.purchased_at IS NOT NULL"),
-        select: %{
-          record_id: fragment("records.id"),
-          cover_hash: fragment("records.cover_hash"),
-          release_id: r.value
-        }
-
-    wishlisted_releases_query =
-      from r in fragment("records, json_each(records.release_ids)"),
-        where: fragment("records.purchased_at IS NULL"),
-        select: %{
-          record_id: fragment("records.id"),
-          cover_hash: fragment("records.cover_hash"),
-          release_id: r.value
-        }
-
     query =
       from t in Track,
-        left_join: cr in subquery(collected_releases_query),
+        left_join: cr in subquery(Collection.collected_releases_query()),
         on: cr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
-        left_join: wr in subquery(wishlisted_releases_query),
+        left_join: wr in subquery(Wishlist.wishlisted_releases_query()),
         on: wr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
         where: fragment("json_extract(album, '$.title') != ''"),
         group_by: [

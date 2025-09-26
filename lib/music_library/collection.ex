@@ -109,6 +109,16 @@ defmodule MusicLibrary.Collection do
     Repo.all(q)
   end
 
+  def collected_releases_query do
+    from r in fragment("records, json_each(records.release_ids)"),
+      where: fragment("records.purchased_at IS NOT NULL"),
+      select: %{
+        record_id: fragment("records.id"),
+        cover_hash: fragment("records.cover_hash"),
+        release_id: r.value
+      }
+  end
+
   defp base_search do
     from r in SearchIndex,
       where: not is_nil(r.purchased_at)
