@@ -47,16 +47,5 @@ defmodule LastFm.FeedTest do
       assert {:ok, 0} == Feed.update([@track_two, @track_one])
       assert_receive %{track_count: 0}
     end
-
-    test "it returns tracks in descending order of scrobble" do
-      assert {:ok, 2} == Feed.update([@track_two, @track_one])
-      track_two_scrobbled_at_uts = @track_two.scrobbled_at_uts
-      track_one_scrobbled_at_uts = @track_one.scrobbled_at_uts
-
-      assert [
-               %{scrobbled_at_uts: ^track_two_scrobbled_at_uts},
-               %{scrobbled_at_uts: ^track_one_scrobbled_at_uts}
-             ] = Feed.all_tracks(10)
-    end
   end
 end

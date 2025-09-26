@@ -8,8 +8,6 @@ defmodule LastFm.Feed do
   to one track at a time, and the timestamp has second-level precision.
   """
 
-  import Ecto.Query
-
   @insertable_fields [
     :musicbrainz_id,
     :title,
@@ -42,16 +40,6 @@ defmodule LastFm.Feed do
     Phoenix.PubSub.broadcast(LastFm.PubSub, "feed:update", %{track_count: count})
 
     {:ok, count}
-  end
-
-  @spec all_tracks(non_neg_integer()) :: [LastFm.Track.t()]
-  def all_tracks(limit) do
-    q =
-      from t in LastFm.Track,
-        order_by: {:desc, t.scrobbled_at_uts},
-        limit: ^limit
-
-    MusicLibrary.Repo.all(q)
   end
 
   @spec subscribe() :: :ok

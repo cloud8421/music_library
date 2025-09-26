@@ -75,16 +75,6 @@ defmodule MusicLibrary.Collection do
     Repo.one!(q)
   end
 
-  def collected_releases(release_ids) do
-    q =
-      from r in fragment("records, json_each(records.release_ids)"),
-        where: r.value in ^release_ids,
-        where: fragment("records.purchased_at IS NOT NULL"),
-        select: %{record_id: fragment("records.id"), release_id: r.value}
-
-    Repo.all(q)
-  end
-
   def count_records_by_artist(opts \\ []) do
     limit = Keyword.get(opts, :limit, 30)
 
