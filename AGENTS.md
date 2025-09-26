@@ -199,6 +199,10 @@ UI and Styling
   visually while maintaining scanability and preserving all functionality.
 - Use Phoenix view helpers and templates to keep views DRY.
 - Use minimal markup and avoid nesting DIVs unnecessarily.
+- Always use `gettext/1` for user-visible text instead of hardcoded strings
+- Apply translations consistently across all UI text, error messages, page titles, and button labels
+- Use `:if` attributes over `<%= if %>` blocks in HEEx templates for cleaner, more readable code
+- Leverage built-in Phoenix LiveView features like `phx-disable-with` for loading states instead of manual state tracking
 
 Performance Optimization
 

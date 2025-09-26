@@ -24,7 +24,8 @@
       "Bash(mix format:*)",
       "Bash(mise run dev:static-checks:*)",
       "Bash(find:*)",
-      "Bash(xargs sed:*)"
+      "Bash(xargs sed:*)",
+      "Bash(git show:*)"
     ]
   },
   "enableAllProjectMcpServers": false
