@@ -246,12 +246,6 @@ defmodule MusicLibraryWeb.StatsComponents do
   defp silver_year?(year), do: rem(year, 5) == 0
   defp normal_year?(year), do: !gold_year?(year) && !silver_year?(year)
 
-  def tracked_record?(tracked_releases, release_id) do
-    Enum.find_value(tracked_releases, fn tracked_release ->
-      if tracked_release.release_id == release_id, do: tracked_release.record_id
-    end)
-  end
-
   # The Tailwind build step requires all needed classes to be explicitly referenced
   # in the source code, and not dynamically generated. This implies that one cannot
   # (for example) interpolate a number in a class name.

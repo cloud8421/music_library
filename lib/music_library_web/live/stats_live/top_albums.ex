@@ -1,8 +1,7 @@
 defmodule MusicLibraryWeb.StatsLive.TopAlbums do
   use MusicLibraryWeb, :live_component
 
-  import MusicLibraryWeb.StatsComponents, only: [tracked_record?: 2]
-
+  alias MusicLibrary.Assets.Transform
   alias MusicLibrary.ScrobbleActivity
 
   def live(assigns) do
@@ -67,11 +66,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
               <.loading />
             </div>
           </:loading>
-          <.top_albums_by_period
-            albums={top_albums.albums}
-            collected_releases={top_albums.collected_releases}
-            wishlisted_releases={top_albums.wishlisted_releases}
-          />
+          <.top_albums_by_period albums={top_albums} />
         </.async_result>
       </.tabs>
     </div>
@@ -104,8 +99,6 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
   end
 
   attr :albums, :list, required: true
-  attr :collected_releases, :list, required: true
-  attr :wishlisted_releases, :list, required: true
 
   defp top_albums_by_period(assigns) do
     ~H"""
@@ -113,18 +106,16 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
       <div class="space-y-2">
         <div
           :for={album <- @albums}
-          phx-click={
-            navigate_to_record(@collected_releases, @wishlisted_releases, album.album_musicbrainz_id)
-          }
+          phx-click={navigate_to_record(album)}
           class={[
             "flex items-center space-x-3 p-2",
-            tracked_record?(@collected_releases ++ @wishlisted_releases, album.album_musicbrainz_id) &&
+            (album.collected_record_id || album.wishlisted_record_id) &&
               "cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800"
           ]}
         >
           <img
             class="w-12 h-12 rounded-md object-cover"
-            src={album.cover_url}
+            src={cover_url(album)}
             alt={album.album_title}
           />
           <div class="flex-1 min-w-0">
@@ -142,22 +133,19 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
             {album.play_count}
           </.badge>
           <.badge :if={
-            album.album_musicbrainz_id !== "" and
-              !tracked_record?(
-                @collected_releases ++ @wishlisted_releases,
-                album.album_musicbrainz_id
-              )
+            album.album_musicbrainz_id !== "" and !album.collected_record_id and
+              !album.wishlisted_record_id
           }>
             {album.play_count}
           </.badge>
           <.badge
-            :if={tracked_record?(@collected_releases, album.album_musicbrainz_id)}
+            :if={album.collected_record_id}
             color="success"
           >
             {album.play_count}
           </.badge>
           <.badge
-            :if={tracked_record?(@wishlisted_releases, album.album_musicbrainz_id)}
+            :if={album.wishlisted_record_id}
             color="warning"
           >
             {album.play_count}
@@ -190,16 +178,30 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
     )
   end
 
-  defp navigate_to_record(collected_releases, wishlisted_releases, musicbrainz_id) do
+  defp navigate_to_record(album) do
     cond do
-      record_id = tracked_record?(collected_releases, musicbrainz_id) ->
-        JS.navigate(~p"/collection/#{record_id}")
+      album.collected_record_id ->
+        JS.navigate(~p"/collection/#{album.collected_record_id}")
 
-      record_id = tracked_record?(wishlisted_releases, musicbrainz_id) ->
-        JS.navigate(~p"/wishlist/#{record_id}")
+      album.wishlisted_record_id ->
+        JS.navigate(~p"/wishlist/#{album.wishlisted_record_id}")
 
       true ->
         nil
+    end
+  end
+
+  @last_fm_fallback_cover_url "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png"
+
+  defp cover_url(album) do
+    if album.cover_url == @last_fm_fallback_cover_url do
+      payload =
+        Transform.new(hash: album.cover_hash, width: 96)
+        |> Transform.encode!()
+
+      ~p"/assets/#{payload}"
+    else
+      album.cover_url
     end
   end
 end

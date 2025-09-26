@@ -3,7 +3,7 @@ defmodule MusicLibrary.ScrobbleActivity do
 
   alias LastFm.{Scrobble, Track}
   alias MusicBrainz.Release
-  alias MusicLibrary.{Artists, Collection, Records.ArtistRecord, Repo, Secrets, Wishlist}
+  alias MusicLibrary.{Artists, Records.ArtistRecord, Repo, Secrets}
 
   def can_scrobble? do
     Secrets.get("last_fm_session_key") !== nil
@@ -232,8 +232,30 @@ defmodule MusicLibrary.ScrobbleActivity do
       |> DateTime.from_naive!(timezone)
       |> DateTime.to_unix()
 
+    collected_releases_query =
+      from r in fragment("records, json_each(records.release_ids)"),
+        where: fragment("records.purchased_at IS NOT NULL"),
+        select: %{
+          record_id: fragment("records.id"),
+          cover_hash: fragment("records.cover_hash"),
+          release_id: r.value
+        }
+
+    wishlisted_releases_query =
+      from r in fragment("records, json_each(records.release_ids)"),
+        where: fragment("records.purchased_at IS NULL"),
+        select: %{
+          record_id: fragment("records.id"),
+          cover_hash: fragment("records.cover_hash"),
+          release_id: r.value
+        }
+
     query =
       from t in Track,
+        left_join: cr in subquery(collected_releases_query),
+        on: cr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
+        left_join: wr in subquery(wishlisted_releases_query),
+        on: wr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
         where: t.scrobbled_at_uts >= ^cutoff_timestamp,
         where: fragment("json_extract(album, '$.title') != ''"),
         group_by: [
@@ -246,7 +268,10 @@ defmodule MusicLibrary.ScrobbleActivity do
           artist_musicbrainz_id: fragment("json_extract(artist, '$.musicbrainz_id')"),
           play_count: count(t.scrobbled_at_uts),
           cover_url: fragment("max(?)", t.cover_url),
-          album_musicbrainz_id: fragment("json_extract(album, '$.musicbrainz_id')")
+          album_musicbrainz_id: fragment("json_extract(album, '$.musicbrainz_id')"),
+          collected_record_id: cr.record_id,
+          wishlisted_record_id: wr.record_id,
+          cover_hash: coalesce(cr.cover_hash, wr.cover_hash)
         },
         order_by: [desc: count(t.scrobbled_at_uts)],
         limit: ^limit
@@ -261,8 +286,30 @@ defmodule MusicLibrary.ScrobbleActivity do
   def get_top_albums(opts) do
     limit = Keyword.get(opts, :limit, 10)
 
+    collected_releases_query =
+      from r in fragment("records, json_each(records.release_ids)"),
+        where: fragment("records.purchased_at IS NOT NULL"),
+        select: %{
+          record_id: fragment("records.id"),
+          cover_hash: fragment("records.cover_hash"),
+          release_id: r.value
+        }
+
+    wishlisted_releases_query =
+      from r in fragment("records, json_each(records.release_ids)"),
+        where: fragment("records.purchased_at IS NULL"),
+        select: %{
+          record_id: fragment("records.id"),
+          cover_hash: fragment("records.cover_hash"),
+          release_id: r.value
+        }
+
     query =
       from t in Track,
+        left_join: cr in subquery(collected_releases_query),
+        on: cr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
+        left_join: wr in subquery(wishlisted_releases_query),
+        on: wr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
         where: fragment("json_extract(album, '$.title') != ''"),
         group_by: [
           fragment("json_extract(album, '$.title')"),
@@ -274,7 +321,10 @@ defmodule MusicLibrary.ScrobbleActivity do
           artist_musicbrainz_id: fragment("json_extract(artist, '$.musicbrainz_id')"),
           play_count: count(t.scrobbled_at_uts),
           cover_url: fragment("max(?)", t.cover_url),
-          album_musicbrainz_id: fragment("json_extract(album, '$.musicbrainz_id')")
+          album_musicbrainz_id: fragment("json_extract(album, '$.musicbrainz_id')"),
+          collected_record_id: cr.record_id,
+          wishlisted_record_id: wr.record_id,
+          cover_hash: coalesce(cr.cover_hash, wr.cover_hash)
         },
         order_by: [desc: count(t.scrobbled_at_uts)],
         limit: ^limit
@@ -352,31 +402,13 @@ defmodule MusicLibrary.ScrobbleActivity do
   releases.
   """
   def get_top_albums_by_period(opts) do
-    period = Keyword.get(opts, :period, :last_7_days)
-
-    albums =
-      case period do
-        :all_time -> get_top_albums(opts)
-        :last_7_days -> get_top_albums_by_days(7, opts)
-        :last_30_days -> get_top_albums_by_days(30, opts)
-        :last_90_days -> get_top_albums_by_days(90, opts)
-        :last_365_days -> get_top_albums_by_days(365, opts)
-      end
-
-    all_album_ids =
-      albums
-      |> Enum.map(fn t -> t.album_musicbrainz_id end)
-      |> Enum.uniq()
-      |> Enum.reject(fn musicbrainz_id -> musicbrainz_id == "" end)
-
-    collected_releases = Collection.collected_releases(all_album_ids)
-    wishlisted_releases = Wishlist.wishlisted_releases(all_album_ids)
-
-    %{
-      collected_releases: collected_releases,
-      wishlisted_releases: wishlisted_releases,
-      albums: albums
-    }
+    case Keyword.get(opts, :period, :last_7_days) do
+      :all_time -> get_top_albums(opts)
+      :last_7_days -> get_top_albums_by_days(7, opts)
+      :last_30_days -> get_top_albums_by_days(30, opts)
+      :last_90_days -> get_top_albums_by_days(90, opts)
+      :last_365_days -> get_top_albums_by_days(365, opts)
+    end
   end
 
   @doc """
