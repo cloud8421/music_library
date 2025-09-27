@@ -739,11 +739,13 @@ msgid "Successfully connected your Last.fm account"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
+#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Error scrobbling release"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
+#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Release scrobbled successfully"
 msgstr ""
@@ -760,21 +762,25 @@ msgid "Scrobbling..."
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
+#: lib/music_library_web/live/scrobble_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Scrobble release"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
+#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Disc scrobbled successfully"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
+#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Error scrobbling disc"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
+#: lib/music_library_web/live/scrobble_live/show.html.heex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Scrobble disc"
 msgstr ""
@@ -1437,11 +1443,6 @@ msgstr ""
 
 #: lib/music_library_web/live/scrobble_live/show.html.heex
 #, elixir-autogen, elixir-format
-msgid "Back to Search"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.html.heex
-#, elixir-autogen, elixir-format
 msgid "Barcode:"
 msgstr ""
 
@@ -1456,73 +1457,8 @@ msgid "Country:"
 msgstr ""
 
 #: lib/music_library_web/live/scrobble_live/show.html.heex
-#, elixir-autogen, elixir-format
-msgid "Finished Date"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.html.heex
-#, elixir-autogen, elixir-format
-msgid "Finished Time"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.html.heex
-#, elixir-autogen, elixir-format
-msgid "Just finished listening"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.html.heex
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Loading release details..."
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.html.heex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Release Date:"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.html.heex
-#, elixir-autogen, elixir-format
-msgid "Release Information"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.html.heex
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Scrobble Entire Release"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.html.heex
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Scrobble Medium"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.html.heex
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Scrobble Options"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.html.heex
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Scrobble timing"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.html.heex
-#, elixir-autogen, elixir-format
-msgid "Started Date"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.html.heex
-#, elixir-autogen, elixir-format
-msgid "Started Time"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.html.heex
-#, elixir-autogen, elixir-format
-msgid "Started listening at"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.html.heex
-#, elixir-autogen, elixir-format
-msgid "This will scrobble all tracks from all media in sequence"
 msgstr ""
 
 #: lib/music_library_web/live/scrobble_live/show.html.heex

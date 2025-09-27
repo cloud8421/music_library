@@ -1,30 +1,8 @@
 <Layouts.app flash={@flash} current_section={:scrobble} socket={@socket}>
   <div>
-    <div :if={@loading} class="text-center py-8">
-      <.icon name="hero-arrow-path" class="h-8 w-8 animate-spin mx-auto text-gray-400" />
-      <p class="text-gray-600 dark:text-gray-400 mt-2">{gettext("Loading release details...")}</p>
-    </div>
-    <div :if={not @loading} class="space-y-6">
+    <div class="space-y-6">
       <div class="flex items-center gap-4">
-        <.link navigate={~p"/scrobble"} class="flex-shrink-0">
-          <.button variant="ghost" size="sm">
-            <.icon name="hero-arrow-left" class="h-4 w-4 mr-2" /> {gettext("Back to Search")}
-          </.button>
-        </.link>
-
-        <div class="min-w-0 flex-1">
-          <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
-            {@release.title}
-          </h1>
-          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            <span :if={@release.artists != []}>
-              by {@release.artists |> Enum.map(& &1.name) |> Enum.join(", ")}
-            </span>
-            <span :if={@release.date}>
-              {@release.date}
-            </span>
-          </p>
-        </div>
+        <div class="min-w-0 flex-1"></div>
       </div>
 
       <div
@@ -43,184 +21,131 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2">
-          <div class="bg-white dark:bg-zinc-800 shadow rounded-lg">
-            <div class="p-6">
-              <h3 class="text-lg font-semibold mb-4">{gettext("Release Information")}</h3>
-              <div class="flex gap-6">
-                <div class="flex-shrink-0">
-                  <img
-                    src={MusicBrainz.Release.thumb_url(@release)}
-                    alt={"Cover art for #{@release.title}"}
-                    class="w-32 h-32 object-cover rounded-lg shadow-sm"
-                    loading="lazy"
-                  />
-                </div>
-                <div class="flex-1">
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                    <div :if={@release.date}>
-                      <span class="font-medium text-gray-600 dark:text-gray-400">
-                        {gettext("Release Date:")}
-                      </span>
-                      <br />{@release.date}
-                    </div>
-                    <div :if={@release.country}>
-                      <span class="font-medium text-gray-600 dark:text-gray-400">
-                        {gettext("Country:")}
-                      </span>
-                      <br />{@release.country}
-                    </div>
-                    <div :if={@release.barcode}>
-                      <span class="font-medium text-gray-600 dark:text-gray-400">
-                        {gettext("Barcode:")}
-                      </span>
-                      <br />{@release.barcode}
-                    </div>
-                    <div :if={@release.catalog_number}>
-                      <span class="font-medium text-gray-600 dark:text-gray-400">
-                        {gettext("Catalog Number:")}
-                      </span>
-                      <br />{@release.catalog_number}
-                    </div>
-                  </div>
-                </div>
-              </div>
+      <div class="bg-white dark:bg-zinc-800 shadow rounded-lg">
+        <div class="p-6">
+          <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
+            {@release.title}
+          </h1>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            <span :if={@release.artists != []}>
+              by {@release.artists |> Enum.map(& &1.name) |> Enum.join(", ")}
+            </span>
+            <span :if={@release.date}>
+              {@release.date}
+            </span>
+          </p>
+          <div class="flex gap-6 mt-4">
+            <div class="flex-shrink-0">
+              <img
+                src={MusicBrainz.Release.thumb_url(@release)}
+                alt={"Cover art for #{@release.title}"}
+                class="w-32 h-32 object-cover rounded-lg shadow-sm"
+                loading="lazy"
+              />
             </div>
-          </div>
-
-          <div :if={@release.media != []} class="bg-white dark:bg-zinc-800 shadow rounded-lg mt-6">
-            <div class="p-6">
-              <h3 class="text-lg font-semibold mb-4">{gettext("Tracks")}</h3>
-              <div class="space-y-6">
-                <div :for={medium <- @release.media} class="space-y-3">
-                  <div class="flex justify-between items-center">
-                    <h4 :if={length(@release.media) > 1} class="font-medium">
-                      Medium {medium.number}
-                      <span :if={medium.title}>
-                        - {medium.title}
-                      </span>
-                      <span :if={medium.format}>
-                        ({medium.format})
-                      </span>
-                    </h4>
-                    <h4 :if={length(@release.media) == 1} class="font-medium">
-                      {gettext("Tracks")}
-                      <span :if={medium.format}>
-                        ({medium.format})
-                      </span>
-                    </h4>
-                    <.button
-                      :if={@can_scrobble}
-                      size="sm"
-                      variant="outline"
-                      phx-click="scrobble_medium"
-                      phx-value-medium_number={medium.number}
-                    >
-                      <.icon name="hero-play" class="h-3 w-3 mr-1" /> {gettext("Scrobble Medium")}
-                    </.button>
-                  </div>
-
-                  <div class="space-y-1">
-                    <div
-                      :for={track <- medium.tracks}
-                      class="flex justify-between items-center py-2 px-3 bg-gray-50 dark:bg-gray-800 rounded"
-                    >
-                      <div class="flex items-center gap-3">
-                        <span class="text-xs text-gray-500 dark:text-gray-400 w-6 text-right">
-                          {track.position}
-                        </span>
-                        <div class="min-w-0 flex-1">
-                          <p class="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">
-                            {track.title}
-                          </p>
-                          <p
-                            :if={track.artists != [] and track.artists != @release.artists}
-                            class="text-xs text-gray-600 dark:text-gray-400 truncate"
-                          >
-                            {track.artists |> Enum.map(& &1.name) |> Enum.join(", ")}
-                          </p>
-                        </div>
-                      </div>
-                      <span
-                        :if={track.length}
-                        class="text-xs text-gray-500 dark:text-gray-400 font-mono"
-                      >
-                        {format_duration(track.length)}
-                      </span>
-                    </div>
-                  </div>
+            <div class="flex-1">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div :if={@release.date}>
+                  <span class="font-medium text-gray-600 dark:text-gray-400">
+                    {gettext("Release Date:")}
+                  </span>
+                  <br />{@release.date}
+                </div>
+                <div :if={@release.country}>
+                  <span class="font-medium text-gray-600 dark:text-gray-400">
+                    {gettext("Country:")}
+                  </span>
+                  <br />{@release.country}
+                </div>
+                <div :if={@release.barcode}>
+                  <span class="font-medium text-gray-600 dark:text-gray-400">
+                    {gettext("Barcode:")}
+                  </span>
+                  <br />{@release.barcode}
+                </div>
+                <div :if={@release.catalog_number}>
+                  <span class="font-medium text-gray-600 dark:text-gray-400">
+                    {gettext("Catalog Number:")}
+                  </span>
+                  <br />{@release.catalog_number}
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div :if={@can_scrobble} class="lg:col-span-1">
-          <div class="bg-white dark:bg-zinc-800 shadow rounded-lg sticky top-6">
-            <div class="p-6">
-              <h3 class="text-lg font-semibold mb-4">{gettext("Scrobble Options")}</h3>
+      <div :if={@release.media != []} class="bg-white dark:bg-zinc-800 shadow rounded-lg mt-6">
+        <div class="p-6">
+          <div class="flex justify-between items-center">
+            <h3 class="text-lg font-semibold mb-4">{gettext("Tracks")}</h3>
 
-              <.form
-                for={%{}}
-                as={:scrobble}
-                phx-change="update_scrobble_form"
-                class="space-y-4"
-              >
-                <.select
-                  name="type"
-                  label={gettext("Scrobble timing")}
-                  value={@scrobble_form["type"]}
-                  options={[
-                    {gettext("Just finished listening"), "finished_at"},
-                    {gettext("Started listening at"), "started_at"}
-                  ]}
-                />
+            <.button
+              :if={@can_scrobble}
+              phx-click="scrobble_release"
+              size="sm"
+            >
+              {gettext("Scrobble release")}
+            </.button>
+          </div>
 
-                <div :if={@scrobble_form["type"] == "finished_at"} class="space-y-2">
-                  <.input
-                    type="date"
-                    name="finished_at_date"
-                    label={gettext("Finished Date")}
-                    value={@scrobble_form["finished_at_date"]}
-                  />
-                  <.input
-                    type="time"
-                    name="finished_at_time"
-                    label={gettext("Finished Time")}
-                    value={@scrobble_form["finished_at_time"]}
-                  />
-                </div>
-                <div :if={@scrobble_form["type"] != "finished_at"} class="space-y-2">
-                  <.input
-                    type="date"
-                    name="started_at_date"
-                    label={gettext("Started Date")}
-                    value={@scrobble_form["started_at_date"]}
-                  />
-                  <.input
-                    type="time"
-                    name="started_at_time"
-                    label={gettext("Started Time")}
-                    value={@scrobble_form["started_at_time"]}
-                  />
-                </div>
-              </.form>
-
-              <div class="space-y-3 mt-6">
+          <div class="space-y-6">
+            <div :for={medium <- @release.media} class="space-y-3">
+              <div class="flex justify-between items-center">
+                <h4 :if={length(@release.media) > 1} class="font-medium">
+                  Medium {medium.number}
+                  <span :if={medium.title}>
+                    - {medium.title}
+                  </span>
+                  <span :if={medium.format}>
+                    ({medium.format})
+                  </span>
+                </h4>
+                <h4 :if={length(@release.media) == 1} class="font-medium">
+                  {gettext("Tracks")}
+                  <span :if={medium.format}>
+                    ({medium.format})
+                  </span>
+                </h4>
                 <.button
-                  phx-click="scrobble_release"
-                  class="w-full"
-                  size="lg"
+                  :if={@can_scrobble}
+                  size="sm"
+                  variant="outline"
+                  phx-click="scrobble_medium"
+                  phx-value-medium_number={medium.number}
                 >
-                  <.icon name="hero-play" class="h-4 w-4 mr-2" /> {gettext(
-                    "Scrobble Entire Release"
-                  )}
+                  {gettext("Scrobble disc")}
                 </.button>
+              </div>
 
-                <p class="text-xs text-gray-500 dark:text-gray-400 text-center">
-                  {gettext("This will scrobble all tracks from all media in sequence")}
-                </p>
+              <div class="space-y-1">
+                <div
+                  :for={track <- medium.tracks}
+                  class="flex justify-between items-center py-2 px-3 bg-gray-50 dark:bg-gray-800 rounded"
+                >
+                  <div class="flex items-center gap-3">
+                    <span class="text-xs text-gray-500 dark:text-gray-400 w-6 text-right">
+                      {track.position}
+                    </span>
+                    <div class="min-w-0 flex-1">
+                      <p class="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">
+                        {track.title}
+                      </p>
+                      <p
+                        :if={track.artists != [] and track.artists != @release.artists}
+                        class="text-xs text-gray-600 dark:text-gray-400 truncate"
+                      >
+                        {track.artists |> Enum.map(& &1.name) |> Enum.join(", ")}
+                      </p>
+                    </div>
+                  </div>
+                  <span
+                    :if={track.length}
+                    class="text-xs text-gray-500 dark:text-gray-400 font-mono"
+                  >
+                    {format_duration(track.length)}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
