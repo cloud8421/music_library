@@ -1,8 +1,9 @@
 defmodule MusicLibraryWeb.ScrobbleLive.Show do
   use MusicLibraryWeb, :live_view
 
+  import(MusicLibraryWeb.Components.Release, only: [medium: 1])
+
   alias MusicLibrary.ScrobbleActivity
-  alias MusicLibraryWeb.Duration
 
   @impl true
   def mount(_params, _session, socket) do
