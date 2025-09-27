@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.Components.Release do
   use MusicLibraryWeb, :live_component
   use Gettext, backend: MusicLibraryWeb.Gettext
 
+  alias MusicBrainz.Release
   alias MusicLibrary.ScrobbleActivity
   alias MusicLibraryWeb.Duration
 
@@ -75,62 +76,95 @@ defmodule MusicLibraryWeb.Components.Release do
                 {gettext("Error loading tracks")}
               </div>
             </:failed>
-            <div :for={medium <- release_with_tracks.media} class="space-y-4">
-              <div
-                :if={MusicBrainz.Release.media_count(release_with_tracks) > 1}
-                class="flex justify-between items-center gap-4"
-              >
-                <h4 class="text-sm md:text-md font-semibold text-zinc-700 dark:text-zinc-300">
-                  {medium_title(medium)}
-                </h4>
-                <.button
-                  :if={@can_scrobble?}
-                  size="sm"
-                  disabled={@already_scrobbled}
-                  phx-click="scrobble_medium"
-                  phx-value-number={medium.number}
-                  phx-target={@myself}
-                  phx-disable-with={gettext("Scrobbling...")}
-                >
-                  {gettext("Scrobble disc")}
-                </.button>
-              </div>
-              <ul id={"disc-#{medium.number}"} class="w-full table table-auto">
-                <li
-                  :for={track <- medium.tracks}
-                  class="contents leading-5 text-zinc-700 dark:text-zinc-300 list-none"
-                >
-                  <div class="table-row">
-                    <span class="table-cell text-xs text-right pr-1">
-                      {track.number || track.position}
-                    </span>
-                    <span class="table-cell text-xs md:text-sm font-medium leading-8 w-full">
-                      {track.title}
-                    </span>
-                    <span class="table-cell text-xs md:text-sm text-right pl-2">
-                      {track.length && Duration.format_duration(track.length)}
-                    </span>
-                  </div>
-                  <div
-                    :if={release_with_tracks.artists !== track.artists}
-                    class="table-row text-xs md:text-sm"
-                  >
-                    <span class="table-cell" />
-                    <span class="table-cell">
-                      {Enum.map_join(track.artists, ", ", fn artist -> artist.name end)}
-                    </span>
-                  </div>
-                </li>
-              </ul>
-              <.separator />
-              <p class="text-xs md:text-sm text-right text-zinc-700 dark:text-zinc-300">
-                {medium_duration(medium)}
-              </p>
-            </div>
+            <.medium
+              :for={medium <- release_with_tracks.media}
+              can_scrobble?={@can_scrobble?}
+              already_scrobbled={@already_scrobbled}
+              medium={medium}
+              release_artists={release_with_tracks.artists}
+              media_count={MusicBrainz.Release.media_count(release_with_tracks)}
+              myself={@myself}
+            />
           </.async_result>
         </div>
       </.sheet>
     </div>
+    """
+  end
+
+  attr :medium, Release.Medium, required: true
+  attr :release_artists, :list, required: true
+  attr :media_count, :integer, required: true
+  attr :can_scrobble?, :boolean, required: true
+  attr :already_scrobbled, :boolean, required: true
+  attr :myself, :any, required: true
+
+  def medium(assigns) do
+    ~H"""
+    <div
+      :if={@media_count > 1}
+      class="flex justify-between items-center gap-4 space-y-4"
+    >
+      <h4 class="text-sm md:text-md font-semibold text-zinc-700 dark:text-zinc-300">
+        {medium_title(@medium)}
+      </h4>
+      <.button
+        :if={@can_scrobble?}
+        size="sm"
+        disabled={@already_scrobbled}
+        phx-click="scrobble_medium"
+        phx-value-number={@medium.number}
+        phx-target={@myself}
+        phx-disable-with={gettext("Scrobbling...")}
+      >
+        {gettext("Scrobble disc")}
+      </.button>
+    </div>
+    <.track_list
+      medium_number={@medium.number}
+      tracks={@medium.tracks}
+      release_artists={@release_artists}
+    />
+    <.separator />
+    <p class="text-xs md:text-sm text-right text-zinc-700 dark:text-zinc-300">
+      {medium_duration(@medium)}
+    </p>
+    """
+  end
+
+  attr :medium_number, :integer, required: true
+  attr :tracks, :list, required: true
+  attr :release_artists, :list, required: true
+
+  def track_list(assigns) do
+    ~H"""
+    <ul id={"disc-#{@medium_number}"} class="w-full table table-auto">
+      <li
+        :for={track <- @tracks}
+        class="contents leading-5 text-zinc-700 dark:text-zinc-300 list-none"
+      >
+        <div class="table-row">
+          <span class="table-cell text-xs text-right pr-1">
+            {track.number || track.position}
+          </span>
+          <span class="table-cell text-xs md:text-sm font-medium leading-8 w-full">
+            {track.title}
+          </span>
+          <span class="table-cell text-xs md:text-sm text-right pl-2">
+            {track.length && Duration.format_duration(track.length)}
+          </span>
+        </div>
+        <div
+          :if={@release_artists !== track.artists}
+          class="table-row text-xs md:text-sm"
+        >
+          <span class="table-cell" />
+          <span class="table-cell">
+            {Enum.map_join(track.artists, ", ", fn artist -> artist.name end)}
+          </span>
+        </div>
+      </li>
+    </ul>
     """
   end
 
