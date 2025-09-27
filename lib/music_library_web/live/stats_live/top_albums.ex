@@ -191,6 +191,10 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
     end
   end
 
+  defp cover_url(album) when is_nil(album.cover_hash) do
+    album.cover_url
+  end
+
   defp cover_url(album) do
     if LastFm.fallback_cover?(album.cover_url) do
       payload =

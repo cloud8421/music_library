@@ -150,6 +150,10 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     |> DateTime.to_iso8601()
   end
 
+  defp track_or_album_cover_url(track_or_album, nil) do
+    track_or_album.cover_url
+  end
+
   defp track_or_album_cover_url(track_or_album, cover_hash) do
     if LastFm.fallback_cover?(track_or_album.cover_url) do
       payload =
