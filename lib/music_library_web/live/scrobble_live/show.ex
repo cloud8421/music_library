@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
   use MusicLibraryWeb, :live_view
 
   alias MusicLibrary.ScrobbleActivity
+  alias MusicLibraryWeb.Duration
 
   @impl true
   def mount(_params, _session, socket) do
@@ -77,15 +78,5 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
            gettext("Error scrobbling disc") <> "," <> inspect(reason)
          )}
     end
-  end
-
-  defp format_duration(nil), do: "Unknown"
-
-  defp format_duration(milliseconds) when is_integer(milliseconds) do
-    seconds = div(milliseconds, 1000)
-    minutes = div(seconds, 60)
-    remaining_seconds = rem(seconds, 60)
-
-    "#{minutes}:#{String.pad_leading(Integer.to_string(remaining_seconds), 2, "0")}"
   end
 end

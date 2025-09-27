@@ -3,6 +3,7 @@ defmodule MusicLibraryWeb.Components.Release do
   use Gettext, backend: MusicLibraryWeb.Gettext
 
   alias MusicLibrary.ScrobbleActivity
+  alias MusicLibraryWeb.Duration
 
   def open(id), do: Fluxon.open_dialog(id)
 
@@ -107,7 +108,7 @@ defmodule MusicLibraryWeb.Components.Release do
                       {track.title}
                     </span>
                     <span class="table-cell text-xs md:text-sm text-right pl-2">
-                      {track.length && format_duration(track.length)}
+                      {track.length && Duration.format_duration(track.length)}
                     </span>
                   </div>
                   <div
@@ -197,7 +198,7 @@ defmodule MusicLibraryWeb.Components.Release do
   defp medium_duration(medium) do
     medium
     |> MusicBrainz.Release.medium_duration()
-    |> format_duration()
+    |> Duration.format_duration()
   end
 
   defp medium_title(medium) do
@@ -206,43 +207,5 @@ defmodule MusicLibraryWeb.Components.Release do
     else
       medium.title
     end
-  end
-
-  defp format_duration(milliseconds) do
-    milliseconds
-    |> System.convert_time_unit(:millisecond, :second)
-    |> format_seconds()
-  end
-
-  defp format_seconds(seconds) when seconds <= 59 do
-    "0:#{zero_pad(seconds)}"
-  end
-
-  defp format_seconds(seconds) do
-    minutes = div(seconds, 60)
-    remaining_seconds = rem(seconds, 60)
-
-    format_minutes(minutes, remaining_seconds)
-  end
-
-  defp format_minutes(minutes, seconds) when minutes <= 59 do
-    "#{minutes}:#{zero_pad(seconds)}"
-  end
-
-  defp format_minutes(minutes, seconds) do
-    hours = div(minutes, 60)
-    remaining_minutes = rem(minutes, 60)
-
-    format_hours(hours, remaining_minutes, seconds)
-  end
-
-  defp format_hours(hours, minutes, seconds) do
-    "#{hours}:#{zero_pad(minutes)}:#{zero_pad(seconds)}"
-  end
-
-  defp zero_pad(integer) do
-    integer
-    |> to_string()
-    |> String.pad_leading(2, "0")
   end
 end
