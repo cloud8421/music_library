@@ -336,12 +336,17 @@ defmodule MusicLibrary.ScrobbleRules do
 
   """
   def apply_all_rules do
-    list_enabled_rules()
-    |> Enum.map(fn rule ->
-      case apply_rule(rule) do
-        {:ok, count} -> {:ok, {rule.type, rule.match_value, count}}
-        {:error, reason} -> {:error, {rule.type, rule.match_value, reason}}
-      end
+    :telemetry.span([:music_library, :scrobble_rules, :apply_all_rules], %{}, fn ->
+      result =
+        list_enabled_rules()
+        |> Enum.map(fn rule ->
+          case apply_rule(rule) do
+            {:ok, count} -> {:ok, {rule.type, rule.match_value, count}}
+            {:error, reason} -> {:error, {rule.type, rule.match_value, reason}}
+          end
+        end)
+
+      {result, %{scrobble_track_count: :all}}
     end)
   end
 
@@ -362,12 +367,17 @@ defmodule MusicLibrary.ScrobbleRules do
   end
 
   def apply_all_rules(tracks) do
-    list_enabled_rules()
-    |> Enum.map(fn rule ->
-      case apply_rule(rule, tracks) do
-        {:ok, count} -> {:ok, {rule.type, rule.match_value, count}}
-        {:error, reason} -> {:error, {rule.type, rule.match_value, reason}}
-      end
+    :telemetry.span([:music_library, :scrobble_rules, :apply_all_rules], %{}, fn ->
+      result =
+        list_enabled_rules()
+        |> Enum.map(fn rule ->
+          case apply_rule(rule, tracks) do
+            {:ok, count} -> {:ok, {rule.type, rule.match_value, count}}
+            {:error, reason} -> {:error, {rule.type, rule.match_value, reason}}
+          end
+        end)
+
+      {result, %{scrobble_track_count: Enum.count(tracks)}}
     end)
   end
 

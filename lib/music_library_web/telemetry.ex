@@ -88,6 +88,13 @@ defmodule MusicLibraryWeb.Telemetry do
         reporter_options: [nav: "Assets"]
       ),
 
+      # Scrobble Rules
+      summary("music_library.scrobble_rules.apply_all_rules.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:scrobble_track_count],
+        reporter_options: [nav: "Scrobble Rules"]
+      ),
+
       # VM Metrics
       summary("vm.memory.total", unit: {:byte, :megabyte}),
       summary("vm.total_run_queue_lengths.total"),
