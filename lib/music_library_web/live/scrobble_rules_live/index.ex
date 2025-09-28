@@ -96,6 +96,8 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
   def handle_event("apply_all_rules", _params, socket) do
     results = ScrobbleRules.apply_all_rules()
 
+    ScrobbleRules.log_apply_results(results)
+
     total_updated =
       results
       |> Enum.filter(fn {status, _} -> status == :ok end)
