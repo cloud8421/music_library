@@ -1,0 +1,264 @@
+╭─────────────────────────────────────────────────────────╮
+│ ✻ Welcome to Claude Code!                               │
+│                                                         │
+│   /help for help, /status for your current setup        │
+│                                                         │
+│   cwd: /Users/cloud/github.com/cloud8421/music_library  │
+╰─────────────────────────────────────────────────────────╯
+
+> Can you optimize this query?
+
+SELECT s0."scrobbled_at_uts", s0."musicbrainz_id", s0."title", s0."cover_url", s0."scrobbled_at_label", s0."artist", s0."album", 
+s0."last_fm_data", s1."record_id", s2."record_id", s3."musicbrainz_id", coalesce(s1."cover_hash", s2."cover_hash") FROM 
+"scrobbled_tracks" AS s0 LEFT OUTER JOIN (SELECT records.id AS "record_id", records.cover_hash AS "cover_hash", sf0."value" AS 
+"release_id" FROM records, json_each(records.release_ids) AS sf0 WHERE (records.purchased_at IS NOT NULL)) AS s1 ON 
+s1."release_id" = s0."album" ->> '$.musicbrainz_id' LEFT OUTER JOIN (SELECT records.id AS "record_id", records.cover_hash AS 
+"cover_hash", sf0."value" AS "release_id" FROM records, json_each(records.release_ids) AS sf0 WHERE (records.purchased_at IS 
+NULL)) AS s2 ON s2."release_id" = s0."album" ->> '$.musicbrainz_id' LEFT OUTER JOIN (SELECT DISTINCT sa0."musicbrainz_id" AS 
+"musicbrainz_id", sa0."record_id" AS "record_id", sa0."artist" AS "artist" FROM "artist_records" AS sa0) AS s3 ON (s2."record_id" 
+= s3."record_id") OR (s1."record_id" = s3."record_id") ORDER BY s0."scrobbled_at_uts" DESC LIMIT 100
+
+⏺ I'll analyze this query to identify optimization opportunities. Let me first examine the current database schema and understand
+  the query structure.
+  ⎿  * LastFm.Album at lib/last_fm/album.ex:1                                                                                    
+     * LastFm.Artist at lib/last_fm/artist.ex:1
+     * LastFm.Track at lib/last_fm/track.ex:1
+     … +11 lines (ctrl+o to expand)
+
+⏺ Search(pattern: "scrobbled_tracks")
+  ⎿  Found 11 files (ctrl+o to expand)
+
+⏺ Read(lib/last_fm/track.ex)
+  ⎿  Read 95 lines (ctrl+o to expand)
+
+⏺ Read(priv/repo/migrations/20250530203701_create_scrobbled_tracks.exs)
+  ⎿  Read 19 lines (ctrl+o to expand)
+
+⏺ Read(lib/music_library/records/record.ex)
+  ⎿  Read 276 lines (ctrl+o to expand)
+
+⏺ Now let me find where this query is being generated to understand the context:
+
+⏺ Search(pattern: "FROM.*scrobbled_tracks.*AS s0")
+  ⎿  Found 0 files 
+
+⏺ Search(pattern: "scrobbled_tracks.*LEFT OUTER JOIN", output_mode: "content")
+  ⎿  Found 0 lines 
+
+⏺ Search(pattern: "json_each.*release_ids")
+  ⎿  Found 3 files (ctrl+o to expand)
+
+⏺ Search(pattern: "scrobbled_tracks.*s0", output_mode: "content")
+  ⎿  Found 0 lines 
+
+⏺ Let me search in the last_fm.ex file where this query might be generated:
+
+⏺ Read(lib/last_fm.ex)
+  ⎿  Read 87 lines (ctrl+o to expand)
+
+⏺ Let me search for more specific patterns to find where this query is generated:
+
+⏺ Search(pattern: "purchased_at IS NOT NULL")
+  ⎿  Found 2 files (ctrl+o to expand)
+
+⏺ Read(lib/music_library/collection.ex)
+  ⎿  Read 127 lines (ctrl+o to expand)
+
+⏺ Search(pattern: "coalesce.*cover_hash")
+  ⎿  Found 1 file (ctrl+o to expand)
+
+⏺ Read(lib/music_library/scrobble_activity.ex)
+  ⎿  Read 472 lines (ctrl+o to expand)
+
+⏺ Found it! The query comes from the recent_activity/2 function in MusicLibrary.ScrobbleActivity. Let me examine the database
+  indexes to understand the current optimization opportunities:
+
+⏺ tidewave - execute_sql_query (MCP)(query: "SELECT name, sql FROM sqlite_master WHERE type='index' AND tbl_name IN
+                                    ('scrobbled_tracks', 'records') ORDER BY tbl_name, name")
+  ⎿  %Exqlite.Result{                                                                                                            
+       command: :execute,
+       columns: ["name", "sql"],
+     … +3 lines (ctrl+o to expand)
+
+⏺ tidewave - execute_sql_query (MCP)(query: "SELECT name, sql FROM sqlite_master WHERE type='index' ORDER BY name")
+  ⎿  %Exqlite.Result{                                                                                                            
+       command: :execute,
+       columns: ["name", "sql"],
+     … +7 lines (ctrl+o to expand)
+
+⏺ Let me check what indexes exist specifically for the tables we're working with:
+
+⏺ tidewave - execute_sql_query (MCP)(query: "PRAGMA index_list('scrobbled_tracks')")
+  ⎿  %Exqlite.Result{                                                                                                            
+       command: :execute,
+       columns: ["seq", "name", "unique", "origin", "partial"],
+     … +3 lines (ctrl+o to expand)
+
+⏺ tidewave - execute_sql_query (MCP)(query: "PRAGMA index_list('records')")
+  ⎿  %Exqlite.Result{                                                                                                            
+       command: :execute,
+       columns: ["seq", "name", "unique", "origin", "partial"],
+     … +3 lines (ctrl+o to expand)
+
+⏺ tidewave - execute_sql_query (MCP)(query: "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
+  ⎿  %Exqlite.Result{                                                                                                            
+       command: :execute,
+       columns: ["name"],
+     … +3 lines (ctrl+o to expand)
+
+⏺ Let me check if the scrobbled_tracks table actually exists and examine its structure:
+
+⏺ tidewave - execute_sql_query (MCP)(query: ".tables")
+  ⎿  Error: Failed to execute query: %Exqlite.Error{message: "near \".\": syntax error", statement: ".tables"}
+
+⏺ Bash(mix ecto.migrate)
+  ⎿ 21:39:52.643 [info] Migrations already up                                                                                    
+
+    21:39:52.646 [debug] Exqlite: loading extension `/Users/cloud/github.com/cloud8421/music_library/_build/dev/lib/music_library
+    … +5 lines (ctrl+o to expand)
+
+
+⏺ tidewave - execute_sql_query (MCP)(query: "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE '%scrobbled%' OR name
+                                    LIKE '%records%'")
+  ⎿  %Exqlite.Result{command: :execute, columns: ["name"], rows: [], num_rows: 0}                                                
+
+⏺ tidewave - execute_sql_query (MCP)(query: "SELECT name FROM sqlite_master WHERE type='table'", repo: "MusicLibrary.Repo")
+  ⎿  %Exqlite.Result{                                                                                                            
+       command: :execute,
+       columns: ["name"],
+     … +28 lines (ctrl+o to expand)
+
+⏺ Now let me check the existing indexes:
+
+⏺ tidewave - execute_sql_query (MCP)(query: "PRAGMA index_list('scrobbled_tracks')", repo: "MusicLibrary.Repo")
+  ⎿  %Exqlite.Result{                                                                                                            
+       command: :execute,
+       columns: ["seq", "name", "unique", "origin", "partial"],
+     … +3 lines (ctrl+o to expand)
+
+⏺ tidewave - execute_sql_query (MCP)(query: "PRAGMA index_list('records')", repo: "MusicLibrary.Repo")
+  ⎿  %Exqlite.Result{                                                                                                            
+       command: :execute,
+       columns: ["seq", "name", "unique", "origin", "partial"],
+     … +18 lines (ctrl+o to expand)
+
+⏺ tidewave - execute_sql_query (MCP)(query: "PRAGMA index_info('scrobbled_tracks_scrobbled_at_uts_title_index')", repo:
+                                    "MusicLibrary.Repo")
+  ⎿  %Exqlite.Result{                                                                                                            
+       command: :execute,
+       columns: ["seqno", "cid", "name"],
+     … +3 lines (ctrl+o to expand)
+
+⏺ tidewave - execute_sql_query (MCP)(query: "PRAGMA index_info('records_release_ids_index')", repo: "MusicLibrary.Repo")
+  ⎿  %Exqlite.Result{                                                                                                            
+       command: :execute,
+       columns: ["seqno", "cid", "name"],
+     … +3 lines (ctrl+o to expand)
+
+⏺ Query Optimization Analysis
+
+  The query from MusicLibrary.ScrobbleActivity.recent_activity/2 has several optimization opportunities:
+
+  Current Issues:
+
+  1. Complex subqueries with json_each(): The query uses json_each() on release_ids arrays for both collection and wishlist joins,
+   which is expensive for each row.
+  2. Multiple LEFT JOINs with subqueries: Three separate subqueries are executed and joined, creating a cartesian product that's
+  then filtered.
+  3. JSON extraction in WHERE clauses: Using fragment("? ->> '$.musicbrainz_id'", t.album) requires JSON parsing for every row.
+  4. Missing indexes: No composite indexes for the JSON-based join conditions.
+
+  Recommended Optimizations:
+
+  1. Add Strategic Indexes
+
+  -- Index for album musicbrainz_id JSON extraction (most critical)
+  CREATE INDEX idx_scrobbled_tracks_album_mbid
+  ON scrobbled_tracks((album ->> '$.musicbrainz_id'));
+
+  -- Composite index for the main query
+  CREATE INDEX idx_scrobbled_tracks_scrobbled_at_album_mbid
+  ON scrobbled_tracks(scrobbled_at_uts DESC, (album ->> '$.musicbrainz_id'));
+
+  2. Rewrite the Query Structure
+
+  Instead of multiple subqueries, use CTEs and reduce the number of joins:
+
+  def recent_activity_optimized(timezone, limit \\ 100) do
+    # Single CTE for all releases with their collection/wishlist status
+    releases_cte = """
+    WITH releases AS (
+      SELECT 
+        r.id as record_id,
+        r.cover_hash,
+        r.purchased_at IS NOT NULL as is_collected,
+        sf.value as release_id
+      FROM records r, json_each(r.release_ids) sf
+    )
+    """
+
+    query = from t in Track,
+      left_join: r in fragment("""
+        (SELECT record_id, cover_hash, release_id,
+                CASE WHEN is_collected THEN record_id END as collected_record_id,
+                CASE WHEN NOT is_collected THEN record_id END as wishlisted_record_id
+         FROM releases)
+      """),
+      on: r.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
+      left_join: ar in ArtistRecord,
+      on: ar.record_id == r.record_id,
+      order_by: [desc: t.scrobbled_at_uts],
+      limit: ^limit,
+      select: %{
+        track: t,
+        collected_record_id: r.collected_record_id,
+        wishlisted_record_id: r.wishlisted_record_id,
+        artist_id: ar.musicbrainz_id,
+        cover_hash: r.cover_hash
+      }
+  end
+
+  3. Alternative: Materialized View Approach
+
+  Create a materialized view that pre-joins release data:
+
+  CREATE VIEW release_lookup AS
+  SELECT
+    r.id as record_id,
+    r.cover_hash,
+    r.purchased_at IS NOT NULL as is_collected,
+    sf.value as release_id
+  FROM records r, json_each(r.release_ids) sf;
+
+  CREATE INDEX idx_release_lookup_release_id ON release_lookup(release_id);
+
+  4. Denormalization Option
+
+  Consider adding a release_musicbrainz_id field directly to scrobbled_tracks to avoid JSON extraction:
+
+  # In migration
+  add :album_musicbrainz_id, :string
+  create index(:scrobbled_tracks, [:album_musicbrainz_id])
+  create index(:scrobbled_tracks, [:scrobbled_at_uts, :album_musicbrainz_id])
+
+⏺ Immediate Impact Recommendations:
+
+  High Impact, Low Risk:
+  1. Add the JSON extraction index: CREATE INDEX idx_scrobbled_tracks_album_mbid ON scrobbled_tracks((album ->> 
+  '$.musicbrainz_id'))
+  2. Add composite index: CREATE INDEX idx_scrobbled_tracks_scrobbled_at_album_mbid ON scrobbled_tracks(scrobbled_at_uts DESC, 
+  (album ->> '$.musicbrainz_id'))
+
+  Medium Impact, Medium Risk:
+  3. Rewrite query to use a single CTE instead of multiple subqueries
+  4. Create the release_lookup view for better join performance
+
+  High Impact, Higher Risk:
+  5. Denormalize by adding album_musicbrainz_id column to eliminate JSON extraction entirely
+
+  The most critical optimization is adding indexes for the JSON extraction operations, which should provide immediate performance
+  improvements with no code changes required.
+
+
+
+
