@@ -6,7 +6,7 @@
       </div>
     </header>
 
-    <div class="flex items-end gap-6 mt-8 justify-center sm:justify-start">
+    <div class="flex items-end gap-6 mt-8 justify-between">
       <.button_group>
         <.button
           patch={order_path(@track_list_params, :scrobbled_at)}
@@ -54,6 +54,7 @@
           {gettext("Album")}
         </.button>
       </.button_group>
+      <.refresh_lastfm_feed_button />
     </div>
   </div>
 

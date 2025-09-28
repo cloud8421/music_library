@@ -129,19 +129,6 @@ defmodule MusicLibraryWeb.StatsComponents do
     """
   end
 
-  def refresh_lastfm_feed_button(assigns) do
-    ~H"""
-    <button
-      type="button"
-      class="phx-click-loading:animate-spin text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-300"
-      phx-click={JS.push("refresh_lastfm_feed")}
-    >
-      <span class="sr-only">{gettext("Refresh LastFm Feed")}</span>
-      <.icon name="hero-arrow-path" class="-mt-1 h-5 w-5" aria-hidden="true" data-slot="icon" />
-    </button>
-    """
-  end
-
   attr :record_show_path, :any, required: true
   attr :records, :list, required: true
   attr :current_date, Date, required: true

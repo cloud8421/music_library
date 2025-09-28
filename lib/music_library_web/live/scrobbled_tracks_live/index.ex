@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
   use MusicLibraryWeb, :live_view
 
   import MusicLibraryWeb.Components.Pagination
+  import MusicLibraryWeb.ScrobbleComponents, only: [refresh_lastfm_feed_button: 1]
 
   alias LastFm.Track
   alias MusicLibrary.ScrobbleActivity
@@ -19,6 +20,10 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
       socket
       |> assign(:current_section, :scrobble_activity)
       |> stream_configure(:tracks, dom_id: fn %Track{scrobbled_at_uts: id} -> "tracks-#{id}" end)
+
+    if connected?(socket) do
+      LastFm.subscribe_to_feed()
+    end
 
     {:ok, socket}
   end
@@ -66,6 +71,14 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
     {:noreply, load_and_assign_tracks(socket, socket.assigns.track_list_params)}
   end
 
+  def handle_info(%{track_count: 0}, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_info(%{track_count: _count}, socket) do
+    {:noreply, load_and_assign_tracks(socket, socket.assigns.track_list_params)}
+  end
+
   @impl true
   def handle_event("delete", %{"scrobbled-at-uts" => scrobbled_at_uts}, socket) do
     track = ScrobbleActivity.get_track!(scrobbled_at_uts)
@@ -81,6 +94,11 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
       |> Map.take([:query, :page, :page_size])
 
     {:noreply, push_patch(socket, to: ~p"/scrobbled-tracks?#{qs}")}
+  end
+
+  def handle_event("refresh_lastfm_feed", _, socket) do
+    LastFm.refresh_scrobbled_tracks()
+    {:noreply, socket}
   end
 
   defp parse_order("scrobbled_at"), do: :scrobbled_at
