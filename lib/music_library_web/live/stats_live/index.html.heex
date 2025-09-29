@@ -114,15 +114,15 @@
                   />
                   <div>
                     <p
-                      :if={!artist_id}
+                      :if={!artist_id(album, artist_id)}
                       class="font-semibold text-sm block text-zinc-500 dark:text-zinc-400"
                     >
                       {album.artist.name}
                     </p>
                     <.link
-                      :if={artist_id}
+                      :if={artist_id(album, artist_id)}
                       class="font-semibold text-sm block text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
-                      navigate={~p"/artists/#{album.artist.musicbrainz_id}"}
+                      navigate={~p"/artists/#{artist_id(album, artist_id)}"}
                     >
                       {album.artist.name}
                     </.link>
@@ -299,15 +299,15 @@
                   />
                   <div>
                     <p
-                      :if={!artist_id}
+                      :if={!artist_id(track, artist_id)}
                       class="font-semibold text-sm block text-zinc-500 dark:text-zinc-400"
                     >
                       {track.artist.name}
                     </p>
                     <.link
-                      :if={artist_id}
+                      :if={artist_id(track, artist_id)}
                       class="font-semibold text-sm block text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
-                      navigate={~p"/artists/#{artist_id}"}
+                      navigate={~p"/artists/#{artist_id(track, artist_id)}"}
                     >
                       {track.artist.name}
                     </.link>

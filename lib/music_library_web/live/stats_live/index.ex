@@ -166,4 +166,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       track_or_album.cover_url
     end
   end
+
+  defp artist_id(track_or_album, record_artist_id) do
+    record_artist_id || track_or_album.artist.musicbrainz_id
+  end
 end
