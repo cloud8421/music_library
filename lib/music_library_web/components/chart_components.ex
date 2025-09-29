@@ -66,6 +66,7 @@ defmodule MusicLibraryWeb.ChartComponents do
             y={y}
             width={bar_width}
             height={@bar_height}
+            rx="4"
             class={[
               "opacity-80 hover:opacity-100 transition-opacity",
               @color_class,
