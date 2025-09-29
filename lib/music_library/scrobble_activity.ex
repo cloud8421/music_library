@@ -382,7 +382,25 @@ defmodule MusicLibrary.ScrobbleActivity do
     page_size = Map.get(params, :page_size, 200)
     order = Map.get(params, :order, :scrobbled_at)
 
-    base_query = from(t in Track)
+    all_artists_query =
+      from ar in ArtistRecord,
+        distinct: true
+
+    base_query =
+      from t in Track,
+        left_join: cr in subquery(Collection.collected_releases_query()),
+        on: cr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
+        left_join: wr in subquery(Wishlist.wishlisted_releases_query()),
+        on: wr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
+        left_join: ar in subquery(all_artists_query),
+        on: wr.record_id == ar.record_id or cr.record_id == ar.record_id,
+        select: %{
+          track: t,
+          collected_record_id: cr.record_id,
+          wishlisted_record_id: wr.record_id,
+          artist_id: ar.musicbrainz_id,
+          cover_hash: coalesce(cr.cover_hash, wr.cover_hash)
+        }
 
     search_query =
       if query == "" do
@@ -393,8 +411,8 @@ defmodule MusicLibrary.ScrobbleActivity do
         from t in base_query,
           where:
             like(fragment("lower(?)", t.title), ^query_term) or
-              like(fragment("lower(json_extract(artist, '$.name'))"), ^query_term) or
-              like(fragment("lower(json_extract(album, '$.title'))"), ^query_term)
+              like(fragment("lower(json_extract(?, '$.name'))", t.artist), ^query_term) or
+              like(fragment("lower(json_extract(?, '$.title'))", t.album), ^query_term)
       end
 
     ordered_query =
@@ -406,10 +424,10 @@ defmodule MusicLibrary.ScrobbleActivity do
           from t in search_query, order_by: [asc: t.title]
 
         :artist ->
-          from t in search_query, order_by: [asc: fragment("json_extract(artist, '$.name')")]
+          from t in search_query, order_by: [asc: fragment("json_extract(?, '$.name')", t.artist)]
 
         :album ->
-          from t in search_query, order_by: [asc: fragment("json_extract(album, '$.title')")]
+          from t in search_query, order_by: [asc: fragment("json_extract(?, '$.title')", t.album)]
       end
 
     offset = (page - 1) * page_size

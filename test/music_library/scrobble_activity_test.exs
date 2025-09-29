@@ -11,7 +11,7 @@ defmodule MusicLibrary.ScrobbleActivityTest do
       _track1 = track_fixture(%{title: "First Track"})
       _track2 = track_fixture(%{title: "Second Track"})
 
-      tracks = ScrobbleActivity.list_tracks()
+      tracks = list_tracks()
 
       assert length(tracks) == 2
       track_titles = Enum.map(tracks, & &1.title)
@@ -32,7 +32,7 @@ defmodule MusicLibrary.ScrobbleActivityTest do
           scrobbled_at_uts: System.system_time(:second)
         })
 
-      tracks = ScrobbleActivity.list_tracks(%{order: :scrobbled_at})
+      tracks = list_tracks(%{order: :scrobbled_at})
 
       assert length(tracks) == 2
       # Should be ordered by scrobbled_at_uts descending (newest first)
@@ -44,7 +44,7 @@ defmodule MusicLibrary.ScrobbleActivityTest do
       track_fixture(%{title: "Zebra Track"})
       track_fixture(%{title: "Alpha Track"})
 
-      tracks = ScrobbleActivity.list_tracks(%{order: :title})
+      tracks = list_tracks(%{order: :title})
 
       assert length(tracks) == 2
       assert List.first(tracks).title == "Alpha Track"
@@ -55,7 +55,7 @@ defmodule MusicLibrary.ScrobbleActivityTest do
       track_fixture(%{artist_name: "Zebra Artist", title: "Track 1"})
       track_fixture(%{artist_name: "Alpha Artist", title: "Track 2"})
 
-      tracks = ScrobbleActivity.list_tracks(%{order: :artist})
+      tracks = list_tracks(%{order: :artist})
 
       assert length(tracks) == 2
       assert List.first(tracks).artist.name == "Alpha Artist"
@@ -66,7 +66,7 @@ defmodule MusicLibrary.ScrobbleActivityTest do
       track_fixture(%{album_title: "Zebra Album", title: "Track 1"})
       track_fixture(%{album_title: "Alpha Album", title: "Track 2"})
 
-      tracks = ScrobbleActivity.list_tracks(%{order: :album})
+      tracks = list_tracks(%{order: :album})
 
       assert length(tracks) == 2
       assert List.first(tracks).album.title == "Alpha Album"
@@ -77,7 +77,7 @@ defmodule MusicLibrary.ScrobbleActivityTest do
       track_fixture(%{title: "Special Track"})
       track_fixture(%{title: "Regular Track"})
 
-      tracks = ScrobbleActivity.list_tracks(%{query: "Special"})
+      tracks = list_tracks(%{query: "Special"})
 
       assert length(tracks) == 1
       assert List.first(tracks).title == "Special Track"
@@ -87,7 +87,7 @@ defmodule MusicLibrary.ScrobbleActivityTest do
       track_fixture(%{artist_name: "Special Artist", title: "Track 1"})
       track_fixture(%{artist_name: "Regular Artist", title: "Track 2"})
 
-      tracks = ScrobbleActivity.list_tracks(%{query: "Special Artist"})
+      tracks = list_tracks(%{query: "Special Artist"})
 
       assert length(tracks) == 1
       assert List.first(tracks).artist.name == "Special Artist"
@@ -97,7 +97,7 @@ defmodule MusicLibrary.ScrobbleActivityTest do
       track_fixture(%{album_title: "Special Album", title: "Track 1"})
       track_fixture(%{album_title: "Regular Album", title: "Track 2"})
 
-      tracks = ScrobbleActivity.list_tracks(%{query: "Special Album"})
+      tracks = list_tracks(%{query: "Special Album"})
 
       assert length(tracks) == 1
       assert List.first(tracks).album.title == "Special Album"
@@ -107,11 +107,11 @@ defmodule MusicLibrary.ScrobbleActivityTest do
       create_test_tracks(5)
 
       # Get first 2 tracks
-      tracks_page_1 = ScrobbleActivity.list_tracks(%{page: 1, page_size: 2})
+      tracks_page_1 = list_tracks(%{page: 1, page_size: 2})
       assert length(tracks_page_1) == 2
 
       # Get next 2 tracks
-      tracks_page_2 = ScrobbleActivity.list_tracks(%{page: 2, page_size: 2})
+      tracks_page_2 = list_tracks(%{page: 2, page_size: 2})
       assert length(tracks_page_2) == 2
 
       # Ensure they're different tracks
@@ -123,7 +123,7 @@ defmodule MusicLibrary.ScrobbleActivityTest do
     test "returns empty list when query matches no tracks" do
       track_fixture(%{title: "Test Track"})
 
-      tracks = ScrobbleActivity.list_tracks(%{query: "NonexistentTrack"})
+      tracks = list_tracks(%{query: "NonexistentTrack"})
 
       assert tracks == []
     end
@@ -281,5 +281,15 @@ defmodule MusicLibrary.ScrobbleActivityTest do
 
       assert new_count == initial_count + 3
     end
+  end
+
+  defp list_tracks do
+    ScrobbleActivity.list_tracks()
+    |> Enum.map(fn r -> r.track end)
+  end
+
+  defp list_tracks(params) do
+    ScrobbleActivity.list_tracks(params)
+    |> Enum.map(fn r -> r.track end)
   end
 end

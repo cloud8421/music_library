@@ -2,10 +2,12 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
   use MusicLibraryWeb, :live_view
 
   import MusicLibraryWeb.Components.Pagination
+  import MusicLibraryWeb.RecordComponents, only: [format_label: 1]
   import MusicLibraryWeb.ScrobbleComponents, only: [refresh_lastfm_feed_button: 1]
 
   alias LastFm.Track
-  alias MusicLibrary.ScrobbleActivity
+  alias MusicLibrary.Assets.Transform
+  alias MusicLibrary.{Records, ScrobbleActivity}
 
   @default_tracks_list_params %{
     query: "",
@@ -19,7 +21,9 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
     socket =
       socket
       |> assign(:current_section, :scrobble_activity)
-      |> stream_configure(:tracks, dom_id: fn %Track{scrobbled_at_uts: id} -> "tracks-#{id}" end)
+      |> stream_configure(:tracks,
+        dom_id: fn %{track: %Track{scrobbled_at_uts: id}} -> "tracks-#{id}" end
+      )
 
     if connected?(socket) do
       LastFm.subscribe_to_feed()
@@ -173,5 +177,21 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
       |> Map.take([:query, :page, :page_size, :order])
 
     ~p"/scrobbled-tracks?#{qs}"
+  end
+
+  defp track_cover_url(track, nil) do
+    track.cover_url
+  end
+
+  defp track_cover_url(track, cover_hash) do
+    if LastFm.fallback_cover?(track.cover_url) do
+      payload =
+        Transform.new(hash: cover_hash, width: 96)
+        |> Transform.encode!()
+
+      ~p"/assets/#{payload}"
+    else
+      track.cover_url
+    end
   end
 end
