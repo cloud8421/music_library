@@ -113,7 +113,8 @@ defmodule MusicLibrary.MixProject do
       {:error_tracker, "~> 0.6.0"},
       {:recon, "~> 2.5"},
       {:telemetry_metrics, "~> 1.0"},
-      {:telemetry_poller, "~> 1.0"}
+      {:telemetry_poller, "~> 1.0"},
+      {:orion, "~> 1.0"}
     ]
   end
 

@@ -3,6 +3,7 @@ defmodule MusicLibraryWeb.Router do
 
   import MusicLibraryWeb.Auth, only: [require_logged_in: 2, require_api_token: 2]
   import Oban.Web.Router
+  import OrionWeb.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -104,6 +105,8 @@ defmodule MusicLibraryWeb.Router do
         ecto_repos: [MusicLibrary.Repo, MusicLibrary.BackgroundRepo, MusicLibrary.ErrorRepo]
 
       oban_dashboard "/oban"
+
+      live_orion("/orion")
     end
   end
 end
