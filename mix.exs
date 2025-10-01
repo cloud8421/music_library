@@ -109,6 +109,7 @@ defmodule MusicLibrary.MixProject do
       {:lazy_html, ">= 0.1.0", only: :test},
 
       # Prod error/perf tooling
+      {:sentry, "~> 11.0"},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:error_tracker, "~> 0.6.0"},
       {:recon, "~> 2.5"},
