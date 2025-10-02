@@ -205,7 +205,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     |> assign(:current_section, :artists)
     |> assign(:artist, artist)
     |> assign(:artist_info, artist_info)
-    |> assign(:external_links, Artists.external_links(artist_info))
+    |> assign(:external_links, ArtistInfo.external_links(artist_info))
     |> assign(:country, ArtistInfo.country(artist_info))
     |> assign_async(:lastfm_artist_info, fn ->
       with {:ok, lastfm_artist_info} <- LastFm.get_artist_info(artist.musicbrainz_id, artist.name) do

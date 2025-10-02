@@ -3,6 +3,8 @@ defmodule MusicLibrary.Artists.ArtistInfo do
 
   import Ecto.Changeset
 
+  alias MusicBrainz.ExternalLink
+
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "artist_infos" do
     field :musicbrainz_data, :map, default: %{}
@@ -63,16 +65,10 @@ defmodule MusicLibrary.Artists.ArtistInfo do
     end)
   end
 
-  def relation_urls(artist_info, pattern \\ nil) do
-    case get_in(artist_info.musicbrainz_data, ["relations", Access.all(), "url", "resource"]) do
-      nil -> []
-      urls -> filter_urls(urls, pattern)
-    end
-  end
+  @external_link_patterns %{
+    "ProgArchives" => "progarchives.com"
+  }
 
-  defp filter_urls(urls, nil), do: urls
-
-  defp filter_urls(urls, pattern) do
-    Enum.filter(urls, fn url -> String.contains?(url, pattern) end)
-  end
+  def external_links(artist_info),
+    do: ExternalLink.external_links(artist_info.musicbrainz_data, @external_link_patterns)
 end
