@@ -205,7 +205,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     |> assign(:current_section, :artists)
     |> assign(:artist, artist)
     |> assign(:artist_info, artist_info)
-    |> assign(:external_links, external_links(artist_info))
+    |> assign(:external_links, Artists.external_links(artist_info))
     |> assign(:country, ArtistInfo.country(artist_info))
     |> assign_async(:lastfm_artist_info, fn ->
       with {:ok, lastfm_artist_info} <- LastFm.get_artist_info(artist.musicbrainz_id, artist.name) do
@@ -362,21 +362,5 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
       escape: false,
       attributes: [class: "mt-2 text-sm/7"]
     )
-  end
-
-  @external_link_patterns %{
-    "ProgArchives" => "progarchives.com"
-  }
-
-  defp external_links(artist_info) do
-    Enum.reduce(@external_link_patterns, [], fn {name, pattern}, acc ->
-      case ArtistInfo.relation_urls(artist_info, pattern) do
-        [] ->
-          acc
-
-        [url | _rest] ->
-          [%{name: name, url: url} | acc]
-      end
-    end)
   end
 end

@@ -163,6 +163,22 @@ defmodule MusicLibrary.Artists do
     |> Repo.update()
   end
 
+  @external_link_patterns %{
+    "ProgArchives" => "progarchives.com"
+  }
+
+  def external_links(artist_info) do
+    Enum.reduce(@external_link_patterns, [], fn {name, pattern}, acc ->
+      case ArtistInfo.relation_urls(artist_info, pattern) do
+        [] ->
+          acc
+
+        [url | _rest] ->
+          [%{name: name, url: url} | acc]
+      end
+    end)
+  end
+
   def favicon_url(external_link), do: Favicon.favicon_url(external_link.url)
 
   defp get_collected_artist_ids do
