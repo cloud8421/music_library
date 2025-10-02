@@ -3,6 +3,7 @@ defmodule MusicLibrary.Artists do
 
   alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibrary.Assets
+  alias MusicLibrary.Favicon
   alias MusicLibrary.Records.{ArtistRecord, Record}
   alias MusicLibrary.Repo
   alias MusicLibrary.{BackgroundRepo, Worker}
@@ -162,10 +163,7 @@ defmodule MusicLibrary.Artists do
     |> Repo.update()
   end
 
-  def favicon_url(external_link) do
-    uri = URI.parse(external_link.url)
-    "https://www.google.com/s2/favicons?domain=#{uri.host}&sz=16"
-  end
+  def favicon_url(external_link), do: Favicon.favicon_url(external_link.url)
 
   defp get_collected_artist_ids do
     q =

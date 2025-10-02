@@ -5,7 +5,7 @@ defmodule MusicLibrary.OnlineStoreTemplates do
 
   import Ecto.Query, warn: false
   alias MusicLibrary.OnlineStoreTemplates.OnlineStoreTemplate
-  alias MusicLibrary.Repo
+  alias MusicLibrary.{Favicon, Repo}
 
   @doc """
   Returns the list of enabled online store templates ordered by name.
@@ -76,8 +76,5 @@ defmodule MusicLibrary.OnlineStoreTemplates do
     |> String.replace("{format}", URI.encode_www_form(format_string))
   end
 
-  def favicon_url(template) do
-    uri = URI.parse(template.url_template)
-    "https://www.google.com/s2/favicons?domain=#{uri.host}&sz=16"
-  end
+  def favicon_url(template), do: Favicon.favicon_url(template.url_template)
 end
