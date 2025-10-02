@@ -1469,7 +1469,7 @@ msgstr ""
 msgid "You need to connect your Last.fm account to scrobble. Please set up your Last.fm session key in the settings."
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/components/core_components.ex
 #, elixir-autogen, elixir-format
 msgid "External links"
 msgstr ""

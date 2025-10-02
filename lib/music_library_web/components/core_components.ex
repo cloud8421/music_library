@@ -136,6 +136,40 @@ defmodule MusicLibraryWeb.CoreComponents do
     """
   end
 
+  attr :external_links, :list, default: []
+
+  def external_links(assigns) do
+    ~H"""
+    <dt
+      :if={@external_links != []}
+      class="mt-4 text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400"
+    >
+      {gettext("External links")}
+    </dt>
+    <dd class="mt-4 space-y-2">
+      <Fluxon.Components.Button.button
+        :for={external_link <- @external_links}
+        href={external_link.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        variant="ghost"
+        size="sm"
+        class="ml-2 first:ml-0"
+      >
+        <img
+          class="mr-2"
+          src={favicon_url(external_link.url)}
+          alt={external_link.name}
+          loading="lazy"
+        />
+        <span class="text-sm font-medium text-zinc-900 dark:text-white">
+          {external_link.name}
+        </span>
+      </Fluxon.Components.Button.button>
+    </dd>
+    """
+  end
+
   def favicon_url(url) do
     uri = URI.parse(url)
     "https://www.google.com/s2/favicons?domain=#{uri.host}&sz=16"
