@@ -3,7 +3,6 @@ defmodule MusicLibrary.Artists do
 
   alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibrary.Assets
-  alias MusicLibrary.Favicon
   alias MusicLibrary.Records.{ArtistRecord, Record}
   alias MusicLibrary.Repo
   alias MusicLibrary.{BackgroundRepo, Worker}
@@ -179,7 +178,6 @@ defmodule MusicLibrary.Artists do
     end)
   end
 
-  def favicon_url(external_link), do: Favicon.favicon_url(external_link.url)
 
   defp get_collected_artist_ids do
     q =
