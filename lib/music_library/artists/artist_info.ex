@@ -62,4 +62,17 @@ defmodule MusicLibrary.Artists.ArtistInfo do
       image["type"] == type
     end)
   end
+
+  def relation_urls(artist_info, pattern \\ nil) do
+    case get_in(artist_info.musicbrainz_data, ["relations", Access.all(), "url", "resource"]) do
+      nil -> []
+      urls -> filter_urls(urls, pattern)
+    end
+  end
+
+  defp filter_urls(urls, nil), do: urls
+
+  defp filter_urls(urls, pattern) do
+    Enum.filter(urls, fn url -> String.contains?(url, pattern) end)
+  end
 end

@@ -162,6 +162,11 @@ defmodule MusicLibrary.Artists do
     |> Repo.update()
   end
 
+  def favicon_url(external_link) do
+    uri = URI.parse(external_link.url)
+    "https://www.google.com/s2/favicons?domain=#{uri.host}&sz=16"
+  end
+
   defp get_collected_artist_ids do
     q =
       from ar in ArtistRecord,
