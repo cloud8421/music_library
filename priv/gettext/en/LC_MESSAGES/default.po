@@ -1470,6 +1470,6 @@ msgid "You need to connect your Last.fm account to scrobble. Please set up your 
 msgstr ""
 
 #: lib/music_library_web/components/core_components.ex
-#, elixir-autogen, elixir-format
-msgid "External links"
+#, elixir-autogen, elixir-format, fuzzy
+msgid "External Links"
 msgstr ""

@@ -1471,5 +1471,5 @@ msgstr ""
 
 #: lib/music_library_web/components/core_components.ex
 #, elixir-autogen, elixir-format
-msgid "External links"
+msgid "External Links"
 msgstr ""
