@@ -153,15 +153,6 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
-  sentry_dsn =
-    System.get_env("SENTRY_DSN") ||
-      raise """
-      environment variable SENTRY_DSN is missing.
-      """
-
-  config :sentry,
-    dsn: sentry_dsn
-
   # ## SSL Support
   #
   # To get SSL working, you will need to add the `https` key
