@@ -114,7 +114,7 @@ defmodule MusicLibraryWeb.StatsLive.TopArtists do
           class={[
             "flex items-center space-x-3 p-2",
             artist.musicbrainz_id != "" &&
-              "cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800"
+              "cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-700"
           ]}
         >
           <.artist_image
@@ -131,7 +131,7 @@ defmodule MusicLibraryWeb.StatsLive.TopArtists do
             <.icon name="hero-user" class="w-6 h-6 text-zinc-400" />
           </div>
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-zinc-900 dark:text-zinc-300 hover:text-zinc-700 dark:hover:text-zinc-400 truncate">
+            <p class="text-sm font-medium text-zinc-900 dark:text-zinc-300 truncate">
               {artist.name}
             </p>
           </div>
