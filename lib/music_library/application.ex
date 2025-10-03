@@ -18,7 +18,6 @@ defmodule MusicLibrary.Application do
     children = [
       MusicLibrary.Vault,
       MusicLibrary.Repo,
-      MusicLibrary.ErrorRepo,
       MusicLibrary.BackgroundRepo,
       MusicLibraryWeb.Telemetry,
       {Oban, Application.fetch_env!(:music_library, Oban)},

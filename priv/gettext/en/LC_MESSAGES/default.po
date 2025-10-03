@@ -389,11 +389,6 @@ msgstr ""
 msgid "A->Z"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex
-#, elixir-autogen, elixir-format
-msgid "Errors"
-msgstr ""
-
 #: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "On Tour"

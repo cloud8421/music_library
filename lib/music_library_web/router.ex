@@ -89,19 +89,15 @@ defmodule MusicLibraryWeb.Router do
   end
 
   if Application.compile_env(:music_library, :monitoring_routes) do
-    use ErrorTracker.Web, :router
-
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
       pipe_through [:browser, :logged_in]
 
-      error_tracker_dashboard("/errors")
-
       live_dashboard "/dashboard",
         metrics: MusicLibraryWeb.Telemetry,
         metrics_history: {MusicLibraryWeb.Telemetry.Storage, :metrics_history, []},
-        ecto_repos: [MusicLibrary.Repo, MusicLibrary.BackgroundRepo, MusicLibrary.ErrorRepo]
+        ecto_repos: [MusicLibrary.Repo, MusicLibrary.BackgroundRepo]
 
       oban_dashboard "/oban"
     end

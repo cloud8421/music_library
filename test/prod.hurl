@@ -38,7 +38,7 @@ GET https://music-library.claudio-ortolina.org/dev/dashboard
 HTTP 302
 Location: /login
 
-# Error Tracker
-GET https://music-library.claudio-ortolina.org/dev/errors
+# Oban
+GET https://music-library.claudio-ortolina.org/dev/oban
 HTTP 302
 Location: /login

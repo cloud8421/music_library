@@ -84,20 +84,6 @@ if config_env() == :prod do
     temp_store: :memory,
     show_sensitive_data_on_connection_error: true
 
-  error_database_path =
-    System.get_env("ERROR_DATABASE_PATH") ||
-      raise """
-      environment variable ERROR_DATABASE_PATH is missing.
-      For example: /etc/music_library/music_library_errors.db
-      """
-
-  config :music_library, MusicLibrary.ErrorRepo,
-    database: error_database_path,
-    # 16MB * pool_size = base memory usage
-    cache_size: -8000,
-    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5"),
-    show_sensitive_data_on_connection_error: true
-
   background_database_path =
     System.get_env("BACKGROUND_DATABASE_PATH") ||
       raise """

@@ -12,7 +12,7 @@ config :elixir, :time_zone_database, TimeZoneInfo.TimeZoneDatabase
 config :time_zone_info, update: :daily
 
 config :music_library,
-  ecto_repos: [MusicLibrary.BackgroundRepo, MusicLibrary.Repo, MusicLibrary.ErrorRepo],
+  ecto_repos: [MusicLibrary.BackgroundRepo, MusicLibrary.Repo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 
 config :music_library, default_timezone: "Europe/London"
@@ -76,11 +76,6 @@ config :logger, :default_formatter,
 # Use JSON for JSON parsing in Phoenix
 config :phoenix, :json_library, JSON
 
-config :error_tracker,
-  repo: MusicLibrary.ErrorRepo,
-  otp_app: :music_library,
-  enabled: true
-
 config :music_library, Oban,
   engine: Oban.Engines.Lite,
   queues: [default: 10, heavy_writes: 1, music_brainz: 1],
@@ -93,8 +88,6 @@ config :music_library, Oban,
        {"0 */12 * * *", MusicLibrary.Worker.PruneAssetCache}
      ]}
   ]
-
-config :music_library, MusicLibrary.ErrorRepo, priv: "priv/error_repo"
 
 config :music_library, MusicLibrary.BackgroundRepo, priv: "priv/background_repo"
 

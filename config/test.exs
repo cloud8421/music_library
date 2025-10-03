@@ -11,11 +11,6 @@ config :music_library, MusicLibrary.Repo,
   pool_size: 32,
   pool: Ecto.Adapters.SQL.Sandbox
 
-config :music_library, MusicLibrary.ErrorRepo,
-  database: Path.expand("../data/music_library_errors_test.db", __DIR__),
-  pool_size: 32,
-  pool: Ecto.Adapters.SQL.Sandbox
-
 config :music_library, MusicLibrary.BackgroundRepo,
   database: Path.expand("../data/music_library_background_test.db", __DIR__),
   pool_size: 32,

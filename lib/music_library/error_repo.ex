@@ -1,5 +1,0 @@
-defmodule MusicLibrary.ErrorRepo do
-  use Ecto.Repo,
-    otp_app: :music_library,
-    adapter: Ecto.Adapters.SQLite3
-end
