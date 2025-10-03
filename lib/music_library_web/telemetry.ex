@@ -63,7 +63,7 @@ defmodule MusicLibraryWeb.Telemetry do
         unit: {:native, :millisecond},
         tags: [:normalized_path],
         tag_values: &add_tags/1,
-        drop: &drop_archive_requests/1,
+        drop: &drop_unwanted_hosts/1,
         reporter_options: [
           nav: "External APIs"
         ]
@@ -72,7 +72,7 @@ defmodule MusicLibraryWeb.Telemetry do
         unit: {:native, :millisecond},
         tags: [:host],
         tag_values: &add_tags/1,
-        drop: &drop_archive_requests/1,
+        drop: &drop_unwanted_hosts/1,
         reporter_options: [
           nav: "External APIs"
         ]
@@ -122,7 +122,7 @@ defmodule MusicLibraryWeb.Telemetry do
     })
   end
 
-  defp drop_archive_requests(metadata) do
-    metadata.request.host =~ "archive.org"
+  defp drop_unwanted_hosts(metadata) do
+    metadata.request.host =~ "archive.org" or metadata.request.host =~ "sentry.io"
   end
 end
