@@ -16,7 +16,7 @@ gh = 'latest'
 # NPM DEPS
 
 [tasks.npm-install]
-run = 'npm install --prefix assets'
+run = 'npm ci --prefix assets'
 hide = true
 
 [tasks.npm-update]
