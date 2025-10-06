@@ -86,6 +86,10 @@ The project is managed and configured via [mise-en-place](https://mise.jdx.dev):
 > set of credentials. See the `env` section in `mise.toml` for the required
 > environment variables.
 
+It's recommended to use the git hooks included in the project. Install with:
+
+`mise generate git-pre-commit --write --task=dev:precommit`
+
 ## Environment configuration
 
 The application requires the following environment variables:

@@ -43,17 +43,6 @@ run = """
 hurl --test --progress-bar scripts/deploy.hurl
 """
 
-# GIT TOOLING
-
-[tasks.static-checks-hook]
-description = '''
-Pre-commit task to ensure code conforms to static checks policies.
-
-Install with `mise generate git-pre-commit --write --task=dev:precommit`
-'''
-run = 'mix do format --check-formatted, credo --strict, gettext.extract --check-up-to-date'
-hide = true
-
 # DEVELOPMENT/TEST
 
 [tasks.test]
