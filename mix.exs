@@ -129,6 +129,7 @@ defmodule MusicLibrary.MixProject do
         "deps.get",
         "ecto.setup",
         "assets.setup",
+        "cmd npm ci --prefix assets",
         "assets.build",
         "usage_rules.sync AGENTS.md --all --inline usage_rules:all --link-to-folder deps --remove-missing --yes"
       ],

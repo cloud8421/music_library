@@ -124,11 +124,7 @@ mix hex.repo add fluxon https://repo.fluxonui.com \
 hide = true
 
 [tasks."dev:setup"]
-depends = [
-  'npm-install',
-  'fluxon-add-repo',
-  'gh-markdown-preview-extension-install',
-]
+depends = ['fluxon-add-repo', 'gh-markdown-preview-extension-install']
 description = 'Install dependencies and setup the database'
 run = ['mix setup']
 
