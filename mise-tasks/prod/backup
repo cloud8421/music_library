@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+#MISE description="Backup the production database to the local development env"
+
 set -e
 
 current_date=$(date +%s)

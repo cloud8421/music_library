@@ -140,10 +140,6 @@ run = "gh run watch"
 description = 'Open an ssh console to the production env'
 run = 'ssh music-library-prod'
 
-[tasks."prod:backup"]
-description = 'Backup the production database to the local development env'
-run = 'scripts/prod-backup.sh'
-
 [tasks."prod:prune-backups"]
 confirm = 'Are you sure you want to delete all downloaded database backups?'
 description = 'Deletes all downloaded database backups'
