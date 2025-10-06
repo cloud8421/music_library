@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+#MISE description="Deploy on production and monitor deployment"
+#MISE confirm="Are you sure you want to deploy to production?"
+
+set -e
+
+hurl --test --progress-bar scripts/prod/deploy.hurl

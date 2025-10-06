@@ -37,12 +37,6 @@ run = 'rm data/music_library_prod*'
 description = 'Run HTTP tests against production'
 run = 'hurl --test test/prod.hurl'
 
-[tasks."prod:deploy"]
-description = 'Deploy on production and monitor'
-run = """
-hurl --test --progress-bar scripts/deploy.hurl
-"""
-
 # DEVELOPMENT/TEST
 
 [tasks.test]
