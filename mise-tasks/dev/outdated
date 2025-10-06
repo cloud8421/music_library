@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+#MISE description="Show outdated dependencies. Errors at the firsst outdated dependency"
+
+set -e
+
+npm outdated --prefix assets
+
+mix do tailwind.check_version, esbuild.check_version, sqlean.check_version
+
+mix hex.outdated --all
