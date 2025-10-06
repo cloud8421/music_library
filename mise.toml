@@ -77,11 +77,6 @@ hide = true
 
 # TOOLING
 
-[tasks.gh-markdown-preview-extension-install]
-description = 'Install a gh extension to preview GH-flavoured markdown files locally'
-run = ['gh extension install thiagokokada/gh-gfm-preview']
-hide = true
-
 [tasks.gh-markdown-preview-extension-update]
 description = 'Update the gh extension to preview GH-flavoured markdown files locally'
 run = ['gh extension upgrade gfm-preview']
@@ -111,22 +106,6 @@ depends = [
   'gh-markdown-preview-extension-update',
 ]
 description = 'Update dependencies'
-
-# SETUP
-
-[tasks.fluxon-add-repo]
-description = "Add the fluxon repo"
-run = """
-mix hex.repo add fluxon https://repo.fluxonui.com \
-  --fetch-public-key $FLUXON_KEY_FINGERPRINT \
-  --auth-key $FLUXON_LICENSE_KEY
-"""
-hide = true
-
-[tasks."dev:setup"]
-depends = ['fluxon-add-repo', 'gh-markdown-preview-extension-install']
-description = 'Install dependencies and setup the database'
-run = ['mix setup']
 
 # CI
 
