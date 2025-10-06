@@ -12,7 +12,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   alias MusicLibraryWeb.StatsLive.{TopAlbums, TopArtists}
 
   def mount(_params, _session, socket) do
-    current_date = Date.utc_today()
+    current_date = DateTime.now!(socket.assigns.timezone) |> DateTime.to_date()
     latest_record = Collection.get_latest_record!()
     records_by_artists = Collection.count_records_by_artist(limit: 20)
     records_by_genre = Collection.count_records_by_genre(limit: 20)
