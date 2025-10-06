@@ -53,10 +53,6 @@ hide = true
 
 # DEVELOPMENT/TEST
 
-[tasks."dev:static-checks"]
-description = 'Run static checks for code formatting, translations, quality'
-run = 'mix do format, credo, gettext.extract --merge'
-
 [tasks.test]
 description = 'Run project tests'
 run = 'mix test'

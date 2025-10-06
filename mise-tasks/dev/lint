@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+#MISE description="Run static checks for code formatting, translations, quality"
+
+set -e
+
+mix lint

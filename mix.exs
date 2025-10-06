@@ -147,6 +147,11 @@ defmodule MusicLibrary.MixProject do
       ],
       "ecto.setup": ["ecto.create", "ecto.migrate"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
+      lint: [
+        "format",
+        "credo",
+        "gettext.extract --merge"
+      ],
       # When running the migrate task WITHOUT setting the log_level option,
       # Ecto defaults to debug IRRESPECTIVELY of the log level set in
       # config/test.exs. The debug log level persists while the first 2-3
