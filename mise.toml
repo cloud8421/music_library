@@ -11,6 +11,9 @@ hurl = 'latest'
 sqlite = 'latest'
 gh = 'latest'
 
+[task_config]
+includes = ["scripts"]
+
 # PUBLIC TASKS
 
 # CI
