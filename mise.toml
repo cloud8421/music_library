@@ -11,67 +11,7 @@ hurl = 'latest'
 sqlite = 'latest'
 gh = 'latest'
 
-# BUILDING BLOCKS
-
-# NPM DEPS
-
-[tasks.npm-install]
-run = 'npm ci --prefix assets'
-hide = true
-
-[tasks.npm-update]
-run = 'npm update --prefix assets'
-hide = true
-
-# TAILWIND DEP
-
-[tasks.tailwind-update]
-description = 'Update the Tailwind version configured in the project'
-run = 'mix tailwind.update_version'
-hide = true
-
-# ESBUILD DEP
-
-[tasks.esbuild-update]
-description = 'Update the esbuild version configured in the project'
-run = 'mix esbuild.update_version'
-hide = true
-
-# MIX DEPS
-
-[tasks.mix-update]
-description = 'Update mix dependencies'
-run = ['mix deps.update --all']
-hide = true
-
-# SQLEAN EXTENSIONS
-
-[tasks.sqlean-update]
-description = 'Update the sqlite3 extensions configured in the project'
-run = ['mix sqlean.update_version']
-hide = true
-
-# TOOLING
-
-[tasks.gh-markdown-preview-extension-update]
-description = 'Update the gh extension to preview GH-flavoured markdown files locally'
-run = ['gh extension upgrade gfm-preview']
-hide = true
-
 # PUBLIC TASKS
-
-# DEPENDENCIES
-
-[tasks."deps:update"]
-depends = [
-  'npm-update',
-  'tailwind-update',
-  'esbuild-update',
-  'sqlean-update',
-  'mix-update',
-  'gh-markdown-preview-extension-update',
-]
-description = 'Update dependencies'
 
 # CI
 

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+#MISE description="Update dependencies. Errors at the firsst outdated dependency"
+
+set -e
+
+npm update --prefix assets
+
+mix do tailwind.update_version, esbuild.update_version, sqlean.update_version
+
+mix deps.update --all
+
+gh extension upgrade gfm-preview
