@@ -60,10 +60,6 @@ hide = true
 description = 'Run project tests'
 run = 'mix test'
 
-[tasks."dev:console"]
-description = 'Run the application attached to an IEx console'
-run = 'iex -S mix phx.server'
-
 [tasks."dev:readme-preview"]
 description = 'Preview the README file via a GH flavoured markdown rendered'
 run = 'gh gfm-preview README.md'

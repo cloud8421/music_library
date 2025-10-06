@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+#MISE description="Run the application attached to an IEx console"
+
+set -e
+
+iex -S mix phx.server
