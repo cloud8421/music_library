@@ -26,6 +26,12 @@ defmodule MusicLibrary.MixProject do
     ]
   end
 
+  def cli do
+    [
+      preferred_envs: [precommit: :test]
+    ]
+  end
+
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
@@ -125,6 +131,12 @@ defmodule MusicLibrary.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
+      precommit: [
+        "credo --strict",
+        "gettext.extract --check-up-to-date",
+        "deps.unlock --unused",
+        "test"
+      ],
       setup: [
         "deps.get",
         "ecto.setup",

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+#MISE description="Run checks before a commit"
+
+set -e
+
+mix precommit
