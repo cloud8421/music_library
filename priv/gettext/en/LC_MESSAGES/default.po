@@ -783,11 +783,6 @@ msgstr ""
 msgid "Scrobble disc"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex
-#, elixir-autogen, elixir-format
-msgid "More"
-msgstr ""
-
 #: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Artist image refreshed successfully"
@@ -898,6 +893,7 @@ msgstr ""
 msgid "Wishlisted on"
 msgstr ""
 
+#: lib/music_library_web/components/layouts/app.html.heex
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/artist_live/show.html.heex
 #: lib/music_library_web/live/collection_live/show.html.heex

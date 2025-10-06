@@ -50,12 +50,13 @@
         <.universal_search_trigger />
         <.dropdown placement="bottom-end">
           <:toggle>
-            <button class="flex items-center text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200 gap-x-2">
-              <div class="text-sm font-semibold ">
-                {gettext("More")}
-              </div>
-              <.icon name="hero-chevron-down" class="h-4 w-4" />
-            </button>
+            <span class="sr-only">{gettext("Actions")}</span>
+            <.icon
+              name="hero-ellipsis-vertical"
+              class="-mt-1 h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+              aria-hidden="true"
+              data-slot="icon"
+            />
           </:toggle>
           <.dropdown_link href={~p"/scrobbled-tracks"}>
             <.icon
