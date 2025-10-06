@@ -7,26 +7,11 @@ defmodule MusicLibrary.Records do
 
   alias MusicLibrary.Artists
   alias MusicLibrary.Assets
-  alias MusicLibrary.Records.{ArtistRecord, Record, SearchParser}
+  alias MusicLibrary.Records.{ArtistRecord, Record, SearchIndex, SearchParser}
   alias MusicLibrary.{BackgroundRepo, Repo, Worker}
 
   def essential_fields do
-    [
-      :id,
-      :type,
-      :format,
-      :title,
-      :artists,
-      :genres,
-      :musicbrainz_id,
-      :purchased_at,
-      :release_ids,
-      :included_release_group_ids,
-      :cover_hash,
-      :release_date,
-      :inserted_at,
-      :updated_at
-    ]
+    SearchIndex.__schema__(:fields)
   end
 
   def search_records(initial_search, query, opts) do
