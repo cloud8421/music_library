@@ -6,6 +6,7 @@ services:
         - FLUXON_KEY_FINGERPRINT
         - FLUXON_LICENSE_KEY
     image: fullyforged/music_library:latest
+    init: true
     ports:
       - 8080
     environment:
