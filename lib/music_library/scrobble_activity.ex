@@ -231,7 +231,7 @@ defmodule MusicLibrary.ScrobbleActivity do
           album_title: fragment("json_extract(album, '$.title')"),
           artist_name: fragment("json_extract(artist, '$.name')"),
           artist_musicbrainz_id: fragment("json_extract(artist, '$.musicbrainz_id')"),
-          play_count: count(t.scrobbled_at_uts),
+          play_count: count(t.scrobbled_at_uts, :distinct),
           cover_url: fragment("max(?)", t.cover_url),
           album_musicbrainz_id: fragment("json_extract(album, '$.musicbrainz_id')"),
           collected_record_id: cr.record_id,
@@ -266,7 +266,7 @@ defmodule MusicLibrary.ScrobbleActivity do
           album_title: fragment("json_extract(album, '$.title')"),
           artist_name: fragment("json_extract(artist, '$.name')"),
           artist_musicbrainz_id: fragment("json_extract(artist, '$.musicbrainz_id')"),
-          play_count: count(t.scrobbled_at_uts),
+          play_count: count(t.scrobbled_at_uts, :distinct),
           cover_url: fragment("max(?)", t.cover_url),
           album_musicbrainz_id: fragment("json_extract(album, '$.musicbrainz_id')"),
           collected_record_id: cr.record_id,
@@ -298,7 +298,7 @@ defmodule MusicLibrary.ScrobbleActivity do
           name: fragment("json_extract(artist, '$.name')"),
           musicbrainz_id: fragment("json_extract(artist, '$.musicbrainz_id')"),
           image_hash: ai.image_data_hash,
-          play_count: count(t.scrobbled_at_uts)
+          play_count: count(t.scrobbled_at_uts, :distinct)
         },
         order_by: [desc: count(t.scrobbled_at_uts)],
         limit: ^limit
@@ -335,7 +335,7 @@ defmodule MusicLibrary.ScrobbleActivity do
           name: fragment("json_extract(artist, '$.name')"),
           musicbrainz_id: fragment("json_extract(artist, '$.musicbrainz_id')"),
           image_hash: ai.image_data_hash,
-          play_count: count(t.scrobbled_at_uts)
+          play_count: count(t.scrobbled_at_uts, :distinct)
         },
         order_by: [desc: count(t.scrobbled_at_uts)],
         limit: ^limit
