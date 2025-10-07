@@ -5,4 +5,8 @@
 
 set -e
 
+source "$(dirname "$0")/../_helpers.sh"
+
+ensure_working_directory!
+
 hurl --test --progress-bar scripts/prod/deploy.hurl

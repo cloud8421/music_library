@@ -4,6 +4,10 @@
 
 set -e
 
+source "$(dirname "$0")/../_helpers.sh"
+
+ensure_working_directory!
+
 npm outdated --prefix assets
 
 mix do tailwind.check_version, esbuild.check_version, sqlean.check_version
