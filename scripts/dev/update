@@ -10,6 +10,7 @@ ensure_working_directory!
 
 npm update --prefix assets
 
+# shellcheck disable=SC1010
 mix do tailwind.update_version, esbuild.update_version, sqlean.update_version
 
 mix deps.update --all

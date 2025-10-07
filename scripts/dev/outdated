@@ -10,6 +10,7 @@ ensure_working_directory!
 
 npm outdated --prefix assets
 
+# shellcheck disable=SC1010
 mix do tailwind.check_version, esbuild.check_version, sqlean.check_version
 
 mix hex.outdated --all
