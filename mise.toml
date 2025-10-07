@@ -41,13 +41,3 @@ run = 'mix test'
 [tasks."dev:readme-preview"]
 description = 'Preview the README file via a GH flavoured markdown rendered'
 run = 'gh gfm-preview README.md'
-
-# DOCKER
-
-[tasks."docker:build"]
-description = 'Builds and tags the application Docker image'
-run = 'docker compose build'
-
-[tasks."docker:push"]
-description = 'Push the image to the registry'
-run = 'docker compose push'
