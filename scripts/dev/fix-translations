@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+#MISE description="Fix translation file conflicts"
+
+set -e
+
+git co --theirs priv/gettext/default.pot
+
+git co --theirs priv/gettext/en/LC_MESSAGES/default.po
+
+mix gettext.extract --merge
