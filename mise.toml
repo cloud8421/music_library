@@ -13,9 +13,3 @@ gh = 'latest'
 
 [task_config]
 includes = ["scripts"]
-
-# DEVELOPMENT/TEST
-
-[tasks.test]
-description = 'Run project tests'
-run = 'mix test'
