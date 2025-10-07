@@ -1,4 +1,6 @@
-ensure_working_directory!() {
+#!/usr/bin/env bash
+
+function ensure_working_directory! {
   root_dir="$(git rev-parse --show-toplevel)"
 
   if [[ "$PWD" != "$root_dir" ]]; then
