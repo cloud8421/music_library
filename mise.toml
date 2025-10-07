@@ -25,7 +25,3 @@ run = 'hurl --test test/prod.hurl'
 [tasks.test]
 description = 'Run project tests'
 run = 'mix test'
-
-[tasks."dev:readme-preview"]
-description = 'Preview the README file via a GH flavoured markdown rendered'
-run = 'gh gfm-preview README.md'
