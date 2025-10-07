@@ -11,6 +11,7 @@ hurl = 'latest'
 sqlite = 'latest'
 gh = 'latest'
 shellcheck = 'latest'
+fd = 'latest'
 
 [task_config]
 includes = ["scripts"]
