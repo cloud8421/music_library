@@ -16,10 +16,6 @@ includes = ["scripts"]
 
 # PRODUCTION
 
-[tasks."prod:console"]
-description = 'Open an ssh console to the production env'
-run = 'ssh music-library-prod'
-
 [tasks."prod:test"]
 description = 'Run HTTP tests against production'
 run = 'hurl --test test/prod.hurl'
