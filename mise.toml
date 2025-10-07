@@ -10,6 +10,7 @@ DBUI_URL = 'sqlite:data/music_library_dev.db'
 hurl = 'latest'
 sqlite = 'latest'
 gh = 'latest'
+shellcheck = 'latest'
 
 [task_config]
 includes = ["scripts"]
