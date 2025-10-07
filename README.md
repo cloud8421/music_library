@@ -107,16 +107,14 @@ are included at the top of `mise.toml`).
 
 ## Running the application
 
-Start the Phoenix endpoint with `mix phx.server` or inside IEx with
-`iex -S mix phx.server`.
+Start the Phoenix endpoint with `mise run console` (along with an attached IEx session).
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 The default password for development is `change me`.
 
 ## Deployment
 
-The application provides a Dockerfile suitable for production use. You can
-build a working image using `mise run docker:build`.
+The application is deployed via Coolify, using a Docker Compose strategy.
 
 ## CI
 
