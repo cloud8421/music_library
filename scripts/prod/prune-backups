@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+#MISE description="Remove locally downloaded production database backups"
+#MISE confirm="Are you sure you want to remove all backups?"
+
+set -e
+
+rm data/music_library_prod*
