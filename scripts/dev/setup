@@ -11,8 +11,8 @@ ensure_working_directory!
 # Add the Fluxon UI hex source repo
 
 mix hex.repo add fluxon https://repo.fluxonui.com \
-  --fetch-public-key $FLUXON_KEY_FINGERPRINT \
-  --auth-key $FLUXON_LICENSE_KEY
+  --fetch-public-key "$FLUXON_KEY_FINGERPRINT" \
+  --auth-key "$FLUXON_LICENSE_KEY"
 
 # Install the gh extension to preview local markdown files
 
