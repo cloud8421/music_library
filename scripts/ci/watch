@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+#MISE description="Watch CI running"
+
+set -e
+
+gh run watch

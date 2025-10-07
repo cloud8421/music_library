@@ -14,14 +14,6 @@ gh = 'latest'
 [task_config]
 includes = ["scripts"]
 
-# PUBLIC TASKS
-
-# CI
-
-[tasks."ci:watch"]
-description = "Monitor CI status"
-run = "gh run watch"
-
 # PRODUCTION
 
 [tasks."prod:console"]
