@@ -4,11 +4,20 @@
 
 Music Library is an Elixir/Phoenix application for managing a personal music collection. It allows users to:
 
-- Add records from MusicBrainz, with optional data overrides
-- Manage a collection and wishlist of records with search/filtering capabilities
-- Integrate with Last.fm for scrobbles and record tracking
-- View statistics about the collection
-- Store all data in a single SQLite database
+- Add records from MusicBrainz, with optional override of specific pieces of data
+- Manage a collection and a wishlist of records, with ways to quickly search and filter based on records' metadata
+- Integration with Last.fm:
+  - display latest scrobbles, and where possible connect them with records in the collection or wishlist
+  - scrobble a record
+  - store a local copy of the complete scrobble history, and setup rules to fix its data as needed
+- Barcode scanning functionality for adding records
+- Artist information management with automatic fetching and caching
+- Online store templates for quick external lookups
+- Notes system for tracking custom information about records
+- Assets management with image transformation and caching
+- Color extraction from album artwork
+- Some basic stats (top albums, top artists, collection insights)
+- All data stored in a single SQLite database for portability and ease of backup/restore
 
 ## Development Setup
 
@@ -22,12 +31,14 @@ Music Library is an Elixir/Phoenix application for managing a personal music col
 
 Required environment variables:
 
-- `LAST_FM_USER`: Last.fm username for Scrobble Activity
-- `LAST_FM_API_KEY`: Last.fm API key (secret)
-- `OPENAI_KEY`: OpenAI API key (secret)
+- `LAST_FM_USER`: Last.fm username used to populate the Scrobble Activity
+- `LAST_FM_API_KEY`: Last.fm API key used to fetch the Scrobble Activity (secret)
+- `OPENAI_KEY`: OpenAI API key used to populate genres (secret)
 - `FLUXON_KEY_FINGERPRINT`: Fluxon license fingerprint
-- `FLUXON_LICENSE_KEY`: Fluxon license key
-- `LOGIN_PASSWORD`: Password for accessing the application (in production)
+- `FLUXON_LICENSE_KEY`: Fluxon license key (secret)
+- `LOGIN_PASSWORD`: Password for accessing the application (in production, secret)
+
+In development, the default password is `change me`.
 
 Create a `mise.local.toml` with required variables (samples in `mise.toml`).
 
@@ -45,25 +56,28 @@ mise run dev:setup
 
 ### Development
 
-```sh
-# Run the Phoenix server
-mix phx.server
+IF YOU CAN CONNECT TO THE MCP SERVER, THEN THE APPLICATION IS ALREADY RUNNING.
 
-# Run the server with an interactive Elixir console.
-# Note that if you can access the configured MCP server, the application server
-# is already running
-iex -S mix phx.server
-# OR
+Otherwise you can run:
+
+```sh
+# Run the Phoenix server with IEx console
 mise run dev:console
 
 # Run static checks (format, credo, gettext)
-mise run dev:static-checks
+mise run dev:lint
 
-# Show outdated dependencies
-mise run deps:outdated
+# Show outdated dependencies (errors at first outdated)
+mise run dev:outdated
 
-# Update dependencies
-mise run deps:update
+# Update dependencies (errors at first outdated)
+mise run dev:update
+
+# Fix translation file conflicts
+mise run dev:fix-translations
+
+# Render README.md with GitHub Flavored Markdown preview
+mise run dev:readme
 ```
 
 ### Testing
@@ -71,14 +85,18 @@ mise run deps:update
 ```sh
 # Run all tests
 mix test
-# OR
-mise run test
+
+# Run tests via mise (alternative)
+mise run dev:test
 
 # Run a specific test file
 mix test test/path/to/test_file.exs
 
 # Run a specific test (line number)
 mix test test/path/to/test_file.exs:42
+
+# Run previously failed tests
+mix test --failed
 ```
 
 ### Database
@@ -92,44 +110,44 @@ mix ecto.reset
 
 # Run migrations
 mix ecto.migrate
+
+# Create a new migration
+mix ecto.gen.migration migration_name
+
+# Rollback last migration
+mix ecto.rollback
 ```
 
-### Production
+### Production & CI
 
-```sh
-# Run migrations against production
-mise run prod:migrate
+YOU'RE NOT ALLOWED TO TOUCH PRODUCTION IN ANY POSSIBLE WAY.
 
-# Backup production database to local dev env
-mise run prod:backup
+Available commands for monitoring (view only):
+- `mise run prod:backup` - Backup the production database to local dev env
+- `mise run prod:prune-backups` - Remove locally downloaded production database backups
+- `mise run prod:test` - Run HTTP tests against production
+- `mise run ci:watch` - Watch CI running
 
-# Run HTTP tests against production
-mise run prod:test
-
-# Open SSH console to production environment
-mise run prod:console
-```
-
-### Docker
-
-```sh
-# Build and tag Docker image
-mise run docker:build
-
-# Push image to registry
-mise run docker:push
-```
+Deployment is handled via Coolify using a Docker Compose strategy.
 
 ## Architecture
 
 ### Database Structure
 
-The application uses SQLite with a unique database design:
+The application uses SQLite with two databases:
+- Main database (`Repo`): Primary data storage
+- Background database (`BackgroundRepo`): For background jobs and workers
 
-- Single `records` table stores all record data with embedded JSON for artists
-- Uses a virtual FTS5 table (`records_search_index`) for efficient searching
-- `artist_infos` table stores additional artist metadata
+Key tables and schemas:
+- `records` table stores all record data with embedded JSON for artists
+- `artist_infos` table stores additional artist metadata (bio, images, etc.)
 - `artist_records` view provides normalized artist-record relationships
+- `records_search_index` virtual FTS5 table for efficient full-text searching
+- `scrobble_rules` table for managing Last.fm scrobble data corrections
+- `online_store_templates` table for external store URL templates
+- `notes` table for custom record annotations
+- `assets` table for cached images with transformations
+- `secrets` table for encrypted sensitive data (uses Cloak)
 - Collection vs. wishlist differentiated by `purchased_at` field (NULL = wishlist)
 
 Tables are synchronized with triggers, and multiple indices exist for performance.
@@ -139,17 +157,50 @@ Tables are synchronized with triggers, and multiple indices exist for performanc
 The application follows standard Phoenix/Elixir structure:
 
 - `lib/music_library`: Core application logic
-  - `records/`: Record and collection management
-  - `artists/`: Artist data handling
-  - `wishlist/`: Wishlist functionality
+  - `records/`: Record and collection management (includes batch operations, search parsing)
+  - `artists/`: Artist data handling and artist info management
+  - `collection.ex`: Collection-specific functionality
+  - `wishlist.ex`: Wishlist-specific functionality
+  - `scrobble_activity.ex`: Last.fm scrobble tracking and activity
+  - `scrobble_rules/`: Rules for correcting scrobble data
   - `barcode_scan/`: Barcode scanning features
-  - `colors/`: Extract colors for images, e.g. album artworks
-  - `secrets/`: Manage encrypted secrets that are stored in the db
-- `lib/music_brainz`, `lib/discogs`, `lib/last_fm`: External API integrations
+  - `assets/`: Asset caching, image transformation
+  - `colors/`: Extract colors from images (album artworks)
+  - `notes/`: Note management for records
+  - `online_store_templates/`: External store URL templates
+  - `secrets/`: Encrypted secrets management (uses Cloak/Vault)
+  - `worker/`: Background job workers (Oban)
+    - `fetch_artist_image.ex`, `fetch_artist_info.ex`, `prune_artist_info.ex`
+    - `record_refresh_music_brainz_data.ex`, `refresh_cover.ex`
+    - `extract_colors.ex`, `populate_genres.ex`
+    - `apply_scrobble_rules.ex`, `prune_asset_cache.ex`
+
+- External API integrations:
+  - `lib/music_brainz`: MusicBrainz API client (primary metadata source)
+  - `lib/discogs`: Discogs API client
+  - `lib/last_fm`: Last.fm API client (scrobbles, artist info)
+  - `lib/open_ai`: OpenAI API client (genre population)
+
 - `lib/music_library_web`: Web interface (Phoenix)
   - `live/`: LiveView implementations
-  - `components/`: UI components
+    - `collection_live/`, `wishlist_live/`: Collection and wishlist views
+    - `artist_live/`: Artist detail pages
+    - `scrobble_live/`, `scrobble_rules_live/`, `scrobbled_tracks_live/`: Scrobble management
+    - `stats_live/`: Statistics (top albums, top artists)
+    - `universal_search_live/`: Universal search interface
+    - `online_store_template_live/`: Store template management
+  - `components/`: UI components (Fluxon-based)
+    - `record_components.ex`, `artist_components.ex`, `scrobble_components.ex`
+    - `search_components.ex`, `stats_components.ex`, `chart_components.ex`
+    - `barcode_scanner.ex`, `notes.ex`, `pagination.ex`
   - `controllers/`: Traditional Phoenix controllers
+    - `collection_controller.ex`: Collection export endpoints
+    - `asset_controller.ex`: Asset serving
+    - `archive_controller.ex`: Archive management
+    - `health_controller.ex`: Health checks
+    - `last_fm_controller.ex`: Last.fm OAuth callback
+    - `session_controller.ex`: Authentication
+  - `hooks/`: LiveView hooks (`get_timezone.ex`, `static_assets.ex`)
 
 ## Git Workflow
 
@@ -158,12 +209,15 @@ Run the following before commits to ensure code quality:
 ```sh
 # Run static checks to ensure code quality
 mix do format --check-formatted, credo --strict, gettext.extract --check-up-to-date
+
+# Or use the mise task
+mise run dev:lint
 ```
 
 To set up a pre-commit hook:
 
 ```sh
-mise generate git-pre-commit --write --task=static-checks-hook
+mise generate git-pre-commit --write --task=dev:precommit
 ```
 
 ### Guidelines
@@ -179,6 +233,7 @@ Code Style and Structure
 - Use descriptive variable and function names (e.g., user_signed_in?, calculate_total).
 - Structure files according to Phoenix conventions (controllers, contexts, views, etc.).
 - Where possible use Fluxon components instead of rolling your own
+- Use Oban for background job processing (workers in `lib/music_library/worker/`)
 
 Database design
 
@@ -222,12 +277,21 @@ Testing
 
 - Write comprehensive tests using ExUnit.
 - Follow TDD practices.
+- Run tests with `mix test` or `mise run dev:test`
+- Use `mix test --failed` to rerun failed tests
 
 Security
 
-- Implement proper authentication and authorization.
+- Authentication handled via session-based login (see `MusicLibraryWeb.Auth`)
 - Use strong parameters in controllers (params validation).
 - Protect against common web vulnerabilities (XSS, CSRF, SQL injection).
+- Sensitive data encrypted using Cloak (see `MusicLibrary.Vault` and `MusicLibrary.Secrets`)
+
+Background Jobs
+
+- Use Oban workers for all background tasks
+- Workers are in `lib/music_library/worker/`
+- Common worker patterns: fetching external data, pruning caches, applying rules
 
 Follow the official Phoenix guides for best practices in routing, controllers, contexts, views, and other Phoenix components.
 
@@ -243,19 +307,24 @@ usage rules to understand the correct patterns, conventions, and best practices.
 <!-- usage-rules-header-end -->
 
 <!-- igniter-start -->
+
 ## igniter usage
+
 _A code generation and project patching framework_
 
 [igniter usage rules](deps/igniter/usage-rules.md)
+
 <!-- igniter-end -->
 <!-- usage_rules-start -->
+
 ## usage_rules usage
+
 _A dev tool for Elixir projects to gather LLM usage rules from dependencies_
 
 ## Using Usage Rules
 
-Many packages have usage rules, which you should *thoroughly* consult before taking any
-action. These usage rules contain guidelines and rules *directly from the package authors*.
+Many packages have usage rules, which you should _thoroughly_ consult before taking any
+action. These usage rules contain guidelines and rules _directly from the package authors_.
 They are your best source of knowledge for making decisions.
 
 ## Modules & functions in the current app and dependencies
@@ -274,10 +343,9 @@ mix usage_rules.docs Enum.zip
 mix usage_rules.docs Enum.zip/1
 ```
 
-
 ## Searching Documentation
 
-You should also consult the documentation of any tools you are using, early and often. The best 
+You should also consult the documentation of any tools you are using, early and often. The best
 way to accomplish this is to use the `usage_rules.search_docs` mix task. Once you have
 found what you are looking for, use the links in the search results to get more detail. For example:
 
@@ -295,23 +363,27 @@ mix usage_rules.search_docs "making requests" -p req
 mix usage_rules.search_docs "Enum.zip" --query-by title
 ```
 
-
 <!-- usage_rules-end -->
 <!-- usage_rules:elixir-start -->
+
 ## usage_rules:elixir usage
+
 # Elixir Core Usage Rules
 
 ## Pattern Matching
+
 - Use pattern matching over conditional logic when possible
 - Prefer to match on function heads instead of using `if`/`else` or `case` in function bodies
 - `%{}` matches ANY map, not just empty maps. Use `map_size(map) == 0` guard to check for truly empty maps
 
 ## Error Handling
+
 - Use `{:ok, result}` and `{:error, reason}` tuples for operations that can fail
 - Avoid raising exceptions for control flow
 - Use `with` for chaining operations that return `{:ok, _}` or `{:error, _}`
 
 ## Common Mistakes to Avoid
+
 - Elixir has no `return` statement, nor early returns. The last expression in a block is always returned.
 - Don't use `Enum` functions on large collections when `Stream` is more appropriate
 - Avoid nested `case` statements - refactor to a single `case`, `with` or separate functions
@@ -324,6 +396,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 - There are many useful standard library functions, prefer to use them where possible
 
 ## Function Design
+
 - Use guard clauses: `when is_binary(name) and byte_size(name) > 0`
 - Prefer multiple function clauses over complex conditional logic
 - Name functions descriptively: `calculate_total_price/2` not `calc/2`
@@ -331,6 +404,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 - Names like `is_thing` should be reserved for guards
 
 ## Data Structures
+
 - Use structs over maps when the shape is known: `defstruct [:name, :age]`
 - Prefer keyword lists for options: `[timeout: 5000, retries: 3]`
 - Use maps for dynamic key-value data
@@ -343,6 +417,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 - Read the docs and options fully before using tasks
 
 ## Testing
+
 - Run tests in a specific file with `mix test test/my_test.exs` and a specific test with the line number `mix test path/to/test.exs:123`
 - Limit the number of failed tests with `mix test --max-failures n`
 - Use `@tag` to tag specific tests, and `mix test --only tag` to run only those tests
@@ -355,26 +430,32 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 
 <!-- usage_rules:elixir-end -->
 <!-- usage_rules:otp-start -->
+
 ## usage_rules:otp usage
+
 # OTP Usage Rules
 
 ## GenServer Best Practices
+
 - Keep state simple and serializable
 - Handle all expected messages explicitly
 - Use `handle_continue/2` for post-init work
 - Implement proper cleanup in `terminate/2` when necessary
 
 ## Process Communication
+
 - Use `GenServer.call/3` for synchronous requests expecting replies
 - Use `GenServer.cast/2` for fire-and-forget messages.
 - When in doubt, use `call` over `cast`, to ensure back-pressure
 - Set appropriate timeouts for `call/3` operations
 
 ## Fault Tolerance
+
 - Set up processes such that they can handle crashing and being restarted by supervisors
 - Use `:max_restarts` and `:max_seconds` to prevent restart loops
 
 ## Task and Async
+
 - Use `Task.Supervisor` for better fault tolerance
 - Handle task failures with `Task.yield/2` or `Task.shutdown/2`
 - Set appropriate task timeouts
@@ -382,7 +463,9 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 
 <!-- usage_rules:otp-end -->
 <!-- phoenix:ecto-start -->
+
 ## phoenix:ecto usage
+
 ## Ecto Guidelines
 
 - **Always** preload Ecto associations in queries when they'll be accessed in templates, ie a message that needs to reference the `message.user.email`
@@ -394,7 +477,9 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 
 <!-- phoenix:ecto-end -->
 <!-- phoenix:elixir-start -->
+
 ## phoenix:elixir usage
+
 ## Elixir guidelines
 
 - Elixir lists **do not support index based access via the access syntax**
@@ -412,7 +497,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
       Enum.at(mylist, i)
 
 - Elixir variables are immutable, but can be rebound, so for block expressions like `if`, `case`, `cond`, etc
-  you *must* bind the result of the expression to a variable if you want to use it and you CANNOT rebind the result inside the expression, ie:
+  you _must_ bind the result of the expression to a variable if you want to use it and you CANNOT rebind the result inside the expression, ie:
 
       # INVALID: we are rebinding inside the `if` and the result never gets assigned
       if connected?(socket) do
@@ -441,7 +526,9 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 
 <!-- phoenix:elixir-end -->
 <!-- phoenix:html-start -->
+
 ## phoenix:html usage
+
 ## Phoenix HTML guidelines
 
 - Phoenix templates **always** use `~H` or .html.heex files (known as HEEx), **never** use `~E`
@@ -450,7 +537,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 - **Always** add unique DOM IDs to key elements (like forms, buttons, etc) when writing templates, these IDs can later be used in tests (`<.form for={@form} id="product-form">`)
 - For "app wide" template imports, you can import/alias into the `my_app_web.ex`'s `html_helpers` block, so they will be available to all LiveViews, LiveComponent's, and all modules that do `use MyAppWeb, :html` (replace "my_app" by the actual app name)
 
-- Elixir supports `if/else` but **does NOT support `if/else if` or `if/elsif`. **Never use `else if` or `elseif` in Elixir**, **always** use `cond` or `case` for multiple conditionals.
+- Elixir supports `if/else` but **does NOT support `if/else if` or `if/elsif`. **Never use `else if` or `elseif` in Elixir**,**always\*\* use `cond` or `case` for multiple conditionals.
 
   **Never do this (invalid)**:
 
@@ -471,7 +558,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
           ...
       <% end %>
 
-- HEEx require special tag annotation if you want to insert literal curly's like `{` or `}`. If you want to show a textual code snippet on the page in a `<pre>` or `<code>` block you *must* annotate the parent tag with `phx-no-curly-interpolation`:
+- HEEx require special tag annotation if you want to insert literal curly's like `{` or `}`. If you want to show a textual code snippet on the page in a `<pre>` or `<code>` block you _must_ annotate the parent tag with `phx-no-curly-interpolation`:
 
       <code phx-no-curly-interpolation>
         let obj = {key: "val"}
@@ -521,10 +608,12 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 
 <!-- phoenix:html-end -->
 <!-- phoenix:liveview-start -->
+
 ## phoenix:liveview usage
+
 ## Phoenix LiveView guidelines
 
-- **Never** use the deprecated `live_redirect` and `live_patch` functions, instead **always** use the `<.link navigate={href}>` and  `<.link patch={href}>` in templates, and `push_navigate` and `push_patch` functions LiveViews
+- **Never** use the deprecated `live_redirect` and `live_patch` functions, instead **always** use the `<.link navigate={href}>` and `<.link patch={href}>` in templates, and `push_navigate` and `push_patch` functions LiveViews
 - **Avoid LiveComponent's** unless you have a strong, specific need for them
 - LiveViews should be named like `AppWeb.WeatherLive`, with a `Live` suffix. When you go to add LiveView routes to the router, the default `:browser` scope is **already aliased** with the `AppWeb` module, so you can just do `live "/weather", WeatherLive`
 - Remember anytime you use `phx-hook="MyHook"` and that js hook manages its own DOM, you **must** also set the `phx-update="ignore"` attribute
@@ -546,7 +635,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
         </div>
       </div>
 
-- LiveView streams are *not* enumerable, so you cannot use `Enum.filter/2` or `Enum.reject/2` on them. Instead, if you want to filter, prune, or refresh a list of items on the UI, you **must refetch the data and re-stream the entire stream collection, passing reset: true**:
+- LiveView streams are _not_ enumerable, so you cannot use `Enum.filter/2` or `Enum.reject/2` on them. Instead, if you want to filter, prune, or refresh a list of items on the UI, you **must refetch the data and re-stream the entire stream collection, passing reset: true**:
 
       def handle_event("filter", %{"filter" => filter}, socket) do
         # re-fetch the messages based on the filter
@@ -559,7 +648,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
         |> stream(:messages, messages, reset: true)}
       end
 
-- LiveView streams *do not support counting or empty states*. If you need to display a count, you must track it using a separate assign. For empty states, you can use Tailwind classes:
+- LiveView streams _do not support counting or empty states_. If you need to display a count, you must track it using a separate assign. For empty states, you can use Tailwind classes:
 
       <div id="tasks" phx-update="stream">
         <div class="hidden only:block">No tasks yet</div>
@@ -653,7 +742,9 @@ And **never** do this:
 
 <!-- phoenix:liveview-end -->
 <!-- phoenix:phoenix-start -->
+
 ## phoenix:phoenix usage
+
 ## Phoenix guidelines
 
 - Remember Phoenix router `scope` blocks include an optional alias which is prefixed for all routes within the scope. **Always** be mindful of this when creating routes within a scope to avoid duplicate module prefixes.
@@ -672,9 +763,12 @@ And **never** do this:
 
 <!-- phoenix:phoenix-end -->
 <!-- fluxon-start -->
+
 ## fluxon usage
+
 _Fluxon UI Components_
 
 [fluxon usage rules](deps/fluxon/usage-rules.md)
+
 <!-- fluxon-end -->
 <!-- usage-rules-end -->
