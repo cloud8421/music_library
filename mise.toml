@@ -14,12 +14,6 @@ gh = 'latest'
 [task_config]
 includes = ["scripts"]
 
-# PRODUCTION
-
-[tasks."prod:test"]
-description = 'Run HTTP tests against production'
-run = 'hurl --test test/prod.hurl'
-
 # DEVELOPMENT/TEST
 
 [tasks.test]
