@@ -238,7 +238,7 @@ defmodule MusicLibrary.ScrobbleActivity do
           wishlisted_record_id: wr.record_id,
           cover_hash: coalesce(cr.cover_hash, wr.cover_hash)
         },
-        order_by: [desc: count(t.scrobbled_at_uts)],
+        order_by: [desc: count(t.scrobbled_at_uts, :distinct)],
         limit: ^limit
 
     Repo.all(query)
@@ -273,7 +273,7 @@ defmodule MusicLibrary.ScrobbleActivity do
           wishlisted_record_id: wr.record_id,
           cover_hash: coalesce(cr.cover_hash, wr.cover_hash)
         },
-        order_by: [desc: count(t.scrobbled_at_uts)],
+        order_by: [desc: count(t.scrobbled_at_uts, :distinct)],
         limit: ^limit
 
     Repo.all(query)
@@ -300,7 +300,7 @@ defmodule MusicLibrary.ScrobbleActivity do
           image_hash: ai.image_data_hash,
           play_count: count(t.scrobbled_at_uts, :distinct)
         },
-        order_by: [desc: count(t.scrobbled_at_uts)],
+        order_by: [desc: count(t.scrobbled_at_uts, :distinct)],
         limit: ^limit
 
     Repo.all(query)
@@ -337,7 +337,7 @@ defmodule MusicLibrary.ScrobbleActivity do
           image_hash: ai.image_data_hash,
           play_count: count(t.scrobbled_at_uts, :distinct)
         },
-        order_by: [desc: count(t.scrobbled_at_uts)],
+        order_by: [desc: count(t.scrobbled_at_uts, :distinct)],
         limit: ^limit
 
     Repo.all(query)
