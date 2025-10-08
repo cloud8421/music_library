@@ -150,7 +150,8 @@ defmodule MusicLibrary.MixProject do
       lint: [
         "format",
         "credo",
-        "gettext.extract --merge"
+        "gettext.extract --merge",
+        "cmd fd . 'scripts/' --exclude '*.hurl' -t file --exec shellcheck --color"
       ],
       # When running the migrate task WITHOUT setting the log_level option,
       # Ecto defaults to debug IRRESPECTIVELY of the log level set in

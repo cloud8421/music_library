@@ -8,6 +8,4 @@ source "$(git rev-parse --show-toplevel)/scripts/_helpers.sh"
 
 ensure_working_directory!
 
-fd . 'scripts/' --exclude '*.hurl' -t file --exec shellcheck --color
-
 mix lint
