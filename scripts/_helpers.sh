@@ -8,3 +8,7 @@ function ensure_working_directory! {
     exit
   fi
 }
+
+function debug_msg {
+  echo "==> $1"
+}

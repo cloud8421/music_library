@@ -8,9 +8,15 @@ source "$(git rev-parse --show-toplevel)/scripts/_helpers.sh"
 
 ensure_working_directory!
 
+debug_msg "Checking outdated NPM dependencies..."
+
 npm outdated --prefix assets
+
+debug_msg "Checking outdated tooling (tailwind, esbuild, sqlean)..."
 
 # shellcheck disable=SC1010
 mix do tailwind.check_version, esbuild.check_version, sqlean.check_version
+
+debug_msg "Checking outdated mix dependencies"
 
 mix hex.outdated --all

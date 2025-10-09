@@ -8,13 +8,21 @@ source "$(git rev-parse --show-toplevel)/scripts/_helpers.sh"
 
 ensure_working_directory!
 
+debug_msg "Updating NPM dependencies..."
+
 npm update --prefix assets
+
+debug_msg "Updating tooling (tailwind, esbuild, sqlean)..."
 
 # shellcheck disable=SC1010
 mix do tailwind.update_version, esbuild.update_version, sqlean.update_version
 
+debug_msg "Updating mix dependencies"
+
 mix deps.update --all
 
 mix usage_rules.sync AGENTS.md --all --inline usage_rules:all --link-to-folder deps --remove-missing --yes
+
+debug_msg "Updating gh extensions"
 
 gh extension upgrade gfm-preview
