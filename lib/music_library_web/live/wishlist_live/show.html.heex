@@ -302,6 +302,12 @@
     </details>
   </div>
 
+  <.similar_records
+    similar_records={@similar_records}
+    record_show_path={fn record -> ~p"/wishlist/#{record}" end}
+    section={:wishlist}
+  />
+
   <.json_viewer title={gettext("MusicBrainz data")} data={@record.musicbrainz_data} />
 
   <.structured_modal

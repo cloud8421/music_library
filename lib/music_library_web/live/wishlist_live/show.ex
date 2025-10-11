@@ -8,11 +8,13 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
       release_summary: 1,
       artist_links: 1,
       record_colors: 1,
-      record_cover: 1
+      record_cover: 1,
+      similar_records: 1
     ]
 
   alias MusicLibrary.OnlineStoreTemplates
   alias MusicLibrary.Records
+  alias MusicLibrary.Records.Similarity
 
   @impl true
   def mount(%{"id" => record_id}, _session, socket) do
@@ -32,12 +34,14 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
   def handle_params(%{"id" => id}, _, socket) do
     record = Records.get_record!(id)
     online_store_templates = OnlineStoreTemplates.list_enabled_templates()
+    similar_records = Similarity.find_similar(id, limit: 6, scope: :wishlist)
 
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, record))
      |> assign(:record, record)
-     |> assign(:online_store_templates, online_store_templates)}
+     |> assign(:online_store_templates, online_store_templates)
+     |> assign(:similar_records, similar_records)}
   end
 
   @impl true

@@ -28,7 +28,9 @@
       "Bash(git show:*)",
       "Bash(cat:*)",
       "Bash(mise tasks:*)",
-      "Bash(mix run:*)"
+      "Bash(mix run:*)",
+      "Bash(sqlite3:*)",
+      "WebSearch"
     ]
   },
   "enableAllProjectMcpServers": false

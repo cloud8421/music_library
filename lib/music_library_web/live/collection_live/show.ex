@@ -10,10 +10,12 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
       release_summary: 1,
       artist_links: 1,
       record_colors: 1,
-      record_cover: 1
+      record_cover: 1,
+      similar_records: 1
     ]
 
   alias MusicLibrary.{Records, ScrobbleActivity}
+  alias MusicLibrary.Records.Similarity
   alias Phoenix.LiveView.JS
 
   @impl true
@@ -33,6 +35,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   def handle_params(%{"id" => id}, _, socket) do
     record = Records.get_record!(id)
     last_listened_track = Records.get_last_listened_track(record)
+    similar_records = Similarity.find_similar(id, limit: 6, scope: :collection)
 
     socket =
       if record.selected_release_id do
@@ -45,7 +48,8 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, record))
      |> assign(:record, record)
-     |> assign(:last_listened_track, last_listened_track)}
+     |> assign(:last_listened_track, last_listened_track)
+     |> assign(:similar_records, similar_records)}
   end
 
   @impl true

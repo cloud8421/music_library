@@ -279,6 +279,15 @@ defmodule MusicLibrary.Records do
     |> BackgroundRepo.insert()
   end
 
+  def generate_embedding_async(record) do
+    meta = %{title: record.title, artists: Enum.map(record.artists, & &1.name)}
+    params = %{"record_id" => record.id}
+
+    params
+    |> Worker.GenerateRecordEmbedding.new(meta: meta)
+    |> BackgroundRepo.insert()
+  end
+
   def resize_cover(record) do
     with {:ok, thumb_data} <- Assets.Image.resize(record.cover_data),
          {:ok, asset} <- Assets.store_image(%{content: thumb_data, format: "image/jpeg"}) do
@@ -340,6 +349,7 @@ defmodule MusicLibrary.Records do
   def create_record(attrs \\ %{}) do
     with {:ok, record} <- do_create_record(attrs) do
       extract_colors_async(record, :fast)
+      generate_embedding_async(record)
 
       record
       |> Record.artist_ids()

@@ -16,6 +16,10 @@ defmodule OpenAI do
     {:ok, result}
   end
 
+  def embeddings(text) do
+    API.get_embeddings(text, api_key())
+  end
+
   defp api_key do
     Application.get_env(:music_library, __MODULE__)
     |> Keyword.fetch!(:api_key)
