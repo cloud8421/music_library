@@ -107,57 +107,6 @@ defmodule MusicLibrary.Records.SimilarityTest do
     end
   end
 
-  describe "cosine_similarity/2" do
-    test "calculates similarity between identical vectors" do
-      vec = [1.0, 2.0, 3.0, 4.0]
-      similarity = Similarity.cosine_similarity(vec, vec)
-
-      assert_in_delta similarity, 1.0, 0.0001
-    end
-
-    test "calculates similarity between orthogonal vectors" do
-      vec_a = [1.0, 0.0, 0.0]
-      vec_b = [0.0, 1.0, 0.0]
-      similarity = Similarity.cosine_similarity(vec_a, vec_b)
-
-      assert_in_delta similarity, 0.0, 0.0001
-    end
-
-    test "calculates similarity between opposite vectors" do
-      vec_a = [1.0, 0.0, 0.0]
-      vec_b = [-1.0, 0.0, 0.0]
-      similarity = Similarity.cosine_similarity(vec_a, vec_b)
-
-      assert_in_delta similarity, -1.0, 0.0001
-    end
-
-    test "calculates similarity between similar vectors" do
-      vec_a = [1.0, 2.0, 3.0]
-      vec_b = [1.1, 2.1, 2.9]
-      similarity = Similarity.cosine_similarity(vec_a, vec_b)
-
-      # Should be close to 1.0 since vectors are similar
-      assert similarity > 0.99
-    end
-
-    test "raises error for vectors of different lengths" do
-      vec_a = [1.0, 2.0, 3.0]
-      vec_b = [1.0, 2.0]
-
-      assert_raise ArgumentError, fn ->
-        Similarity.cosine_similarity(vec_a, vec_b)
-      end
-    end
-
-    test "handles zero vectors" do
-      vec_a = [0.0, 0.0, 0.0]
-      vec_b = [1.0, 2.0, 3.0]
-      similarity = Similarity.cosine_similarity(vec_a, vec_b)
-
-      assert similarity == 0.0
-    end
-  end
-
   describe "store_embedding/3 and get_embedding/1" do
     test "stores and retrieves an embedding" do
       record = record()
@@ -167,10 +116,7 @@ defmodule MusicLibrary.Records.SimilarityTest do
       assert {:ok, _} = Similarity.store_embedding(record.id, embedding, text_rep)
       assert {:ok, retrieved_embedding} = Similarity.get_embedding(record.id)
 
-      assert length(retrieved_embedding) == 1536
-      # Check that embeddings are the same (within floating point precision)
-      Enum.zip(embedding, retrieved_embedding)
-      |> Enum.each(fn {a, b} -> assert_in_delta a, b, 0.0001 end)
+      assert SqliteVec.Float32.new(embedding) == retrieved_embedding
     end
 
     test "updates existing embedding on conflict" do
@@ -182,7 +128,7 @@ defmodule MusicLibrary.Records.SimilarityTest do
       assert {:ok, _} = Similarity.store_embedding(record.id, embedding2, "Text 2")
 
       assert {:ok, retrieved_embedding} = Similarity.get_embedding(record.id)
-      assert List.first(retrieved_embedding) == 0.7
+      assert SqliteVec.Float32.new(embedding2) == retrieved_embedding
     end
 
     test "returns error for non-existent record" do
@@ -225,13 +171,6 @@ defmodule MusicLibrary.Records.SimilarityTest do
       similar = Similarity.find_similar(record1.id, limit: 1)
 
       assert length(similar) == 1
-    end
-
-    test "respects min_similarity option", %{record1: record1} do
-      similar = Similarity.find_similar(record1.id, min_similarity: 0.99)
-
-      # Since we have slight variations, only very similar records pass
-      assert length(similar) <= 1
     end
 
     test "returns empty list for record without embedding" do

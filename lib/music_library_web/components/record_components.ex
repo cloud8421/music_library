@@ -422,7 +422,6 @@ defmodule MusicLibraryWeb.RecordComponents do
             </button>
 
             <span class="absolute top-2 right-2 rounded-full px-2 py-0.5 text-xs font-medium bg-zinc-900/75 text-white backdrop-blur-sm">
-              {Float.round(similarity * 100, 0)}%
             </span>
           </div>
 

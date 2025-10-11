@@ -4,7 +4,9 @@ defmodule MusicLibrary.Records.Similarity do
   """
 
   import Ecto.Query
+  import(SqliteVec.Ecto.Query)
 
+  alias MusicLibrary.Records
   alias MusicLibrary.Records.{Record, RecordEmbedding}
   alias MusicLibrary.Repo
 
@@ -53,44 +55,30 @@ defmodule MusicLibrary.Records.Similarity do
   """
   def find_similar(record_id, opts \\ []) do
     limit = Keyword.get(opts, :limit, 10)
-    min_similarity = Keyword.get(opts, :min_similarity, 0.0)
     scope = Keyword.get(opts, :scope)
 
-    with {:ok, source_embedding} <- get_embedding(record_id),
-         similar_records <- calculate_similarities(source_embedding, record_id, scope) do
-      similar_records
-      |> Enum.filter(fn {_record, similarity} -> similarity >= min_similarity end)
-      |> Enum.take(limit)
-      |> Enum.map(fn {record, similarity} -> {record, Float.round(similarity, 4)} end)
-    else
-      {:error, :not_found} -> []
-    end
-  end
+    record = Records.get_record!(record_id)
+    record_musicbrainz_id = record.musicbrainz_id
 
-  @doc """
-  Calculates cosine similarity between two embedding vectors.
+    case get_embedding(record_id) do
+      {:ok, source_embedding} ->
+        query =
+          from re in RecordEmbedding,
+            where: re.record_id != ^record_id,
+            join: r in Record,
+            on: r.id == re.record_id and r.musicbrainz_id != ^record_musicbrainz_id,
+            order_by: vec_distance_cosine(re.embedding, vec_f32(source_embedding)),
+            select: {r, re.embedding},
+            group_by: r.musicbrainz_id,
+            limit: ^limit
 
-  Returns a float between -1.0 and 1.0, where:
-  - 1.0 = identical vectors
-  - 0.0 = orthogonal vectors
-  - -1.0 = opposite vectors
-  """
-  def cosine_similarity(vec_a, vec_b) when is_list(vec_a) and is_list(vec_b) do
-    if length(vec_a) != length(vec_b) do
-      raise ArgumentError, "Vectors must have the same length"
-    end
+        query = apply_scope_filter(query, scope)
 
-    dot_product =
-      Enum.zip(vec_a, vec_b)
-      |> Enum.reduce(0.0, fn {a, b}, acc -> acc + a * b end)
+        query
+        |> Repo.all()
 
-    magnitude_a = calculate_magnitude(vec_a)
-    magnitude_b = calculate_magnitude(vec_b)
-
-    if magnitude_a == 0.0 or magnitude_b == 0.0 do
-      0.0
-    else
-      dot_product / (magnitude_a * magnitude_b)
+      {:error, :not_found} ->
+        []
     end
   end
 
@@ -141,31 +129,6 @@ defmodule MusicLibrary.Records.Similarity do
   defp humanize_type(:single), do: "Single"
   defp humanize_type(:other), do: "Other"
   defp humanize_type(_), do: "Unknown"
-
-  defp calculate_magnitude(vector) do
-    vector
-    |> Enum.reduce(0.0, fn x, acc -> acc + x * x end)
-    |> :math.sqrt()
-  end
-
-  defp calculate_similarities(source_embedding, source_record_id, scope) do
-    query =
-      from re in RecordEmbedding,
-        where: re.record_id != ^source_record_id,
-        join: r in Record,
-        on: r.id == re.record_id,
-        select: {r, re.embedding}
-
-    query = apply_scope_filter(query, scope)
-
-    query
-    |> Repo.all()
-    |> Enum.map(fn {record, embedding} ->
-      similarity = cosine_similarity(source_embedding, embedding)
-      {record, similarity}
-    end)
-    |> Enum.sort_by(fn {_record, similarity} -> similarity end, :desc)
-  end
 
   defp apply_scope_filter(query, :collection) do
     from [re, r] in query, where: not is_nil(r.purchased_at)

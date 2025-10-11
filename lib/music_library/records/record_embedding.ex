@@ -10,7 +10,7 @@ defmodule MusicLibrary.Records.RecordEmbedding do
   schema "record_embeddings" do
     belongs_to :record, Record
 
-    field :embedding, MusicLibrary.Records.RecordEmbedding.EmbeddingType
+    field :embedding, SqliteVec.Ecto.Float32
     field :text_representation, :string
 
     timestamps(type: :utc_datetime)
@@ -20,28 +20,6 @@ defmodule MusicLibrary.Records.RecordEmbedding do
     record_embedding
     |> cast(attrs, [:record_id, :embedding, :text_representation])
     |> validate_required([:record_id, :embedding, :text_representation])
-    |> validate_embedding_dimensions()
     |> unique_constraint(:record_id)
-  end
-
-  defp validate_embedding_dimensions(changeset) do
-    case get_change(changeset, :embedding) do
-      nil ->
-        changeset
-
-      embedding when is_list(embedding) ->
-        if length(embedding) == 1536 do
-          changeset
-        else
-          add_error(
-            changeset,
-            :embedding,
-            "must have exactly 1536 dimensions, got #{length(embedding)}"
-          )
-        end
-
-      _ ->
-        add_error(changeset, :embedding, "must be a list of floats")
-    end
   end
 end

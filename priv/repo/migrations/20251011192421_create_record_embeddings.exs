@@ -1,17 +1,23 @@
 defmodule MusicLibrary.Repo.Migrations.CreateRecordEmbeddings do
   use Ecto.Migration
 
-  def change do
-    create table(:record_embeddings, primary_key: false) do
-      add :id, :binary_id, primary_key: true
-      add :record_id, references(:records, type: :binary_id, on_delete: :delete_all), null: false
+  def up do
+    execute("""
+    CREATE TABLE record_embeddings (
+      id TEXT PRIMARY KEY,
+      record_id TEXT NOT NULL CONSTRAINT record_embeddings_record_id_fkey REFERENCES records(id) ON DELETE CASCADE,
+      embedding float[1536] NOT NULL,
+      text_representation TEXT NOT NULL,
+      inserted_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL);
+    """)
 
-      add :embedding, :text, null: false
-      add :text_representation, :text, null: false
+    execute("""
+    CREATE UNIQUE INDEX record_embeddings_record_id_index ON record_embeddings (record_id);
+    """)
+  end
 
-      timestamps(type: :utc_datetime)
-    end
-
-    create unique_index(:record_embeddings, [:record_id])
+  def down do
+    drop table(:record_embeddings)
   end
 end
