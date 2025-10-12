@@ -43,7 +43,6 @@ defmodule MusicLibrary.Records.Similarity do
   ## Options
 
   - `:limit` - Maximum number of similar records to return (default: 10)
-  - `:min_similarity` - Minimum similarity score (0.0 to 1.0, default: 0.0)
   - `:scope` - Filter by :collection or :wishlist (default: no filter)
 
   ## Examples
@@ -51,7 +50,7 @@ defmodule MusicLibrary.Records.Similarity do
       iex> find_similar("record-id-123", limit: 5)
       [%Record{}, ...]
 
-      iex> find_similar("record-id-123", min_similarity: 0.7, scope: :collection)
+      iex> find_similar("record-id-123", scope: :collection)
       [%Record{}, ...]
   """
   def find_similar(record_id, opts \\ []) do
