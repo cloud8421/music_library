@@ -1,12 +1,16 @@
 defmodule MusicLibrary.Worker.PopulateGenres do
   use Oban.Worker, queue: :heavy_writes, max_attempts: 10
 
+  alias MusicLibrary.Records
+
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"id" => record_id}}) do
-    record = MusicLibrary.Records.get_record!(record_id)
+    record = Records.get_record!(record_id)
 
-    with {:ok, updated_record} <- MusicLibrary.Records.populate_genres(record) do
-      MusicLibrary.Records.notify_update(updated_record)
+    with {:ok, updated_record} <- Records.populate_genres(record),
+         {:ok, _worker} <-
+           Records.Similarity.generate_embedding_async(updated_record) do
+      Records.notify_update(updated_record)
     end
   end
 end

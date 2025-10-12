@@ -1,8 +1,6 @@
 defmodule MusicLibrary.Worker.GenerateRecordEmbedding do
   use Oban.Worker, queue: :heavy_writes, max_attempts: 3
 
-  require Logger
-
   alias MusicLibrary.Records
   alias MusicLibrary.Records.Similarity
 
@@ -12,12 +10,7 @@ defmodule MusicLibrary.Worker.GenerateRecordEmbedding do
 
     with {:ok, embedding} <- generate_embedding(record),
          {:ok, _} <- store_embedding(record, embedding) do
-      Logger.info("Generated embedding for record #{record_id}")
-      :ok
-    else
-      {:error, reason} = error ->
-        Logger.error("Failed to generate embedding for record #{record_id}: #{inspect(reason)}")
-        error
+      Records.notify_update(record)
     end
   end
 
@@ -28,8 +21,8 @@ defmodule MusicLibrary.Worker.GenerateRecordEmbedding do
       {:ok, embedding} ->
         {:ok, {embedding, text}}
 
-      {:error, reason} ->
-        {:error, reason}
+      error ->
+        error
     end
   end
 

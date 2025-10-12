@@ -121,7 +121,7 @@ defmodule MusicLibrary.Records.Similarity do
 
     params
     |> GenerateRecordEmbedding.new(meta: meta)
-    |> Oban.insert!()
+    |> Oban.insert()
   end
 
   def generate_all_embeddings_async do

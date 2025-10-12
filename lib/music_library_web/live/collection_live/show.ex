@@ -35,7 +35,6 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   def handle_params(%{"id" => id}, _, socket) do
     record = Records.get_record!(id)
     last_listened_track = Records.get_last_listened_track(record)
-    similar_records = Similarity.find_similar(id, limit: 6, scope: :collection)
 
     socket =
       if record.selected_release_id do
@@ -49,7 +48,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
      |> assign(:page_title, page_title(socket.assigns.live_action, record))
      |> assign(:record, record)
      |> assign(:last_listened_track, last_listened_track)
-     |> assign(:similar_records, similar_records)}
+     |> assign_similar_records()}
   end
 
   @impl true
@@ -141,7 +140,10 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
   @impl true
   def handle_info({MusicLibraryWeb.Components.RecordForm, {:saved, record}}, socket) do
-    {:noreply, assign(socket, :record, record)}
+    {:noreply,
+     socket
+     |> assign(:record, record)
+     |> assign_similar_records()}
   end
 
   @impl true
@@ -149,7 +151,8 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     {:noreply,
      socket
      |> put_toast(:info, gettext("Record updated in the background"))
-     |> assign(:record, record)}
+     |> assign(:record, record)
+     |> assign_similar_records()}
   end
 
   def page_title(:show, record) do
@@ -184,4 +187,11 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
   defp title_segment(:show), do: gettext("Show")
   defp title_segment(:edit), do: gettext("Edit")
+
+  defp assign_similar_records(socket) do
+    similar_records =
+      Similarity.find_similar(socket.assigns.record.id, limit: 6, scope: :collection)
+
+    assign(socket, :similar_records, similar_records)
+  end
 end
