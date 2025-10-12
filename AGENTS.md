@@ -17,6 +17,8 @@ Music Library is an Elixir/Phoenix application for managing a personal music col
 - Assets management with image transformation and caching
 - Color extraction from album artwork
 - Some basic stats (top albums, top artists, collection insights)
+- Universal search across collection, wishlist, and artists
+- Similar records discovery using AI-powered embeddings (using SQLite vector extension)
 - All data stored in a single SQLite database for portability and ease of backup/restore
 
 ## Development Setup
@@ -143,6 +145,7 @@ Key tables and schemas:
 - `artist_infos` table stores additional artist metadata (bio, images, etc.)
 - `artist_records` view provides normalized artist-record relationships
 - `records_search_index` virtual FTS5 table for efficient full-text searching
+- `record_embeddings` table stores AI-generated embeddings for similarity search (uses sqlite-vec extension)
 - `scrobble_rules` table for managing Last.fm scrobble data corrections
 - `online_store_templates` table for external store URL templates
 - `notes` table for custom record annotations
@@ -157,10 +160,11 @@ Tables are synchronized with triggers, and multiple indices exist for performanc
 The application follows standard Phoenix/Elixir structure:
 
 - `lib/music_library`: Core application logic
-  - `records/`: Record and collection management (includes batch operations, search parsing)
+  - `records/`: Record and collection management (includes batch operations, search parsing, embeddings, similarity)
   - `artists/`: Artist data handling and artist info management
   - `collection.ex`: Collection-specific functionality
   - `wishlist.ex`: Wishlist-specific functionality
+  - `search.ex`: Universal search across collection, wishlist, and artists
   - `scrobble_activity.ex`: Last.fm scrobble tracking and activity
   - `scrobble_rules/`: Rules for correcting scrobble data
   - `barcode_scan/`: Barcode scanning features
@@ -173,13 +177,14 @@ The application follows standard Phoenix/Elixir structure:
     - `fetch_artist_image.ex`, `fetch_artist_info.ex`, `prune_artist_info.ex`
     - `record_refresh_music_brainz_data.ex`, `refresh_cover.ex`
     - `extract_colors.ex`, `populate_genres.ex`
+    - `generate_record_embedding.ex`: Generate AI embeddings for similarity search
     - `apply_scrobble_rules.ex`, `prune_asset_cache.ex`
 
 - External API integrations:
   - `lib/music_brainz`: MusicBrainz API client (primary metadata source)
   - `lib/discogs`: Discogs API client
   - `lib/last_fm`: Last.fm API client (scrobbles, artist info)
-  - `lib/open_ai`: OpenAI API client (genre population)
+  - `lib/open_ai`: OpenAI API client (genre population, embeddings generation)
 
 - `lib/music_library_web`: Web interface (Phoenix)
   - `live/`: LiveView implementations
@@ -193,6 +198,7 @@ The application follows standard Phoenix/Elixir structure:
     - `record_components.ex`, `artist_components.ex`, `scrobble_components.ex`
     - `search_components.ex`, `stats_components.ex`, `chart_components.ex`
     - `barcode_scanner.ex`, `notes.ex`, `pagination.ex`
+    - `record_form.ex`, `add_record.ex`, `release.ex`
   - `controllers/`: Traditional Phoenix controllers
     - `collection_controller.ex`: Collection export endpoints
     - `asset_controller.ex`: Asset serving
