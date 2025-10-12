@@ -68,8 +68,13 @@ defmodule MusicLibrary.Records.Similarity do
             where: re.record_id != ^record_id,
             join: r in Record,
             on: r.id == re.record_id and r.musicbrainz_id != ^record_musicbrainz_id,
-            order_by: vec_distance_cosine(re.embedding, vec_f32(source_embedding)),
-            select: {r, re.embedding},
+            order_by: selected_as(:similarity),
+            select: %{
+              record: r,
+              similarity:
+                vec_distance_cosine(re.embedding, vec_f32(source_embedding))
+                |> selected_as(:similarity)
+            },
             group_by: r.musicbrainz_id,
             limit: ^limit
 

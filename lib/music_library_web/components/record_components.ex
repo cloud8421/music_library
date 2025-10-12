@@ -406,7 +406,10 @@ defmodule MusicLibraryWeb.RecordComponents do
         role="list"
         class="mt-4 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 sm:gap-x-6"
       >
-        <li :for={{record, similarity} <- @similar_records} class="relative group">
+        <li
+          :for={%{record: record, similarity: similarity} <- @similar_records}
+          class="relative group"
+        >
           <div class="overflow-hidden rounded-lg bg-zinc-100 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:ring-offset-2 focus-within:ring-offset-zinc-100">
             <.record_cover
               record={record}
@@ -422,6 +425,7 @@ defmodule MusicLibraryWeb.RecordComponents do
             </button>
 
             <span class="absolute top-2 right-2 rounded-full px-2 py-0.5 text-xs font-medium bg-zinc-900/75 text-white backdrop-blur-sm">
+              {Float.round(100 - similarity * 100, 0)}%
             </span>
           </div>
 

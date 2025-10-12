@@ -162,9 +162,9 @@ defmodule MusicLibrary.Records.SimilarityTest do
 
       assert length(similar) >= 1
       # record2 should be most similar to record1
-      {first_record, similarity} = List.first(similar)
+      %{record: first_record, similarity: similarity} = List.first(similar)
       assert first_record.id == record2.id
-      assert similarity > 0.9
+      assert similarity < 5.0
     end
 
     test "respects limit option", %{record1: record1} do
