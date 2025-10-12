@@ -9,6 +9,7 @@ defmodule MusicLibrary.Records.Similarity do
   alias MusicLibrary.Records
   alias MusicLibrary.Records.{Record, RecordEmbedding}
   alias MusicLibrary.Repo
+  alias MusicLibrary.Worker.GenerateRecordEmbedding
 
   @doc """
   Generates a text representation of a record for embedding generation.
@@ -108,6 +109,29 @@ defmodule MusicLibrary.Records.Similarity do
       on_conflict: {:replace, [:embedding, :text_representation, :updated_at]},
       conflict_target: :record_id
     )
+  end
+
+  def generate_embedding_async(record) do
+    meta = %{title: record.title, artists: Enum.map(record.artists, & &1.name)}
+    params = %{record_id: record.id}
+
+    params
+    |> GenerateRecordEmbedding.new(meta: meta)
+    |> Oban.insert!()
+  end
+
+  def generate_all_embeddings_async do
+    Record
+    |> Repo.all()
+    |> Enum.map(fn record ->
+      meta = %{title: record.title, artists: Enum.map(record.artists, & &1.name)}
+      params = %{record_id: record.id}
+
+      params
+      |> GenerateRecordEmbedding.new(meta: meta)
+    end)
+    |> Oban.insert_all()
+    |> Enum.count()
   end
 
   # Private functions
