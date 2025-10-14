@@ -117,7 +117,7 @@ defmodule MusicLibraryWeb.Components.Release do
         phx-target={@myself}
         phx-disable-with={gettext("Scrobbling...")}
       >
-        {gettext("Scrobble disc")}
+        {medium_scrobble_label(@medium.format)}
       </.button>
     </div>
     <.track_list
@@ -130,6 +130,14 @@ defmodule MusicLibraryWeb.Components.Release do
       {medium_duration(@medium)}
     </p>
     """
+  end
+
+  defp medium_scrobble_label(format) do
+    if format && String.contains?(format, "Vinyl") do
+      gettext("Scrobble side")
+    else
+      gettext("Scrobble disc")
+    end
   end
 
   attr :medium_number, :integer, required: true

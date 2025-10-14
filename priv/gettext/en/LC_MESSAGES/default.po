@@ -1474,3 +1474,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Similar Records"
 msgstr ""
+
+#: lib/music_library_web/components/release.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Scrobble side"
+msgstr ""
