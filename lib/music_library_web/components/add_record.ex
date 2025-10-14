@@ -166,6 +166,17 @@ defmodule MusicLibraryWeb.Components.AddRecord do
   end
 
   @impl true
+
+  def handle_event("search", %{"mb_query" => ""}, socket) do
+    {:noreply,
+     socket
+     |> assign(:offset, 0)
+     |> assign(:release_groups_count, 0)
+     |> assign(:release_groups_total_count, 0)
+     |> stream(:release_groups, [], reset: true)
+     |> assign(:form, to_form(%{"mb_query" => ""}))}
+  end
+
   def handle_event("search", %{"mb_query" => mb_query}, socket) do
     {:ok, result} =
       MusicBrainz.search_release_group(mb_query, limit: @batch_size, offset: 0)
