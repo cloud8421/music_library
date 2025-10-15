@@ -7,8 +7,8 @@ defmodule MusicLibrary.Records do
 
   alias MusicLibrary.Artists
   alias MusicLibrary.Assets
-  alias MusicLibrary.Records.{ArtistRecord, Record, SearchIndex, SearchParser}
   alias MusicLibrary.{BackgroundRepo, Repo, Worker}
+  alias MusicLibrary.Records.{ArtistRecord, Record, SearchIndex, SearchParser}
 
   def essential_fields do
     SearchIndex.__schema__(:fields)

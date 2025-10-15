@@ -11,8 +11,8 @@ defmodule MusicLibrary.Search do
   import Ecto.Query, warn: false
 
   alias MusicLibrary.Artists.ArtistInfo
-  alias MusicLibrary.Records.ArtistRecord
   alias MusicLibrary.{Collection, Repo, Wishlist}
+  alias MusicLibrary.Records.ArtistRecord
 
   @doc """
   Performs a universal search across all entity types.

@@ -3,9 +3,8 @@ defmodule MusicLibrary.Artists do
 
   alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibrary.Assets
+  alias MusicLibrary.{BackgroundRepo, Repo, Worker}
   alias MusicLibrary.Records.{ArtistRecord, Record}
-  alias MusicLibrary.Repo
-  alias MusicLibrary.{BackgroundRepo, Worker}
 
   def get_artist!(musicbrainz_id) do
     q =

@@ -6,8 +6,8 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
 
   import MusicLibraryWeb.ArtistComponents, only: [artist_image: 1]
 
-  alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibrary.{Artists, Records}
+  alias MusicLibrary.Artists.ArtistInfo
 
   attr :country, :map, required: true
 
