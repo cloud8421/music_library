@@ -62,6 +62,20 @@ jobs:
         run: mix deps.get
       - name: 📦 Check unused dependencies
         run: mix deps.unlock --check-unused
+      - name: 🔮 Compile for DEV
+        run: mix compile
+        env:
+          MIX_ENV: dev
+          # Half the number of available cores
+          # See https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories
+          MIX_OS_DEPS_COMPILE_PARTITION_COUNT: 2
+      - name: 🔮 Compile for TEST
+        run: mix compile
+        env:
+          MIX_ENV: test
+          # Half the number of available cores
+          # See https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories
+          MIX_OS_DEPS_COMPILE_PARTITION_COUNT: 2
       - name: 🌍 Check translations
         run: mix gettext.extract --check-up-to-date
       - name: 💅 Check formatting
