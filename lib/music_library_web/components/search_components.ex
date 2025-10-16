@@ -226,6 +226,12 @@ defmodule MusicLibraryWeb.SearchComponents do
       <p class="text-zinc-600 dark:text-zinc-400">
         {gettext("No results found for '%{query}'", query: @query)}
       </p>
+      <.link
+        class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate"
+        navigate={~p"/wishlist/import?#{[import_query: @query]}"}
+      >
+        {gettext("Wanna search for '%{query}' wishlist instead?", query: @query)}
+      </.link>
     </div>
     """
   end

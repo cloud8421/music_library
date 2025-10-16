@@ -22,6 +22,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
     {:ok,
      socket
      |> assign(current_section: :wishlist)
+     |> assign(:import_query, "")
      |> assign(:current_date, current_date)}
   end
 
@@ -31,9 +32,12 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
   end
 
   defp apply_action(socket, :import, params) do
+    import_query = params["import_query"] || ""
+
     socket
     |> apply_fallback_index(params)
     |> assign(:page_title, gettext("Add new Record · Wishlist"))
+    |> assign(:import_query, import_query)
     |> assign(:record, nil)
   end
 
