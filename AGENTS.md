@@ -125,6 +125,7 @@ mix ecto.rollback
 YOU'RE NOT ALLOWED TO TOUCH PRODUCTION IN ANY POSSIBLE WAY.
 
 Available commands for monitoring (view only):
+
 - `mise run prod:backup` - Backup the production database to local dev env
 - `mise run prod:prune-backups` - Remove locally downloaded production database backups
 - `mise run prod:test` - Run HTTP tests against production
@@ -137,10 +138,12 @@ Deployment is handled via Coolify using a Docker Compose strategy.
 ### Database Structure
 
 The application uses SQLite with two databases:
+
 - Main database (`Repo`): Primary data storage
 - Background database (`BackgroundRepo`): For background jobs and workers
 
 Key tables and schemas:
+
 - `records` table stores all record data with embedded JSON for artists
 - `artist_infos` table stores additional artist metadata (bio, images, etc.)
 - `artist_records` view provides normalized artist-record relationships
@@ -214,10 +217,7 @@ Run the following before commits to ensure code quality:
 
 ```sh
 # Run static checks to ensure code quality
-mix do format --check-formatted, credo --strict, gettext.extract --check-up-to-date
-
-# Or use the mise task
-mise run dev:lint
+mise run dev:precommit
 ```
 
 To set up a pre-commit hook:
@@ -313,12 +313,16 @@ usage rules to understand the correct patterns, conventions, and best practices.
 <!-- usage-rules-header-end -->
 
 <!-- igniter-start -->
+
 ## igniter usage
+
 _A code generation and project patching framework_
 
 [igniter usage rules](deps/igniter/usage-rules.md)
+
 <!-- igniter-end -->
 <!-- usage_rules-start -->
+
 ## usage_rules usage
 _A dev tool for Elixir projects to gather LLM usage rules from dependencies_
 
