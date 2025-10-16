@@ -68,7 +68,7 @@ COPY assets assets
 RUN npm ci --prefix assets
 
 # Compile the release and assets
-RUN mix do compile, assets.deploy
+RUN mix do compile + assets.deploy
 
 # Make sure stacktraces are complete
 RUN mix sentry.package_source_code
