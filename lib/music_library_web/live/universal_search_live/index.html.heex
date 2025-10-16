@@ -21,73 +21,12 @@
         />
       </div>
     </form>
-    
-<!-- Empty state -->
+
     <.empty_state :if={@search_query == ""} />
-    
-<!-- No results -->
+
     <.no_results :if={@search_query != "" and @total_results == 0} query={@search_query} />
-    
-<!-- Search results -->
+
     <div :if={@total_results > 0} class="max-h-148 md:max-h-164 overflow-y-auto">
-      <!-- Collection results -->
-      <.search_result_group
-        :if={length(@search_results.collection) > 0}
-        title="Collection"
-        count={length(@search_results.collection)}
-        total_count={@search_counts.collection_count}
-      >
-        <.search_result_record
-          :for={record <- @search_results.collection}
-          record={record}
-          type={:collection}
-          phx-click="navigate_to_record"
-          phx-value-id={record.id}
-          phx-value-type="collection"
-          phx-target={@myself}
-        />
-        <:actions>
-          <.view_all_button
-            :if={@search_counts.collection_count > length(@search_results.collection)}
-            count={@search_counts.collection_count}
-            target="collection"
-            phx-click="navigate_to_collection"
-            phx-value-query={@search_query}
-            phx-target={@myself}
-          />
-        </:actions>
-      </.search_result_group>
-      
-<!-- Wishlist results -->
-      <.search_result_group
-        :if={length(@search_results.wishlist) > 0}
-        title="Wishlist"
-        count={length(@search_results.wishlist)}
-        total_count={@search_counts.wishlist_count}
-        class="border-t border-zinc-200 dark:border-zinc-700"
-      >
-        <.search_result_record
-          :for={record <- @search_results.wishlist}
-          record={record}
-          type={:wishlist}
-          phx-click="navigate_to_record"
-          phx-value-id={record.id}
-          phx-value-type="wishlist"
-          phx-target={@myself}
-        />
-        <:actions>
-          <.view_all_button
-            :if={@search_counts.wishlist_count > length(@search_results.wishlist)}
-            count={@search_counts.wishlist_count}
-            target="wishlist"
-            phx-click="navigate_to_wishlist"
-            phx-value-query={@search_query}
-            phx-target={@myself}
-          />
-        </:actions>
-      </.search_result_group>
-      
-<!-- Artists results -->
       <.search_result_group
         :if={length(@search_results.artists) > 0}
         title="Artists"
@@ -105,8 +44,59 @@
         />
       </.search_result_group>
     </div>
-    
-<!-- Footer with keyboard shortcuts -->
+    <.search_result_group
+      :if={length(@search_results.collection) > 0}
+      title="Collection"
+      count={length(@search_results.collection)}
+      total_count={@search_counts.collection_count}
+    >
+      <.search_result_record
+        :for={record <- @search_results.collection}
+        record={record}
+        type={:collection}
+        phx-click="navigate_to_record"
+        phx-value-id={record.id}
+        phx-value-type="collection"
+        phx-target={@myself}
+      />
+      <:actions>
+        <.view_all_button
+          :if={@search_counts.collection_count > length(@search_results.collection)}
+          count={@search_counts.collection_count}
+          target="collection"
+          phx-click="navigate_to_collection"
+          phx-value-query={@search_query}
+          phx-target={@myself}
+        />
+      </:actions>
+    </.search_result_group>
+    <.search_result_group
+      :if={length(@search_results.wishlist) > 0}
+      title="Wishlist"
+      count={length(@search_results.wishlist)}
+      total_count={@search_counts.wishlist_count}
+      class="border-t border-zinc-200 dark:border-zinc-700"
+    >
+      <.search_result_record
+        :for={record <- @search_results.wishlist}
+        record={record}
+        type={:wishlist}
+        phx-click="navigate_to_record"
+        phx-value-id={record.id}
+        phx-value-type="wishlist"
+        phx-target={@myself}
+      />
+      <:actions>
+        <.view_all_button
+          :if={@search_counts.wishlist_count > length(@search_results.wishlist)}
+          count={@search_counts.wishlist_count}
+          target="wishlist"
+          phx-click="navigate_to_wishlist"
+          phx-value-query={@search_query}
+          phx-target={@myself}
+        />
+      </:actions>
+    </.search_result_group>
     <.results_footer total_results={@total_results} />
   </.structured_modal>
 </div>
