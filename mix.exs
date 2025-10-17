@@ -135,6 +135,7 @@ defmodule MusicLibrary.MixProject do
         "shellcheck",
         "credo --strict",
         "gettext.extract --check-up-to-date",
+        "format --check-formatted",
         "deps.unlock --unused",
         "test"
       ],
