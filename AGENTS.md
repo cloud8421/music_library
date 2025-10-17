@@ -313,16 +313,12 @@ usage rules to understand the correct patterns, conventions, and best practices.
 <!-- usage-rules-header-end -->
 
 <!-- igniter-start -->
-
 ## igniter usage
-
 _A code generation and project patching framework_
 
 [igniter usage rules](deps/igniter/usage-rules.md)
-
 <!-- igniter-end -->
 <!-- usage_rules-start -->
-
 ## usage_rules usage
 _A dev tool for Elixir projects to gather LLM usage rules from dependencies_
 
