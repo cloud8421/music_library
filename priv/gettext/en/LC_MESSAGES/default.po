@@ -1402,7 +1402,6 @@ msgstr ""
 msgid "90d"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex
 #: lib/music_library_web/live/scrobble_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Scrobble"
@@ -1483,4 +1482,9 @@ msgstr ""
 #: lib/music_library_web/components/search_components.ex
 #, elixir-autogen, elixir-format
 msgid "Wanna search for '%{query}' wishlist instead?"
+msgstr ""
+
+#: lib/music_library_web/components/layouts/app.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Scrobble Anything"
 msgstr ""

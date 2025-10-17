@@ -35,15 +35,6 @@
             />
             {gettext("Wishlist")}
           </.nav_link>
-          <.nav_link route={~p"/scrobble"} section={:scrobble} current_section={@current_section}>
-            <.icon
-              name="hero-play"
-              class="max-sm:hidden h-4 w-4 mr-2"
-              aria-hidden="true"
-              data-slot="icon"
-            />
-            {gettext("Scrobble")}
-          </.nav_link>
         </div>
       </div>
       <div class="flex items-center">
@@ -61,6 +52,15 @@
                 />
               </.button>
             </:toggle>
+            <.dropdown_link href={~p"/scrobble"}>
+              <.icon
+                name="hero-play"
+                class="h-4 w-4 mr-2"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+              {gettext("Scrobble Anything")}
+            </.dropdown_link>
             <.dropdown_link href={~p"/scrobbled-tracks"}>
               <.icon
                 name="hero-musical-note"
