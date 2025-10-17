@@ -46,74 +46,83 @@
           </.nav_link>
         </div>
       </div>
-      <div class="flex space-x-2 md:space-x-4 items-center">
-        <.universal_search_trigger />
-        <.dropdown placement="bottom-end">
-          <:toggle>
-            <span class="sr-only">{gettext("Actions")}</span>
-            <.icon
-              name="hero-ellipsis-vertical"
-              class="-mt-1 h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
-              aria-hidden="true"
-              data-slot="icon"
-            />
-          </:toggle>
-          <.dropdown_link href={~p"/scrobbled-tracks"}>
-            <.icon
-              name="hero-musical-note"
-              class="h-4 w-4 mr-2"
-              aria-hidden="true"
-              data-slot="icon"
-            />
-            {gettext("Scrobbled Tracks")}
-          </.dropdown_link>
-          <.dropdown_link href={~p"/scrobble-rules"}>
-            <.icon
-              name="hero-adjustments-horizontal"
-              class="h-4 w-4 mr-2"
-              aria-hidden="true"
-              data-slot="icon"
-            />
-            {gettext("Scrobble Rules")}
-          </.dropdown_link>
-          <.dropdown_link href={~p"/online-store-templates"}>
-            <.icon
-              name="hero-building-storefront"
-              class="h-4 w-4 mr-2"
-              aria-hidden="true"
-              data-slot="icon"
-            />
-            {gettext("Online Store Templates")}
-          </.dropdown_link>
-          <.dropdown_link href={~p"/backup"}>
-            <.icon
-              name="hero-archive-box-arrow-down"
-              class="h-4 w-4 mr-2"
-              aria-hidden="true"
-              data-slot="icon"
-            />
-            {gettext("Backup")}
-          </.dropdown_link>
-          <.dropdown_separator />
-          <.dropdown_link href={~p"/dev/dashboard"}>
-            <.icon name="hero-chart-bar" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
-            {gettext("Live Dashboard")}
-          </.dropdown_link>
-          <.dropdown_link href={~p"/dev/oban"}>
-            <.icon name="hero-cog" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
-            {gettext("Oban")}
-          </.dropdown_link>
-          <.dropdown_separator />
-          <.dropdown_link href={~p"/login"}>
-            <.icon
-              name="hero-arrow-left-start-on-rectangle"
-              class="h-4 w-4 mr-2"
-              aria-hidden="true"
-              data-slot="icon"
-            />
-            {gettext("Logout")}
-          </.dropdown_link>
-        </.dropdown>
+      <div class="flex items-center">
+        <.button_group>
+          <.universal_search_trigger />
+          <.dropdown placement="bottom-end">
+            <:toggle>
+              <.button variant="soft">
+                <span class="sr-only">{gettext("Actions")}</span>
+                <.icon
+                  name="hero-ellipsis-vertical"
+                  class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+              </.button>
+            </:toggle>
+            <.dropdown_link href={~p"/scrobbled-tracks"}>
+              <.icon
+                name="hero-musical-note"
+                class="h-4 w-4 mr-2"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+              {gettext("Scrobbled Tracks")}
+            </.dropdown_link>
+            <.dropdown_link href={~p"/scrobble-rules"}>
+              <.icon
+                name="hero-adjustments-horizontal"
+                class="h-4 w-4 mr-2"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+              {gettext("Scrobble Rules")}
+            </.dropdown_link>
+            <.dropdown_link href={~p"/online-store-templates"}>
+              <.icon
+                name="hero-building-storefront"
+                class="h-4 w-4 mr-2"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+              {gettext("Online Store Templates")}
+            </.dropdown_link>
+            <.dropdown_link href={~p"/backup"}>
+              <.icon
+                name="hero-archive-box-arrow-down"
+                class="h-4 w-4 mr-2"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+              {gettext("Backup")}
+            </.dropdown_link>
+            <.dropdown_separator />
+            <.dropdown_link href={~p"/dev/dashboard"}>
+              <.icon
+                name="hero-chart-bar"
+                class="h-4 w-4 mr-2"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+              {gettext("Live Dashboard")}
+            </.dropdown_link>
+            <.dropdown_link href={~p"/dev/oban"}>
+              <.icon name="hero-cog" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
+              {gettext("Oban")}
+            </.dropdown_link>
+            <.dropdown_separator />
+            <.dropdown_link href={~p"/login"}>
+              <.icon
+                name="hero-arrow-left-start-on-rectangle"
+                class="h-4 w-4 mr-2"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+              {gettext("Logout")}
+            </.dropdown_link>
+          </.dropdown>
+        </.button_group>
       </div>
     </div>
   </div>

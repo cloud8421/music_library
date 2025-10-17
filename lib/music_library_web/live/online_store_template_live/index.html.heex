@@ -53,15 +53,15 @@
         <div class="flex items-center">
           <.dropdown id={"actions-#{template.id}"} placement="bottom-end">
             <:toggle>
-              <div>
+              <.button variant="ghost">
                 <span class="sr-only">{gettext("Actions")}</span>
                 <.icon
                   name="hero-ellipsis-vertical"
-                  class="-mt-1 h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                  class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
                   aria-hidden="true"
                   data-slot="icon"
                 />
-              </div>
+              </.button>
             </:toggle>
             <.dropdown_button phx-click="toggle-enabled" phx-value-id={template.id}>
               {if template.enabled,

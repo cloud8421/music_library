@@ -102,7 +102,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                 </span>
                 <.icon
                   name="hero-banknotes"
-                  class="-mt-1 h-4 w-4"
+                  class="h-4 w-4"
                   aria-hidden="true"
                   data-slot="icon"
                 />
@@ -113,7 +113,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                 <span class="sr-only">
                   {gettext("Wishlisted on")}
                 </span>
-                <.icon name="hero-star" class="-mt-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
+                <.icon name="hero-star" class="h-4 w-4" aria-hidden="true" data-slot="icon" />
                 {Records.Record.format_as_date(record.inserted_at)}
               </span>
             </p>
@@ -128,31 +128,32 @@ defmodule MusicLibraryWeb.RecordComponents do
               <span class="sr-only">
                 {gettext("Purchased on")}
               </span>
-              <.icon name="hero-banknotes" class="-mt-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
+              <.icon name="hero-banknotes" class="h-4 w-4" aria-hidden="true" data-slot="icon" />
               {Records.Record.format_as_date(record.purchased_at)}
             </p>
             <p :if={!record.purchased_at} class="text-xs leading-6 text-zinc-900 dark:text-zinc-300">
               <span class="sr-only">
                 {gettext("Wishlisted on")}
               </span>
-              <.icon name="hero-star" class="-mt-1 h-4 w-4" aria-hidden="true" data-slot="icon" />
+              <.icon name="hero-star" class="h-4 w-4" aria-hidden="true" data-slot="icon" />
               {Records.Record.format_as_date(record.inserted_at)}
             </p>
           </div>
           <.dropdown id={"actions-#{record.id}"} placement="bottom-end">
             <:toggle>
-              <div
+              <.button
+                variant="ghost"
                 phx-click={JS.toggle_class("pointer-events-none", to: "#records > li")}
                 phx-click-away={JS.remove_class("pointer-events-none", to: "#records > li")}
               >
                 <span class="sr-only">{gettext("Actions")}</span>
                 <.icon
                   name="hero-ellipsis-vertical"
-                  class="-mt-1 h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                  class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
                   aria-hidden="true"
                   data-slot="icon"
                 />
-              </div>
+              </.button>
             </:toggle>
             <.focus_wrap id={"actions-#{record.id}-focus-wrap"} class="pointer-events-auto">
               <.dropdown_link id={"actions-#{record.id}-edit"} patch={@record_edit_path.(record)}>
@@ -246,15 +247,17 @@ defmodule MusicLibraryWeb.RecordComponents do
             <p class="pointer-events-none mt-2 block truncate text-sm font-medium text-zinc-900 dark:text-zinc-300">
               {record.title}
             </p>
-            <.dropdown id={"actions-#{record.id}"} placement="bottom-end" class="mt-2">
+            <.dropdown id={"actions-#{record.id}"} placement="bottom-end">
               <:toggle>
-                <span class="sr-only">{gettext("Actions")}</span>
-                <.icon
-                  name="hero-ellipsis-vertical"
-                  class="-mt-1 h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
-                  aria-hidden="true"
-                  data-slot="icon"
-                />
+                <.button variant="ghost" class="mt-2">
+                  <span class="sr-only">{gettext("Actions")}</span>
+                  <.icon
+                    name="hero-ellipsis-vertical"
+                    class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                    aria-hidden="true"
+                    data-slot="icon"
+                  />
+                </.button>
               </:toggle>
               <.focus_wrap id={"actions-#{record.id}-focus-wrap"}>
                 <.dropdown_link id={"actions-#{record.id}-edit"} patch={@record_edit_path.(record)}>

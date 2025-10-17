@@ -30,7 +30,7 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
     </script>
     <.button
       id="universal-search-button"
-      variant="ghost"
+      variant="soft"
       title={gettext("Search (Cmd/Ctrl+K)")}
       phx-click="open_modal"
       phx-target="#universal-search"

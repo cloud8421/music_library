@@ -69,7 +69,7 @@ defmodule MusicLibraryWeb.Components.Release do
               <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
                 <.icon
                   name="hero-exclamation-triangle"
-                  class="-mt-1 mr-1 h-5 w-5"
+                  class="h-5 w-5"
                   aria-hidden="true"
                   data-slot="icon"
                 />

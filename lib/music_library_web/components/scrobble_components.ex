@@ -13,7 +13,7 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
       phx-click={JS.push("refresh_lastfm_feed")}
     >
       <span class="sr-only">{gettext("Refresh LastFm Feed")}</span>
-      <.icon name="hero-arrow-path" class="-mt-1 h-5 w-5" aria-hidden="true" data-slot="icon" />
+      <.icon name="hero-arrow-path" class="h-5 w-5" aria-hidden="true" data-slot="icon" />
     </button>
     """
   end

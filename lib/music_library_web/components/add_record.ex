@@ -95,7 +95,7 @@ defmodule MusicLibraryWeb.Components.AddRecord do
             <span class="sr-only">{gettext("Choose which format to import")}</span>
             <.icon
               name="hero-plus"
-              class="-mt-1 h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+              class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
               aria-hidden="true"
               data-slot="icon"
             />

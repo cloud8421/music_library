@@ -186,7 +186,7 @@ defmodule MusicLibraryWeb.StatsComponents do
                 </span>
                 <.icon
                   name="hero-banknotes"
-                  class="-mt-1 h-4 w-4"
+                  class="h-4 w-4"
                   aria-hidden="true"
                   data-slot="icon"
                 />
