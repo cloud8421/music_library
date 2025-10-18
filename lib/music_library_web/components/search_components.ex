@@ -230,7 +230,7 @@ defmodule MusicLibraryWeb.SearchComponents do
         class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate"
         navigate={~p"/wishlist/import?#{[import_query: @query]}"}
       >
-        {gettext("Wanna search for '%{query}' wishlist instead?", query: @query)}
+        {gettext("Add a record instead", query: @query)}
       </.link>
     </div>
     """
