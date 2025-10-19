@@ -152,7 +152,7 @@ defmodule MusicLibraryWeb.Components.Release do
         class="contents leading-5 text-zinc-700 dark:text-zinc-300 list-none"
       >
         <div class="table-row">
-          <span class="table-cell text-xs text-right pr-1">
+          <span class="table-cell text-xs text-right pr-1 text-nowrap">
             {track.number || track.position}
           </span>
           <span class="table-cell text-xs md:text-sm font-medium leading-8 w-full">
