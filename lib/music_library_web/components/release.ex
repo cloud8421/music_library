@@ -5,6 +5,7 @@ defmodule MusicLibraryWeb.Components.Release do
   alias MusicBrainz.Release
   alias MusicLibrary.ScrobbleActivity
   alias MusicLibraryWeb.Duration
+  alias Phoenix.LiveView.AsyncResult
 
   def open(id), do: Fluxon.open_dialog(id)
 
@@ -13,6 +14,7 @@ defmodule MusicLibraryWeb.Components.Release do
     {:ok,
      socket
      |> assign(:can_scrobble?, ScrobbleActivity.can_scrobble?())
+     |> assign(:release_with_tracks, AsyncResult.loading())
      |> assign(:already_scrobbled, false)}
   end
 
@@ -45,7 +47,7 @@ defmodule MusicLibraryWeb.Components.Release do
         <div class="mt-6 flex justify-between items-center gap-4">
           <h3 class="text-lg font-semibold text-zinc-700 dark:text-zinc-300">{gettext("Tracks")}</h3>
           <.button
-            :if={@can_scrobble?}
+            :if={@can_scrobble? && @release_with_tracks.ok?}
             size="sm"
             disabled={@already_scrobbled}
             phx-click="scrobble_release"
@@ -62,8 +64,10 @@ defmodule MusicLibraryWeb.Components.Release do
         <div :if={@release_with_tracks} class="space-y-4 mt-4">
           <.async_result :let={release_with_tracks} assign={@release_with_tracks}>
             <:loading>
-              <span class="sr-only">{gettext("Loading release with tracks")}</span>
-              <.loading />
+              <div class="flex items-center justify-center mt-48">
+                <span class="sr-only">{gettext("Loading release with tracks")}</span>
+                <.loading />
+              </div>
             </:loading>
             <:failed :let={_failure}>
               <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
@@ -176,65 +180,63 @@ defmodule MusicLibraryWeb.Components.Release do
     """
   end
 
+  defguardp release_loaded?(assigns) when assigns.release_with_tracks.ok?
+
   @impl true
-  def handle_event("scrobble_release", _params, socket) do
-    release_with_tracks_async_result =
-      socket.assigns.release_with_tracks
+  def handle_event("scrobble_release", _params, socket) when release_loaded?(socket.assigns) do
+    release_with_tracks = socket.assigns.release_with_tracks.result
 
-    if release_with_tracks =
-         release_with_tracks_async_result && release_with_tracks_async_result.result do
-      case ScrobbleActivity.scrobble_release(release_with_tracks, finished_at: DateTime.utc_now()) do
-        {:ok, _} ->
-          send_update_after(socket.assigns.myself, %{already_scrobbled: false}, 3000)
+    case ScrobbleActivity.scrobble_release(release_with_tracks, finished_at: DateTime.utc_now()) do
+      {:ok, _} ->
+        send_update_after(socket.assigns.myself, %{already_scrobbled: false}, 3000)
 
-          {:noreply,
-           socket
-           |> assign(:already_scrobbled, true)
-           |> put_toast(:info, gettext("Release scrobbled successfully"))}
+        {:noreply,
+         socket
+         |> assign(:already_scrobbled, true)
+         |> put_toast(:info, gettext("Release scrobbled successfully"))}
 
-        {:error, reason} ->
-          {:noreply,
-           socket
-           |> put_toast(
-             :error,
-             gettext("Error scrobbling release") <> "," <> inspect(reason)
-           )}
-      end
-    else
-      {:noreply, socket |> put_toast(:error, gettext("Error scrobbling release"))}
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_toast(
+           :error,
+           gettext("Error scrobbling release") <> "," <> inspect(reason)
+         )}
     end
   end
 
-  def handle_event("scrobble_medium", %{"number" => number}, socket) do
-    release_with_tracks_async_result =
-      socket.assigns.release_with_tracks
+  def handle_event("scrobble_release", _params, socket) do
+    {:noreply, socket |> put_toast(:error, gettext("Error scrobbling release"))}
+  end
 
+  def handle_event("scrobble_medium", %{"number" => number}, socket)
+      when release_loaded?(socket.assigns) do
+    release_with_tracks = socket.assigns.release_with_tracks.result
     number = String.to_integer(number)
 
-    if release_with_tracks =
-         release_with_tracks_async_result && release_with_tracks_async_result.result do
-      case ScrobbleActivity.scrobble_medium(number, release_with_tracks,
-             finished_at: DateTime.utc_now()
-           ) do
-        {:ok, _} ->
-          send_update_after(socket.assigns.myself, %{already_scrobbled: false}, 3000)
+    case ScrobbleActivity.scrobble_medium(number, release_with_tracks,
+           finished_at: DateTime.utc_now()
+         ) do
+      {:ok, _} ->
+        send_update_after(socket.assigns.myself, %{already_scrobbled: false}, 3000)
 
-          {:noreply,
-           socket
-           |> assign(:already_scrobbled, true)
-           |> put_toast(:info, gettext("Disc scrobbled successfully"))}
+        {:noreply,
+         socket
+         |> assign(:already_scrobbled, true)
+         |> put_toast(:info, gettext("Disc scrobbled successfully"))}
 
-        {:error, reason} ->
-          {:noreply,
-           socket
-           |> put_toast(
-             :error,
-             gettext("Error scrobbling disc") <> "," <> inspect(reason)
-           )}
-      end
-    else
-      {:noreply, socket |> put_toast(:error, gettext("Error scrobbling disc"))}
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_toast(
+           :error,
+           gettext("Error scrobbling disc") <> "," <> inspect(reason)
+         )}
     end
+  end
+
+  def handle_event("scrobble_medium", _params, socket) do
+    {:noreply, socket |> put_toast(:error, gettext("Error scrobbling disc"))}
   end
 
   defp medium_duration(medium) do
