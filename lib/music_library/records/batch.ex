@@ -7,17 +7,15 @@ defmodule MusicLibrary.Records.Batch do
 
   require Logger
 
-  def refresh_musicbrainz_data(opts \\ []) do
+  def refresh_musicbrainz_data do
     run_on_all_records(fn record ->
-      sleep = Keyword.get(opts, :sleep, 2000)
-      Records.refresh_musicbrainz_data(record)
-      Process.sleep(sleep)
+      Records.refresh_musicbrainz_data_async(record)
     end)
   end
 
-  def refresh_musicbrainz_data_async do
+  def generate_embeddings do
     run_on_all_records(fn record ->
-      Records.refresh_musicbrainz_data_async(record)
+      Records.generate_embedding_async(record)
     end)
   end
 
