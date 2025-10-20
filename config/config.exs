@@ -59,7 +59,7 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "4.1.14",
+  version: "4.1.15",
   music_library: [
     args: ~w(
       --input=assets/css/app.css
