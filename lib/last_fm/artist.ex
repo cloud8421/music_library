@@ -15,6 +15,7 @@ defmodule LastFm.Artist do
           image_data_hash: String.t() | nil
         }
 
+  @primary_key false
   embedded_schema do
     field :musicbrainz_id, :string
     field :name, :string

@@ -7,6 +7,7 @@ defmodule LastFm.Album do
           musicbrainz_id: String.t(),
           title: String.t()
         }
+  @primary_key false
   embedded_schema do
     field :musicbrainz_id, :string
     field :title, :string
