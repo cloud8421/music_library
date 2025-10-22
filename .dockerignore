@@ -46,11 +46,15 @@ erl_crash.dump
 # Dev databases
 /data
 
+/.github/
+
+README.md
 /docs
+/.claude/
+AGENTS.md
+CLAUDE.md
+*.livemd
 
 # Dev tooling and environment
 /mise.toml
 /mise.local.toml
-
-/.claude/
-/.github/
