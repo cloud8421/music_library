@@ -413,11 +413,111 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 - Read the docs and options fully before using tasks
 
 ## Testing
+
+### Running Tests
 - Run tests in a specific file with `mix test test/my_test.exs` and a specific test with the line number `mix test path/to/test.exs:123`
 - Limit the number of failed tests with `mix test --max-failures n`
 - Use `@tag` to tag specific tests, and `mix test --only tag` to run only those tests
 - Use `assert_raise` for testing expected exceptions: `assert_raise ArgumentError, fn -> invalid_function() end`
 - Use `mix help test` to for full documentation on running tests
+
+### PhoenixTest Guidelines
+- **Always** use PhoenixTest for LiveView testing instead of `Phoenix.LiveViewTest` functions
+- PhoenixTest provides a clean, chainable API for testing web interactions
+- Import test helpers with `use MusicLibraryWeb.ConnCase` (ConnCase already includes PhoenixTest)
+- **Never** import `Phoenix.LiveViewTest` in test files - PhoenixTest replaces it
+
+### PhoenixTest Patterns
+
+#### Navigation and Assertions
+- Use `visit(conn, path)` to navigate to pages
+- Chain assertions using `|>` for cleaner test flow
+- Use `assert_has(selector)` or `assert_has(selector, text: "expected")` to verify element presence
+- Use `refute_has(selector)` or `refute_has(selector, text: "unexpected")` to verify element absence
+
+#### Interactions
+- Use `click_button("Button Text")` instead of `element("#id") |> render_click()`
+- Use `fill_in("Label", with: "value")` instead of `form("#id", params) |> render_change()`
+- For accessibility: ensure form inputs have associated labels (use `<label for="input-id">` or `.sr-only` class for screen-reader-only labels)
+
+#### Common Patterns
+
+**Opening modals and interacting:**
+```elixir
+conn
+|> visit(~p"/collection")
+|> click_button("Search (Cmd/Ctrl+K)")
+|> assert_has("#modal-id")
+|> fill_in("Search", with: "query")
+|> assert_has("p", text: "Expected result")
+```
+
+**Testing async operations:**
+```elixir
+conn
+|> visit(~p"/path")
+|> unwrap(&render_async/1)  # Wait for async assigns to load
+|> assert_has("span", text: "Data")
+```
+
+**Negative assertions:**
+```elixir
+conn
+|> visit(~p"/path")
+|> refute_has("#hidden-element")
+|> click_button("Clear")
+|> refute_has("p", text: "Should not appear")
+```
+
+#### Anti-Patterns to Avoid
+
+**Never do this (old style):**
+```elixir
+{:ok, view, _html} = live(conn, ~p"/path")
+view |> element("#button") |> render_click()
+html = render(view)
+assert html =~ "text"
+```
+
+**Always do this (PhoenixTest style):**
+```elixir
+conn
+|> visit(~p"/path")
+|> click_button("Button Text")
+|> assert_has("p", text: "text")
+```
+
+**Never access raw HTML:**
+```elixir
+# Bad: testing raw HTML strings
+html = render(view)
+assert html =~ "universal-search-root"
+
+# Good: testing semantic elements
+conn
+|> visit(~p"/path")
+|> assert_has("#universal-search-root")
+```
+
+**Never use form helpers directly:**
+```elixir
+# Bad: using form/render_change
+view
+|> form("#universal-search form", %{query: "search"})
+|> render_change()
+
+# Good: using fill_in
+conn
+|> visit(~p"/path")
+|> fill_in("Search", with: "search")
+```
+
+### Test Organization
+- Keep setup blocks clean and focused
+- Use descriptive test names that explain what is being tested
+- Group related tests in describe blocks
+- Chain assertions to show clear test flow and reduce boilerplate
+- Avoid storing intermediate results unless necessary
 
 ## Debugging
 
