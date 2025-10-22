@@ -3,6 +3,7 @@ defmodule MusicLibraryWeb.Router do
 
   import MusicLibraryWeb.Auth, only: [require_logged_in: 2, require_api_token: 2]
   import Oban.Web.Router
+  import Lotus.Web.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -100,6 +101,8 @@ defmodule MusicLibraryWeb.Router do
         ecto_repos: [MusicLibrary.Repo, MusicLibrary.BackgroundRepo]
 
       oban_dashboard "/oban"
+
+      lotus_dashboard("/lotus")
     end
   end
 end

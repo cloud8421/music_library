@@ -110,6 +110,10 @@ defmodule MusicLibrary.MixProject do
       {:oban, "~> 2.20"},
       {:oban_web, "~> 2.11"},
 
+      # Data analysis
+      {:lotus_web, "~> 0.5.2"},
+      {:lotus, "~> 0.9.2"},
+
       # Test tooling
       {:phoenix_test, "~> 0.8.0", only: :test},
       {:lazy_html, ">= 0.1.0", only: :test},
