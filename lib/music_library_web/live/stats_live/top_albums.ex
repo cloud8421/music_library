@@ -196,14 +196,6 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
   end
 
   defp cover_url(album) do
-    if LastFm.fallback_cover?(album.cover_url) do
-      payload =
-        Transform.new(hash: album.cover_hash, width: 96)
-        |> Transform.encode!()
-
-      ~p"/assets/#{payload}"
-    else
-      album.cover_url
-    end
+    ~p"/assets/#{Transform.new(hash: album.cover_hash, width: 96)}"
   end
 end
