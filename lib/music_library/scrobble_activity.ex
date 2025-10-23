@@ -75,17 +75,26 @@ defmodule MusicLibrary.ScrobbleActivity do
   end
 
   def scrobble_medium(number, release_with_tracks, {:started_at, started_at}) do
-    session_key = Secrets.get!("last_fm_session_key").value
-
-    medium =
+    medium_duration =
       release_with_tracks.media
       |> Enum.find(fn medium -> medium.number == number end)
+      |> Release.medium_duration()
 
-    {scrobbles, _finished_at} =
-      medium.tracks
-      |> to_scrobbles(release_with_tracks, started_at)
+    if medium_duration == 0 do
+      {:error, :no_duration}
+    else
+      session_key = Secrets.get!("last_fm_session_key").value
 
-    LastFm.scrobble(scrobbles, session_key)
+      medium =
+        release_with_tracks.media
+        |> Enum.find(fn medium -> medium.number == number end)
+
+      {scrobbles, _finished_at} =
+        medium.tracks
+        |> to_scrobbles(release_with_tracks, started_at)
+
+      LastFm.scrobble(scrobbles, session_key)
+    end
   end
 
   defp to_scrobbles(tracks, release_with_tracks, started_at) do
