@@ -183,15 +183,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
     track.cover_url
   end
 
-  defp track_cover_url(track, cover_hash) do
-    if LastFm.fallback_cover?(track.cover_url) do
-      payload =
-        Transform.new(hash: cover_hash, width: 96)
-        |> Transform.encode!()
-
-      ~p"/assets/#{payload}"
-    else
-      track.cover_url
-    end
+  defp track_cover_url(_track, cover_hash) do
+    ~p"/assets/#{Transform.new(hash: cover_hash, width: 96)}"
   end
 end

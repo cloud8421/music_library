@@ -155,16 +155,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     track_or_album.cover_url
   end
 
-  defp track_or_album_cover_url(track_or_album, cover_hash) do
-    if LastFm.fallback_cover?(track_or_album.cover_url) do
-      payload =
-        Transform.new(hash: cover_hash, width: 96)
-        |> Transform.encode!()
-
-      ~p"/assets/#{payload}"
-    else
-      track_or_album.cover_url
-    end
+  defp track_or_album_cover_url(_track_or_album, cover_hash) do
+    ~p"/assets/#{Transform.new(hash: cover_hash, width: 96)}"
   end
 
   defp artist_id(track_or_album, record_artist_id) do
