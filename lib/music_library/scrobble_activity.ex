@@ -32,14 +32,20 @@ defmodule MusicLibrary.ScrobbleActivity do
   end
 
   def scrobble_release(release_with_tracks, {:started_at, started_at}) do
-    session_key = Secrets.get!("last_fm_session_key").value
+    release_duration = Release.release_duration(release_with_tracks)
 
-    {scrobbles, _finished_at} =
-      release_with_tracks
-      |> MusicBrainz.Release.tracks()
-      |> to_scrobbles(release_with_tracks, started_at)
+    if release_duration == 0 do
+      {:error, :no_duration}
+    else
+      session_key = Secrets.get!("last_fm_session_key").value
 
-    LastFm.scrobble(scrobbles, session_key)
+      {scrobbles, _finished_at} =
+        release_with_tracks
+        |> MusicBrainz.Release.tracks()
+        |> to_scrobbles(release_with_tracks, started_at)
+
+      LastFm.scrobble(scrobbles, session_key)
+    end
   end
 
   def scrobble_medium(number, release_with_tracks, opts) when is_list(opts) do

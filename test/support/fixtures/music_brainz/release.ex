@@ -25,6 +25,12 @@ defmodule MusicBrainz.Fixtures.Release do
     |> JSON.decode!()
   end
 
+  def release_with_media(:marbles) do
+    Path.join([@fixtures_folder, "release_with_media - marillion - marbles.json"])
+    |> File.read!()
+    |> JSON.decode!()
+  end
+
   def release_id(name) do
     release(name) |> Map.get("id")
   end
