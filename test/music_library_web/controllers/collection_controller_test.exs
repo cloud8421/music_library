@@ -4,7 +4,7 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
   import MusicLibrary.Fixtures.Records
 
   defp create_record(_) do
-    %{record: record_with_artist("Steven Wilson")}
+    %{record: record_with_artist("Steven Wilson", %{release_date: "2025-06-21"})}
   end
 
   defp api_token do
@@ -86,6 +86,37 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
                "total" => 1,
                "limit" => 20,
                "offset" => 0,
+               "records" => [
+                 %{
+                   "id" => record.id,
+                   "artists" => ["Steven Wilson"],
+                   "title" => record.title,
+                   "cover_url" =>
+                     "http://localhost:4002/api/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjpudWxsfQ",
+                   "thumb_url" =>
+                     "http://localhost:4002/api/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjo0ODB9"
+                 }
+               ]
+             }
+    end
+  end
+
+  describe "GET /api/collection/on_this_day" do
+    setup [:create_record]
+
+    test "it requires authentication", %{conn: conn} do
+      conn = get(conn, ~p"/api/collection/on_this_day")
+
+      assert conn.status == 401
+    end
+
+    test "it returns a list of records", %{conn: conn, record: record} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{api_token()}")
+        |> get(~p"/api/collection/on_this_day?date=2025-06-21")
+
+      assert json_response(conn, 200) == %{
                "records" => [
                  %{
                    "id" => record.id,

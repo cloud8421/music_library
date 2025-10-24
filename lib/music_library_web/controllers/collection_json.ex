@@ -16,6 +16,12 @@ defmodule MusicLibraryWeb.CollectionJSON do
     }
   end
 
+  def on_this_day(%{records: records}) do
+    %{
+      records: Enum.map(records, &record/1)
+    }
+  end
+
   defp record(record) do
     %{
       id: record.id,

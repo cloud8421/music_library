@@ -15,6 +15,18 @@ defmodule MusicLibraryWeb.CollectionController do
     render(conn, :show, record: random_record)
   end
 
+  def on_this_day(conn, params) do
+    current_date =
+      case Map.get(params, "date") do
+        nil -> Date.utc_today()
+        date_string -> Date.from_iso8601!(date_string)
+      end
+
+    records_on_this_day = Collection.get_records_on_this_day(current_date)
+
+    render(conn, :on_this_day, records: records_on_this_day)
+  end
+
   def index(conn, params) do
     limit =
       params
