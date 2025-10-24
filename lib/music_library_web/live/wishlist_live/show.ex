@@ -8,13 +8,11 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
       release_summary: 1,
       artist_links: 1,
       record_colors: 1,
-      record_cover: 1,
-      similar_records: 1
+      record_cover: 1
     ]
 
   alias MusicLibrary.OnlineStoreTemplates
   alias MusicLibrary.Records
-  alias MusicLibrary.Records.Similarity
 
   @impl true
   def mount(%{"id" => record_id}, _session, socket) do
@@ -39,8 +37,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, record))
      |> assign(:record, record)
-     |> assign(:online_store_templates, online_store_templates)
-     |> assign_similar_records()}
+     |> assign(:online_store_templates, online_store_templates)}
   end
 
   @impl true
@@ -150,8 +147,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
   def handle_info({MusicLibraryWeb.Components.RecordForm, {:saved, record}}, socket) do
     {:noreply,
      socket
-     |> assign(:record, record)
-     |> assign_similar_records()}
+     |> assign(:record, record)}
   end
 
   @impl true
@@ -159,8 +155,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
     {:noreply,
      socket
      |> put_toast(:info, gettext("Record updated in the background"))
-     |> assign(:record, record)
-     |> assign_similar_records()}
+     |> assign(:record, record)}
   end
 
   def page_title(action, record) do
@@ -180,11 +175,4 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
   defp title_segment(:show), do: gettext("Show")
   defp title_segment(:edit), do: gettext("Edit")
-
-  defp assign_similar_records(socket) do
-    similar_records =
-      Similarity.find_similar(socket.assigns.record.id, limit: 6, scope: :wishlist)
-
-    assign(socket, :similar_records, similar_records)
-  end
 end
