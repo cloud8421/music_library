@@ -167,9 +167,9 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
     end
 
     test "handles page parameter", %{conn: conn} do
-      create_test_tracks(250)
+      create_test_tracks(5)
 
-      {:ok, _index_live, html} = live(conn, ~p"/scrobbled-tracks?page=2&page_size=100")
+      {:ok, _index_live, html} = live(conn, ~p"/scrobbled-tracks?page=2&page_size=3")
 
       assert html =~ "Scrobbled Tracks"
     end
