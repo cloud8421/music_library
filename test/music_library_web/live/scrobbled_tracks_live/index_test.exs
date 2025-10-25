@@ -129,31 +129,20 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
   end
 
   describe "Pagination" do
-    test "shows pagination when more than one page", %{conn: conn} do
-      # Create enough tracks to require pagination (more than 200)
+    test "navigates to next page", %{conn: conn} do
       create_test_tracks(201)
 
       {:ok, index_live, html} = live(conn, ~p"/scrobbled-tracks")
 
-      # Should show pagination component
       assert html =~ "Next"
       assert has_element?(index_live, "#bottom_pagination")
-    end
 
-    test "navigates to next page", %{conn: conn} do
-      create_test_tracks(201)
+      html =
+        index_live
+        |> element("a[href*='page=2']", "2")
+        |> render_click()
 
-      {:ok, index_live, _html} = live(conn, ~p"/scrobbled-tracks")
-
-      # Click next page button (if visible)
-      if has_element?(index_live, "button[patch*='page=2']") do
-        html =
-          index_live
-          |> element("button[patch*='page=2']")
-          |> render_click()
-
-        assert html =~ "Scrobbled Tracks"
-      end
+      assert html =~ "Scrobbled Tracks"
     end
   end
 
