@@ -69,10 +69,10 @@ mise run dev:console
 # Run static checks (format, credo, gettext)
 mise run dev:lint
 
-# Show outdated dependencies (errors at first outdated)
+# Show outdated dependencies
 mise run dev:outdated
 
-# Update dependencies (errors at first outdated)
+# Update dependencies
 mise run dev:update
 
 # Fix translation file conflicts

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-#MISE description="Show outdated dependencies. Errors at the firsst outdated dependency"
+#MISE description="Show outdated dependencies."
 
-set -e
+# We purposefully do not set `set -e` here, as we want to see all outdated dependencies at once.
 
 source "$(git rev-parse --show-toplevel)/scripts/_helpers.sh"
 
