@@ -25,6 +25,12 @@ defmodule MusicLibraryWeb.CollectionJSON do
   defp record(record) do
     %{
       id: record.id,
+      type: record.type,
+      format: record.format,
+      musicbrainz_id: record.musicbrainz_id,
+      genres: record.genres,
+      release_date: record.release_date,
+      purchased_at: record.purchased_at,
       artists: Enum.map(record.artists, & &1.name),
       title: record.title,
       cover_url: url(~p"/api/assets/#{Transform.new(hash: record.cover_hash)}"),

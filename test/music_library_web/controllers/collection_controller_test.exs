@@ -27,15 +27,7 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
         |> put_req_header("authorization", "Bearer #{api_token()}")
         |> get(~p"/api/collection/latest")
 
-      assert json_response(conn, 200) == %{
-               "id" => record.id,
-               "artists" => ["Steven Wilson"],
-               "title" => record.title,
-               "cover_url" =>
-                 "http://localhost:4002/api/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjpudWxsfQ",
-               "thumb_url" =>
-                 "http://localhost:4002/api/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjo0ODB9"
-             }
+      assert json_response(conn, 200) == expected_record_json(record)
     end
   end
 
@@ -55,15 +47,7 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
         |> put_req_header("authorization", "Bearer #{api_token()}")
         |> get(~p"/api/collection/random")
 
-      assert json_response(conn, 200) == %{
-               "id" => record.id,
-               "artists" => ["Steven Wilson"],
-               "title" => record.title,
-               "cover_url" =>
-                 "http://localhost:4002/api/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjpudWxsfQ",
-               "thumb_url" =>
-                 "http://localhost:4002/api/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjo0ODB9"
-             }
+      assert json_response(conn, 200) == expected_record_json(record)
     end
   end
 
@@ -86,17 +70,7 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
                "total" => 1,
                "limit" => 20,
                "offset" => 0,
-               "records" => [
-                 %{
-                   "id" => record.id,
-                   "artists" => ["Steven Wilson"],
-                   "title" => record.title,
-                   "cover_url" =>
-                     "http://localhost:4002/api/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjpudWxsfQ",
-                   "thumb_url" =>
-                     "http://localhost:4002/api/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjo0ODB9"
-                 }
-               ]
+               "records" => [expected_record_json(record)]
              }
     end
   end
@@ -117,18 +91,26 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
         |> get(~p"/api/collection/on_this_day?date=2025-06-21")
 
       assert json_response(conn, 200) == %{
-               "records" => [
-                 %{
-                   "id" => record.id,
-                   "artists" => ["Steven Wilson"],
-                   "title" => record.title,
-                   "cover_url" =>
-                     "http://localhost:4002/api/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjpudWxsfQ",
-                   "thumb_url" =>
-                     "http://localhost:4002/api/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjo0ODB9"
-                 }
-               ]
+               "records" => [expected_record_json(record)]
              }
     end
+  end
+
+  defp expected_record_json(record) do
+    %{
+      "id" => record.id,
+      "type" => record.type |> to_string(),
+      "format" => record.format |> to_string(),
+      "musicbrainz_id" => record.musicbrainz_id,
+      "genres" => record.genres,
+      "release_date" => record.release_date,
+      "purchased_at" => record.purchased_at |> DateTime.to_iso8601(),
+      "artists" => Enum.map(record.artists, & &1.name),
+      "title" => record.title,
+      "cover_url" =>
+        "http://localhost:4002/api/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjpudWxsfQ",
+      "thumb_url" =>
+        "http://localhost:4002/api/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjo0ODB9"
+    }
   end
 end
