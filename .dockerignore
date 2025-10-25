@@ -28,7 +28,13 @@
 /test/
 /tmp/
 .elixir_ls
+.expert
 .iex.exs
+/.shellcheckrc
+.credo.exs
+.formatter.exs
+
+compose.yaml
 
 # Mix artifacts
 /_build/
@@ -61,3 +67,4 @@ CLAUDE.md
 # Dev tooling and environment
 /mise.toml
 /mise.local.toml
+/.tool-versions
