@@ -21,7 +21,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
   end
 
   defp create_multiple_tracks(_) do
-    tracks = create_test_tracks(10)
+    tracks = create_test_tracks(5)
     %{tracks: tracks}
   end
 
@@ -131,7 +131,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
   describe "Pagination" do
     test "shows pagination when more than one page", %{conn: conn} do
       # Create enough tracks to require pagination (more than 200)
-      create_test_tracks(250)
+      create_test_tracks(201)
 
       {:ok, index_live, html} = live(conn, ~p"/scrobbled-tracks")
 
@@ -141,7 +141,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
     end
 
     test "navigates to next page", %{conn: conn} do
-      create_test_tracks(250)
+      create_test_tracks(201)
 
       {:ok, index_live, _html} = live(conn, ~p"/scrobbled-tracks")
 
