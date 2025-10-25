@@ -2,6 +2,8 @@ defmodule MusicLibraryWeb.ArchiveController do
   use MusicLibraryWeb, :controller
 
   def backup(conn, _params) do
+    MusicLibrary.Repo.vacuum()
+
     database_path = database_path()
     current_time = DateTime.utc_now()
     file_name = "music_library_#{DateTime.to_unix(current_time)}.db"
