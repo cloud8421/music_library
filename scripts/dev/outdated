@@ -42,17 +42,19 @@ echo "============================================="
 printf "%-30s | %s\n" "Dependency" "Status"
 echo "---------------------------------------------"
 
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+normal=$(tput sgr0)
+
 for i in "${!command_names[@]}"; do
   name="${command_names[$i]}"
   result="${command_results[$i]}"
 
   if [ "$result" -eq 0 ]; then
-    status="✓ Up to date"
+    printf "%-30s | %s\n" "$name" "${green}✓ Up to date${normal}"
   else
-    status="✗ Run update"
+    printf "%-30s | %s\n" "$name" "${red}✗ Run update${normal}"
   fi
-
-  printf "%-30s | %s\n" "$name" "$status"
 done
 
 echo "============================================="
