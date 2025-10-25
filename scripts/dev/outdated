@@ -8,15 +8,51 @@ source "$(git rev-parse --show-toplevel)/scripts/_helpers.sh"
 
 ensure_working_directory!
 
-debug_msg "Checking outdated NPM dependencies..."
+# Initialize arrays to track commands
+declare -a command_names
+declare -a command_results
 
-npm outdated --prefix assets
+# Function to run and track commands
+run_and_track() {
+  local name="$1"
+  shift
+  "$@"
+  local result=$?
+  command_names+=("$name")
+  command_results+=("$result")
+  return $result
+}
+
+debug_msg "Checking outdated NPM dependencies..."
+run_and_track "NPM dependencies" npm outdated --prefix assets
 
 debug_msg "Checking outdated tooling (tailwind, esbuild, sqlean)..."
-
-# shellcheck disable=SC1010
-mix do tailwind.check_version + esbuild.check_version + sqlean.check_version
+run_and_track "Tailwind" mix tailwind.check_version
+run_and_track "ESBuild" mix esbuild.check_version
+run_and_track "Sqlean" mix sqlean.check_version
 
 debug_msg "Checking outdated mix dependencies"
+run_and_track "Mix dependencies" mix hex.outdated --all
 
-mix hex.outdated --all
+# Print summary table
+echo ""
+echo "============================================="
+echo "Summary"
+echo "============================================="
+printf "%-30s | %s\n" "Dependency" "Status"
+echo "---------------------------------------------"
+
+for i in "${!command_names[@]}"; do
+  name="${command_names[$i]}"
+  result="${command_results[$i]}"
+
+  if [ "$result" -eq 0 ]; then
+    status="✓ Up to date"
+  else
+    status="✗ Run update"
+  fi
+
+  printf "%-30s | %s\n" "$name" "$status"
+done
+
+echo "============================================="
