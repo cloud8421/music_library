@@ -138,7 +138,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
 
   describe "Pagination" do
     test "navigates to next page", %{conn: conn} do
-      create_test_tracks(201)
+      create_test_tracks(21)
 
       conn
       |> visit(~p"/scrobbled-tracks")
