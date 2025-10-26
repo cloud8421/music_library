@@ -53,7 +53,7 @@ for i in "${!command_names[@]}"; do
   if [ "$result" -eq 0 ]; then
     printf "%-30s | %s\n" "$name" "${green}✓ Up to date${normal}"
   else
-    printf "%-30s | %s\n" "$name" "${red}✗ Run update${normal}"
+    printf "%-30s | %s\n" "$name" "${red}✗ Outdated${normal}"
   fi
 done
 
