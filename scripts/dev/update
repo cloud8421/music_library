@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#MISE description="Update dependencies. Errors at the firsst outdated dependency"
+#MISE description="Update dependencies"
 
 set -e
 
