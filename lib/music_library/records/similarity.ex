@@ -6,7 +6,7 @@ defmodule MusicLibrary.Records.Similarity do
   import Ecto.Query
   import(SqliteVec.Ecto.Query)
 
-  alias MusicLibrary.Records
+  alias MusicLibrary.{Artists, Records}
   alias MusicLibrary.Records.{Record, RecordEmbedding}
   alias MusicLibrary.Repo
   alias MusicLibrary.Worker.GenerateRecordEmbedding
@@ -22,6 +22,11 @@ defmodule MusicLibrary.Records.Similarity do
   - Type (album, EP, etc.)
   """
   def text_representation(%Record{} = record) do
+    artist_infos =
+      record.artists
+      |> Enum.map(& &1.musicbrainz_id)
+      |> Artists.get_artist_infos()
+
     artist_names = Record.artist_names(record)
     genres = Enum.join(record.genres, ", ")
     year = extract_year(record.release_date)
@@ -33,8 +38,38 @@ defmodule MusicLibrary.Records.Similarity do
     Genres: #{genres}
     Released: #{year}
     Type: #{type}
+
+    #{artist_infos_summary(artist_infos)}
     """
     |> String.trim()
+  end
+
+  defp artist_infos_summary([]), do: ""
+
+  defp artist_infos_summary(artist_infos) do
+    Enum.map_join(artist_infos, "\n\n", &artist_info_summary/1)
+  end
+
+  defp artist_info_summary(artist_info) when is_nil(artist_info.discogs_data), do: ""
+
+  defp artist_info_summary(%{discogs_data: discogs_data}) do
+    profile_section =
+      if profile = Map.get(discogs_data, "profile") do
+        "Profile for #{discogs_data["name"]}: #{profile}"
+      else
+        ""
+      end
+
+    members_section =
+      if members = Map.get(discogs_data, "members") do
+        members_list = Enum.map_join(members, ", ", fn member -> member["name"] end)
+
+        "Members (past and present): #{members_list}"
+      else
+        ""
+      end
+
+    Enum.join([profile_section, members_section], "\n")
   end
 
   @doc """

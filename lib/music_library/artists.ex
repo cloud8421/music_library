@@ -110,6 +110,13 @@ defmodule MusicLibrary.Artists do
     Repo.get!(ArtistInfo, artist_id)
   end
 
+  def get_artist_infos(artist_ids) do
+    q =
+      from ai in ArtistInfo, where: ai.id in ^artist_ids
+
+    Repo.all(q)
+  end
+
   def fetch_image(artist_id) do
     artist_info = get_artist_info!(artist_id)
 
