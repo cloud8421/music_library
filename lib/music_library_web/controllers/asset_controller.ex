@@ -27,14 +27,11 @@ defmodule MusicLibraryWeb.AssetController do
     case Cache.get(payload, format) do
       :not_found ->
         if asset = Assets.get(transform.hash) do
-          image_data =
+          {:ok, image_data} =
             if transform.width do
-              # TODO: find a way to cache computation, or pre-compute thumb and store it
-              {:ok, data} = Image.resize(asset.content, transform.width, format)
-              data
+              Image.resize(asset.content, transform.width, format)
             else
-              {:ok, data} = Image.convert(asset.content, asset.format, format)
-              data
+              Image.convert(asset.content, asset.format, format)
             end
 
           Cache.set(payload, format, image_data)
