@@ -1493,3 +1493,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Lotus"
 msgstr ""
+
+#: lib/music_library_web/components/stats_components.ex
+#, elixir-autogen, elixir-format
+msgid "Today"
+msgstr ""

@@ -212,14 +212,26 @@ defmodule MusicLibraryWeb.StatsComponents do
       )
 
     ~H"""
-    <span class={[
-      "text-xs leading-5",
-      normal_year?(@years) && "text-zinc-500 dark:text-zinc-400",
-      gold_year?(@years) &&
-        "font-semibold bg-gradient-to-r bg-clip-text text-transparent from-yellow-500 via-yellow-200 to-yellow-700 animate-shine",
-      silver_year?(@years) &&
-        "font-semibold bg-gradient-to-r bg-clip-text text-transparent from-gray-500 via-gray-200 to-gray-700 animate-shine"
-    ]}>
+    <span
+      :if={same_year?(@years)}
+      class={[
+        "text-xs leading-5",
+        "font-semibold bg-linear-to-r bg-clip-text text-transparent from-red-500 via-red-200 to-red-700 animate-shine"
+      ]}
+    >
+      {gettext("Today")}
+    </span>
+    <span
+      :if={!same_year?(@years)}
+      class={[
+        "text-xs leading-5",
+        normal_year?(@years) && "text-zinc-500 dark:text-zinc-400",
+        gold_year?(@years) &&
+          "font-semibold bg-linear-to-r bg-clip-text text-transparent from-yellow-500 via-yellow-200 to-yellow-700 animate-shine",
+        silver_year?(@years) &&
+          "font-semibold bg-linear-to-r bg-clip-text text-transparent from-gray-500 via-gray-200 to-gray-700 animate-shine"
+      ]}
+    >
       {ngettext(
         "1 year ago",
         "%{count} years ago",
@@ -229,6 +241,7 @@ defmodule MusicLibraryWeb.StatsComponents do
     """
   end
 
+  defp same_year?(year), do: year == 0
   defp gold_year?(year), do: rem(year, 10) == 0
   defp silver_year?(year), do: rem(year, 5) == 0
   defp normal_year?(year), do: !gold_year?(year) && !silver_year?(year)
