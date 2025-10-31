@@ -28,6 +28,10 @@ defmodule MusicLibrary.Records.SearchParser do
   mbid_filter = ignore(string("mbid:"))
   mbid = concat(mbid_filter, query) |> tag(:mbid)
 
+  year = integer(4) |> tag(:year)
+  purchase_year_filter = ignore(string("purchase_year:"))
+  purchase_year = concat(purchase_year_filter, year) |> tag(:purchase_year)
+
   genre_filter = ignore(string("genre:"))
   genre = concat(genre_filter, query) |> tag(:genre)
 
@@ -59,7 +63,7 @@ defmodule MusicLibrary.Records.SearchParser do
     choice([concat(type_filter, types), ignore(invalid_type)])
     |> tag(:type)
 
-  search = repeat(choice([artist, album, mbid, genre, space, format, type, query]))
+  search = repeat(choice([artist, album, mbid, genre, space, format, type, purchase_year, query]))
 
   defparsecp(:search_parser, search)
 
@@ -86,6 +90,8 @@ defmodule MusicLibrary.Records.SearchParser do
     {:ok, %{query: ""}}
     iex> MusicLibrary.Records.SearchParser.parse("type:album")
     {:ok, %{type: :album}}
+    iex> MusicLibrary.Records.SearchParser.parse("purchase_year:2024")
+    {:ok, %{purchase_year: 2024}}
   """
   def parse(""), do: {:ok, %{query: ""}}
 
@@ -124,6 +130,9 @@ defmodule MusicLibrary.Records.SearchParser do
 
       {:type, [value]}, acc ->
         Map.put(acc, :type, value)
+
+      {:purchase_year, [{:year, [value]}]}, acc ->
+        Map.put(acc, :purchase_year, value)
 
       {:query, [value]}, acc ->
         Map.update(acc, :query, value, &(&1 <> " " <> value))

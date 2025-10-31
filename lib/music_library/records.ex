@@ -61,7 +61,8 @@ defmodule MusicLibrary.Records do
   end
 
   defp build_search(initial_search, query, order \\ :alphabetical) do
-    {:ok, parsed_query} = SearchParser.parse(query)
+    {:ok, parsed_query} =
+      SearchParser.parse(query)
 
     search_with_order =
       case order do
@@ -120,6 +121,19 @@ defmodule MusicLibrary.Records do
 
       {:type, type}, search ->
         search |> where([r], r.type == ^type)
+
+      {:purchase_year, year}, search ->
+        search
+        |> where(
+          [r],
+          fragment(
+            "? >= ? and ? < ?",
+            r.purchased_at,
+            ^to_string(year),
+            r.purchased_at,
+            ^to_string(year + 1)
+          )
+        )
 
       {:query, ""}, search ->
         search
