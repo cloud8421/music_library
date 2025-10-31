@@ -68,7 +68,9 @@
             aria-hidden="true"
             data-slot="icon"
           />
-          {gettext("Grid")}
+          <span class="hidden sm:inline">
+            {gettext("Grid")}
+          </span>
         </.button>
         <.button
           phx-click="set_display"
@@ -79,7 +81,9 @@
           ]}
         >
           <.icon name="hero-list-bullet" class="icon" aria-hidden="true" data-slot="icon" />
-          {gettext("List")}
+          <span class="hidden sm:inline">
+            {gettext("List")}
+          </span>
         </.button>
       </.button_group>
     </div>
