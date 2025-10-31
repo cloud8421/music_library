@@ -11,7 +11,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
   @default_records_list_params %{
     query: "",
     page: 1,
-    page_size: 50,
+    page_size: 48,
     order: :alphabetical
   }
 
@@ -23,6 +23,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
      socket
      |> assign(current_section: :wishlist)
      |> assign(:import_query, "")
+     |> assign(:display, :grid)
      |> assign(:current_date, current_date)}
   end
 
@@ -139,6 +140,18 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
         {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
+
+  def handle_event("set_display", %{"mode" => mode}, socket) do
+    mode = parse_mode(mode)
+
+    {:noreply,
+     socket
+     |> assign(:display, mode)
+     |> load_and_assign_records(socket.assigns.record_list_params)}
+  end
+
+  defp parse_mode("grid"), do: :grid
+  defp parse_mode("list"), do: :list
 
   defp load_and_assign_records(socket, record_list_params) do
     offset = page_to_offset(record_list_params.page, record_list_params.page_size)

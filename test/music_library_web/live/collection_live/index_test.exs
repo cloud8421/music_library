@@ -49,7 +49,10 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       {expected_present, expected_absent} =
         Enum.split(records, page_size)
 
-      session = visit(conn, ~p"/collection?order=alphabetical&page_size=#{page_size}")
+      session =
+        conn
+        |> visit(~p"/collection?order=alphabetical&page_size=#{page_size}")
+        |> click_button("List")
 
       for record <- expected_present do
         cover_url = cover_url(record, 160)
@@ -139,7 +142,9 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       qs = [query: record.title]
 
       session =
-        visit(conn, ~p"/collection?#{qs}")
+        conn
+        |> visit(~p"/collection?#{qs}")
+        |> click_button("List")
 
       cover_url = cover_url(record, 160)
 
@@ -180,7 +185,9 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       ]
 
       session =
-        visit(conn, ~p"/collection?#{qs}")
+        conn
+        |> visit(~p"/collection?#{qs}")
+        |> click_button("List")
 
       for record <- present do
         cover_url = cover_url(record, 160)
@@ -234,7 +241,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         |> assert_has("p", text: "Record updated successfully")
 
       updated_record = MusicLibrary.Records.get_record!(record.id)
-      updated_cover_url = cover_url(updated_record, 160)
+      updated_cover_url = cover_url(updated_record, 560)
 
       assert updated_record.cover_hash !== record.cover_hash
       assert_has(session, "img[src='#{updated_cover_url}']")

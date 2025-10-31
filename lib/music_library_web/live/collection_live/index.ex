@@ -12,13 +12,16 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
   @default_records_list_params %{
     query: "",
     page: 1,
-    page_size: 50,
+    page_size: 48,
     order: :purchase
   }
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :current_section, :collection)}
+    {:ok,
+     socket
+     |> assign(:current_section, :collection)
+     |> assign(:display, :grid)}
   end
 
   @impl true
@@ -123,6 +126,18 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
          |> push_patch(to: ~p"/collection")}
     end
   end
+
+  def handle_event("set_display", %{"mode" => mode}, socket) do
+    mode = parse_mode(mode)
+
+    {:noreply,
+     socket
+     |> assign(:display, mode)
+     |> load_and_assign_records(socket.assigns.record_list_params)}
+  end
+
+  defp parse_mode("grid"), do: :grid
+  defp parse_mode("list"), do: :list
 
   defp load_and_assign_records(socket, record_list_params) do
     offset = page_to_offset(record_list_params.page, record_list_params.page_size)

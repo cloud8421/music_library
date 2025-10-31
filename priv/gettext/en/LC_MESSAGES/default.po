@@ -1500,9 +1500,31 @@ msgstr ""
 msgid "Today"
 msgstr ""
 
+#: lib/music_library_web/live/collection_live/index.html.heex
+#: lib/music_library_web/live/wishlist_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Grid"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/index.html.heex
+#: lib/music_library_web/live/wishlist_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "List"
+msgstr ""
+
 #: lib/music_library_web/live/maintenance_live/index.html.heex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Artists"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Database"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Database vacuumed successfully."
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex
@@ -1510,6 +1532,11 @@ msgstr ""
 #: lib/music_library_web/live/maintenance_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Maintenance"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Operation started in the background."
 msgstr ""
 
 #: lib/music_library_web/live/maintenance_live/index.html.heex
@@ -1529,32 +1556,17 @@ msgstr ""
 
 #: lib/music_library_web/live/maintenance_live/index.html.heex
 #, elixir-autogen, elixir-format
+msgid "Run lower-level operations on the database"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format
 msgid "Run operations on the entire artist database. Monitor execution via the Oban dashboard."
 msgstr ""
 
 #: lib/music_library_web/live/maintenance_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Run operations on the entire record database. Monitor execution via the Oban dashboard."
-msgstr ""
-
-#: lib/music_library_web/live/maintenance_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Database"
-msgstr ""
-
-#: lib/music_library_web/live/maintenance_live/index.ex
-#, elixir-autogen, elixir-format
-msgid "Database vacuumed successfully."
-msgstr ""
-
-#: lib/music_library_web/live/maintenance_live/index.ex
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Operation started in the background."
-msgstr ""
-
-#: lib/music_library_web/live/maintenance_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Run lower-level operations on the database"
 msgstr ""
 
 #: lib/music_library_web/live/maintenance_live/index.html.heex

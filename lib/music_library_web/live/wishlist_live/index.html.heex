@@ -39,10 +39,49 @@
           {gettext("A->Z")}
         </.button>
       </.button_group>
+
+      <.button_group>
+        <.button
+          phx-click="set_display"
+          phx-value-mode="grid"
+          size="sm"
+          class={[
+            @display == :grid && "bg-zinc-100! dark:bg-zinc-700!"
+          ]}
+        >
+          <.icon
+            name="hero-squares-2x2"
+            class="icon"
+            aria-hidden="true"
+            data-slot="icon"
+          />
+          {gettext("Grid")}
+        </.button>
+        <.button
+          phx-click="set_display"
+          phx-value-mode="list"
+          size="sm"
+          class={[
+            @display == :list && "bg-zinc-100! dark:bg-zinc-700!"
+          ]}
+        >
+          <.icon name="hero-list-bullet" class="icon" aria-hidden="true" data-slot="icon" />
+          {gettext("List")}
+        </.button>
+      </.button_group>
     </div>
   </div>
 
+  <.dense_record_grid
+    :if={@display == :grid}
+    id="wishlist"
+    records={@streams.records}
+    record_show_path={fn record -> ~p"/wishlist/#{record}" end}
+    record_edit_path={fn record -> ~p"/wishlist/#{record}/edit" end}
+  />
+
   <.record_list
+    :if={@display == :list}
     current_date={@current_date}
     records={@streams.records}
     record_show_path={fn record -> ~p"/wishlist/#{record}" end}
