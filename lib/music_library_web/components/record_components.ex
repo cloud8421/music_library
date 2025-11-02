@@ -212,14 +212,17 @@ defmodule MusicLibraryWeb.RecordComponents do
         id={@id}
         phx-update="stream"
         role="list"
-        class="mt-4 grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-4 sm:gap-x-6 xl:gap-x-8"
+        class="mt-4 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-4 sm:gap-x-6 xl:gap-x-8"
       >
         <li :for={{id, record} <- @records} id={id} class="relative">
-          <div class="group overflow-hidden rounded-lg bg-zinc-100 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:ring-offset-2 focus-within:ring-offset-zinc-100">
-            <div class="relative">
+          <div class="overflow-hidden rounded-lg bg-zinc-100 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:ring-offset-2 focus-within:ring-offset-zinc-100">
+            <div
+              class="relative cursor-pointer"
+              phx-click={JS.navigate(@record_show_path.(record))}
+            >
               <.record_cover
                 record={record}
-                class="pointer-events-none aspect-square object-cover group-hover:opacity-75"
+                class="aspect-square object-cover hover:opacity-75"
                 width={460}
               />
               <span
@@ -234,57 +237,55 @@ defmodule MusicLibraryWeb.RecordComponents do
               >
                 {Records.Record.included_release_groups_count(record)}
               </span>
+              <div class="absolute right-1 top-1 rounded-lg bg-zinc-100/75 dark:bg-zinc-700/75 w-5 h-5">
+                <.dropdown id={"actions-#{record.id}"} placement="bottom-end">
+                  <:toggle>
+                    <span class="sr-only">{gettext("Actions")}</span>
+                    <.icon
+                      name="hero-ellipsis-vertical"
+                      class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                      aria-hidden="true"
+                      data-slot="icon"
+                      phx-click={JS.toggle_class("pointer-events-none", to: "#{@id} > li")}
+                      phx-click-away={JS.remove_class("pointer-events-none", to: "#{@id} > li")}
+                    />
+                  </:toggle>
+                  <.focus_wrap id={"actions-#{record.id}-focus-wrap"}>
+                    <.dropdown_link
+                      id={"actions-#{record.id}-edit"}
+                      patch={@record_edit_path.(record)}
+                    >
+                      {gettext("Edit")}
+                    </.dropdown_link>
+
+                    <.dropdown_link
+                      :if={!record.purchased_at}
+                      id={"actions-#{record.id}-purchase"}
+                      phx-click={
+                        JS.dispatch("music_library:confetti")
+                        |> JS.push("add-to-collection", value: %{id: record.id})
+                      }
+                    >
+                      {gettext("Purchased")}
+                    </.dropdown_link>
+                    <.dropdown_separator />
+                    <.dropdown_link
+                      id={"actions-#{record.id}-delete"}
+                      phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
+                      data-confirm={gettext("Are you sure?")}
+                      class="text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
+                    >
+                      {gettext("Delete")}
+                    </.dropdown_link>
+                  </.focus_wrap>
+                </.dropdown>
+              </div>
             </div>
-            <button
-              type="button"
-              class="absolute inset-0 focus:outline-hidden"
-              phx-click={JS.navigate(@record_show_path.(record))}
-            >
-              <span class="sr-only">{gettext("View details")}</span>
-            </button>
           </div>
           <div class="flex justify-between items-center">
-            <p class="pointer-events-none mt-2 block truncate text-sm font-medium text-zinc-900 dark:text-zinc-300">
+            <p class="pointer-events-none mt-2 block text-sm font-medium text-zinc-900 dark:text-zinc-300">
               {record.title}
             </p>
-            <.dropdown id={"actions-#{record.id}"} placement="bottom-end">
-              <:toggle>
-                <.button variant="ghost" class="mt-2">
-                  <span class="sr-only">{gettext("Actions")}</span>
-                  <.icon
-                    name="hero-ellipsis-vertical"
-                    class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
-                    aria-hidden="true"
-                    data-slot="icon"
-                  />
-                </.button>
-              </:toggle>
-              <.focus_wrap id={"actions-#{record.id}-focus-wrap"}>
-                <.dropdown_link id={"actions-#{record.id}-edit"} patch={@record_edit_path.(record)}>
-                  {gettext("Edit")}
-                </.dropdown_link>
-
-                <.dropdown_link
-                  :if={!record.purchased_at}
-                  id={"actions-#{record.id}-purchase"}
-                  phx-click={
-                    JS.dispatch("music_library:confetti")
-                    |> JS.push("add-to-collection", value: %{id: record.id})
-                  }
-                >
-                  {gettext("Purchased")}
-                </.dropdown_link>
-                <.dropdown_separator />
-                <.dropdown_link
-                  id={"actions-#{record.id}-delete"}
-                  phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
-                  data-confirm={gettext("Are you sure?")}
-                  class="text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
-                >
-                  {gettext("Delete")}
-                </.dropdown_link>
-              </.focus_wrap>
-            </.dropdown>
           </div>
           <p class="pointer-events-none block text-sm font-medium text-zinc-500">
             {format_label(record.format)} · {type_label(record.type)}
