@@ -12,7 +12,7 @@
       )}
     </p>
     <ul class="mt-4">
-      <li>
+      <li class="space-y-4">
         <.button type="button" phx-click="refresh_records_musicbrainz_data">
           {gettext("Refresh MusicBrainz data")}
         </.button>
@@ -30,7 +30,7 @@
       )}
     </p>
     <ul class="mt-4">
-      <li>
+      <li class="space-y-4">
         <.button disabled type="button" phx-click="refresh_artists_musicbrainz_data">
           {gettext("Refresh MusicBrainz data")}
         </.button>
@@ -46,7 +46,7 @@
       {gettext("Run lower-level operations on the database")}
     </p>
     <ul class="mt-4">
-      <li>
+      <li class="space-y-4">
         <.button
           type="button"
           phx-click="db_vacuum"
