@@ -368,6 +368,7 @@ msgstr ""
 msgid "Refresh cover"
 msgstr ""
 
+#: lib/music_library_web/live/maintenance_live/index.html.heex
 #: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Records"
@@ -1497,4 +1498,71 @@ msgstr ""
 #: lib/music_library_web/components/stats_components.ex
 #, elixir-autogen, elixir-format
 msgid "Today"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Artists"
+msgstr ""
+
+#: lib/music_library_web/components/layouts/app.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Maintenance"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Refresh Discogs data"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Refresh MusicBrainz data"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Regenerate record embeddings"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Run operations on the entire artist database. Monitor execution via the Oban dashboard."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Run operations on the entire record database. Monitor execution via the Oban dashboard."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Database"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Database vacuumed successfully."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Operation started in the background."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Run lower-level operations on the database"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Running vacuum..."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Vacuum"
 msgstr ""

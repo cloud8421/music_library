@@ -104,6 +104,8 @@ defmodule MusicLibraryWeb.Router do
       oban_dashboard "/oban"
 
       lotus_dashboard("/lotus")
+
+      live "/maintenance", MusicLibraryWeb.MaintenanceLive.Index, :index
     end
   end
 end
