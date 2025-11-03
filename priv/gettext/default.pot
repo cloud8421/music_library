@@ -1573,3 +1573,23 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Vacuum"
 msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Are you sure you want to refresh Discogs data for all artists? This operation can take a long time to complete."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Are you sure you want to refresh MusicBrainz data for all artists? This operation can take a long time to complete."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Are you sure you want to refresh MusicBrainz data for all records? This operation can take a long time to complete."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Are you sure you want to regenerate embeddings for all records? This operation can take a long time to complete."
+msgstr ""

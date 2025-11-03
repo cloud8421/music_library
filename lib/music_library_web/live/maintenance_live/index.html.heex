@@ -13,10 +13,26 @@
     </p>
     <ul class="mt-4">
       <li class="space-y-4">
-        <.button type="button" phx-click="refresh_records_musicbrainz_data">
+        <.button
+          type="button"
+          phx-click="refresh_records_musicbrainz_data"
+          data-confirm={
+            gettext(
+              "Are you sure you want to refresh MusicBrainz data for all records? This operation can take a long time to complete."
+            )
+          }
+        >
           {gettext("Refresh MusicBrainz data")}
         </.button>
-        <.button type="button" phx-click="generate_record_embeddings">
+        <.button
+          type="button"
+          phx-click="generate_record_embeddings"
+          data-confirm={
+            gettext(
+              "Are you sure you want to regenerate embeddings for all records? This operation can take a long time to complete."
+            )
+          }
+        >
           {gettext("Regenerate record embeddings")}
         </.button>
       </li>
@@ -31,10 +47,28 @@
     </p>
     <ul class="mt-4">
       <li class="space-y-4">
-        <.button disabled type="button" phx-click="refresh_artists_musicbrainz_data">
+        <.button
+          disabled
+          type="button"
+          phx-click="refresh_artists_musicbrainz_data"
+          data-confirm={
+            gettext(
+              "Are you sure you want to refresh MusicBrainz data for all artists? This operation can take a long time to complete."
+            )
+          }
+        >
           {gettext("Refresh MusicBrainz data")}
         </.button>
-        <.button disabled type="button" phx-click="refresh_artists_discogs_data">
+        <.button
+          disabled
+          type="button"
+          phx-click="refresh_artists_discogs_data"
+          data-confirm={
+            gettext(
+              "Are you sure you want to refresh Discogs data for all artists? This operation can take a long time to complete."
+            )
+          }
+        >
           {gettext("Refresh Discogs data")}
         </.button>
       </li>
