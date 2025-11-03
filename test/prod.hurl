@@ -42,8 +42,3 @@ Location: /login
 GET https://music-library.claudio-ortolina.org/dev/oban
 HTTP 302
 Location: /login
-
-# Lotus
-GET https://music-library.claudio-ortolina.org/dev/lotus
-HTTP 302
-Location: /login

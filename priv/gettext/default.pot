@@ -1490,11 +1490,6 @@ msgstr ""
 msgid "Add a record instead"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex
-#, elixir-autogen, elixir-format
-msgid "Lotus"
-msgstr ""
-
 #: lib/music_library_web/components/stats_components.ex
 #, elixir-autogen, elixir-format
 msgid "Today"
