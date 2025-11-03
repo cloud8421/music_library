@@ -222,7 +222,7 @@ defmodule MusicLibraryWeb.RecordComponents do
             >
               <.record_cover
                 record={record}
-                class="aspect-square object-cover hover:opacity-75"
+                class="aspect-square object-cover hover:opacity-85"
                 width={460}
               />
               <span
@@ -237,13 +237,13 @@ defmodule MusicLibraryWeb.RecordComponents do
               >
                 {Records.Record.included_release_groups_count(record)}
               </span>
-              <div class="absolute right-1 top-1 rounded-lg bg-zinc-100/75 dark:bg-zinc-700/75 w-5 h-5">
+              <div class="absolute right-2 top-2 rounded-full bg-zinc-100/50 hover:bg-zinc-100/75 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/75 size-5">
                 <.dropdown id={"actions-#{record.id}"} placement="bottom-end">
                   <:toggle>
                     <span class="sr-only">{gettext("Actions")}</span>
                     <.icon
                       name="hero-ellipsis-vertical"
-                      class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                      class="size-5 text-zinc-800 dark:text-zinc-400 cursor-pointer"
                       aria-hidden="true"
                       data-slot="icon"
                       phx-click={JS.toggle_class("pointer-events-none", to: "#{@id} > li")}
