@@ -241,7 +241,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         |> assert_has("p", text: "Record updated successfully")
 
       updated_record = MusicLibrary.Records.get_record!(record.id)
-      updated_cover_url = cover_url(updated_record, 560)
+      updated_cover_url = cover_url(updated_record, 460)
 
       assert updated_record.cover_hash !== record.cover_hash
       assert_has(session, "img[src='#{updated_cover_url}']")

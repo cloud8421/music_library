@@ -76,12 +76,14 @@
     </div>
   </div>
 
-  <.dense_record_grid
+  <.record_grid
     :if={@display == :grid}
     id="wishlist"
     records={@streams.records}
     record_show_path={fn record -> ~p"/wishlist/#{record}" end}
     record_edit_path={fn record -> ~p"/wishlist/#{record}/edit" end}
+    display_artist_names
+    density={:high}
   />
 
   <.record_list

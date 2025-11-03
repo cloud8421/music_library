@@ -190,16 +190,21 @@ defmodule MusicLibraryWeb.RecordComponents do
   end
 
   attr :records, :list, required: true
-  attr :records_count, :integer, required: true
-  attr :title, :string, required: true
+  attr :records_count, :integer, default: 0
+  attr :title, :string, default: nil
   attr :id, :string, required: true
   attr :record_show_path, :any, required: true
   attr :record_edit_path, :any, required: true
+  attr :display_artist_names, :boolean, default: false
+  attr :density, :atom, values: [:low, :high], default: :low
 
   def record_grid(assigns) do
     ~H"""
     <div class="mt-4">
-      <header class="flex items-baseline justify-start">
+      <header
+        :if={@title}
+        class="flex items-baseline justify-start"
+      >
         <h2 class="font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300">
           {@title}
         </h2>
@@ -212,7 +217,12 @@ defmodule MusicLibraryWeb.RecordComponents do
         id={@id}
         phx-update="stream"
         role="list"
-        class="mt-4 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-4 sm:gap-x-6 xl:gap-x-8"
+        class={[
+          @density == :low &&
+            "mt-4 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-4 sm:gap-x-6 xl:gap-x-8",
+          @density == :high &&
+            "mt-4 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-4 md:grid-cols-6 xl:grid-cols-8"
+        ]}
       >
         <li :for={{id, record} <- @records} id={id} class="relative">
           <div class="overflow-hidden rounded-lg bg-zinc-100 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:ring-offset-2 focus-within:ring-offset-zinc-100">
@@ -282,108 +292,16 @@ defmodule MusicLibraryWeb.RecordComponents do
               </div>
             </div>
           </div>
-          <div class="flex justify-between items-center">
-            <p class="pointer-events-none mt-2 block text-sm font-medium text-zinc-900 dark:text-zinc-300">
-              {record.title}
-            </p>
-          </div>
-          <p class="pointer-events-none block text-sm font-medium text-zinc-500">
-            {format_label(record.format)} · {type_label(record.type)}
-          </p>
-          <p class="pointer-events-none block text-sm font-medium text-zinc-500">
-            {Records.Record.format_release_date(record.release_date)}
-          </p>
-        </li>
-      </ul>
-    </div>
-    """
-  end
-
-  attr :records, :list, required: true
-  attr :id, :string, required: true
-  attr :record_show_path, :any, required: true
-  attr :record_edit_path, :any, required: true
-
-  def dense_record_grid(assigns) do
-    ~H"""
-    <div class="mt-4">
-      <ul
-        id={@id}
-        phx-update="stream"
-        role="list"
-        class="mt-4 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-4 md:grid-cols-6 xl:grid-cols-8"
-      >
-        <li :for={{id, record} <- @records} id={id} class="relative">
-          <div class="group overflow-hidden rounded-lg bg-zinc-100 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:ring-offset-2 focus-within:ring-offset-zinc-100">
-            <div class="relative">
-              <.record_cover
-                record={record}
-                class="pointer-events-none aspect-square object-cover group-hover:opacity-75"
-                width={560}
-              />
-              <span
-                :if={Records.Record.included_release_groups_count(record) > 0}
-                class={[
-                  "absolute right-0 bottom-0 rounded-br-lg rounded-tl-lg px-2",
-                  "text-sm font-medium",
-                  "bg-zinc-50 dark:bg-zinc-500/10",
-                  "text-zinc-700 dark:text-zinc-400",
-                  "border border-zinc-600/20 dark:border-zinc-500/20"
-                ]}
-              >
-                {Records.Record.included_release_groups_count(record)}
-              </span>
-            </div>
-            <button
-              type="button"
-              class="absolute inset-0 focus:outline-hidden"
-              phx-click={JS.navigate(@record_show_path.(record))}
+          <div class="mt-2">
+            <h1
+              :if={@display_artist_names}
+              class="text-sm leading-6 text-zinc-700"
             >
-              <span class="sr-only">{gettext("View details")}</span>
-            </button>
-          </div>
-          <div class="flex justify-between items-center">
-            <p class="pointer-events-none mt-2 block truncate text-sm font-medium text-zinc-900 dark:text-zinc-300">
+              <.artist_links joinphrase_class="text-xs" artists={record.artists} />
+            </h1>
+            <p class="pointer-events-none text-sm font-medium text-zinc-900 dark:text-zinc-300">
               {record.title}
             </p>
-            <.dropdown id={"actions-#{record.id}"} placement="bottom-end">
-              <:toggle>
-                <.button variant="ghost" class="mt-2">
-                  <span class="sr-only">{gettext("Actions")}</span>
-                  <.icon
-                    name="hero-ellipsis-vertical"
-                    class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
-                    aria-hidden="true"
-                    data-slot="icon"
-                  />
-                </.button>
-              </:toggle>
-              <.focus_wrap id={"actions-#{record.id}-focus-wrap"}>
-                <.dropdown_link id={"actions-#{record.id}-edit"} patch={@record_edit_path.(record)}>
-                  {gettext("Edit")}
-                </.dropdown_link>
-
-                <.dropdown_link
-                  :if={!record.purchased_at}
-                  id={"actions-#{record.id}-purchase"}
-                  phx-click={
-                    JS.dispatch("music_library:confetti")
-                    |> JS.push("add-to-collection", value: %{id: record.id})
-                  }
-                >
-                  {gettext("Purchased")}
-                </.dropdown_link>
-                <.dropdown_separator />
-                <.dropdown_link
-                  id={"actions-#{record.id}-delete"}
-                  phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
-                  data-confirm={gettext("Are you sure?")}
-                  class="text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
-                >
-                  {gettext("Delete")}
-                </.dropdown_link>
-              </.focus_wrap>
-            </.dropdown>
           </div>
           <p class="pointer-events-none block text-sm font-medium text-zinc-500">
             {format_label(record.format)} · {type_label(record.type)}
