@@ -36,7 +36,7 @@ defmodule MusicLibraryWeb.StatsComponents do
           </span>
           <.link
             :for={artist <- @record.artists}
-            class="text-sm md:text-base text-zinc-600 dark:text-zinc-200 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
+            class="text-sm md:text-base text-zinc-600 dark:text-zinc-300 hover:text-zinc-500 dark:hover:text-zinc-200"
             navigate={~p"/artists/#{artist.musicbrainz_id}"}
           >
             {artist.name}
@@ -109,7 +109,7 @@ defmodule MusicLibraryWeb.StatsComponents do
     ~H"""
     <%!-- TODO: replace with OSS version --%>
     <dl class={[
-      "mt-5 grid divide-zinc-200 dark:divide-zinc-900 overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow-sm divide-x-1",
+      "mt-5 grid divide-zinc-200 dark:divide-zinc-900 overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow-sm divide-x",
       stats_class(@categories_with_counts)
     ]}>
       <div :for={{category, count} <- @categories_with_counts} class="px-2 py-5 sm:px-4">
@@ -163,7 +163,7 @@ defmodule MusicLibraryWeb.StatsComponents do
                 "text-xs font-medium",
                 "bg-zinc-200/80 dark:bg-zinc-500/70",
                 "text-zinc-700 dark:text-zinc-200",
-                "border-1 border-zinc-600/20 dark:border-zinc-500/20"
+                "border border-zinc-600/20 dark:border-zinc-500/20"
               ]}
             >
               {Records.Record.included_release_groups_count(record)}

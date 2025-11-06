@@ -145,7 +145,7 @@ defmodule MusicLibraryWeb.Components.Pagination do
 
   defp numbered_link(assigns) when assigns.active do
     ~H"""
-    <.button class="!bg-zinc-100 dark:!bg-zinc-700">
+    <.button class="bg-zinc-100! dark:bg-zinc-700!">
       {@page_number}
     </.button>
     """
