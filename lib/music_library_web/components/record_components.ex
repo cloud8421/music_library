@@ -212,7 +212,6 @@ defmodule MusicLibraryWeb.RecordComponents do
           {ngettext("1 record", "%{count} records", @records_count)}
         </span>
       </header>
-      <%!-- TODO: replace with OSS version --%>
       <ul
         id={@id}
         phx-update="stream"
@@ -225,71 +224,69 @@ defmodule MusicLibraryWeb.RecordComponents do
         ]}
       >
         <li :for={{id, record} <- @records} id={id} class="relative">
-          <div class="overflow-hidden rounded-lg bg-zinc-100 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:ring-offset-2 focus-within:ring-offset-zinc-100">
-            <div
-              class="relative cursor-pointer"
-              phx-click={JS.navigate(@record_show_path.(record))}
+          <div
+            class="relative cursor-pointer"
+            phx-click={JS.navigate(@record_show_path.(record))}
+          >
+            <.record_cover
+              record={record}
+              class="aspect-square rounded-lg hover:opacity-85"
+              width={460}
+            />
+            <span
+              :if={Records.Record.included_release_groups_count(record) > 0}
+              class={[
+                "absolute right-0 bottom-0 rounded-br-lg rounded-tl-lg px-2",
+                "text-sm font-medium",
+                "bg-zinc-50 dark:bg-zinc-500/10",
+                "text-zinc-700 dark:text-zinc-400",
+                "border border-zinc-600/20 dark:border-zinc-500/20"
+              ]}
             >
-              <.record_cover
-                record={record}
-                class="aspect-square object-cover hover:opacity-85"
-                width={460}
-              />
-              <span
-                :if={Records.Record.included_release_groups_count(record) > 0}
-                class={[
-                  "absolute right-0 bottom-0 rounded-br-lg rounded-tl-lg px-2",
-                  "text-sm font-medium",
-                  "bg-zinc-50 dark:bg-zinc-500/10",
-                  "text-zinc-700 dark:text-zinc-400",
-                  "border border-zinc-600/20 dark:border-zinc-500/20"
-                ]}
-              >
-                {Records.Record.included_release_groups_count(record)}
-              </span>
-              <div class="absolute right-2 top-2 rounded-full bg-zinc-100/50 hover:bg-zinc-100/75 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/75 size-5">
-                <.dropdown id={"actions-#{record.id}"} placement="bottom-end">
-                  <:toggle>
-                    <span class="sr-only">{gettext("Actions")}</span>
-                    <.icon
-                      name="hero-ellipsis-vertical"
-                      class="size-5 text-zinc-800 dark:text-zinc-400 cursor-pointer"
-                      aria-hidden="true"
-                      data-slot="icon"
-                      phx-click={JS.toggle_class("pointer-events-none", to: "#{@id} > li")}
-                      phx-click-away={JS.remove_class("pointer-events-none", to: "#{@id} > li")}
-                    />
-                  </:toggle>
-                  <.focus_wrap id={"actions-#{record.id}-focus-wrap"}>
-                    <.dropdown_link
-                      id={"actions-#{record.id}-edit"}
-                      patch={@record_edit_path.(record)}
-                    >
-                      {gettext("Edit")}
-                    </.dropdown_link>
+              {Records.Record.included_release_groups_count(record)}
+            </span>
+            <div class="absolute right-2 top-2 rounded-full bg-zinc-100/50 hover:bg-zinc-100/75 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/75 size-5">
+              <.dropdown id={"actions-#{record.id}"} placement="bottom-end">
+                <:toggle>
+                  <span class="sr-only">{gettext("Actions")}</span>
+                  <.icon
+                    name="hero-ellipsis-vertical"
+                    class="size-5 text-zinc-800 dark:text-zinc-400 cursor-pointer"
+                    aria-hidden="true"
+                    data-slot="icon"
+                    phx-click={JS.toggle_class("pointer-events-none", to: "#{@id} > li")}
+                    phx-click-away={JS.remove_class("pointer-events-none", to: "#{@id} > li")}
+                  />
+                </:toggle>
+                <.focus_wrap id={"actions-#{record.id}-focus-wrap"}>
+                  <.dropdown_link
+                    id={"actions-#{record.id}-edit"}
+                    patch={@record_edit_path.(record)}
+                  >
+                    {gettext("Edit")}
+                  </.dropdown_link>
 
-                    <.dropdown_link
-                      :if={!record.purchased_at}
-                      id={"actions-#{record.id}-purchase"}
-                      phx-click={
-                        JS.dispatch("music_library:confetti")
-                        |> JS.push("add-to-collection", value: %{id: record.id})
-                      }
-                    >
-                      {gettext("Purchased")}
-                    </.dropdown_link>
-                    <.dropdown_separator />
-                    <.dropdown_link
-                      id={"actions-#{record.id}-delete"}
-                      phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
-                      data-confirm={gettext("Are you sure?")}
-                      class="text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
-                    >
-                      {gettext("Delete")}
-                    </.dropdown_link>
-                  </.focus_wrap>
-                </.dropdown>
-              </div>
+                  <.dropdown_link
+                    :if={!record.purchased_at}
+                    id={"actions-#{record.id}-purchase"}
+                    phx-click={
+                      JS.dispatch("music_library:confetti")
+                      |> JS.push("add-to-collection", value: %{id: record.id})
+                    }
+                  >
+                    {gettext("Purchased")}
+                  </.dropdown_link>
+                  <.dropdown_separator />
+                  <.dropdown_link
+                    id={"actions-#{record.id}-delete"}
+                    phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
+                    data-confirm={gettext("Are you sure?")}
+                    class="text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
+                  >
+                    {gettext("Delete")}
+                  </.dropdown_link>
+                </.focus_wrap>
+              </.dropdown>
             </div>
           </div>
           <div class="mt-2">
