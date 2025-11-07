@@ -3,7 +3,8 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
 
   require Logger
 
-  alias MusicLibrary.Records.Batch
+  alias MusicLibrary.Artists
+  alias MusicLibrary.Records
   alias MusicLibrary.Repo
 
   def mount(_params, _session, socket) do
@@ -16,7 +17,7 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
   end
 
   def handle_event("refresh_records_musicbrainz_data", _params, socket) do
-    Batch.refresh_musicbrainz_data()
+    Records.Batch.refresh_musicbrainz_data()
 
     {:noreply,
      socket
@@ -24,7 +25,23 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
   end
 
   def handle_event("generate_record_embeddings", _params, socket) do
-    Batch.generate_embeddings()
+    Records.Batch.generate_embeddings()
+
+    {:noreply,
+     socket
+     |> put_toast(:info, gettext("Operation started in the background."))}
+  end
+
+  def handle_event("refresh_artists_musicbrainz_data", _params, socket) do
+    Artists.Batch.refresh_musicbrainz_data()
+
+    {:noreply,
+     socket
+     |> put_toast(:info, gettext("Operation started in the background."))}
+  end
+
+  def handle_event("refresh_artists_discogs_data", _params, socket) do
+    Artists.Batch.refresh_discogs_data()
 
     {:noreply,
      socket

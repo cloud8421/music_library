@@ -71,4 +71,11 @@ defmodule MusicLibrary.Artists.ArtistInfo do
 
   def external_links(artist_info),
     do: ExternalLink.external_links(artist_info.musicbrainz_data, @external_link_patterns)
+
+  def discogs_id(artist_info) do
+    case artist_info.discogs_data do
+      %{"id" => discogs_id} -> discogs_id
+      _ -> nil
+    end
+  end
 end

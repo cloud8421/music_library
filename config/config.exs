@@ -78,7 +78,7 @@ config :phoenix, :json_library, JSON
 
 config :music_library, Oban,
   engine: Oban.Engines.Lite,
-  queues: [default: 10, heavy_writes: 1, music_brainz: 1],
+  queues: [default: 10, heavy_writes: 1, music_brainz: 1, discogs: 1],
   repo: MusicLibrary.BackgroundRepo,
   plugins: [
     {Oban.Plugins.Cron,

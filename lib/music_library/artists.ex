@@ -100,6 +100,50 @@ defmodule MusicLibrary.Artists do
     end
   end
 
+  def refresh_musicbrainz_data(artist_id) do
+    with {:ok, musicbrainz_artist} <- MusicBrainz.get_artist(artist_id) do
+      get_artist_info!(artist_id)
+      |> ArtistInfo.changeset(%{musicbrainz_data: musicbrainz_artist.musicbrainz_data})
+      |> Repo.update()
+    end
+  end
+
+  def refresh_musicbrainz_data_async(artist_info) do
+    meta = %{}
+    params = %{"id" => artist_info.id}
+
+    params
+    |> Worker.ArtistRefreshMusicBrainzData.new(meta: meta)
+    |> BackgroundRepo.insert()
+  end
+
+  def refresh_discogs_data(artist_id) do
+    artist_info = get_artist_info!(artist_id)
+
+    if discogs_id = ArtistInfo.discogs_id(artist_info) do
+      case Discogs.get_artist(discogs_id) do
+        {:ok, discogs_artist} ->
+          artist_info
+          |> ArtistInfo.changeset(%{discogs_data: discogs_artist})
+          |> Repo.update()
+
+        error ->
+          error
+      end
+    else
+      {:ok, artist_info}
+    end
+  end
+
+  def refresh_discogs_data_async(artist_info) do
+    meta = %{}
+    params = %{"id" => artist_info.id}
+
+    params
+    |> Worker.ArtistRefreshDiscogsData.new(meta: meta)
+    |> BackgroundRepo.insert()
+  end
+
   def create_artist_info(attrs) do
     %ArtistInfo{}
     |> ArtistInfo.changeset(attrs)
