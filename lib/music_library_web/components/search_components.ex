@@ -33,7 +33,7 @@ defmodule MusicLibraryWeb.SearchComponents do
       {@rest}
     >
       <div class="flex items-center space-x-3">
-        <div class="flex-shrink-0">
+        <div class="shrink-0">
           <.record_cover
             record={@record}
             class="w-12 h-12 rounded-md aspect-square object-cover"
