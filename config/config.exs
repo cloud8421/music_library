@@ -86,6 +86,8 @@ config :music_library, Oban,
        # every 12 hours
        {"0 */12 * * *", MusicLibrary.Worker.ApplyScrobbleRules},
        {"0 */12 * * *", MusicLibrary.Worker.PruneAssetCache},
+       # every day at 2 am,
+       {"0 2 * * *", MusicLibrary.Worker.PruneAssets},
        # every day at 3 am,
        {"0 3 * * *", MusicLibrary.Worker.RepoVacuum}
      ]}
