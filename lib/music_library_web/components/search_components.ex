@@ -26,8 +26,10 @@ defmodule MusicLibraryWeb.SearchComponents do
     <div
       class={[
         "p-3 rounded-lg cursor-pointer transition-colors",
-        "hover:bg-zinc-50 dark:hover:bg-zinc-700"
+        "hover:bg-zinc-50 dark:hover:bg-zinc-700",
+        "aria-selected:bg-zinc-200 dark:aria-selected:bg-zinc-500"
       ]}
+      role="option"
       {@rest}
     >
       <div class="flex items-center space-x-3">
@@ -72,8 +74,10 @@ defmodule MusicLibraryWeb.SearchComponents do
     <div
       class={[
         "p-3 rounded-lg cursor-pointer transition-colors",
-        "hover:bg-zinc-50 dark:hover:bg-zinc-700"
+        "hover:bg-zinc-50 dark:hover:bg-zinc-700",
+        "aria-selected:bg-zinc-200 dark:aria-selected:bg-zinc-500"
       ]}
+      role="option"
       {@rest}
     >
       <div class="flex items-center space-x-3">
@@ -131,7 +135,7 @@ defmodule MusicLibraryWeb.SearchComponents do
         </span>
       </h3>
 
-      <div class="space-y-2">
+      <div class="space-y-2" role="listbox">
         {render_slot(@inner_block)}
       </div>
 
