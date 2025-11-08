@@ -47,9 +47,7 @@ defmodule MusicLibrary.MixProject do
       {:circular_buffer, "~> 1.0", override: true},
 
       # Translations
-      # Pinned until there's a fix for the issue caused by
-      # https://github.com/elixir-gettext/gettext/pull/423
-      {:gettext, "== 1.0.0"},
+      {:gettext, "~> 1.0"},
 
       # Web Server
       {:bandit, "~> 1.5"},
