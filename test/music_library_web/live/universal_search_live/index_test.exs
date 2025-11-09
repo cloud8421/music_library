@@ -136,16 +136,9 @@ defmodule MusicLibraryWeb.UniversalSearchLive.IndexTest do
     end
 
     test "hook is attached to the universal search container", %{conn: conn} do
-      {:ok, view, _html} =
-        conn
-        |> visit(~p"/collection")
-        |> PhoenixTest.unwrap()
-
-      # Get the rendered HTML
-      html = Phoenix.LiveViewTest.render(view)
-
-      # Verify the hook is attached
-      assert html =~ ~s(phx-hook="UniversalSearchNavigation")
+      conn
+      |> visit(~p"/collection")
+      |> assert_has("[phx-hook='UniversalSearchNavigation']")
     end
   end
 end
