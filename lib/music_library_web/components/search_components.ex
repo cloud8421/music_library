@@ -27,7 +27,7 @@ defmodule MusicLibraryWeb.SearchComponents do
       class={[
         "p-3 rounded-lg cursor-pointer transition-colors",
         "hover:bg-zinc-50 dark:hover:bg-zinc-700",
-        "aria-selected:bg-zinc-200 dark:aria-selected:bg-zinc-500"
+        "aria-selected:bg-zinc-200 dark:aria-selected:bg-zinc-700"
       ]}
       role="option"
       {@rest}
@@ -75,7 +75,7 @@ defmodule MusicLibraryWeb.SearchComponents do
       class={[
         "p-3 rounded-lg cursor-pointer transition-colors",
         "hover:bg-zinc-50 dark:hover:bg-zinc-700",
-        "aria-selected:bg-zinc-200 dark:aria-selected:bg-zinc-500"
+        "aria-selected:bg-zinc-200 dark:aria-selected:bg-zinc-700"
       ]}
       role="option"
       {@rest}
@@ -139,7 +139,7 @@ defmodule MusicLibraryWeb.SearchComponents do
         {render_slot(@inner_block)}
       </div>
 
-      <div :for={action <- @actions} class="mt-3">
+      <div :for={action <- @actions} class="px-2 mt-3">
         {render_slot(action)}
       </div>
     </div>
@@ -160,7 +160,8 @@ defmodule MusicLibraryWeb.SearchComponents do
   def view_all_button(assigns) do
     ~H"""
     <button
-      class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+      role="option"
+      class="aria-selected:bg-zinc-200 dark:aria-selected:bg-zinc-700 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
       {@rest}
     >
       {gettext("View all %{count} %{target} results →", count: @count, target: @target)}
