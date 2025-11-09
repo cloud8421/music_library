@@ -1593,3 +1593,13 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to regenerate embeddings for all records? This operation can take a long time to complete."
 msgstr ""
+
+#: lib/music_library_web/components/search_components.ex
+#, elixir-autogen, elixir-format
+msgid "Navigate"
+msgstr ""
+
+#: lib/music_library_web/components/search_components.ex
+#, elixir-autogen, elixir-format
+msgid "Select"
+msgstr ""
