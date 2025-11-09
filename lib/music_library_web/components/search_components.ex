@@ -81,7 +81,7 @@ defmodule MusicLibraryWeb.SearchComponents do
       {@rest}
     >
       <div class="flex items-center space-x-3">
-        <div class="flex-shrink-0">
+        <div class="shrink-0">
           <.artist_image
             class="w-12 h-12 rounded-md aspect-square object-cover"
             artist={@artist}
@@ -124,8 +124,8 @@ defmodule MusicLibraryWeb.SearchComponents do
 
   def search_result_group(assigns) do
     ~H"""
-    <div class={["p-4", @class]}>
-      <h3 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3 uppercase tracking-wide">
+    <div class={["p-2", @class]}>
+      <h3 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1 uppercase tracking-wide">
         {@title}
         <span :if={@total_count && @total_count > @count}>
           {gettext("(%{count} of %{total})", count: @count, total: @total_count)}
@@ -135,11 +135,11 @@ defmodule MusicLibraryWeb.SearchComponents do
         </span>
       </h3>
 
-      <div class="space-y-2" role="listbox">
+      <div class="space-y-1" role="listbox">
         {render_slot(@inner_block)}
       </div>
 
-      <div :for={action <- @actions} class="px-2 mt-3">
+      <div :for={action <- @actions} class="px-2 mt-2">
         {render_slot(action)}
       </div>
     </div>
@@ -180,7 +180,7 @@ defmodule MusicLibraryWeb.SearchComponents do
 
   def results_footer(assigns) do
     ~H"""
-    <div class="p-4 bg-zinc-50 dark:bg-zinc-900 rounded-b-lg border-t border-zinc-200 dark:border-zinc-700">
+    <div class="p-2 bg-zinc-50 dark:bg-zinc-900 rounded-b-lg border-t border-zinc-200 dark:border-zinc-700">
       <div class="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
         <div class="flex items-center space-x-4">
           <div :if={@total_results > 0} class="flex items-center">
