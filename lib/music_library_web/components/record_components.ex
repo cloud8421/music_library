@@ -425,26 +425,17 @@ defmodule MusicLibraryWeb.RecordComponents do
       >
         <li
           :for={%{record: record, similarity: similarity} <- @similar_records}
-          class="relative group"
+          class="relative"
+          phx-click={JS.navigate(@record_show_path.(record))}
         >
-          <div class="overflow-hidden rounded-lg bg-zinc-100 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:ring-offset-2 focus-within:ring-offset-zinc-100">
-            <.record_cover
-              record={record}
-              class="pointer-events-none aspect-square object-cover group-hover:opacity-75 transition-opacity"
-              width={300}
-            />
-            <button
-              type="button"
-              class="absolute inset-0 focus:outline-hidden"
-              phx-click={JS.navigate(@record_show_path.(record))}
-            >
-              <span class="sr-only">{gettext("View details")}</span>
-            </button>
-
-            <span class="absolute top-2 right-2 rounded-full px-2 py-0.5 text-xs font-medium bg-zinc-900/75 text-white backdrop-blur-sm">
-              {Float.round(100 - similarity * 100, 0)}%
-            </span>
-          </div>
+          <.record_cover
+            record={record}
+            class="aspect-square rounded-lg hover:opacity-85"
+            width={300}
+          />
+          <span class="absolute top-2 right-2 rounded-full px-2 py-0.5 text-xs font-medium bg-zinc-900/75 text-white backdrop-blur-sm">
+            {Float.round(100 - similarity * 100, 0)}%
+          </span>
 
           <p class="pointer-events-none mt-2 block truncate text-sm font-medium text-zinc-900 dark:text-zinc-300">
             {record.title}
