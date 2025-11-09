@@ -1,7 +1,7 @@
 export default {
   mounted() {
     this.selectedIndex = -1; // -1 means search input is focused
-    
+
     this.keydownHandler = (event) => {
       // Only handle keyboard navigation when the modal is open
       const modal = document.getElementById("universal-search-root");
@@ -45,7 +45,7 @@ export default {
 
   navigateDown() {
     const results = this.getResultElements();
-    
+
     if (results.length === 0) return;
 
     // Move to next result or wrap to search input
@@ -55,13 +55,13 @@ export default {
       // Wrap back to search input
       this.selectedIndex = -1;
     }
-    
+
     this.updateSelection();
   },
 
   navigateUp() {
     const results = this.getResultElements();
-    
+
     if (results.length === 0) return;
 
     // Move to previous result or wrap to last result
@@ -71,13 +71,13 @@ export default {
       // Wrap to last result
       this.selectedIndex = results.length - 1;
     }
-    
+
     this.updateSelection();
   },
 
   selectCurrentResult() {
     const results = this.getResultElements();
-    
+
     if (this.selectedIndex >= 0 && this.selectedIndex < results.length) {
       const selectedResult = results[this.selectedIndex];
       // Trigger the click event on the result
@@ -87,7 +87,7 @@ export default {
 
   updateSelection() {
     const results = this.getResultElements();
-    
+
     // Remove all aria-selected attributes
     results.forEach((result) => {
       result.removeAttribute("aria-selected");
@@ -103,7 +103,7 @@ export default {
       // Mark selected result
       const selectedResult = results[this.selectedIndex];
       selectedResult.setAttribute("aria-selected", "true");
-      
+
       // Scroll into view if needed
       selectedResult.scrollIntoView({
         block: "nearest",
@@ -116,7 +116,7 @@ export default {
     // Get all result items with role="option"
     const modal = document.getElementById("universal-search-root");
     if (!modal) return [];
-    
+
     return Array.from(modal.querySelectorAll('[role="option"]'));
   }
 };
