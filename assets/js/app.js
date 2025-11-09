@@ -24,12 +24,14 @@ import { hooks as colocatedHooks } from "phoenix-colocated/music_library";
 import topbar from "../vendor/topbar";
 import { Hooks as FluxonHooks, DOM as FluxonDOM } from "fluxon";
 import FormatNumberHook from "./hooks/format-number";
+import UniversalSearchNavigationHook from "./hooks/universal-search-navigation";
 import confetti from "canvas-confetti";
 import { createLiveToastHook } from "live_toast";
 import banner from "./banner";
 
 let Hooks = FluxonHooks;
 Hooks.FormatNumber = FormatNumberHook;
+Hooks.UniversalSearchNavigation = UniversalSearchNavigationHook;
 Hooks.LiveToast = createLiveToastHook();
 
 const csrfToken = document

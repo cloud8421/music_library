@@ -182,6 +182,15 @@ defmodule MusicLibraryWeb.SearchComponents do
     <div class="p-4 bg-zinc-50 dark:bg-zinc-900 rounded-b-lg border-t border-zinc-200 dark:border-zinc-700">
       <div class="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
         <div class="flex items-center space-x-4">
+          <div :if={@total_results > 0} class="flex items-center">
+            <kbd class="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded">↑</kbd>
+            <kbd class="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded ml-1">↓</kbd>
+            <span class="ml-1">{gettext("Navigate")}</span>
+          </div>
+          <div :if={@total_results > 0} class="flex items-center">
+            <kbd class="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded">Enter</kbd>
+            <span class="ml-1">{gettext("Select")}</span>
+          </div>
           <div class="flex items-center">
             <kbd class="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded">Esc</kbd>
             <span class="ml-1">{gettext("Close")}</span>
