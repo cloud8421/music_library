@@ -1,6 +1,5 @@
 export default {
   mounted() {
-    this.searchInput = document.getElementById("universal-search-input");
     this.selectedIndex = -1; // -1 means search input is focused
     
     this.keydownHandler = (event) => {
@@ -89,15 +88,16 @@ export default {
   updateSelection() {
     const results = this.getResultElements();
     
-    // Remove all aria-selected attributes and return focus to search input
+    // Remove all aria-selected attributes
     results.forEach((result) => {
       result.removeAttribute("aria-selected");
     });
 
     if (this.selectedIndex === -1) {
       // Focus search input
-      if (this.searchInput) {
-        this.searchInput.focus();
+      const searchInput = document.getElementById("universal-search-input");
+      if (searchInput) {
+        searchInput.focus();
       }
     } else if (this.selectedIndex >= 0 && this.selectedIndex < results.length) {
       // Mark selected result
