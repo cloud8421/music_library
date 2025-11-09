@@ -107,4 +107,45 @@ defmodule MusicLibraryWeb.UniversalSearchLive.IndexTest do
       |> assert_has("div", text: "1 result")
     end
   end
+
+  describe "Keyboard navigation" do
+    test "displays keyboard navigation hints when results are present", %{
+      conn: conn,
+      collection_record: collection_record
+    } do
+      conn
+      |> visit(~p"/collection")
+      |> click_button("Search (Cmd/Ctrl+K)")
+      |> fill_in("Universal Search", with: collection_record.title)
+      |> assert_has("kbd", text: "↑")
+      |> assert_has("kbd", text: "↓")
+      |> assert_has("span", text: "Navigate")
+      |> assert_has("kbd", text: "Enter")
+      |> assert_has("span", text: "Select")
+    end
+
+    test "search results have role=option for keyboard navigation", %{
+      conn: conn,
+      collection_record: collection_record
+    } do
+      conn
+      |> visit(~p"/collection")
+      |> click_button("Search (Cmd/Ctrl+K)")
+      |> fill_in("Universal Search", with: collection_record.title)
+      |> assert_has("[role='option']")
+    end
+
+    test "hook is attached to the universal search container", %{conn: conn} do
+      {:ok, view, _html} =
+        conn
+        |> visit(~p"/collection")
+        |> PhoenixTest.unwrap()
+
+      # Get the rendered HTML
+      html = Phoenix.LiveViewTest.render(view)
+
+      # Verify the hook is attached
+      assert html =~ ~s(phx-hook="UniversalSearchNavigation")
+    end
+  end
 end
