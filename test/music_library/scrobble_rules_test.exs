@@ -287,5 +287,141 @@ defmodule MusicLibrary.ScrobbleRulesTest do
 
       assert ScrobbleRules.count_artist_matches(rule) == 2
     end
+
+    test "apply_all_album_rules/1 applies multiple album rules in one query" do
+      # Create two album rules
+      rule1 = scrobble_rule_fixture(@valid_album_attrs)
+
+      rule2 =
+        scrobble_rule_fixture(%{
+          match_value: "Wish You Were Here",
+          target_musicbrainz_id: "abcdef12-3456-7890-abcd-ef1234567890"
+        })
+
+      # Create tracks matching each rule
+      track1 =
+        scrobbled_track_fixture(%{
+          album: %{musicbrainz_id: "", title: "Dark Side of the Moon"}
+        })
+
+      track2 =
+        scrobbled_track_fixture(%{
+          scrobbled_at_uts: System.system_time(:second) + 1,
+          album: %{musicbrainz_id: "", title: "Wish You Were Here"}
+        })
+
+      # Create a non-matching track
+      _track3 =
+        scrobbled_track_fixture(%{
+          scrobbled_at_uts: System.system_time(:second) + 2,
+          album: %{musicbrainz_id: "", title: "The Wall"}
+        })
+
+      # Apply both rules at once
+      assert {:ok, 2} = ScrobbleRules.apply_all_album_rules([rule1, rule2])
+
+      # Verify both tracks were updated by fetching them again
+      updated_track1 = Repo.get(Track, track1.scrobbled_at_uts)
+      assert updated_track1.album.musicbrainz_id == rule1.target_musicbrainz_id
+
+      updated_track2 = Repo.get(Track, track2.scrobbled_at_uts)
+      assert updated_track2.album.musicbrainz_id == rule2.target_musicbrainz_id
+    end
+
+    test "apply_all_artist_rules/1 applies multiple artist rules in one query" do
+      # Create two artist rules
+      rule1 = scrobble_rule_fixture(@valid_artist_attrs)
+
+      rule2 =
+        scrobble_rule_fixture(%{
+          type: :artist,
+          match_value: "Led Zeppelin",
+          target_musicbrainz_id: "fedcba98-7654-3210-fedc-ba9876543210"
+        })
+
+      # Create tracks matching each rule
+      track1 =
+        scrobbled_track_fixture(%{
+          artist: %{musicbrainz_id: "", name: "Pink Floyd"}
+        })
+
+      track2 =
+        scrobbled_track_fixture(%{
+          scrobbled_at_uts: System.system_time(:second) + 1,
+          artist: %{musicbrainz_id: "", name: "Led Zeppelin"}
+        })
+
+      # Create a non-matching track
+      _track3 =
+        scrobbled_track_fixture(%{
+          scrobbled_at_uts: System.system_time(:second) + 2,
+          artist: %{musicbrainz_id: "", name: "The Beatles"}
+        })
+
+      # Apply both rules at once
+      assert {:ok, 2} = ScrobbleRules.apply_all_artist_rules([rule1, rule2])
+
+      # Verify both tracks were updated by fetching them again
+      updated_track1 = Repo.get(Track, track1.scrobbled_at_uts)
+      assert updated_track1.artist.musicbrainz_id == rule1.target_musicbrainz_id
+
+      updated_track2 = Repo.get(Track, track2.scrobbled_at_uts)
+      assert updated_track2.artist.musicbrainz_id == rule2.target_musicbrainz_id
+    end
+
+    test "apply_all_album_rules/1 with empty list returns 0" do
+      assert {:ok, 0} = ScrobbleRules.apply_all_album_rules([])
+    end
+
+    test "apply_all_artist_rules/1 with empty list returns 0" do
+      assert {:ok, 0} = ScrobbleRules.apply_all_artist_rules([])
+    end
+
+    test "apply_all_rules/0 batches rules by type" do
+      # Create multiple rules of each type
+      _album_rule1 = scrobble_rule_fixture(@valid_album_attrs)
+
+      _album_rule2 =
+        scrobble_rule_fixture(%{
+          match_value: "Wish You Were Here",
+          target_musicbrainz_id: "abcdef12-3456-7890-abcd-ef1234567890"
+        })
+
+      _artist_rule1 = scrobble_rule_fixture(@valid_artist_attrs)
+
+      _artist_rule2 =
+        scrobble_rule_fixture(%{
+          type: :artist,
+          match_value: "Led Zeppelin",
+          target_musicbrainz_id: "fedcba98-7654-3210-fedc-ba9876543210"
+        })
+
+      # Create tracks matching the rules
+      _track1 =
+        scrobbled_track_fixture(%{
+          album: %{musicbrainz_id: "", title: "Dark Side of the Moon"},
+          artist: %{musicbrainz_id: "", name: "Pink Floyd"}
+        })
+
+      _track2 =
+        scrobbled_track_fixture(%{
+          scrobbled_at_uts: System.system_time(:second) + 1,
+          album: %{musicbrainz_id: "", title: "Wish You Were Here"},
+          artist: %{musicbrainz_id: "", name: "Led Zeppelin"}
+        })
+
+      # Apply all rules
+      results = ScrobbleRules.apply_all_rules()
+
+      # Should have 4 results (one for each rule)
+      assert length(results) == 4
+
+      # All results should be successful
+      Enum.each(results, fn result ->
+        assert {:ok, {_type, _match_value, count}} = result
+        # Count should be > 0 since we have matching tracks
+        assert count > 0
+      end)
+    end
   end
 end
