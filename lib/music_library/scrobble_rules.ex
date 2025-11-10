@@ -327,7 +327,107 @@ defmodule MusicLibrary.ScrobbleRules do
   end
 
   @doc """
+  Applies all album rules in a single query.
+
+  Uses a CASE statement to update the musicbrainz_id for all matching albums
+  in one database operation, which is more efficient than applying rules individually.
+
+  ## Examples
+
+      iex> apply_all_album_rules([rule1, rule2])
+      {:ok, 15}
+
+  """
+  def apply_all_album_rules([]), do: {:ok, 0}
+
+  def apply_all_album_rules(rules) when is_list(rules) do
+    # Build CASE WHEN clauses dynamically
+    {case_clauses, case_params} =
+      rules
+      |> Enum.reduce({"", []}, fn rule, {sql_acc, params_acc} ->
+        clause = "WHEN json_extract(album, '$.title') = ? THEN json_set(album, '$.musicbrainz_id', ?) "
+        {sql_acc <> clause, params_acc ++ [rule.match_value, rule.target_musicbrainz_id]}
+      end)
+
+    # Build complete UPDATE statement
+    case_sql = "CASE #{case_clauses}ELSE album END"
+
+    # Build WHERE IN clause
+    match_values = Enum.map(rules, & &1.match_value)
+    in_placeholders = Enum.map(match_values, fn _ -> "?" end) |> Enum.join(", ")
+    where_sql = "json_extract(album, '$.title') IN (#{in_placeholders})"
+
+    # Complete SQL
+    sql = """
+    UPDATE scrobbled_tracks 
+    SET album = #{case_sql}
+    WHERE #{where_sql}
+    """
+
+    # All parameters: case params + where params
+    all_params = case_params ++ match_values
+
+    # Execute the query
+    case Ecto.Adapters.SQL.query(Repo, sql, all_params) do
+      {:ok, %{num_rows: count}} -> {:ok, count}
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  @doc """
+  Applies all artist rules in a single query.
+
+  Uses a CASE statement to update the musicbrainz_id for all matching artists
+  in one database operation, which is more efficient than applying rules individually.
+
+  ## Examples
+
+      iex> apply_all_artist_rules([rule1, rule2])
+      {:ok, 25}
+
+  """
+  def apply_all_artist_rules([]), do: {:ok, 0}
+
+  def apply_all_artist_rules(rules) when is_list(rules) do
+    # Build CASE WHEN clauses dynamically
+    {case_clauses, case_params} =
+      rules
+      |> Enum.reduce({"", []}, fn rule, {sql_acc, params_acc} ->
+        clause = "WHEN json_extract(artist, '$.name') = ? THEN json_set(artist, '$.musicbrainz_id', ?) "
+        {sql_acc <> clause, params_acc ++ [rule.match_value, rule.target_musicbrainz_id]}
+      end)
+
+    # Build complete UPDATE statement
+    case_sql = "CASE #{case_clauses}ELSE artist END"
+
+    # Build WHERE IN clause
+    match_values = Enum.map(rules, & &1.match_value)
+    in_placeholders = Enum.map(match_values, fn _ -> "?" end) |> Enum.join(", ")
+    where_sql = "json_extract(artist, '$.name') IN (#{in_placeholders})"
+
+    # Complete SQL
+    sql = """
+    UPDATE scrobbled_tracks 
+    SET artist = #{case_sql}
+    WHERE #{where_sql}
+    """
+
+    # All parameters: case params + where params
+    all_params = case_params ++ match_values
+
+    # Execute the query
+    case Ecto.Adapters.SQL.query(Repo, sql, all_params) do
+      {:ok, %{num_rows: count}} -> {:ok, count}
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  @doc """
   Applies all enabled rules.
+
+  This optimized version groups rules by type and applies all rules of each type
+  in a single database query, which is much more efficient than applying each rule
+  individually.
 
   ## Examples
 
@@ -337,14 +437,45 @@ defmodule MusicLibrary.ScrobbleRules do
   """
   def apply_all_rules do
     :telemetry.span([:music_library, :scrobble_rules, :apply_all_rules], %{}, fn ->
-      result =
-        list_enabled_rules()
-        |> Enum.map(fn rule ->
-          case apply_rule(rule) do
-            {:ok, count} -> {:ok, {rule.type, rule.match_value, count}}
-            {:error, reason} -> {:error, {rule.type, rule.match_value, reason}}
-          end
-        end)
+      enabled_rules = list_enabled_rules()
+
+      # Group rules by type
+      {album_rules, artist_rules} =
+        Enum.split_with(enabled_rules, fn rule -> rule.type == :album end)
+
+      # Apply all album rules in one query
+      album_result =
+        case apply_all_album_rules(album_rules) do
+          {:ok, count} ->
+            # Return the count for each album rule (total updated)
+            # Note: this returns the same count for each rule since they're applied together
+            Enum.map(album_rules, fn rule ->
+              {:ok, {rule.type, rule.match_value, count}}
+            end)
+
+          {:error, reason} ->
+            Enum.map(album_rules, fn rule ->
+              {:error, {rule.type, rule.match_value, reason}}
+            end)
+        end
+
+      # Apply all artist rules in one query
+      artist_result =
+        case apply_all_artist_rules(artist_rules) do
+          {:ok, count} ->
+            # Return the count for each artist rule (total updated)
+            # Note: this returns the same count for each rule since they're applied together
+            Enum.map(artist_rules, fn rule ->
+              {:ok, {rule.type, rule.match_value, count}}
+            end)
+
+          {:error, reason} ->
+            Enum.map(artist_rules, fn rule ->
+              {:error, {rule.type, rule.match_value, reason}}
+            end)
+        end
+
+      result = album_result ++ artist_result
 
       {result, %{scrobble_track_count: :all}}
     end)
