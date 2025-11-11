@@ -121,7 +121,7 @@ defmodule MusicLibraryWeb.Components.Release do
       <.button
         :if={@can_scrobble?}
         size="sm"
-        disabled={@already_scrobbled}
+        disabled={@already_scrobbled || MapSet.size(@selected_tracks) > 0}
         phx-click="scrobble_medium"
         phx-value-number={@medium.number}
         phx-target={@myself}
