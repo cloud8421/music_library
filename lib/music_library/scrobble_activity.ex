@@ -97,6 +97,50 @@ defmodule MusicLibrary.ScrobbleActivity do
     end
   end
 
+  def scrobble_tracks(selected_track_ids, release_with_tracks, opts) when is_list(opts) do
+    case Enum.sort(opts) do
+      [finished_at: _, started_at: _] ->
+        raise ArgumentError, """
+        Cannot scrobble tracks with both started_at and finished_at.
+          Remove either of them.
+        """
+
+      [started_at: started_at] ->
+        scrobble_tracks(selected_track_ids, release_with_tracks, {:started_at, started_at})
+
+      [finished_at: finished_at] ->
+        scrobble_tracks(selected_track_ids, release_with_tracks, {:finished_at, finished_at})
+    end
+  end
+
+  def scrobble_tracks(selected_track_ids, release_with_tracks, {:finished_at, finished_at}) do
+    all_tracks = Release.tracks(release_with_tracks)
+    selected_tracks = Enum.filter(all_tracks, fn track -> MapSet.member?(selected_track_ids, track.id) end)
+    
+    tracks_duration = Enum.sum_by(selected_tracks, fn track -> track.length || 0 end)
+    started_at = DateTime.add(finished_at, -tracks_duration, :millisecond)
+    scrobble_tracks(selected_track_ids, release_with_tracks, {:started_at, started_at})
+  end
+
+  def scrobble_tracks(selected_track_ids, release_with_tracks, {:started_at, started_at}) do
+    all_tracks = Release.tracks(release_with_tracks)
+    selected_tracks = Enum.filter(all_tracks, fn track -> MapSet.member?(selected_track_ids, track.id) end)
+    
+    tracks_duration = Enum.sum_by(selected_tracks, fn track -> track.length || 0 end)
+
+    if tracks_duration == 0 do
+      {:error, :no_duration}
+    else
+      session_key = Secrets.get!("last_fm_session_key").value
+
+      {scrobbles, _finished_at} =
+        selected_tracks
+        |> to_scrobbles(release_with_tracks, started_at)
+
+      LastFm.scrobble(scrobbles, session_key)
+    end
+  end
+
   defp to_scrobbles(tracks, release_with_tracks, started_at) do
     tracks
     |> Enum.map_reduce(started_at, fn track, time ->
