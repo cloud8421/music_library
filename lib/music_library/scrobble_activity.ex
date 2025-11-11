@@ -115,8 +115,10 @@ defmodule MusicLibrary.ScrobbleActivity do
 
   def scrobble_tracks(selected_track_ids, release_with_tracks, {:finished_at, finished_at}) do
     all_tracks = Release.tracks(release_with_tracks)
-    selected_tracks = Enum.filter(all_tracks, fn track -> MapSet.member?(selected_track_ids, track.id) end)
-    
+
+    selected_tracks =
+      Enum.filter(all_tracks, fn track -> MapSet.member?(selected_track_ids, track.id) end)
+
     tracks_duration = Enum.sum_by(selected_tracks, fn track -> track.length || 0 end)
     started_at = DateTime.add(finished_at, -tracks_duration, :millisecond)
     scrobble_tracks(selected_track_ids, release_with_tracks, {:started_at, started_at})
@@ -124,8 +126,10 @@ defmodule MusicLibrary.ScrobbleActivity do
 
   def scrobble_tracks(selected_track_ids, release_with_tracks, {:started_at, started_at}) do
     all_tracks = Release.tracks(release_with_tracks)
-    selected_tracks = Enum.filter(all_tracks, fn track -> MapSet.member?(selected_track_ids, track.id) end)
-    
+
+    selected_tracks =
+      Enum.filter(all_tracks, fn track -> MapSet.member?(selected_track_ids, track.id) end)
+
     tracks_duration = Enum.sum_by(selected_tracks, fn track -> track.length || 0 end)
 
     if tracks_duration == 0 do

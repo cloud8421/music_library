@@ -50,7 +50,11 @@ defmodule MusicLibraryWeb.Components.Release do
             :if={@can_scrobble? && @release_with_tracks.ok?}
             size="sm"
             disabled={@already_scrobbled}
-            phx-click={if MapSet.size(@selected_tracks) > 0, do: "scrobble_selected_tracks", else: "scrobble_release"}
+            phx-click={
+              if MapSet.size(@selected_tracks) > 0,
+                do: "scrobble_selected_tracks",
+                else: "scrobble_release"
+            }
             phx-target={@myself}
             phx-disable-with={gettext("Scrobbling...")}
           >
