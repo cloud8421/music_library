@@ -113,7 +113,7 @@ defmodule MusicLibraryWeb.Components.Release do
     ~H"""
     <div
       :if={@media_count > 1}
-      class="flex justify-between items-center gap-4 space-y-4"
+      class="flex justify-between items-center gap-4"
     >
       <h4 class="text-sm md:text-md font-semibold text-zinc-700 dark:text-zinc-300">
         {medium_title(@medium)}
