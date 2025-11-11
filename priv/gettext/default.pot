@@ -767,6 +767,26 @@ msgid "Scrobble release"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
+#, elixir-autogen, elixir-format
+msgid "Scrobble selected tracks"
+msgstr ""
+
+#: lib/music_library_web/components/release.ex
+#, elixir-autogen, elixir-format
+msgid "Selected tracks scrobbled successfully"
+msgstr ""
+
+#: lib/music_library_web/components/release.ex
+#, elixir-autogen, elixir-format
+msgid "Error scrobbling selected tracks"
+msgstr ""
+
+#: lib/music_library_web/components/release.ex
+#, elixir-autogen, elixir-format
+msgid "No tracks selected"
+msgstr ""
+
+#: lib/music_library_web/components/release.ex
 #: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Disc scrobbled successfully"
