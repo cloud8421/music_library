@@ -313,6 +313,14 @@ defmodule MusicLibraryWeb.Components.Release do
     {:noreply, socket |> put_toast(:error, gettext("Error scrobbling selected tracks"))}
   end
 
+  def scrobble_button_label(selected_tracks) do
+    if MapSet.size(selected_tracks) > 0 do
+      gettext("Scrobble selected tracks")
+    else
+      gettext("Scrobble release")
+    end
+  end
+
   defp medium_duration(medium) do
     medium
     |> MusicBrainz.Release.medium_duration()
@@ -324,14 +332,6 @@ defmodule MusicLibraryWeb.Components.Release do
       gettext("Disc %{no}", %{no: medium.number})
     else
       medium.title
-    end
-  end
-
-  defp scrobble_button_label(selected_tracks) do
-    if MapSet.size(selected_tracks) > 0 do
-      gettext("Scrobble selected tracks")
-    else
-      gettext("Scrobble release")
     end
   end
 end

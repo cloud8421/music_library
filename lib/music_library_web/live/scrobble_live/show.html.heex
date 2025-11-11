@@ -81,10 +81,14 @@
 
           <.button
             :if={@can_scrobble}
-            phx-click="scrobble_release"
+            phx-click={
+              if MapSet.size(@selected_tracks) > 0,
+                do: "scrobble_selected_tracks",
+                else: "scrobble_release"
+            }
             size="sm"
           >
-            {gettext("Scrobble release")}
+            {scrobble_button_label(@selected_tracks)}
           </.button>
         </div>
 
@@ -94,7 +98,7 @@
           already_scrobbled={false}
           medium={medium}
           release_artists={@release.artists}
-          selected_tracks={MapSet.new()}
+          selected_tracks={@selected_tracks}
           media_count={MusicBrainz.Release.media_count(@release)}
           myself={nil}
         />
