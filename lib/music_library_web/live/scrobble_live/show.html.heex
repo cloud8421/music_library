@@ -94,6 +94,7 @@
           already_scrobbled={false}
           medium={medium}
           release_artists={@release.artists}
+          selected_tracks={MapSet.new()}
           media_count={MusicBrainz.Release.media_count(@release)}
           myself={nil}
         />
