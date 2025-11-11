@@ -4,7 +4,7 @@ defmodule MusicLibrary.Records.Similarity do
   """
 
   import Ecto.Query
-  import(SqliteVec.Ecto.Query)
+  import SqliteVec.Ecto.Query
 
   alias MusicLibrary.{Artists, Records}
   alias MusicLibrary.Records.{Record, RecordEmbedding}
