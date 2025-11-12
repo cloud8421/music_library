@@ -23,6 +23,10 @@ defmodule MusicLibraryWeb.AssetController do
     end
   end
 
+  defp cached_get(_payload, transform, _format) when is_nil(transform.hash) do
+    nil
+  end
+
   defp cached_get(payload, transform, format) do
     case Cache.get(payload, format) do
       :not_found ->
