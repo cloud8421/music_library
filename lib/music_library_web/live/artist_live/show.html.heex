@@ -153,10 +153,16 @@
               {gettext("Error loading biography")}
             </div>
           </:failed>
-          <dt class="mt-4 text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+          <dt
+            :if={lastfm_artist_info.bio not in [nil, ""]}
+            class="mt-4 text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400"
+          >
             {gettext("Biography")}
           </dt>
-          <dd class="text-zinc-700 dark:text-zinc-300">
+          <dd
+            :if={lastfm_artist_info.bio not in [nil, ""]}
+            class="text-zinc-700 dark:text-zinc-300"
+          >
             {remove_read_more_link(lastfm_artist_info.summary)}
             <.link
               class="block mt-2 text-sm font-medium text-zinc-900 dark:text-zinc-400"
@@ -171,7 +177,12 @@
               {gettext("Read more")}
             </.link>
           </dd>
-          <.sheet id="bio" class="max-w-2xl text-zinc-700 dark:text-zinc-300" placement="left">
+          <.sheet
+            :if={lastfm_artist_info.bio not in [nil, ""]}
+            id="bio"
+            class="max-w-2xl text-zinc-700 dark:text-zinc-300"
+            placement="left"
+          >
             {render_bio(lastfm_artist_info.bio)}
           </.sheet>
         </.async_result>
