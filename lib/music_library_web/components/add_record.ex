@@ -200,7 +200,7 @@ defmodule MusicLibraryWeb.Components.AddRecord do
          socket
          |> assign(:offset, offset)
          |> assign(:loaded_all_results?, length(result.release_groups) < @batch_size)
-         |> assign(:release_groups_count, length(result.release_groups))
+         |> assign(:release_groups_count, offset + length(result.release_groups))
          |> assign(:release_groups_total_count, result.total_count)
          |> stream(:release_groups, result.release_groups)}
 
