@@ -1,6 +1,8 @@
 defmodule MusicLibraryWeb.Components.Release do
   use MusicLibraryWeb, :live_component
 
+  require Logger
+
   alias MusicBrainz.Release
   alias MusicLibrary.ScrobbleActivity
   alias MusicLibraryWeb.Duration
@@ -220,6 +222,8 @@ defmodule MusicLibraryWeb.Components.Release do
          |> put_toast(:info, gettext("Release scrobbled successfully"))}
 
       {:error, reason} ->
+        Logger.error("Error scrobbling release: #{inspect(reason)}")
+
         {:noreply,
          socket
          |> put_toast(
@@ -250,6 +254,8 @@ defmodule MusicLibraryWeb.Components.Release do
          |> put_toast(:info, gettext("Disc scrobbled successfully"))}
 
       {:error, reason} ->
+        Logger.error("Error scrobbling medium: #{inspect(reason)}")
+
         {:noreply,
          socket
          |> put_toast(
@@ -299,6 +305,8 @@ defmodule MusicLibraryWeb.Components.Release do
            |> put_toast(:info, gettext("Selected tracks scrobbled successfully"))}
 
         {:error, reason} ->
+          Logger.error("Error scrobbling tracks: #{inspect(reason)}")
+
           {:noreply,
            socket
            |> put_toast(
