@@ -251,7 +251,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                   <span class="sr-only">{gettext("Actions")}</span>
                   <.icon
                     name="hero-ellipsis-vertical"
-                    class="size-5 text-zinc-800 dark:text-zinc-400 cursor-pointer"
+                    class="size-5 text-zinc-800 dark:text-zinc-200 cursor-pointer"
                     aria-hidden="true"
                     data-slot="icon"
                     phx-click={JS.toggle_class("pointer-events-none", to: "#{@id} > li")}
