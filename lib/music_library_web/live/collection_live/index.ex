@@ -12,7 +12,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
   @default_records_list_params %{
     query: "",
     page: 1,
-    page_size: 48,
+    page_size: 72,
     order: :purchase
   }
 
