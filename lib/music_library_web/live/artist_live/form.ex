@@ -16,7 +16,7 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="w-82 md:w-2xl">
+    <div class="w-full">
       <header>
         <h1 class="text-base font-medium leading-6 text-zinc-700 dark:text-zinc-300">
           {@artist.name}
