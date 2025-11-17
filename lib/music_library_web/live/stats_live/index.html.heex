@@ -517,7 +517,7 @@
     </div>
     <div class="lg:col-span-4">
       <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
-        {gettext("Top %{n} Artists", %{n: length(@records_by_artist)})}
+        {gettext("Top %{n} Collection Artists", %{n: length(@records_by_artist)})}
       </h1>
       <div class="mt-5 bg-white dark:bg-zinc-800 rounded-md shadow-sm">
         <.vertical_bar_chart
@@ -539,7 +539,7 @@
 
     <div class="lg:col-span-4">
       <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
-        {gettext("Top %{n} Genres", %{n: length(@records_by_genre)})}
+        {gettext("Top %{n} Collection Genres", %{n: length(@records_by_genre)})}
       </h1>
       <div class="mt-5 bg-white dark:bg-zinc-800 rounded-md shadow-sm">
         <.vertical_bar_chart

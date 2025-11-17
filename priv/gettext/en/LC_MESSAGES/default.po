@@ -681,16 +681,6 @@ msgstr ""
 msgid "Oban"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Top %{n} Artists"
-msgstr ""
-
-#: lib/music_library_web/live/stats_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Top %{n} Genres"
-msgstr ""
-
 #: lib/music_library_web/components/record_form.ex
 #, elixir-autogen, elixir-format
 msgid "Release Date"
@@ -1623,4 +1613,14 @@ msgstr ""
 #: lib/music_library_web/components/search_components.ex
 #, elixir-autogen, elixir-format
 msgid "Select"
+msgstr ""
+
+#: lib/music_library_web/live/stats_live/index.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Top %{n} Collection Artists"
+msgstr ""
+
+#: lib/music_library_web/live/stats_live/index.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Top %{n} Collection Genres"
 msgstr ""
