@@ -9,32 +9,26 @@ defmodule MusicLibrary.SqlHelpersTest do
 
   describe "json_extract/2 macro" do
     test "generates correct SQL fragment" do
-      # Build a query using the macro
       query = from(t in Track, where: json_extract(t.album, "$.title") == "Test Album")
 
-      # Convert to SQL to verify
-      sql = Ecto.Adapters.SQL.to_sql(:all, Repo, query)
+      {sql, _params} = Repo.to_sql(:all, query)
 
-      # Check that json_extract is in the SQL
-      assert sql =~ "json_extract"
-      assert sql =~ "$.title"
+      assert sql ==
+               "SELECT s0.\"scrobbled_at_uts\", s0.\"musicbrainz_id\", s0.\"title\", s0.\"cover_url\", s0.\"scrobbled_at_label\", s0.\"artist\", s0.\"album\", s0.\"last_fm_data\" FROM \"scrobbled_tracks\" AS s0 WHERE (json_extract(s0.\"album\", '$.title') = 'Test Album')"
     end
   end
 
   describe "json_set/3 macro" do
     test "generates correct SQL fragment" do
-      # Build a query using the macro
       query =
         from(t in Track,
           update: [set: [album: json_set(t.album, "$.musicbrainz_id", "test-id")]]
         )
 
-      # Convert to SQL to verify
-      sql = Ecto.Adapters.SQL.to_sql(:update_all, Repo, query)
+      {sql, _params} = Repo.to_sql(:update_all, query)
 
-      # Check that json_set is in the SQL
-      assert sql =~ "json_set"
-      assert sql =~ "$.musicbrainz_id"
+      assert sql ==
+               "UPDATE \"scrobbled_tracks\" AS s0 SET \"album\" = json_set(s0.\"album\", '$.musicbrainz_id', 'test-id')"
     end
   end
 
@@ -83,7 +77,6 @@ defmodule MusicLibrary.SqlHelpersTest do
 
       {case_sql, case_params, match_values} = case_when([rule1, rule2], field_spec)
 
-      # Should have two WHEN clauses
       assert case_sql =~ "WHEN json_extract(album, '$.title') = ?"
       assert String.match?(case_sql, ~r/WHEN.*WHEN/)
       assert case_sql =~ "ELSE album END"
