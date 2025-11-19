@@ -321,8 +321,15 @@
               {gettext("Last listened at")}
             </dt>
             <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
-              {@last_listened_track &&
-                localize_scrobbled_at(@last_listened_track.scrobbled_at_uts, @timezone)}
+              <span :if={@last_listened_track}>
+                {localize_scrobbled_at(@last_listened_track.scrobbled_at_uts, @timezone)}
+              </span>
+              <span :if={@play_count == 0}>
+                {gettext("Never")}
+              </span>
+              <span :if={@play_count > 0}>
+                {ngettext("(1 scrobble)", "(%{count} scrobbles)", @play_count)}
+              </span>
             </dd>
           </div>
         </dl>

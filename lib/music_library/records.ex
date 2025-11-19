@@ -242,6 +242,21 @@ defmodule MusicLibrary.Records do
   end
 
   def get_last_listened_track(record) do
+    q =
+      from t in scrobbles_for_record_query(record),
+        order_by: [desc: t.scrobbled_at_uts],
+        limit: 1
+
+    Repo.one(q)
+  end
+
+  def play_count(record) do
+    record
+    |> scrobbles_for_record_query()
+    |> Repo.aggregate(:count)
+  end
+
+  defp scrobbles_for_record_query(record) do
     record_id = record.id
 
     q =
@@ -253,16 +268,11 @@ defmodule MusicLibrary.Records do
     main_artist_name = Record.main_artist(record).name
     record_title = record.title
 
-    q =
-      from t in LastFm.Track,
-        where: fragment("? ->> '$.musicbrainz_id'", t.album) in ^release_ids,
-        or_where:
-          fragment("? ->> '$.title'", t.album) == ^record_title and
-            fragment("? ->> '$.name'", t.artist) == ^main_artist_name,
-        order_by: [desc: t.scrobbled_at_uts],
-        limit: 1
-
-    Repo.one(q)
+    from t in LastFm.Track,
+      where: fragment("? ->> '$.musicbrainz_id'", t.album) in ^release_ids,
+      or_where:
+        fragment("? ->> '$.title'", t.album) == ^record_title and
+          fragment("? ->> '$.name'", t.artist) == ^main_artist_name
   end
 
   def refresh_cover(record) do

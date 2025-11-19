@@ -35,6 +35,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   def handle_params(%{"id" => id}, _, socket) do
     record = Records.get_record!(id)
     last_listened_track = Records.get_last_listened_track(record)
+    play_count = Records.play_count(record) || 0
 
     socket =
       if record.selected_release_id do
@@ -48,6 +49,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
      |> assign(:page_title, page_title(socket.assigns.live_action, record))
      |> assign(:record, record)
      |> assign(:last_listened_track, last_listened_track)
+     |> assign(:play_count, play_count)
      |> assign_similar_records()}
   end
 
