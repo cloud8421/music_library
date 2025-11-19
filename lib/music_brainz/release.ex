@@ -41,8 +41,19 @@ defmodule MusicBrainz.Release do
     Enum.count(release.media)
   end
 
+  def get_medium(release, medium_number) do
+    Enum.find(release.media, fn m -> m.number == medium_number end)
+  end
+
   def medium_duration(medium) do
     Enum.sum_by(medium.tracks, fn track -> track.length || 0 end)
+  end
+
+  def medium_tracks(release, medium_number) do
+    case Enum.find(release.media, fn m -> m.number == medium_number end) do
+      nil -> []
+      medium -> medium.tracks
+    end
   end
 
   def release_duration(release) do

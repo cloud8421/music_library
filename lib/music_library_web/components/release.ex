@@ -47,7 +47,24 @@ defmodule MusicLibraryWeb.Components.Release do
         class="min-w-xs sm:min-w-sm"
       >
         <div class="mt-6 flex justify-between items-center gap-4">
-          <h3 class="text-lg font-semibold text-zinc-700 dark:text-zinc-300">{gettext("Tracks")}</h3>
+          <h3 class="text-lg font-semibold text-zinc-700 dark:text-zinc-300">
+            <input
+              :if={
+                @can_scrobble? && @release_with_tracks.ok? &&
+                  Release.media_count(@release_with_tracks.result) == 1
+              }
+              type="checkbox"
+              id="medium-checkbox-1"
+              checked={
+                medium_selected?(Release.get_medium(@release_with_tracks.result, 1), @selected_tracks)
+              }
+              phx-click="toggle_medium"
+              phx-value-medium-number={1}
+              phx-target={@myself}
+              class="w-4 h-4 mr-2 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            {gettext("Tracks")}
+          </h3>
           <.button
             :if={@can_scrobble? && @release_with_tracks.ok?}
             size="sm"
@@ -118,6 +135,16 @@ defmodule MusicLibraryWeb.Components.Release do
       class="flex justify-between items-center gap-4"
     >
       <h4 class="text-sm md:text-md font-semibold text-zinc-700 dark:text-zinc-300">
+        <input
+          :if={@can_scrobble?}
+          type="checkbox"
+          id={"medium-checkbox-#{@medium.number}"}
+          checked={medium_selected?(@medium, @selected_tracks)}
+          phx-click="toggle_medium"
+          phx-value-medium-number={@medium.number}
+          phx-target={@myself}
+          class="w-4 h-4 mr-2 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+        />
         {medium_title(@medium)}
       </h4>
       <.button
@@ -282,6 +309,27 @@ defmodule MusicLibraryWeb.Components.Release do
     {:noreply, assign(socket, :selected_tracks, updated_tracks)}
   end
 
+  def handle_event("toggle_medium", %{"medium-number" => number}, socket) do
+    number = String.to_integer(number)
+    selected_tracks = socket.assigns.selected_tracks
+    release_with_tracks = socket.assigns.release_with_tracks.result
+
+    medium_tracks =
+      release_with_tracks
+      |> Release.medium_tracks(number)
+      |> Enum.map(& &1.id)
+      |> MapSet.new()
+
+    updated_tracks =
+      if MapSet.subset?(medium_tracks, selected_tracks) do
+        MapSet.difference(selected_tracks, medium_tracks)
+      else
+        MapSet.union(selected_tracks, medium_tracks)
+      end
+
+    {:noreply, assign(socket, :selected_tracks, updated_tracks)}
+  end
+
   def handle_event("scrobble_selected_tracks", _params, socket)
       when release_loaded?(socket.assigns) do
     release_with_tracks = socket.assigns.release_with_tracks.result
@@ -319,6 +367,11 @@ defmodule MusicLibraryWeb.Components.Release do
 
   def handle_event("scrobble_selected_tracks", _params, socket) do
     {:noreply, socket |> put_toast(:error, gettext("Error scrobbling selected tracks"))}
+  end
+
+  defp medium_selected?(medium, selected_tracks) do
+    medium_track_ids = medium.tracks |> Enum.map(& &1.id) |> MapSet.new()
+    MapSet.subset?(medium_track_ids, selected_tracks)
   end
 
   def scrobble_button_label(selected_tracks) do
