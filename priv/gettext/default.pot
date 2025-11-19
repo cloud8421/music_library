@@ -1624,3 +1624,13 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Top %{n} Collection Genres"
 msgstr ""
+
+#: lib/music_library_web/components/chart_components.ex
+#, elixir-autogen, elixir-format
+msgid "No data available"
+msgstr ""
+
+#: lib/music_library_web/components/stats_components.ex
+#, elixir-autogen, elixir-format
+msgid "No record found"
+msgstr ""

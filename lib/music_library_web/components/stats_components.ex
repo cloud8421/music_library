@@ -6,13 +6,14 @@ defmodule MusicLibraryWeb.StatsComponents do
 
   alias MusicLibrary.Records
 
-  attr :record, Records.Record, required: true
+  attr :record, Records.Record, required: false
   attr :title, :string, required: true
   attr :class, :string
 
   def album_preview(assigns) do
     ~H"""
     <div
+      :if={@record}
       class={[
         "flex items-center rounded-md bg-white dark:bg-zinc-800 px-4 pb-5 pt-5 shadow-sm sm:px-6 sm:pt-6 cursor-pointer",
         @class
@@ -43,6 +44,17 @@ defmodule MusicLibraryWeb.StatsComponents do
           </.link>
         </p>
       </div>
+    </div>
+    <div
+      :if={!@record}
+      class={[
+        "flex items-center rounded-md bg-white dark:bg-zinc-800 px-4 pb-5 pt-5 shadow-sm sm:px-6 sm:pt-6 cursor-pointer",
+        @class
+      ]}
+    >
+      <p class="truncate text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400">
+        {gettext("No record found")}
+      </p>
     </div>
     """
   end

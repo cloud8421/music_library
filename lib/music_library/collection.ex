@@ -53,6 +53,17 @@ defmodule MusicLibrary.Collection do
     Repo.all(q)
   end
 
+  def get_latest_record do
+    q =
+      from r in Record,
+        where: not is_nil(r.purchased_at),
+        order_by: [{:desc, r.purchased_at}, order_alphabetically()],
+        limit: 1,
+        select: ^Records.essential_fields()
+
+    Repo.one(q)
+  end
+
   def get_latest_record! do
     q =
       from r in Record,

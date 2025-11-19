@@ -23,7 +23,7 @@ defmodule MusicLibraryWeb.ChartComponents do
   attr :class, :string, default: ""
   attr :datum_click, :any, default: nil, doc: "the function for handling phx-click on each datum"
 
-  def vertical_bar_chart(assigns) do
+  def vertical_bar_chart(assigns) when assigns.data != [] do
     assigns =
       assigns
       |> assign(:padding, 40)
@@ -91,6 +91,14 @@ defmodule MusicLibraryWeb.ChartComponents do
           </text>
         <% end %>
       </svg>
+    </div>
+    """
+  end
+
+  def vertical_bar_chart(assigns) do
+    ~H"""
+    <div class={["w-full", @class]}>
+      {gettext("No data available")}
     </div>
     """
   end
