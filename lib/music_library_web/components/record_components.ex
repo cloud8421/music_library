@@ -230,7 +230,7 @@ defmodule MusicLibraryWeb.RecordComponents do
           >
             <.record_cover
               record={record}
-              class="aspect-square rounded-lg hover:opacity-85 hover:animate-pulse hover:outline-2 outline-red-500"
+              class="aspect-square object-cover rounded-lg hover:opacity-85 hover:animate-pulse hover:outline-2 outline-red-500"
               width={460}
             />
             <span
