@@ -6,7 +6,7 @@ jobs:
     name: Test
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: erlef/setup-beam@v1
         id: setup-beam
         with:
@@ -95,7 +95,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     concurrency: deploy-group
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: gacts/install-hurl@v1
       - name: 🚀 Deploy to production
         run: hurl --test --report-tap deploy.tap scripts/prod/deploy.hurl

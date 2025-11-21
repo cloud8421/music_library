@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-24.04
     environment: production
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: gacts/install-hurl@v1
       - run: hurl --test --report-tap verification.tap test/prod.hurl
         env:
