@@ -152,6 +152,7 @@ defmodule MusicLibrary.Records.Record do
     |> update_artists()
     |> update_release_ids()
     |> update_included_release_group_ids()
+    |> update_musicbrainz_data_derived_fields()
   end
 
   def rotate_dominant_colors(%__MODULE__{dominant_colors: dominant_colors} = record) do
@@ -196,6 +197,22 @@ defmodule MusicLibrary.Records.Record do
           changeset,
           :included_release_group_ids,
           ReleaseGroup.included_release_group_ids(musicbrainz_data)
+        )
+    end
+  end
+
+  defp update_musicbrainz_data_derived_fields(changeset) do
+    case get_change(changeset, :musicbrainz_data) do
+      nil ->
+        changeset
+
+      musicbrainz_data ->
+        changeset
+        |> put_change(:title, musicbrainz_data["title"])
+        |> put_change(:release_date, musicbrainz_data["first-release-date"])
+        |> put_change(
+          :cover_url,
+          "https://coverartarchive.org/release-group/#{musicbrainz_data["id"]}/front"
         )
     end
   end
