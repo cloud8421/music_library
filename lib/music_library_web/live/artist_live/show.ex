@@ -62,24 +62,18 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
         class="mt-4 grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-4 sm:gap-x-6 lg:grid-cols-6 xl:gap-x-8"
       >
         <li :for={artist <- @artists} class="relative">
-          <div class="group overflow-hidden rounded-lg bg-zinc-100 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:ring-offset-2 focus-within:ring-offset-zinc-100">
-            <div class="relative">
-              <.artist_image
-                class="pointer-events-none aspect-square object-cover group-hover:opacity-75"
-                artist={artist}
-                image_hash={artist.image_data_hash}
-              />
-            </div>
-            <button
-              type="button"
-              class="absolute inset-0 focus:outline-hidden"
-              phx-click={
-                JS.patch(~p"/artists/#{artist.musicbrainz_id}")
-                |> JS.dispatch("music_library:scroll_top")
-              }
-            >
-              <span class="sr-only">{gettext("View details")}</span>
-            </button>
+          <div
+            class="relative cursor-pointer"
+            phx-click={
+              JS.patch(~p"/artists/#{artist.musicbrainz_id}")
+              |> JS.dispatch("music_library:scroll_top")
+            }
+          >
+            <.artist_image
+              class="aspect-square object-cover rounded-lg hover:shadow-lg/20"
+              artist={artist}
+              image_hash={artist.image_data_hash}
+            />
           </div>
           <p class="pointer-events-none mt-2 block truncate text-sm font-medium text-zinc-900 dark:text-zinc-300">
             {artist.name}
