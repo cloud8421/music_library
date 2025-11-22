@@ -430,7 +430,7 @@ defmodule MusicLibraryWeb.RecordComponents do
         >
           <.record_cover
             record={record}
-            class="aspect-square rounded-lg hover:opacity-85"
+            class="aspect-square object-cover rounded-lg hover:opacity-85 hover:animate-pulse hover:outline-2 outline-red-500"
             width={300}
           />
           <span class="absolute top-2 right-2 rounded-full px-2 py-0.5 text-xs font-medium bg-zinc-900/75 text-white backdrop-blur-sm">
