@@ -25,7 +25,7 @@
           ]}
         >
           <.icon name="hero-star" class="icon" aria-hidden="true" data-slot="icon" />
-          {gettext("Insertion")}
+          <span class="hidden sm:inline">{gettext("Insertion")}</span>
         </.button>
         <.button
           patch={order_path(@record_list_params, :alphabetical)}
@@ -36,7 +36,7 @@
           ]}
         >
           <.icon name="hero-user-solid" class="icon" aria-hidden="true" data-slot="icon" />
-          {gettext("A->Z")}
+          <span class="hidden sm:inline">{gettext("A->Z")}</span>
         </.button>
       </.button_group>
 
