@@ -39,7 +39,7 @@
             aria-hidden="true"
             data-slot="icon"
           />
-          <span class="hidden sm:inline">{gettext("Purchase")}</span>
+          <span class="sr-only sm:not-sr-only">{gettext("Purchase")}</span>
         </.button>
         <.button
           patch={order_path(@record_list_params, :alphabetical)}
@@ -49,7 +49,7 @@
           ]}
         >
           <.icon name="hero-user-solid" class="icon" aria-hidden="true" data-slot="icon" />
-          <span class="hidden sm:inline">{gettext("A->Z")}</span>
+          <span class="sr-only sm:not-sr-only">{gettext("A->Z")}</span>
         </.button>
         <.button
           patch={order_path(@record_list_params, :release)}
@@ -59,7 +59,7 @@
           ]}
         >
           <.icon name="hero-calendar-days" class="icon" aria-hidden="true" data-slot="icon" />
-          <span class="hidden sm:inline">{gettext("Release")}</span>
+          <span class="sr-only sm:not-sr-only">{gettext("Release")}</span>
         </.button>
       </.button_group>
 
@@ -78,7 +78,7 @@
             aria-hidden="true"
             data-slot="icon"
           />
-          <span class="hidden sm:inline">
+          <span class="sr-only sm:not-sr-only">
             {gettext("Grid")}
           </span>
         </.button>
@@ -91,7 +91,7 @@
           ]}
         >
           <.icon name="hero-list-bullet" class="icon" aria-hidden="true" data-slot="icon" />
-          <span class="hidden sm:inline">
+          <span class="sr-only sm:not-sr-only">
             {gettext("List")}
           </span>
         </.button>
