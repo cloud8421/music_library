@@ -184,6 +184,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
   defp parse_order("alphabetical"), do: :alphabetical
   defp parse_order("purchase"), do: :purchase
+  defp parse_order("release"), do: :release
 
   defp order_path(record_list_params, order) do
     qs =

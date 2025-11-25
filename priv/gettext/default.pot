@@ -1641,3 +1641,8 @@ msgstr[1] ""
 #, elixir-autogen, elixir-format
 msgid "Never"
 msgstr ""
+
+#: lib/music_library_web/live/collection_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Release"
+msgstr ""

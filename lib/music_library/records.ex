@@ -83,6 +83,13 @@ defmodule MusicLibrary.Records do
             {:desc, r.inserted_at},
             order_alphabetically()
           ])
+
+        :release ->
+          initial_search
+          |> order_by([r], [
+            {:desc, r.release_date},
+            order_alphabetically()
+          ])
       end
 
     Enum.reduce(parsed_query, search_with_order, fn
