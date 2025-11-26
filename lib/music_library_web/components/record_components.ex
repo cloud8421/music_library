@@ -304,7 +304,25 @@ defmodule MusicLibraryWeb.RecordComponents do
             {format_label(record.format)} · {type_label(record.type)}
           </p>
           <p class="pointer-events-none block text-sm font-medium text-zinc-500">
+            <.icon
+              name="hero-calendar-days"
+              class="-mt-1 h-4 w-4"
+              aria-hidden="true"
+              data-slot="icon"
+            />
             {Records.Record.format_release_date(record.release_date)}
+            <p
+              :if={record.purchased_at}
+              class="pointer-events-none block text-sm font-medium text-zinc-500"
+            >
+              <.icon
+                name="hero-banknotes"
+                class="h-4 w-4"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+              {Records.Record.format_as_date(record.purchased_at)}
+            </p>
           </p>
         </li>
       </ul>
