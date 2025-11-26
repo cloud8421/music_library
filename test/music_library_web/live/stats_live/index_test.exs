@@ -269,13 +269,9 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
 
       assert_has(session, "h1", text: "On This day")
 
-      assert_has(session, "#records_on_this_day-#{record_today.id} h2",
-        text: escape(record_today.title)
-      )
+      assert_has(session, "##{record_today.id} h2", text: escape(record_today.title))
 
-      refute_has(session, "#records_on_this_day-#{record_yesterday.id} h2",
-        text: escape(record_yesterday.title)
-      )
+      refute_has(session, "##{record_yesterday.id} h2", text: escape(record_yesterday.title))
     end
 
     test "it updates the 'On This Day' records when the date is changed", %{
@@ -303,13 +299,9 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
 
       session = conn |> visit("/")
 
-      assert_has(session, "#records_on_this_day-#{record_today.id} h2",
-        text: escape(record_today.title)
-      )
+      assert_has(session, "##{record_today.id} h2", text: escape(record_today.title))
 
-      refute_has(session, "#records_on_this_day-#{record_yesterday.id} h2",
-        text: escape(record_yesterday.title)
-      )
+      refute_has(session, "##{record_yesterday.id} h2", text: escape(record_yesterday.title))
 
       session
       |> unwrap(fn view ->
@@ -318,13 +310,9 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         |> render_change()
       end)
 
-      refute_has(session, "#records_on_this_day-#{record_today.id} h2",
-        text: escape(record_today.title)
-      )
+      refute_has(session, "##{record_today.id} h2", text: escape(record_today.title))
 
-      assert_has(session, "#records_on_this_day-#{record_yesterday.id} h2",
-        text: escape(record_yesterday.title)
-      )
+      assert_has(session, "##{record_yesterday.id} h2", text: escape(record_yesterday.title))
     end
   end
 end

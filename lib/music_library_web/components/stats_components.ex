@@ -150,8 +150,7 @@ defmodule MusicLibraryWeb.StatsComponents do
     <ul
       class="mt-5 p-4"
       role="list"
-      id="records"
-      phx-update="stream"
+      id="records-on-this-day"
     >
       <li
         id="no-records-on-this-day"
@@ -160,10 +159,10 @@ defmodule MusicLibraryWeb.StatsComponents do
         {gettext("No records released on this day.")}
       </li>
       <li
-        :for={{id, record} <- @records}
+        :for={record <- @records}
         phx-click={JS.navigate(@record_show_path.(record))}
         class="flex justify-between gap-x-6 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 px-2 -mx-2 md:px-4 md:-mx-4 cursor-pointer"
-        id={id}
+        id={record.id}
       >
         <div class="flex min-w-0 gap-x-4 items-center">
           <div class="relative w-12 flex-none">

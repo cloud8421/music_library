@@ -30,7 +30,6 @@ defmodule MusicLibraryWeb.StatsLive.Index do
      |> stream_configure(:recent_albums,
        dom_id: fn %{album: album} -> "album-#{album.scrobbled_at_uts}" end
      )
-     |> stream(:records_on_this_day, records_on_this_day, reset: true)
      |> assign_counts()
      |> assign_scrobble_activity()
      |> assign(
@@ -40,7 +39,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        page_title: gettext("Stats"),
        current_section: :stats,
        records_by_artist: records_by_artists,
-       records_by_genre: records_by_genre
+       records_by_genre: records_by_genre,
+       records_on_this_day: records_on_this_day
      )}
   end
 
@@ -89,8 +89,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
         {:noreply,
          socket
-         |> assign(:current_date, date)
-         |> stream(:records_on_this_day, records_on_this_day, reset: true)}
+         |> assign(%{current_date: date, records_on_this_day: records_on_this_day})}
 
       {:error, _reason} ->
         {:noreply, socket}
