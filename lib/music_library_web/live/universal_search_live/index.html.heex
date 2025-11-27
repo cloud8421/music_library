@@ -27,13 +27,12 @@
 
     <.no_results :if={@search_query != "" and @total_results == 0} query={@search_query} />
 
-    <div :if={@total_results > 0} class="max-h-148 md:max-h-164 overflow-y-auto">
+    <div :if={@total_results > 0} class="max-h-148 md:max-h-164 overflow-y-auto mt-4">
       <.search_result_group
         :if={length(@search_results.artists) > 0}
         title="Artists"
         count={length(@search_results.artists)}
         total_count={@search_counts.artists_count}
-        class="border-t border-zinc-200 dark:border-zinc-700"
       >
         <.search_result_artist
           :for={%{artist: artist, image_data_hash: image_data_hash} <- @search_results.artists}
@@ -76,7 +75,6 @@
       title="Wishlist"
       count={length(@search_results.wishlist)}
       total_count={@search_counts.wishlist_count}
-      class="border-t border-zinc-200 dark:border-zinc-700"
     >
       <.search_result_record
         :for={record <- @search_results.wishlist}
