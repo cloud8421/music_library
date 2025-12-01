@@ -9,8 +9,9 @@ defmodule MusicLibrary.Records.SearchParser do
 
   import NimbleParsec
 
-  word = utf8_string([not: ?\s], min: 1)
+  word = utf8_string([not: ?\s, not: ?,], min: 1)
   space = ignore(string(" "))
+  comma = ignore(string(","))
 
   quoted_words =
     ignore(string(~s(")))
@@ -63,7 +64,8 @@ defmodule MusicLibrary.Records.SearchParser do
     choice([concat(type_filter, types), ignore(invalid_type)])
     |> tag(:type)
 
-  search = repeat(choice([artist, album, mbid, genre, space, format, type, purchase_year, query]))
+  search =
+    repeat(choice([artist, album, mbid, genre, space, comma, format, type, purchase_year, query]))
 
   defparsecp(:search_parser, search)
 
@@ -72,8 +74,12 @@ defmodule MusicLibrary.Records.SearchParser do
 
     iex> MusicLibrary.Records.SearchParser.parse("")
     {:ok, %{query: ""}}
+    iex> MusicLibrary.Records.SearchParser.parse("hello, bye")
+    {:ok, %{query: "hello bye"}}
     iex> MusicLibrary.Records.SearchParser.parse("marbles")
     {:ok, %{query: "marbles"}}
+    iex> MusicLibrary.Records.SearchParser.parse("marillion marbles")
+    {:ok, %{query: "marillion marbles"}}
     iex> MusicLibrary.Records.SearchParser.parse("artist:marillion album:marbles")
     {:ok, %{artist: "marillion", album: "marbles"}}
     iex> MusicLibrary.Records.SearchParser.parse("artist:marillion album:fugazi artist:fish")
