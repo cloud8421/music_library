@@ -160,7 +160,7 @@ defmodule MusicLibrary.Records.SimilarityTest do
     test "finds similar records", %{record1: record1, record2: record2} do
       similar = Similarity.find_similar(record1.id, limit: 5)
 
-      assert length(similar) >= 1
+      refute Enum.empty?(similar)
       # record2 should be most similar to record1
       %{record: first_record, similarity: similarity} = List.first(similar)
       assert first_record.id == record2.id

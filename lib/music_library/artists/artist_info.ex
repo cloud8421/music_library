@@ -49,10 +49,11 @@ defmodule MusicLibrary.Artists.ArtistInfo do
   end
 
   def extract_image(artist_info) do
-    primary_image = extract_image(artist_info.discogs_data, "primary")
-    secondary_image = extract_image(artist_info.discogs_data, "secondary")
+    image =
+      extract_image(artist_info.discogs_data, "primary") ||
+        extract_image(artist_info.discogs_data, "secondary")
 
-    if image = primary_image || secondary_image do
+    if image do
       {:ok, %{url: image["resource_url"], width: image["width"]}}
     else
       {:error, :image_not_found}

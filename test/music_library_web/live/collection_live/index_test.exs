@@ -113,8 +113,8 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       {page_3_records, rest_of_records} = Enum.split(rest_of_records, page_size)
 
       # Safeguard - make sure we're not testing against empty lists
-      assert length(page_3_records) !== 0
-      assert length(rest_of_records) !== 0
+      refute Enum.empty?(page_3_records)
+      refute Enum.empty?(rest_of_records)
 
       page_3_session =
         visit(conn, ~p"/collection?order=alphabetical&page=3&page_size=#{page_size}")
