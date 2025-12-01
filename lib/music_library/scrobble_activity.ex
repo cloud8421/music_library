@@ -190,7 +190,9 @@ defmodule MusicLibrary.ScrobbleActivity do
     tracks_query =
       from t in Track,
         left_join: cr in subquery(Collection.collected_releases_query()),
-        on: cr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
+        on:
+          cr.selected_release_id == fragment("? ->> '$.musicbrainz_id'", t.album) or
+            cr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
         left_join: wr in subquery(Wishlist.wishlisted_releases_query()),
         on: wr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
         left_join: ar in subquery(all_artists_query),
