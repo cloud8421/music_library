@@ -126,8 +126,7 @@ defmodule MusicLibrary.Collection do
       select: %{
         record_id: fragment("records.id"),
         cover_hash: fragment("records.cover_hash"),
-        release_id: r.value,
-        selected_release_id: fragment("records.selected_release_id")
+        release_id: r.value
       }
   end
 
