@@ -350,7 +350,7 @@ defmodule MusicLibraryWeb.RecordComponents do
         <span>{country_label(@release.country)}</span>
       </div>
       <div class="col-span-2">
-        <span class="text-xs text-zinc-900 dark:text-zinc-400">{@release.disambiguation}</span>
+        <span class="text-xs text-zinc-600 dark:text-zinc-500">{@release.disambiguation}</span>
       </div>
     </div>
     """
