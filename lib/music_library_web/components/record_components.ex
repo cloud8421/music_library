@@ -466,4 +466,29 @@ defmodule MusicLibraryWeb.RecordComponents do
     </div>
     """
   end
+
+  attr :record, Records.Record, required: true
+
+  def release_list(assigns) do
+    ~H"""
+    <.sheet
+      id={"release-list-" <> @record.id}
+      placement="right"
+      class="min-w-xs sm:min-w-sm"
+    >
+      <h3 class="text-lg font-semibold text-zinc-700 dark:text-zinc-300">
+        {gettext("Available releases")}
+      </h3>
+      <div class="mt-6 space-y-4">
+        <.release_summary
+          :for={release_id <- @record.release_ids}
+          release={Records.Record.find_release(@record, release_id)}
+          class={
+            @record.selected_release_id == release_id && "bg-zinc-100 dark:bg-zinc-800 p-2 rounded-lg"
+          }
+        />
+      </div>
+    </.sheet>
+    """
+  end
 end

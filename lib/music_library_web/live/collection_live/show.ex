@@ -11,6 +11,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
       artist_links: 1,
       record_colors: 1,
       record_cover: 1,
+      release_list: 1,
       similar_records: 1
     ]
 

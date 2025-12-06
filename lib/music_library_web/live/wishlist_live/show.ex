@@ -8,7 +8,8 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
       release_summary: 1,
       artist_links: 1,
       record_colors: 1,
-      record_cover: 1
+      record_cover: 1,
+      release_list: 1
     ]
 
   alias MusicLibrary.OnlineStoreTemplates
