@@ -340,10 +340,10 @@ defmodule MusicLibraryWeb.RecordComponents do
       "grid grid-cols-2 w-full auto-cols-min space-x-1 text-zinc-700 dark:text-zinc-300"
     ]}>
       <div class="space-x-1">
+        <.format_badge release={@release} />
         <span :if={@release.catalog_number} class="font-mono text-xs md:text-sm">
           {@release.catalog_number}
         </span>
-        <.format_badge release={@release} />
       </div>
       <div class="text-right">
         <span class="text-xs md:text-sm">{Records.Record.format_release_date(@release.date)}</span>
@@ -385,8 +385,8 @@ defmodule MusicLibraryWeb.RecordComponents do
 
   def release_label(release) do
     [
-      release.catalog_number,
       ReleaseSearchResult.format(release),
+      release.catalog_number,
       Records.Record.format_release_date(release.date),
       country_label(release.country)
     ]
