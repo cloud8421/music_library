@@ -26,8 +26,11 @@ config :music_library, MusicLibraryWeb.Endpoint,
 # Print only warnings and errors during test
 config :logger, level: :warning
 
-# Initialize plugs at runtime for faster test compilation
-config :phoenix, :plug_init_mode, :runtime
+config :phoenix,
+  # Initialize plugs at runtime for faster test compilation
+  plug_init_mode: :runtime,
+  # Enable sorting query params in verified routes during tests
+  sort_verified_routes_query_params: true
 
 # Enable helpful, but potentially expensive runtime checks
 config :phoenix_live_view,
