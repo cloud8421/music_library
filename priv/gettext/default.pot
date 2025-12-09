@@ -837,7 +837,6 @@ msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/components/scrobble_components.ex
-#: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Unknown"
 msgstr ""
@@ -925,25 +924,21 @@ msgid "All time"
 msgstr ""
 
 #: lib/music_library_web/components/scrobble_components.ex
-#: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Album ID:"
 msgstr ""
 
 #: lib/music_library_web/components/scrobble_components.ex
-#: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Artist ID:"
 msgstr ""
 
 #: lib/music_library_web/components/scrobble_components.ex
-#: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Copy album MusicBrainz ID to clipboard"
 msgstr ""
 
 #: lib/music_library_web/components/scrobble_components.ex
-#: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Copy artist MusicBrainz ID to clipboard"
 msgstr ""

@@ -124,4 +124,77 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
     </.tooltip>
     """
   end
+
+  attr :album, :map, required: true
+
+  def album_metadata_tooltip(assigns) do
+    ~H"""
+    <.tooltip>
+      <.icon
+        name="hero-information-circle"
+        class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+        aria-hidden="true"
+        data-slot="icon"
+      />
+      <:content>
+        <dl class="p-2">
+          <div class="flex gap-2 w-full">
+            <dt>{gettext("Album ID:")}</dt>
+            <dd class="font-mono">
+              <code id={"tooltip-album-#{@album.scrobbled_at_uts}"}>
+                {@album.metadata.musicbrainz_id || gettext("Unknown")}
+              </code>
+              <button
+                :if={@album.metadata.musicbrainz_id not in ["", nil]}
+                phx-click={
+                  JS.dispatch("music_library:clipcopy",
+                    to: "#tooltip-album-#{@album.scrobbled_at_uts}"
+                  )
+                  |> JS.transition("animate-shake")
+                }
+              >
+                <span class="sr-only">
+                  {gettext("Copy album MusicBrainz ID to clipboard")}
+                </span>
+                <.icon
+                  name="hero-clipboard-document"
+                  class="h-5 w-5"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+              </button>
+            </dd>
+          </div>
+          <div class="flex gap-2 w-full mt-2">
+            <dt>{gettext("Artist ID:")}</dt>
+            <dd class="font-mono">
+              <code id={"tooltip-artist-#{@album.scrobbled_at_uts}"}>
+                {@album.artist.musicbrainz_id || gettext("Unknown")}
+              </code>
+              <button
+                :if={@album.artist.musicbrainz_id not in ["", nil]}
+                phx-click={
+                  JS.dispatch("music_library:clipcopy",
+                    to: "#tooltip-artist-#{@album.scrobbled_at_uts}"
+                  )
+                  |> JS.transition("animate-shake")
+                }
+              >
+                <span class="sr-only">
+                  {gettext("Copy artist MusicBrainz ID to clipboard")}
+                </span>
+                <.icon
+                  name="hero-clipboard-document"
+                  class="h-5 w-5"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+              </button>
+            </dd>
+          </div>
+        </dl>
+      </:content>
+    </.tooltip>
+    """
+  end
 end
