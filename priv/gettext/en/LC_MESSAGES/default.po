@@ -1657,3 +1657,13 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Show releases included in the record"
 msgstr ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/form.ex
+#, elixir-autogen, elixir-format
+msgid "Album MusicBrainz ID"
+msgstr ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/form.ex
+#, elixir-autogen, elixir-format
+msgid "Artist MusicBrainz ID"
+msgstr ""

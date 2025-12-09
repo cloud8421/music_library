@@ -35,6 +35,11 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Form do
             label={gettext("Artist Name")}
             placeholder={gettext("Artist name")}
           />
+          <.input
+            class="font-mono"
+            field={artist[:musicbrainz_id]}
+            label={gettext("Artist MusicBrainz ID")}
+          />
         </.inputs_for>
 
         <.inputs_for :let={album} field={@form[:album]}>
@@ -43,6 +48,11 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Form do
             type="text"
             label={gettext("Album Title")}
             placeholder={gettext("Album name")}
+          />
+          <.input
+            class="font-mono"
+            field={album[:musicbrainz_id]}
+            label={gettext("Album MusicBrainz ID")}
           />
         </.inputs_for>
 

@@ -10,8 +10,8 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
   @invalid_track_attrs %{title: "", artist: %{name: ""}, album: %{title: ""}}
   @valid_track_attrs %{
     title: "Updated Track Title",
-    artist: %{name: "Updated Artist"},
-    album: %{title: "Updated Album"},
+    artist: %{name: "Updated Artist", musicbrainz_id: "9a5cf59b-5da0-4021-b885-b6b78dd6886e"},
+    album: %{title: "Updated Album", musicbrainz_id: "9a5cf59b-5da0-4021-b885-b6b78dd6886f"},
     cover_url: "https://example.com/updated-cover.jpg"
   }
 
@@ -114,7 +114,9 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
       session
       |> fill_in("Track Title", with: @valid_track_attrs.title)
       |> fill_in("Artist Name", with: @valid_track_attrs.artist.name)
+      |> fill_in("Artist MusicBrainz ID", with: @valid_track_attrs.artist.musicbrainz_id)
       |> fill_in("Album Title", with: @valid_track_attrs.album.title)
+      |> fill_in("Album MusicBrainz ID", with: @valid_track_attrs.album.musicbrainz_id)
       |> fill_in("Cover Image URL (optional)", with: @valid_track_attrs.cover_url)
       |> click_button("Update Track")
       |> assert_has("p", text: "Track updated successfully")
