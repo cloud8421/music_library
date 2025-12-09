@@ -3,7 +3,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
 
   import MusicLibraryWeb.Components.Pagination
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1]
-  import MusicLibraryWeb.ScrobbleComponents, only: [refresh_lastfm_feed_button: 1]
+  import MusicLibraryWeb.ScrobbleComponents
 
   alias LastFm.Track
   alias MusicLibrary.Assets.Transform
@@ -185,5 +185,11 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
 
   defp track_cover_url(_track, cover_hash) do
     ~p"/assets/#{Transform.new(hash: cover_hash, width: 96)}"
+  end
+
+  defp format_scrobbled_at_uts(uts) do
+    uts
+    |> DateTime.from_unix!()
+    |> DateTime.to_iso8601()
   end
 end

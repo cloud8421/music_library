@@ -5,7 +5,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   import MusicLibraryWeb.ChartComponents
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
   import MusicLibraryWeb.StatsComponents
-  import MusicLibraryWeb.ScrobbleComponents, only: [refresh_lastfm_feed_button: 1]
+  import MusicLibraryWeb.ScrobbleComponents
 
   alias MusicLibrary.Assets.Transform
   alias MusicLibrary.{Collection, Records, ScrobbleActivity, Wishlist}
