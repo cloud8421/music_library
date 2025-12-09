@@ -12,7 +12,7 @@
           patch={order_path(@track_list_params, :scrobbled_at)}
           size="xs"
           class={[
-            @track_list_params.order == :scrobbled_at && "!bg-zinc-100 dark:!bg-zinc-700"
+            @track_list_params.order == :scrobbled_at && "bg-zinc-100! dark:bg-zinc-700!"
           ]}
         >
           <.icon
@@ -27,7 +27,7 @@
           patch={order_path(@track_list_params, :title)}
           size="xs"
           class={[
-            @track_list_params.order == :title && "!bg-zinc-100 dark:!bg-zinc-700"
+            @track_list_params.order == :title && "bg-zinc-100! dark:bg-zinc-700!"
           ]}
         >
           <.icon name="hero-musical-note-solid" class="icon" aria-hidden="true" data-slot="icon" />
@@ -37,7 +37,7 @@
           patch={order_path(@track_list_params, :artist)}
           size="xs"
           class={[
-            @track_list_params.order == :artist && "!bg-zinc-100 dark:!bg-zinc-700"
+            @track_list_params.order == :artist && "bg-zinc-100! dark:bg-zinc-700!"
           ]}
         >
           <.icon name="hero-user-solid" class="icon" aria-hidden="true" data-slot="icon" />
@@ -47,7 +47,7 @@
           patch={order_path(@track_list_params, :album)}
           size="xs"
           class={[
-            @track_list_params.order == :album && "!bg-zinc-100 dark:!bg-zinc-700"
+            @track_list_params.order == :album && "bg-zinc-100! dark:bg-zinc-700!"
           ]}
         >
           <.icon name="hero-musical-note-solid" class="icon" aria-hidden="true" data-slot="icon" />
@@ -90,7 +90,7 @@
         class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-800 px-2 -mx-2 md:px-4 md:-mx-4 cursor-pointer"
       >
         <div class="flex items-center space-x-4 flex-1 min-w-0">
-          <div class="flex-shrink-0">
+          <div class="shrink-0">
             <img
               class="h-12 w-12 rounded-md shadow-sm"
               src={track_cover_url(track, cover_hash)}
