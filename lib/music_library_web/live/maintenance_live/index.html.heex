@@ -13,28 +13,34 @@
     </p>
     <ul class="mt-4">
       <li class="space-y-4">
-        <.button
-          type="button"
-          phx-click="refresh_records_musicbrainz_data"
-          data-confirm={
-            gettext(
-              "Are you sure you want to refresh MusicBrainz data for all records? This operation can take a long time to complete."
-            )
-          }
-        >
-          {gettext("Refresh MusicBrainz data")}
-        </.button>
-        <.button
-          type="button"
-          phx-click="generate_record_embeddings"
-          data-confirm={
-            gettext(
-              "Are you sure you want to regenerate embeddings for all records? This operation can take a long time to complete."
-            )
-          }
-        >
-          {gettext("Regenerate record embeddings")}
-        </.button>
+        <.button_group>
+          <.button
+            type="button"
+            phx-click="refresh_records_musicbrainz_data"
+            disabled={@refresh_records_musicbrainz_jobs > 0}
+            data-confirm={
+              gettext(
+                "Are you sure you want to refresh MusicBrainz data for all records? This operation can take a long time to complete."
+              )
+            }
+          >
+            <.loading :if={@refresh_records_musicbrainz_jobs > 0} class="size-4" />
+            {gettext("Refresh MusicBrainz data")}
+          </.button>
+          <.button
+            type="button"
+            phx-click="generate_record_embeddings"
+            disabled={@generate_record_embeddings_jobs > 0}
+            data-confirm={
+              gettext(
+                "Are you sure you want to regenerate embeddings for all records? This operation can take a long time to complete."
+              )
+            }
+          >
+            <.loading :if={@generate_record_embeddings_jobs > 0} class="size-4" />
+            {gettext("Regenerate record embeddings")}
+          </.button>
+        </.button_group>
       </li>
     </ul>
     <h3 class="mt-4 text-base font-semibold text-zinc-900 dark:text-white">
@@ -47,28 +53,34 @@
     </p>
     <ul class="mt-4">
       <li class="space-y-4">
-        <.button
-          type="button"
-          phx-click="refresh_artists_musicbrainz_data"
-          data-confirm={
-            gettext(
-              "Are you sure you want to refresh MusicBrainz data for all artists? This operation can take a long time to complete."
-            )
-          }
-        >
-          {gettext("Refresh MusicBrainz data")}
-        </.button>
-        <.button
-          type="button"
-          phx-click="refresh_artists_discogs_data"
-          data-confirm={
-            gettext(
-              "Are you sure you want to refresh Discogs data for all artists? This operation can take a long time to complete."
-            )
-          }
-        >
-          {gettext("Refresh Discogs data")}
-        </.button>
+        <.button_group>
+          <.button
+            type="button"
+            phx-click="refresh_artists_musicbrainz_data"
+            disabled={@refresh_artists_musicbrainz_jobs > 0}
+            data-confirm={
+              gettext(
+                "Are you sure you want to refresh MusicBrainz data for all artists? This operation can take a long time to complete."
+              )
+            }
+          >
+            <.loading :if={@refresh_artists_musicbrainz_jobs > 0} class="size-4" />
+            {gettext("Refresh MusicBrainz data")}
+          </.button>
+          <.button
+            type="button"
+            phx-click="refresh_artists_discogs_data"
+            disabled={@refresh_artists_discogs_jobs > 0}
+            data-confirm={
+              gettext(
+                "Are you sure you want to refresh Discogs data for all artists? This operation can take a long time to complete."
+              )
+            }
+          >
+            <.loading :if={@refresh_artists_discogs_jobs > 0} class="size-4" />
+            {gettext("Refresh Discogs data")}
+          </.button>
+        </.button_group>
       </li>
     </ul>
     <h3 class="mt-4 text-base font-semibold text-zinc-900 dark:text-white">
