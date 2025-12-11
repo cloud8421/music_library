@@ -744,12 +744,14 @@ defmodule MusicLibrary.ScrobbleRules do
       |> Enum.map(fn {:ok, {_, _, count}} -> count end)
       |> Enum.sum()
 
-    Logger.info(fn ->
-      "Scrobble rules application completed: " <>
-        "applied #{total_applied} rules, " <>
-        "#{total_errors} errors, " <>
-        "#{total_tracks_updated} tracks updated"
-    end)
+    if total_tracks_updated > 0 do
+      Logger.info(fn ->
+        "Scrobble rules application completed: " <>
+          "applied #{total_applied} rules, " <>
+          "#{total_errors} errors, " <>
+          "#{total_tracks_updated} tracks updated"
+      end)
+    end
 
     Enum.each(errors, fn {:error, {type, match_value, reason}} ->
       Logger.error(fn ->
