@@ -88,7 +88,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
     track = ScrobbleActivity.get_track!(scrobbled_at_uts)
     {:ok, _} = ScrobbleActivity.delete_track(track)
 
-    {:noreply, stream_delete(socket, :tracks, track)}
+    {:noreply, stream_delete(socket, :tracks, %{track: track})}
   end
 
   def handle_event("search", %{"query" => query}, socket) do
