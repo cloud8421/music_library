@@ -33,6 +33,34 @@ services:
       interval: 10s
       timeout: 20s
       retries: 10
+  backup:
+    image: litestream/litestream
+    user: "0"
+    configs:
+      - source: litestream
+        target: /opt/litestream/litestream.yaml
+    volumes:
+      - /data/coolify/applications/music-library:/mnt/music_library
+    entrypoint: /usr/local/bin/litestream
+    command: replicate -config /opt/litestream/litestream.yaml
+    healthcheck:
+      disable: true
+    environment:
+      - LITESTREAM_ACCESS_KEY_ID
+      - LITESTREAM_SECRET_ACCESS_KEY
+configs:
+  litestream:
+    content: |
+      dbs:
+        - path: /mnt/music_library/music_library_prod.db
+          replica:
+            type: s3
+            name: music_library_prod
+            bucket: ffmusiclibrary
+            path: prod
+            endpoint: https://nbg1.your-objectstorage.com
+            sync-interval: 60m
+            retention: 672h
 secrets:
   FLUXON_KEY_FINGERPRINT:
     environment: FLUXON_KEY_FINGERPRINT

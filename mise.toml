@@ -23,6 +23,7 @@ sqlite = 'latest'
 gh = 'latest'
 shellcheck = 'latest'
 fd = 'latest'
+litestream = 'latest'
 
 [task_config]
 includes = ["scripts"]
