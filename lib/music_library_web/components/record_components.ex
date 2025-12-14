@@ -481,10 +481,10 @@ defmodule MusicLibraryWeb.RecordComponents do
       </h3>
       <div class="mt-6 space-y-4">
         <.release_summary
-          :for={release_id <- @record.release_ids}
-          release={Records.Record.find_release(@record, release_id)}
+          :for={release <- Records.Record.releases(@record)}
+          release={release}
           class={
-            @record.selected_release_id == release_id && "bg-zinc-100 dark:bg-zinc-800 p-2 rounded-lg"
+            @record.selected_release_id == release.id && "bg-zinc-100 dark:bg-zinc-800 p-2 rounded-lg"
           }
         />
       </div>
