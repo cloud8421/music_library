@@ -1667,3 +1667,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Artist MusicBrainz ID"
 msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "No scrobble rules found"
+msgstr ""

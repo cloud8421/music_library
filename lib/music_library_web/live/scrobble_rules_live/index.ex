@@ -1,8 +1,17 @@
 defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
   use MusicLibraryWeb, :live_view
 
+  import MusicLibraryWeb.Components.Pagination
+
   alias MusicLibrary.ScrobbleRules
   alias MusicLibrary.ScrobbleRules.ScrobbleRule
+
+  @default_list_params %{
+    page: 1,
+    page_size: 20,
+    query: "",
+    order: :inserted_at
+  }
 
   @impl true
   def mount(_params, _session, socket) do
@@ -28,11 +37,14 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
     |> assign(:scrobble_rule, %ScrobbleRule{})
   end
 
-  defp apply_action(socket, :index, _params) do
-    socket
-    |> assign(:page_title, gettext("Scrobble Rules"))
-    |> assign(:scrobble_rule, nil)
-    |> stream(:scrobble_rules, ScrobbleRules.list_scrobble_rules(), reset: true)
+  defp apply_action(socket, :index, params) do
+    total_rules = ScrobbleRules.count_scrobble_rules()
+
+    list_params =
+      @default_list_params
+      |> merge_pagination(params, total_rules)
+
+    load_and_assign_rules(socket, list_params)
   end
 
   def apply_fallback_index(socket, params) do
@@ -44,12 +56,74 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
     end
   end
 
+  defp merge_pagination(params, url_params, total_records) do
+    page = parse_page(url_params["page"])
+    page_size = parse_page_size(url_params["page_size"])
+
+    params
+    |> Map.put(:page, page)
+    |> Map.put(:page_size, page_size)
+    |> Map.put(:total_records, total_records)
+  end
+
+  defp parse_page(nil), do: 1
+
+  defp parse_page(page) when is_binary(page) do
+    case Integer.parse(page) do
+      {num, ""} when num > 0 -> num
+      _ -> 1
+    end
+  end
+
+  defp parse_page(_), do: 1
+
+  defp parse_page_size(nil), do: 20
+
+  defp parse_page_size(page_size) when is_binary(page_size) do
+    case Integer.parse(page_size) do
+      {num, ""} when num in [20, 50, 100] -> num
+      _ -> 20
+    end
+  end
+
+  defp parse_page_size(_), do: 20
+
+  defp load_and_assign_rules(socket, list_params) do
+    offset = page_to_offset(list_params.page, list_params.page_size)
+
+    rules =
+      ScrobbleRules.list_scrobble_rules(
+        offset: offset,
+        limit: list_params.page_size
+      )
+
+    list_params_with_total =
+      Map.put(list_params, :total_entries, list_params.total_records)
+
+    socket
+    |> assign(:list_params, list_params_with_total)
+    |> assign(:page_title, gettext("Scrobble Rules"))
+    |> assign(:scrobble_rule, nil)
+    |> stream(:scrobble_rules, rules, reset: true)
+  end
+
+  def back_path(list_params) do
+    qs =
+      list_params
+      |> Map.take([:page, :page_size])
+
+    ~p"/scrobble-rules?#{qs}"
+  end
+
   @impl true
   def handle_info(
         {MusicLibraryWeb.ScrobbleRulesLive.Form, {:created, scrobble_rule}},
         socket
       ) do
-    {:noreply, stream_insert(socket, :scrobble_rules, scrobble_rule, at: 0)}
+    {:noreply,
+     socket
+     |> stream_insert(:scrobble_rules, scrobble_rule, at: 0)
+     |> load_and_assign_rules(socket.assigns.list_params)}
   end
 
   def handle_info(
@@ -64,7 +138,10 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
     scrobble_rule = ScrobbleRules.get_scrobble_rule!(id)
     {:ok, _} = ScrobbleRules.delete_scrobble_rule(scrobble_rule)
 
-    {:noreply, stream_delete(socket, :scrobble_rules, scrobble_rule)}
+    {:noreply,
+     socket
+     |> stream_delete(:scrobble_rules, scrobble_rule)
+     |> load_and_assign_rules(socket.assigns.list_params)}
   end
 
   @impl true

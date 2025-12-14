@@ -66,7 +66,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
              |> render_click() =~
                "Edit Scrobble Rule"
 
-      assert_patch(index_live, ~p"/scrobble-rules/#{scrobble_rule}/edit")
+      assert_patch(index_live, ~p"/scrobble-rules/#{scrobble_rule}/edit?page=1&page_size=20")
 
       assert index_live
              |> form("#scrobble_rule-form", scrobble_rule: @invalid_attrs)

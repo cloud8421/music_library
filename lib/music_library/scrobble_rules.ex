@@ -45,7 +45,62 @@ defmodule MusicLibrary.ScrobbleRules do
             where: r.enabled == ^enabled
       end
 
+    query =
+      case Keyword.get(opts, :offset) do
+        nil ->
+          query
+
+        offset ->
+          from r in query,
+            offset: ^offset
+      end
+
+    query =
+      case Keyword.get(opts, :limit) do
+        nil ->
+          query
+
+        limit ->
+          from r in query,
+            limit: ^limit
+      end
+
     Repo.all(query)
+  end
+
+  @doc """
+  Returns the count of scrobble_rules.
+
+  ## Examples
+
+      iex> count_scrobble_rules()
+      42
+
+  """
+  def count_scrobble_rules(opts \\ []) do
+    query = from(r in ScrobbleRule)
+
+    query =
+      case Keyword.get(opts, :type) do
+        nil ->
+          query
+
+        type ->
+          from r in query,
+            where: r.type == ^type
+      end
+
+    query =
+      case Keyword.get(opts, :enabled) do
+        nil ->
+          query
+
+        enabled ->
+          from r in query,
+            where: r.enabled == ^enabled
+      end
+
+    Repo.aggregate(query, :count)
   end
 
   @doc """
