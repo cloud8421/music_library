@@ -40,7 +40,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
     test "saves new scrobble_rule", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
 
-      assert index_live |> element("a", "New Rule") |> render_click() =~
+      assert index_live |> element("a", "Add") |> render_click() =~
                "New Scrobble Rule"
 
       assert_patch(index_live, ~p"/scrobble-rules/new")
@@ -140,7 +140,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
     test "shows validation errors for missing required fields", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
 
-      assert index_live |> element("a", "New Rule") |> render_click()
+      assert index_live |> element("a", "Add") |> render_click()
 
       assert index_live
              |> form("#scrobble_rule-form",
@@ -152,7 +152,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
     test "shows validation errors for invalid MusicBrainz ID", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
 
-      assert index_live |> element("a", "New Rule") |> render_click()
+      assert index_live |> element("a", "Add") |> render_click()
 
       assert index_live
              |> form("#scrobble_rule-form",
@@ -168,7 +168,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
     test "updates form labels based on rule type", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
 
-      assert index_live |> element("a", "New Rule") |> render_click()
+      assert index_live |> element("a", "Add") |> render_click()
 
       # Select album type
       html =

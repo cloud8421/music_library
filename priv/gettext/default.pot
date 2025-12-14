@@ -588,6 +588,8 @@ msgid "Some records could not be imported: %{summary}"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/index.html.heex
+#: lib/music_library_web/live/online_store_template_live/index.html.heex
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #: lib/music_library_web/live/wishlist_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Add"
@@ -1013,11 +1015,6 @@ msgstr ""
 msgid "Match Value"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "New Rule"
-msgstr ""
-
 #: lib/music_library_web/live/scrobble_rules_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "New Scrobble Rule"
@@ -1154,11 +1151,6 @@ msgstr ""
 msgid "Dominant Colors"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "Apply All"
-msgstr ""
-
 #: lib/music_library_web/components/record_form.ex
 #: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
 #, elixir-autogen, elixir-format
@@ -1259,11 +1251,6 @@ msgstr ""
 #: lib/music_library_web/live/online_store_template_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Enable template"
-msgstr ""
-
-#: lib/music_library_web/live/online_store_template_live/index.html.heex
-#, elixir-autogen, elixir-format
-msgid "New Template"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/root.html.heex
@@ -1671,4 +1658,9 @@ msgstr ""
 #: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "No scrobble rules found"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Apply"
 msgstr ""
