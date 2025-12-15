@@ -443,17 +443,19 @@ defmodule MusicLibraryWeb.RecordComponents do
       >
         <li
           :for={%{record: record, similarity: similarity} <- @similar_records}
-          class="relative"
+          class="relative cursor-pointer"
           phx-click={JS.navigate(@record_show_path.(record))}
         >
-          <.record_cover
-            record={record}
-            class="aspect-square object-cover rounded-lg hover:shadow-lg/20"
-            width={300}
-          />
-          <span class="absolute top-2 right-2 rounded-full px-2 py-0.5 text-xs font-medium bg-zinc-900/75 text-white backdrop-blur-sm">
-            {Float.round(100 - similarity * 100, 0)}%
-          </span>
+          <div class="group">
+            <.record_cover
+              record={record}
+              class="aspect-square object-cover rounded-lg group-hover:shadow-lg/20"
+              width={300}
+            />
+            <span class="absolute top-2 right-2 rounded-full px-2 py-0.5 text-xs font-medium bg-zinc-900/75 text-white backdrop-blur-sm">
+              {Float.round(100 - similarity * 100, 0)}%
+            </span>
+          </div>
 
           <p class="pointer-events-none mt-2 block truncate text-sm font-medium text-zinc-900 dark:text-zinc-300">
             {record.title}
