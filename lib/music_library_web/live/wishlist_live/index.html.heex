@@ -20,7 +20,6 @@
           patch={order_path(@record_list_params, :insertion)}
           size="sm"
           class={[
-            "rounded-l-md rounded-r-none",
             @record_list_params.order == :insertion && "bg-zinc-100! dark:bg-zinc-700!"
           ]}
         >
@@ -31,7 +30,6 @@
           patch={order_path(@record_list_params, :alphabetical)}
           size="sm"
           class={[
-            "-ml-px rounded-r-md rounded-l-none",
             @record_list_params.order == :alphabetical && "bg-zinc-100 dark:bg-zinc-700!"
           ]}
         >
