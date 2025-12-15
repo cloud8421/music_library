@@ -225,12 +225,12 @@ defmodule MusicLibraryWeb.RecordComponents do
       >
         <li :for={{id, record} <- @records} id={id} class="relative">
           <div
-            class="relative cursor-pointer"
+            class="relative cursor-pointer group"
             phx-click={JS.navigate(@record_show_path.(record))}
           >
             <.record_cover
               record={record}
-              class="aspect-square object-cover rounded-lg hover:shadow-lg/20"
+              class="aspect-square object-cover rounded-lg group-hover:shadow-lg/20"
               width={460}
             />
             <span
