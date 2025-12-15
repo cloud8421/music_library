@@ -89,7 +89,9 @@ config :music_library, Oban,
        # every day at 2 am,
        {"0 2 * * *", MusicLibrary.Worker.PruneAssets},
        # every day at 3 am,
-       {"0 3 * * *", MusicLibrary.Worker.RepoVacuum}
+       {"0 3 * * *", MusicLibrary.Worker.RepoVacuum},
+       # every day at 4 am,
+       {"0 4 * * *", MusicLibrary.Worker.RepoOptimize}
      ]}
   ]
 
