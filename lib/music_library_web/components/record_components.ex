@@ -157,6 +157,12 @@ defmodule MusicLibraryWeb.RecordComponents do
             </:toggle>
             <.focus_wrap id={"actions-#{record.id}-focus-wrap"} class="pointer-events-auto">
               <.dropdown_link id={"actions-#{record.id}-edit"} patch={@record_edit_path.(record)}>
+                <.icon
+                  name="hero-pencil-square"
+                  class="h-4 w-4 mr-1 phx-click-loading:animate-bounce"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
                 {gettext("Edit")}
               </.dropdown_link>
 
@@ -168,6 +174,12 @@ defmodule MusicLibraryWeb.RecordComponents do
                   |> JS.push("add-to-collection", value: %{id: record.id})
                 }
               >
+                <.icon
+                  name="hero-banknotes"
+                  class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
                 {gettext("Purchased")}
               </.dropdown_link>
               <.dropdown_separator />
@@ -179,6 +191,12 @@ defmodule MusicLibraryWeb.RecordComponents do
                   "text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
                 ]}
               >
+                <.icon
+                  name="hero-trash"
+                  class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
                 {gettext("Delete")}
               </.dropdown_link>
             </.focus_wrap>
@@ -263,6 +281,12 @@ defmodule MusicLibraryWeb.RecordComponents do
                     id={"actions-#{record.id}-edit"}
                     patch={@record_edit_path.(record)}
                   >
+                    <.icon
+                      name="hero-pencil-square"
+                      class="h-4 w-4 mr-1 phx-click-loading:animate-bounce"
+                      aria-hidden="true"
+                      data-slot="icon"
+                    />
                     {gettext("Edit")}
                   </.dropdown_link>
 
@@ -274,6 +298,12 @@ defmodule MusicLibraryWeb.RecordComponents do
                       |> JS.push("add-to-collection", value: %{id: record.id})
                     }
                   >
+                    <.icon
+                      name="hero-banknotes"
+                      class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
+                      aria-hidden="true"
+                      data-slot="icon"
+                    />
                     {gettext("Purchased")}
                   </.dropdown_link>
                   <.dropdown_separator />
@@ -283,6 +313,12 @@ defmodule MusicLibraryWeb.RecordComponents do
                     data-confirm={gettext("Are you sure?")}
                     class="text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
                   >
+                    <.icon
+                      name="hero-trash"
+                      class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
+                      aria-hidden="true"
+                      data-slot="icon"
+                    />
                     {gettext("Delete")}
                   </.dropdown_link>
                 </.focus_wrap>
