@@ -1665,3 +1665,18 @@ msgstr ""
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Apply"
 msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Database optimized successfully."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Optimize"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Running optimize..."
+msgstr ""

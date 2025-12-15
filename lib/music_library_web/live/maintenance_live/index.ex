@@ -109,4 +109,20 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
          |> put_toast(:error, "Database vacuum failed: #{inspect(reason)}.")}
     end
   end
+
+  def handle_event("db_optimize", _params, socket) do
+    case Repo.optimize() do
+      {:ok, _result} ->
+        {:noreply,
+         socket
+         |> put_toast(:info, gettext("Database optimized successfully."))}
+
+      {:error, reason} ->
+        Logger.error("Database optimize failed: #{inspect(reason)}.")
+
+        {:noreply,
+         socket
+         |> put_toast(:error, "Database optimize failed: #{inspect(reason)}.")}
+    end
+  end
 end

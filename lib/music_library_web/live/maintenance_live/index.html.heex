@@ -91,13 +91,22 @@
     </p>
     <ul class="mt-4">
       <li class="space-y-4">
-        <.button
-          type="button"
-          phx-click="db_vacuum"
-          phx-disable-with={gettext("Running vacuum...")}
-        >
-          {gettext("Vacuum")}
-        </.button>
+        <.button_group>
+          <.button
+            type="button"
+            phx-click="db_vacuum"
+            phx-disable-with={gettext("Running vacuum...")}
+          >
+            {gettext("Vacuum")}
+          </.button>
+          <.button
+            type="button"
+            phx-click="db_optimize"
+            phx-disable-with={gettext("Running optimize...")}
+          >
+            {gettext("Optimize")}
+          </.button>
+        </.button_group>
       </li>
     </ul>
   </div>

@@ -35,4 +35,6 @@ defmodule MusicLibrary.Repo do
   end
 
   def vacuum, do: query("VACUUM")
+
+  def optimize, do: query("PRAGMA optimize")
 end
