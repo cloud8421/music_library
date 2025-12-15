@@ -196,6 +196,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
 
   defp parse_order("alphabetical"), do: :alphabetical
   defp parse_order("insertion"), do: :insertion
+  defp parse_order("release"), do: :release
 
   defp order_path(record_list_params, order) do
     qs =

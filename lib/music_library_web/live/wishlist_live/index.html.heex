@@ -38,6 +38,16 @@
           <.icon name="hero-user-solid" class="icon" aria-hidden="true" data-slot="icon" />
           <span class="sr-only sm:not-sr-only">{gettext("A->Z")}</span>
         </.button>
+        <.button
+          patch={order_path(@record_list_params, :release)}
+          size="sm"
+          class={[
+            @record_list_params.order == :release && "bg-zinc-100! dark:bg-zinc-700!"
+          ]}
+        >
+          <.icon name="hero-calendar-days" class="icon" aria-hidden="true" data-slot="icon" />
+          <span class="sr-only sm:not-sr-only">{gettext("Release")}</span>
+        </.button>
       </.button_group>
 
       <.button_group>

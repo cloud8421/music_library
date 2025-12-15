@@ -1630,6 +1630,7 @@ msgid "Never"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/index.html.heex
+#: lib/music_library_web/live/wishlist_live/index.html.heex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Release"
 msgstr ""
