@@ -7,6 +7,7 @@ defmodule MusicLibraryWeb.ArtistComponents do
   attr :image_hash, :string, required: true
   attr :class, :string, required: false, default: nil
   attr :width, :integer, default: nil
+  attr :rest, :global
 
   def artist_image(assigns) do
     payload =
@@ -21,6 +22,7 @@ defmodule MusicLibraryWeb.ArtistComponents do
       src={~p"/assets/#{@payload}"}
       alt={@artist.name}
       onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
+      {@rest}
     />
     """
   end
