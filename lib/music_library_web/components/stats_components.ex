@@ -23,8 +23,8 @@ defmodule MusicLibraryWeb.StatsComponents do
       <div>
         <.record_cover
           record={@record}
-          class="w-16 md:w-20 rounded-md shadow-sm"
-          width={160}
+          class="w-20 md:w-24 rounded-md shadow-sm"
+          width={192}
         />
       </div>
       <div class="ml-4">
