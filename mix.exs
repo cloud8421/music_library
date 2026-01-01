@@ -76,15 +76,12 @@ defmodule MusicLibrary.MixProject do
       {:live_toast, "~> 0.8.0"},
 
       # Dev tooling
-      {:igniter, "~> 0.6", only: [:dev, :test]},
-      {:usage_rules, "~> 0.1", only: [:dev]},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:quokka, "~> 2.6", only: [:dev, :test], runtime: false},
       {:live_debugger, "~> 0.5.0", only: :dev},
-      {:tidewave, "~> 0.1", only: :dev},
 
       # HTTP Clients
       {:finch, "~> 0.20.0"},
@@ -144,8 +141,7 @@ defmodule MusicLibrary.MixProject do
         "ecto.setup",
         "assets.setup",
         "cmd npm ci --prefix assets",
-        "assets.build",
-        "usage_rules.sync AGENTS.md --all --inline usage_rules:all --link-to-folder deps --remove-missing --yes"
+        "assets.build"
       ],
       "ecto.setup": ["ecto.create", "ecto.migrate"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
