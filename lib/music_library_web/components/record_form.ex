@@ -56,6 +56,7 @@ defmodule MusicLibraryWeb.Components.RecordForm do
             :if={@show_purchased_at}
             field={@form[:purchased_at]}
             display_format="%B %-d, %Y at %I:%M %p"
+            navigation="extended"
             label={gettext("Purchased at")}
           />
         </div>
