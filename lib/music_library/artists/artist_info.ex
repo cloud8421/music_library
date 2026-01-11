@@ -4,12 +4,15 @@ defmodule MusicLibrary.Artists.ArtistInfo do
   import Ecto.Changeset
 
   alias MusicBrainz.ExternalLink
+  alias MusicLibrary.Notes.Note
 
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "artist_infos" do
     field :musicbrainz_data, :map, default: %{}
     field :discogs_data, :map, default: %{}
     field :image_data_hash, :string
+
+    has_one :note, Note, foreign_key: :musicbrainz_id
 
     timestamps(type: :utc_datetime)
   end

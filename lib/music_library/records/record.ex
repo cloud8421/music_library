@@ -4,7 +4,7 @@ defmodule MusicLibrary.Records.Record do
   import Ecto.Changeset
 
   alias MusicBrainz.{Release, ReleaseGroup}
-  alias MusicLibrary.Artists.Artist
+  alias MusicLibrary.{Artists.Artist, Notes.Note}
 
   @formats [:cd, :backup, :vinyl, :blu_ray, :dvd, :multi]
   @types [:album, :ep, :live, :compilation, :single, :other]
@@ -28,6 +28,7 @@ defmodule MusicLibrary.Records.Record do
     field :dominant_colors, {:array, :string}, default: []
 
     embeds_many :artists, Artist, on_replace: :delete
+    has_one :note, Note, foreign_key: :musicbrainz_id, references: :musicbrainz_id
 
     timestamps(type: :utc_datetime)
   end
