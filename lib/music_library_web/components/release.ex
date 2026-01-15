@@ -47,7 +47,7 @@ defmodule MusicLibraryWeb.Components.Release do
         class="min-w-xs sm:min-w-sm"
       >
         <div class="mt-6 flex justify-between items-center gap-4">
-          <h3 class="text-lg font-semibold text-zinc-700 dark:text-zinc-300">
+          <label class="text-lg font-semibold text-zinc-700 dark:text-zinc-300 cursor-pointer">
             <input
               :if={
                 @can_scrobble? && @release_with_tracks.ok? &&
@@ -56,7 +56,10 @@ defmodule MusicLibraryWeb.Components.Release do
               type="checkbox"
               id="medium-checkbox-1"
               checked={
-                medium_selected?(Release.get_medium(@release_with_tracks.result, 1), @selected_tracks)
+                medium_selected?(
+                  Release.get_medium(@release_with_tracks.result, 1),
+                  @selected_tracks
+                )
               }
               phx-click="toggle_medium"
               phx-value-medium-number={1}
@@ -64,7 +67,7 @@ defmodule MusicLibraryWeb.Components.Release do
               class="w-4 h-4 mr-2 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
             />
             {gettext("Tracks")}
-          </h3>
+          </label>
           <.button
             :if={@can_scrobble? && @release_with_tracks.ok?}
             size="sm"
@@ -134,7 +137,7 @@ defmodule MusicLibraryWeb.Components.Release do
       :if={@media_count > 1}
       class="flex justify-between items-center gap-4"
     >
-      <h4 class="text-sm md:text-md font-semibold text-zinc-700 dark:text-zinc-300">
+      <label class="text-sm md:text-md font-semibold text-zinc-700 dark:text-zinc-300 cursor-pointer">
         <input
           :if={@can_scrobble?}
           type="checkbox"
@@ -149,7 +152,7 @@ defmodule MusicLibraryWeb.Components.Release do
         <.badge variant="soft" class="text-xs">
           {@medium.format}
         </.badge>
-      </h4>
+      </label>
       <.button
         :if={@can_scrobble?}
         size="sm"
@@ -197,40 +200,42 @@ defmodule MusicLibraryWeb.Components.Release do
     <ul id={"disc-#{@medium_number}"} class="w-full table table-auto">
       <li
         :for={track <- @tracks}
-        class="contents leading-5 text-zinc-700 dark:text-zinc-300 list-none"
+        class="leading-5 text-zinc-700 dark:text-zinc-300 list-none"
       >
-        <div class="table-row">
-          <span :if={@can_scrobble?} class="table-cell pr-2 align-middle">
-            <input
-              type="checkbox"
-              id={"track-checkbox-#{track.id}"}
-              checked={MapSet.member?(@selected_tracks, track.id)}
-              phx-click="toggle_track"
-              phx-value-track-id={track.id}
-              phx-target={@myself}
-              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-          </span>
-          <span class="table-cell text-xs text-right pr-1 text-nowrap">
-            {track.number || track.position}
-          </span>
-          <span class="table-cell text-xs md:text-sm font-medium leading-8 w-full">
-            {track.title}
-          </span>
-          <span class="table-cell text-xs md:text-sm text-right pl-2">
-            {track.length && Duration.format_duration(track.length)}
-          </span>
-        </div>
-        <div
-          :if={@release_artists !== track.artists}
-          class="table-row text-xs md:text-sm"
-        >
-          <span :if={@can_scrobble?} class="table-cell" />
-          <span class="table-cell" />
-          <span class="table-cell">
-            {Enum.map_join(track.artists, ", ", fn artist -> artist.name end)}
-          </span>
-        </div>
+        <label class="contents cursor-pointer">
+          <div class="table-row">
+            <span :if={@can_scrobble?} class="table-cell pr-2 align-middle">
+              <input
+                type="checkbox"
+                id={"track-checkbox-#{track.id}"}
+                checked={MapSet.member?(@selected_tracks, track.id)}
+                phx-click="toggle_track"
+                phx-value-track-id={track.id}
+                phx-target={@myself}
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
+            </span>
+            <span class="table-cell text-xs text-right pr-1 text-nowrap">
+              {track.number || track.position}
+            </span>
+            <span class="table-cell text-xs md:text-sm font-medium leading-8 w-full">
+              {track.title}
+            </span>
+            <span class="table-cell text-xs md:text-sm text-right pl-2">
+              {track.length && Duration.format_duration(track.length)}
+            </span>
+          </div>
+          <div
+            :if={@release_artists !== track.artists}
+            class="table-row text-xs md:text-sm"
+          >
+            <span :if={@can_scrobble?} class="table-cell" />
+            <span class="table-cell" />
+            <span class="table-cell">
+              {Enum.map_join(track.artists, ", ", fn artist -> artist.name end)}
+            </span>
+          </div>
+        </label>
       </li>
     </ul>
     """
