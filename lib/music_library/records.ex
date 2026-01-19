@@ -45,7 +45,7 @@ defmodule MusicLibrary.Records do
 
   defp fts_escape(term) do
     # For FTS5, if the term contains special characters, we need to wrap it in double quotes
-    if String.contains?(term, ["'", " ", "\"", "(", ")", "^", "-", ":", "?"]) do
+    if String.contains?(term, ["'", " ", "\"", "(", ")", "^", "-", ":", "?", "."]) do
       # Escape internal double quotes and wrap in double quotes
       escaped = String.replace(term, "\"", "\"\"")
       "\"#{escaped}\"*"
