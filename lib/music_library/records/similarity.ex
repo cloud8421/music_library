@@ -132,6 +132,13 @@ defmodule MusicLibrary.Records.Similarity do
     end
   end
 
+  def get_embedding_text(record_id) do
+    case Repo.get_by(RecordEmbedding, record_id: record_id) do
+      nil -> {:error, :not_found}
+      embedding -> {:ok, embedding.text_representation}
+    end
+  end
+
   @doc """
   Stores an embedding for a record.
   """

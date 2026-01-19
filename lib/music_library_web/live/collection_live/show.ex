@@ -38,6 +38,12 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     last_listened_track = Records.get_last_listened_track(record)
     play_count = Records.play_count(record) || 0
 
+    embedding_text =
+      case Similarity.get_embedding_text(id) do
+        {:ok, text} -> text
+        {:error, _reason} -> gettext("Not available")
+      end
+
     socket =
       if record.selected_release_id do
         socket
@@ -49,6 +55,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, record))
      |> assign(:record, record)
+     |> assign(:embedding_text, embedding_text)
      |> assign(:last_listened_track, last_listened_track)
      |> assign(:play_count, play_count)
      |> assign_similar_records()}

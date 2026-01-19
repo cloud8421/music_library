@@ -111,7 +111,19 @@ defmodule MusicLibraryWeb.CoreComponents do
     ~H"""
     <details class="mt-4 text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300">
       <summary class="text-xs sm:text-sm font-medium cursor-pointer">{@title}</summary>
-      <pre><code class="text-xs sm:text-sm"><%= Jason.encode!(@data, pretty: true) %></code></pre>
+      <pre><code class="text-xs sm:text-sm">{Jason.encode!(@data, pretty: true)}</code></pre>
+    </details>
+    """
+  end
+
+  attr :title, :string, required: true
+  attr :data, :string, required: true
+
+  def text_viewer(assigns) do
+    ~H"""
+    <details class="mt-4 text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300">
+      <summary class="text-xs sm:text-sm font-medium cursor-pointer">{@title}</summary>
+      <code class="whitespace-pre-wrap text-xs sm:text-sm">{@data}</code>
     </details>
     """
   end
