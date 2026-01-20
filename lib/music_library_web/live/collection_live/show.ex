@@ -38,12 +38,6 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     last_listened_track = Records.get_last_listened_track(record)
     play_count = Records.play_count(record) || 0
 
-    embedding_text =
-      case Similarity.get_embedding_text(id) do
-        {:ok, text} -> text
-        {:error, _reason} -> gettext("Not available")
-      end
-
     socket =
       if record.selected_release_id do
         socket
@@ -55,9 +49,9 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, record))
      |> assign(:record, record)
-     |> assign(:embedding_text, embedding_text)
      |> assign(:last_listened_track, last_listened_track)
      |> assign(:play_count, play_count)
+     |> assign_embedding_text()
      |> assign_similar_records()}
   end
 
@@ -153,7 +147,8 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     {:noreply,
      socket
      |> assign(:record, record)
-     |> assign_similar_records()}
+     |> assign_similar_records()
+     |> assign_embedding_text()}
   end
 
   @impl true
@@ -162,7 +157,8 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
      socket
      |> put_toast(:info, gettext("Record updated in the background"))
      |> assign(:record, record)
-     |> assign_similar_records()}
+     |> assign_similar_records()
+     |> assign_embedding_text()}
   end
 
   def page_title(:show, record) do
@@ -203,5 +199,15 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
       Similarity.find_similar(socket.assigns.record.id, limit: 6, scope: :collection)
 
     assign(socket, :similar_records, similar_records)
+  end
+
+  defp assign_embedding_text(socket) do
+    case Similarity.get_embedding_text(socket.assigns.record.id) do
+      {:ok, text} ->
+        assign(socket, :embedding_text, text)
+
+      {:error, _reason} ->
+        assign(socket, :embedding_text, gettext("Not available"))
+    end
   end
 end
