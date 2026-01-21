@@ -97,18 +97,24 @@ defmodule MusicLibrary.Records do
         escaped_artist = fts_escape(artist)
 
         search
-        |> where(fragment("records_search_index MATCH 'artists : ' || ?", ^escaped_artist))
-        |> or_where(
-          fragment("records_search_index MATCH 'normalized_artists : ' || ?", ^escaped_artist)
+        |> where(
+          fragment(
+            "records_search_index MATCH 'artists : ' || ? OR records_search_index MATCH 'normalized_artists : ' || ?",
+            ^escaped_artist,
+            ^escaped_artist
+          )
         )
 
       {:album, album}, search ->
         escaped_album = fts_escape(album)
 
         search
-        |> where(fragment("records_search_index MATCH 'title : ' || ?", ^escaped_album))
-        |> or_where(
-          fragment("records_search_index MATCH 'normalized_title : ' || ?", ^escaped_album)
+        |> where(
+          fragment(
+            "records_search_index MATCH 'title : ' || ? OR records_search_index MATCH 'normalized_title : ' || ?",
+            ^escaped_album,
+            ^escaped_album
+          )
         )
 
       {:genre, genre}, search ->
