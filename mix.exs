@@ -84,7 +84,7 @@ defmodule MusicLibrary.MixProject do
       {:live_debugger, "~> 0.5.0", only: :dev},
 
       # HTTP Clients
-      {:finch, "~> 0.20.0"},
+      {:finch, "~> 0.21.0"},
       {:req, "~> 0.5.8"},
 
       # Parsing
