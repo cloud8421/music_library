@@ -345,6 +345,10 @@ defmodule MusicLibrary.ScrobbleActivity do
   @doc """
   Gets the top artists by scrobble count across all time.
   Returns a list of maps with artist information and play counts.
+
+  For a lot of artists, Last.fm doesn't have the correct artist musicbrainz_id
+  (often it's a ""), which makes this query not work as expected at the JOIN
+  level. To fix that, we need to update the data via Scrobble Rules.
   """
   def get_top_artists(opts) do
     limit = Keyword.get(opts, :limit, 10)
@@ -372,6 +376,10 @@ defmodule MusicLibrary.ScrobbleActivity do
   @doc """
   Gets the top artists by scrobble count for the given number of days.
   Returns a list of maps with artist information and play counts.
+
+  For a lot of artists, Last.fm doesn't have the correct artist musicbrainz_id
+  (often it's a ""), which makes this query not work as expected at the JOIN
+  level. To fix that, we need to update the data via Scrobble Rules.
   """
   def get_top_artists_by_days(days, opts) do
     limit = Keyword.get(opts, :limit, 10)
