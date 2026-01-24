@@ -76,9 +76,9 @@ defmodule MusicLibraryWeb.Components.RecordForm do
                 type="color"
                 name="record[dominant_colors][]"
                 value={color}
-                class="size-8 rounded border border-zinc-300 cursor-pointer"
+                class="size-12 md:size-16 rounded border border-zinc-300 cursor-pointer"
               />
-              <span class="text-xs mt-1 text-zinc-600 dark:text-zinc-400">
+              <span class="text-xs md:text-sm mt-1 text-zinc-600 dark:text-zinc-400">
                 {String.upcase(color)}
               </span>
             </div>
