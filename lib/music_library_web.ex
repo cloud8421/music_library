@@ -71,6 +71,7 @@ defmodule MusicLibraryWeb do
   def live_component do
     quote do
       use Phoenix.LiveComponent
+      import MusicLibraryWeb.Hooks.ShowToast, only: [put_toast!: 2]
 
       unquote(html_helpers())
     end

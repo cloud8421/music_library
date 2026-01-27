@@ -250,26 +250,25 @@ defmodule MusicLibraryWeb.Components.Release do
     case ScrobbleActivity.scrobble_release(release_with_tracks, finished_at: DateTime.utc_now()) do
       {:ok, _} ->
         send_update_after(socket.assigns.myself, %{already_scrobbled: false}, 3000)
+        put_toast!(:info, gettext("Release scrobbled successfully"))
 
-        {:noreply,
-         socket
-         |> assign(:already_scrobbled, true)
-         |> put_toast(:info, gettext("Release scrobbled successfully"))}
+        {:noreply, socket |> assign(:already_scrobbled, true)}
 
       {:error, reason} ->
         Logger.error("Error scrobbling release: #{inspect(reason)}")
 
-        {:noreply,
-         socket
-         |> put_toast(
-           :error,
-           gettext("Error scrobbling release") <> "," <> inspect(reason)
-         )}
+        put_toast!(
+          :error,
+          gettext("Error scrobbling release") <> "," <> inspect(reason)
+        )
+
+        {:noreply, socket}
     end
   end
 
   def handle_event("scrobble_release", _params, socket) do
-    {:noreply, socket |> put_toast(:error, gettext("Error scrobbling release"))}
+    put_toast!(:error, gettext("Error scrobbling release"))
+    {:noreply, socket}
   end
 
   def handle_event("scrobble_medium", %{"number" => number}, socket)
@@ -282,26 +281,25 @@ defmodule MusicLibraryWeb.Components.Release do
          ) do
       {:ok, _} ->
         send_update_after(socket.assigns.myself, %{already_scrobbled: false}, 3000)
+        put_toast!(:info, gettext("Disc scrobbled successfully"))
 
-        {:noreply,
-         socket
-         |> assign(:already_scrobbled, true)
-         |> put_toast(:info, gettext("Disc scrobbled successfully"))}
+        {:noreply, socket |> assign(:already_scrobbled, true)}
 
       {:error, reason} ->
         Logger.error("Error scrobbling medium: #{inspect(reason)}")
 
-        {:noreply,
-         socket
-         |> put_toast(
-           :error,
-           gettext("Error scrobbling disc") <> "," <> inspect(reason)
-         )}
+        put_toast!(
+          :error,
+          gettext("Error scrobbling disc") <> "," <> inspect(reason)
+        )
+
+        {:noreply, socket}
     end
   end
 
   def handle_event("scrobble_medium", _params, socket) do
-    {:noreply, socket |> put_toast(:error, gettext("Error scrobbling disc"))}
+    put_toast!(:error, gettext("Error scrobbling disc"))
+    {:noreply, socket}
   end
 
   def handle_event("toggle_track", %{"track-id" => track_id}, socket) do
@@ -344,7 +342,8 @@ defmodule MusicLibraryWeb.Components.Release do
     selected_track_ids = socket.assigns.selected_tracks
 
     if MapSet.size(selected_track_ids) == 0 do
-      {:noreply, socket |> put_toast(:error, gettext("No tracks selected"))}
+      put_toast!(:error, gettext("No tracks selected"))
+      {:noreply, socket}
     else
       case ScrobbleActivity.scrobble_tracks(
              selected_track_ids,
@@ -353,28 +352,29 @@ defmodule MusicLibraryWeb.Components.Release do
            ) do
         {:ok, _} ->
           send_update_after(socket.assigns.myself, %{already_scrobbled: false}, 3000)
+          put_toast!(:info, gettext("Selected tracks scrobbled successfully"))
 
           {:noreply,
            socket
            |> assign(:already_scrobbled, true)
-           |> assign(:selected_tracks, MapSet.new())
-           |> put_toast(:info, gettext("Selected tracks scrobbled successfully"))}
+           |> assign(:selected_tracks, MapSet.new())}
 
         {:error, reason} ->
           Logger.error("Error scrobbling tracks: #{inspect(reason)}")
 
-          {:noreply,
-           socket
-           |> put_toast(
-             :error,
-             gettext("Error scrobbling selected tracks") <> "," <> inspect(reason)
-           )}
+          put_toast!(
+            :error,
+            gettext("Error scrobbling selected tracks") <> "," <> inspect(reason)
+          )
+
+          {:noreply, socket}
       end
     end
   end
 
   def handle_event("scrobble_selected_tracks", _params, socket) do
-    {:noreply, socket |> put_toast(:error, gettext("Error scrobbling selected tracks"))}
+    put_toast!(:error, gettext("Error scrobbling selected tracks"))
+    {:noreply, socket}
   end
 
   defp medium_selected?(medium, selected_tracks) do

@@ -39,7 +39,11 @@ defmodule MusicLibraryWeb.Router do
       get "/assets/:transform_payload", AssetController, :show
 
       live_session :default,
-        on_mount: [MusicLibraryWeb.Hooks.StaticAssets, MusicLibraryWeb.Hooks.GetTimezone] do
+        on_mount: [
+          MusicLibraryWeb.Hooks.StaticAssets,
+          MusicLibraryWeb.Hooks.GetTimezone,
+          MusicLibraryWeb.Hooks.ShowToast
+        ] do
         live "/", StatsLive.Index, :index
 
         live "/collection", CollectionLive.Index, :index
