@@ -40,7 +40,7 @@ defmodule MusicLibraryWeb.Components.AddRecord do
         role="list"
         class={[
           "mt-5 divide-y divide-zinc-100 dark:divide-slate-300/30",
-          "max-h-[500px] overflow-y-auto"
+          "max-h-125 overflow-y-auto"
         ]}
       >
         <.result
