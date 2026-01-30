@@ -92,18 +92,12 @@ It's recommended to use the git hooks included in the project. Install with:
 
 ## Environment configuration
 
-The application requires the following environment variables:
-
-- `LAST_FM_USER`: the Last.fm username used to populate the Scrobble Activity
-- `LAST_FM_API_KEY` (secret): the Last.fm API key used to fetch the Scrobble Activity
-- `OPENAI_KEY` (secret): the OpenAI API key used to populating genres
-
-In production, the application also requires:
-
-- `LOGIN_PASSWORD` (secret): the password used for accessing the application.
+Required environment variables for development are listed in `mise.toml`.
 
 You can create a `mise.local.toml` with the required variables (sample values
 are included at the top of `mise.toml`).
+
+For production, please see `compose.yaml` for a list of required variables.
 
 ## Running the application
 
