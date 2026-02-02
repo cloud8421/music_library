@@ -3,8 +3,10 @@ defmodule MusicLibrary.Worker.ArtistRefreshMusicBrainzData do
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"id" => artist_info_id}}) do
-    MusicLibrary.Artists.refresh_musicbrainz_data(artist_info_id)
+    result = MusicLibrary.Artists.refresh_musicbrainz_data(artist_info_id)
 
     Process.sleep(500)
+
+    result
   end
 end
