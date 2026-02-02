@@ -53,9 +53,12 @@ defmodule MusicLibrary.Records.Similarity do
   defp artist_info_summary(artist_info) when is_nil(artist_info.discogs_data), do: ""
 
   defp artist_info_summary(%{discogs_data: discogs_data}) do
+    # if available, use the plain text version of the profile to avoid pollution by BBTags
+    profile_data = Map.get(discogs_data, "profile_plaintext") || Map.get(discogs_data, "profile")
+
     profile_section =
-      if profile = Map.get(discogs_data, "profile") do
-        "Profile for #{discogs_data["name"]}: #{profile}"
+      if profile_data do
+        "Profile for #{discogs_data["name"]}: #{profile_data}"
       else
         ""
       end
