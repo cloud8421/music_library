@@ -5,7 +5,7 @@ defmodule MusicLibrary.Worker.ArtistRefreshDiscogsData do
   def perform(%Oban.Job{args: %{"id" => artist_info_id}}) do
     result = MusicLibrary.Artists.refresh_discogs_data(artist_info_id)
 
-    Process.sleep(500)
+    Process.sleep(1_000)
 
     result
   end
