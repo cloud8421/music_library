@@ -8,7 +8,10 @@ defmodule Discogs.API do
   def get_artist(id, config) do
     config
     |> new_request()
-    |> Req.merge(url: "/artists/#{id}")
+    |> Req.merge(
+      headers: %{accept: "application/vnd.discogs.v2.plaintext+json"},
+      url: "/artists/#{id}"
+    )
     |> get_request()
   end
 
