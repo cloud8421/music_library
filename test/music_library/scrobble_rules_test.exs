@@ -95,6 +95,17 @@ defmodule MusicLibrary.ScrobbleRulesTest do
       assert scrobble_rule.description == "Fix Pink Floyd album"
     end
 
+    test "create_scrobble_rule/1 doesn't allow duplicates for the same type" do
+      valid_attrs = Map.put(@valid_album_attrs, :type, :album)
+
+      assert {:ok, %ScrobbleRule{} = scrobble_rule} =
+               ScrobbleRules.create_scrobble_rule(valid_attrs)
+
+      assert scrobble_rule.type == :album
+
+      assert {:error, _changeset} = ScrobbleRules.create_scrobble_rule(valid_attrs)
+    end
+
     test "create_scrobble_rule/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = ScrobbleRules.create_scrobble_rule(@invalid_attrs)
     end
