@@ -119,7 +119,7 @@ defmodule MusicLibraryWeb.StatsLive.TopArtists do
         >
           <.artist_image
             :if={artist.musicbrainz_id != ""}
-            class="w-12 h-12 rounded-md object-cover"
+            class="w-12 h-12 rounded-md shadow-sm object-cover"
             artist={artist}
             width={96}
             image_hash={artist.image_hash}

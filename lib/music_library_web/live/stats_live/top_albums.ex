@@ -114,7 +114,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
           ]}
         >
           <img
-            class="w-12 h-12 rounded-md object-cover"
+            class="w-12 h-12 rounded-md shadow-sm object-cover"
             src={cover_url(album)}
             alt={album.album_title}
           />
