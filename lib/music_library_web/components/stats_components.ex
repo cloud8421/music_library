@@ -161,7 +161,7 @@ defmodule MusicLibraryWeb.StatsComponents do
       <li
         :for={record <- @records}
         phx-click={JS.navigate(@record_show_path.(record))}
-        class="flex justify-between gap-x-6 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 px-2 -mx-2 md:px-4 md:-mx-4 cursor-pointer"
+        class="flex justify-between gap-x-6 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-700 px-2 md:px-4 cursor-pointer"
         id={record.id}
       >
         <div class="flex min-w-0 gap-x-4 items-center">
