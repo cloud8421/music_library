@@ -99,10 +99,6 @@
           <.on_tour_link lastfm_artist_info={lastfm_artist_info} />
           <.play_count play_count={lastfm_artist_info.play_count} />
         </.async_result>
-        <.button variant="solid" patch={~p"/artists/#{@artist.musicbrainz_id}/import"}>
-          <.icon name="hero-plus" class="icon" aria-hidden="true" data-slot="icon" />
-          {gettext("Add more")}
-        </.button>
       </div>
     </header>
 
@@ -264,22 +260,6 @@
       data={@artist_info.discogs_data}
     />
   </div>
-
-  <.structured_modal
-    :if={@live_action == :import}
-    id="record-modal"
-    on_close={JS.patch(~p"/artists/#{@artist.musicbrainz_id}")}
-  >
-    <.live_component
-      module={MusicLibraryWeb.Components.AddRecord}
-      id={:search}
-      title={@page_title}
-      action={@live_action}
-      patch={~p"/artists/#{@artist.musicbrainz_id}"}
-      initial_query={"arid:#{@artist.musicbrainz_id}"}
-      icon_name="hero-plus"
-    />
-  </.structured_modal>
 
   <.live_component
     id="artist-notes"

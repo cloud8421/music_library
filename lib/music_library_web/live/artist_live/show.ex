@@ -95,34 +95,6 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
   end
 
   @impl true
-  def handle_event("import", %{"id" => musicbrainz_id, "format" => format}, socket) do
-    case Records.import_from_musicbrainz_release_group(musicbrainz_id,
-           format: format,
-           purchased_at: nil
-         ) do
-      {:ok, _record} ->
-        {:noreply,
-         socket
-         |> put_toast(:info, gettext("Record wishlisted successfully"))
-         |> push_patch(to: ~p"/artists/#{socket.assigns.artist.musicbrainz_id}")}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply,
-         socket
-         |> put_toast(
-           :error,
-           gettext("Error wishlisting record") <> "," <> inspect(changeset.errors)
-         )
-         |> push_patch(to: ~p"/artists/#{socket.assigns.artist.musicbrainz_id}")}
-
-      {:error, reason} ->
-        {:noreply,
-         socket
-         |> put_toast(:error, gettext("Error wishlisting record") <> "," <> inspect(reason))
-         |> push_patch(to: ~p"/artists/#{socket.assigns.artist.musicbrainz_id}")}
-    end
-  end
-
   def handle_event("refresh_artist_info", %{"id" => id}, socket) do
     case Artists.fetch_artist_info(id) do
       {:ok, artist_info} ->
@@ -221,20 +193,6 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     |> assign(:page_title, page_title(socket.assigns.live_action, artist))
   end
 
-  defp apply_action(socket, :import, params) do
-    socket =
-      if get_in(socket.assigns, [:streams, :collection_records]) == nil do
-        socket
-        |> apply_action(:show, params)
-      else
-        socket
-      end
-
-    socket
-    |> assign(:page_title, gettext("Add more · Artist"))
-    |> assign(:initial_query, "arid:#{socket.assigns.artist.musicbrainz_id}")
-  end
-
   defp apply_action(socket, :edit, params) do
     socket =
       if get_in(socket.assigns, [:streams, :collection_records]) == nil do
@@ -278,17 +236,6 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
         artist.name,
         "·",
         gettext("Edit")
-      ],
-      " "
-    )
-  end
-
-  defp page_title(:import, artist) do
-    Enum.join(
-      [
-        artist.name,
-        "·",
-        gettext("Add more")
       ],
       " "
     )
