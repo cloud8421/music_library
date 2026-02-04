@@ -105,6 +105,19 @@
                 </.dropdown_link>
 
                 <.dropdown_link
+                  id={"actions-#{@record.id}-regenerate-embeddings"}
+                  phx-click={JS.push("regenerate_embeddings", value: %{id: @record.id})}
+                >
+                  <.icon
+                    name="hero-sparkles"
+                    class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
+                    aria-hidden="true"
+                    data-slot="icon"
+                  />
+                  {gettext("Regenerate embeddings")}
+                </.dropdown_link>
+
+                <.dropdown_link
                   id={"actions-#{@record.id}-extract-colors-fast"}
                   phx-click={JS.push("extract_colors", value: %{id: @record.id, method: :fast})}
                 >

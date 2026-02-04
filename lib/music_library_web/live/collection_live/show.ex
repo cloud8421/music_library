@@ -142,6 +142,25 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     end
   end
 
+  def handle_event("regenerate_embeddings", %{"id" => id}, socket) do
+    record = Records.get_record!(id)
+
+    case Similarity.generate_embedding_async(record) do
+      {:ok, _worker} ->
+        {:noreply,
+         socket
+         |> put_toast(:info, gettext("In progress - record will update automatically"))}
+
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_toast(
+           :error,
+           gettext("Error") <> "," <> inspect(reason)
+         )}
+    end
+  end
+
   @impl true
   def handle_info({MusicLibraryWeb.Components.RecordForm, {:saved, record}}, socket) do
     {:noreply,

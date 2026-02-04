@@ -1682,3 +1682,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Not available"
 msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Regenerate embeddings"
+msgstr ""
