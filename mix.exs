@@ -82,6 +82,7 @@ defmodule MusicLibrary.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:quokka, "~> 2.6", only: [:dev, :test], runtime: false},
       {:live_debugger, "~> 0.5.0", only: :dev},
+      {:usage_rules, "~> 0.1"},
 
       # HTTP Clients
       {:finch, "~> 0.21.0"},
@@ -141,7 +142,8 @@ defmodule MusicLibrary.MixProject do
         "ecto.setup",
         "assets.setup",
         "cmd npm ci --prefix assets",
-        "assets.build"
+        "assets.build",
+        "usage_rules.sync AGENTS.md --all --inline usage_rules:all --link-to-folder deps --remove-missing --yes"
       ],
       "ecto.setup": ["ecto.create", "ecto.migrate"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
