@@ -9,7 +9,7 @@ defmodule MusicLibrary.RecordSets do
     limit = Keyword.get(opts, :limit, 20)
 
     from(rs in RecordSet,
-      order_by: [desc: rs.updated_at],
+      order_by: [asc: rs.name],
       offset: ^offset,
       limit: ^limit,
       preload: [items: :record]
