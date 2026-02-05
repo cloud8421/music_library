@@ -38,9 +38,14 @@
       >
         <div class="flex items-baseline justify-between mb-3">
           <div class="grow">
-            <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-              {record_set.name}
-            </h2>
+            <header class="flex items-baseline justify-start">
+              <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                {record_set.name}
+              </h2>
+              <span class="ml-2 text-xs text-zinc-500 dark:text-zinc-400">
+                {ngettext("1 record", "%{count} records", length(record_set.items))}
+              </span>
+            </header>
             <article
               :if={record_set.description}
               class="text-sm mt-1 prose dark:prose-invert prose-zinc prose-sm prose-h1:text-sm max-w-none"
@@ -49,9 +54,6 @@
             </article>
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-xs text-zinc-500 dark:text-zinc-400">
-              {ngettext("1 record", "%{count} records", length(record_set.items))}
-            </span>
             <.dropdown id={"set-actions-#{record_set.id}"} placement="bottom-end">
               <:toggle>
                 <.button variant="ghost">
