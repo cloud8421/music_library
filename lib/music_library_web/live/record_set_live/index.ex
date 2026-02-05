@@ -5,6 +5,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
 
   alias MusicLibrary.RecordSets
   alias MusicLibrary.RecordSets.RecordSet
+  alias MusicLibraryWeb.Markdown
 
   @default_list_params %{
     page: 1,
@@ -180,5 +181,11 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
     {:ok, updated_set} = RecordSets.move_record_in_set(record_set, record_id, :down)
 
     {:noreply, stream_insert(socket, :record_sets, updated_set)}
+  end
+
+  defp render_description(description) do
+    description
+    |> Markdown.to_html()
+    |> raw()
   end
 end
