@@ -147,8 +147,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
       ) do
     {:noreply,
      socket
-     |> stream_insert(:record_sets, record_set)
-     |> push_patch(to: back_path(socket.assigns.list_params))}
+     |> stream_insert(:record_sets, record_set)}
   end
 
   @impl true
