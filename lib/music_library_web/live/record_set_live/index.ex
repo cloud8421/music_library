@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
   use MusicLibraryWeb, :live_view
 
   import MusicLibraryWeb.Components.Pagination
+  import MusicLibraryWeb.RecordComponents, only: [artist_links: 1]
 
   alias MusicLibrary.RecordSets
   alias MusicLibrary.RecordSets.RecordSet

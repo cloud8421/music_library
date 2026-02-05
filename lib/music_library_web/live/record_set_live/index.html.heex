@@ -146,9 +146,12 @@
                 </.dropdown_button>
               </.dropdown>
             </div>
-            <p class="mt-1 text-sm font-medium text-zinc-900 dark:text-zinc-300">
+            <h1 class="mt-1 text-xs sm:text-sm leading-6 text-zinc-700">
+              <.artist_links joinphrase_class="text-xs" artists={item.record.artists} />
+            </h1>
+            <h2 class="flex font-semibold text-xs sm:text-sm leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
               {item.record.title}
-            </p>
+            </h2>
           </div>
 
           <.link
