@@ -25,6 +25,7 @@ import topbar from "../vendor/topbar";
 import { Hooks as FluxonHooks, DOM as FluxonDOM } from "fluxon";
 import FormatNumberHook from "./hooks/format-number";
 import UniversalSearchNavigationHook from "./hooks/universal-search-navigation";
+import RecordPickerNavigationHook from "./hooks/record-picker-navigation";
 import confetti from "canvas-confetti";
 import { createLiveToastHook } from "live_toast";
 import banner from "./banner";
@@ -32,6 +33,7 @@ import banner from "./banner";
 let Hooks = FluxonHooks;
 Hooks.FormatNumber = FormatNumberHook;
 Hooks.UniversalSearchNavigation = UniversalSearchNavigationHook;
+Hooks.RecordPickerNavigation = RecordPickerNavigationHook;
 Hooks.LiveToast = createLiveToastHook();
 
 const csrfToken = document

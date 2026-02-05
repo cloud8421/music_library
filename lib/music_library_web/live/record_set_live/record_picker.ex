@@ -7,7 +7,7 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
+    <div id="record-picker-navigation" phx-hook="RecordPickerNavigation">
       <header class="mb-6">
         <h1 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
           {@title}
@@ -26,7 +26,7 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
         <.input
           type="search"
           size="sm"
-          id={:query}
+          id="record-picker-search-input"
           name={:query}
           value={@query}
           placeholder={gettext("Search")}
@@ -48,7 +48,11 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
         </li>
         <li
           :for={record <- @results}
-          class="flex items-center gap-3 py-3 px-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer rounded-lg"
+          role="option"
+          class={[
+            "flex items-center gap-3 py-3 px-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer rounded-lg",
+            "aria-selected:bg-zinc-100 dark:aria-selected:bg-zinc-700"
+          ]}
           phx-click="add_record"
           phx-target={@myself}
           phx-value-record-id={record.id}
