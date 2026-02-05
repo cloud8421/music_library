@@ -31,7 +31,8 @@
       "Bash(mix run:*)",
       "Bash(sqlite3:*)",
       "WebSearch",
-      "Bash(mix shellcheck:*)"
+      "Bash(mix shellcheck:*)",
+      "Bash(mix compile:*)"
     ]
   },
   "enableAllProjectMcpServers": false
