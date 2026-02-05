@@ -28,6 +28,9 @@ defmodule MusicLibraryWeb.RecordSetLive.Form do
         />
 
         <.textarea
+          class={[
+            "w-full min-h-128 md:min-h-164 overflow-scroll font-mono"
+          ]}
           field={@form[:description]}
           label={gettext("Description (optional)")}
           placeholder={gettext("What is this set about?")}
