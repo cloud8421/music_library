@@ -35,6 +35,19 @@
             />
             {gettext("Wishlist")}
           </.nav_link>
+          <.nav_link
+            route={~p"/record-sets"}
+            section={:record_sets}
+            current_section={@current_section}
+          >
+            <.icon
+              name="hero-rectangle-stack"
+              class="max-sm:hidden h-4 w-4 mr-2"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+            {gettext("Sets")}
+          </.nav_link>
         </div>
       </div>
       <div class="flex items-center">
