@@ -4,6 +4,8 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
   alias MusicLibrary.Collection
   alias MusicLibrary.Records.Record
 
+  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -70,6 +72,11 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
             </p>
             <p class="text-xs text-zinc-500 dark:text-zinc-400 truncate">
               {Record.artist_names(record)}
+            </p>
+            <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+              {Record.format_release_date(record.release_date)} · {type_label(record.type)} · {format_label(
+                record.format
+              )}
             </p>
           </div>
           <div class="flex-none">
