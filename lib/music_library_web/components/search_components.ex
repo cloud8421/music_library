@@ -9,6 +9,7 @@ defmodule MusicLibraryWeb.SearchComponents do
   import MusicLibraryWeb.ArtistComponents, only: [artist_image: 1]
 
   alias MusicLibrary.Records.Record
+  alias MusicLibraryWeb.Markdown
 
   @doc """
   Renders a search result item for records.
@@ -96,6 +97,47 @@ defmodule MusicLibraryWeb.SearchComponents do
           <p :if={@artist.disambiguation} class="text-sm text-zinc-500 dark:text-zinc-400 truncate">
             {@artist.disambiguation}
           </p>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a search result item for record sets.
+
+  ## Examples
+
+      <.search_result_record_set record_set={record_set} />
+  """
+  attr :record_set, :map, required: true
+  attr :rest, :global, include: ~w(phx-click phx-value-id)
+
+  def search_result_record_set(assigns) do
+    ~H"""
+    <div
+      class={[
+        "p-3 rounded-lg cursor-pointer transition-colors",
+        "hover:bg-zinc-50 dark:hover:bg-zinc-700",
+        "aria-selected:bg-zinc-200 dark:aria-selected:bg-zinc-700"
+      ]}
+      role="option"
+      {@rest}
+    >
+      <div class="flex items-center space-x-3">
+        <div class="shrink-0 w-12 h-12 rounded-md bg-zinc-100 dark:bg-zinc-700 flex items-center justify-center">
+          <.icon name="hero-queue-list" class="h-6 w-6 text-zinc-400 dark:text-zinc-500" />
+        </div>
+        <div class="min-w-0 flex-1">
+          <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+            {@record_set.name}
+          </p>
+          <div
+            :if={@record_set.description}
+            class="prose prose-zinc dark:prose-invert prose-sm"
+          >
+            {render_description(@record_set.description)}
+          </div>
         </div>
       </div>
     </div>
@@ -248,5 +290,12 @@ defmodule MusicLibraryWeb.SearchComponents do
       </.link>
     </div>
     """
+  end
+
+  defp render_description(description) do
+    description
+    |> String.slice(0, 100)
+    |> Markdown.to_html()
+    |> raw()
   end
 end

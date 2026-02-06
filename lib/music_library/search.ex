@@ -11,7 +11,7 @@ defmodule MusicLibrary.Search do
   import Ecto.Query, warn: false
 
   alias MusicLibrary.Artists.ArtistInfo
-  alias MusicLibrary.{Collection, Repo, Wishlist}
+  alias MusicLibrary.{Collection, RecordSets, Repo, Wishlist}
   alias MusicLibrary.Records.ArtistRecord
 
   @doc """
@@ -31,7 +31,8 @@ defmodule MusicLibrary.Search do
     %{
       collection: search_collection(query, limit),
       wishlist: search_wishlist(query, limit),
-      artists: search_artists(query, limit)
+      artists: search_artists(query, limit),
+      record_sets: search_record_sets(query, limit)
     }
   end
 
@@ -90,8 +91,16 @@ defmodule MusicLibrary.Search do
     %{
       collection_count: Collection.search_records_count(query),
       wishlist_count: Wishlist.search_records_count(query),
-      artists_count: search_artists_count(query)
+      artists_count: search_artists_count(query),
+      record_sets_count: RecordSets.count_record_sets(query)
     }
+  end
+
+  @doc """
+  Searches record sets by name, description, and contained records.
+  """
+  def search_record_sets(query, limit \\ 5) do
+    RecordSets.search_record_sets(query, limit: limit)
   end
 
   @doc """

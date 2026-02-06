@@ -79,7 +79,8 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
         total_results =
           length(search_results.collection) +
             length(search_results.wishlist) +
-            length(search_results.artists)
+            length(search_results.artists) +
+            length(search_results.record_sets)
 
         {:noreply,
          socket
@@ -145,11 +146,32 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
      |> push_navigate(to: ~p"/wishlist?query=#{query}")}
   end
 
+  @impl true
+  def handle_event("navigate_to_record_set", %{"id" => id}, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_modal, false)
+     |> push_navigate(to: ~p"/record-sets/#{id}")}
+  end
+
+  @impl true
+  def handle_event("navigate_to_record_sets", %{"query" => query}, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_modal, false)
+     |> push_navigate(to: ~p"/record-sets?query=#{query}")}
+  end
+
   defp reset(socket) do
     socket
     |> assign(:search_query, "")
-    |> assign(:search_results, %{collection: [], wishlist: [], artists: []})
-    |> assign(:search_counts, %{collection_count: 0, wishlist_count: 0, artists_count: 0})
+    |> assign(:search_results, %{collection: [], wishlist: [], artists: [], record_sets: []})
+    |> assign(:search_counts, %{
+      collection_count: 0,
+      wishlist_count: 0,
+      artists_count: 0,
+      record_sets_count: 0
+    })
     |> assign(:total_results, 0)
   end
 end

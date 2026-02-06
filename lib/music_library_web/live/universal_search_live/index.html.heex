@@ -96,6 +96,30 @@
         />
       </:actions>
     </.search_result_group>
+    <.search_result_group
+      :if={length(@search_results.record_sets) > 0}
+      title="Record Sets"
+      count={length(@search_results.record_sets)}
+      total_count={@search_counts.record_sets_count}
+    >
+      <.search_result_record_set
+        :for={record_set <- @search_results.record_sets}
+        record_set={record_set}
+        phx-click="navigate_to_record_set"
+        phx-value-id={record_set.id}
+        phx-target={@myself}
+      />
+      <:actions>
+        <.view_all_button
+          :if={@search_counts.record_sets_count > length(@search_results.record_sets)}
+          count={@search_counts.record_sets_count}
+          target="record set"
+          phx-click="navigate_to_record_sets"
+          phx-value-query={@search_query}
+          phx-target={@myself}
+        />
+      </:actions>
+    </.search_result_group>
     <.results_footer total_results={@total_results} />
   </.structured_modal>
 </div>
