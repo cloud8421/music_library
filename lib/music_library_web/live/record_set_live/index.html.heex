@@ -43,7 +43,7 @@
                 {record_set.name}
               </h2>
               <span class="ml-2 text-xs text-zinc-500 dark:text-zinc-400">
-                {ngettext("1 record", "%{count} records", length(record_set.items))}
+                {gettext("%{collected}/%{total} records", RecordSet.count_by_status(record_set))}
               </span>
             </header>
             <article
@@ -92,9 +92,26 @@
         <div class="flex flex-wrap items-start gap-3 md:overflow-x-auto pb-2">
           <div
             :for={item <- record_set.items}
-            class="flex-none w-24 sm:w-32 group relative"
+            class={[
+              "flex-none w-24 sm:w-32 group relative",
+              is_nil(item.record.purchased_at) &&
+                "opacity-60 hover:opacity-100 transition-opacity"
+            ]}
           >
-            <.link navigate={~p"/collection/#{item.record}"}>
+            <.link
+              :if={item.record.purchased_at}
+              navigate={~p"/collection/#{item.record}"}
+            >
+              <MusicLibraryWeb.RecordComponents.record_cover
+                record={item.record}
+                class="rounded-lg aspect-square object-cover"
+                width={256}
+              />
+            </.link>
+            <.link
+              :if={!item.record.purchased_at}
+              navigate={~p"/wishlist/#{item.record}"}
+            >
               <MusicLibraryWeb.RecordComponents.record_cover
                 record={item.record}
                 class="rounded-lg aspect-square object-cover"
@@ -107,14 +124,13 @@
                 placement="bottom-end"
               >
                 <:toggle>
-                  <span class="rounded-full bg-zinc-900/60 p-0.5 cursor-pointer">
-                    <.icon
-                      name="hero-ellipsis-vertical"
-                      class="h-4 w-4 text-white"
-                      aria-hidden="true"
-                      data-slot="icon"
-                    />
-                  </span>
+                  <span class="sr-only">{gettext("Actions")}</span>
+                  <.icon
+                    name="hero-ellipsis-vertical"
+                    class="size-5 text-zinc-800 dark:text-zinc-200 cursor-pointer"
+                    aria-hidden="true"
+                    data-slot="icon"
+                  />
                 </:toggle>
                 <.dropdown_button
                   :if={item.position > 0}

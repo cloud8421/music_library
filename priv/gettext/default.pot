@@ -270,6 +270,7 @@ msgid "Choose which format to import"
 msgstr ""
 
 #: lib/music_library_web/components/barcode_scanner.ex
+#: lib/music_library_web/live/record_set_live/record_picker.ex
 #: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
 #: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format
@@ -277,6 +278,7 @@ msgid "Collected"
 msgstr ""
 
 #: lib/music_library_web/components/barcode_scanner.ex
+#: lib/music_library_web/live/record_set_live/record_picker.ex
 #: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
 #: lib/music_library_web/live/stats_live/index.html.heex
 #, elixir-autogen, elixir-format
@@ -395,7 +397,6 @@ msgid "On Tour"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
-#: lib/music_library_web/live/record_set_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "1 record"
 msgid_plural "%{count} records"
@@ -1778,11 +1779,6 @@ msgstr ""
 msgid "Save Set"
 msgstr ""
 
-#: lib/music_library_web/live/record_set_live/record_picker.ex
-#, elixir-autogen, elixir-format
-msgid "Search your collection to add a record to this set."
-msgstr ""
-
 #: lib/music_library_web/components/layouts/app.html.heex
 #, elixir-autogen, elixir-format
 msgid "Sets"
@@ -1796,4 +1792,14 @@ msgstr ""
 #: lib/music_library_web/live/record_set_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "e.g. Favorites, Road Trip, Sunday Morning"
+msgstr ""
+
+#: lib/music_library_web/live/record_set_live/record_picker.ex
+#, elixir-autogen, elixir-format
+msgid "Search your records to add a record to this set."
+msgstr ""
+
+#: lib/music_library_web/live/record_set_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "%{collected}/%{total} records"
 msgstr ""

@@ -21,4 +21,13 @@ defmodule MusicLibrary.RecordSets.RecordSet do
     |> cast(attrs, [:name, :description])
     |> validate_required([:name])
   end
+
+  def count_by_status(record_set) do
+    record_set.items
+    |> Enum.frequencies_by(fn item ->
+      if item.record.purchased_at, do: :collected, else: :wishlisted
+    end)
+    |> Map.new()
+    |> Map.put(:total, Enum.count(record_set.items))
+  end
 end

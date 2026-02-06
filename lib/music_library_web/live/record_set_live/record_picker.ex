@@ -3,6 +3,7 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
 
   alias MusicLibrary.Collection
   alias MusicLibrary.Records.Record
+  alias MusicLibrary.Wishlist
 
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
 
@@ -15,7 +16,7 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
           {@title}
         </h1>
         <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-          {gettext("Search your collection to add a record to this set.")}
+          {gettext("Search your records to add a record to this set.")}
         </p>
       </header>
       <form
@@ -38,58 +39,80 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
         />
       </form>
 
-      <ul
+      <div
         :if={@query != ""}
-        class="mt-4 divide-y divide-zinc-100 dark:divide-zinc-700 max-h-96 overflow-y-auto"
+        class="mt-4 max-h-96 overflow-y-auto"
       >
-        <li
-          :if={@results == []}
+        <p
+          :if={@collected_results == [] and @wishlisted_results == []}
           class="py-4 text-center text-sm text-zinc-500 dark:text-zinc-400"
         >
           {gettext("No records found")}
-        </li>
-        <li
-          :for={record <- @results}
-          role="option"
-          class={[
-            "flex items-center gap-3 py-3 px-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer rounded-lg",
-            "aria-selected:bg-zinc-100 dark:aria-selected:bg-zinc-700"
-          ]}
-          phx-click="add_record"
-          phx-target={@myself}
-          phx-value-record-id={record.id}
-        >
-          <div class="w-12 flex-none">
-            <MusicLibraryWeb.RecordComponents.record_cover
-              record={record}
-              class="rounded aspect-square object-cover"
-              width={96}
-            />
-          </div>
-          <div class="min-w-0 flex-auto">
-            <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
-              {record.title}
-            </p>
-            <p class="text-xs text-zinc-500 dark:text-zinc-400 truncate">
-              {Record.artist_names(record)}
-            </p>
-            <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-              {Record.format_release_date(record.release_date)} · {type_label(record.type)} · {format_label(
-                record.format
-              )}
-            </p>
-          </div>
-          <div class="flex-none">
-            <.icon
-              name="hero-plus-circle"
-              class="h-5 w-5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
-              aria-hidden="true"
-              data-slot="icon"
-            />
-          </div>
-        </li>
-      </ul>
+        </p>
+
+        <div :if={@collected_results != []}>
+          <h3 class="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mb-1">
+            {gettext("Collected")}
+          </h3>
+          <ul class="divide-y divide-zinc-100 dark:divide-zinc-700">
+            <.record_result :for={record <- @collected_results} record={record} myself={@myself} />
+          </ul>
+        </div>
+
+        <div :if={@wishlisted_results != []} class={[@collected_results != [] && "mt-4"]}>
+          <h3 class="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mb-1">
+            {gettext("Wishlisted")}
+          </h3>
+          <ul class="divide-y divide-zinc-100 dark:divide-zinc-700">
+            <.record_result :for={record <- @wishlisted_results} record={record} myself={@myself} />
+          </ul>
+        </div>
+      </div>
     </div>
+    """
+  end
+
+  defp record_result(assigns) do
+    ~H"""
+    <li
+      role="option"
+      class={[
+        "flex items-center gap-3 py-3 px-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer rounded-lg",
+        "aria-selected:bg-zinc-100 dark:aria-selected:bg-zinc-700"
+      ]}
+      phx-click="add_record"
+      phx-target={@myself}
+      phx-value-record-id={@record.id}
+    >
+      <div class="w-12 flex-none">
+        <MusicLibraryWeb.RecordComponents.record_cover
+          record={@record}
+          class="rounded aspect-square object-cover"
+          width={96}
+        />
+      </div>
+      <div class="min-w-0 flex-auto">
+        <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+          {@record.title}
+        </p>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400 truncate">
+          {Record.artist_names(@record)}
+        </p>
+        <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+          {Record.format_release_date(@record.release_date)} · {type_label(@record.type)} · {format_label(
+            @record.format
+          )}
+        </p>
+      </div>
+      <div class="flex-none">
+        <.icon
+          name="hero-plus-circle"
+          class="h-5 w-5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+          aria-hidden="true"
+          data-slot="icon"
+        />
+      </div>
+    </li>
     """
   end
 
@@ -102,27 +125,39 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
      socket
      |> assign(assigns)
      |> assign(:query, "")
-     |> assign(:results, [])
+     |> assign(:collected_results, [])
+     |> assign(:wishlisted_results, [])
      |> assign(:existing_record_ids, existing_record_ids)}
   end
 
   @impl true
   def handle_event("search", %{"query" => query}, socket) do
-    results =
+    {collected, wishlisted} =
       if String.trim(query) == "" do
-        []
+        {[], []}
       else
-        query
-        |> Collection.search_records(limit: 20)
-        |> Enum.reject(fn record ->
+        reject = fn record ->
           MapSet.member?(socket.assigns.existing_record_ids, record.id)
-        end)
+        end
+
+        collected =
+          query
+          |> Collection.search_records(limit: 20)
+          |> Enum.reject(reject)
+
+        wishlisted =
+          query
+          |> Wishlist.search_records(limit: 20)
+          |> Enum.reject(reject)
+
+        {collected, wishlisted}
       end
 
     {:noreply,
      socket
      |> assign(:query, query)
-     |> assign(:results, results)}
+     |> assign(:collected_results, collected)
+     |> assign(:wishlisted_results, wishlisted)}
   end
 
   def handle_event("add_record", %{"record-id" => record_id}, socket) do
@@ -132,8 +167,10 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
       {:ok, updated_set} ->
         existing_record_ids = MapSet.put(socket.assigns.existing_record_ids, record_id)
 
-        results =
-          Enum.reject(socket.assigns.results, fn record -> record.id == record_id end)
+        reject = fn record -> record.id == record_id end
+
+        collected_results = Enum.reject(socket.assigns.collected_results, reject)
+        wishlisted_results = Enum.reject(socket.assigns.wishlisted_results, reject)
 
         notify_parent({:added, updated_set})
         put_toast!(:info, gettext("Record added to set"))
@@ -142,7 +179,8 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
          socket
          |> assign(:record_set, updated_set)
          |> assign(:existing_record_ids, existing_record_ids)
-         |> assign(:results, results)}
+         |> assign(:collected_results, collected_results)
+         |> assign(:wishlisted_results, wishlisted_results)}
 
       {:error, _changeset} ->
         put_toast!(:error, gettext("Could not add record to set"))
