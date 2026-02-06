@@ -19,6 +19,8 @@
     </div>
   </header>
 
+  <.search_form query={@list_params.query} />
+
   <div class="mt-6 space-y-6">
     <ul phx-update="stream" id="record-sets-list" class="space-y-6">
       <li
@@ -69,7 +71,7 @@
               <.dropdown_link
                 id={"set-actions-#{record_set.id}-edit"}
                 patch={
-                  ~p"/record-sets/#{record_set}/edit?#{Map.take(@list_params, [:page, :page_size])}"
+                  ~p"/record-sets/#{record_set}/edit?#{Map.take(@list_params, [:query, :page, :page_size]) |> Enum.filter(fn {_, v} -> v not in ["", nil] end)}"
                 }
               >
                 {gettext("Edit")}

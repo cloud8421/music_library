@@ -21,6 +21,23 @@ defmodule MusicLibrary.RecordSets do
     Repo.aggregate(RecordSet, :count)
   end
 
+  def count_record_sets(query) do
+    record_sets_search_query(query)
+    |> Repo.aggregate(:count)
+  end
+
+  def search_record_sets(query, opts \\ []) do
+    offset = Keyword.get(opts, :offset, 0)
+    limit = Keyword.get(opts, :limit, 20)
+
+    record_sets_search_query(query)
+    |> order_by([rs], desc: rs.updated_at)
+    |> offset(^offset)
+    |> limit(^limit)
+    |> preload(items: :record)
+    |> Repo.all()
+  end
+
   def get_record_set!(id) do
     RecordSet
     |> Repo.get!(id)
@@ -123,6 +140,37 @@ defmodule MusicLibrary.RecordSets do
     end
 
     {:ok, get_record_set!(record_set.id)}
+  end
+
+  defp record_sets_search_query(""), do: from(rs in RecordSet)
+
+  defp record_sets_search_query(query) do
+    like_query = "%#{query}%"
+
+    from(rs in RecordSet,
+      where:
+        like(rs.name, ^like_query) or
+          like(rs.description, ^like_query) or
+          fragment(
+            """
+            EXISTS (
+              SELECT 1 FROM record_set_items AS i
+              JOIN records AS r ON r.id = i.record_id
+              WHERE i.record_set_id = ?
+              AND (
+                r.title LIKE ?
+                OR EXISTS (
+                  SELECT 1 FROM json_each(r.artists)
+                  WHERE json_extract(value, '$.name') LIKE ?
+                )
+              )
+            )
+            """,
+            rs.id,
+            ^like_query,
+            ^like_query
+          )
+    )
   end
 
   defp recompact_positions(record_set_id) do

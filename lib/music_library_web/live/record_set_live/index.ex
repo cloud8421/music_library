@@ -47,10 +47,12 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
   end
 
   defp apply_action(socket, :index, params) do
-    total_sets = RecordSets.count_record_sets()
+    query = params["query"] || ""
+    total_sets = RecordSets.count_record_sets(query)
 
     list_params =
       @default_list_params
+      |> merge_query(query)
       |> merge_pagination(params, total_sets)
 
     load_and_assign_sets(socket, list_params)
@@ -73,6 +75,10 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
     |> Map.put(:page, page)
     |> Map.put(:page_size, page_size)
     |> Map.put(:total_records, total_records)
+  end
+
+  defp merge_query(params, query) do
+    Map.put(params, :query, query)
   end
 
   defp parse_page(nil), do: 1
@@ -101,7 +107,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
     offset = page_to_offset(list_params.page, list_params.page_size)
 
     sets =
-      RecordSets.list_record_sets(
+      RecordSets.search_record_sets(list_params.query,
         offset: offset,
         limit: list_params.page_size
       )
@@ -119,7 +125,8 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
   def back_path(list_params) do
     qs =
       list_params
-      |> Map.take([:page, :page_size])
+      |> Map.take([:query, :page, :page_size])
+      |> Enum.filter(fn {_, v} -> v not in ["", nil] end)
 
     ~p"/record-sets?#{qs}"
   end
@@ -152,6 +159,15 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
   end
 
   @impl true
+  def handle_event("search", %{"query" => query}, socket) do
+    qs =
+      @default_list_params
+      |> Map.put(:query, query)
+      |> Map.take([:query, :page, :page_size])
+
+    {:noreply, push_patch(socket, to: ~p"/record-sets?#{qs}")}
+  end
+
   def handle_event("delete_set", %{"id" => id}, socket) do
     record_set = RecordSets.get_record_set!(id)
     {:ok, _} = RecordSets.delete_record_set(record_set)
