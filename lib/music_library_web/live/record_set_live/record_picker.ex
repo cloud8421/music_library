@@ -20,7 +20,7 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
         </p>
       </header>
       <form
-        class="w-full sm:w-1/3"
+        class="w-full"
         for={@query}
         phx-submit="search"
         phx-change="search"
