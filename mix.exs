@@ -83,6 +83,7 @@ defmodule MusicLibrary.MixProject do
       {:quokka, "~> 2.6", only: [:dev, :test], runtime: false},
       {:live_debugger, "~> 0.6.0", only: :dev},
       {:usage_rules, "~> 0.1"},
+      {:tidewave, "~> 0.5", only: :dev},
 
       # HTTP Clients
       {:finch, "~> 0.21.0"},
