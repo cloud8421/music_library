@@ -48,11 +48,13 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
 
   defp apply_action(socket, :index, params) do
     query = params["query"] || ""
+    order = parse_order(params["order"] || "updated_at")
     total_sets = RecordSets.count_record_sets(query)
 
     list_params =
       @default_list_params
       |> merge_query(query)
+      |> merge_order(order)
       |> merge_pagination(params, total_sets)
 
     load_and_assign_sets(socket, list_params)
@@ -109,7 +111,8 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
     sets =
       RecordSets.search_record_sets(list_params.query,
         offset: offset,
-        limit: list_params.page_size
+        limit: list_params.page_size,
+        order: list_params.order
       )
 
     list_params_with_total =
@@ -125,7 +128,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
   def back_path(list_params) do
     qs =
       list_params
-      |> Map.take([:query, :page, :page_size])
+      |> Map.take([:query, :page, :page_size, :order])
       |> Enum.filter(fn {_, v} -> v not in ["", nil] end)
 
     ~p"/record-sets?#{qs}"
@@ -163,7 +166,8 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
     qs =
       @default_list_params
       |> Map.put(:query, query)
-      |> Map.take([:query, :page, :page_size])
+      |> Map.put(:order, socket.assigns.list_params.order)
+      |> Map.take([:query, :page, :page_size, :order])
 
     {:noreply, push_patch(socket, to: ~p"/record-sets?#{qs}")}
   end
@@ -197,6 +201,24 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
     {:ok, updated_set} = RecordSets.move_record_in_set(record_set, record_id, :down)
 
     {:noreply, stream_insert(socket, :record_sets, updated_set)}
+  end
+
+  defp parse_order("alphabetical"), do: :alphabetical
+  defp parse_order("updated_at"), do: :updated_at
+  defp parse_order(_), do: :updated_at
+
+  defp merge_order(params, order) do
+    Map.put(params, :order, order)
+  end
+
+  defp order_path(list_params, order) do
+    qs =
+      list_params
+      |> Map.take([:query])
+      |> Map.put(:order, order)
+      |> Enum.filter(fn {_, v} -> v not in ["", nil] end)
+
+    ~p"/record-sets?#{qs}"
   end
 
   defp render_description(description) do

@@ -91,7 +91,7 @@ defmodule MusicLibraryWeb.Components.Pagination do
   attr :query, :string, required: true
 
   attr :order, :atom,
-    values: [:alphabetical, :purchase, :scrobbled_at, :title, :artist, :album],
+    values: [:alphabetical, :purchase, :scrobbled_at, :title, :artist, :album, :updated_at],
     required: true
 
   defp next_link(assigns) do
@@ -111,7 +111,7 @@ defmodule MusicLibraryWeb.Components.Pagination do
   attr :query, :string, required: true
 
   attr :order, :atom,
-    values: [:alphabetical, :purchase, :scrobbled_at, :title, :artist, :album],
+    values: [:alphabetical, :purchase, :scrobbled_at, :title, :artist, :album, :updated_at],
     required: true
 
   defp prev_link(assigns) do
@@ -140,7 +140,7 @@ defmodule MusicLibraryWeb.Components.Pagination do
   attr :query, :string, required: true
 
   attr :order, :atom,
-    values: [:alphabetical, :purchase, :scrobbled_at, :title, :artist, :album],
+    values: [:alphabetical, :purchase, :scrobbled_at, :title, :artist, :album, :updated_at],
     required: true
 
   defp numbered_link(assigns) when assigns.active do

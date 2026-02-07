@@ -21,6 +21,27 @@
 
   <.search_form query={@list_params.query} />
 
+  <div class="flex items-end justify-between gap-6 mt-4">
+    <.button_group>
+      <.button
+        patch={order_path(@list_params, :updated_at)}
+        size="sm"
+        class={[@list_params.order == :updated_at && "bg-zinc-100! dark:bg-zinc-700!"]}
+      >
+        <.icon name="hero-clock" class="icon" aria-hidden="true" data-slot="icon" />
+        <span class="sr-only sm:not-sr-only">{gettext("Updated")}</span>
+      </.button>
+      <.button
+        patch={order_path(@list_params, :alphabetical)}
+        size="sm"
+        class={[@list_params.order == :alphabetical && "bg-zinc-100! dark:bg-zinc-700!"]}
+      >
+        <.icon name="hero-user-solid" class="icon" aria-hidden="true" data-slot="icon" />
+        <span class="sr-only sm:not-sr-only">{gettext("A->Z")}</span>
+      </.button>
+    </.button_group>
+  </div>
+
   <div class="mt-6 space-y-6">
     <ul phx-update="stream" id="record-sets-list" class="space-y-6">
       <li
@@ -71,7 +92,7 @@
               <.dropdown_link
                 id={"set-actions-#{record_set.id}-edit"}
                 patch={
-                  ~p"/record-sets/#{record_set}/edit?#{Map.take(@list_params, [:query, :page, :page_size]) |> Enum.filter(fn {_, v} -> v not in ["", nil] end)}"
+                  ~p"/record-sets/#{record_set}/edit?#{Map.take(@list_params, [:query, :page, :page_size, :order]) |> Enum.filter(fn {_, v} -> v not in ["", nil] end)}"
                 }
               >
                 {gettext("Edit")}

@@ -386,6 +386,7 @@ msgid "Error loading play count"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/index.html.heex
+#: lib/music_library_web/live/record_set_live/index.html.heex
 #: lib/music_library_web/live/wishlist_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "A->Z"
@@ -1802,4 +1803,9 @@ msgstr ""
 #: lib/music_library_web/live/record_set_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "%{collected}/%{total} records"
+msgstr ""
+
+#: lib/music_library_web/live/record_set_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Updated"
 msgstr ""

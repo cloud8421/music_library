@@ -29,13 +29,22 @@ defmodule MusicLibrary.RecordSets do
   def search_record_sets(query, opts \\ []) do
     offset = Keyword.get(opts, :offset, 0)
     limit = Keyword.get(opts, :limit, 20)
+    order = Keyword.get(opts, :order, :updated_at)
 
     record_sets_search_query(query)
-    |> order_by([rs], desc: rs.updated_at)
+    |> apply_order(order)
     |> offset(^offset)
     |> limit(^limit)
     |> preload(items: :record)
     |> Repo.all()
+  end
+
+  defp apply_order(query, :alphabetical) do
+    order_by(query, [rs], fragment("? COLLATE NOCASE ASC", rs.name))
+  end
+
+  defp apply_order(query, _) do
+    order_by(query, [rs], desc: rs.updated_at)
   end
 
   def get_record_set!(id) do
