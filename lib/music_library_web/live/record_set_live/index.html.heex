@@ -1,25 +1,17 @@
 <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
   <header class="mb-6">
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-          {gettext("Record Sets")}
-        </h1>
-      </div>
-      <div>
-        <.button
-          variant="solid"
-          size="sm"
-          patch={~p"/record-sets/new"}
-        >
-          <.icon name="hero-plus" class="icon" aria-hidden="true" data-slot="icon" />
-          {gettext("New Set")}
-        </.button>
-      </div>
+    <div class="flex items-center justify-between gap-6 mb-2 mt-2">
+      <.search_form query={@list_params.query} />
+      <.button
+        variant="solid"
+        size="sm"
+        patch={~p"/record-sets/new"}
+      >
+        <.icon name="hero-plus" class="icon" aria-hidden="true" data-slot="icon" />
+        {gettext("New Set")}
+      </.button>
     </div>
   </header>
-
-  <.search_form query={@list_params.query} />
 
   <div class="flex items-end justify-between gap-6 mt-4">
     <.button_group>

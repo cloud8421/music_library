@@ -1745,7 +1745,6 @@ msgid "No records found"
 msgstr ""
 
 #: lib/music_library_web/live/record_set_live/index.ex
-#: lib/music_library_web/live/record_set_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Record Sets"
 msgstr ""

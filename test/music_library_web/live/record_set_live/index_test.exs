@@ -12,7 +12,6 @@ defmodule MusicLibraryWeb.RecordSetLive.IndexTest do
 
       conn
       |> visit(~p"/record-sets")
-      |> assert_has("h1", text: "Record Sets")
       |> assert_has("h2", text: "My Favorites")
     end
 
