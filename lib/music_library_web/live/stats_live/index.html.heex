@@ -139,62 +139,20 @@
                   </div>
                 </div>
 
-                <div class="flex gap-1 flex-col text-right">
-                  <.badge :if={album.metadata.musicbrainz_id == ""}>
-                    {gettext("No MB ID")}
-                  </.badge>
-                  <.link
-                    :if={collected_record_id}
-                    navigate={~p"/collection/#{collected_record_id}"}
-                  >
-                    <.badge color="success">
-                      {gettext("Collected")}
-                    </.badge>
-                  </.link>
-                  <.link
-                    :if={wishlisted_record_id}
-                    navigate={~p"/wishlist/#{wishlisted_record_id}"}
-                  >
-                    <.badge color="warning">
-                      {gettext("Wishlisted")}
-                    </.badge>
-                  </.link>
-                </div>
+                <.record_status_badges
+                  musicbrainz_id={album.metadata.musicbrainz_id}
+                  collected_record_id={collected_record_id}
+                  wishlisted_record_id={wishlisted_record_id}
+                />
 
-                <.dropdown
+                <.import_format_dropdown
                   :if={
                     album.metadata.musicbrainz_id !== "" and !collected_record_id and
                       !wishlisted_record_id
                   }
                   id={"actions-#{album.scrobbled_at_uts}-albums"}
-                  placement="bottom-end"
-                >
-                  <:toggle>
-                    <.button variant="ghost">
-                      <span class="sr-only">{gettext("Choose which format to import")}</span>
-                      <.icon
-                        name="hero-star"
-                        class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
-                        aria-hidden="true"
-                        data-slot="icon"
-                      />
-                    </.button>
-                  </:toggle>
-                  <.focus_wrap id={"actions-#{album.scrobbled_at_uts}-albums-focus-wrap"}>
-                    <.dropdown_link
-                      :for={format <- Records.Record.formats()}
-                      id={"actions-#{album.scrobbled_at_uts}-#{format}-import"}
-                      phx-click={
-                        JS.push("import",
-                          value: %{id: album.metadata.musicbrainz_id, format: format},
-                          page_loading: true
-                        )
-                      }
-                    >
-                      {format_label(format)}
-                    </.dropdown_link>
-                  </.focus_wrap>
-                </.dropdown>
+                  musicbrainz_id={album.metadata.musicbrainz_id}
+                />
               </div>
             </div>
           </li>
@@ -264,58 +222,20 @@
                   </div>
                 </div>
 
-                <div class="flex gap-1 flex-col text-right">
-                  <.badge :if={track.album.musicbrainz_id == ""}>
-                    {gettext("No MB ID")}
-                  </.badge>
-                  <.link
-                    :if={collected_record_id}
-                    navigate={~p"/collection/#{collected_record_id}"}
-                  >
-                    <.badge color="success">{gettext("Collected")}</.badge>
-                  </.link>
-                  <.link
-                    :if={wishlisted_record_id}
-                    navigate={~p"/wishlist/#{wishlisted_record_id}"}
-                  >
-                    <.badge color="warning">{gettext("Wishlisted")}</.badge>
-                  </.link>
-                </div>
+                <.record_status_badges
+                  musicbrainz_id={track.album.musicbrainz_id}
+                  collected_record_id={collected_record_id}
+                  wishlisted_record_id={wishlisted_record_id}
+                />
 
-                <.dropdown
+                <.import_format_dropdown
                   :if={
                     track.album.musicbrainz_id !== "" and !collected_record_id and
                       !wishlisted_record_id
                   }
                   id={"actions-#{track.scrobbled_at_uts}-tracks"}
-                  placement="bottom-end"
-                >
-                  <:toggle>
-                    <.button variant="ghost">
-                      <span class="sr-only">{gettext("Choose which format to import")}</span>
-                      <.icon
-                        name="hero-star"
-                        class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
-                        aria-hidden="true"
-                        data-slot="icon"
-                      />
-                    </.button>
-                  </:toggle>
-                  <.focus_wrap id={"actions-#{track.scrobbled_at_uts}-tracks-focus-wrap"}>
-                    <.dropdown_link
-                      :for={format <- Records.Record.formats()}
-                      id={"actions-#{track.scrobbled_at_uts}-#{format}-import"}
-                      phx-click={
-                        JS.push("import",
-                          value: %{id: track.album.musicbrainz_id, format: format},
-                          page_loading: true
-                        )
-                      }
-                    >
-                      {format_label(format)}
-                    </.dropdown_link>
-                  </.focus_wrap>
-                </.dropdown>
+                  musicbrainz_id={track.album.musicbrainz_id}
+                />
               </div>
             </div>
           </li>

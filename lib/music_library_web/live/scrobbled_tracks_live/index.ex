@@ -2,12 +2,11 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
   use MusicLibraryWeb, :live_view
 
   import MusicLibraryWeb.Components.Pagination
-  import MusicLibraryWeb.RecordComponents, only: [format_label: 1]
   import MusicLibraryWeb.ScrobbleComponents
 
   alias LastFm.Track
   alias MusicLibrary.Assets.Transform
-  alias MusicLibrary.{Records, ScrobbleActivity}
+  alias MusicLibrary.ScrobbleActivity
 
   @default_tracks_list_params %{
     query: "",

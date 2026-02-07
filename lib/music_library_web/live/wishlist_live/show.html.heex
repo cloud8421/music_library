@@ -153,69 +153,38 @@
       </div>
 
       <div class="mt-4 md:mt-8">
-        <%!-- TODO: replace with OSS version --%>
         <dl class="divide-y divide-zinc-100 dark:divide-slate-300/30">
-          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-              {gettext("ID")}
-            </dt>
-            <dd class="mt-1 text-xs md:text-sm flex justify-between leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+          <.dl_row label={gettext("ID")}>
+            <div class="flex justify-between">
               <code id={"record-#{@record.id}"}>{@record.id}</code>
-              <button phx-click={
-                JS.dispatch("music_library:clipcopy", to: "#record-" <> @record.id)
-                |> JS.transition("animate-shake")
-              }>
-                <span class="sr-only">{gettext("Copy record ID to clipboard")}</span>
-                <.icon
-                  name="hero-clipboard-document"
-                  class="-mt-1 h-5 w-5"
-                  aria-hidden="true"
-                  data-slot="icon"
-                />
-              </button>
-            </dd>
-          </div>
-          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-              {gettext("Genres")}
-            </dt>
-            <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
-              <.link
-                :for={genre <- @record.genres}
-                class="mr-2 text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
-                patch={~p"/wishlist?#{%{query: ~s(genre:"#{genre}")}}"}
-              >
-                {genre}
-              </.link>
-            </dd>
-          </div>
-          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-              {gettext("MusicBrainz ID")}
-            </dt>
-            <dd class="mt-1 text-xs md:text-sm flex justify-between leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+              <.copy_to_clipboard
+                target_id={"record-#{@record.id}"}
+                label={gettext("Copy record ID to clipboard")}
+              />
+            </div>
+          </.dl_row>
+          <.dl_row label={gettext("Genres")}>
+            <.link
+              :for={genre <- @record.genres}
+              class="mr-2 text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
+              patch={~p"/wishlist?#{%{query: ~s(genre:"#{genre}")}}"}
+            >
+              {genre}
+            </.link>
+          </.dl_row>
+          <.dl_row label={gettext("MusicBrainz ID")}>
+            <div class="flex justify-between">
               <a href={MusicBrainz.ReleaseGroup.url(@record.musicbrainz_id)}>
                 <code id={"mb-#{@record.musicbrainz_id}"}>{@record.musicbrainz_id}</code>
               </a>
-              <button phx-click={
-                JS.dispatch("music_library:clipcopy", to: "#mb-" <> @record.musicbrainz_id)
-                |> JS.transition("animate-shake")
-              }>
-                <span class="sr-only">{gettext("Copy MusicBrainz ID to clipboard")}</span>
-                <.icon
-                  name="hero-clipboard-document"
-                  class="-mt-1 h-5 w-5"
-                  aria-hidden="true"
-                  data-slot="icon"
-                />
-              </button>
-            </dd>
-          </div>
-          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-              {gettext("Published releases")}
-            </dt>
-            <dd class="mt-1 flex justify-between text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+              <.copy_to_clipboard
+                target_id={"mb-#{@record.musicbrainz_id}"}
+                label={gettext("Copy MusicBrainz ID to clipboard")}
+              />
+            </div>
+          </.dl_row>
+          <.dl_row label={gettext("Published releases")}>
+            <div class="flex justify-between">
               {Records.Record.release_count(@record)}
               <.release_list record={@record} />
               <button phx-click={Fluxon.open_dialog("release-list-" <> @record.id)}>
@@ -229,59 +198,38 @@
                   data-slot="icon"
                 />
               </button>
-            </dd>
-          </div>
-          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-              {gettext("Wishlisted release")}
-            </dt>
-            <dd class="mt-1 flex justify-between space-x-2 leading-6 sm:col-span-2 sm:mt-0">
+            </div>
+          </.dl_row>
+          <.dl_row label={gettext("Wishlisted release")}>
+            <div class="flex justify-between space-x-2">
               <span
                 :if={!@record.selected_release_id}
                 class="text-xs md:text-sm text-zinc-700 dark:text-zinc-300"
               >
                 {gettext("No release selected")}
               </span>
-
               <.release_summary
                 :if={@record.selected_release_id}
                 release={Records.Record.selected_release(@record)}
               />
-            </dd>
-          </div>
-          <div
+            </div>
+          </.dl_row>
+          <.dl_row
             :if={Records.Record.included_release_groups_count(@record) > 0}
-            class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+            label={gettext("Includes")}
           >
-            <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-              {gettext("Includes")}
-            </dt>
-            <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
-              <ul>
-                <li :for={
-                  included_release_group <- Records.Record.included_release_groups(@record)
-                }>
-                  {included_release_group.artists} - {included_release_group.title}
-                </li>
-              </ul>
-            </dd>
-          </div>
-          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-              {gettext("Inserted at")}
-            </dt>
-            <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
-              {Records.Record.format_as_date(@record.inserted_at)}
-            </dd>
-          </div>
-          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-              {gettext("Updated at")}
-            </dt>
-            <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
-              {Records.Record.format_as_date(@record.updated_at)}
-            </dd>
-          </div>
+            <ul>
+              <li :for={included_release_group <- Records.Record.included_release_groups(@record)}>
+                {included_release_group.artists} - {included_release_group.title}
+              </li>
+            </ul>
+          </.dl_row>
+          <.dl_row label={gettext("Inserted at")}>
+            {Records.Record.format_as_date(@record.inserted_at)}
+          </.dl_row>
+          <.dl_row label={gettext("Updated at")}>
+            {Records.Record.format_as_date(@record.updated_at)}
+          </.dl_row>
         </dl>
       </div>
     </div>

@@ -186,6 +186,37 @@ defmodule MusicLibraryWeb.CoreComponents do
     "https://www.google.com/s2/favicons?domain=#{uri.host}&sz=16"
   end
 
+  attr :target_id, :string, required: true
+  attr :label, :string, required: true
+
+  def copy_to_clipboard(assigns) do
+    ~H"""
+    <button phx-click={
+      JS.dispatch("music_library:clipcopy", to: "#" <> @target_id)
+      |> JS.transition("animate-shake")
+    }>
+      <span class="sr-only">{@label}</span>
+      <.icon name="hero-clipboard-document" class="-mt-1 h-5 w-5" aria-hidden="true" data-slot="icon" />
+    </button>
+    """
+  end
+
+  attr :label, :string, required: true
+  slot :inner_block, required: true
+
+  def dl_row(assigns) do
+    ~H"""
+    <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+      <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+        {@label}
+      </dt>
+      <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+        {render_slot(@inner_block)}
+      </dd>
+    </div>
+    """
+  end
+
   ## JS Commands
 
   def show(js \\ %JS{}, selector) do

@@ -135,18 +135,10 @@
                 {@artist.musicbrainz_id}
               </code>
             </a>
-            <button phx-click={
-              JS.dispatch("music_library:clipcopy", to: "#mb-" <> @artist.musicbrainz_id)
-              |> JS.transition("animate-shake")
-            }>
-              <span class="sr-only">{gettext("Copy MusicBrainz ID to clipboard")}</span>
-              <.icon
-                name="hero-clipboard-document"
-                class="-mt-1 h-5 w-5"
-                aria-hidden="true"
-                data-slot="icon"
-              />
-            </button>
+            <.copy_to_clipboard
+              target_id={"mb-#{@artist.musicbrainz_id}"}
+              label={gettext("Copy MusicBrainz ID to clipboard")}
+            />
           </dd>
         </dl>
         <.async_result :let={lastfm_artist_info} assign={@lastfm_artist_info}>
