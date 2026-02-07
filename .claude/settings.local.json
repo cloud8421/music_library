@@ -32,7 +32,8 @@
       "Bash(sqlite3:*)",
       "WebSearch",
       "Bash(mix shellcheck:*)",
-      "Bash(mix compile:*)"
+      "Bash(mix compile:*)",
+      "mcp__tidewave__get_docs"
     ]
   },
   "enableAllProjectMcpServers": false

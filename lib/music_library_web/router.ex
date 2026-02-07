@@ -70,6 +70,10 @@ defmodule MusicLibraryWeb.Router do
         live "/record-sets/:id/edit", RecordSetLive.Index, :edit
         live "/record-sets/:id/add-record", RecordSetLive.Index, :add_record
 
+        live "/record-sets/:id", RecordSetLive.Show, :show
+        live "/record-sets/:id/show/edit", RecordSetLive.Show, :edit
+        live "/record-sets/:id/show/add-record", RecordSetLive.Show, :add_record
+
         live "/scrobble-rules", ScrobbleRulesLive.Index, :index
         live "/scrobble-rules/new", ScrobbleRulesLive.Index, :new
         live "/scrobble-rules/:id/edit", ScrobbleRulesLive.Index, :edit

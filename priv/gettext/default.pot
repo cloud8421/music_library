@@ -15,6 +15,7 @@ msgstr ""
 #: lib/music_library_web/live/collection_live/show.html.heex
 #: lib/music_library_web/live/online_store_template_live/index.html.heex
 #: lib/music_library_web/live/record_set_live/index.html.heex
+#: lib/music_library_web/live/record_set_live/show.html.heex
 #: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
@@ -40,6 +41,7 @@ msgstr ""
 #: lib/music_library_web/live/collection_live/show.html.heex
 #: lib/music_library_web/live/online_store_template_live/index.html.heex
 #: lib/music_library_web/live/record_set_live/index.html.heex
+#: lib/music_library_web/live/record_set_live/show.html.heex
 #: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
@@ -55,6 +57,8 @@ msgstr ""
 #: lib/music_library_web/live/collection_live/show.html.heex
 #: lib/music_library_web/live/online_store_template_live/index.html.heex
 #: lib/music_library_web/live/record_set_live/index.html.heex
+#: lib/music_library_web/live/record_set_live/show.ex
+#: lib/music_library_web/live/record_set_live/show.html.heex
 #: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
 #: lib/music_library_web/live/wishlist_live/show.ex
@@ -908,6 +912,7 @@ msgstr ""
 #: lib/music_library_web/live/collection_live/show.html.heex
 #: lib/music_library_web/live/online_store_template_live/index.html.heex
 #: lib/music_library_web/live/record_set_live/index.html.heex
+#: lib/music_library_web/live/record_set_live/show.html.heex
 #: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
@@ -1699,6 +1704,8 @@ msgid "Regenerate embeddings"
 msgstr ""
 
 #: lib/music_library_web/live/record_set_live/index.ex
+#: lib/music_library_web/live/record_set_live/show.ex
+#: lib/music_library_web/live/record_set_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Add Record"
 msgstr ""
@@ -1714,11 +1721,13 @@ msgid "Edit Set"
 msgstr ""
 
 #: lib/music_library_web/live/record_set_live/index.html.heex
+#: lib/music_library_web/live/record_set_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Move left"
 msgstr ""
 
 #: lib/music_library_web/live/record_set_live/index.html.heex
+#: lib/music_library_web/live/record_set_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Move right"
 msgstr ""
@@ -1765,11 +1774,13 @@ msgid "Record set updated successfully"
 msgstr ""
 
 #: lib/music_library_web/live/record_set_live/index.html.heex
+#: lib/music_library_web/live/record_set_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Remove"
 msgstr ""
 
 #: lib/music_library_web/live/record_set_live/index.html.heex
+#: lib/music_library_web/live/record_set_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Remove this record from the set?"
 msgstr ""
@@ -1800,6 +1811,7 @@ msgid "Search your records to add a record to this set."
 msgstr ""
 
 #: lib/music_library_web/live/record_set_live/index.html.heex
+#: lib/music_library_web/live/record_set_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "%{collected}/%{total} records"
 msgstr ""
@@ -1807,4 +1819,9 @@ msgstr ""
 #: lib/music_library_web/live/record_set_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Updated"
+msgstr ""
+
+#: lib/music_library_web/live/record_set_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "No records in this set yet"
 msgstr ""

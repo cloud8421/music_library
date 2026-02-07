@@ -55,7 +55,9 @@
           <div class="grow">
             <header class="sm:flex items-baseline justify-start">
               <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-                {record_set.name}
+                <.link navigate={~p"/record-sets/#{record_set}"} class="hover:underline">
+                  {record_set.name}
+                </.link>
               </h2>
               <span class="sm:ml-2 text-xs text-zinc-500 dark:text-zinc-400">
                 {gettext("%{collected}/%{total} records", RecordSet.count_by_status(record_set))}

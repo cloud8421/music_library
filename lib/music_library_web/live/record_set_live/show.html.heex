@@ -1,0 +1,186 @@
+<Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
+  <div class="mt-4">
+    <header class="mt-4 flex items-baseline justify-between">
+      <div>
+        <h1 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+          {@record_set.name}
+        </h1>
+        <span class="text-xs text-zinc-500 dark:text-zinc-400">
+          {gettext("%{collected}/%{total} records", RecordSet.count_by_status(@record_set))}
+        </span>
+      </div>
+      <div class="flex items-center gap-2">
+        <.button
+          variant="solid"
+          size="sm"
+          patch={~p"/record-sets/#{@record_set}/show/add-record"}
+        >
+          <.icon name="hero-plus" class="icon" aria-hidden="true" data-slot="icon" />
+          {gettext("Add Record")}
+        </.button>
+        <.dropdown id="set-actions" placement="bottom-end">
+          <:toggle>
+            <.button variant="ghost">
+              <span class="sr-only">{gettext("Actions")}</span>
+              <.icon
+                name="hero-ellipsis-vertical"
+                class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+            </.button>
+          </:toggle>
+          <.dropdown_link
+            id="set-actions-edit"
+            patch={~p"/record-sets/#{@record_set}/show/edit"}
+          >
+            {gettext("Edit")}
+          </.dropdown_link>
+          <.separator />
+          <.dropdown_button
+            phx-click="delete_set"
+            data-confirm={gettext("Are you sure?")}
+            class={[
+              "text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
+            ]}
+          >
+            {gettext("Delete")}
+          </.dropdown_button>
+        </.dropdown>
+      </div>
+    </header>
+
+    <article
+      :if={@record_set.description}
+      class="mt-4 prose dark:prose-invert prose-zinc prose-sm prose-h1:text-sm max-w-none"
+    >
+      {render_description(@record_set.description)}
+    </article>
+
+    <div class="mt-6">
+      <div
+        :if={@record_set.items == []}
+        id="no-records"
+        class="p-8 text-center bg-zinc-50 dark:bg-zinc-800 rounded-lg"
+      >
+        <.icon name="hero-musical-note" class="h-12 w-12 text-zinc-400 mx-auto mb-4" />
+        <p class="text-zinc-600 dark:text-zinc-400">
+          {gettext("No records in this set yet")}
+        </p>
+      </div>
+
+      <div
+        :if={@record_set.items != []}
+        class="grid grid-cols-2 sm:grid-cols-4 gap-4"
+        id="record-set-records"
+      >
+        <div
+          :for={item <- @record_set.items}
+          id={"record-#{item.record.id}"}
+          class={[
+            "group relative",
+            is_nil(item.record.purchased_at) &&
+              "opacity-60 hover:opacity-100 transition-opacity"
+          ]}
+        >
+          <.link
+            :if={item.record.purchased_at}
+            navigate={~p"/collection/#{item.record}"}
+          >
+            <MusicLibraryWeb.RecordComponents.record_cover
+              record={item.record}
+              class="rounded-lg aspect-square object-cover"
+              width={512}
+            />
+          </.link>
+          <.link
+            :if={!item.record.purchased_at}
+            navigate={~p"/wishlist/#{item.record}"}
+          >
+            <MusicLibraryWeb.RecordComponents.record_cover
+              record={item.record}
+              class="rounded-lg aspect-square object-cover"
+              width={512}
+            />
+          </.link>
+          <div class="absolute top-1 right-1 rounded-full bg-zinc-100/50 hover:bg-zinc-100/75 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/75 size-5">
+            <.dropdown
+              id={"item-actions-#{item.record.id}"}
+              placement="bottom-end"
+            >
+              <:toggle>
+                <span class="sr-only">{gettext("Actions")}</span>
+                <.icon
+                  name="hero-ellipsis-vertical"
+                  class="size-5 text-zinc-800 dark:text-zinc-200 cursor-pointer"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+              </:toggle>
+              <.dropdown_button
+                :if={item.position > 0}
+                phx-click="move_up"
+                phx-value-record-id={item.record.id}
+              >
+                {gettext("Move left")}
+              </.dropdown_button>
+              <.dropdown_button
+                :if={item.position < length(@record_set.items) - 1}
+                phx-click="move_down"
+                phx-value-record-id={item.record.id}
+              >
+                {gettext("Move right")}
+              </.dropdown_button>
+              <.separator />
+              <.dropdown_button
+                phx-click="remove_record"
+                phx-value-record-id={item.record.id}
+                data-confirm={gettext("Remove this record from the set?")}
+                class={[
+                  "text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
+                ]}
+              >
+                {gettext("Remove")}
+              </.dropdown_button>
+            </.dropdown>
+          </div>
+          <h1 class="mt-1 text-xs sm:text-sm leading-6 text-zinc-700">
+            <.artist_links joinphrase_class="text-xs" artists={item.record.artists} />
+          </h1>
+          <h2 class="flex font-semibold text-xs sm:text-sm leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+            {item.record.title}
+          </h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <.structured_modal
+    :if={@live_action == :edit}
+    id="record-set-modal"
+    on_close={JS.patch(~p"/record-sets/#{@record_set}")}
+  >
+    <.live_component
+      module={MusicLibraryWeb.RecordSetLive.Form}
+      id={@record_set.id}
+      title={@page_title}
+      action={@live_action}
+      record_set={@record_set}
+      patch={~p"/record-sets/#{@record_set}"}
+    />
+  </.structured_modal>
+
+  <.structured_modal
+    :if={@live_action == :add_record}
+    id="record-picker-modal"
+    on_close={JS.patch(~p"/record-sets/#{@record_set}")}
+  >
+    <.live_component
+      module={MusicLibraryWeb.RecordSetLive.RecordPicker}
+      id={"record-picker-#{@record_set.id}"}
+      title={@page_title}
+      record_set={@record_set}
+      patch={~p"/record-sets/#{@record_set}"}
+    />
+  </.structured_modal>
+</Layouts.app>
