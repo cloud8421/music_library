@@ -1,102 +1,100 @@
 <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
-  <div>
-    <header class="gap-6 mb-2">
-      <div class="flex items-center justify-between gap-6 mb-2 mt-2">
-        <.search_form query={@record_list_params.query} />
-        <.button_group>
-          <.button
-            variant="solid"
-            size="sm"
-            patch={~p"/collection/import"}
-          >
-            <.icon name="hero-plus" class="icon" aria-hidden="true" data-slot="icon" />
-            {gettext("Add")}
-          </.button>
-          <.button
-            variant="solid"
-            size="sm"
-            patch={~p"/collection/scan"}
-          >
-            <.barcode_icon class="icon fill-current" />
-            {gettext("Scan")}
-          </.button>
-        </.button_group>
-      </div>
-    </header>
-
-    <div class="flex items-end justify-between gap-6 mt-8">
+  <header class="gap-6 mb-2">
+    <div class="flex items-center justify-between gap-6 mb-2 mt-2">
+      <.search_form query={@record_list_params.query} />
       <.button_group>
         <.button
-          patch={order_path(@record_list_params, :purchase)}
+          variant="solid"
           size="sm"
-          class={[
-            @record_list_params.order == :purchase && "bg-zinc-100! dark:bg-zinc-700!"
-          ]}
+          patch={~p"/collection/import"}
         >
-          <.icon
-            name="hero-banknotes-solid"
-            class="icon"
-            aria-hidden="true"
-            data-slot="icon"
-          />
-          <span class="sr-only sm:not-sr-only">{gettext("Purchase")}</span>
+          <.icon name="hero-plus" class="icon" aria-hidden="true" data-slot="icon" />
+          {gettext("Add")}
         </.button>
         <.button
-          patch={order_path(@record_list_params, :alphabetical)}
+          variant="solid"
           size="sm"
-          class={[
-            @record_list_params.order == :alphabetical && "bg-zinc-100! dark:bg-zinc-700!"
-          ]}
+          patch={~p"/collection/scan"}
         >
-          <.icon name="hero-user-solid" class="icon" aria-hidden="true" data-slot="icon" />
-          <span class="sr-only sm:not-sr-only">{gettext("A->Z")}</span>
-        </.button>
-        <.button
-          patch={order_path(@record_list_params, :release)}
-          size="sm"
-          class={[
-            @record_list_params.order == :release && "bg-zinc-100! dark:bg-zinc-700!"
-          ]}
-        >
-          <.icon name="hero-calendar-days" class="icon" aria-hidden="true" data-slot="icon" />
-          <span class="sr-only sm:not-sr-only">{gettext("Release")}</span>
-        </.button>
-      </.button_group>
-
-      <.button_group>
-        <.button
-          phx-click="set_display"
-          phx-value-mode="grid"
-          size="sm"
-          class={[
-            @display == :grid && "bg-zinc-100! dark:bg-zinc-700!"
-          ]}
-        >
-          <.icon
-            name="hero-squares-2x2"
-            class="icon"
-            aria-hidden="true"
-            data-slot="icon"
-          />
-          <span class="sr-only sm:not-sr-only">
-            {gettext("Grid")}
-          </span>
-        </.button>
-        <.button
-          phx-click="set_display"
-          phx-value-mode="list"
-          size="sm"
-          class={[
-            @display == :list && "bg-zinc-100! dark:bg-zinc-700!"
-          ]}
-        >
-          <.icon name="hero-list-bullet" class="icon" aria-hidden="true" data-slot="icon" />
-          <span class="sr-only sm:not-sr-only">
-            {gettext("List")}
-          </span>
+          <.barcode_icon class="icon fill-current" />
+          {gettext("Scan")}
         </.button>
       </.button_group>
     </div>
+  </header>
+
+  <div class="flex items-end justify-between gap-6 mt-8">
+    <.button_group>
+      <.button
+        patch={order_path(@record_list_params, :purchase)}
+        size="sm"
+        class={[
+          @record_list_params.order == :purchase && "bg-zinc-100! dark:bg-zinc-700!"
+        ]}
+      >
+        <.icon
+          name="hero-banknotes-solid"
+          class="icon"
+          aria-hidden="true"
+          data-slot="icon"
+        />
+        <span class="sr-only sm:not-sr-only">{gettext("Purchase")}</span>
+      </.button>
+      <.button
+        patch={order_path(@record_list_params, :alphabetical)}
+        size="sm"
+        class={[
+          @record_list_params.order == :alphabetical && "bg-zinc-100! dark:bg-zinc-700!"
+        ]}
+      >
+        <.icon name="hero-user-solid" class="icon" aria-hidden="true" data-slot="icon" />
+        <span class="sr-only sm:not-sr-only">{gettext("A->Z")}</span>
+      </.button>
+      <.button
+        patch={order_path(@record_list_params, :release)}
+        size="sm"
+        class={[
+          @record_list_params.order == :release && "bg-zinc-100! dark:bg-zinc-700!"
+        ]}
+      >
+        <.icon name="hero-calendar-days" class="icon" aria-hidden="true" data-slot="icon" />
+        <span class="sr-only sm:not-sr-only">{gettext("Release")}</span>
+      </.button>
+    </.button_group>
+
+    <.button_group>
+      <.button
+        phx-click="set_display"
+        phx-value-mode="grid"
+        size="sm"
+        class={[
+          @display == :grid && "bg-zinc-100! dark:bg-zinc-700!"
+        ]}
+      >
+        <.icon
+          name="hero-squares-2x2"
+          class="icon"
+          aria-hidden="true"
+          data-slot="icon"
+        />
+        <span class="sr-only sm:not-sr-only">
+          {gettext("Grid")}
+        </span>
+      </.button>
+      <.button
+        phx-click="set_display"
+        phx-value-mode="list"
+        size="sm"
+        class={[
+          @display == :list && "bg-zinc-100! dark:bg-zinc-700!"
+        ]}
+      >
+        <.icon name="hero-list-bullet" class="icon" aria-hidden="true" data-slot="icon" />
+        <span class="sr-only sm:not-sr-only">
+          {gettext("List")}
+        </span>
+      </.button>
+    </.button_group>
   </div>
 
   <.record_grid
