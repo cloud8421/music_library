@@ -28,6 +28,8 @@ defmodule MusicLibrary.RecordSets.RecordSet do
       if item.record.purchased_at, do: :collected, else: :wishlisted
     end)
     |> Map.new()
+    |> Map.put_new(:collected, 0)
+    |> Map.put_new(:wishlisted, 0)
     |> Map.put(:total, Enum.count(record_set.items))
   end
 end
