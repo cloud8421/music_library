@@ -94,7 +94,7 @@ defmodule MusicLibrary.MixProject do
       {:nimble_parsec, "~> 1.4"},
 
       # Image manipulation
-      {:vix, "~> 0.37.0"},
+      {:vix, "~> 0.38.0"},
 
       # Notes
       {:earmark, "~> 1.4"},
