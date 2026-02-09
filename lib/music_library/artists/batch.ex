@@ -19,6 +19,12 @@ defmodule MusicLibrary.Artists.Batch do
     end)
   end
 
+  def refresh_wikipedia_data do
+    run_on_all_artist_infos(fn artist_info ->
+      Artists.refresh_wikipedia_data_async(artist_info)
+    end)
+  end
+
   defp run_on_all_artist_infos(fun) do
     q = from(r in ArtistInfo)
     stream = Repo.stream(q, max_rows: 50)

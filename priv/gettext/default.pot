@@ -1867,3 +1867,13 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Wikipedia data refreshed successfully"
 msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Are you sure you want to refresh Wikipedia data for all artists? This operation can take a long time to complete."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Refresh Wikipedia data"
+msgstr ""

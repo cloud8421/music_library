@@ -50,6 +50,10 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
       :refresh_artists_discogs_jobs,
       count_jobs("MusicLibrary.Worker.ArtistRefreshDiscogsData")
     )
+    |> assign(
+      :refresh_artists_wikipedia_jobs,
+      count_jobs("MusicLibrary.Worker.ArtistRefreshWikipediaData")
+    )
   end
 
   defp count_jobs(worker) do
@@ -88,6 +92,14 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
 
   def handle_event("refresh_artists_discogs_data", _params, socket) do
     Artists.Batch.refresh_discogs_data()
+
+    {:noreply,
+     socket
+     |> put_toast(:info, gettext("Operation started in the background."))}
+  end
+
+  def handle_event("refresh_artists_wikipedia_data", _params, socket) do
+    Artists.Batch.refresh_wikipedia_data()
 
     {:noreply,
      socket

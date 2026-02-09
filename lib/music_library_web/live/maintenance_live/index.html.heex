@@ -80,6 +80,19 @@
             <.loading :if={@refresh_artists_discogs_jobs > 0} class="size-4" />
             {gettext("Refresh Discogs data")}
           </.button>
+          <.button
+            type="button"
+            phx-click="refresh_artists_wikipedia_data"
+            disabled={@refresh_artists_wikipedia_jobs > 0}
+            data-confirm={
+              gettext(
+                "Are you sure you want to refresh Wikipedia data for all artists? This operation can take a long time to complete."
+              )
+            }
+          >
+            <.loading :if={@refresh_artists_wikipedia_jobs > 0} class="size-4" />
+            {gettext("Refresh Wikipedia data")}
+          </.button>
         </.button_group>
       </li>
     </ul>
