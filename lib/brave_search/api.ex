@@ -20,6 +20,8 @@ defmodule BraveSearch.API do
             %{
               thumbnail_url: get_in(result, ["thumbnail", "src"]),
               image_url: get_in(result, ["properties", "url"]),
+              width: get_in(result, ["properties", "width"]),
+              height: get_in(result, ["properties", "height"]),
               title: Map.get(result, "title", ""),
               source: Map.get(result, "source", "")
             }

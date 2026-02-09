@@ -19,7 +19,11 @@ defmodule BraveSearch.APITest do
           "results" => [
             %{
               "thumbnail" => %{"src" => "https://example.com/thumb.jpg"},
-              "properties" => %{"url" => "https://example.com/full.jpg"},
+              "properties" => %{
+                "url" => "https://example.com/full.jpg",
+                "width" => 800,
+                "height" => 600
+              },
               "title" => "Test Image",
               "source" => "example.com"
             }
@@ -32,6 +36,8 @@ defmodule BraveSearch.APITest do
       assert {:ok, [result]} = API.search_images("test query", [], @config)
       assert result.thumbnail_url == "https://example.com/thumb.jpg"
       assert result.image_url == "https://example.com/full.jpg"
+      assert result.width == 800
+      assert result.height == 600
       assert result.title == "Test Image"
       assert result.source == "example.com"
     end

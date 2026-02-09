@@ -365,6 +365,16 @@ defmodule MusicLibraryWeb.Components.RecordForm do
                 class="aspect-square w-full object-cover"
                 loading="lazy"
               />
+              <span
+                :if={result.width && result.height}
+                class={[
+                  "absolute bottom-0 inset-x-0",
+                  "bg-black/60 text-white text-xs text-center",
+                  "py-0.5"
+                ]}
+              >
+                {result.width}&times;{result.height}
+              </span>
             </button>
           </div>
         </div>
