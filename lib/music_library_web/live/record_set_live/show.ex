@@ -43,9 +43,16 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
 
   @impl true
   def handle_event("delete_set", _params, socket) do
-    {:ok, _} = RecordSets.delete_record_set(socket.assigns.record_set)
+    case RecordSets.delete_record_set(socket.assigns.record_set) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_toast(:info, gettext("Set deleted successfully"))
+         |> push_navigate(to: ~p"/record-sets")}
 
-    {:noreply, push_navigate(socket, to: ~p"/record-sets")}
+      {:error, _changeset} ->
+        {:noreply, put_toast(socket, :error, gettext("Failed to delete set"))}
+    end
   end
 
   def handle_event("remove_record", %{"record-id" => record_id}, socket) do

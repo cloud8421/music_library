@@ -1832,3 +1832,13 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Search or add genres..."
 msgstr ""
+
+#: lib/music_library_web/live/record_set_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Failed to delete set"
+msgstr ""
+
+#: lib/music_library_web/live/record_set_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Set deleted successfully"
+msgstr ""
