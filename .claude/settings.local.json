@@ -34,7 +34,8 @@
       "Bash(mix shellcheck:*)",
       "Bash(mix compile:*)",
       "mcp__tidewave__get_docs",
-      "mcp__tidewave__search_package_docs"
+      "mcp__tidewave__search_package_docs",
+      "Bash(wc:*)"
     ]
   },
   "enableAllProjectMcpServers": false
