@@ -5,6 +5,7 @@ defmodule MusicLibraryWeb.Components.RecordForm do
     only: [format_label: 1, type_label: 1, release_label: 1, release_summary: 1, record_cover: 1]
 
   alias MusicLibrary.{Assets, Records}
+  alias MusicLibrary.Assets.Image
   alias MusicLibrary.Records.Record
 
   @impl true
@@ -297,6 +298,76 @@ defmodule MusicLibraryWeb.Components.RecordForm do
             </div>
           </div>
         </div>
+        <div class="col-span-full space-y-4">
+          <.label>{gettext("Search for cover art online")}</.label>
+          <div class="flex gap-2">
+            <div class="flex-1">
+              <.input
+                type="text"
+                id="cover-search-query"
+                name="cover_search_query"
+                value={@cover_search_query}
+                phx-keyup="update_cover_search_query"
+                phx-target={@myself}
+              />
+            </div>
+            <.button
+              type="button"
+              size="sm"
+              id="cover-search-button"
+              phx-click="search_covers"
+              phx-target={@myself}
+              disabled={@cover_search_loading}
+            >
+              <.icon
+                :if={@cover_search_loading}
+                name="hero-arrow-path"
+                class="icon animate-spin"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+              <.icon
+                :if={!@cover_search_loading}
+                name="hero-magnifying-glass"
+                class="icon"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+              {gettext("Search")}
+            </.button>
+          </div>
+          <p :if={@cover_search_error} class="text-sm text-red-600 dark:text-red-400">
+            {@cover_search_error}
+          </p>
+          <div
+            :if={@cover_search_results != []}
+            id="cover-search-results"
+            class="grid grid-cols-3 sm:grid-cols-4 gap-2"
+          >
+            <button
+              :for={result <- @cover_search_results}
+              type="button"
+              phx-click="select_cover"
+              phx-value-url={result.image_url}
+              phx-target={@myself}
+              disabled={@cover_search_loading}
+              class={[
+                "group relative overflow-hidden rounded-md",
+                "border border-zinc-200 dark:border-zinc-700",
+                "hover:ring-2 hover:ring-indigo-500",
+                "focus:outline-none focus:ring-2 focus:ring-indigo-500",
+                "disabled:opacity-50 disabled:cursor-not-allowed"
+              ]}
+            >
+              <img
+                src={result.thumbnail_url}
+                alt={result.title}
+                class="aspect-square w-full object-cover"
+                loading="lazy"
+              />
+            </button>
+          </div>
+        </div>
         <:actions>
           <div class="w-full md:flex md:justify-center">
             <.button variant="solid" class="w-full md:w-auto" phx-disable-with={gettext("Saving...")}>
@@ -333,7 +404,13 @@ defmodule MusicLibraryWeb.Components.RecordForm do
      end)
      |> assign_new(:all_genres, fn -> Records.list_genres() end)
      |> assign_new(:genre_query, fn -> "" end)
-     |> assign_new(:genre_suggestions, fn -> [] end)}
+     |> assign_new(:genre_suggestions, fn -> [] end)
+     |> assign_new(:cover_search_query, fn ->
+       "#{Record.artist_names(record)} #{record.title} album cover"
+     end)
+     |> assign_new(:cover_search_results, fn -> [] end)
+     |> assign_new(:cover_search_loading, fn -> false end)
+     |> assign_new(:cover_search_error, fn -> nil end)}
   end
 
   @impl true
@@ -410,6 +487,89 @@ defmodule MusicLibraryWeb.Components.RecordForm do
     changeset = Records.change_record(socket.assigns.record, params)
 
     {:noreply, assign(socket, :form, to_form(changeset, action: :validate))}
+  end
+
+  def handle_event("update_cover_search_query", %{"value" => query}, socket) do
+    {:noreply, assign(socket, :cover_search_query, query)}
+  end
+
+  def handle_event("search_covers", _params, socket) do
+    query = socket.assigns.cover_search_query
+
+    {:noreply,
+     socket
+     |> assign(:cover_search_loading, true)
+     |> assign(:cover_search_error, nil)
+     |> start_async(:cover_search, fn -> BraveSearch.search_images(query, count: 20) end)}
+  end
+
+  def handle_event("select_cover", %{"url" => url}, socket) do
+    {:noreply,
+     socket
+     |> assign(:cover_search_loading, true)
+     |> assign(:cover_search_error, nil)
+     |> start_async(:cover_download, fn ->
+       with {:ok, data} <- BraveSearch.download_image(url),
+            {:ok, resized} <- Image.resize(data),
+            {:ok, asset} <- Assets.store_image(%{content: resized, format: "image/jpeg"}) do
+         {:ok, asset.hash}
+       end
+     end)}
+  end
+
+  @impl true
+  def handle_async(:cover_search, {:ok, {:ok, results}}, socket) do
+    {:noreply,
+     socket
+     |> assign(:cover_search_results, results)
+     |> assign(:cover_search_loading, false)}
+  end
+
+  def handle_async(:cover_search, {:ok, {:error, reason}}, socket) do
+    {:noreply,
+     socket
+     |> assign(:cover_search_error, "Search failed: #{inspect(reason)}")
+     |> assign(:cover_search_loading, false)}
+  end
+
+  def handle_async(:cover_search, {:exit, reason}, socket) do
+    {:noreply,
+     socket
+     |> assign(:cover_search_error, "Search failed: #{inspect(reason)}")
+     |> assign(:cover_search_loading, false)}
+  end
+
+  def handle_async(:cover_download, {:ok, {:ok, cover_hash}}, socket) do
+    case Records.update_record(socket.assigns.record, %{"cover_hash" => cover_hash}) do
+      {:ok, record} ->
+        notify_parent({:saved, record})
+
+        {:noreply,
+         socket
+         |> assign(:cover_search_loading, false)
+         |> put_toast(:info, gettext("Cover art updated successfully"))
+         |> push_patch(to: socket.assigns.patch)}
+
+      {:error, _changeset} ->
+        {:noreply,
+         socket
+         |> assign(:cover_search_error, gettext("Failed to save cover art"))
+         |> assign(:cover_search_loading, false)}
+    end
+  end
+
+  def handle_async(:cover_download, {:ok, {:error, reason}}, socket) do
+    {:noreply,
+     socket
+     |> assign(:cover_search_error, "Download failed: #{inspect(reason)}")
+     |> assign(:cover_search_loading, false)}
+  end
+
+  def handle_async(:cover_download, {:exit, reason}, socket) do
+    {:noreply,
+     socket
+     |> assign(:cover_search_error, "Download failed: #{inspect(reason)}")
+     |> assign(:cover_search_loading, false)}
   end
 
   defp save_record(socket, record_params, uploaded_covers) do

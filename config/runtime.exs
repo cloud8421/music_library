@@ -28,6 +28,10 @@ if personal_access_token = System.get_env("DISCOGS_PERSONAL_ACCESS_TOKEN") do
   config :music_library, Discogs, personal_access_token: personal_access_token
 end
 
+if api_key = System.get_env("BRAVE_SEARCH_API_KEY") do
+  config :music_library, BraveSearch, api_key: api_key
+end
+
 if default_timezone = System.get_env("DEFAULT_TIMEZONE") do
   config :music_library, :default_timezone, default_timezone
 end

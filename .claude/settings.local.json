@@ -37,7 +37,9 @@
       "mcp__tidewave__search_package_docs",
       "Bash(wc:*)",
       "Bash(python3:*)",
-      "Bash(MIX_ENV=test mix ecto.migrate:*)"
+      "Bash(MIX_ENV=test mix ecto.migrate:*)",
+      "WebFetch(domain:api-dashboard.search.brave.com)",
+      "WebFetch(domain:api.search.brave.com)"
     ]
   },
   "enableAllProjectMcpServers": false

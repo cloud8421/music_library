@@ -191,6 +191,7 @@ msgid "Saving..."
 msgstr ""
 
 #: lib/music_library_web/components/core_components.ex
+#: lib/music_library_web/components/record_form.ex
 #: lib/music_library_web/live/record_set_live/record_picker.ex
 #, elixir-autogen, elixir-format
 msgid "Search"
@@ -1876,4 +1877,19 @@ msgstr ""
 #: lib/music_library_web/live/maintenance_live/index.html.heex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Refresh Wikipedia data"
+msgstr ""
+
+#: lib/music_library_web/components/record_form.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Cover art updated successfully"
+msgstr ""
+
+#: lib/music_library_web/components/record_form.ex
+#, elixir-autogen, elixir-format
+msgid "Failed to save cover art"
+msgstr ""
+
+#: lib/music_library_web/components/record_form.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Search for cover art online"
 msgstr ""

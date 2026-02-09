@@ -49,6 +49,8 @@ config :music_library, Discogs, personal_access_token: "change me", user_agent: 
 
 config :music_library, Wikipedia, user_agent: user_agent
 
+config :music_library, BraveSearch, api_key: "change me", user_agent: user_agent
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.27.3",
