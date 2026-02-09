@@ -37,14 +37,14 @@ defmodule MusicLibrary.ScrobbleActivity do
     if release_duration == 0 do
       {:error, :no_duration}
     else
-      session_key = Secrets.get!("last_fm_session_key").value
+      with {:ok, session_key} <- fetch_session_key() do
+        {scrobbles, _finished_at} =
+          release_with_tracks
+          |> MusicBrainz.Release.tracks()
+          |> to_scrobbles(release_with_tracks, started_at)
 
-      {scrobbles, _finished_at} =
-        release_with_tracks
-        |> MusicBrainz.Release.tracks()
-        |> to_scrobbles(release_with_tracks, started_at)
-
-      LastFm.scrobble(scrobbles, session_key)
+        LastFm.scrobble(scrobbles, session_key)
+      end
     end
   end
 
@@ -83,17 +83,17 @@ defmodule MusicLibrary.ScrobbleActivity do
     if medium_duration == 0 do
       {:error, :no_duration}
     else
-      session_key = Secrets.get!("last_fm_session_key").value
+      with {:ok, session_key} <- fetch_session_key() do
+        medium =
+          release_with_tracks.media
+          |> Enum.find(fn medium -> medium.number == number end)
 
-      medium =
-        release_with_tracks.media
-        |> Enum.find(fn medium -> medium.number == number end)
+        {scrobbles, _finished_at} =
+          medium.tracks
+          |> to_scrobbles(release_with_tracks, started_at)
 
-      {scrobbles, _finished_at} =
-        medium.tracks
-        |> to_scrobbles(release_with_tracks, started_at)
-
-      LastFm.scrobble(scrobbles, session_key)
+        LastFm.scrobble(scrobbles, session_key)
+      end
     end
   end
 
@@ -135,13 +135,20 @@ defmodule MusicLibrary.ScrobbleActivity do
     if tracks_duration == 0 do
       {:error, :no_duration}
     else
-      session_key = Secrets.get!("last_fm_session_key").value
+      with {:ok, session_key} <- fetch_session_key() do
+        {scrobbles, _finished_at} =
+          selected_tracks
+          |> to_scrobbles(release_with_tracks, started_at)
 
-      {scrobbles, _finished_at} =
-        selected_tracks
-        |> to_scrobbles(release_with_tracks, started_at)
+        LastFm.scrobble(scrobbles, session_key)
+      end
+    end
+  end
 
-      LastFm.scrobble(scrobbles, session_key)
+  defp fetch_session_key do
+    case Secrets.get("last_fm_session_key") do
+      %{value: value} -> {:ok, value}
+      nil -> {:error, :no_session_key}
     end
   end
 
