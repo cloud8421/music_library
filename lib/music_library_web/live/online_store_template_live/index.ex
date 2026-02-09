@@ -8,7 +8,7 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(:current_section, :scrobble_rules)
+     |> assign(:current_section, :online_store_templates)
      |> stream(:templates, OnlineStoreTemplates.list_templates())}
   end
 
