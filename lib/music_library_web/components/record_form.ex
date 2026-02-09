@@ -91,20 +91,13 @@ defmodule MusicLibraryWeb.Components.RecordForm do
             </span>
           </div>
           <div class="relative" id="genre-input-container" phx-hook=".GenreInput" phx-target={@myself}>
-            <input
+            <.input
               type="text"
               id="genre-input"
+              name="genre-input"
               value={@genre_query}
               autocomplete="off"
               placeholder={gettext("Search or add genres...")}
-              class={[
-                "block w-full rounded-md border-0 py-1.5 shadow-sm sm:text-sm sm:leading-6",
-                "ring-1 ring-inset ring-zinc-300 dark:ring-zinc-600",
-                "bg-white dark:bg-zinc-800",
-                "text-zinc-900 dark:text-zinc-100",
-                "placeholder:text-zinc-400 dark:placeholder:text-zinc-500",
-                "focus:ring-2 focus:ring-inset focus:ring-zinc-500"
-              ]}
             />
             <ul
               :if={
