@@ -248,12 +248,7 @@ defmodule MusicLibrary.Records do
   end
 
   def populate_genres_async(record) do
-    meta = %{title: record.title, artists: Enum.map(record.artists, & &1.name)}
-    params = %{"id" => record.id}
-
-    params
-    |> Worker.PopulateGenres.new(meta: meta)
-    |> BackgroundRepo.insert()
+    enqueue_worker(Worker.PopulateGenres, %{"id" => record.id}, record_meta(record))
   end
 
   defp get_cover_art_or_default(musicbrainz_id) do
@@ -308,30 +303,23 @@ defmodule MusicLibrary.Records do
   end
 
   def refresh_cover_async(record) do
-    meta = %{title: record.title, artists: Enum.map(record.artists, & &1.name)}
-    params = %{"id" => record.id}
-
-    params
-    |> Worker.RefreshCover.new(meta: meta)
-    |> BackgroundRepo.insert()
+    enqueue_worker(Worker.RefreshCover, %{"id" => record.id}, record_meta(record))
   end
 
   def extract_colors_async(record, method) do
-    meta = %{title: record.title, artists: Enum.map(record.artists, & &1.name)}
-    params = %{"id" => record.id, "method" => method}
-
-    params
-    |> Worker.ExtractColors.new(meta: meta)
-    |> BackgroundRepo.insert()
+    enqueue_worker(
+      Worker.ExtractColors,
+      %{"id" => record.id, "method" => method},
+      record_meta(record)
+    )
   end
 
   def generate_embedding_async(record) do
-    meta = %{title: record.title, artists: Enum.map(record.artists, & &1.name)}
-    params = %{"record_id" => record.id}
-
-    params
-    |> Worker.GenerateRecordEmbedding.new(meta: meta)
-    |> BackgroundRepo.insert()
+    enqueue_worker(
+      Worker.GenerateRecordEmbedding,
+      %{"record_id" => record.id},
+      record_meta(record)
+    )
   end
 
   def resize_cover(record) do
@@ -353,12 +341,7 @@ defmodule MusicLibrary.Records do
   end
 
   def refresh_musicbrainz_data_async(record) do
-    meta = %{title: record.title, artists: Enum.map(record.artists, & &1.name)}
-    params = %{"id" => record.id}
-
-    params
-    |> Worker.RecordRefreshMusicBrainzData.new(meta: meta)
-    |> BackgroundRepo.insert()
+    enqueue_worker(Worker.RecordRefreshMusicBrainzData, %{"id" => record.id}, record_meta(record))
   end
 
   defp merge_releases(musicbrainz_id, musicbrainz_data) do
@@ -445,5 +428,13 @@ defmodule MusicLibrary.Records do
       "records:#{record.id}",
       {:update, record}
     )
+  end
+
+  defp enqueue_worker(worker, params, meta) do
+    params |> worker.new(meta: meta) |> BackgroundRepo.insert()
+  end
+
+  defp record_meta(record) do
+    %{title: record.title, artists: Enum.map(record.artists, & &1.name)}
   end
 end

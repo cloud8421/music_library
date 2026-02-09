@@ -109,12 +109,7 @@ defmodule MusicLibrary.Artists do
   end
 
   def refresh_musicbrainz_data_async(artist_info) do
-    meta = %{}
-    params = %{"id" => artist_info.id}
-
-    params
-    |> Worker.ArtistRefreshMusicBrainzData.new(meta: meta)
-    |> BackgroundRepo.insert()
+    enqueue_worker(Worker.ArtistRefreshMusicBrainzData, %{"id" => artist_info.id})
   end
 
   def refresh_discogs_data(artist_id) do
@@ -136,12 +131,7 @@ defmodule MusicLibrary.Artists do
   end
 
   def refresh_discogs_data_async(artist_info) do
-    meta = %{}
-    params = %{"id" => artist_info.id}
-
-    params
-    |> Worker.ArtistRefreshDiscogsData.new(meta: meta)
-    |> BackgroundRepo.insert()
+    enqueue_worker(Worker.ArtistRefreshDiscogsData, %{"id" => artist_info.id})
   end
 
   def create_artist_info(attrs) do
@@ -176,30 +166,15 @@ defmodule MusicLibrary.Artists do
   end
 
   def fetch_artist_info_async(artist_id) do
-    meta = %{}
-    params = %{"id" => artist_id}
-
-    params
-    |> Worker.FetchArtistInfo.new(meta: meta)
-    |> BackgroundRepo.insert()
+    enqueue_worker(Worker.FetchArtistInfo, %{"id" => artist_id})
   end
 
   def fetch_image_async(artist_id) do
-    meta = %{}
-    params = %{"id" => artist_id}
-
-    params
-    |> Worker.FetchArtistImage.new(meta: meta)
-    |> BackgroundRepo.insert()
+    enqueue_worker(Worker.FetchArtistImage, %{"id" => artist_id})
   end
 
   def prune_artist_info_async(artist_id) do
-    meta = %{}
-    params = %{"id" => artist_id}
-
-    params
-    |> Worker.PruneArtistInfo.new(meta: meta)
-    |> BackgroundRepo.insert()
+    enqueue_worker(Worker.PruneArtistInfo, %{"id" => artist_id})
   end
 
   def change_artist_info(artist_info, attrs \\ %{}) do
@@ -222,5 +197,9 @@ defmodule MusicLibrary.Artists do
         select: ar.musicbrainz_id
 
     q |> Repo.all() |> MapSet.new()
+  end
+
+  defp enqueue_worker(worker, params) do
+    params |> worker.new(meta: %{}) |> BackgroundRepo.insert()
   end
 end
