@@ -13,7 +13,7 @@ defmodule MusicLibrary.ScrobbleActivity do
     case Enum.sort(opts) do
       [finished_at: _, started_at: _] ->
         raise ArgumentError, """
-        Cannot scobble a release with both started_at and finished_at.
+        Cannot scrobble a release with both started_at and finished_at.
           Remove either of them.
         """
 
