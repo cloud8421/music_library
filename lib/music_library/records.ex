@@ -159,6 +159,15 @@ defmodule MusicLibrary.Records do
     end)
   end
 
+  def list_genres do
+    q =
+      from r in fragment("records, json_each(records.genres)"),
+        select: fragment("DISTINCT value"),
+        order_by: fragment("value COLLATE NOCASE ASC")
+
+    Repo.all(q)
+  end
+
   def get_record!(id), do: Repo.get!(Record, id)
 
   def get_release_status(release_id, format) do

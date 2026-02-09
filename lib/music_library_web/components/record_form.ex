@@ -60,6 +60,179 @@ defmodule MusicLibraryWeb.Components.RecordForm do
             label={gettext("Purchased at")}
           />
         </div>
+        <div class="space-y-2">
+          <.label>{gettext("Genres")}</.label>
+          <input type="hidden" name="record[genres][]" value="" />
+          <input
+            :for={genre <- get_current_genres(assigns)}
+            type="hidden"
+            name="record[genres][]"
+            value={genre}
+          />
+          <div class="flex flex-wrap gap-2">
+            <span
+              :for={genre <- get_current_genres(assigns)}
+              class={[
+                "inline-flex items-center gap-x-1",
+                "rounded-md bg-zinc-100 dark:bg-zinc-700",
+                "px-2 py-1 text-sm text-zinc-700 dark:text-zinc-300"
+              ]}
+            >
+              {genre}
+              <button
+                type="button"
+                phx-click="remove_genre"
+                phx-value-genre={genre}
+                phx-target={@myself}
+                class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+              >
+                <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
+              </button>
+            </span>
+          </div>
+          <div class="relative" id="genre-input-container" phx-hook=".GenreInput" phx-target={@myself}>
+            <input
+              type="text"
+              id="genre-input"
+              value={@genre_query}
+              autocomplete="off"
+              placeholder={gettext("Search or add genres...")}
+              class={[
+                "block w-full rounded-md border-0 py-1.5 shadow-sm sm:text-sm sm:leading-6",
+                "ring-1 ring-inset ring-zinc-300 dark:ring-zinc-600",
+                "bg-white dark:bg-zinc-800",
+                "text-zinc-900 dark:text-zinc-100",
+                "placeholder:text-zinc-400 dark:placeholder:text-zinc-500",
+                "focus:ring-2 focus:ring-inset focus:ring-zinc-500"
+              ]}
+            />
+            <ul
+              :if={
+                @genre_suggestions != [] or
+                  (@genre_query != "" and @genre_query not in get_current_genres(assigns))
+              }
+              role="listbox"
+              id="genre-suggestions"
+              class={[
+                "absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md",
+                "bg-white dark:bg-zinc-800",
+                "py-1 shadow-lg",
+                "ring-1 ring-black/5 dark:ring-white/10"
+              ]}
+            >
+              <li
+                :for={suggestion <- @genre_suggestions}
+                phx-click="add_genre"
+                phx-value-genre={suggestion}
+                phx-target={@myself}
+                class={[
+                  "cursor-pointer select-none px-3 py-2 text-sm",
+                  "text-zinc-700 dark:text-zinc-300",
+                  "hover:bg-zinc-100 dark:hover:bg-zinc-700",
+                  "aria-selected:bg-zinc-100 dark:aria-selected:bg-zinc-700"
+                ]}
+                role="option"
+              >
+                {suggestion}
+              </li>
+              <li
+                :if={
+                  @genre_query != "" and
+                    String.downcase(String.trim(@genre_query)) not in Enum.map(
+                      @genre_suggestions,
+                      &String.downcase/1
+                    ) and String.trim(@genre_query) != ""
+                }
+                phx-click="add_genre"
+                phx-value-genre={String.downcase(String.trim(@genre_query))}
+                phx-target={@myself}
+                class={[
+                  "cursor-pointer select-none px-3 py-2 text-sm",
+                  "text-zinc-500 dark:text-zinc-400 italic",
+                  "hover:bg-zinc-100 dark:hover:bg-zinc-700",
+                  "aria-selected:bg-zinc-100 dark:aria-selected:bg-zinc-700"
+                ]}
+                role="option"
+              >
+                {gettext("Create \"%{genre}\"", genre: String.downcase(String.trim(@genre_query)))}
+              </li>
+            </ul>
+          </div>
+          <script :type={Phoenix.LiveView.ColocatedHook} name=".GenreInput">
+            export default {
+              mounted() {
+                this.input = this.el.querySelector("#genre-input");
+                this.selectedIndex = -1;
+                this.debounceTimer = null;
+
+                this.input.addEventListener("input", (e) => {
+                  clearTimeout(this.debounceTimer);
+                  this.debounceTimer = setTimeout(() => {
+                    this.pushEventTo(this.el, "search_genres", { value: e.target.value });
+                  }, 150);
+                });
+
+                this.input.addEventListener("keydown", (e) => {
+                  const list = this.el.querySelector("#genre-suggestions");
+                  if (!list) {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const value = this.input.value.trim().toLowerCase();
+                      if (value) {
+                        this.pushEventTo(this.el, "add_genre", { genre: value });
+                        this.input.value = "";
+                      }
+                    }
+                    return;
+                  }
+
+                  const items = list.querySelectorAll("[role='option']");
+                  if (items.length === 0) return;
+
+                  if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    this.selectedIndex = Math.min(this.selectedIndex + 1, items.length - 1);
+                    this.updateSelection(items);
+                  } else if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
+                    this.updateSelection(items);
+                  } else if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (this.selectedIndex >= 0 && this.selectedIndex < items.length) {
+                      items[this.selectedIndex].click();
+                    } else {
+                      const value = this.input.value.trim().toLowerCase();
+                      if (value) {
+                        this.pushEventTo(this.el, "add_genre", { genre: value });
+                      }
+                    }
+                    this.input.value = "";
+                  } else if (e.key === "Escape") {
+                    e.preventDefault();
+                    this.input.value = "";
+                    this.pushEventTo(this.el, "search_genres", { value: "" });
+                  }
+                });
+              },
+              updated() {
+                this.selectedIndex = -1;
+              },
+              updateSelection(items) {
+                items.forEach((item, i) => {
+                  if (i === this.selectedIndex) {
+                    item.setAttribute("aria-selected", "true");
+                  } else {
+                    item.removeAttribute("aria-selected");
+                  }
+                });
+              },
+              destroyed() {
+                clearTimeout(this.debounceTimer);
+              }
+            }
+          </script>
+        </div>
         <div class="space-y-4">
           <div class="flex items-center gap-x-2">
             <.label for="dominant_colors">
@@ -164,7 +337,10 @@ defmodule MusicLibraryWeb.Components.RecordForm do
      |> assign(assigns)
      |> assign_new(:form, fn ->
        to_form(Records.change_record(record))
-     end)}
+     end)
+     |> assign_new(:all_genres, fn -> Records.list_genres() end)
+     |> assign_new(:genre_query, fn -> "" end)
+     |> assign_new(:genre_suggestions, fn -> [] end)}
   end
 
   @impl true
@@ -190,6 +366,57 @@ defmodule MusicLibraryWeb.Components.RecordForm do
   def handle_event("rotate_dominant_colors", _params, socket) do
     changeset = Record.rotate_dominant_colors(socket.assigns.form.source)
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
+  end
+
+  def handle_event("search_genres", %{"value" => query}, socket) do
+    current_genres = get_current_genres(socket.assigns)
+    query = String.trim(query)
+
+    suggestions =
+      if query == "" do
+        []
+      else
+        downcased_query = String.downcase(query)
+
+        socket.assigns.all_genres
+        |> Enum.filter(fn g ->
+          String.contains?(String.downcase(g), downcased_query) and g not in current_genres
+        end)
+        |> Enum.take(10)
+      end
+
+    {:noreply,
+     socket
+     |> assign(:genre_query, query)
+     |> assign(:genre_suggestions, suggestions)}
+  end
+
+  def handle_event("add_genre", %{"genre" => genre}, socket) do
+    genre = genre |> String.trim() |> String.downcase()
+    current_genres = get_current_genres(socket.assigns)
+
+    if genre == "" or genre in current_genres do
+      {:noreply, socket |> assign(:genre_query, "") |> assign(:genre_suggestions, [])}
+    else
+      new_genres = current_genres ++ [genre]
+      params = Map.merge(socket.assigns.form.params, %{"genres" => new_genres})
+      changeset = Records.change_record(socket.assigns.record, params)
+
+      {:noreply,
+       socket
+       |> assign(:form, to_form(changeset, action: :validate))
+       |> assign(:genre_query, "")
+       |> assign(:genre_suggestions, [])}
+    end
+  end
+
+  def handle_event("remove_genre", %{"genre" => genre}, socket) do
+    current_genres = get_current_genres(socket.assigns)
+    new_genres = Enum.reject(current_genres, &(&1 == genre))
+    params = Map.merge(socket.assigns.form.params, %{"genres" => new_genres})
+    changeset = Records.change_record(socket.assigns.record, params)
+
+    {:noreply, assign(socket, :form, to_form(changeset, action: :validate))}
   end
 
   defp save_record(socket, record_params, uploaded_covers) do
@@ -234,6 +461,10 @@ defmodule MusicLibraryWeb.Components.RecordForm do
         release.id
       }
     end)
+  end
+
+  defp get_current_genres(assigns) do
+    Ecto.Changeset.get_field(assigns.form.source, :genres) || []
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})

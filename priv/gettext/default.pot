@@ -83,6 +83,7 @@ msgstr ""
 msgid "Formats"
 msgstr ""
 
+#: lib/music_library_web/components/record_form.ex
 #: lib/music_library_web/live/collection_live/show.html.heex
 #: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format
@@ -1820,4 +1821,14 @@ msgstr ""
 #: lib/music_library_web/live/record_set_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "No records in this set yet"
+msgstr ""
+
+#: lib/music_library_web/components/record_form.ex
+#, elixir-autogen, elixir-format
+msgid "Create \"%{genre}\""
+msgstr ""
+
+#: lib/music_library_web/components/record_form.ex
+#, elixir-autogen, elixir-format
+msgid "Search or add genres..."
 msgstr ""
