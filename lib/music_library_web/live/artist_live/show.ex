@@ -101,6 +101,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
         {:noreply,
          socket
          |> assign(:artist_info, artist_info)
+         |> assign(:biography, build_biography(artist_info))
          |> put_toast(:info, gettext("Artist info refreshed successfully"))}
 
       {:error, reason} ->
@@ -109,6 +110,25 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
          |> put_toast(
            :error,
            gettext("Error refreshing artist info") <> "," <> inspect(reason)
+         )}
+    end
+  end
+
+  def handle_event("refresh_wikipedia_data", %{"id" => id}, socket) do
+    case Artists.refresh_wikipedia_data(id) do
+      {:ok, artist_info} ->
+        {:noreply,
+         socket
+         |> assign(:artist_info, artist_info)
+         |> assign(:biography, build_biography(artist_info))
+         |> put_toast(:info, gettext("Wikipedia data refreshed successfully"))}
+
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_toast(
+           :error,
+           gettext("Error refreshing Wikipedia data") <> "," <> inspect(reason)
          )}
     end
   end
@@ -171,6 +191,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     |> assign(:current_section, :artists)
     |> assign(:artist, artist)
     |> assign(:artist_info, artist_info)
+    |> assign(:biography, build_biography(artist_info))
     |> assign(:external_links, ArtistInfo.external_links(artist_info))
     |> assign(:country, ArtistInfo.country(artist_info))
     |> assign_async(:lastfm_artist_info, fn ->
@@ -248,6 +269,20 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
       collection: Enum.sort_by(collection, fn r -> r.release_date end, :desc),
       wishlist: Enum.sort_by(wishlist, fn r -> r.release_date end, :desc)
     }
+  end
+
+  defp build_biography(artist_info) do
+    bio_html = ArtistInfo.wikipedia_bio(artist_info)
+
+    if bio_html do
+      %{
+        source: "Wikipedia",
+        summary_html: ArtistInfo.wikipedia_summary(artist_info),
+        bio_html: bio_html,
+        url: ArtistInfo.wikipedia_url(artist_info),
+        description: ArtistInfo.wikipedia_description(artist_info)
+      }
+    end
   end
 
   # Bios start with text, then a link to read more on Last.fm, followed by a license text.

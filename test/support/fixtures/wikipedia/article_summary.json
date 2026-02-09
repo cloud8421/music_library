@@ -1,0 +1,35 @@
+{
+  "type": "standard",
+  "title": "Steven Wilson",
+  "displaytitle": "Steven Wilson",
+  "namespace": {
+    "id": 0,
+    "text": ""
+  },
+  "wikibase_item": "Q352766",
+  "titles": {
+    "canonical": "Steven_Wilson",
+    "normalized": "Steven Wilson",
+    "display": "Steven Wilson"
+  },
+  "pageid": 1845781,
+  "extract": "Steven John Wilson is an English musician. He is most associated with the progressive rock genre, though his influences and work extend beyond it.",
+  "extract_html": "<p><b>Steven John Wilson</b> is an English musician. He is most associated with the progressive rock genre, though his influences and work extend beyond it.</p>",
+  "description": "English musician and record producer",
+  "content_urls": {
+    "desktop": {
+      "page": "https://en.wikipedia.org/wiki/Steven_Wilson",
+      "revisions": "https://en.wikipedia.org/wiki/Steven_Wilson?action=history",
+      "edit": "https://en.wikipedia.org/wiki/Steven_Wilson?action=edit",
+      "talk": "https://en.wikipedia.org/wiki/Talk:Steven_Wilson"
+    },
+    "mobile": {
+      "page": "https://en.m.wikipedia.org/wiki/Steven_Wilson",
+      "revisions": "https://en.m.wikipedia.org/w/index.php?title=Steven_Wilson&action=history",
+      "edit": "https://en.m.wikipedia.org/w/index.php?title=Steven_Wilson&action=edit",
+      "talk": "https://en.m.wikipedia.org/wiki/Talk:Steven_Wilson"
+    }
+  },
+  "lang": "en",
+  "dir": "ltr"
+}

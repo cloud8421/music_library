@@ -134,6 +134,32 @@ defmodule MusicLibrary.Artists do
     enqueue_worker(Worker.ArtistRefreshDiscogsData, %{"id" => artist_info.id})
   end
 
+  def fetch_wikipedia_data(artist_id) do
+    artist_info = get_artist_info!(artist_id)
+
+    if wikidata_id = ArtistInfo.wikidata_id(artist_info) do
+      case Wikipedia.get_artist_summary(wikidata_id) do
+        {:ok, summary} ->
+          artist_info
+          |> ArtistInfo.changeset(%{wikipedia_data: summary})
+          |> Repo.update()
+
+        error ->
+          error
+      end
+    else
+      {:ok, artist_info}
+    end
+  end
+
+  def refresh_wikipedia_data(artist_id) do
+    fetch_wikipedia_data(artist_id)
+  end
+
+  def refresh_wikipedia_data_async(artist_info) do
+    enqueue_worker(Worker.ArtistRefreshWikipediaData, %{"id" => artist_info.id})
+  end
+
   def create_artist_info(attrs) do
     %ArtistInfo{}
     |> ArtistInfo.changeset(attrs)

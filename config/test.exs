@@ -57,6 +57,12 @@ config :music_library, Discogs,
     max_retries: 0
   ]
 
+config :music_library, Wikipedia,
+  req_options: [
+    plug: {Req.Test, Wikipedia.API},
+    max_retries: 0
+  ]
+
 config :phoenix_test, :endpoint, MusicLibraryWeb.Endpoint
 
 config :music_library, Oban, testing: :manual

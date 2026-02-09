@@ -1,0 +1,16 @@
+{
+  "entities": {
+    "Q352766": {
+      "type": "item",
+      "id": "Q352766",
+      "sitelinks": {
+        "enwiki": {
+          "site": "enwiki",
+          "title": "Steven Wilson",
+          "badges": []
+        }
+      }
+    }
+  },
+  "success": 1
+}

@@ -1842,3 +1842,28 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Set deleted successfully"
 msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Error refreshing Wikipedia data"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Read full article on Wikipedia"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Refresh Wikipedia"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Wikipedia data"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Wikipedia data refreshed successfully"
+msgstr ""

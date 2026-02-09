@@ -32,6 +32,14 @@ defmodule MusicBrainz.Artist do
     end
   end
 
+  def get_wikidata_id(r) do
+    Enum.find_value(r.relations, fn relation ->
+      if relation.type == "wikidata" do
+        parse_wikidata_id(relation.url["resource"])
+      end
+    end)
+  end
+
   def url(id) do
     "https://musicbrainz.org/artist/#{id}"
   end
@@ -47,4 +55,7 @@ defmodule MusicBrainz.Artist do
 
   defp parse_discogs_id("https://www.discogs.com/artist/" <> id), do: String.to_integer(id)
   defp parse_discogs_id(_other), do: nil
+
+  defp parse_wikidata_id("https://www.wikidata.org/wiki/" <> id), do: id
+  defp parse_wikidata_id(_other), do: nil
 end

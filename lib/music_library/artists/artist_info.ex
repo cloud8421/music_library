@@ -10,6 +10,7 @@ defmodule MusicLibrary.Artists.ArtistInfo do
   schema "artist_infos" do
     field :musicbrainz_data, :map, default: %{}
     field :discogs_data, :map, default: %{}
+    field :wikipedia_data, :map, default: %{}
     field :image_data_hash, :string
 
     has_one :note, Note, foreign_key: :musicbrainz_id
@@ -23,6 +24,7 @@ defmodule MusicLibrary.Artists.ArtistInfo do
       :id,
       :musicbrainz_data,
       :discogs_data,
+      :wikipedia_data,
       :image_data_hash
     ])
     |> validate_required([:musicbrainz_data])
@@ -81,5 +83,34 @@ defmodule MusicLibrary.Artists.ArtistInfo do
       %{"id" => discogs_id} -> discogs_id
       _ -> nil
     end
+  end
+
+  def wikidata_id(artist_info) do
+    relations = get_in(artist_info.musicbrainz_data, ["relations"]) || []
+
+    Enum.find_value(relations, fn
+      %{"type" => "wikidata", "url" => %{"resource" => "https://www.wikidata.org/wiki/" <> id}} ->
+        id
+
+      _ ->
+        nil
+    end)
+  end
+
+  def wikipedia_bio(artist_info) do
+    get_in(artist_info.wikipedia_data, ["intro_html"]) ||
+      get_in(artist_info.wikipedia_data, ["extract_html"])
+  end
+
+  def wikipedia_summary(artist_info) do
+    get_in(artist_info.wikipedia_data, ["extract"])
+  end
+
+  def wikipedia_url(artist_info) do
+    get_in(artist_info.wikipedia_data, ["content_urls", "desktop", "page"])
+  end
+
+  def wikipedia_description(artist_info) do
+    get_in(artist_info.wikipedia_data, ["description"])
   end
 end

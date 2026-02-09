@@ -47,6 +47,8 @@ config :music_library, MusicBrainz, user_agent: user_agent
 
 config :music_library, Discogs, personal_access_token: "change me", user_agent: user_agent
 
+config :music_library, Wikipedia, user_agent: user_agent
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.27.3",
@@ -78,7 +80,7 @@ config :phoenix, :json_library, JSON
 
 config :music_library, Oban,
   engine: Oban.Engines.Lite,
-  queues: [default: 10, heavy_writes: 1, music_brainz: 1, discogs: 1],
+  queues: [default: 10, heavy_writes: 1, music_brainz: 1, discogs: 1, wikipedia: 1],
   repo: MusicLibrary.BackgroundRepo,
   plugins: [
     {Oban.Plugins.Cron,
