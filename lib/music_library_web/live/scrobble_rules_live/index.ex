@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
   use MusicLibraryWeb, :live_view
 
   import MusicLibraryWeb.Components.Pagination
+  import MusicLibraryWeb.LiveHelpers.Params
 
   alias MusicLibrary.ScrobbleRules
   alias MusicLibrary.ScrobbleRules.ScrobbleRule
@@ -56,38 +57,6 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
     end
   end
 
-  defp merge_pagination(params, url_params, total_records) do
-    page = parse_page(url_params["page"])
-    page_size = parse_page_size(url_params["page_size"])
-
-    params
-    |> Map.put(:page, page)
-    |> Map.put(:page_size, page_size)
-    |> Map.put(:total_records, total_records)
-  end
-
-  defp parse_page(nil), do: 1
-
-  defp parse_page(page) when is_binary(page) do
-    case Integer.parse(page) do
-      {num, ""} when num > 0 -> num
-      _ -> 1
-    end
-  end
-
-  defp parse_page(_), do: 1
-
-  defp parse_page_size(nil), do: 20
-
-  defp parse_page_size(page_size) when is_binary(page_size) do
-    case Integer.parse(page_size) do
-      {num, ""} when num in [20, 50, 100] -> num
-      _ -> 20
-    end
-  end
-
-  defp parse_page_size(_), do: 20
-
   defp load_and_assign_rules(socket, list_params) do
     offset = page_to_offset(list_params.page, list_params.page_size)
 
@@ -97,11 +66,8 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
         limit: list_params.page_size
       )
 
-    list_params_with_total =
-      Map.put(list_params, :total_entries, list_params.total_records)
-
     socket
-    |> assign(:list_params, list_params_with_total)
+    |> assign(:list_params, list_params)
     |> assign(:page_title, gettext("Scrobble Rules"))
     |> assign(:scrobble_rule, nil)
     |> stream(:scrobble_rules, rules, reset: true)

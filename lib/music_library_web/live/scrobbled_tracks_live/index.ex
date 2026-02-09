@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
   use MusicLibraryWeb, :live_view
 
   import MusicLibraryWeb.Components.Pagination
+  import MusicLibraryWeb.LiveHelpers.Params
   import MusicLibraryWeb.ScrobbleComponents
 
   alias LastFm.Track
@@ -55,7 +56,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
       @default_tracks_list_params
       |> merge_query(query)
       |> merge_order(order)
-      |> merge_pagination(params, total_tracks)
+      |> merge_pagination(params, total_tracks, allowed_page_sizes: [20, 50, 100, 200, 500])
 
     load_and_assign_tracks(socket, track_list_params)
   end
@@ -110,51 +111,12 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
   defp parse_order("album"), do: :album
   defp parse_order(_), do: :scrobbled_at
 
-  defp merge_query(params, query), do: Map.put(params, :query, query)
-  defp merge_order(params, order), do: Map.put(params, :order, order)
-
-  defp merge_pagination(params, url_params, total_records) do
-    page = parse_page(url_params["page"])
-    page_size = parse_page_size(url_params["page_size"])
-
-    params
-    |> Map.put(:page, page)
-    |> Map.put(:page_size, page_size)
-    |> Map.put(:total_records, total_records)
-  end
-
-  defp parse_page(nil), do: 1
-
-  defp parse_page(page) when is_binary(page) do
-    case Integer.parse(page) do
-      {num, ""} when num > 0 -> num
-      _ -> 1
-    end
-  end
-
-  defp parse_page(_), do: 1
-
-  defp parse_page_size(nil), do: 20
-
-  defp parse_page_size(page_size) when is_binary(page_size) do
-    case Integer.parse(page_size) do
-      {num, ""} when num in [20, 50, 100, 200, 500] -> num
-      _ -> 20
-    end
-  end
-
-  defp parse_page_size(_), do: 20
-
   defp load_and_assign_tracks(socket, track_list_params) do
     tracks = ScrobbleActivity.list_tracks(track_list_params)
     tracks_empty? = tracks == []
 
-    # Add total_entries for pagination component
-    track_list_params_with_total =
-      Map.put(track_list_params, :total_entries, track_list_params.total_records)
-
     socket
-    |> assign(:track_list_params, track_list_params_with_total)
+    |> assign(:track_list_params, track_list_params)
     |> assign(:tracks_empty?, tracks_empty?)
     |> assign(:page_title, gettext("Scrobbled Tracks"))
     |> stream(:tracks, tracks, reset: true)

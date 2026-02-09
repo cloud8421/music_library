@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
   use MusicLibraryWeb, :live_view
 
   import MusicLibraryWeb.Components.Pagination
+  import MusicLibraryWeb.LiveHelpers.Params
   import MusicLibraryWeb.RecordComponents
 
   alias MusicLibrary.Records
@@ -168,30 +169,6 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
     |> assign(:record, nil)
     |> assign(:record_list_params, record_list_params)
     |> stream(:records, records, reset: true)
-  end
-
-  defp merge_query(record_list_params, query) do
-    Map.put(record_list_params, :query, query)
-  end
-
-  defp merge_order(record_list_params, order) do
-    Map.put(record_list_params, :order, order)
-  end
-
-  defp merge_pagination(record_list_params, params, total_records) do
-    record_list_params
-    |> Map.put(:page, parse_int_or_default(params["page"], record_list_params.page))
-    |> Map.put(
-      :page_size,
-      parse_int_or_default(params["page_size"], record_list_params.page_size)
-    )
-    |> Map.put(:total_entries, total_records)
-  end
-
-  defp parse_int_or_default(nil, default), do: default
-
-  defp parse_int_or_default(value, _default) when is_binary(value) do
-    String.to_integer(value)
   end
 
   defp parse_order("alphabetical"), do: :alphabetical
