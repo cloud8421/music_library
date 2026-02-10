@@ -98,7 +98,6 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Search` | (cross-context) | Universal search across collection, wishlist, artists, record sets |
 | `Secrets` | Secret | Encrypted key-value storage |
 | `BarcodeScan` | (Result struct) | Barcode → MusicBrainz lookup workflow |
-| `Colors` | — | Dominant color extraction from cover images |
 
 ---
 
@@ -108,8 +107,9 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 |--------|---------|
 | `Records.SearchParser` | Parses search syntax: `artist:X`, `album:X`, `genre:"Y"`, `format:cd`, `type:album`, `purchase_year:2024`, free text |
 | `Records.Similarity` | Embedding generation (OpenAI), cosine-distance search (sqlite-vec) |
-| `Records.Batch` | Batch operations: refresh all MusicBrainz data, generate all embeddings |
-| `Artists.Batch` | Batch refresh: MusicBrainz, Discogs, Wikipedia for all artists |
+| `Batch` | Generic batch runner: stream + transaction + error accumulation |
+| `Records.Batch` | Batch operations: refresh all MusicBrainz data, generate all embeddings (uses `Batch`) |
+| `Artists.Batch` | Batch refresh: MusicBrainz, Discogs, Wikipedia for all artists (uses `Batch`) |
 | `Assets.Cache` | ETS-based asset cache with TTL |
 | `Assets.Image` / `Assets.Transform` | Image processing via Vix (libvips) |
 | `FormatNumber` | Number formatting utility |
@@ -230,8 +230,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | Module | Purpose |
 |--------|---------|
 | `CoreComponents` | Forms, buttons, icons, tables, flash messages |
-| `RecordComponents` | Record cards, cover images, labels, grids |
-| `ArtistComponents` | Artist images, links |
+| `RecordComponents` | Record cards, cover images, artist images, labels, grids |
 | `ChartComponents` | SVG charts for stats |
 | `StatsComponents` | Stats dashboard widgets |
 | `ScrobbleComponents` | Scrobble activity displays |
@@ -266,8 +265,8 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | Hook | Type | Purpose |
 |------|------|---------|
 | `FormatNumber` | External (`assets/js/hooks/`) | Client-side number formatting |
-| `UniversalSearchNavigation` | External | Keyboard navigation in search modal |
-| `RecordPickerNavigation` | External | Keyboard navigation in record picker |
+| `UniversalSearchNavigation` | External | Keyboard navigation in search modal (via `create-navigation-hook` factory) |
+| `RecordPickerNavigation` | External | Keyboard navigation in record picker (via `create-navigation-hook` factory) |
 | Various `.ColocatedHooks` | Colocated (in .heex) | Inline hooks prefixed with `.` |
 
 ### JS Event Listeners (app.js)
