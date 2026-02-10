@@ -5,8 +5,8 @@ defmodule MusicLibraryWeb.SearchComponents do
 
   use MusicLibraryWeb, :html
 
-  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1, record_cover: 1]
-  import MusicLibraryWeb.ArtistComponents, only: [artist_image: 1]
+  import MusicLibraryWeb.RecordComponents,
+    only: [format_label: 1, type_label: 1, record_cover: 1, artist_image: 1]
 
   alias MusicLibrary.Records.Record
   alias MusicLibraryWeb.Markdown

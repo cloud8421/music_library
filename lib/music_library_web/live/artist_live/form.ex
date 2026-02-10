@@ -1,7 +1,7 @@
 defmodule MusicLibraryWeb.ArtistLive.Form do
   use MusicLibraryWeb, :live_component
 
-  import MusicLibraryWeb.ArtistComponents, only: [artist_image: 1]
+  import MusicLibraryWeb.RecordComponents, only: [artist_image: 1]
 
   alias MusicLibrary.Artists
   alias MusicLibrary.Assets

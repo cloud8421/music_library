@@ -7,6 +7,27 @@ defmodule MusicLibraryWeb.RecordComponents do
   alias Phoenix.LiveView.JS
 
   attr :record, :map, required: true
+  attr :size, :atom, values: [:sm, :md], default: :sm
+
+  def release_groups_badge(assigns) do
+    ~H"""
+    <span
+      :if={Records.Record.included_release_groups_count(@record) > 0}
+      class={[
+        "absolute right-0 bottom-0 rounded-br-lg rounded-tl-lg",
+        "font-medium",
+        "border border-zinc-600/20 dark:border-zinc-500/20",
+        @size == :sm &&
+          "px-1 text-xs bg-zinc-200/80 dark:bg-zinc-500/70 text-zinc-700 dark:text-zinc-200",
+        @size == :md && "px-2 text-sm bg-zinc-50 dark:bg-zinc-500/10 text-zinc-700 dark:text-zinc-400"
+      ]}
+    >
+      {Records.Record.included_release_groups_count(@record)}
+    </span>
+    """
+  end
+
+  attr :record, :map, required: true
   attr :class, :string, required: false, default: "rounded-lg"
   attr :width, :integer, default: nil
 
@@ -67,18 +88,7 @@ defmodule MusicLibraryWeb.RecordComponents do
         <div class="flex min-w-0 gap-x-4 items-center">
           <div class="relative w-20 flex-none">
             <.record_cover record={record} width={160} />
-            <span
-              :if={Records.Record.included_release_groups_count(record) > 0}
-              class={[
-                "absolute right-0 bottom-0 rounded-br-lg rounded-tl-lg px-1",
-                "text-xs font-medium",
-                "bg-zinc-200/80 dark:bg-zinc-500/70",
-                "text-zinc-700 dark:text-zinc-200",
-                "border border-zinc-600/20 dark:border-zinc-500/20"
-              ]}
-            >
-              {Records.Record.included_release_groups_count(record)}
-            </span>
+            <.release_groups_badge record={record} />
           </div>
           <div class="min-w-0 flex-auto">
             <h1 class="text-sm leading-6 text-zinc-700">
@@ -251,18 +261,7 @@ defmodule MusicLibraryWeb.RecordComponents do
               class="aspect-square object-cover rounded-lg group-hover:shadow-lg/20"
               width={460}
             />
-            <span
-              :if={Records.Record.included_release_groups_count(record) > 0}
-              class={[
-                "absolute right-0 bottom-0 rounded-br-lg rounded-tl-lg px-2",
-                "text-sm font-medium",
-                "bg-zinc-50 dark:bg-zinc-500/10",
-                "text-zinc-700 dark:text-zinc-400",
-                "border border-zinc-600/20 dark:border-zinc-500/20"
-              ]}
-            >
-              {Records.Record.included_release_groups_count(record)}
-            </span>
+            <.release_groups_badge record={record} size={:md} />
             <div class="absolute right-2 top-2 rounded-full bg-zinc-100/50 hover:bg-zinc-100/75 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/75 size-5">
               <.dropdown id={"actions-#{record.id}"} placement="bottom-end">
                 <:toggle>
@@ -527,6 +526,30 @@ defmodule MusicLibraryWeb.RecordComponents do
         />
       </div>
     </.sheet>
+    """
+  end
+
+  attr :artist, :map, required: true
+  attr :image_hash, :string, required: true
+  attr :class, :string, required: false, default: nil
+  attr :width, :integer, default: nil
+  attr :rest, :global
+
+  def artist_image(assigns) do
+    payload =
+      Transform.new(hash: assigns.image_hash, width: assigns.width)
+      |> Transform.encode!()
+
+    assigns = assign(assigns, :payload, payload)
+
+    ~H"""
+    <img
+      class={@class}
+      src={~p"/assets/#{@payload}"}
+      alt={@artist.name}
+      onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
+      {@rest}
+    />
     """
   end
 end

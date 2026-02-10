@@ -2,7 +2,13 @@ defmodule MusicLibraryWeb.StatsComponents do
   use MusicLibraryWeb, :live_component
 
   import MusicLibraryWeb.RecordComponents,
-    only: [format_label: 1, type_label: 1, artist_links: 1, record_cover: 1]
+    only: [
+      format_label: 1,
+      type_label: 1,
+      artist_links: 1,
+      record_cover: 1,
+      release_groups_badge: 1
+    ]
 
   alias MusicLibrary.Records
 
@@ -167,18 +173,7 @@ defmodule MusicLibraryWeb.StatsComponents do
         <div class="flex min-w-0 gap-x-4 items-center">
           <div class="relative w-12 flex-none">
             <.record_cover record={record} width={96} />
-            <span
-              :if={Records.Record.included_release_groups_count(record) > 0}
-              class={[
-                "absolute right-0 bottom-0 rounded-br-lg rounded-tl-lg px-1",
-                "text-xs font-medium",
-                "bg-zinc-200/80 dark:bg-zinc-500/70",
-                "text-zinc-700 dark:text-zinc-200",
-                "border border-zinc-600/20 dark:border-zinc-500/20"
-              ]}
-            >
-              {Records.Record.included_release_groups_count(record)}
-            </span>
+            <.release_groups_badge record={record} />
           </div>
           <div class="min-w-0 flex-auto">
             <h1 class="text-sm leading-6 text-zinc-700">
