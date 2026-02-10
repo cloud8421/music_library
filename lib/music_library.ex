@@ -22,7 +22,6 @@ defmodule MusicLibrary do
   - `MusicLibrary.ScrobbleRules` - Rules system for normalizing scrobbled track metadata
 
   ### Content and Metadata Management
-  - `MusicLibrary.Colors` - Color extraction from album artwork using fast or slow algorithms
   - `MusicLibrary.OnlineStoreTemplates` - Configurable templates for generating online store URLs
   - `MusicLibrary.Secrets` - Encrypted storage for API keys and sensitive configuration
   """
