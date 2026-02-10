@@ -1,6 +1,8 @@
 defmodule MusicLibrary.ScrobbleRulesTest do
   use MusicLibrary.DataCase
 
+  import MusicLibrary.ScrobbleRulesFixtures
+
   alias LastFm.Track
   alias MusicLibrary.ScrobbleRules
   alias MusicLibrary.ScrobbleRules.ScrobbleRule
@@ -23,15 +25,6 @@ defmodule MusicLibrary.ScrobbleRulesTest do
     }
 
     @invalid_attrs %{type: nil, match_value: nil, target_musicbrainz_id: nil}
-
-    def scrobble_rule_fixture(attrs \\ %{}) do
-      {:ok, scrobble_rule} =
-        attrs
-        |> Enum.into(@valid_album_attrs)
-        |> ScrobbleRules.create_scrobble_rule()
-
-      scrobble_rule
-    end
 
     def scrobbled_track_fixture(attrs \\ %{}) do
       default_attrs = %{
