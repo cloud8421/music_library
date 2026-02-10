@@ -176,7 +176,15 @@ defmodule MusicLibrary.MixProject do
   defp usage_rules do
     [
       file: "AGENTS.md",
-      usage_rules: :all
+      usage_rules: [
+        :elixir,
+        :otp,
+        "phoenix:all",
+        :usage_rules,
+        "usage_rules:all",
+        # link fluxon as it's HUGE
+        {:fluxon, link: :at}
+      ]
     ]
   end
 end
