@@ -73,10 +73,13 @@
         :if={@record_set.items != []}
         class="grid grid-cols-2 sm:grid-cols-4 gap-4"
         id="record-set-records"
+        phx-hook="SortableList"
       >
         <div
           :for={item <- @record_set.items}
           id={"record-#{item.record.id}"}
+          data-sortable-item
+          data-record-id={item.record.id}
           class={[
             "group relative",
             is_nil(item.record.purchased_at) &&
@@ -103,6 +106,16 @@
               width={512}
             />
           </.link>
+          <div
+            data-sortable-handle
+            class="absolute top-1 left-1 hidden group-hover:flex items-center justify-center rounded-full bg-zinc-100/50 hover:bg-zinc-100/75 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/75 size-5 cursor-grab active:cursor-grabbing"
+          >
+            <.icon
+              name="hero-bars-2"
+              class="size-3.5 text-zinc-800 dark:text-zinc-200"
+              aria-hidden="true"
+            />
+          </div>
           <div class="absolute top-1 right-1 rounded-full bg-zinc-100/50 hover:bg-zinc-100/75 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/75 size-5">
             <.dropdown
               id={"item-actions-#{item.record.id}"}

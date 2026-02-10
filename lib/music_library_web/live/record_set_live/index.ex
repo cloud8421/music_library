@@ -62,7 +62,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
   end
 
   defp apply_fallback_index(socket, params) do
-    if get_in(socket.assigns, [:streams, :record_sets]) == nil do
+    if socket.assigns[:record_sets] == nil do
       socket
       |> apply_action(:index, params)
     else
@@ -84,7 +84,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
     |> assign(:list_params, list_params)
     |> assign(:page_title, gettext("Record Sets"))
     |> assign(:record_set, nil)
-    |> stream(:record_sets, sets, reset: true)
+    |> assign(:record_sets, sets)
   end
 
   def back_path(list_params) do
@@ -98,29 +98,24 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
 
   @impl true
   def handle_info(
-        {MusicLibraryWeb.RecordSetLive.Form, {:created, record_set}},
+        {MusicLibraryWeb.RecordSetLive.Form, {:created, _record_set}},
         socket
       ) do
-    {:noreply,
-     socket
-     |> stream_insert(:record_sets, record_set, at: 0)
-     |> load_and_assign_sets(socket.assigns.list_params)}
+    {:noreply, load_and_assign_sets(socket, socket.assigns.list_params)}
   end
 
   def handle_info(
         {MusicLibraryWeb.RecordSetLive.Form, {:updated, record_set}},
         socket
       ) do
-    {:noreply, stream_insert(socket, :record_sets, record_set)}
+    {:noreply, update_record_set_in_list(socket, record_set)}
   end
 
   def handle_info(
         {MusicLibraryWeb.RecordSetLive.RecordPicker, {:added, record_set}},
         socket
       ) do
-    {:noreply,
-     socket
-     |> stream_insert(:record_sets, record_set)}
+    {:noreply, update_record_set_in_list(socket, record_set)}
   end
 
   @impl true
@@ -138,31 +133,44 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
     record_set = RecordSets.get_record_set!(id)
     {:ok, _} = RecordSets.delete_record_set(record_set)
 
-    {:noreply,
-     socket
-     |> stream_delete(:record_sets, record_set)
-     |> load_and_assign_sets(socket.assigns.list_params)}
+    {:noreply, load_and_assign_sets(socket, socket.assigns.list_params)}
   end
 
   def handle_event("remove_record", %{"set-id" => set_id, "record-id" => record_id}, socket) do
     record_set = RecordSets.get_record_set!(set_id)
     {:ok, updated_set} = RecordSets.remove_record_from_set(record_set, record_id)
 
-    {:noreply, stream_insert(socket, :record_sets, updated_set)}
+    {:noreply, update_record_set_in_list(socket, updated_set)}
   end
 
   def handle_event("move_up", %{"set-id" => set_id, "record-id" => record_id}, socket) do
     record_set = RecordSets.get_record_set!(set_id)
     {:ok, updated_set} = RecordSets.move_record_in_set(record_set, record_id, :up)
 
-    {:noreply, stream_insert(socket, :record_sets, updated_set)}
+    {:noreply, update_record_set_in_list(socket, updated_set)}
   end
 
   def handle_event("move_down", %{"set-id" => set_id, "record-id" => record_id}, socket) do
     record_set = RecordSets.get_record_set!(set_id)
     {:ok, updated_set} = RecordSets.move_record_in_set(record_set, record_id, :down)
 
-    {:noreply, stream_insert(socket, :record_sets, updated_set)}
+    {:noreply, update_record_set_in_list(socket, updated_set)}
+  end
+
+  def handle_event("reorder", %{"set_id" => set_id, "record_ids" => record_ids}, socket) do
+    record_set = RecordSets.get_record_set!(set_id)
+    {:ok, updated_set} = RecordSets.reorder_records_in_set(record_set, record_ids)
+
+    {:noreply, update_record_set_in_list(socket, updated_set)}
+  end
+
+  defp update_record_set_in_list(socket, updated_set) do
+    record_sets =
+      Enum.map(socket.assigns.record_sets, fn set ->
+        if set.id == updated_set.id, do: updated_set, else: set
+      end)
+
+    assign(socket, :record_sets, record_sets)
   end
 
   defp parse_order("alphabetical"), do: :alphabetical

@@ -76,6 +76,13 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
     {:noreply, assign(socket, :record_set, updated_set)}
   end
 
+  def handle_event("reorder", %{"record_ids" => record_ids}, socket) do
+    {:ok, updated_set} =
+      RecordSets.reorder_records_in_set(socket.assigns.record_set, record_ids)
+
+    {:noreply, assign(socket, :record_set, updated_set)}
+  end
+
   defp page_title(:show, record_set), do: record_set.name
   defp page_title(:edit, record_set), do: gettext("Edit") <> " · " <> record_set.name
   defp page_title(:add_record, record_set), do: gettext("Add Record") <> " · " <> record_set.name

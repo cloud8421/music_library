@@ -2,7 +2,8 @@
   "dependencies": {
     "barcode-detector": "^3.0.0",
     "canvas-confetti": "^1.9.3",
-    "live_toast": "file:../deps/live_toast"
+    "live_toast": "file:../deps/live_toast",
+    "sortablejs": "^1.15.6"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16"

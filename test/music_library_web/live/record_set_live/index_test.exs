@@ -119,6 +119,23 @@ defmodule MusicLibraryWeb.RecordSetLive.IndexTest do
     end
   end
 
+  describe "Drag-and-drop reorder" do
+    test "reorders records via reorder event", %{conn: conn} do
+      {set, [r1, r2, r3]} = record_set_with_records(3)
+
+      {:ok, view, _html} = live(conn, ~p"/record-sets")
+
+      render_hook(view, "reorder", %{
+        "set_id" => set.id,
+        "record_ids" => [r3.id, r1.id, r2.id]
+      })
+
+      updated = RecordSets.get_record_set!(set.id)
+      ids_in_order = Enum.map(updated.items, & &1.record.id)
+      assert ids_in_order == [r3.id, r1.id, r2.id]
+    end
+  end
+
   describe "Reorder records" do
     test "moves a record left (up)", %{conn: conn} do
       {set, [r1, r2 | _]} = record_set_with_records(3)

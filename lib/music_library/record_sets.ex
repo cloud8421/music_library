@@ -116,6 +116,22 @@ defmodule MusicLibrary.RecordSets do
     {:ok, get_record_set!(record_set.id)}
   end
 
+  def reorder_records_in_set(%RecordSet{} = record_set, ordered_record_ids)
+      when is_list(ordered_record_ids) do
+    Repo.transaction(fn ->
+      ordered_record_ids
+      |> Enum.with_index()
+      |> Enum.each(fn {record_id, position} ->
+        from(i in RecordSetItem,
+          where: i.record_set_id == ^record_set.id and i.record_id == ^record_id
+        )
+        |> Repo.update_all(set: [position: position])
+      end)
+    end)
+
+    {:ok, get_record_set!(record_set.id)}
+  end
+
   def move_record_in_set(%RecordSet{} = record_set, record_id, direction)
       when direction in [:up, :down] do
     items =

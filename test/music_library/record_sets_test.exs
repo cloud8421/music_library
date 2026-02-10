@@ -176,6 +176,26 @@ defmodule MusicLibrary.RecordSetsTest do
     end
   end
 
+  describe "reorder_records_in_set/2" do
+    test "reorders records according to the given order" do
+      {set, [r1, r2, r3]} = record_set_with_records(3)
+
+      {:ok, updated} = RecordSets.reorder_records_in_set(set, [r3.id, r1.id, r2.id])
+
+      ids_in_order = Enum.map(updated.items, & &1.record.id)
+      assert ids_in_order == [r3.id, r1.id, r2.id]
+    end
+
+    test "no-ops when order is unchanged" do
+      {set, [r1, r2, r3]} = record_set_with_records(3)
+
+      {:ok, updated} = RecordSets.reorder_records_in_set(set, [r1.id, r2.id, r3.id])
+
+      ids_in_order = Enum.map(updated.items, & &1.record.id)
+      assert ids_in_order == [r1.id, r2.id, r3.id]
+    end
+  end
+
   describe "move_record_in_set/3" do
     test "moves a record up" do
       {set, [r1, r2 | _]} = record_set_with_records(3)
