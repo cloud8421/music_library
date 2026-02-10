@@ -1,3 +1,7 @@
+# Project architecture
+
+[Project architecture](architecture.md)
+
 <!-- usage-rules-start -->
 <!-- usage-rules-header -->
 # Usage Rules
