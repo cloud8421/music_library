@@ -12,7 +12,8 @@ defmodule MusicLibrary.MixProject do
       aliases: aliases(),
       deps: deps(),
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
-      listeners: [Phoenix.CodeReloader]
+      listeners: [Phoenix.CodeReloader],
+      usage_rules: usage_rules()
     ]
   end
 
@@ -82,7 +83,7 @@ defmodule MusicLibrary.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:quokka, "~> 2.6", only: [:dev, :test], runtime: false},
       {:live_debugger, "~> 0.6.0", only: :dev},
-      {:usage_rules, "~> 0.1"},
+      {:usage_rules, "~> 1.0"},
       {:tidewave, "~> 0.5", only: :dev},
 
       # HTTP Clients
@@ -144,7 +145,7 @@ defmodule MusicLibrary.MixProject do
         "assets.setup",
         "cmd npm ci --prefix assets",
         "assets.build",
-        "usage_rules.sync AGENTS.md --all --inline usage_rules:all --link-to-folder deps --remove-missing --yes"
+        "usage_rules.sync"
       ],
       "ecto.setup": ["ecto.create", "ecto.migrate"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
@@ -169,6 +170,13 @@ defmodule MusicLibrary.MixProject do
         "esbuild music_library --minify",
         "phx.digest"
       ]
+    ]
+  end
+
+  defp usage_rules do
+    [
+      file: "AGENTS.md",
+      usage_rules: :all
     ]
   end
 end

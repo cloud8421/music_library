@@ -21,11 +21,7 @@ debug_msg "Updating mix dependencies"
 
 mix deps.update --all
 
-mix usage_rules.sync AGENTS.md --all \
-  --inline usage_rules:all \
-  --link-to-folder deps \
-  --remove-missing \
-  --yes
+mix usage_rules.sync
 
 debug_msg "Updating gh extensions"
 
