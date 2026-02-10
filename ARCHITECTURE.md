@@ -124,7 +124,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `LastFm` / `LastFm.API` | last.fm | Scrobbling, listening history, artist info |
 | `Discogs` / `Discogs.API` | discogs.com | Artist profiles, images |
 | `Wikipedia` / `Wikipedia.API` | wikipedia.org | Artist biographies |
-| `BraveSearch` / `BraveSearch.API` | search.brave.com | Cover art image search |
+| `BraveSearch` / `BraveSearch.API` | search.brave.com | Cover art and artist image search |
 | `OpenAI` / `OpenAI.API` | api.openai.com | Text embeddings for similarity |
 
 Each has a `Config` module reading from application env. In tests, all HTTP calls are
@@ -215,7 +215,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | Component | Used In | Purpose |
 |-----------|---------|---------|
 | `RecordForm` | Collection/Wishlist (edit) | Record editing: cover search, genre autocomplete, color picker, file upload |
-| `ArtistLive.Form` | ArtistLive.Show | Edit artist image/bio |
+| `ArtistLive.Form` | ArtistLive.Show | Edit artist image (upload + Brave image search) |
 | `RecordSetLive.Form` | RecordSetLive.Index | Create/edit record set |
 | `RecordSetLive.RecordPicker` | RecordSetLive.Show | Search and add records to set |
 | `ScrobbledTracksLive.Form` | ScrobbledTracksLive.Index | Edit scrobbled track |

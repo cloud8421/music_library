@@ -5,6 +5,7 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
 
   alias MusicLibrary.Artists
   alias MusicLibrary.Assets
+  alias MusicLibrary.Assets.Image
 
   @impl true
   def mount(socket) do
@@ -80,6 +81,86 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
             </div>
           </div>
         </div>
+        <div class="col-span-full space-y-4">
+          <.label>{gettext("Search for artist image online")}</.label>
+          <div class="flex gap-2">
+            <div class="flex-1">
+              <.input
+                type="text"
+                id="image-search-query"
+                name="image_search_query"
+                value={@image_search_query}
+                phx-keyup="update_image_search_query"
+                phx-target={@myself}
+              />
+            </div>
+            <.button
+              type="button"
+              size="sm"
+              id="image-search-button"
+              phx-click="search_images"
+              phx-target={@myself}
+              disabled={@image_search_loading}
+            >
+              <.icon
+                :if={@image_search_loading}
+                name="hero-arrow-path"
+                class="icon animate-spin"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+              <.icon
+                :if={!@image_search_loading}
+                name="hero-magnifying-glass"
+                class="icon"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+              {gettext("Search")}
+            </.button>
+          </div>
+          <p :if={@image_search_error} class="text-sm text-red-600 dark:text-red-400">
+            {@image_search_error}
+          </p>
+          <div
+            :if={@image_search_results != []}
+            id="image-search-results"
+            class="grid grid-cols-3 sm:grid-cols-4 gap-2"
+          >
+            <button
+              :for={result <- @image_search_results}
+              type="button"
+              phx-click="select_image"
+              phx-value-url={result.image_url}
+              phx-target={@myself}
+              disabled={@image_search_loading}
+              class={[
+                "group relative overflow-hidden rounded-md",
+                "border border-zinc-200 dark:border-zinc-700",
+                "hover:ring-2 hover:ring-indigo-500",
+                "focus:outline-none focus:ring-2 focus:ring-indigo-500",
+                "disabled:opacity-50 disabled:cursor-not-allowed"
+              ]}
+            >
+              <img
+                src={result.thumbnail_url}
+                alt={result.title}
+                class="aspect-square w-full object-cover"
+                loading="lazy"
+              />
+              <span
+                :if={result.width && result.height}
+                class={[
+                  "absolute bottom-0 inset-x-0",
+                  "bg-black/60 text-white text-xs text-center",
+                  "py-0.5"
+                ]}
+              >
+                {result.width}&times;{result.height}
+              </span>
+            </button>
+          </div>
+        </div>
         <:actions>
           <div class="w-full md:flex md:justify-center">
             <.button variant="solid" class="w-full md:w-auto" phx-disable-with={gettext("Saving...")}>
@@ -99,7 +180,11 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
      |> assign(assigns)
      |> assign_new(:form, fn ->
        to_form(Artists.change_artist_info(artist_info))
-     end)}
+     end)
+     |> assign_new(:image_search_query, fn -> "#{assigns.artist.name} artist" end)
+     |> assign_new(:image_search_results, fn -> [] end)
+     |> assign_new(:image_search_loading, fn -> false end)
+     |> assign_new(:image_search_error, fn -> nil end)}
   end
 
   @impl true
@@ -123,6 +208,89 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
 
   def handle_event("recover_form", params, socket) do
     handle_event("validate", params, socket)
+  end
+
+  def handle_event("update_image_search_query", %{"value" => query}, socket) do
+    {:noreply, assign(socket, :image_search_query, query)}
+  end
+
+  def handle_event("search_images", _params, socket) do
+    query = socket.assigns.image_search_query
+
+    {:noreply,
+     socket
+     |> assign(:image_search_loading, true)
+     |> assign(:image_search_error, nil)
+     |> start_async(:image_search, fn -> BraveSearch.search_images(query, count: 20) end)}
+  end
+
+  def handle_event("select_image", %{"url" => url}, socket) do
+    {:noreply,
+     socket
+     |> assign(:image_search_loading, true)
+     |> assign(:image_search_error, nil)
+     |> start_async(:image_download, fn ->
+       with {:ok, data} <- BraveSearch.download_image(url),
+            {:ok, resized} <- Image.resize(data),
+            {:ok, asset} <- Assets.store_image(%{content: resized, format: "image/jpeg"}) do
+         {:ok, asset.hash}
+       end
+     end)}
+  end
+
+  @impl true
+  def handle_async(:image_search, {:ok, {:ok, results}}, socket) do
+    {:noreply,
+     socket
+     |> assign(:image_search_results, results)
+     |> assign(:image_search_loading, false)}
+  end
+
+  def handle_async(:image_search, {:ok, {:error, reason}}, socket) do
+    {:noreply,
+     socket
+     |> assign(:image_search_error, "Search failed: #{inspect(reason)}")
+     |> assign(:image_search_loading, false)}
+  end
+
+  def handle_async(:image_search, {:exit, reason}, socket) do
+    {:noreply,
+     socket
+     |> assign(:image_search_error, "Search failed: #{inspect(reason)}")
+     |> assign(:image_search_loading, false)}
+  end
+
+  def handle_async(:image_download, {:ok, {:ok, image_hash}}, socket) do
+    case Artists.update_artist_info(socket.assigns.artist_info, %{"image_data_hash" => image_hash}) do
+      {:ok, artist_info} ->
+        notify_parent({:saved, artist_info})
+
+        {:noreply,
+         socket
+         |> assign(:image_search_loading, false)
+         |> put_toast(:info, gettext("Artist image updated successfully"))
+         |> push_patch(to: socket.assigns.patch)}
+
+      {:error, _changeset} ->
+        {:noreply,
+         socket
+         |> assign(:image_search_error, gettext("Failed to save artist image"))
+         |> assign(:image_search_loading, false)}
+    end
+  end
+
+  def handle_async(:image_download, {:ok, {:error, reason}}, socket) do
+    {:noreply,
+     socket
+     |> assign(:image_search_error, "Download failed: #{inspect(reason)}")
+     |> assign(:image_search_loading, false)}
+  end
+
+  def handle_async(:image_download, {:exit, reason}, socket) do
+    {:noreply,
+     socket
+     |> assign(:image_search_error, "Download failed: #{inspect(reason)}")
+     |> assign(:image_search_loading, false)}
   end
 
   defp save_artist_info(socket, artist_info_params, uploaded_images) do
