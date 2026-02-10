@@ -682,6 +682,7 @@ msgid "Oban"
 msgstr ""
 
 #: lib/music_library_web/components/record_form.ex
+#: lib/music_library_web/live/scrobble_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Release Date"
 msgstr ""
@@ -1423,6 +1424,7 @@ msgid "Release Groups"
 msgstr ""
 
 #: lib/music_library_web/live/scrobble_live/index.html.heex
+#: lib/music_library_web/live/scrobble_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "1 disc"
 msgid_plural "%{count} discs"
@@ -1432,26 +1434,6 @@ msgstr[1] ""
 #: lib/music_library_web/live/scrobble_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Releases for \"%{title}\""
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.html.heex
-#, elixir-autogen, elixir-format
-msgid "Barcode:"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.html.heex
-#, elixir-autogen, elixir-format
-msgid "Catalog Number:"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.html.heex
-#, elixir-autogen, elixir-format
-msgid "Country:"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.html.heex
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Release Date:"
 msgstr ""
 
 #: lib/music_library_web/live/scrobble_live/show.html.heex
@@ -1908,4 +1890,59 @@ msgstr ""
 #: lib/music_library_web/live/artist_live/form.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Search for artist image online"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/index.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Back"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Back to search"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Barcode"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Catalog Number"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Country"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Last.fm not connected"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/index.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Loading releases..."
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Media"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "No release groups found for \"%{query}\""
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/index.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Searching..."
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/index.html.heex
+#, elixir-autogen, elixir-format
+msgid "Try a different search term or check the spelling"
 msgstr ""

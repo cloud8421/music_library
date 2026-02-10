@@ -29,16 +29,16 @@
                 onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
               />
               <div class="min-w-0 flex-auto">
-                <h1 class="truncate text-sm leading-6 text-zinc-700 dark:text-zinc-400">
+                <p class="truncate text-sm leading-6 text-zinc-700 dark:text-zinc-400">
                   {release_group.artists}
-                </h1>
-                <h2 class="truncate mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+                </p>
+                <p class="truncate mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
                   {release_group.title}
-                </h2>
-                <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-                  {Records.Record.format_release_date(release_group.release_date)} · {type_label(
-                    release_group.type
-                  )}
+                </p>
+                <p class="mt-1 flex items-center gap-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+                  {Records.Record.format_release_date(release_group.release_date)}
+                  <span>&middot;</span>
+                  <.badge variant="soft" size="xs">{type_label(release_group.type)}</.badge>
                 </p>
               </div>
             </div>
@@ -55,69 +55,57 @@
             size="sm"
             phx-click="clear_selection"
           >
-            <.icon name="hero-arrow-left" class="h-4 w-4" />
+            <.icon name="hero-arrow-left" class="icon" aria-hidden="true" data-slot="icon" />
+            {gettext("Back")}
           </.button>
           <h3 class="text-lg font-semibold">
             {gettext("Releases for \"%{title}\"", title: @selected_release_group.title)}
           </h3>
         </div>
 
-        <div class="grid gap-3">
-          <%= for release <- @releases do %>
-            <div class="bg-white dark:bg-zinc-800 shadow rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-              <.link
-                navigate={~p"/scrobble/#{release.id}"}
-                class="block p-4"
-              >
-                <div class="flex justify-start">
-                  <div>
-                    <img
-                      class="w-20 flex-none rounded-lg mr-4"
-                      alt={release.title}
-                      src={Release.thumb_url(release)}
-                      onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
-                    />
-                  </div>
-                  <div>
-                    <h4 class="font-medium text-gray-900 dark:text-gray-100">
-                      {release.title}
-                    </h4>
-                    <div class="text-sm text-gray-600 dark:text-gray-400 mt-1 space-y-1">
-                      <%= if release.date do %>
-                        <p>Released: {release.date}</p>
-                      <% end %>
-                      <%= if release.country do %>
-                        <p>Country: {release.country}</p>
-                      <% end %>
-                      <%= if release.barcode do %>
-                        <p>Barcode: {release.barcode}</p>
-                      <% end %>
-                      <%= if release.catalog_number do %>
-                        <p>Catalog: {release.catalog_number}</p>
-                      <% end %>
-                      <%= if release.media != [] do %>
-                        <p>
-                          {ngettext("1 disc", "%{count} discs", Release.media_count(release))}
-                        </p>
-                      <% end %>
-                    </div>
-                  </div>
+        <ul class="divide-y divide-zinc-100 dark:divide-slate-300/30">
+          <li :for={release <- @releases}>
+            <.link
+              navigate={~p"/scrobble/#{release.id}"}
+              class="flex items-center gap-x-4 py-5 px-4 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
+            >
+              <img
+                class="w-20 flex-none rounded-lg"
+                alt={release.title}
+                src={Release.thumb_url(release)}
+                onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
+              />
+              <div class="min-w-0 flex-auto">
+                <p class="font-medium text-zinc-900 dark:text-zinc-100">
+                  {release.title}
+                </p>
+                <div class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-zinc-500 dark:text-zinc-400">
+                  <span :if={release.date}>{release.date}</span>
+                  <span :if={release.country}>
+                    {country_label(release.country)}
+                  </span>
+                  <.badge :if={release.catalog_number} variant="soft" size="xs">
+                    {release.catalog_number}
+                  </.badge>
+                  <span :if={release.media != []}>
+                    {ngettext("1 disc", "%{count} discs", Release.media_count(release))}
+                  </span>
                 </div>
-              </.link>
-            </div>
-          <% end %>
-        </div>
+              </div>
+            </.link>
+          </li>
+        </ul>
       </div>
     <% end %>
 
     <%= if @loading && @search_query != "" do %>
       <div class="text-center py-8">
-        <.icon name="hero-arrow-path" class="h-8 w-8 animate-spin mx-auto text-gray-400" />
-        <p class="text-gray-600 dark:text-gray-400 mt-2">
+        <.loading class="size-8 mx-auto text-zinc-400" />
+        <p class="text-zinc-600 dark:text-zinc-400 mt-2">
           <%= if @selected_release_group do %>
-            Loading releases...
+            {gettext("Loading releases...")}
           <% else %>
-            Searching...
+            {gettext("Searching...")}
           <% end %>
         </p>
       </div>
@@ -127,13 +115,13 @@
       <div class="text-center py-8">
         <.icon
           name="hero-magnifying-glass"
-          class="h-12 w-12 mx-auto text-gray-300 dark:text-gray-600"
+          class="h-12 w-12 mx-auto text-zinc-300 dark:text-zinc-600"
         />
-        <p class="text-gray-600 dark:text-gray-400 mt-3">
-          No release groups found for "{@search_query}"
+        <p class="text-zinc-600 dark:text-zinc-400 mt-3">
+          {gettext("No release groups found for \"%{query}\"", query: @search_query)}
         </p>
-        <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">
-          Try a different search term or check the spelling
+        <p class="text-sm text-zinc-500 dark:text-zinc-500 mt-1">
+          {gettext("Try a different search term or check the spelling")}
         </p>
       </div>
     <% end %>

@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
   use MusicLibraryWeb, :live_view
 
   import(MusicLibraryWeb.Components.Release, only: [medium: 1, scrobble_button_label: 1])
+  import MusicLibraryWeb.RecordComponents, only: [country_label: 1]
 
   alias MusicLibrary.ScrobbleActivity
 

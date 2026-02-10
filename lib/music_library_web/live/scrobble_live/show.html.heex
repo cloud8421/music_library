@@ -1,107 +1,92 @@
 <Layouts.app flash={@flash} current_section={:scrobble} socket={@socket}>
   <div>
-    <div class="space-y-6">
-      <div class="flex items-center gap-4">
-        <div class="min-w-0 flex-1"></div>
-      </div>
+    <.alert
+      :if={not @can_scrobble}
+      color="warning"
+      title={gettext("Last.fm not connected")}
+      hide_close
+    >
+      {gettext(
+        "You need to connect your Last.fm account to scrobble. Please set up your Last.fm session key in the settings."
+      )}
+    </.alert>
 
-      <div
-        :if={not @can_scrobble}
-        class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4"
-      >
-        <div class="flex">
-          <.icon name="hero-exclamation-triangle" class="h-5 w-5 text-yellow-400" />
-          <div class="ml-3">
-            <p class="text-sm text-yellow-800 dark:text-yellow-200">
-              {gettext(
-                "You need to connect your Last.fm account to scrobble. Please set up your Last.fm session key in the settings."
-              )}
-            </p>
-          </div>
-        </div>
-      </div>
+    <div class="mt-2 mb-4">
+      <.button variant="ghost" size="sm" navigate={~p"/scrobble"}>
+        <.icon name="hero-arrow-left" class="icon" aria-hidden="true" data-slot="icon" />
+        {gettext("Back to search")}
+      </.button>
+    </div>
 
-      <div class="bg-white dark:bg-zinc-800 shadow rounded-lg">
-        <div class="p-6">
-          <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
-            {@release.title}
-          </h1>
-          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            <span :if={@release.artists != []}>
-              by {@release.artists |> Enum.map(& &1.name) |> Enum.join(", ")}
-            </span>
-            <span :if={@release.date}>
-              {@release.date}
-            </span>
-          </p>
-          <div class="flex gap-6 mt-4">
-            <div class="flex-shrink-0">
-              <img
-                src={MusicBrainz.Release.thumb_url(@release)}
-                alt={"Cover art for #{@release.title}"}
-                class="w-32 h-32 object-cover rounded-lg shadow-sm"
-                loading="lazy"
-              />
-            </div>
-            <div class="flex-1">
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                <div :if={@release.date}>
-                  <span class="font-medium text-gray-600 dark:text-gray-400">
-                    {gettext("Release Date:")}
-                  </span>
-                  <br />{@release.date}
-                </div>
-                <div :if={@release.country}>
-                  <span class="font-medium text-gray-600 dark:text-gray-400">
-                    {gettext("Country:")}
-                  </span>
-                  <br />{@release.country}
-                </div>
-                <div :if={@release.barcode}>
-                  <span class="font-medium text-gray-600 dark:text-gray-400">
-                    {gettext("Barcode:")}
-                  </span>
-                  <br />{@release.barcode}
-                </div>
-                <div :if={@release.catalog_number}>
-                  <span class="font-medium text-gray-600 dark:text-gray-400">
-                    {gettext("Catalog Number:")}
-                  </span>
-                  <br />{@release.catalog_number}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div :if={@release.media != []} class="mt-6 space-y-4">
-        <div class="flex justify-between items-center">
-          <h3 class="text-lg font-semibold mb-4">{gettext("Tracks")}</h3>
-
-          <.button
-            :if={@can_scrobble}
-            phx-click={
-              if MapSet.size(@selected_tracks) > 0,
-                do: "scrobble_selected_tracks",
-                else: "scrobble_release"
-            }
-            size="sm"
-          >
-            {scrobble_button_label(@selected_tracks)}
-          </.button>
-        </div>
-
-        <.medium
-          :for={medium <- @release.media}
-          can_scrobble?={@can_scrobble}
-          already_scrobbled={false}
-          medium={medium}
-          release_artists={@release.artists}
-          selected_tracks={@selected_tracks}
-          media_count={MusicBrainz.Release.media_count(@release)}
-          myself={nil}
+    <div class="md:flex mt-4 px-4 md:gap-x-4">
+      <div class="drop-shadow-sm md:max-w-152 lg:min-w-152">
+        <img
+          src={MusicBrainz.Release.thumb_url(@release)}
+          alt={"Cover art for #{@release.title}"}
+          class="w-full rounded-lg drop-shadow-sm"
+          loading="lazy"
+          onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
         />
+      </div>
+
+      <div class="grow">
+        <div class="mt-4 md:mt-0 flex justify-between items-center">
+          <h1 :if={@release.artists != []} class="text-base font-medium leading-6 text-zinc-700">
+            {@release.artists |> Enum.map(& &1.name) |> Enum.join(", ")}
+          </h1>
+        </div>
+        <h2 class="mt-1 flex font-semibold text-lg md:text-2xl text-zinc-700 dark:text-zinc-300 text-wrap">
+          {@release.title}
+        </h2>
+
+        <div class="mt-4 md:mt-8">
+          <dl class="divide-y divide-zinc-100 dark:divide-slate-300/30">
+            <.dl_row :if={@release.date} label={gettext("Release Date")}>
+              {@release.date}
+            </.dl_row>
+            <.dl_row :if={@release.country} label={gettext("Country")}>
+              {country_label(@release.country)} {@release.country}
+            </.dl_row>
+            <.dl_row :if={@release.barcode} label={gettext("Barcode")}>
+              <code>{@release.barcode}</code>
+            </.dl_row>
+            <.dl_row :if={@release.catalog_number} label={gettext("Catalog Number")}>
+              <code>{@release.catalog_number}</code>
+            </.dl_row>
+            <.dl_row :if={@release.media != []} label={gettext("Media")}>
+              {ngettext("1 disc", "%{count} discs", MusicBrainz.Release.media_count(@release))}
+            </.dl_row>
+          </dl>
+        </div>
+
+        <div :if={@release.media != []} class="mt-6 space-y-4">
+          <div class="flex justify-between items-center">
+            <h3 class="text-lg font-semibold">{gettext("Tracks")}</h3>
+
+            <.button
+              :if={@can_scrobble}
+              phx-click={
+                if MapSet.size(@selected_tracks) > 0,
+                  do: "scrobble_selected_tracks",
+                  else: "scrobble_release"
+              }
+              size="sm"
+            >
+              {scrobble_button_label(@selected_tracks)}
+            </.button>
+          </div>
+
+          <.medium
+            :for={medium <- @release.media}
+            can_scrobble?={@can_scrobble}
+            already_scrobbled={false}
+            medium={medium}
+            release_artists={@release.artists}
+            selected_tracks={@selected_tracks}
+            media_count={MusicBrainz.Release.media_count(@release)}
+            myself={nil}
+          />
+        </div>
       </div>
     </div>
   </div>
