@@ -1,9 +1,9 @@
 defmodule MusicLibraryWeb.RecordSetLive.Show do
   use MusicLibraryWeb, :live_view
 
-  import MusicLibraryWeb.RecordComponents, only: [artist_links: 1]
+  import MusicLibraryWeb.RecordComponents, only: [artist_links: 1, type_label: 1, format_label: 1]
 
-  alias MusicLibrary.RecordSets
+  alias MusicLibrary.{Records, RecordSets}
   alias MusicLibrary.RecordSets.RecordSet
   alias MusicLibraryWeb.Markdown
   alias Phoenix.LiveView.JS
