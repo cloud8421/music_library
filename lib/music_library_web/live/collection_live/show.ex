@@ -15,8 +15,9 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
       similar_records: 1
     ]
 
-  alias MusicLibrary.{Records, ScrobbleActivity}
+  alias MusicLibrary.{Records, RecordSets, ScrobbleActivity}
   alias MusicLibrary.Records.Similarity
+  alias MusicLibrary.RecordSets.RecordSet
   alias Phoenix.LiveView.JS
 
   @impl true
@@ -45,12 +46,15 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
         socket
       end
 
+    record_sets = RecordSets.list_record_sets_for_record(record.id)
+
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, record))
      |> assign(:record, record)
      |> assign(:last_listened_track, last_listened_track)
      |> assign(:play_count, play_count)
+     |> assign(:record_sets, record_sets)
      |> assign_embedding_text()
      |> assign_similar_records()}
   end

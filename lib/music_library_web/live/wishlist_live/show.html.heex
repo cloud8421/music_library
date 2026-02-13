@@ -224,6 +224,24 @@
               </li>
             </ul>
           </.dl_row>
+          <.dl_row :if={@record_sets != []} label={gettext("Record sets")}>
+            <ul>
+              <li :for={record_set <- @record_sets} class="flex items-baseline gap-2">
+                <.link
+                  navigate={~p"/record-sets/#{record_set}"}
+                  class="text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300 hover:underline"
+                >
+                  {record_set.name}
+                </.link>
+                <span class="text-xs text-zinc-500 dark:text-zinc-400">
+                  {gettext(
+                    "%{collected}/%{total} collected",
+                    RecordSet.count_by_status(record_set)
+                  )}
+                </span>
+              </li>
+            </ul>
+          </.dl_row>
           <.dl_row label={gettext("Inserted at")}>
             {Records.Record.format_as_date(@record.inserted_at)}
           </.dl_row>

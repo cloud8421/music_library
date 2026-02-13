@@ -167,6 +167,17 @@ defmodule MusicLibrary.RecordSets do
     {:ok, get_record_set!(record_set.id)}
   end
 
+  def list_record_sets_for_record(record_id) do
+    from(rs in RecordSet,
+      join: i in RecordSetItem,
+      on: i.record_set_id == rs.id,
+      where: i.record_id == ^record_id,
+      order_by: [asc: rs.name],
+      preload: [items: :record]
+    )
+    |> Repo.all()
+  end
+
   defp record_sets_search_query(""), do: from(rs in RecordSet)
 
   defp record_sets_search_query(query) do

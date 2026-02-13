@@ -1946,3 +1946,15 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Try a different search term or check the spelling"
 msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/wishlist_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "%{collected}/%{total} collected"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/wishlist_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Record sets"
+msgstr ""

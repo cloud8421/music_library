@@ -13,7 +13,8 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
     ]
 
   alias MusicLibrary.OnlineStoreTemplates
-  alias MusicLibrary.Records
+  alias MusicLibrary.{Records, RecordSets}
+  alias MusicLibrary.RecordSets.RecordSet
 
   @impl true
   def mount(%{"id" => record_id}, _session, socket) do
@@ -34,11 +35,14 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
     record = Records.get_record!(id)
     online_store_templates = OnlineStoreTemplates.list_enabled_templates()
 
+    record_sets = RecordSets.list_record_sets_for_record(record.id)
+
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, record))
      |> assign(:record, record)
-     |> assign(:online_store_templates, online_store_templates)}
+     |> assign(:online_store_templates, online_store_templates)
+     |> assign(:record_sets, record_sets)}
   end
 
   @impl true
