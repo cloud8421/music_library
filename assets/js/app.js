@@ -30,6 +30,7 @@ import SortableListHook from "./hooks/sortable-list";
 import confetti from "canvas-confetti";
 import { createLiveToastHook } from "live_toast";
 import banner from "./banner";
+import initPullToSearch from "./pull-to-search";
 
 let Hooks = FluxonHooks;
 Hooks.FormatNumber = FormatNumberHook;
@@ -151,3 +152,4 @@ window.enableLiveViewChangeObserver = () => {
 };
 
 banner();
+initPullToSearch();

@@ -16,9 +16,47 @@
 @custom-variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
 
 @layer base {
+  html, body {
+    overscroll-behavior-y: contain;
+  }
+
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
+  }
+
+  /* Pull-to-search indicator */
+  .ptr--ptr {
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  .ptr--box {
+    display: flex;
+    justify-content: center;
+    padding: 8px 0;
+  }
+
+  .ptr--icon,
+  .ptr--text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ptr--text {
+    display: none;
+  }
+
+  .ptr-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--color-zinc-400);
+    transition: color 0.2s ease;
+  }
+
+  .ptr--release .ptr-icon {
+    color: var(--color-zinc-700);
   }
 }
 
