@@ -3,7 +3,6 @@
     "barcode-detector": "^3.0.0",
     "canvas-confetti": "^1.9.3",
     "live_toast": "file:../deps/live_toast",
-    "pulltorefreshjs": "^0.1.22",
     "sortablejs": "^1.15.6"
   },
   "devDependencies": {
