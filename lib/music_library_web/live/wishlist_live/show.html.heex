@@ -144,11 +144,14 @@
         </h2>
         <p class="flex items-center mt-2 text-sm text-zinc-500 dark:text-zinc-400">
           <.record_colors record={@record} />
-          {Records.Record.format_release_date(@record.release_date)}
-          <span :if={@current_date && !Records.Record.released?(@record, @current_date)}>
-            ({gettext("Unreleased")})
+
+          <span class="ml-1">
+            {Records.Record.format_release_date(@record.release_date)}
+            <span :if={@current_date && !Records.Record.released?(@record, @current_date)}>
+              ({gettext("Unreleased")})
+            </span>
+            · {format_label(@record.format)} · {type_label(@record.type)}
           </span>
-          · {format_label(@record.format)} · {type_label(@record.type)}
         </p>
       </div>
 
