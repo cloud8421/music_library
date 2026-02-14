@@ -118,7 +118,7 @@
             data-sortable-item
             data-record-id={item.record.id}
             class={[
-              "flex-none w-24 sm:w-32 group relative",
+              "flex-none w-32 group relative",
               is_nil(item.record.purchased_at) &&
                 "opacity-60 dark:opacity-40 hover:opacity-100 transition-opacity"
             ]}
@@ -145,7 +145,7 @@
             </.link>
             <div
               data-sortable-handle
-              class="absolute top-1 left-1 flex items-center justify-center rounded-full bg-zinc-100/50 hover:bg-zinc-100/75 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/75 size-5 cursor-grab active:cursor-grabbing"
+              class="absolute top-1 left-1 flex items-center justify-center rounded-full bg-zinc-100/50 hover:bg-zinc-100/75 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/75 size-8 sm:size-5 cursor-grab active:cursor-grabbing"
             >
               <.icon
                 name="hero-bars-2"
@@ -197,10 +197,10 @@
                 </.dropdown_button>
               </.dropdown>
             </div>
-            <h1 class="mt-1 text-xs sm:text-sm leading-6 text-zinc-700">
-              <.artist_links joinphrase_class="text-xs" artists={item.record.artists} />
+            <h1 class="mt-1 text-sm sm:text-sm leading-6 text-zinc-700">
+              <.artist_links joinphrase_class="text-sm" artists={item.record.artists} />
             </h1>
-            <h2 class="flex font-semibold text-xs sm:text-sm leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+            <h2 class="flex font-semibold text-sm sm:text-sm leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
               {item.record.title}
             </h2>
             <p class="pointer-events-none block text-sm font-medium text-zinc-500">
