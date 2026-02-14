@@ -1958,3 +1958,8 @@ msgstr ""
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Record sets"
 msgstr ""
+
+#: lib/music_library_web/components/release.ex
+#, elixir-autogen, elixir-format
+msgid "Retry"
+msgstr ""

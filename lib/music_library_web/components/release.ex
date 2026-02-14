@@ -26,8 +26,8 @@ defmodule MusicLibraryWeb.Components.Release do
      socket
      |> assign(assigns)
      |> assign_async(:release_with_tracks, fn ->
-       with {:ok, release} <- MusicBrainz.get_release(record.selected_release_id) do
-         {:ok, %{release_with_tracks: MusicBrainz.Release.from_api_response(release)}}
+       with {:ok, release} <- load_release_with_tracks(record.selected_release_id) do
+         {:ok, %{release_with_tracks: release}}
        end
      end)}
   end
@@ -104,6 +104,14 @@ defmodule MusicLibraryWeb.Components.Release do
                   data-slot="icon"
                 />
                 {gettext("Error loading tracks")}
+                <.button
+                  variant="ghost"
+                  size="xs"
+                  phx-click={JS.push("load_release_tracks", target: @myself)}
+                  class="ml-2  cursor-pointer"
+                >
+                  {gettext("Retry")}
+                </.button>
               </div>
             </:failed>
             <.medium
@@ -375,6 +383,24 @@ defmodule MusicLibraryWeb.Components.Release do
   def handle_event("scrobble_selected_tracks", _params, socket) do
     put_toast!(:error, gettext("Error scrobbling selected tracks"))
     {:noreply, socket}
+  end
+
+  def handle_event("load_release_tracks", _params, socket) do
+    selected_release_id = socket.assigns.record.selected_release_id
+
+    {:noreply,
+     socket
+     |> assign_async(:release_with_tracks, fn ->
+       with {:ok, release} <- load_release_with_tracks(selected_release_id) do
+         {:ok, %{release_with_tracks: release}}
+       end
+     end)}
+  end
+
+  defp load_release_with_tracks(release_id) do
+    with {:ok, release} <- MusicBrainz.get_release(release_id) do
+      {:ok, MusicBrainz.Release.from_api_response(release)}
+    end
   end
 
   defp medium_selected?(medium, selected_tracks) do
