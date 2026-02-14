@@ -95,7 +95,9 @@ config :music_library, Oban,
        # every day at 3 am,
        {"0 3 * * *", MusicLibrary.Worker.RepoVacuum},
        # every day at 4 am,
-       {"0 4 * * *", MusicLibrary.Worker.RepoOptimize}
+       {"0 4 * * *", MusicLibrary.Worker.RepoOptimize},
+       # every first day of the month at 6 am,
+       {"0 6 1 * *", MusicLibrary.Worker.RecordRefreshAllMusicBrainzData}
      ]}
   ]
 
