@@ -445,11 +445,11 @@ defmodule MusicLibraryWeb.RecordComponents do
 
   def record_colors(assigns) do
     ~H"""
-    <span class="flex items-center">
+    <span class="inline-flex items-end gap-[2px] w-[22px] h-[14px]">
       <span
-        :for={color <- @record.dominant_colors}
-        class="inline-block w-4 h-4 mr-1"
-        style={"background-color: #{color}"}
+        :for={{color, i} <- Enum.with_index(@record.dominant_colors)}
+        class="w-[3px] rounded-sm animate-equalizer-bar"
+        style={"background-color: #{color}; animation-delay: #{i * -0.45}s"}
       >
       </span>
     </span>
