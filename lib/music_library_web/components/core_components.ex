@@ -152,7 +152,10 @@ defmodule MusicLibraryWeb.CoreComponents do
 
   def external_links(assigns) do
     ~H"""
-    <details class="mt-4 text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300">
+    <details
+      :if={@external_links != []}
+      class="mt-4 text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
+    >
       <summary class="text-xs sm:text-sm font-medium cursor-pointer">
         {gettext("External Links")}
       </summary>
