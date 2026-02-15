@@ -352,26 +352,21 @@ defmodule MusicLibrary.ScrobbleActivity do
   @doc """
   Gets the top artists by scrobble count across all time.
   Returns a list of maps with artist information and play counts.
-
-  For a lot of artists, Last.fm doesn't have the correct artist musicbrainz_id
-  (often it's a ""), which makes this query not work as expected at the JOIN
-  level. To fix that, we need to update the data via Scrobble Rules.
   """
   def get_top_artists(opts) do
     limit = Keyword.get(opts, :limit, 10)
 
     query =
       from t in Track,
-        join: ai in Artists.ArtistInfo,
+        left_join: ai in Artists.ArtistInfo,
         on: ai.id == fragment("json_extract(?, '$.musicbrainz_id')", t.artist),
         group_by: [
-          fragment("json_extract(artist, '$.name')"),
-          fragment("json_extract(artist, '$.musicbrainz_id')")
+          fragment("json_extract(artist, '$.name')")
         ],
         select: %{
           name: fragment("json_extract(artist, '$.name')"),
-          musicbrainz_id: fragment("json_extract(artist, '$.musicbrainz_id')"),
-          image_hash: ai.image_data_hash,
+          musicbrainz_id: max(fragment("json_extract(artist, '$.musicbrainz_id')")),
+          image_hash: max(ai.image_data_hash),
           play_count: count(t.scrobbled_at_uts, :distinct)
         },
         order_by: [desc: count(t.scrobbled_at_uts, :distinct)],
@@ -383,10 +378,6 @@ defmodule MusicLibrary.ScrobbleActivity do
   @doc """
   Gets the top artists by scrobble count for the given number of days.
   Returns a list of maps with artist information and play counts.
-
-  For a lot of artists, Last.fm doesn't have the correct artist musicbrainz_id
-  (often it's a ""), which makes this query not work as expected at the JOIN
-  level. To fix that, we need to update the data via Scrobble Rules.
   """
   def get_top_artists_by_days(days, opts) do
     limit = Keyword.get(opts, :limit, 10)
@@ -402,17 +393,16 @@ defmodule MusicLibrary.ScrobbleActivity do
 
     query =
       from t in Track,
-        join: ai in Artists.ArtistInfo,
+        left_join: ai in Artists.ArtistInfo,
         on: ai.id == fragment("json_extract(?, '$.musicbrainz_id')", t.artist),
         where: t.scrobbled_at_uts >= ^cutoff_timestamp,
         group_by: [
-          fragment("json_extract(artist, '$.name')"),
-          fragment("json_extract(artist, '$.musicbrainz_id')")
+          fragment("json_extract(artist, '$.name')")
         ],
         select: %{
           name: fragment("json_extract(artist, '$.name')"),
-          musicbrainz_id: fragment("json_extract(artist, '$.musicbrainz_id')"),
-          image_hash: ai.image_data_hash,
+          musicbrainz_id: max(fragment("json_extract(artist, '$.musicbrainz_id')")),
+          image_hash: max(ai.image_data_hash),
           play_count: count(t.scrobbled_at_uts, :distinct)
         },
         order_by: [desc: count(t.scrobbled_at_uts, :distinct)],
