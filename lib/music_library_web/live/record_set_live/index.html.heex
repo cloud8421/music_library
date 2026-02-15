@@ -74,7 +74,7 @@
           <div class="flex items-center gap-2">
             <.dropdown id={"set-actions-#{record_set.id}"} placement="bottom-end">
               <:toggle>
-                <.button variant="ghost">
+                <.button variant="soft">
                   <span class="sr-only">{gettext("Actions")}</span>
                   <.icon
                     name="hero-ellipsis-vertical"
@@ -108,7 +108,7 @@
         </div>
 
         <div
-          class="flex flex-wrap items-start gap-3 md:overflow-x-auto pb-2"
+          class="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12 gap-3 pb-2"
           id={"record-set-#{record_set.id}-items"}
           phx-hook="SortableList"
           data-set-id={record_set.id}
@@ -118,7 +118,7 @@
             data-sortable-item
             data-record-id={item.record.id}
             class={[
-              "flex-none w-32 group relative",
+              "flex-none group relative",
               is_nil(item.record.purchased_at) &&
                 "opacity-60 dark:opacity-40 hover:opacity-100 transition-opacity"
             ]}
@@ -220,7 +220,7 @@
           <.link
             patch={~p"/record-sets/#{record_set}/add-record"}
             class={[
-              "flex-none w-32 aspect-square",
+              "flex-none aspect-square",
               "border-2 border-dashed border-zinc-300 dark:border-zinc-600",
               "rounded-lg flex items-center justify-center",
               "hover:border-zinc-400 dark:hover:border-zinc-500",
