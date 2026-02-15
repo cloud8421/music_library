@@ -229,7 +229,7 @@ defmodule MusicLibrary.Records.Record do
       "title" => release_group["title"],
       "artists" => artists_attrs,
       "release_date" => release_group["first-release-date"],
-      "type" => parse_subtype(release_group["primary-type"]),
+      "type" => parse_subtype(release_group["primary-type"], release_group["secondary-types"]),
       "genres" => Enum.map(release_group["genres"], fn g -> g["name"] end),
       "release_ids" => Enum.map(release_group["releases"], fn r -> r["id"] end),
       "cover_url" => "https://coverartarchive.org/release-group/#{musicbrainz_id}/front"
@@ -250,12 +250,18 @@ defmodule MusicLibrary.Records.Record do
     end)
   end
 
-  defp parse_subtype("Album"), do: :album
-  defp parse_subtype("EP"), do: :ep
-  defp parse_subtype("Live"), do: :live
-  defp parse_subtype("Compilation"), do: :compilation
-  defp parse_subtype("Single"), do: :single
-  defp parse_subtype(_), do: :other
+  defp parse_subtype("Album", secondary_types), do: parse_secondary_types(secondary_types)
+  defp parse_subtype("EP", _secondary_types), do: :ep
+  defp parse_subtype("Single", _secondary_types), do: :single
+  defp parse_subtype(_primary_type, _secondary_types), do: :other
+
+  defp parse_secondary_types(secondary_types) do
+    cond do
+      "Live" in secondary_types -> :live
+      "Compilation" in secondary_types -> :compilation
+      true -> :album
+    end
+  end
 
   @doc """
   Format a release date in a conventional format.
