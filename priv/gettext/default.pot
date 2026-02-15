@@ -1686,7 +1686,6 @@ msgstr ""
 
 #: lib/music_library_web/live/record_set_live/index.ex
 #: lib/music_library_web/live/record_set_live/show.ex
-#: lib/music_library_web/live/record_set_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Add Record"
 msgstr ""
@@ -1800,11 +1799,6 @@ msgstr ""
 #: lib/music_library_web/live/record_set_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Updated"
-msgstr ""
-
-#: lib/music_library_web/live/record_set_live/show.html.heex
-#, elixir-autogen, elixir-format
-msgid "No records in this set yet"
 msgstr ""
 
 #: lib/music_library_web/components/record_form.ex

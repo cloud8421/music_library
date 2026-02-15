@@ -32,12 +32,12 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
       |> assert_has("h2", text: escape(r2.title))
     end
 
-    test "shows empty state when set has no records", %{conn: conn} do
+    test "shows add record tile when set has no records", %{conn: conn} do
       set = record_set()
 
       conn
       |> visit(~p"/record-sets/#{set}")
-      |> assert_has("p", text: "No records in this set yet")
+      |> assert_has("a[href*='add-record']")
     end
 
     test "renders markdown description as HTML", %{conn: conn} do

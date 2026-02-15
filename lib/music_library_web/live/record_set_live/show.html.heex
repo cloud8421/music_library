@@ -10,14 +10,6 @@
         </span>
       </div>
       <div class="flex items-center gap-2">
-        <.button
-          variant="solid"
-          size="sm"
-          patch={~p"/record-sets/#{@record_set}/show/add-record"}
-        >
-          <.icon name="hero-plus" class="icon" aria-hidden="true" data-slot="icon" />
-          {gettext("Add Record")}
-        </.button>
         <.dropdown id="set-actions" placement="bottom-end">
           <:toggle>
             <.button variant="ghost">
@@ -59,18 +51,6 @@
 
     <div class="mt-6">
       <div
-        :if={@record_set.items == []}
-        id="no-records"
-        class="p-8 text-center bg-zinc-50 dark:bg-zinc-800 rounded-lg"
-      >
-        <.icon name="hero-musical-note" class="h-12 w-12 text-zinc-400 mx-auto mb-4" />
-        <p class="text-zinc-600 dark:text-zinc-400">
-          {gettext("No records in this set yet")}
-        </p>
-      </div>
-
-      <div
-        :if={@record_set.items != []}
         class="grid grid-cols-3 sm:grid-cols-6 gap-4"
         id="record-set-records"
         phx-hook="SortableList"
@@ -176,6 +156,24 @@
             {Records.Record.format_release_date(item.record.release_date)}
           </p>
         </div>
+        <.link
+          patch={~p"/record-sets/#{@record_set}/show/add-record"}
+          class={[
+            "aspect-square",
+            "border-2 border-dashed border-zinc-300 dark:border-zinc-600",
+            "rounded-lg flex items-center justify-center",
+            "hover:border-zinc-400 dark:hover:border-zinc-500",
+            "hover:bg-zinc-50 dark:hover:bg-zinc-800",
+            "transition-colors cursor-pointer"
+          ]}
+        >
+          <.icon
+            name="hero-plus"
+            class="h-8 w-8 text-zinc-400 dark:text-zinc-500"
+            aria-hidden="true"
+            data-slot="icon"
+          />
+        </.link>
       </div>
     </div>
   </div>
