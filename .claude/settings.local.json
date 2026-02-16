@@ -40,7 +40,8 @@
       "Bash(MIX_ENV=test mix ecto.migrate:*)",
       "WebFetch(domain:api-dashboard.search.brave.com)",
       "WebFetch(domain:api.search.brave.com)",
-      "Bash(while read dir)"
+      "Bash(while read dir)",
+      "Bash(MIX_ENV=dev mix run:*)"
     ]
   },
   "enableAllProjectMcpServers": false
