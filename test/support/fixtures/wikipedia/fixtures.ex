@@ -1,32 +1,33 @@
 defmodule Wikipedia.Fixtures do
   @fixtures_folder Path.join([File.cwd!(), "test/support/fixtures/wikipedia"])
 
-  def wikidata_response do
-    Path.join([@fixtures_folder, "wikidata_response.json"])
-    |> File.read!()
-    |> JSON.decode!()
-  end
+  # Cache fixtures at compile time to avoid repeated file I/O
+  @wikidata_response Path.join([@fixtures_folder, "wikidata_response.json"])
+                     |> File.read!()
+                     |> JSON.decode!()
 
-  def wikidata_response_no_enwiki do
-    Path.join([@fixtures_folder, "wikidata_response_no_enwiki.json"])
-    |> File.read!()
-    |> JSON.decode!()
-  end
+  @wikidata_response_no_enwiki Path.join([@fixtures_folder, "wikidata_response_no_enwiki.json"])
+                               |> File.read!()
+                               |> JSON.decode!()
 
-  def article_summary do
-    Path.join([@fixtures_folder, "article_summary.json"])
-    |> File.read!()
-    |> JSON.decode!()
-  end
+  @article_summary Path.join([@fixtures_folder, "article_summary.json"])
+                   |> File.read!()
+                   |> JSON.decode!()
 
-  def article_extract do
-    Path.join([@fixtures_folder, "article_extract.json"])
-    |> File.read!()
-    |> JSON.decode!()
-  end
+  @article_extract Path.join([@fixtures_folder, "article_extract.json"])
+                   |> File.read!()
+                   |> JSON.decode!()
+
+  def wikidata_response, do: @wikidata_response
+
+  def wikidata_response_no_enwiki, do: @wikidata_response_no_enwiki
+
+  def article_summary, do: @article_summary
+
+  def article_extract, do: @article_extract
 
   def article_extract_html do
-    article_extract()
+    @article_extract
     |> get_in(["query", "pages"])
     |> Map.values()
     |> List.first()
