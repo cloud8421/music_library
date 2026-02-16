@@ -42,7 +42,8 @@
       "WebFetch(domain:api.search.brave.com)",
       "Bash(while read dir)",
       "Bash(MIX_ENV=dev mix run:*)",
-      "Bash(mix deps.get:*)"
+      "Bash(mix deps.get:*)",
+      "Bash(ls:*)"
     ]
   },
   "enableAllProjectMcpServers": false
