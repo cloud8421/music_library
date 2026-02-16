@@ -3,7 +3,7 @@ defmodule MusicLibrary.Collection do
   import MusicLibrary.Records, only: [order_alphabetically: 0]
 
   alias MusicLibrary.Records
-  alias MusicLibrary.Records.{Record, SearchIndex}
+  alias MusicLibrary.Records.{Record, RecordRelease, SearchIndex}
   alias MusicLibrary.Repo
 
   def search_records(query, opts \\ []) do
@@ -121,13 +121,9 @@ defmodule MusicLibrary.Collection do
   end
 
   def collected_releases_query do
-    from r in fragment("records, json_each(records.release_ids)"),
-      where: fragment("records.purchased_at IS NOT NULL"),
-      select: %{
-        record_id: fragment("records.id"),
-        cover_hash: fragment("records.cover_hash"),
-        release_id: r.value
-      }
+    from rr in RecordRelease,
+      where: not is_nil(rr.purchased_at),
+      select: %{record_id: rr.record_id, cover_hash: rr.cover_hash, release_id: rr.release_id}
   end
 
   defp base_search do

@@ -2,7 +2,7 @@ defmodule MusicLibrary.Wishlist do
   import Ecto.Query, warn: false
 
   alias MusicLibrary.Records
-  alias MusicLibrary.Records.SearchIndex
+  alias MusicLibrary.Records.{RecordRelease, SearchIndex}
   alias MusicLibrary.Repo
 
   def search_records(query, opts \\ []) do
@@ -22,13 +22,9 @@ defmodule MusicLibrary.Wishlist do
   end
 
   def wishlisted_releases_query do
-    from r in fragment("records, json_each(records.release_ids)"),
-      where: fragment("records.purchased_at IS NULL"),
-      select: %{
-        record_id: fragment("records.id"),
-        cover_hash: fragment("records.cover_hash"),
-        release_id: r.value
-      }
+    from rr in RecordRelease,
+      where: is_nil(rr.purchased_at),
+      select: %{record_id: rr.record_id, cover_hash: rr.cover_hash, release_id: rr.release_id}
   end
 
   defp base_search do
