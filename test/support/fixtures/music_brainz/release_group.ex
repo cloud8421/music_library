@@ -1,32 +1,37 @@
 defmodule MusicBrainz.Fixtures.ReleaseGroup do
   @fixtures_folder Path.join([File.cwd!(), "test/support/fixtures/music_brainz"])
 
-  def release_group_search_results do
-    Path.join([@fixtures_folder, "release_group_search_results - marillion - marbles.json"])
-    |> File.read!()
-    |> JSON.decode!()
-  end
+  # Cache JSON fixtures at compile time to avoid repeated file I/O
+  @release_group_search_results Path.join([
+                                  @fixtures_folder,
+                                  "release_group_search_results - marillion - marbles.json"
+                                ])
+                                |> File.read!()
+                                |> JSON.decode!()
 
-  def release_group(:mystery_of_time) do
-    Path.join([@fixtures_folder, "release_group - avantasia - the mystery of time.json"])
-    |> File.read!()
-    |> JSON.decode!()
-  end
+  @mystery_of_time Path.join([
+                     @fixtures_folder,
+                     "release_group - avantasia - the mystery of time.json"
+                   ])
+                   |> File.read!()
+                   |> JSON.decode!()
 
-  def release_group(:marbles) do
-    Path.join([@fixtures_folder, "release_group - marillion - marbles.json"])
-    |> File.read!()
-    |> JSON.decode!()
-  end
+  @marbles Path.join([@fixtures_folder, "release_group - marillion - marbles.json"])
+           |> File.read!()
+           |> JSON.decode!()
 
-  def release_group(:lockdown_trilogy) do
-    Path.join([
-      @fixtures_folder,
-      "release_group_with_includes - mariusz duda - lockdown trilogy.json"
-    ])
-    |> File.read!()
-    |> JSON.decode!()
-  end
+  @lockdown_trilogy Path.join([
+                      @fixtures_folder,
+                      "release_group_with_includes - mariusz duda - lockdown trilogy.json"
+                    ])
+                    |> File.read!()
+                    |> JSON.decode!()
+
+  def release_group_search_results, do: @release_group_search_results
+
+  def release_group(:mystery_of_time), do: @mystery_of_time
+  def release_group(:marbles), do: @marbles
+  def release_group(:lockdown_trilogy), do: @lockdown_trilogy
 
   def release_group_releases(name) do
     rg = release_group(name)
