@@ -199,26 +199,69 @@ defmodule Mix.Tasks.Scrobble.Audit do
   end
 
   defp get_sample_tracks_by_album(albums) do
-    Enum.map(albums, fn %{album_title: album_title, artist_name: artist_name} ->
-      query =
-        from t in Track,
-          where:
-            fragment("json_extract(?, '$.title') = ?", t.album, ^album_title) and
-              fragment("json_extract(?, '$.name') = ?", t.artist, ^artist_name) and
-              (fragment("json_extract(?, '$.musicbrainz_id') IS NULL", t.album) or
-                 fragment("json_extract(?, '$.musicbrainz_id') = ''", t.album)),
-          select: %{
-            title: t.title,
-            scrobbled_at: t.scrobbled_at_label
-          },
-          limit: 3
+    album_keys =
+      Enum.map(albums, fn %{album_title: album_title, artist_name: artist_name} ->
+        {album_title, artist_name}
+      end)
 
-      %{
-        album: album_title,
-        artist: artist_name,
-        sample_tracks: Repo.all(query)
-      }
-    end)
+    case album_keys do
+      [] ->
+        []
+
+      _ ->
+        base_query =
+          from t in Track,
+            where:
+              fragment("json_extract(?, '$.musicbrainz_id') IS NULL", t.album) or
+                fragment("json_extract(?, '$.musicbrainz_id') = ''", t.album),
+            select: %{
+              title: t.title,
+              scrobbled_at: t.scrobbled_at_label,
+              album_title: fragment("json_extract(?, '$.title')", t.album),
+              artist_name: fragment("json_extract(?, '$.name')", t.artist)
+            }
+
+        album_match_dynamic =
+          Enum.reduce(album_keys, false, fn {album_title, artist_name}, dynamic_acc ->
+            pair_dynamic =
+              dynamic(
+                [t],
+                fragment("json_extract(?, '$.title') = ?", t.album, ^album_title) and
+                  fragment("json_extract(?, '$.name') = ?", t.artist, ^artist_name)
+              )
+
+            dynamic([t], ^dynamic_acc or ^pair_dynamic)
+          end)
+
+        query =
+          from t in base_query,
+            where: ^album_match_dynamic
+
+        tracks = Repo.all(query)
+
+        tracks_by_key =
+          Enum.group_by(tracks, fn %{album_title: album_title, artist_name: artist_name} ->
+            {album_title, artist_name}
+          end)
+
+        Enum.map(albums, fn %{album_title: album_title, artist_name: artist_name} ->
+          key = {album_title, artist_name}
+
+          sample_tracks =
+            tracks_by_key
+            |> Map.get(key, [])
+            |> Enum.take(3)
+            |> Enum.map(fn %{title: title, scrobbled_at: scrobbled_at} ->
+              %{title: title, scrobbled_at: scrobbled_at}
+            end)
+
+          %{
+            album: album_title,
+            artist: artist_name,
+            sample_tracks: sample_tracks
+          }
+        end)
+    end
   end
 
   defp output_json(report) do
