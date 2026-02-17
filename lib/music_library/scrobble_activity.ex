@@ -506,6 +506,10 @@ defmodule MusicLibrary.ScrobbleActivity do
     |> Repo.all()
   end
 
+  def count_tracks do
+    Repo.aggregate(Track, :count, :scrobbled_at_uts)
+  end
+
   @doc """
   Gets a single track by scrobbled_at_uts.
   """
