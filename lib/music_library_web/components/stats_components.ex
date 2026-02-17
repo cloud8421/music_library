@@ -125,7 +125,6 @@ defmodule MusicLibraryWeb.StatsComponents do
 
   def counters_by_category(assigns) do
     ~H"""
-    <%!-- TODO: replace with OSS version --%>
     <dl class={[
       "mt-5 grid divide-zinc-200 dark:divide-zinc-900 overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow-sm divide-x",
       stats_class(@categories_with_counts)
