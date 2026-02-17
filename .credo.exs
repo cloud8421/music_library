@@ -6,8 +6,7 @@
         disabled: [
           {Credo.Check.Refactor.CyclomaticComplexity, []},
           {Credo.Check.Refactor.Nesting, []},
-          {Credo.Check.Readability.ModuleDoc, []},
-          {Credo.Check.Design.TagTODO, []}
+          {Credo.Check.Readability.ModuleDoc, []}
         ]
       }
       # files etc.
