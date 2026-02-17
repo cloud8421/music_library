@@ -506,6 +506,16 @@ defmodule MusicLibrary.ScrobbleActivity do
     |> Repo.all()
   end
 
+  @doc """
+  Returns the total number of scrobbled tracks.
+
+  This counts all tracks stored in the database using their `scrobbled_at_uts` as the primary key.
+
+  ## Examples
+
+      iex> MusicLibrary.ScrobbleActivity.count_tracks()
+      42
+  """
   def count_tracks do
     Repo.aggregate(Track, :count, :scrobbled_at_uts)
   end
