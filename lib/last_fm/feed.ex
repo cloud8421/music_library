@@ -1,11 +1,10 @@
 defmodule LastFm.Feed do
   @moduledoc """
-  Holds a in-memory cache of scrobbled tracks.
+  Persists scrobbled tracks in `MusicLibrary.Repo` and publishes feed updates.
 
-  Tracks are keyed and ASC ordered by their scrobbling unix timestamp. While this
-  is technically prone to collision, it's very unlikely for that to happen since
-  scrobbles are sequential events that occur over time - a user can likely only listen
-  to one track at a time, and the timestamp has second-level precision.
+  Tracks are inserted into the `scrobbled_tracks` table with conflict handling on
+  `[:scrobbled_at_uts, :title]` to avoid duplicates, then scrobble rules are applied
+  to newly inserted rows.
   """
 
   @insertable_fields [
