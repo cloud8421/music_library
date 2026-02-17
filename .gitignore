@@ -44,3 +44,4 @@ npm-debug.log
 
 # LSP Servers
 /.lexical
+priv/*.db
