@@ -71,7 +71,6 @@ defmodule LastFm.Refresh do
         {:reply, :ok, config, config.refresh_interval}
 
       error ->
-        # TODO: think about failure scenario - error is logged at the API level
         {:reply, error, config, config.refresh_interval}
     end
   end
