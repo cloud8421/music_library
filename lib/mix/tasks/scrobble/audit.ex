@@ -76,8 +76,7 @@ defmodule Mix.Tasks.Scrobble.Audit do
           :album
 
         other ->
-          Mix.Shell.IO.error("Invalid type: #{other}. Valid types are: artist, album")
-          System.halt(1)
+          Mix.raise("Invalid type: #{other}. Valid types are: artist, album")
       end
 
     # Validate and convert format option
@@ -93,8 +92,7 @@ defmodule Mix.Tasks.Scrobble.Audit do
           :text
 
         other ->
-          Mix.Shell.IO.error("Invalid format: #{other}. Valid formats are: json, text")
-          System.halt(1)
+          Mix.raise("Invalid format: #{other}. Valid formats are: json, text")
       end
 
     verbose = Keyword.get(opts, :verbose, false)
