@@ -6,8 +6,10 @@ defmodule MusicLibrary.Collection do
   alias MusicLibrary.Records.{Record, RecordRelease, SearchIndex}
   alias MusicLibrary.Repo
 
+  @pagination Application.compile_env!(:music_library, :pagination)
+
   def search_records(query, opts \\ []) do
-    limit = Keyword.get(opts, :limit, 20)
+    limit = Keyword.get(opts, :limit, @pagination[:default_page_size])
     offset = Keyword.get(opts, :offset, 0)
     order = Keyword.get(opts, :order, :alphabetical)
 
@@ -87,7 +89,7 @@ defmodule MusicLibrary.Collection do
   end
 
   def count_records_by_artist(opts \\ []) do
-    limit = Keyword.get(opts, :limit, 30)
+    limit = Keyword.get(opts, :limit, @pagination[:stats_limit])
 
     q =
       from r in fragment("records, json_each(records.artists)"),
@@ -105,7 +107,7 @@ defmodule MusicLibrary.Collection do
   end
 
   def count_records_by_genre(opts \\ []) do
-    limit = Keyword.get(opts, :limit, 30)
+    limit = Keyword.get(opts, :limit, @pagination[:stats_limit])
 
     q =
       from r in fragment("records, json_each(records.genres)"),

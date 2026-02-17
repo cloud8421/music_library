@@ -1,4 +1,6 @@
 defmodule MusicLibraryWeb.LiveHelpers.Params do
+  @pagination Application.compile_env!(:music_library, :pagination)
+
   def parse_page(nil), do: 1
 
   def parse_page(page) when is_binary(page) do
@@ -26,7 +28,7 @@ defmodule MusicLibraryWeb.LiveHelpers.Params do
 
   def merge_pagination(params, url_params, total_entries, opts \\ []) do
     allowed = Keyword.get(opts, :allowed_page_sizes)
-    default_page_size = params[:page_size] || 20
+    default_page_size = params[:page_size] || @pagination[:default_page_size]
 
     page = parse_page(url_params["page"])
     page_size = parse_page_size(url_params["page_size"], allowed, default_page_size)

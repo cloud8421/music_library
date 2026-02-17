@@ -5,6 +5,8 @@ defmodule MusicLibrary.ScrobbleActivity do
   alias MusicBrainz.Release
   alias MusicLibrary.{Artists, Collection, Records.ArtistRecord, Repo, Secrets, Wishlist}
 
+  @pagination Application.compile_env!(:music_library, :pagination)
+
   def can_scrobble? do
     Secrets.get("last_fm_session_key") !== nil
   end
@@ -274,7 +276,7 @@ defmodule MusicLibrary.ScrobbleActivity do
   Returns a list of maps with album information and play counts.
   """
   def get_top_albums_by_days(days, opts) do
-    limit = Keyword.get(opts, :limit, 10)
+    limit = Keyword.get(opts, :limit, @pagination[:top_items_limit])
     current_time = Keyword.get_lazy(opts, :current_time, &DateTime.utc_now/0)
     timezone = Keyword.get(opts, :timezone, &MusicLibrary.default_timezone/0)
 
@@ -319,7 +321,7 @@ defmodule MusicLibrary.ScrobbleActivity do
   Returns a list of maps with album information and play counts.
   """
   def get_top_albums(opts) do
-    limit = Keyword.get(opts, :limit, 10)
+    limit = Keyword.get(opts, :limit, @pagination[:top_items_limit])
 
     query =
       from t in Track,
@@ -354,7 +356,7 @@ defmodule MusicLibrary.ScrobbleActivity do
   Returns a list of maps with artist information and play counts.
   """
   def get_top_artists(opts) do
-    limit = Keyword.get(opts, :limit, 10)
+    limit = Keyword.get(opts, :limit, @pagination[:top_items_limit])
 
     query =
       from t in Track,
@@ -380,7 +382,7 @@ defmodule MusicLibrary.ScrobbleActivity do
   Returns a list of maps with artist information and play counts.
   """
   def get_top_artists_by_days(days, opts) do
-    limit = Keyword.get(opts, :limit, 10)
+    limit = Keyword.get(opts, :limit, @pagination[:top_items_limit])
     current_time = Keyword.get_lazy(opts, :current_time, &DateTime.utc_now/0)
     timezone = Keyword.get(opts, :timezone, &MusicLibrary.default_timezone/0)
 
@@ -447,7 +449,7 @@ defmodule MusicLibrary.ScrobbleActivity do
   def list_tracks(params \\ %{}) do
     query = Map.get(params, :query, "")
     page = Map.get(params, :page, 1)
-    page_size = Map.get(params, :page_size, 200)
+    page_size = Map.get(params, :page_size, @pagination[:tracks_page_size])
     order = Map.get(params, :order, :scrobbled_at)
 
     all_artists_query =

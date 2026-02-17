@@ -4,9 +4,11 @@ defmodule MusicLibrary.RecordSets do
   alias MusicLibrary.RecordSets.{RecordSet, RecordSetItem}
   alias MusicLibrary.Repo
 
+  @pagination Application.compile_env!(:music_library, :pagination)
+
   def list_record_sets(opts \\ []) do
     offset = Keyword.get(opts, :offset, 0)
-    limit = Keyword.get(opts, :limit, 20)
+    limit = Keyword.get(opts, :limit, @pagination[:default_page_size])
 
     from(rs in RecordSet,
       order_by: [desc: rs.updated_at],
@@ -28,7 +30,7 @@ defmodule MusicLibrary.RecordSets do
 
   def search_record_sets(query, opts \\ []) do
     offset = Keyword.get(opts, :offset, 0)
-    limit = Keyword.get(opts, :limit, 20)
+    limit = Keyword.get(opts, :limit, @pagination[:default_page_size])
     order = Keyword.get(opts, :order, :updated_at)
 
     record_sets_search_query(query)

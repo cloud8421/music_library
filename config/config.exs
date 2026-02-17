@@ -17,6 +17,13 @@ config :music_library,
 
 config :music_library, default_timezone: "Europe/London"
 
+config :music_library, :pagination,
+  default_page_size: 20,
+  stats_limit: 30,
+  top_items_limit: 10,
+  tracks_page_size: 200,
+  search_preview_limit: 5
+
 config :music_library, MusicLibraryWeb,
   login_password: "change me",
   api_token: "change me"

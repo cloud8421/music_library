@@ -5,8 +5,10 @@ defmodule MusicLibrary.Wishlist do
   alias MusicLibrary.Records.{RecordRelease, SearchIndex}
   alias MusicLibrary.Repo
 
+  @pagination Application.compile_env!(:music_library, :pagination)
+
   def search_records(query, opts \\ []) do
-    limit = Keyword.get(opts, :limit, 20)
+    limit = Keyword.get(opts, :limit, @pagination[:default_page_size])
     offset = Keyword.get(opts, :offset, 0)
     order = Keyword.get(opts, :order, :alphabetical)
 

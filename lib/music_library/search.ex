@@ -14,6 +14,8 @@ defmodule MusicLibrary.Search do
   alias MusicLibrary.{Collection, RecordSets, Repo, Wishlist}
   alias MusicLibrary.Records.ArtistRecord
 
+  @pagination Application.compile_env!(:music_library, :pagination)
+
   @doc """
   Performs a universal search across all entity types.
 
@@ -26,7 +28,7 @@ defmodule MusicLibrary.Search do
   - :limit - Limit per category (default: 5)
   """
   def universal_search(query, opts \\ []) do
-    limit = Keyword.get(opts, :limit, 5)
+    limit = Keyword.get(opts, :limit, @pagination[:search_preview_limit])
 
     %{
       collection: search_collection(query, limit),
@@ -39,14 +41,14 @@ defmodule MusicLibrary.Search do
   @doc """
   Searches records in the collection (purchased records).
   """
-  def search_collection(query, limit \\ 5) do
+  def search_collection(query, limit \\ @pagination[:search_preview_limit]) do
     Collection.search_records(query, limit: limit)
   end
 
   @doc """
   Searches records in the wishlist (unpurchased records).
   """
-  def search_wishlist(query, limit \\ 5) do
+  def search_wishlist(query, limit \\ @pagination[:search_preview_limit]) do
     Wishlist.search_records(query, limit: limit)
   end
 
@@ -56,7 +58,7 @@ defmodule MusicLibrary.Search do
   Searches across artist names in the artist_records table,
   returning distinct artists that match the query.
   """
-  def search_artists(query, limit \\ 5) do
+  def search_artists(query, limit \\ @pagination[:search_preview_limit]) do
     case String.trim(query) do
       "" ->
         []
@@ -99,7 +101,7 @@ defmodule MusicLibrary.Search do
   @doc """
   Searches record sets by name, description, and contained records.
   """
-  def search_record_sets(query, limit \\ 5) do
+  def search_record_sets(query, limit \\ @pagination[:search_preview_limit]) do
     RecordSets.search_record_sets(query, limit: limit)
   end
 
