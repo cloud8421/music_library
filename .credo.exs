@@ -3,9 +3,11 @@
     %{
       name: "default",
       checks: %{
+        extra: [
+          {Credo.Check.Refactor.Nesting, max_nesting: 3}
+        ],
         disabled: [
           {Credo.Check.Refactor.CyclomaticComplexity, []},
-          {Credo.Check.Refactor.Nesting, []},
           {Credo.Check.Readability.ModuleDoc, []}
         ]
       }

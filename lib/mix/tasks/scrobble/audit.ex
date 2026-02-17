@@ -307,6 +307,7 @@ defmodule Mix.Tasks.Scrobble.Audit do
         Enum.each(artist_issues.sample_tracks, fn %{artist: artist, sample_tracks: tracks} ->
           Mix.Shell.IO.info("\n  Artist: #{artist}")
 
+          # credo:disable-for-next-line Credo.Check.Refactor.Nesting
           Enum.each(tracks, fn track ->
             Mix.Shell.IO.info("    - #{track.title} (from #{track.album})")
           end)
@@ -343,6 +344,7 @@ defmodule Mix.Tasks.Scrobble.Audit do
                                                  } ->
           Mix.Shell.IO.info("\n  Album: #{album} by #{artist}")
 
+          # credo:disable-for-next-line Credo.Check.Refactor.Nesting
           Enum.each(tracks, fn track ->
             Mix.Shell.IO.info("    - #{track.title}")
           end)
