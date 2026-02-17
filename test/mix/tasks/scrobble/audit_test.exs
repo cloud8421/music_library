@@ -17,6 +17,22 @@ defmodule Mix.Tasks.Scrobble.AuditTest do
       assert output =~ "Total scrobbled tracks: 0"
     end
 
+    test "exits with error for invalid type" do
+      assert catch_exit(fn ->
+               capture_io(fn ->
+                 Audit.run(["--type", "invalid"])
+               end)
+             end) == {:shutdown, 1}
+    end
+
+    test "exits with error for invalid format" do
+      assert catch_exit(fn ->
+               capture_io(fn ->
+                 Audit.run(["--format", "invalid"])
+               end)
+             end) == {:shutdown, 1}
+    end
+
     test "generates audit report with tracks having missing artist musicbrainz_ids" do
       # Create tracks with empty artist musicbrainz_id
       track_fixture(%{

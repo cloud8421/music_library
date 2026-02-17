@@ -63,7 +63,43 @@ defmodule Mix.Tasks.Scrobble.Audit do
         aliases: [t: :type, f: :format, v: :verbose]
       )
 
-    opts
+    # Validate and convert type option
+    type =
+      case Keyword.get(opts, :type) do
+        nil ->
+          :all
+
+        "artist" ->
+          :artist
+
+        "album" ->
+          :album
+
+        other ->
+          Mix.Shell.IO.error("Invalid type: #{other}. Valid types are: artist, album")
+          System.halt(1)
+      end
+
+    # Validate and convert format option
+    format =
+      case Keyword.get(opts, :format) do
+        nil ->
+          :text
+
+        "json" ->
+          :json
+
+        "text" ->
+          :text
+
+        other ->
+          Mix.Shell.IO.error("Invalid format: #{other}. Valid formats are: json, text")
+          System.halt(1)
+      end
+
+    verbose = Keyword.get(opts, :verbose, false)
+
+    [type: type, format: format, verbose: verbose]
   end
 
   defp generate_audit_report(:all, verbose) do
@@ -86,10 +122,6 @@ defmodule Mix.Tasks.Scrobble.Audit do
       total_tracks: ScrobbleActivity.count_tracks(),
       album_issues: audit_album_musicbrainz_ids(verbose)
     }
-  end
-
-  defp count_total_tracks do
-    ScrobbleActivity.count_tracks()
   end
 
   defp audit_artist_musicbrainz_ids(verbose) do
