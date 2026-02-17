@@ -7,8 +7,8 @@ defmodule MusicLibrary.Records do
 
   alias MusicLibrary.Artists
   alias MusicLibrary.Assets
-  alias MusicLibrary.{BackgroundRepo, Repo, Worker}
   alias MusicLibrary.Records.{ArtistRecord, Record, SearchIndex, SearchParser}
+  alias MusicLibrary.{Repo, Worker}
 
   def essential_fields do
     SearchIndex.__schema__(:fields)
@@ -431,7 +431,7 @@ defmodule MusicLibrary.Records do
   end
 
   defp enqueue_worker(worker, params, meta) do
-    params |> worker.new(meta: meta) |> BackgroundRepo.insert()
+    params |> worker.new(meta: meta) |> Oban.insert()
   end
 
   defp record_meta(record) do

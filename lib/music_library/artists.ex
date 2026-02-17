@@ -3,8 +3,8 @@ defmodule MusicLibrary.Artists do
 
   alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibrary.Assets
-  alias MusicLibrary.{BackgroundRepo, Repo, Worker}
   alias MusicLibrary.Records.{ArtistRecord, Record}
+  alias MusicLibrary.{Repo, Worker}
 
   def get_artist!(musicbrainz_id) do
     q =
@@ -226,6 +226,6 @@ defmodule MusicLibrary.Artists do
   end
 
   defp enqueue_worker(worker, params) do
-    params |> worker.new(meta: %{}) |> BackgroundRepo.insert()
+    params |> worker.new(meta: %{}) |> Oban.insert()
   end
 end
