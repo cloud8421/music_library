@@ -507,6 +507,20 @@ defmodule MusicLibrary.ScrobbleActivity do
   end
 
   @doc """
+  Returns the total number of scrobbled tracks.
+
+  This counts all tracks stored in the database using their `scrobbled_at_uts` as the primary key.
+
+  ## Examples
+
+      iex> MusicLibrary.ScrobbleActivity.count_tracks()
+      42
+  """
+  def count_tracks do
+    Repo.aggregate(Track, :count, :scrobbled_at_uts)
+  end
+
+  @doc """
   Gets a single track by scrobbled_at_uts.
   """
   def get_track!(scrobbled_at_uts) when is_integer(scrobbled_at_uts) do
@@ -555,5 +569,121 @@ defmodule MusicLibrary.ScrobbleActivity do
       end
 
     Repo.aggregate(search_query, :count, :scrobbled_at_uts)
+  end
+
+  @doc """
+  Counts tracks with missing or empty artist MusicBrainz IDs.
+
+  ## Examples
+
+      iex> count_tracks_missing_artist_musicbrainz_id()
+      42
+
+  """
+  def count_tracks_missing_artist_musicbrainz_id do
+    query =
+      from t in Track,
+        where:
+          fragment("json_extract(?, '$.musicbrainz_id') IS NULL", t.artist) or
+            fragment("json_extract(?, '$.musicbrainz_id') = ''", t.artist),
+        select: count(t.scrobbled_at_uts)
+
+    Repo.one(query) || 0
+  end
+
+  @doc """
+  Counts tracks with missing or empty album MusicBrainz IDs.
+
+  ## Examples
+
+      iex> count_tracks_missing_album_musicbrainz_id()
+      37
+
+  """
+  def count_tracks_missing_album_musicbrainz_id do
+    query =
+      from t in Track,
+        where:
+          fragment("json_extract(?, '$.musicbrainz_id') IS NULL", t.album) or
+            fragment("json_extract(?, '$.musicbrainz_id') = ''", t.album),
+        select: count(t.scrobbled_at_uts)
+
+    Repo.one(query) || 0
+  end
+
+  @doc """
+  Gets artists with missing MusicBrainz IDs, grouped by artist name.
+
+  Returns a list of maps with artist name and track count.
+
+  ## Examples
+
+      iex> get_artists_missing_musicbrainz_id()
+      [%{artist_name: "Some Artist", track_count: 5}, ...]
+
+  """
+  def get_artists_missing_musicbrainz_id(opts \\ []) do
+    limit = Keyword.get(opts, :limit)
+
+    query =
+      from t in Track,
+        where:
+          fragment("json_extract(?, '$.musicbrainz_id') IS NULL", t.artist) or
+            fragment("json_extract(?, '$.musicbrainz_id') = ''", t.artist),
+        select: %{
+          artist_name: fragment("json_extract(?, '$.name')", t.artist),
+          track_count: count(t.scrobbled_at_uts)
+        },
+        group_by: fragment("json_extract(?, '$.name')", t.artist),
+        order_by: [desc: count(t.scrobbled_at_uts)]
+
+    query =
+      if limit do
+        from q in query, limit: ^limit
+      else
+        query
+      end
+
+    Repo.all(query)
+  end
+
+  @doc """
+  Gets albums with missing MusicBrainz IDs, grouped by album title and artist.
+
+  Returns a list of maps with album title, artist name, and track count.
+
+  ## Examples
+
+      iex> get_albums_missing_musicbrainz_id()
+      [%{album_title: "Some Album", artist_name: "Some Artist", track_count: 3}, ...]
+
+  """
+  def get_albums_missing_musicbrainz_id(opts \\ []) do
+    limit = Keyword.get(opts, :limit)
+
+    query =
+      from t in Track,
+        where:
+          fragment("json_extract(?, '$.musicbrainz_id') IS NULL", t.album) or
+            fragment("json_extract(?, '$.musicbrainz_id') = ''", t.album),
+        select: %{
+          album_title: fragment("json_extract(?, '$.title')", t.album),
+          artist_name: fragment("json_extract(?, '$.name')", t.artist),
+          track_count: count(t.scrobbled_at_uts)
+        },
+        group_by: [
+          fragment("json_extract(?, '$.title')", t.album),
+          fragment("json_extract(?, '$.name')", t.artist)
+        ],
+        order_by: [desc: count(t.scrobbled_at_uts)]
+
+    query =
+      if limit do
+        from q in query, limit: ^limit
+      else
+        query
+      end
+
+    Repo.all(query)
   end
 end

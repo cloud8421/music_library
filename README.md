@@ -17,6 +17,7 @@
   - [Setup](#setup)
   - [Environment configuration](#environment-configuration)
   - [Running the application](#running-the-application)
+  - [Auditing Scrobble Data Quality](#auditing-scrobble-data-quality)
   - [Deployment](#deployment)
   - [CI](#ci)
   - [Architecture](#architecture)
@@ -33,6 +34,7 @@
     connect them with records in the collection or wishlist
   - scrobble a record
   - store a local copy of the complete scrobble history, and setup rules to fix its data as needed
+  - audit scrobble data quality and identify tracks with missing MusicBrainz IDs
 - Some basic stats
 - All data stored in a single SQLite database for portability and ease of backup/restore
 
@@ -105,6 +107,57 @@ Start the Phoenix endpoint with `mise run console` (along with an attached IEx s
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 The default password for development is `change me`.
+
+## Auditing Scrobble Data Quality
+
+The application includes a Mix task to audit scrobbled tracks and identify data quality issues such as missing MusicBrainz IDs for artists and albums.
+
+### Running the Audit
+
+```bash
+# Audit all tracks
+mix scrobble.audit
+
+# Audit with detailed output including sample tracks
+mix scrobble.audit --verbose
+
+# Audit only artist issues
+mix scrobble.audit --type artist
+
+# Audit only album issues
+mix scrobble.audit --type album
+
+# Output as JSON for processing
+mix scrobble.audit --format json
+```
+
+### Understanding the Audit Report
+
+The audit report shows:
+- Total number of scrobbled tracks
+- Artists with missing MusicBrainz IDs (grouped by artist name)
+- Albums with missing MusicBrainz IDs (grouped by album title and artist)
+- Track counts for each issue
+
+### Fixing Data Quality Issues
+
+After identifying issues, you can:
+
+1. **Create Scrobble Rules**: Navigate to the Scrobble Rules page in the web interface and add rules to map artist or album names to their correct MusicBrainz IDs.
+
+2. **Apply Rules**: Use the "Apply Rules" button in the Scrobble Rules page to update existing tracks, or run in IEx:
+   ```elixir
+   MusicLibrary.ScrobbleRules.apply_all_rules()
+   ```
+
+3. **Re-audit**: Run the audit again to verify the fixes worked.
+
+The application also provides helper functions in the `MusicLibrary.ScrobbleActivity` context:
+- `count_tracks_missing_artist_musicbrainz_id/0`
+- `count_tracks_missing_album_musicbrainz_id/0`
+- `get_artists_missing_musicbrainz_id/1`
+- `get_albums_missing_musicbrainz_id/1`
+
 
 ## Deployment
 
