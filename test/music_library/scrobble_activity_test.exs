@@ -431,13 +431,13 @@ defmodule MusicLibrary.ScrobbleActivityTest do
       assert count == 2
     end
 
-    test "counts tracks with nil artist musicbrainz_id" do
-      # Create track with nil musicbrainz_id by directly inserting
+    test "counts tracks with empty artist musicbrainz_id" do
+      # Empty string is the most common case from Last.fm API
       track_fixture(%{artist_musicbrainz_id: ""})
 
       count = ScrobbleActivity.count_tracks_missing_artist_musicbrainz_id()
 
-      assert count >= 1
+      assert count == 1
     end
   end
 

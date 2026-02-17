@@ -44,4 +44,6 @@ npm-debug.log
 
 # LSP Servers
 /.lexical
-priv/*.db
+
+# Database files in priv directory
+priv/**/*.db
