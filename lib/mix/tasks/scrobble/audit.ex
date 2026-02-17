@@ -167,23 +167,33 @@ defmodule Mix.Tasks.Scrobble.Audit do
   end
 
   defp get_sample_tracks_by_artist(artists) do
-    Enum.map(artists, fn %{artist_name: artist_name} ->
-      query =
-        from t in Track,
-          where:
-            fragment("json_extract(?, '$.name') = ?", t.artist, ^artist_name) and
-              (fragment("json_extract(?, '$.musicbrainz_id') IS NULL", t.artist) or
-                 fragment("json_extract(?, '$.musicbrainz_id') = ''", t.artist)),
-          select: %{
-            title: t.title,
-            album: fragment("json_extract(?, '$.title')", t.album),
-            scrobbled_at: t.scrobbled_at_label
-          },
-          limit: 3
+    artist_names = Enum.map(artists, & &1.artist_name)
 
+    query =
+      from t in Track,
+        where:
+          fragment("json_extract(?, '$.name')", t.artist) in ^artist_names and
+            (fragment("json_extract(?, '$.musicbrainz_id') IS NULL", t.artist) or
+               fragment("json_extract(?, '$.musicbrainz_id') = ''", t.artist)),
+        select: %{
+          artist_name: fragment("json_extract(?, '$.name')", t.artist),
+          title: t.title,
+          album: fragment("json_extract(?, '$.title')", t.album),
+          scrobbled_at: t.scrobbled_at_label
+        }
+
+    tracks_by_artist =
+      query
+      |> Repo.all()
+      |> Enum.group_by(& &1.artist_name, fn track -> Map.delete(track, :artist_name) end)
+
+    Enum.map(artists, fn %{artist_name: artist_name} ->
       %{
         artist: artist_name,
-        sample_tracks: Repo.all(query)
+        sample_tracks:
+          tracks_by_artist
+          |> Map.get(artist_name, [])
+          |> Enum.take(3)
       }
     end)
   end
