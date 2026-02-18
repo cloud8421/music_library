@@ -1,6 +1,6 @@
 defmodule MusicBrainz.API do
   @moduledoc """
-  The original data from Obsidian maps records to MusicBrainz release groups, so we can leverage the MusicBrainz API to:
+  We can leverage the MusicBrainz API to:
 
   - Import new records
   - Extend the metadata associated with existing records

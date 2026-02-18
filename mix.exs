@@ -92,7 +92,6 @@ defmodule MusicLibrary.MixProject do
       {:req, "~> 0.5.8"},
 
       # Parsing
-      {:yaml_elixir, "~> 2.11"},
       {:nimble_parsec, "~> 1.4"},
 
       # Image manipulation
