@@ -112,6 +112,14 @@ config :music_library, Oban,
      ]}
   ]
 
+# Timing metrics (execution time, queue time) are stored in space-efficient
+# quantile sketches. By default, values are recorded in `:native` time units
+# (nanoseconds on most systems), which provides maximum precision but uses more
+# space.
+# For reduced storage size (~20% smaller) and better bin consolidation, we
+# configure sketches to store timing in millisecond
+config :oban_met, sketch_time_unit: :millisecond
+
 config :music_library, MusicLibrary.BackgroundRepo, priv: "priv/background_repo"
 
 config :fluxon, :translate_function, &MusicLibraryWeb.CoreComponents.translate_error/1
