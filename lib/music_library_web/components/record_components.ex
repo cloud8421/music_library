@@ -420,13 +420,17 @@ defmodule MusicLibraryWeb.RecordComponents do
 
   def release_label(release) do
     [
-      ReleaseSearchResult.format(release),
-      release.catalog_number,
+      release |> ReleaseSearchResult.format() |> format_as_text(),
+      if(release.catalog_number, do: release.catalog_number <> " - "),
       Records.Record.format_release_date(release.date),
       country_label(release.country)
     ]
     |> Enum.reject(fn fragment -> fragment in [nil, ""] end)
     |> Enum.join(" ")
+  end
+
+  defp format_as_text(format) do
+    "[" <> (format |> to_string() |> String.upcase()) <> "]"
   end
 
   def country_label(nil), do: nil
