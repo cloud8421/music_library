@@ -50,6 +50,7 @@ defmodule MusicBrainz.ReleaseSearchResult do
   defp parse_format("CD"), do: :cd
   defp parse_format("DVD-Audio"), do: :dvd
   defp parse_format("DVD-Video"), do: :dvd
+  defp parse_format("DVD"), do: :dvd
   defp parse_format("Blu-ray"), do: :blu_ray
   defp parse_format("Digital Media"), do: :digital_download
 
