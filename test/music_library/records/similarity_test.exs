@@ -3,7 +3,9 @@ defmodule MusicLibrary.Records.SimilarityTest do
 
   import MusicLibrary.Fixtures.Records
 
+  alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibrary.Records.{Record, Similarity}
+  alias MusicLibrary.Repo
 
   describe "text_representation/1" do
     test "generates text representation for a record" do
@@ -30,6 +32,78 @@ defmodule MusicLibrary.Records.SimilarityTest do
       assert text =~ "Genres: alternative rock, art rock, experimental"
       assert text =~ "Released: 1997"
       assert text =~ "Type: Album"
+    end
+
+    test "includes Wikipedia data when available" do
+      artist_id = Ecto.UUID.generate()
+
+      Repo.insert!(%ArtistInfo{
+        id: artist_id,
+        musicbrainz_data: %{"name" => "Radiohead"},
+        wikipedia_data: %{
+          "description" => "English rock band",
+          "extract" =>
+            "Radiohead are an English rock band formed in Abingdon. They are known for experimental music."
+        }
+      })
+
+      record = %Record{
+        title: "OK Computer",
+        artists: [
+          %{
+            name: "Radiohead",
+            sort_name: "Radiohead",
+            musicbrainz_id: artist_id,
+            disambiguation: "",
+            joinphrase: ""
+          }
+        ],
+        genres: ["alternative rock"],
+        release_date: "1997-05-21",
+        type: :album
+      }
+
+      text = Similarity.text_representation(record)
+
+      assert text =~ "English rock band"
+      assert text =~ "experimental music"
+      refute text =~ "Members"
+    end
+
+    test "falls back to truncated Discogs profile when Wikipedia unavailable" do
+      artist_id = Ecto.UUID.generate()
+
+      Repo.insert!(%ArtistInfo{
+        id: artist_id,
+        musicbrainz_data: %{"name" => "Some Artist"},
+        discogs_data: %{
+          "name" => "Some Artist",
+          "profile_plaintext" => "Some Artist is a funk band. They have released many albums.",
+          "members" => [%{"name" => "Member One"}, %{"name" => "Member Two"}]
+        }
+      })
+
+      record = %Record{
+        title: "Funky Album",
+        artists: [
+          %{
+            name: "Some Artist",
+            sort_name: "Some Artist",
+            musicbrainz_id: artist_id,
+            disambiguation: "",
+            joinphrase: ""
+          }
+        ],
+        genres: ["funk"],
+        release_date: "2000",
+        type: :album
+      }
+
+      text = Similarity.text_representation(record)
+
+      assert text =~ "funk band"
+      refute text =~ "Members"
+      refute text =~ "Member One"
     end
 
     test "handles records with no release date" do
@@ -107,6 +181,40 @@ defmodule MusicLibrary.Records.SimilarityTest do
     end
   end
 
+  describe "truncate_to_sentence/2" do
+    test "returns text unchanged when within limit" do
+      assert Similarity.truncate_to_sentence("Short text.", 200) == "Short text."
+    end
+
+    test "truncates at sentence boundary" do
+      text = "First sentence. Second sentence. Third sentence that is very long."
+
+      result = Similarity.truncate_to_sentence(text, 40)
+
+      assert result == "First sentence. Second sentence."
+    end
+
+    test "truncates at character limit when no sentence boundary" do
+      text = String.duplicate("a", 300)
+
+      result = Similarity.truncate_to_sentence(text, 200)
+
+      assert byte_size(result) <= 200
+    end
+
+    test "handles empty string" do
+      assert Similarity.truncate_to_sentence("", 200) == ""
+    end
+
+    test "handles text with exclamation and question marks" do
+      text = "What a band! They play great music? Yes indeed. More text that goes over the limit."
+
+      result = Similarity.truncate_to_sentence(text, 55)
+
+      assert result == "What a band! They play great music? Yes indeed."
+    end
+  end
+
   describe "store_embedding/3 and get_embedding/1" do
     test "stores and retrieves an embedding" do
       record = record()
@@ -158,7 +266,7 @@ defmodule MusicLibrary.Records.SimilarityTest do
     end
 
     test "finds similar records", %{record1: record1, record2: record2} do
-      similar = Similarity.find_similar(record1.id, limit: 5)
+      similar = Similarity.find_similar(record1.id, limit: 5, max_distance: 1.0)
 
       refute Enum.empty?(similar)
       # record2 should be most similar to record1
@@ -168,7 +276,7 @@ defmodule MusicLibrary.Records.SimilarityTest do
     end
 
     test "respects limit option", %{record1: record1} do
-      similar = Similarity.find_similar(record1.id, limit: 1)
+      similar = Similarity.find_similar(record1.id, limit: 1, max_distance: 1.0)
 
       assert length(similar) == 1
     end
@@ -185,11 +293,21 @@ defmodule MusicLibrary.Records.SimilarityTest do
       # Mark record2 as purchased
       {:ok, _} = MusicLibrary.Records.update_record(record2, %{purchased_at: DateTime.utc_now()})
 
-      similar = Similarity.find_similar(record1.id, scope: :wishlist)
+      similar = Similarity.find_similar(record1.id, scope: :wishlist, max_distance: 1.0)
 
       # Should not include record2 since it's in collection
-      record_ids = Enum.map(similar, fn {record, _} -> record.id end)
+      record_ids = Enum.map(similar, fn %{record: record} -> record.id end)
       refute record2.id in record_ids
+    end
+
+    test "filters results by max_distance threshold", %{record1: record1} do
+      # With a very low threshold, only very similar records should be returned
+      similar_strict = Similarity.find_similar(record1.id, max_distance: 0.001)
+
+      # With a very high threshold, all records should be returned
+      similar_loose = Similarity.find_similar(record1.id, max_distance: 2.0)
+
+      assert length(similar_strict) <= length(similar_loose)
     end
   end
 end

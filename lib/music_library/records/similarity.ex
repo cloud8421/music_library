@@ -6,10 +6,14 @@ defmodule MusicLibrary.Records.Similarity do
   import Ecto.Query
   import SqliteVec.Ecto.Query
 
-  alias MusicLibrary.{Artists, Records}
+  alias MusicLibrary.Artists
+  alias MusicLibrary.Artists.ArtistInfo
+  alias MusicLibrary.Records
   alias MusicLibrary.Records.{Record, RecordEmbedding}
   alias MusicLibrary.Repo
   alias MusicLibrary.Worker.GenerateRecordEmbedding
+
+  @max_distance Application.compile_env!(:music_library, :similarity)[:max_distance]
 
   @doc """
   Generates a text representation of a record for embedding generation.
@@ -20,6 +24,7 @@ defmodule MusicLibrary.Records.Similarity do
   - Genres
   - Release year
   - Type (album, EP, etc.)
+  - Artist musical style summaries (from Wikipedia, falling back to Discogs)
   """
   def text_representation(%Record{} = record) do
     artist_infos =
@@ -47,32 +52,75 @@ defmodule MusicLibrary.Records.Similarity do
   defp artist_infos_summary([]), do: ""
 
   defp artist_infos_summary(artist_infos) do
-    Enum.map_join(artist_infos, "\n\n", &artist_info_summary/1)
+    artist_infos
+    |> Enum.map(&artist_info_summary/1)
+    |> Enum.reject(&(&1 == ""))
+    |> Enum.join("\n\n")
   end
 
-  defp artist_info_summary(artist_info) when is_nil(artist_info.discogs_data), do: ""
+  defp artist_info_summary(artist_info) do
+    cond do
+      wikipedia_available?(artist_info) ->
+        wikipedia_artist_summary(artist_info)
 
-  defp artist_info_summary(%{discogs_data: discogs_data}) do
-    # if available, use the plain text version of the profile to avoid pollution by BBTags
-    profile_data = Map.get(discogs_data, "profile_plaintext") || Map.get(discogs_data, "profile")
+      discogs_available?(artist_info) ->
+        discogs_artist_summary(artist_info)
 
-    profile_section =
-      if profile_data do
-        "Profile for #{discogs_data["name"]}: #{profile_data}"
-      else
+      true ->
         ""
-      end
+    end
+  end
 
-    members_section =
-      if members = Map.get(discogs_data, "members") do
-        members_list = Enum.map_join(members, ", ", fn member -> member["name"] end)
+  defp wikipedia_available?(artist_info) do
+    ArtistInfo.wikipedia_description(artist_info) != nil ||
+      ArtistInfo.wikipedia_summary(artist_info) != nil
+  end
 
-        "Members (past and present): #{members_list}"
-      else
+  defp discogs_available?(artist_info) do
+    artist_info.discogs_data != nil &&
+      (Map.get(artist_info.discogs_data, "profile_plaintext") != nil ||
+         Map.get(artist_info.discogs_data, "profile") != nil)
+  end
+
+  defp wikipedia_artist_summary(artist_info) do
+    description = ArtistInfo.wikipedia_description(artist_info) || ""
+    summary = ArtistInfo.wikipedia_summary(artist_info) || ""
+    truncated_summary = truncate_to_sentence(summary, 200)
+
+    [description, truncated_summary]
+    |> Enum.reject(&(&1 == ""))
+    |> Enum.join(". ")
+  end
+
+  defp discogs_artist_summary(artist_info) do
+    profile =
+      Map.get(artist_info.discogs_data, "profile_plaintext") ||
+        Map.get(artist_info.discogs_data, "profile") ||
         ""
-      end
 
-    Enum.join([profile_section, members_section], "\n")
+    truncate_to_sentence(profile, 200)
+  end
+
+  @doc false
+  def truncate_to_sentence(text, max_length) when byte_size(text) <= max_length, do: text
+
+  def truncate_to_sentence(text, max_length) do
+    truncated = String.slice(text, 0, max_length)
+
+    case String.split(truncated, ~r/[.!?]\s/, include_captures: true) |> Enum.count() do
+      count when count > 1 ->
+        # Find the last sentence boundary within the limit
+        truncated
+        |> String.replace(~r/[^.!?]*$/, "")
+        |> String.trim()
+        |> case do
+          "" -> String.trim(truncated)
+          result -> result
+        end
+
+      _ ->
+        String.trim(truncated)
+    end
   end
 
   @doc """
@@ -82,6 +130,8 @@ defmodule MusicLibrary.Records.Similarity do
 
   - `:limit` - Maximum number of similar records to return (default: 10)
   - `:scope` - Filter by :collection or :wishlist (default: no filter)
+  - `:max_distance` - Maximum cosine distance threshold (default: #{@max_distance}).
+    Results with distance above this are excluded.
 
   ## Examples
 
@@ -94,6 +144,7 @@ defmodule MusicLibrary.Records.Similarity do
   def find_similar(record_id, opts \\ []) do
     limit = Keyword.get(opts, :limit, 10)
     scope = Keyword.get(opts, :scope)
+    max_distance = Keyword.get(opts, :max_distance, @max_distance)
 
     record = Records.get_record!(record_id)
     record_musicbrainz_id = record.musicbrainz_id
@@ -113,6 +164,7 @@ defmodule MusicLibrary.Records.Similarity do
                 |> selected_as(:similarity)
             },
             group_by: r.musicbrainz_id,
+            having: vec_distance_cosine(re.embedding, vec_f32(source_embedding)) <= ^max_distance,
             limit: ^limit
 
         query = apply_scope_filter(query, scope)

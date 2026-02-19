@@ -1448,11 +1448,6 @@ msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
-msgid "Based on genres, artists, and release year"
-msgstr ""
-
-#: lib/music_library_web/components/record_components.ex
-#, elixir-autogen, elixir-format
 msgid "Similar Records"
 msgstr ""
 
@@ -1956,4 +1951,9 @@ msgstr ""
 #: lib/music_library_web/components/release.ex
 #, elixir-autogen, elixir-format
 msgid "Retry"
+msgstr ""
+
+#: lib/music_library_web/components/record_components.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Based on genres, artists, and musical style"
 msgstr ""

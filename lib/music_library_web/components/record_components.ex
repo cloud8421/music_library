@@ -472,7 +472,7 @@ defmodule MusicLibraryWeb.RecordComponents do
           {gettext("Similar Records")}
         </h2>
         <span class="ml-2 text-xs font-normal text-zinc-500 dark:text-zinc-400">
-          {gettext("Based on genres, artists, and release year")}
+          {gettext("Based on genres, artists, and musical style")}
         </span>
       </header>
 
