@@ -158,6 +158,7 @@ msgstr ""
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/components/stats_components.ex
 #: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/record_set_live/record_picker.ex
 #, elixir-autogen, elixir-format
 msgid "Purchased on"
 msgstr ""

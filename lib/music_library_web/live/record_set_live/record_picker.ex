@@ -99,9 +99,23 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
           {Record.artist_names(@record)}
         </p>
         <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-          {Record.format_release_date(@record.release_date)} · {type_label(@record.type)} · {format_label(
-            @record.format
+          {Record.format_release_date(@record.release_date)} · {format_label(@record.format)} · {type_label(
+            @record.type
           )}
+
+          <span :if={@record.purchased_at}>
+            ·
+            <span class="sr-only">
+              {gettext("Purchased on")}
+            </span>
+            <.icon
+              name="hero-banknotes"
+              class="h-4 w-4"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+            {Record.format_as_date(@record.purchased_at)}
+          </span>
         </p>
       </div>
       <div class="flex-none">
