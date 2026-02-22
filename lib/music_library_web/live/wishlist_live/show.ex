@@ -14,6 +14,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
   alias MusicLibrary.OnlineStoreTemplates
   alias MusicLibrary.{Records, RecordSets}
+  alias MusicLibrary.Records.Similarity
   alias MusicLibrary.RecordSets.RecordSet
 
   @impl true
@@ -42,7 +43,8 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
      |> assign(:page_title, page_title(socket.assigns.live_action, record))
      |> assign(:record, record)
      |> assign(:online_store_templates, online_store_templates)
-     |> assign(:record_sets, record_sets)}
+     |> assign(:record_sets, record_sets)
+     |> assign_embedding_text()}
   end
 
   @impl true
@@ -152,7 +154,8 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
   def handle_info({MusicLibraryWeb.Components.RecordForm, {:saved, record}}, socket) do
     {:noreply,
      socket
-     |> assign(:record, record)}
+     |> assign(:record, record)
+     |> assign_embedding_text()}
   end
 
   @impl true
@@ -160,7 +163,8 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
     {:noreply,
      socket
      |> put_toast(:info, gettext("Record updated in the background"))
-     |> assign(:record, record)}
+     |> assign(:record, record)
+     |> assign_embedding_text()}
   end
 
   def page_title(action, record) do
@@ -176,6 +180,13 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
       ],
       " "
     )
+  end
+
+  defp assign_embedding_text(socket) do
+    case Similarity.get_embedding_text(socket.assigns.record.id) do
+      {:ok, text} -> assign(socket, :embedding_text, text)
+      {:error, _reason} -> assign(socket, :embedding_text, gettext("Not available"))
+    end
   end
 
   defp title_segment(:show), do: gettext("Show")

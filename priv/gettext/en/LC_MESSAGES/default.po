@@ -1666,11 +1666,13 @@ msgid "Running optimize..."
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Record Embedding"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Not available"
 msgstr ""
