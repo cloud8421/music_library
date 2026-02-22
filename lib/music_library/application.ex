@@ -23,6 +23,7 @@ defmodule MusicLibrary.Application do
       {Oban, Application.fetch_env!(:music_library, Oban)},
       {Ecto.Migrator,
        repos: Application.fetch_env!(:music_library, :ecto_repos), skip: skip_migrations?()},
+      {Task.Supervisor, name: MusicLibrary.TaskSupervisor},
       {Phoenix.PubSub, name: MusicLibrary.PubSub},
       {LastFm.Supervisor, LastFm.Config.resolve(:music_library)},
       # Start a worker by calling: MusicLibrary.Worker.start_link(arg)

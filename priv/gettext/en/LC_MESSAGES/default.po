@@ -2000,3 +2000,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "e.g. \"What genre is this?\", \"Tell me about the artists\""
 msgstr ""
+
+#: lib/music_library_web/components/record_chat.ex
+#, elixir-autogen, elixir-format
+msgid "Something went wrong. Please try again."
+msgstr ""

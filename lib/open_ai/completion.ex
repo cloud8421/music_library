@@ -3,7 +3,5 @@ defmodule OpenAI.Completion do
   defstruct content: "",
             temperature: 0.2,
             role: "user",
-            model: "gpt-4o-mini",
-            messages: nil,
-            response_format: nil
+            model: "gpt-4o-mini"
 end

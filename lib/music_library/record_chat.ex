@@ -1,5 +1,5 @@
 defmodule MusicLibrary.RecordChat do
-  alias MusicLibrary.Records.{Record, Similarity}
+  alias MusicLibrary.Records.Record
 
   def stream_response(messages, record, embedding_text, callback) do
     system_prompt = build_system_prompt(record, embedding_text)
@@ -11,11 +11,7 @@ defmodule MusicLibrary.RecordChat do
     OpenAI.chat_stream(full_messages, on_chunk: callback)
   end
 
-  def get_embedding_text(record_id) do
-    Similarity.get_embedding_text(record_id)
-  end
-
-  def build_system_prompt(%Record{} = record, embedding_text) do
+  defp build_system_prompt(%Record{} = record, embedding_text) do
     context =
       case embedding_text do
         nil -> basic_context(record)

@@ -1,6 +1,8 @@
 defmodule MusicLibraryWeb.Components.RecordChat do
   use MusicLibraryWeb, :live_component
 
+  require Logger
+
   alias MusicLibrary.RecordChat
 
   def open(id), do: Fluxon.open_dialog(id)
@@ -12,7 +14,6 @@ defmodule MusicLibraryWeb.Components.RecordChat do
      |> assign(:messages, [])
      |> assign(:current_response, "")
      |> assign(:loading, false)
-     |> assign(:embedding_text, nil)
      |> assign(:error, nil)}
   end
 
@@ -39,21 +40,7 @@ defmodule MusicLibraryWeb.Components.RecordChat do
   end
 
   def update(assigns, socket) do
-    {:ok,
-     socket
-     |> assign(assigns)
-     |> maybe_load_embedding_text()}
-  end
-
-  defp maybe_load_embedding_text(socket) do
-    if socket.assigns.embedding_text == nil and socket.assigns[:record] do
-      case RecordChat.get_embedding_text(socket.assigns.record.id) do
-        {:ok, text} -> assign(socket, :embedding_text, text)
-        {:error, :not_found} -> assign(socket, :embedding_text, nil)
-      end
-    else
-      socket
-    end
+    {:ok, assign(socket, assigns)}
   end
 
   @impl true
@@ -144,7 +131,12 @@ defmodule MusicLibraryWeb.Components.RecordChat do
         </div>
 
         <div class="pt-4 border-t border-zinc-200 dark:border-zinc-700">
-          <form id={"#{@id}-form"} phx-submit="send_message" phx-target={@myself} class="flex gap-2">
+          <form
+            id={"#{@id}-form"}
+            phx-submit="send_message"
+            phx-target={@myself}
+            class="flex gap-2"
+          >
             <.input
               name="message"
               value=""
@@ -188,51 +180,10 @@ defmodule MusicLibraryWeb.Components.RecordChat do
   end
 
   @impl true
-  def handle_event("send_message", %{"message" => ""}, socket) do
-    {:noreply, socket}
-  end
+  def handle_event("send_message", %{"message" => ""}, socket), do: {:noreply, socket}
 
-  def handle_event("send_message", %{"message" => text}, socket) do
-    parent_pid = self()
-    component_id = socket.assigns.id
-    user_message = %{role: "user", content: String.trim(text)}
-
-    messages = socket.assigns.messages ++ [user_message]
-
-    Task.start(fn ->
-      try do
-        RecordChat.stream_response(
-          messages,
-          socket.assigns.record,
-          socket.assigns.embedding_text,
-          fn chunk ->
-            Phoenix.LiveView.send_update(parent_pid, __MODULE__,
-              id: component_id,
-              chunk: chunk
-            )
-          end
-        )
-
-        Phoenix.LiveView.send_update(parent_pid, __MODULE__,
-          id: component_id,
-          done: true
-        )
-      rescue
-        e ->
-          Phoenix.LiveView.send_update(parent_pid, __MODULE__,
-            id: component_id,
-            error: Exception.message(e)
-          )
-      end
-    end)
-
-    {:noreply,
-     socket
-     |> assign(:messages, messages)
-     |> assign(:loading, true)
-     |> assign(:current_response, "")
-     |> assign(:error, nil)}
-  end
+  def handle_event("send_message", %{"message" => text}, socket),
+    do: do_send_message(socket, text)
 
   def handle_event("clear_chat", _params, socket) do
     {:noreply,
@@ -245,15 +196,53 @@ defmodule MusicLibraryWeb.Components.RecordChat do
   def handle_event("retry", _params, socket) do
     case List.last(socket.assigns.messages) do
       %{role: "user"} = last_message ->
-        # Remove the last user message and re-send
-        messages = Enum.drop(socket.assigns.messages, -1)
-
-        socket = assign(socket, :messages, messages)
-        handle_event("send_message", %{"message" => last_message.content}, socket)
+        socket
+        |> assign(:messages, Enum.drop(socket.assigns.messages, -1))
+        |> do_send_message(last_message.content)
 
       _ ->
         {:noreply, assign(socket, :error, nil)}
     end
+  end
+
+  defp do_send_message(socket, text) do
+    parent_pid = self()
+    component_id = socket.assigns.id
+    user_message = %{role: "user", content: String.trim(text)}
+
+    messages = socket.assigns.messages ++ [user_message]
+    record = socket.assigns.record
+    embedding_text = socket.assigns.embedding_text
+
+    Task.Supervisor.start_child(MusicLibrary.TaskSupervisor, fn ->
+      case RecordChat.stream_response(messages, record, embedding_text, fn chunk ->
+             Phoenix.LiveView.send_update(parent_pid, __MODULE__,
+               id: component_id,
+               chunk: chunk
+             )
+           end) do
+        :ok ->
+          Phoenix.LiveView.send_update(parent_pid, __MODULE__,
+            id: component_id,
+            done: true
+          )
+
+        {:error, reason} ->
+          Logger.error("RecordChat streaming error: #{reason}")
+
+          Phoenix.LiveView.send_update(parent_pid, __MODULE__,
+            id: component_id,
+            error: gettext("Something went wrong. Please try again.")
+          )
+      end
+    end)
+
+    {:noreply,
+     socket
+     |> assign(:messages, messages)
+     |> assign(:loading, true)
+     |> assign(:current_response, "")
+     |> assign(:error, nil)}
   end
 
   defp message_classes("user") do

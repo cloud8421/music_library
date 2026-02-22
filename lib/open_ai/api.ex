@@ -75,20 +75,29 @@ defmodule OpenAI.API do
       end
     end
 
-    Req.post!("https://api.openai.com/v1/chat/completions",
-      receive_timeout: 30_000,
-      connect_options: [
-        timeout: 5_000
-      ],
-      json: %{
-        model: model,
-        messages: messages,
-        stream: true,
-        temperature: temperature
-      },
-      auth: {:bearer, api_key},
-      finch_request: fun
-    )
+    case Req.post("https://api.openai.com/v1/chat/completions",
+           receive_timeout: 30_000,
+           connect_options: [
+             timeout: 5_000
+           ],
+           json: %{
+             model: model,
+             messages: messages,
+             stream: true,
+             temperature: temperature
+           },
+           auth: {:bearer, api_key},
+           finch_request: fun
+         ) do
+      {:ok, %{status: status}} when status in 200..299 ->
+        :ok
+
+      {:ok, %{body: body}} ->
+        {:error, "OpenAI API error: #{inspect(body)}"}
+
+      {:error, exception} ->
+        {:error, "Connection error: #{Exception.message(exception)}"}
+    end
   end
 
   def get_embeddings(text, api_key) do

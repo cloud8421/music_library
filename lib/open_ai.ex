@@ -16,12 +16,15 @@ defmodule OpenAI do
     {:ok, result}
   end
 
-  def chat_stream(messages, opts \\ []) do
+  def chat_stream(messages, opts \\ []) when is_list(messages) do
     model = Keyword.get(opts, :model, "gpt-4o-mini")
     temperature = Keyword.get(opts, :temperature, 0.7)
     on_chunk = Keyword.fetch!(opts, :on_chunk)
 
-    API.chat_stream(messages, model, temperature, api_key(), on_chunk)
+    case API.chat_stream(messages, model, temperature, api_key(), on_chunk) do
+      :ok -> :ok
+      {:error, _reason} = error -> error
+    end
   end
 
   def embeddings(text) do
