@@ -17,11 +17,12 @@ defmodule OpenAI do
   end
 
   def chat_stream(messages, opts \\ []) when is_list(messages) do
-    model = Keyword.get(opts, :model, "gpt-4o-mini")
+    model = Keyword.get(opts, :model, "gpt-4.1")
     temperature = Keyword.get(opts, :temperature, 0.7)
+    instructions = Keyword.get(opts, :instructions, "")
     on_chunk = Keyword.fetch!(opts, :on_chunk)
 
-    case API.chat_stream(messages, model, temperature, api_key(), on_chunk) do
+    case API.chat_stream(messages, instructions, model, temperature, api_key(), on_chunk) do
       :ok -> :ok
       {:error, _reason} = error -> error
     end

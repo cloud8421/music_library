@@ -48,7 +48,7 @@ defmodule OpenAI.API do
     )
   end
 
-  def chat_stream(messages, model, temperature, api_key, cb) do
+  def chat_stream(messages, instructions, model, temperature, api_key, cb) do
     fun = fn request, finch_request, finch_name, finch_options ->
       fun = fn
         {:status, status}, response ->
@@ -59,11 +59,11 @@ defmodule OpenAI.API do
 
         {:data, data}, response ->
           data
-          |> String.split("data: ")
-          |> Enum.each(fn str ->
-            str
+          |> String.split("\n")
+          |> Enum.each(fn line ->
+            line
             |> String.trim()
-            |> decode_chat_chunk(cb)
+            |> decode_responses_event(cb)
           end)
 
           response
@@ -75,14 +75,16 @@ defmodule OpenAI.API do
       end
     end
 
-    case Req.post("https://api.openai.com/v1/chat/completions",
-           receive_timeout: 30_000,
+    case Req.post("https://api.openai.com/v1/responses",
+           receive_timeout: 60_000,
            connect_options: [
              timeout: 5_000
            ],
            json: %{
              model: model,
-             messages: messages,
+             instructions: instructions,
+             input: messages,
+             tools: [%{type: "web_search_preview"}],
              stream: true,
              temperature: temperature
            },
@@ -122,13 +124,15 @@ defmodule OpenAI.API do
   defp decode_body("[DONE]", _), do: :ok
   defp decode_body(json, cb), do: cb.(JSON.decode!(json))
 
-  defp decode_chat_chunk("", _cb), do: :ok
-  defp decode_chat_chunk("[DONE]", _cb), do: :ok
+  defp decode_responses_event("", _cb), do: :ok
+  defp decode_responses_event("event:" <> _rest, _cb), do: :ok
 
-  defp decode_chat_chunk(json, cb) do
-    case get_in(JSON.decode!(json), ["choices", Access.at(0), "delta", "content"]) do
-      nil -> :ok
-      content -> cb.(content)
+  defp decode_responses_event("data: " <> json, cb) do
+    case JSON.decode!(json) do
+      %{"type" => "response.output_text.delta", "delta" => delta} -> cb.(delta)
+      _other -> :ok
     end
   end
+
+  defp decode_responses_event(_line, _cb), do: :ok
 end
