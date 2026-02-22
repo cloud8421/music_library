@@ -15,6 +15,7 @@ Key capabilities:
 - Import metadata from MusicBrainz, enrich with Discogs/Wikipedia/Last.fm
 - Scrobble tracks to Last.fm, import listening history
 - Similarity search via OpenAI embeddings + sqlite-vec
+- AI-powered record chat via OpenAI streaming with web search
 - Barcode scanning for quick imports
 - Encrypted secret storage (Cloak)
 
@@ -35,6 +36,7 @@ MusicLibrary.Application (one_for_one)
 ├── Oban                         # Background job engine
 ├── Ecto.Migrator                # Auto-migration on boot
 ├── Phoenix.PubSub (:music_library)
+├── Task.Supervisor (MusicLibrary.TaskSupervisor)
 ├── LastFm.Supervisor (one_for_one)
 │   ├── Phoenix.PubSub (:last_fm) # Last.fm-specific PubSub
 │   └── LastFm.Refresh            # GenServer, periodic scrobble fetch
@@ -64,6 +66,7 @@ write to it directly; insert/update the `records` table instead.
 | `Records.Record` | `records` | `id` (binary_id) | title, type, format, cover_url, cover_hash, musicbrainz_id, genres[], release_date, purchased_at, dominant_colors[], embeds_many :artists |
 | `Records.RecordEmbedding` | `record_embeddings` | `id` | embedding (Float32 vector), text_representation, belongs_to :record |
 | `Records.SearchIndex` | `records_search_index` | `id` | FTS5 mirror of records (virtual, trigger-synced) |
+| `Records.RecordRelease` | `record_releases` | none | record_id, release_id, cover_hash, purchased_at — read-only, no PK |
 | `Records.ArtistRecord` | `artist_records` | composite | musicbrainz_id, record_id — DB view joining artists to records |
 | `Artists.Artist` | — | — | Embedded schema (name, sort_name, musicbrainz_id, joinphrase) |
 | `Artists.ArtistInfo` | `artist_infos` | `id` | musicbrainz_data, discogs_data, wikipedia_data, image_data_hash |
@@ -112,6 +115,9 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Artists.Batch` | Batch refresh: MusicBrainz, Discogs, Wikipedia for all artists (uses `Batch`) |
 | `Assets.Cache` | ETS-based asset cache with TTL |
 | `Assets.Image` / `Assets.Transform` | Image processing via Vix (libvips) |
+| `Colors.ColorFrequencyExtractor` | Color extraction via pixel sampling/histogram |
+| `Colors.EdgeWeightedExtractor` | Color extraction weighted by Sobel edge detection |
+| `RecordChat` | OpenAI-powered streaming chat about a record (web search enabled) |
 | `FormatNumber` | Number formatting utility |
 
 ---
@@ -125,7 +131,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Discogs` / `Discogs.API` | discogs.com | Artist profiles, images |
 | `Wikipedia` / `Wikipedia.API` | wikipedia.org | Artist biographies |
 | `BraveSearch` / `BraveSearch.API` | search.brave.com | Cover art and artist image search |
-| `OpenAI` / `OpenAI.API` | api.openai.com | Text embeddings for similarity |
+| `OpenAI` / `OpenAI.API` | api.openai.com | Text embeddings for similarity, streaming chat via Responses API (gpt-4.1 + web search) |
 
 Each has a `Config` module reading from application env. In tests, all HTTP calls are
 stubbed via `Req.Test` (configured in `config/test.exs`).
@@ -159,7 +165,12 @@ stubbed via `Req.Test` (configured in `config/test.exs`).
 | `ArtistRefreshDiscogsData` | discogs | Manual / batch |
 | `ArtistRefreshWikipediaData` | wikipedia | Manual / batch |
 | `PruneArtistInfo` | default | Record deleted (cleanup orphaned artist data) |
-| `BackfillScrobbledTracks` | heavy_writes | Manual (self-chaining batch import) |
+| `RecordRefreshAllMusicBrainzData` | music_brainz | Manual / cron (bulk refresh via Records.Batch) |
+| `RecordGenerateAllEmbeddings` | heavy_writes | Manual / cron (bulk generate via Records.Batch) |
+| `ArtistRefreshAllMusicBrainzData` | music_brainz | Manual / cron (bulk refresh via Artists.Batch) |
+| `ArtistRefreshAllDiscogsData` | discogs | Manual / cron (bulk refresh via Artists.Batch) |
+| `ArtistRefreshAllWikipediaData` | wikipedia | Manual / cron (bulk refresh via Artists.Batch) |
+| `LastFm.Worker.BackfillScrobbledTracks` | heavy_writes | Manual (self-chaining batch import) |
 
 ### Cron Workers
 
@@ -170,6 +181,11 @@ stubbed via `Req.Test` (configured in `config/test.exs`).
 | Daily 2 AM | `PruneAssets` | default |
 | Daily 3 AM | `RepoVacuum` | heavy_writes |
 | Daily 4 AM | `RepoOptimize` | heavy_writes |
+| Monthly 1st, 6 AM | `RecordRefreshAllMusicBrainzData` | music_brainz |
+| Monthly 1st, 7 AM | `RecordGenerateAllEmbeddings` | heavy_writes |
+| Monthly 1st, 8 AM | `ArtistRefreshAllMusicBrainzData` | music_brainz |
+| Monthly 1st, 9 AM | `ArtistRefreshAllDiscogsData` | discogs |
+| Monthly 1st, 10 AM | `ArtistRefreshAllWikipediaData` | wikipedia |
 
 ---
 
@@ -224,6 +240,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `StatsLive.TopAlbums` | StatsLive.Index | Top albums by period (assign_async) |
 | `StatsLive.TopArtists` | StatsLive.Index | Top artists by period (assign_async) |
 | `UniversalSearchLive.Index` | Layout (global) | Cmd+K search modal |
+| `RecordChat` | CollectionLive.Show, WishlistLive.Show | AI chat sheet for a record (OpenAI streaming) |
 
 ### Shared Component Modules (lib/music_library_web/components/)
 
@@ -240,6 +257,9 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `BarcodeScanner` | Barcode scanning UI (uses barcode-detector JS) |
 | `Release` | MusicBrainz release display |
 | `Notes` | Markdown note rendering |
+| `RecordChat` | AI record chat sheet with streaming responses |
+| `Markdown` | Markdown-to-HTML conversion with `[[double bracket]]` link syntax |
+| `Duration` | Milliseconds to human-readable duration formatting |
 
 ### Controllers
 
@@ -267,7 +287,8 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `FormatNumber` | External (`assets/js/hooks/`) | Client-side number formatting |
 | `UniversalSearchNavigation` | External | Keyboard navigation in search modal (via `create-navigation-hook` factory) |
 | `RecordPickerNavigation` | External | Keyboard navigation in record picker (via `create-navigation-hook` factory) |
-| Various `.ColocatedHooks` | Colocated (in .heex) | Inline hooks prefixed with `.` |
+| `SortableList` | External (`assets/js/hooks/`) | Drag-and-drop reordering of record set items (uses sortablejs) |
+| Various `.ColocatedHooks` | Colocated (in .heex) | Inline hooks prefixed with `.` (includes `.ScrollBottom` for RecordChat) |
 
 ### JS Event Listeners (app.js)
 
@@ -281,7 +302,9 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 
 - `barcode-detector` — Barcode scanning API
 - `canvas-confetti` — Confetti animation
+- `sortablejs` — Drag-and-drop list reordering
 - `live_toast` — Toast notifications (local dep)
+- `@tailwindcss/typography` (dev) — Prose CSS classes for markdown rendering
 
 ---
 
