@@ -27,6 +27,18 @@
               />
             </.button>
             <.button
+              variant="soft"
+              phx-click={MusicLibraryWeb.Components.RecordChat.open("record-chat-sheet")}
+            >
+              <span class="sr-only">{gettext("Chat about album")}</span>
+              <.icon
+                name="hero-chat-bubble-left-right"
+                class="h-5 w-5"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+            </.button>
+            <.button
               :if={@record.selected_release_id}
               variant="soft"
               phx-click={MusicLibraryWeb.Components.Release.open("release-with-tracks-sheet")}
@@ -325,6 +337,13 @@
     module={MusicLibraryWeb.Components.Notes}
     entity={:record}
     musicbrainz_id={@record.musicbrainz_id}
+  />
+
+  <.live_component
+    id="record-chat"
+    sheet_id="record-chat-sheet"
+    module={MusicLibraryWeb.Components.RecordChat}
+    record={@record}
   />
 
   <.structured_modal

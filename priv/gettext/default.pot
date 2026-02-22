@@ -1949,6 +1949,7 @@ msgstr ""
 msgid "Record sets"
 msgstr ""
 
+#: lib/music_library_web/components/record_chat.ex
 #: lib/music_library_web/components/release.ex
 #, elixir-autogen, elixir-format
 msgid "Retry"
@@ -1957,4 +1958,45 @@ msgstr ""
 #: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "Based on genres, artists, and musical style"
+msgstr ""
+
+#: lib/music_library_web/components/record_chat.ex
+#, elixir-autogen, elixir-format
+msgid "Ask about this album..."
+msgstr ""
+
+#: lib/music_library_web/components/record_chat.ex
+#, elixir-autogen, elixir-format
+msgid "Ask anything about this album"
+msgstr ""
+
+#: lib/music_library_web/components/record_chat.ex
+#, elixir-autogen, elixir-format
+msgid "Chat about %{title}"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/wishlist_live/show.html.heex
+#, elixir-autogen, elixir-format
+msgid "Chat about album"
+msgstr ""
+
+#: lib/music_library_web/components/record_chat.ex
+#, elixir-autogen, elixir-format
+msgid "Clear chat"
+msgstr ""
+
+#: lib/music_library_web/components/record_chat.ex
+#, elixir-autogen, elixir-format
+msgid "Send message"
+msgstr ""
+
+#: lib/music_library_web/components/record_chat.ex
+#, elixir-autogen, elixir-format
+msgid "Thinking..."
+msgstr ""
+
+#: lib/music_library_web/components/record_chat.ex
+#, elixir-autogen, elixir-format
+msgid "e.g. \"What genre is this?\", \"Tell me about the artists\""
 msgstr ""

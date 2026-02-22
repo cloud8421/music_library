@@ -48,6 +48,49 @@ defmodule OpenAI.API do
     )
   end
 
+  def chat_stream(messages, model, temperature, api_key, cb) do
+    fun = fn request, finch_request, finch_name, finch_options ->
+      fun = fn
+        {:status, status}, response ->
+          %{response | status: status}
+
+        {:headers, headers}, response ->
+          %{response | headers: headers}
+
+        {:data, data}, response ->
+          data
+          |> String.split("data: ")
+          |> Enum.each(fn str ->
+            str
+            |> String.trim()
+            |> decode_chat_chunk(cb)
+          end)
+
+          response
+      end
+
+      case Finch.stream(finch_request, finch_name, Req.Response.new(), fun, finch_options) do
+        {:ok, response} -> {request, response}
+        {:error, exception, _response} -> {request, exception}
+      end
+    end
+
+    Req.post!("https://api.openai.com/v1/chat/completions",
+      receive_timeout: 30_000,
+      connect_options: [
+        timeout: 5_000
+      ],
+      json: %{
+        model: model,
+        messages: messages,
+        stream: true,
+        temperature: temperature
+      },
+      auth: {:bearer, api_key},
+      finch_request: fun
+    )
+  end
+
   def get_embeddings(text, api_key) do
     resp =
       Req.post!("https://api.openai.com/v1/embeddings",
@@ -69,4 +112,14 @@ defmodule OpenAI.API do
   defp decode_body("", _), do: :ok
   defp decode_body("[DONE]", _), do: :ok
   defp decode_body(json, cb), do: cb.(JSON.decode!(json))
+
+  defp decode_chat_chunk("", _cb), do: :ok
+  defp decode_chat_chunk("[DONE]", _cb), do: :ok
+
+  defp decode_chat_chunk(json, cb) do
+    case get_in(JSON.decode!(json), ["choices", Access.at(0), "delta", "content"]) do
+      nil -> :ok
+      content -> cb.(content)
+    end
+  end
 end

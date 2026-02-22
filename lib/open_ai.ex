@@ -16,6 +16,14 @@ defmodule OpenAI do
     {:ok, result}
   end
 
+  def chat_stream(messages, opts \\ []) do
+    model = Keyword.get(opts, :model, "gpt-4o-mini")
+    temperature = Keyword.get(opts, :temperature, 0.7)
+    on_chunk = Keyword.fetch!(opts, :on_chunk)
+
+    API.chat_stream(messages, model, temperature, api_key(), on_chunk)
+  end
+
   def embeddings(text) do
     API.get_embeddings(text, api_key())
   end
