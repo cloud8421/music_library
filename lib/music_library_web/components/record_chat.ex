@@ -4,6 +4,7 @@ defmodule MusicLibraryWeb.Components.RecordChat do
   require Logger
 
   alias MusicLibrary.RecordChat
+  alias MusicLibraryWeb.Markdown
 
   def open(id), do: Fluxon.open_dialog(id)
 
@@ -52,7 +53,7 @@ defmodule MusicLibraryWeb.Components.RecordChat do
         placement="right"
         class="w-md sm:min-w-lg lg:min-w-2xl flex flex-col h-full"
       >
-        <div class="flex items-center justify-between pb-4 border-b border-zinc-200 dark:border-zinc-700">
+        <div class="flex items-center gap-2 pb-4 border-b border-zinc-200 dark:border-zinc-700">
           <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
             {gettext("Chat about %{title}", title: @record.title)}
           </h2>
@@ -94,7 +95,10 @@ defmodule MusicLibraryWeb.Components.RecordChat do
               message_classes(message.role)
             ]}
           >
-            <p class="whitespace-pre-wrap">{message.content}</p>
+            <p :if={message.role == "user"} class="whitespace-pre-wrap">{message.content}</p>
+            <div :if={message.role == "assistant"} class="prose prose-sm dark:prose-invert">
+              {raw(Markdown.to_html(message.content))}
+            </div>
           </div>
 
           <div
