@@ -1,7 +1,10 @@
 defmodule MusicLibrary.RecordChat do
+  @behaviour MusicLibrary.Chat
+
   alias MusicLibrary.Records.Record
 
-  def stream_response(messages, record, embedding_text, callback) do
+  @impl true
+  def stream_response(messages, {record, embedding_text}, callback) do
     instructions = build_instructions(record, embedding_text)
 
     OpenAI.chat_stream(messages, on_chunk: callback, instructions: instructions)

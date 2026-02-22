@@ -117,7 +117,9 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Assets.Image` / `Assets.Transform` | Image processing via Vix (libvips) |
 | `Colors.ColorFrequencyExtractor` | Color extraction via pixel sampling/histogram |
 | `Colors.EdgeWeightedExtractor` | Color extraction weighted by Sobel edge detection |
-| `RecordChat` | OpenAI-powered streaming chat about a record (web search enabled) |
+| `Chat` | Behaviour for streaming AI chat (`stream_response/3` callback) |
+| `RecordChat` | Chat implementation for records (OpenAI streaming, web search enabled) |
+| `ArtistChat` | Chat implementation for artists (OpenAI streaming, uses Wikipedia/artist context) |
 | `FormatNumber` | Number formatting utility |
 
 ---
@@ -240,7 +242,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `StatsLive.TopAlbums` | StatsLive.Index | Top albums by period (assign_async) |
 | `StatsLive.TopArtists` | StatsLive.Index | Top artists by period (assign_async) |
 | `UniversalSearchLive.Index` | Layout (global) | Cmd+K search modal |
-| `RecordChat` | CollectionLive.Show, WishlistLive.Show | AI chat sheet for a record (OpenAI streaming) |
+| `Chat` | CollectionLive.Show, WishlistLive.Show, ArtistLive.Show | AI chat sheet (OpenAI streaming, configurable per entity) |
 
 ### Shared Component Modules (lib/music_library_web/components/)
 
@@ -257,7 +259,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `BarcodeScanner` | Barcode scanning UI (uses barcode-detector JS) |
 | `Release` | MusicBrainz release display |
 | `Notes` | Markdown note rendering |
-| `RecordChat` | AI record chat sheet with streaming responses |
+| `Chat` | AI chat sheet with streaming responses (generic, used for records and artists) |
 | `Markdown` | Markdown-to-HTML conversion with `[[double bracket]]` link syntax |
 | `Duration` | Milliseconds to human-readable duration formatting |
 
@@ -288,7 +290,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `UniversalSearchNavigation` | External | Keyboard navigation in search modal (via `create-navigation-hook` factory) |
 | `RecordPickerNavigation` | External | Keyboard navigation in record picker (via `create-navigation-hook` factory) |
 | `SortableList` | External (`assets/js/hooks/`) | Drag-and-drop reordering of record set items (uses sortablejs) |
-| Various `.ColocatedHooks` | Colocated (in .heex) | Inline hooks prefixed with `.` (includes `.ScrollBottom` for RecordChat) |
+| Various `.ColocatedHooks` | Colocated (in .heex) | Inline hooks prefixed with `.` (includes `.ScrollBottom` for Chat) |
 
 ### JS Event Listeners (app.js)
 

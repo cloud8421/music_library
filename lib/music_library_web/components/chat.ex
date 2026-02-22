@@ -1,9 +1,8 @@
-defmodule MusicLibraryWeb.Components.RecordChat do
+defmodule MusicLibraryWeb.Components.Chat do
   use MusicLibraryWeb, :live_component
 
   require Logger
 
-  alias MusicLibrary.RecordChat
   alias MusicLibraryWeb.Markdown
 
   def open(id), do: Fluxon.open_dialog(id)
@@ -55,7 +54,7 @@ defmodule MusicLibraryWeb.Components.RecordChat do
       >
         <div class="flex items-center gap-2 pb-4 border-b border-zinc-200 dark:border-zinc-700">
           <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-            {gettext("Chat about %{title}", title: @record.title)}
+            {gettext("Chat about %{title}", title: @title)}
           </h2>
           <.button
             :if={@messages != []}
@@ -82,10 +81,7 @@ defmodule MusicLibraryWeb.Components.RecordChat do
               name="hero-chat-bubble-left-right"
               class="size-12 mb-4 text-zinc-300 dark:text-zinc-600"
             />
-            <p class="text-sm font-medium">{gettext("Ask anything about this album")}</p>
-            <p class="text-xs mt-1">
-              {gettext("e.g. \"What genre is this?\", \"Tell me about the artists\"")}
-            </p>
+            <p class="text-sm font-medium">{@empty_prompt}</p>
           </div>
 
           <div
@@ -144,7 +140,7 @@ defmodule MusicLibraryWeb.Components.RecordChat do
             <.input
               name="message"
               value=""
-              placeholder={gettext("Ask about this album...")}
+              placeholder={@placeholder}
               class="flex-1"
               disabled={@loading}
               autocomplete="off"
@@ -215,11 +211,11 @@ defmodule MusicLibraryWeb.Components.RecordChat do
     user_message = %{role: "user", content: String.trim(text)}
 
     messages = socket.assigns.messages ++ [user_message]
-    record = socket.assigns.record
-    embedding_text = socket.assigns.embedding_text
+    chat_module = socket.assigns.chat_module
+    chat_context = socket.assigns.chat_context
 
     Task.Supervisor.start_child(MusicLibrary.TaskSupervisor, fn ->
-      case RecordChat.stream_response(messages, record, embedding_text, fn chunk ->
+      case chat_module.stream_response(messages, chat_context, fn chunk ->
              Phoenix.LiveView.send_update(parent_pid, __MODULE__,
                id: component_id,
                chunk: chunk
@@ -232,7 +228,7 @@ defmodule MusicLibraryWeb.Components.RecordChat do
           )
 
         {:error, reason} ->
-          Logger.error("RecordChat streaming error: #{reason}")
+          Logger.error("Chat streaming error: #{reason}")
 
           Phoenix.LiveView.send_update(parent_pid, __MODULE__,
             id: component_id,

@@ -21,6 +21,18 @@
                 data-slot="icon"
               />
             </.button>
+            <.button
+              variant="soft"
+              phx-click={MusicLibraryWeb.Components.Chat.open("artist-chat-sheet")}
+            >
+              <span class="sr-only">{gettext("Chat about artist")}</span>
+              <.icon
+                name="hero-chat-bubble-left-right"
+                class="h-5 w-5"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+            </.button>
             <.dropdown id={"actions-#{@artist.musicbrainz_id}"} placement="bottom-end">
               <:toggle>
                 <.button variant="soft">
@@ -330,6 +342,17 @@
     module={MusicLibraryWeb.Components.Notes}
     entity={:artist}
     musicbrainz_id={@artist.musicbrainz_id}
+  />
+
+  <.live_component
+    id="artist-chat"
+    sheet_id="artist-chat-sheet"
+    module={MusicLibraryWeb.Components.Chat}
+    title={@artist.name}
+    chat_module={MusicLibrary.ArtistChat}
+    chat_context={{@artist, @artist_info}}
+    placeholder={gettext("Ask about this artist...")}
+    empty_prompt={gettext("Ask anything about this artist")}
   />
 
   <.structured_modal
