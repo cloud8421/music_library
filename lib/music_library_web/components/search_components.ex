@@ -49,9 +49,24 @@ defmodule MusicLibraryWeb.SearchComponents do
             {Record.artist_names(@record)}
           </p>
           <p class="pointer-events-none block text-sm text-zinc-500">
-            {format_label(@record.format)} · {type_label(@record.type)} · {Record.format_release_date(
-              @record.release_date
-            )}
+            {format_label(@record.format)} · {type_label(@record.type)} ·
+            <.icon
+              name="hero-calendar-days"
+              class="-mt-1 h-4 w-4"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+            {Record.format_release_date(@record.release_date)}
+            <span :if={@record.purchased_at}>
+              ·
+              <.icon
+                name="hero-banknotes"
+                class="h-4 w-4"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+              {Record.format_as_date(@record.purchased_at)}
+            </span>
           </p>
         </div>
       </div>
