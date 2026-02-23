@@ -101,7 +101,9 @@ defmodule MusicLibraryWeb.Components.Chat do
             :if={@current_response != ""}
             class="max-w-[85%] rounded-lg px-4 py-2 text-sm bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100"
           >
-            <p class="whitespace-pre-wrap">{@current_response}</p>
+            <div class="prose prose-sm dark:prose-invert">
+              {raw(Markdown.to_html(@current_response))}
+            </div>
           </div>
 
           <div
