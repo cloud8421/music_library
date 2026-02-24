@@ -49,15 +49,6 @@ defmodule MusicLibraryWeb.Telemetry do
         tags: [:source]
       ),
 
-      # Oban
-      summary("oban.job.stop.duration",
-        unit: {:native, :millisecond},
-        tags: [:state],
-        reporter_options: [
-          nav: "Oban"
-        ]
-      ),
-
       # HTTP Metrics
       summary("finch.request.stop.duration",
         unit: {:native, :millisecond},
@@ -86,13 +77,6 @@ defmodule MusicLibraryWeb.Telemetry do
       summary("music_library.assets.content_size",
         unit: {:byte, :megabyte},
         reporter_options: [nav: "Assets"]
-      ),
-
-      # Scrobble Rules
-      summary("music_library.scrobble_rules.apply_all_rules.stop.duration",
-        unit: {:native, :millisecond},
-        tags: [:scrobble_track_count],
-        reporter_options: [nav: "Scrobble Rules"]
       ),
 
       # VM Metrics
