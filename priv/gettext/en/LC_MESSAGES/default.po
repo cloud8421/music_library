@@ -441,8 +441,8 @@ msgstr ""
 msgid "Album"
 msgstr ""
 
-#: lib/music_library_web/components/layouts/app.html.heex
 #: lib/music_library_web/components/record_components.ex
+#: lib/music_library_web/live/maintenance_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Backup"
 msgstr ""
