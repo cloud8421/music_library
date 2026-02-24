@@ -35,12 +35,5 @@ defmodule MusicLibrary.CountryTest do
       assert Country.to_emoji("en-US") == "🇺🇸"
       assert Country.to_emoji("pl-PL") == "🇵🇱"
     end
-
-    test "matches Flagmojis output for all alpha-2 codes" do
-      for %Flagmojis.Flag{iso: iso, emoji: expected} <- Flagmojis.Data.all() do
-        assert Country.to_emoji(iso) == expected,
-               "mismatch for #{iso}: expected #{expected}, got #{Country.to_emoji(iso)}"
-      end
-    end
   end
 end
