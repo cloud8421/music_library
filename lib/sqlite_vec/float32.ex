@@ -109,6 +109,6 @@ defimpl Inspect, for: SqliteVec.Float32 do
   import Inspect.Algebra
 
   def inspect(vector, opts) do
-    concat(["vec_f32('", Inspect.List.inspect(SqliteVec.Float32.to_list(vector), opts), "')"])
+    concat(["vec_f32('", to_doc(SqliteVec.Float32.to_list(vector), opts), "')"])
   end
 end
