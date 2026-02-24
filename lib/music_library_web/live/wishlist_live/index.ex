@@ -17,6 +17,148 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
   }
 
   @impl true
+  def render(assigns) do
+    ~H"""
+    <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
+      <header class="mb-2">
+        <div class="flex items-center justify-between gap-6 mb-2 mt-2">
+          <.search_form query={@record_list_params.query} />
+          <.button
+            variant="solid"
+            size="sm"
+            patch={~p"/wishlist/import"}
+          >
+            <.icon name="hero-plus" class="icon" aria-hidden="true" data-slot="icon" />
+            {gettext("Add")}
+          </.button>
+        </div>
+      </header>
+
+      <div class="flex items-end justify-between gap-6 mt-8">
+        <.button_group>
+          <.button
+            patch={order_path(@record_list_params, :insertion)}
+            size="sm"
+            class={[
+              @record_list_params.order == :insertion && "bg-zinc-100! dark:bg-zinc-700!"
+            ]}
+          >
+            <.icon name="hero-star" class="icon" aria-hidden="true" data-slot="icon" />
+            <span class="sr-only sm:not-sr-only">{gettext("Insertion")}</span>
+          </.button>
+          <.button
+            patch={order_path(@record_list_params, :alphabetical)}
+            size="sm"
+            class={[
+              @record_list_params.order == :alphabetical && "bg-zinc-100 dark:bg-zinc-700!"
+            ]}
+          >
+            <.icon name="hero-user-solid" class="icon" aria-hidden="true" data-slot="icon" />
+            <span class="sr-only sm:not-sr-only">{gettext("A->Z")}</span>
+          </.button>
+          <.button
+            patch={order_path(@record_list_params, :release)}
+            size="sm"
+            class={[
+              @record_list_params.order == :release && "bg-zinc-100! dark:bg-zinc-700!"
+            ]}
+          >
+            <.icon name="hero-calendar-days" class="icon" aria-hidden="true" data-slot="icon" />
+            <span class="sr-only sm:not-sr-only">{gettext("Release")}</span>
+          </.button>
+        </.button_group>
+
+        <.button_group>
+          <.button
+            phx-click="set_display"
+            phx-value-mode="grid"
+            size="sm"
+            class={[
+              @display == :grid && "bg-zinc-100! dark:bg-zinc-700!"
+            ]}
+          >
+            <.icon
+              name="hero-squares-2x2"
+              class="icon"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+            <span class="sr-only sm:not-sr-only">
+              {gettext("Grid")}
+            </span>
+          </.button>
+          <.button
+            phx-click="set_display"
+            phx-value-mode="list"
+            size="sm"
+            class={[
+              @display == :list && "bg-zinc-100! dark:bg-zinc-700!"
+            ]}
+          >
+            <.icon name="hero-list-bullet" class="icon" aria-hidden="true" data-slot="icon" />
+            <span class="sr-only sm:not-sr-only">
+              {gettext("List")}
+            </span>
+          </.button>
+        </.button_group>
+      </div>
+
+      <.record_grid
+        :if={@display == :grid}
+        id="wishlist"
+        records={@streams.records}
+        record_show_path={fn record -> ~p"/wishlist/#{record}" end}
+        record_edit_path={fn record -> ~p"/wishlist/#{record}/edit" end}
+        display_artist_names
+        density={:high}
+      />
+
+      <.record_list
+        :if={@display == :list}
+        current_date={@current_date}
+        records={@streams.records}
+        record_show_path={fn record -> ~p"/wishlist/#{record}" end}
+        record_edit_path={fn record -> ~p"/wishlist/#{record}/edit" end}
+      />
+
+      <.structured_modal
+        :if={@live_action == :edit}
+        id="record-modal"
+        on_close={JS.patch(back_path(@record_list_params))}
+      >
+        <.live_component
+          module={MusicLibraryWeb.Components.RecordForm}
+          id={@record.id}
+          action={@live_action}
+          show_purchased_at={false}
+          record={@record}
+          patch={back_path(@record_list_params)}
+        />
+      </.structured_modal>
+
+      <.structured_modal
+        :if={@live_action == :import}
+        id="record-modal"
+        on_close={JS.patch(back_path(@record_list_params))}
+      >
+        <.live_component
+          module={MusicLibraryWeb.Components.AddRecord}
+          id={:search}
+          title={@page_title}
+          action={@live_action}
+          record={@record}
+          patch={back_path(@record_list_params)}
+          initial_query={@import_query}
+          icon_name="hero-plus"
+        />
+      </.structured_modal>
+
+      <.pagination id={:bottom_pagination} pagination_params={@record_list_params} />
+    </Layouts.app>
+    """
+  end
+
+  @impl true
   def mount(_params, _session, socket) do
     current_date = Date.utc_today()
 

@@ -12,22 +12,22 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: lib/music_library_web/components/record_components.ex
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/online_store_template_live/index.html.heex
-#: lib/music_library_web/live/record_set_live/index.html.heex
-#: lib/music_library_web/live/record_set_live/show.html.heex
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
-#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/online_store_template_live/index.ex
+#: lib/music_library_web/live/record_set_live/index.ex
+#: lib/music_library_web/live/record_set_live/show.ex
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/index.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Are you sure?"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #: lib/music_library_web/live/collection_live/index.ex
 #: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Collection"
 msgstr ""
@@ -38,13 +38,13 @@ msgid "Cover art"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/online_store_template_live/index.html.heex
-#: lib/music_library_web/live/record_set_live/index.html.heex
-#: lib/music_library_web/live/record_set_live/show.html.heex
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
-#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/online_store_template_live/index.ex
+#: lib/music_library_web/live/record_set_live/index.ex
+#: lib/music_library_web/live/record_set_live/show.ex
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/index.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr ""
@@ -52,17 +52,13 @@ msgstr ""
 #: lib/music_library_web/components/notes.ex
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/artist_live/show.ex
-#: lib/music_library_web/live/artist_live/show.html.heex
 #: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/online_store_template_live/index.html.heex
-#: lib/music_library_web/live/record_set_live/index.html.heex
+#: lib/music_library_web/live/online_store_template_live/index.ex
+#: lib/music_library_web/live/record_set_live/index.ex
 #: lib/music_library_web/live/record_set_live/show.ex
-#: lib/music_library_web/live/record_set_live/show.html.heex
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
-#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/index.ex
 #: lib/music_library_web/live/wishlist_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
 #, elixir-autogen, elixir-format
 msgid "Edit"
 msgstr ""
@@ -78,20 +74,20 @@ msgstr ""
 msgid "Format"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Formats"
 msgstr ""
 
 #: lib/music_library_web/components/record_form.ex
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Genres"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Inserted at"
 msgstr ""
@@ -101,7 +97,7 @@ msgstr ""
 msgid "Invalid password"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Latest purchase"
 msgstr ""
@@ -118,9 +114,9 @@ msgid "Logout"
 msgstr ""
 
 #: lib/music_library_web/components/record_form.ex
-#: lib/music_library_web/live/artist_live/show.html.heex
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "MusicBrainz ID"
 msgstr ""
@@ -145,7 +141,7 @@ msgstr ""
 msgid "Previous"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex
+#: lib/music_library_web/live/collection_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Purchase"
 msgstr ""
@@ -157,7 +153,7 @@ msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/components/stats_components.ex
-#: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
 #: lib/music_library_web/live/record_set_live/record_picker.ex
 #, elixir-autogen, elixir-format
 msgid "Purchased on"
@@ -221,13 +217,13 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Types"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Updated at"
 msgstr ""
@@ -238,8 +234,8 @@ msgid "Welcome to your Music Library"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex
-#: lib/music_library_web/live/artist_live/show.html.heex
-#: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
+#: lib/music_library_web/live/stats_live/index.ex
 #: lib/music_library_web/live/wishlist_live/index.ex
 #: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
@@ -251,21 +247,21 @@ msgstr ""
 msgid "You must be logged in to access this page"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Copy MusicBrainz ID to clipboard"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "MusicBrainz data"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Scrobble activity"
 msgstr ""
@@ -290,8 +286,8 @@ msgstr ""
 msgid "Wishlisted"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Includes"
 msgstr ""
@@ -345,53 +341,53 @@ msgstr ""
 msgid "Made by"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Loading biography"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Loading play count"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Populate genres"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Refresh MB data"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Refresh cover"
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
-#: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
+#: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Records"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Error loading biography"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Error loading play count"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex
-#: lib/music_library_web/live/record_set_live/index.html.heex
-#: lib/music_library_web/live/wishlist_live/index.html.heex
+#: lib/music_library_web/live/collection_live/index.ex
+#: lib/music_library_web/live/record_set_live/index.ex
+#: lib/music_library_web/live/wishlist_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "A->Z"
 msgstr ""
@@ -415,20 +411,20 @@ msgid_plural "%{count} scrobbles"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Copy record ID to clipboard"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "ID"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Unreleased"
 msgstr ""
@@ -436,13 +432,13 @@ msgstr ""
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/scrobble_rules_live/form.ex
 #: lib/music_library_web/live/scrobble_rules_live/index.ex
-#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
+#: lib/music_library_web/live/scrobbled_tracks_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Album"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Backup"
 msgstr ""
@@ -498,7 +494,7 @@ msgid "Vinyl"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Purchased"
 msgstr ""
@@ -510,13 +506,13 @@ msgstr ""
 msgid "Record added to the collection"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Published releases"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex
+#: lib/music_library_web/live/collection_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Scan"
 msgstr ""
@@ -551,17 +547,17 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Error loading similar artists"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Loading similar artists"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Similar artists"
 msgstr ""
@@ -599,10 +595,10 @@ msgstr ""
 msgid "Some records could not be imported: %{summary}"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex
-#: lib/music_library_web/live/online_store_template_live/index.html.heex
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
-#: lib/music_library_web/live/wishlist_live/index.html.heex
+#: lib/music_library_web/live/collection_live/index.ex
+#: lib/music_library_web/live/online_store_template_live/index.ex
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
+#: lib/music_library_web/live/wishlist_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Add"
 msgstr ""
@@ -632,14 +628,14 @@ msgstr ""
 msgid "Search for a record"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Albums"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
-#: lib/music_library_web/live/scrobble_live/show.html.heex
-#: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/scrobble_live/show.ex
+#: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Tracks"
 msgstr ""
@@ -666,7 +662,7 @@ msgstr ""
 msgid "No scrobbles"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Meta"
 msgstr ""
@@ -683,18 +679,18 @@ msgid "Oban"
 msgstr ""
 
 #: lib/music_library_web/components/record_form.ex
-#: lib/music_library_web/live/scrobble_live/show.html.heex
+#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Release Date"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Collected release"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "No release selected"
 msgstr ""
@@ -714,7 +710,7 @@ msgstr ""
 msgid "Loading release with tracks"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Show Tracks"
 msgstr ""
@@ -742,7 +738,7 @@ msgid "Release scrobbled successfully"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
-#: lib/music_library_web/live/scrobble_live/index.html.heex
+#: lib/music_library_web/live/scrobble_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Connect your Last.fm account"
 msgstr ""
@@ -817,27 +813,27 @@ msgstr ""
 msgid "Error refreshing artist info"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Refresh image"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Refresh info"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Biography"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Read more"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Discogs data"
 msgstr ""
@@ -858,12 +854,12 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: lib/music_library_web/live/wishlist_live/index.html.heex
+#: lib/music_library_web/live/wishlist_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Insertion"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Last listened at"
 msgstr ""
@@ -874,14 +870,14 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Extract colors (fast)"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Extract colors (slow)"
 msgstr ""
@@ -909,14 +905,14 @@ msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex
 #: lib/music_library_web/components/record_components.ex
-#: lib/music_library_web/live/artist_live/show.html.heex
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/online_store_template_live/index.html.heex
-#: lib/music_library_web/live/record_set_live/index.html.heex
-#: lib/music_library_web/live/record_set_live/show.html.heex
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
-#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/online_store_template_live/index.ex
+#: lib/music_library_web/live/record_set_live/index.ex
+#: lib/music_library_web/live/record_set_live/show.ex
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/index.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr ""
@@ -980,7 +976,7 @@ msgstr ""
 
 #: lib/music_library_web/live/scrobble_rules_live/form.ex
 #: lib/music_library_web/live/scrobble_rules_live/index.ex
-#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
+#: lib/music_library_web/live/scrobbled_tracks_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Artist"
 msgstr ""
@@ -1045,7 +1041,6 @@ msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex
 #: lib/music_library_web/live/scrobble_rules_live/index.ex
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Scrobble Rules"
 msgstr ""
@@ -1080,28 +1075,28 @@ msgstr ""
 msgid "e.g. The Dark Side of the Moon"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Apply rule"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Disable rule"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Enable rule"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/index.html.heex
+#: lib/music_library_web/live/online_store_template_live/index.ex
 #: lib/music_library_web/live/scrobble_rules_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Disabled"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/index.html.heex
+#: lib/music_library_web/live/online_store_template_live/index.ex
 #: lib/music_library_web/live/scrobble_rules_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Enabled"
@@ -1149,7 +1144,7 @@ msgstr ""
 msgid "to open this search"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Copy record selected release ID to clipboard"
 msgstr ""
@@ -1160,12 +1155,12 @@ msgid "Dominant Colors"
 msgstr ""
 
 #: lib/music_library_web/components/record_form.ex
-#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
+#: lib/music_library_web/live/scrobbled_tracks_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Title"
 msgstr ""
 
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Wishlisted release"
 msgstr ""
@@ -1185,7 +1180,7 @@ msgstr ""
 msgid "Available Variables"
 msgstr ""
 
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Check Online Stores"
 msgstr ""
@@ -1196,7 +1191,7 @@ msgid "Enable this template"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex
-#: lib/music_library_web/live/online_store_template_live/index.html.heex
+#: lib/music_library_web/live/online_store_template_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Online Store Templates"
 msgstr ""
@@ -1251,12 +1246,12 @@ msgstr ""
 msgid "Preview not available"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/index.html.heex
+#: lib/music_library_web/live/online_store_template_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Disable template"
 msgstr ""
 
-#: lib/music_library_web/live/online_store_template_live/index.html.heex
+#: lib/music_library_web/live/online_store_template_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Enable template"
 msgstr ""
@@ -1271,7 +1266,7 @@ msgstr ""
 msgid "Rotate colors"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "On This day"
 msgstr ""
@@ -1288,7 +1283,7 @@ msgstr[1] ""
 msgid "Search (Cmd/Ctrl+K)"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Scrobbles"
 msgstr ""
@@ -1323,12 +1318,12 @@ msgstr ""
 msgid "Edit Track"
 msgstr ""
 
-#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
+#: lib/music_library_web/live/scrobbled_tracks_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "No scrobbled tracks found"
 msgstr ""
 
-#: lib/music_library_web/live/scrobbled_tracks_live/index.html.heex
+#: lib/music_library_web/live/scrobbled_tracks_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Scrobbled"
 msgstr ""
@@ -1369,8 +1364,8 @@ msgstr ""
 msgid "Note updated successfully"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
-#: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
+#: lib/music_library_web/live/collection_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Open Notes"
 msgstr ""
@@ -1419,25 +1414,25 @@ msgstr ""
 msgid "Failed to search for release groups"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/index.html.heex
+#: lib/music_library_web/live/scrobble_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Release Groups"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/index.html.heex
-#: lib/music_library_web/live/scrobble_live/show.html.heex
+#: lib/music_library_web/live/scrobble_live/index.ex
+#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "1 disc"
 msgid_plural "%{count} discs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/music_library_web/live/scrobble_live/index.html.heex
+#: lib/music_library_web/live/scrobble_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Releases for \"%{title}\""
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/show.html.heex
+#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "You need to connect your Last.fm account to scrobble. Please set up your Last.fm session key in the settings."
 msgstr ""
@@ -1472,24 +1467,24 @@ msgstr ""
 msgid "Today"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex
-#: lib/music_library_web/live/wishlist_live/index.html.heex
+#: lib/music_library_web/live/collection_live/index.ex
+#: lib/music_library_web/live/wishlist_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Grid"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex
-#: lib/music_library_web/live/wishlist_live/index.html.heex
+#: lib/music_library_web/live/collection_live/index.ex
+#: lib/music_library_web/live/wishlist_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "List"
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Artists"
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Database"
 msgstr ""
@@ -1501,7 +1496,6 @@ msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex
 #: lib/music_library_web/live/maintenance_live/index.ex
-#: lib/music_library_web/live/maintenance_live/index.html.heex
 #, elixir-autogen, elixir-format
 msgid "Maintenance"
 msgstr ""
@@ -1511,62 +1505,62 @@ msgstr ""
 msgid "Operation started in the background."
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Refresh Discogs data"
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Refresh MusicBrainz data"
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Regenerate record embeddings"
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Run lower-level operations on the database"
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Run operations on the entire artist database. Monitor execution via the Oban dashboard."
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Run operations on the entire record database. Monitor execution via the Oban dashboard."
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Running vacuum..."
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Vacuum"
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to refresh Discogs data for all artists? This operation can take a long time to complete."
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to refresh MusicBrainz data for all artists? This operation can take a long time to complete."
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to refresh MusicBrainz data for all records? This operation can take a long time to complete."
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to regenerate embeddings for all records? This operation can take a long time to complete."
 msgstr ""
@@ -1581,12 +1575,12 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Top %{n} Collection Artists"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/index.html.heex
+#: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Top %{n} Collection Genres"
 msgstr ""
@@ -1601,20 +1595,20 @@ msgstr ""
 msgid "No record found"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "(1 scrobble)"
 msgid_plural "(%{count} scrobbles)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Never"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/index.html.heex
-#: lib/music_library_web/live/wishlist_live/index.html.heex
+#: lib/music_library_web/live/collection_live/index.ex
+#: lib/music_library_web/live/wishlist_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Release"
 msgstr ""
@@ -1624,8 +1618,8 @@ msgstr ""
 msgid "Available releases"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Show releases included in the record"
 msgstr ""
@@ -1640,12 +1634,12 @@ msgstr ""
 msgid "Artist MusicBrainz ID"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "No scrobble rules found"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_rules_live/index.html.heex
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Apply"
 msgstr ""
@@ -1655,18 +1649,18 @@ msgstr ""
 msgid "Database optimized successfully."
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Optimize"
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Running optimize..."
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Record Embedding"
 msgstr ""
@@ -1677,7 +1671,7 @@ msgstr ""
 msgid "Not available"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Regenerate embeddings"
 msgstr ""
@@ -1698,14 +1692,14 @@ msgstr ""
 msgid "Edit Set"
 msgstr ""
 
-#: lib/music_library_web/live/record_set_live/index.html.heex
-#: lib/music_library_web/live/record_set_live/show.html.heex
+#: lib/music_library_web/live/record_set_live/index.ex
+#: lib/music_library_web/live/record_set_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Move left"
 msgstr ""
 
-#: lib/music_library_web/live/record_set_live/index.html.heex
-#: lib/music_library_web/live/record_set_live/show.html.heex
+#: lib/music_library_web/live/record_set_live/index.ex
+#: lib/music_library_web/live/record_set_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Move right"
 msgstr ""
@@ -1716,12 +1710,11 @@ msgid "Name"
 msgstr ""
 
 #: lib/music_library_web/live/record_set_live/index.ex
-#: lib/music_library_web/live/record_set_live/index.html.heex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "New Set"
 msgstr ""
 
-#: lib/music_library_web/live/record_set_live/index.html.heex
+#: lib/music_library_web/live/record_set_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "No record sets yet"
 msgstr ""
@@ -1751,14 +1744,14 @@ msgstr ""
 msgid "Record set updated successfully"
 msgstr ""
 
-#: lib/music_library_web/live/record_set_live/index.html.heex
-#: lib/music_library_web/live/record_set_live/show.html.heex
+#: lib/music_library_web/live/record_set_live/index.ex
+#: lib/music_library_web/live/record_set_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Remove"
 msgstr ""
 
-#: lib/music_library_web/live/record_set_live/index.html.heex
-#: lib/music_library_web/live/record_set_live/show.html.heex
+#: lib/music_library_web/live/record_set_live/index.ex
+#: lib/music_library_web/live/record_set_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Remove this record from the set?"
 msgstr ""
@@ -1788,13 +1781,13 @@ msgstr ""
 msgid "Search your records to add a record to this set."
 msgstr ""
 
-#: lib/music_library_web/live/record_set_live/index.html.heex
-#: lib/music_library_web/live/record_set_live/show.html.heex
+#: lib/music_library_web/live/record_set_live/index.ex
+#: lib/music_library_web/live/record_set_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "%{collected}/%{total} records"
 msgstr ""
 
-#: lib/music_library_web/live/record_set_live/index.html.heex
+#: lib/music_library_web/live/record_set_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Updated"
 msgstr ""
@@ -1824,17 +1817,17 @@ msgstr ""
 msgid "Error refreshing Wikipedia data"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Read full article on Wikipedia"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Refresh Wikipedia"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Wikipedia data"
 msgstr ""
@@ -1844,12 +1837,12 @@ msgstr ""
 msgid "Wikipedia data refreshed successfully"
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Are you sure you want to refresh Wikipedia data for all artists? This operation can take a long time to complete."
 msgstr ""
 
-#: lib/music_library_web/live/maintenance_live/index.html.heex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Refresh Wikipedia data"
 msgstr ""
@@ -1884,69 +1877,69 @@ msgstr ""
 msgid "Search for artist image online"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/index.html.heex
+#: lib/music_library_web/live/scrobble_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Back"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/show.html.heex
+#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Back to search"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/show.html.heex
+#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Barcode"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/show.html.heex
+#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Catalog Number"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/show.html.heex
+#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Country"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/show.html.heex
+#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Last.fm not connected"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/index.html.heex
+#: lib/music_library_web/live/scrobble_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Loading releases..."
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/show.html.heex
+#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Media"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/index.html.heex
+#: lib/music_library_web/live/scrobble_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "No release groups found for \"%{query}\""
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/index.html.heex
+#: lib/music_library_web/live/scrobble_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Searching..."
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/index.html.heex
+#: lib/music_library_web/live/scrobble_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Try a different search term or check the spelling"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{collected}/%{total} collected"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Record sets"
 msgstr ""
@@ -1962,14 +1955,14 @@ msgstr ""
 msgid "Based on genres, artists, and musical style"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Ask about this album..."
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Ask anything about this album"
 msgstr ""
@@ -1979,8 +1972,8 @@ msgstr ""
 msgid "Chat about %{title}"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.html.heex
-#: lib/music_library_web/live/wishlist_live/show.html.heex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Chat about album"
 msgstr ""
@@ -2005,17 +1998,17 @@ msgstr ""
 msgid "Something went wrong. Please try again."
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Ask about this artist..."
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Ask anything about this artist"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.html.heex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Chat about artist"
 msgstr ""

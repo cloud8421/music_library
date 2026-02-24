@@ -6,6 +6,137 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
   alias MusicLibrary.Search
   alias Phoenix.LiveView.ColocatedHook
 
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <div id={@id} phx-hook="UniversalSearchNavigation">
+      <.structured_modal
+        :if={@show_modal}
+        id="universal-search-root"
+        open={@show_modal}
+        on_close={JS.push("close_modal", value: %{}, target: "#universal-search")}
+      >
+        <form class="mt-4 text-sm" phx-change="search" phx-submit="search" phx-target={@myself}>
+          <div class="relative">
+            <.icon
+              name="hero-magnifying-glass"
+              class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-zinc-400"
+            />
+            <label for="universal-search-input" class="sr-only">Universal Search</label>
+            <.input
+              name="query"
+              id="universal-search-input"
+              placeholder="Search records and artists..."
+              value={@search_query}
+              phx-debounce="300"
+              autofocus
+            />
+          </div>
+        </form>
+
+        <.empty_state :if={@search_query == ""} />
+
+        <.no_results :if={@search_query != "" and @total_results == 0} query={@search_query} />
+
+        <div :if={@total_results > 0} class="max-h-148 md:max-h-164 overflow-y-auto mt-4">
+          <.search_result_group
+            :if={length(@search_results.artists) > 0}
+            title="Artists"
+            count={length(@search_results.artists)}
+            total_count={@search_counts.artists_count}
+          >
+            <.search_result_artist
+              :for={%{artist: artist, image_data_hash: image_data_hash} <- @search_results.artists}
+              artist={artist}
+              image_data_hash={image_data_hash}
+              phx-click="navigate_to_artist"
+              phx-value-id={artist.musicbrainz_id}
+              phx-target={@myself}
+            />
+          </.search_result_group>
+        </div>
+        <.search_result_group
+          :if={length(@search_results.collection) > 0}
+          title="Collection"
+          count={length(@search_results.collection)}
+          total_count={@search_counts.collection_count}
+        >
+          <.search_result_record
+            :for={record <- @search_results.collection}
+            record={record}
+            type={:collection}
+            phx-click="navigate_to_record"
+            phx-value-id={record.id}
+            phx-value-type="collection"
+            phx-target={@myself}
+          />
+          <:actions>
+            <.view_all_button
+              :if={@search_counts.collection_count > length(@search_results.collection)}
+              count={@search_counts.collection_count}
+              target="collection"
+              phx-click="navigate_to_collection"
+              phx-value-query={@search_query}
+              phx-target={@myself}
+            />
+          </:actions>
+        </.search_result_group>
+        <.search_result_group
+          :if={length(@search_results.wishlist) > 0}
+          title="Wishlist"
+          count={length(@search_results.wishlist)}
+          total_count={@search_counts.wishlist_count}
+        >
+          <.search_result_record
+            :for={record <- @search_results.wishlist}
+            record={record}
+            type={:wishlist}
+            phx-click="navigate_to_record"
+            phx-value-id={record.id}
+            phx-value-type="wishlist"
+            phx-target={@myself}
+          />
+          <:actions>
+            <.view_all_button
+              :if={@search_counts.wishlist_count > length(@search_results.wishlist)}
+              count={@search_counts.wishlist_count}
+              target="wishlist"
+              phx-click="navigate_to_wishlist"
+              phx-value-query={@search_query}
+              phx-target={@myself}
+            />
+          </:actions>
+        </.search_result_group>
+        <.search_result_group
+          :if={length(@search_results.record_sets) > 0}
+          title="Record Sets"
+          count={length(@search_results.record_sets)}
+          total_count={@search_counts.record_sets_count}
+        >
+          <.search_result_record_set
+            :for={record_set <- @search_results.record_sets}
+            record_set={record_set}
+            phx-click="navigate_to_record_set"
+            phx-value-id={record_set.id}
+            phx-target={@myself}
+          />
+          <:actions>
+            <.view_all_button
+              :if={@search_counts.record_sets_count > length(@search_results.record_sets)}
+              count={@search_counts.record_sets_count}
+              target="record set"
+              phx-click="navigate_to_record_sets"
+              phx-value-query={@search_query}
+              phx-target={@myself}
+            />
+          </:actions>
+        </.search_result_group>
+        <.results_footer total_results={@total_results} />
+      </.structured_modal>
+    </div>
+    """
+  end
+
   def universal_search_trigger(assigns) do
     ~H"""
     <script :type={ColocatedHook} name=".SearchGlobalShortcut">
