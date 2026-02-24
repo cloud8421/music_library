@@ -40,13 +40,7 @@ defmodule MusicLibrary.Artists.ArtistInfo do
         nil -> artist_info.musicbrainz_data["country"]
       end
 
-    %{name: area["name"] || "World", code: keep_alpha_2(country_code) || "XW"}
-  end
-
-  defp keep_alpha_2(nil), do: nil
-
-  defp keep_alpha_2(country_code) do
-    String.slice(country_code, 0..1)
+    %{name: area["name"] || "World", code: country_code || "XW"}
   end
 
   def extract_image(artist_info) when is_nil(artist_info.discogs_data) do

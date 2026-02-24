@@ -3,6 +3,7 @@ defmodule MusicLibraryWeb.RecordComponents do
 
   alias MusicBrainz.ReleaseSearchResult
   alias MusicLibrary.Assets.Transform
+  alias MusicLibrary.Country
   alias MusicLibrary.Records
   alias Phoenix.LiveView.JS
 
@@ -436,14 +437,7 @@ defmodule MusicLibraryWeb.RecordComponents do
   def country_label(nil), do: nil
   def country_label("XW"), do: "🌍"
   def country_label("XE"), do: "🇪🇺"
-
-  def country_label(country_code) do
-    if flagmoji = Flagmojis.by_iso(country_code) do
-      flagmoji.emoji
-    else
-      country_code
-    end
-  end
+  def country_label(country_code), do: Country.to_emoji(country_code)
 
   attr :record, Records.Record, required: true
 
