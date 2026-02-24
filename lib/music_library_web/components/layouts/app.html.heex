@@ -152,6 +152,7 @@
   <div class="mx-auto max-w-screen-2xl">
     <LiveToast.toast_group
       flash={@flash}
+      kinds={[:error, :warning, :info]}
       corner={:top_right}
       connected={assigns[:socket] != nil}
       toasts_sync={assigns[:toasts_sync]}
