@@ -32,6 +32,9 @@ defmodule MusicLibraryWeb.Components.AddRecord do
           autofocus
         />
       </.simple_form>
+      <.alert :if={@error_message} color="danger" hide_close class="mx-4 mt-4">
+        {@error_message}
+      </.alert>
       <ul
         id="release-groups"
         phx-update="stream"
@@ -127,7 +130,8 @@ defmodule MusicLibraryWeb.Components.AddRecord do
      |> assign(:release_groups_count, 0)
      |> assign(:release_groups_total_count, 0)
      |> stream(:release_groups, [])
-     |> assign(:loaded_all_results?, false)}
+     |> assign(:loaded_all_results?, false)
+     |> assign(:error_message, nil)}
   end
 
   @impl true
@@ -138,13 +142,21 @@ defmodule MusicLibraryWeb.Components.AddRecord do
       if mb_query == "" do
         socket
       else
-        {:ok, result} =
-          MusicBrainz.search_release_group(mb_query, limit: @batch_size, offset: 0)
+        case MusicBrainz.search_release_group(mb_query, limit: @batch_size, offset: 0) do
+          {:ok, result} ->
+            socket
+            |> assign(:error_message, nil)
+            |> assign(:release_groups_count, Enum.count(result.release_groups))
+            |> assign(:release_groups_total_count, result.total_count)
+            |> stream(:release_groups, result.release_groups, reset: true)
 
-        socket
-        |> assign(:release_groups_count, Enum.count(result.release_groups))
-        |> assign(:release_groups_total_count, result.total_count)
-        |> stream(:release_groups, result.release_groups, reset: true)
+          {:error, _reason} ->
+            assign(
+              socket,
+              :error_message,
+              gettext("Could not search MusicBrainz. Please try again.")
+            )
+        end
       end
 
     {:ok,
@@ -168,16 +180,27 @@ defmodule MusicLibraryWeb.Components.AddRecord do
   end
 
   def handle_event("search", %{"mb_query" => mb_query}, socket) do
-    {:ok, result} =
-      MusicBrainz.search_release_group(mb_query, limit: @batch_size, offset: 0)
+    case MusicBrainz.search_release_group(mb_query, limit: @batch_size, offset: 0) do
+      {:ok, result} ->
+        {:noreply,
+         socket
+         |> assign(:error_message, nil)
+         |> assign(:offset, 0)
+         |> assign(:release_groups_count, length(result.release_groups))
+         |> assign(:release_groups_total_count, result.total_count)
+         |> stream(:release_groups, result.release_groups, reset: true)
+         |> assign(:form, to_form(%{"mb_query" => mb_query}))}
 
-    {:noreply,
-     socket
-     |> assign(:offset, 0)
-     |> assign(:release_groups_count, length(result.release_groups))
-     |> assign(:release_groups_total_count, result.total_count)
-     |> stream(:release_groups, result.release_groups, reset: true)
-     |> assign(:form, to_form(%{"mb_query" => mb_query}))}
+      {:error, _reason} ->
+        {:noreply,
+         socket
+         |> assign(:error_message, gettext("Could not search MusicBrainz. Please try again."))
+         |> assign(:offset, 0)
+         |> assign(:release_groups_count, 0)
+         |> assign(:release_groups_total_count, 0)
+         |> stream(:release_groups, [], reset: true)
+         |> assign(:form, to_form(%{"mb_query" => mb_query}))}
+    end
   end
 
   def handle_event("load-more", _params, socket) do

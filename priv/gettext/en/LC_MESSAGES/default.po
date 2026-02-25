@@ -2012,3 +2012,8 @@ msgstr ""
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Chat about artist"
 msgstr ""
+
+#: lib/music_library_web/components/add_record.ex
+#, elixir-autogen, elixir-format
+msgid "Could not search MusicBrainz. Please try again."
+msgstr ""
