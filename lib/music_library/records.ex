@@ -99,8 +99,7 @@ defmodule MusicLibrary.Records do
         search
         |> where(
           fragment(
-            "records_search_index MATCH 'artists : ' || ? OR records_search_index MATCH 'normalized_artists : ' || ?",
-            ^escaped_artist,
+            "records_search_index MATCH '{artists normalized_artists} : ' || ?",
             ^escaped_artist
           )
         )
@@ -111,8 +110,7 @@ defmodule MusicLibrary.Records do
         search
         |> where(
           fragment(
-            "records_search_index MATCH 'title : ' || ? OR records_search_index MATCH 'normalized_title : ' || ?",
-            ^escaped_album,
+            "records_search_index MATCH '{title normalized_title} : ' || ?",
             ^escaped_album
           )
         )
