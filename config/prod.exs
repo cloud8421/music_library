@@ -13,5 +13,7 @@ config :logger, level: :info
 
 config :music_library, monitoring_routes: true
 
+config :error_tracker, enabled: true
+
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.
