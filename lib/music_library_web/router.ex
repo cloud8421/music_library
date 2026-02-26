@@ -1,5 +1,6 @@
 defmodule MusicLibraryWeb.Router do
   use MusicLibraryWeb, :router
+  use Honeybadger.Plug
 
   import MusicLibraryWeb.Auth, only: [require_logged_in: 2, require_api_token: 2]
   import Oban.Web.Router

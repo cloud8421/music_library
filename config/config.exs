@@ -136,7 +136,8 @@ config :honeybadger,
   app: :music_library,
   environment_name: config_env(),
   # Enable logging and performance insights
-  insights_enabled: true
+  insights_enabled: true,
+  use_logger: true
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
