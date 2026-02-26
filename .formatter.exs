@@ -1,5 +1,5 @@
 [
-  import_deps: [:ecto, :ecto_sql, :oban, :oban_web, :phoenix, :phoenix_live_view],
+  import_deps: [:error_tracker, :ecto, :ecto_sql, :oban, :oban_web, :phoenix, :phoenix_live_view],
   subdirectories: ["priv/*/migrations"],
   plugins: [Phoenix.LiveView.HTMLFormatter, Quokka],
   inputs: ["*.{heex,ex,exs}", "{config,lib,test}/**/*.{heex,ex,exs}", "priv/*/seeds.exs"],

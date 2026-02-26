@@ -117,6 +117,7 @@ defmodule MusicLibrary.MixProject do
       {:lazy_html, ">= 0.1.0", only: :test},
 
       # Prod error/perf tooling
+      {:error_tracker, "~> 0.7"},
       {:sentry, "~> 11.0"},
       {:honeybadger, "~> 0.24"},
       {:phoenix_live_dashboard, "~> 0.8.3"},

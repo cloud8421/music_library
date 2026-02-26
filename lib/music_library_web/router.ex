@@ -1,5 +1,6 @@
 defmodule MusicLibraryWeb.Router do
   use MusicLibraryWeb, :router
+  use ErrorTracker.Integrations.Plug
   use Honeybadger.Plug
 
   import MusicLibraryWeb.Auth, only: [require_logged_in: 2, require_api_token: 2]
@@ -105,6 +106,7 @@ defmodule MusicLibraryWeb.Router do
 
   if Application.compile_env(:music_library, :monitoring_routes) do
     import Phoenix.LiveDashboard.Router
+    use ErrorTracker.Web, :router
 
     scope "/dev" do
       pipe_through [:browser, :logged_in]
@@ -117,6 +119,8 @@ defmodule MusicLibraryWeb.Router do
       oban_dashboard "/oban"
 
       live "/maintenance", MusicLibraryWeb.MaintenanceLive.Index, :index
+
+      error_tracker_dashboard "/errors"
     end
   end
 end
