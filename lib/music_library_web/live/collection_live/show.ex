@@ -207,6 +207,12 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
             <p class="mt-2 flex items-center text-sm text-zinc-500 dark:text-zinc-400">
               <.record_colors record={@record} />
               <span class="ml-1">
+                <.icon
+                  name="hero-calendar-days"
+                  class="-mt-1 h-4 w-4"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
                 {Records.Record.format_release_date(@record.release_date)} · {format_label(
                   @record.format
                 )} · {type_label(@record.type)}

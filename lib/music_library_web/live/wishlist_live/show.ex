@@ -184,6 +184,12 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
               <.record_colors record={@record} />
 
               <span class="ml-1">
+                <.icon
+                  name="hero-calendar-days"
+                  class="-mt-1 h-4 w-4"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
                 {Records.Record.format_release_date(@record.release_date)}
                 <span :if={@current_date && !Records.Record.released?(@record, @current_date)}>
                   ({gettext("Unreleased")})
