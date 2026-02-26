@@ -56,11 +56,10 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
       </div>
 
       <div class="mt-6 space-y-6">
-        <ul id="record-sets-list" class="space-y-6">
+        <ul id="record-sets-list" class="space-y-6" phx-update="stream">
           <li
-            :if={@record_sets == []}
             id="no-record-sets"
-            class="p-8 text-center bg-zinc-50 dark:bg-zinc-800 rounded-lg"
+            class="hidden only:block p-8 text-center bg-zinc-50 dark:bg-zinc-800 rounded-lg"
           >
             <.icon name="hero-rectangle-stack" class="h-12 w-12 text-zinc-400 mx-auto mb-4" />
             <p class="text-zinc-600 dark:text-zinc-400">
@@ -69,8 +68,8 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
           </li>
 
           <li
-            :for={record_set <- @record_sets}
-            id={"record-set-#{record_set.id}"}
+            :for={{id, record_set} <- @streams.record_sets}
+            id={id}
             class="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-700 p-4"
           >
             <div class="flex items-baseline justify-between mb-3">
@@ -341,7 +340,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
   end
 
   defp apply_fallback_index(socket, params) do
-    if socket.assigns[:record_sets] == nil do
+    if get_in(socket.assigns, [:streams, :record_sets]) == nil do
       socket
       |> apply_action(:index, params)
     else
@@ -363,7 +362,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
     |> assign(:list_params, list_params)
     |> assign(:page_title, gettext("Record Sets"))
     |> assign(:record_set, nil)
-    |> assign(:record_sets, sets)
+    |> stream(:record_sets, sets, reset: true)
   end
 
   def back_path(list_params) do
@@ -444,12 +443,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
   end
 
   defp update_record_set_in_list(socket, updated_set) do
-    record_sets =
-      Enum.map(socket.assigns.record_sets, fn set ->
-        if set.id == updated_set.id, do: updated_set, else: set
-      end)
-
-    assign(socket, :record_sets, record_sets)
+    stream_insert(socket, :record_sets, updated_set)
   end
 
   defp parse_order("alphabetical"), do: :alphabetical
