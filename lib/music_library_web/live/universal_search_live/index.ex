@@ -404,6 +404,12 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
         keywords: ["oban", "jobs", "workers", "queue"]
       },
       %{
+        label: "Errors",
+        path: ~p"/dev/errors",
+        icon: "hero-bug-ant",
+        keywords: ["errors", "error tracker", "exceptions", "bugs"]
+      },
+      %{
         label: "Maintenance",
         path: ~p"/dev/maintenance",
         icon: "hero-wrench-screwdriver",

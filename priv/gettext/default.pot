@@ -2031,3 +2031,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Go to →"
 msgstr ""
+
+#: lib/music_library_web/components/layouts/app.html.heex
+#, elixir-autogen, elixir-format
+msgid "Errors"
+msgstr ""
