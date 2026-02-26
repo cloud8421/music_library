@@ -87,8 +87,7 @@ defmodule MusicLibrary.MixProject do
       {:tidewave, "~> 0.5", only: :dev},
 
       # HTTP Clients
-      # Override is needed due to Sentry locking to an older version
-      {:finch, "~> 0.21.0", override: true},
+      {:finch, "~> 0.21.0"},
       {:req, "~> 0.5.8"},
 
       # Parsing
@@ -115,7 +114,7 @@ defmodule MusicLibrary.MixProject do
       {:lazy_html, ">= 0.1.0", only: :test},
 
       # Prod error/perf tooling
-      {:sentry, "~> 12.0"},
+      {:sentry, "~> 11.0"},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:recon, "~> 2.5"},
       {:telemetry_metrics, "~> 1.0"},

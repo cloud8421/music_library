@@ -127,8 +127,7 @@ config :music_library, MusicLibrary.BackgroundRepo, priv: "priv/background_repo"
 config :fluxon, :translate_function, &MusicLibraryWeb.CoreComponents.translate_error/1
 
 config :sentry,
-  # client: Sentry.FinchClient,
-  enable_logs: true,
+  client: Sentry.FinchClient,
   environment_name: config_env(),
   enable_source_code_context: true,
   root_source_code_paths: [File.cwd!()]
