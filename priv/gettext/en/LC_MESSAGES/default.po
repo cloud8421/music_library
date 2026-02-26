@@ -238,13 +238,6 @@ msgstr ""
 msgid "Copy MusicBrainz ID to clipboard"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.ex
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "MusicBrainz data"
-msgstr ""
-
 #: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Scrobble activity"
@@ -803,11 +796,6 @@ msgstr ""
 #: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Read more"
-msgstr ""
-
-#: lib/music_library_web/live/artist_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Discogs data"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
@@ -1633,12 +1621,6 @@ msgstr ""
 
 #: lib/music_library_web/live/collection_live/show.ex
 #: lib/music_library_web/live/wishlist_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Record Embedding"
-msgstr ""
-
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Not available"
 msgstr ""
@@ -1797,11 +1779,6 @@ msgstr ""
 #: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Refresh Wikipedia"
-msgstr ""
-
-#: lib/music_library_web/live/artist_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Wikipedia data"
 msgstr ""
 
 #: lib/music_library_web/live/artist_live/show.ex
@@ -1996,6 +1973,7 @@ msgstr ""
 msgid "Added %{date}"
 msgstr ""
 
+#: lib/music_library_web/live/artist_live/show.ex
 #: lib/music_library_web/live/collection_live/show.ex
 #: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
@@ -2018,4 +1996,28 @@ msgstr ""
 #: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Copy MB ID"
+msgstr ""
+
+#: lib/music_library_web/components/core_components.ex
+#: lib/music_library_web/live/artist_live/show.ex
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Debug data"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Discogs"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Embedding"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Wikipedia"
 msgstr ""

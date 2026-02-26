@@ -99,6 +99,9 @@ defmodule MusicLibrary.MixProject do
       # Notes
       {:earmark, "~> 1.4"},
 
+      # Syntax highlighting
+      {:lumis, "~> 0.1"},
+
       # Time-zone support - requires mint and castore
       {:time_zone_info, "~> 0.7.8"},
 

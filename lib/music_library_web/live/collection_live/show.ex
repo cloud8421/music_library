@@ -76,6 +76,18 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                     data-slot="icon"
                   />
                 </.button>
+                <.button
+                  variant="soft"
+                  phx-click={Fluxon.open_dialog("debug-data")}
+                >
+                  <span class="sr-only">{gettext("Debug data")}</span>
+                  <.icon
+                    name="hero-code-bracket"
+                    class="h-5 w-5"
+                    aria-hidden="true"
+                    data-slot="icon"
+                  />
+                </.button>
                 <.dropdown id={"actions-#{@record.id}"} placement="bottom-end">
                   <:toggle>
                     <.button variant="soft">
@@ -371,8 +383,18 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
         section={:collection}
       />
 
-      <.json_viewer title={gettext("MusicBrainz data")} data={@record.musicbrainz_data} />
-      <.text_viewer title={gettext("Record Embedding")} data={@embedding_text} />
+      <.debug_data_sheet
+        id="debug-data"
+        items={[
+          %{
+            name: "musicbrainz",
+            title: gettext("MusicBrainz"),
+            data: @record.musicbrainz_data,
+            type: :json
+          },
+          %{name: "embedding", title: gettext("Embedding"), data: @embedding_text, type: :text}
+        ]}
+      />
 
       <.live_component
         id="release-with-tracks"

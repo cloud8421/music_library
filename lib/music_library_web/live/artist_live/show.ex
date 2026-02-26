@@ -120,6 +120,18 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                     data-slot="icon"
                   />
                 </.button>
+                <.button
+                  variant="soft"
+                  phx-click={Fluxon.open_dialog("debug-data")}
+                >
+                  <span class="sr-only">{gettext("Debug data")}</span>
+                  <.icon
+                    name="hero-code-bracket"
+                    class="h-5 w-5"
+                    aria-hidden="true"
+                    data-slot="icon"
+                  />
+                </.button>
                 <.dropdown id={"actions-#{@artist.musicbrainz_id}"} placement="bottom-end">
                   <:toggle>
                     <.button variant="soft">
@@ -404,22 +416,39 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
           </div>
         </div>
 
-        <.json_viewer
-          :if={@artist_info.musicbrainz_data}
-          title={gettext("MusicBrainz data")}
-          data={@artist_info.musicbrainz_data}
-        />
-
-        <.json_viewer
-          :if={@artist_info.discogs_data}
-          title={gettext("Discogs data")}
-          data={@artist_info.discogs_data}
-        />
-
-        <.json_viewer
-          :if={@artist_info.wikipedia_data != %{}}
-          title={gettext("Wikipedia data")}
-          data={@artist_info.wikipedia_data}
+        <.debug_data_sheet
+          id="debug-data"
+          items={
+            Enum.filter(
+              [
+                if(@artist_info.musicbrainz_data,
+                  do: %{
+                    name: "musicbrainz",
+                    title: gettext("MusicBrainz"),
+                    data: @artist_info.musicbrainz_data,
+                    type: :json
+                  }
+                ),
+                if(@artist_info.discogs_data,
+                  do: %{
+                    name: "discogs",
+                    title: gettext("Discogs"),
+                    data: @artist_info.discogs_data,
+                    type: :json
+                  }
+                ),
+                if(@artist_info.wikipedia_data != %{},
+                  do: %{
+                    name: "wikipedia",
+                    title: gettext("Wikipedia"),
+                    data: @artist_info.wikipedia_data,
+                    type: :json
+                  }
+                )
+              ],
+              & &1
+            )
+          }
         />
       </div>
 

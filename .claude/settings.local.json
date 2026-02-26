@@ -45,7 +45,8 @@
       "Bash(mix deps.get:*)",
       "Bash(ls:*)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:hex.pm)"
     ]
   },
   "enableAllProjectMcpServers": false

@@ -20,6 +20,8 @@ defmodule MusicLibraryWeb.CoreComponents do
   alias Phoenix.LiveView.JS
 
   import Fluxon.Components.Input
+  import Fluxon.Components.Sheet
+  import Fluxon.Components.Tabs
 
   @doc """
   Renders a simple form.
@@ -104,29 +106,46 @@ defmodule MusicLibraryWeb.CoreComponents do
     """
   end
 
-  attr :title, :string, required: true
-  attr :data, :map, required: true
+  attr :id, :string, required: true
+  attr :items, :list, required: true
 
-  def json_viewer(assigns) do
+  def debug_data_sheet(assigns) do
     ~H"""
-    <details class="mt-4 text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300">
-      <summary class="text-xs sm:text-sm font-medium cursor-pointer">{@title}</summary>
-      <pre><code class="text-xs sm:text-sm">{Jason.encode!(@data, pretty: true)}</code></pre>
-    </details>
+    <.sheet :if={@items != []} id={@id} placement="right" class="w-md sm:min-w-lg lg:min-w-2xl">
+      <h2 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
+        {gettext("Debug data")}
+      </h2>
+      <.tabs id={"#{@id}-tabs"}>
+        <.tabs_list active_tab={hd(@items).name} variant="segmented" size="xs">
+          <:tab :for={item <- @items} name={item.name}>{item.title}</:tab>
+        </.tabs_list>
+        <.tabs_panel :for={item <- @items} name={item.name} active={item == hd(@items)}>
+          <%= if item.type == :json do %>
+            <div class="mt-4 overflow-auto text-xs rounded-lg [&_pre]:p-4 [&_pre]:rounded-lg">
+              {format_debug_data(item)}
+            </div>
+          <% else %>
+            <pre class="mt-4 overflow-auto text-xs font-mono text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-800 rounded-lg p-4"><code>{format_debug_data(item)}</code></pre>
+          <% end %>
+        </.tabs_panel>
+      </.tabs>
+    </.sheet>
     """
   end
 
-  attr :title, :string, required: true
-  attr :data, :string, required: true
-
-  def text_viewer(assigns) do
-    ~H"""
-    <details class="mt-4 text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300">
-      <summary class="text-xs sm:text-sm font-medium cursor-pointer">{@title}</summary>
-      <code class="whitespace-pre-wrap text-xs sm:text-sm">{@data}</code>
-    </details>
-    """
+  defp format_debug_data(%{type: :json, data: data}) do
+    data
+    |> Jason.encode!(pretty: true)
+    |> Lumis.highlight!(
+      language: "json",
+      formatter:
+        {:html_multi_themes,
+         themes: [light: "github_light", dark: "github_dark"], default_theme: "light-dark()"}
+    )
+    |> Phoenix.HTML.raw()
   end
+
+  defp format_debug_data(%{type: :text, data: data}), do: data
 
   attr :id, :string, required: true
   attr :on_close, :any, required: false, default: nil
