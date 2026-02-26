@@ -107,6 +107,6 @@ defmodule MusicLibraryWeb.Telemetry do
   end
 
   defp drop_unwanted_hosts(metadata) do
-    metadata.request.host =~ "archive.org" or metadata.request.host =~ "sentry.io"
+    metadata.request.host =~ "archive.org"
   end
 end

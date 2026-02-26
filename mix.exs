@@ -118,8 +118,6 @@ defmodule MusicLibrary.MixProject do
 
       # Prod error/perf tooling
       {:error_tracker, "~> 0.7"},
-      {:sentry, "~> 11.0"},
-      {:honeybadger, "~> 0.24"},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:recon, "~> 2.5"},
       {:telemetry_metrics, "~> 1.0"},

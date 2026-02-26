@@ -128,19 +128,6 @@ config :music_library, MusicLibrary.BackgroundRepo, priv: "priv/background_repo"
 
 config :fluxon, :translate_function, &MusicLibraryWeb.CoreComponents.translate_error/1
 
-config :sentry,
-  client: Sentry.FinchClient,
-  environment_name: config_env(),
-  enable_source_code_context: true,
-  root_source_code_paths: [File.cwd!()]
-
-config :honeybadger,
-  app: :music_library,
-  environment_name: config_env(),
-  # Enable logging and performance insights
-  insights_enabled: true,
-  use_logger: true
-
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
