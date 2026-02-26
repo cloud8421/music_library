@@ -40,6 +40,20 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
 
         <div :if={@total_results > 0} class="max-h-148 md:max-h-164 overflow-y-auto mt-4">
           <.search_result_group
+            :if={length(@navigation_links_results) > 0}
+            title={gettext("Go to")}
+            count={length(@navigation_links_results)}
+          >
+            <.search_result_navigation
+              :for={link <- @navigation_links_results}
+              label={link.label}
+              icon={link.icon}
+              phx-click="navigate_to_link"
+              phx-value-path={link.path}
+              phx-target={@myself}
+            />
+          </.search_result_group>
+          <.search_result_group
             :if={length(@search_results.artists) > 0}
             title="Artists"
             count={length(@search_results.artists)}
@@ -206,9 +220,11 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
       query ->
         search_results = Search.universal_search(query, limit: 5)
         search_counts = Search.search_counts(query)
+        navigation_links_results = filter_navigation_links(query)
 
         total_results =
-          length(search_results.collection) +
+          length(navigation_links_results) +
+            length(search_results.collection) +
             length(search_results.wishlist) +
             length(search_results.artists) +
             length(search_results.record_sets)
@@ -218,6 +234,7 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
          |> assign(:search_query, query)
          |> assign(:search_results, search_results)
          |> assign(:search_counts, search_counts)
+         |> assign(:navigation_links_results, navigation_links_results)
          |> assign(:total_results, total_results)}
     end
   end
@@ -293,6 +310,14 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
      |> push_navigate(to: ~p"/record-sets?query=#{query}")}
   end
 
+  @impl true
+  def handle_event("navigate_to_link", %{"path" => path}, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_modal, false)
+     |> push_navigate(to: path)}
+  end
+
   defp reset(socket) do
     socket
     |> assign(:search_query, "")
@@ -303,6 +328,87 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
       artists_count: 0,
       record_sets_count: 0
     })
+    |> assign(:navigation_links_results, [])
     |> assign(:total_results, 0)
+  end
+
+  defp filter_navigation_links(query) do
+    downcased = String.downcase(query)
+
+    Enum.filter(navigation_links(), fn link ->
+      String.contains?(String.downcase(link.label), downcased) or
+        Enum.any?(link.keywords, &String.contains?(&1, downcased))
+    end)
+  end
+
+  defp navigation_links do
+    [
+      %{
+        label: "Stats",
+        path: ~p"/",
+        icon: "hero-chart-pie",
+        keywords: ["stats", "dashboard", "home"]
+      },
+      %{
+        label: "Collection",
+        path: ~p"/collection",
+        icon: "hero-circle-stack",
+        keywords: ["collection", "collected", "records"]
+      },
+      %{
+        label: "Wishlist",
+        path: ~p"/wishlist",
+        icon: "hero-star",
+        keywords: ["wishlist", "wish", "want"]
+      },
+      %{
+        label: "Sets",
+        path: ~p"/record-sets",
+        icon: "hero-rectangle-stack",
+        keywords: ["sets", "record sets", "groups"]
+      },
+      %{
+        label: "Scrobble Anything",
+        path: ~p"/scrobble",
+        icon: "hero-play",
+        keywords: ["scrobble", "play"]
+      },
+      %{
+        label: "Scrobbled Tracks",
+        path: ~p"/scrobbled-tracks",
+        icon: "hero-musical-note",
+        keywords: ["scrobbled", "tracks", "history", "listening"]
+      },
+      %{
+        label: "Scrobble Rules",
+        path: ~p"/scrobble-rules",
+        icon: "hero-adjustments-horizontal",
+        keywords: ["scrobble rules", "rules", "remap"]
+      },
+      %{
+        label: "Online Store Templates",
+        path: ~p"/online-store-templates",
+        icon: "hero-building-storefront",
+        keywords: ["store", "templates", "online", "buy"]
+      },
+      %{
+        label: "Live Dashboard",
+        path: ~p"/dev/dashboard",
+        icon: "hero-chart-bar",
+        keywords: ["live dashboard", "telemetry", "metrics"]
+      },
+      %{
+        label: "Oban",
+        path: ~p"/dev/oban",
+        icon: "hero-cog",
+        keywords: ["oban", "jobs", "workers", "queue"]
+      },
+      %{
+        label: "Maintenance",
+        path: ~p"/dev/maintenance",
+        icon: "hero-wrench-screwdriver",
+        keywords: ["maintenance", "admin", "vacuum"]
+      }
+    ]
   end
 end

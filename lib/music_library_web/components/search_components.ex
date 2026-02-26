@@ -160,6 +160,45 @@ defmodule MusicLibraryWeb.SearchComponents do
   end
 
   @doc """
+  Renders a search result item for navigation links.
+
+  ## Examples
+
+      <.search_result_navigation label="Collection" icon="hero-circle-stack" />
+  """
+  attr :label, :string, required: true
+  attr :icon, :string, required: true
+  attr :rest, :global, include: ~w(phx-click phx-value-path)
+
+  def search_result_navigation(assigns) do
+    ~H"""
+    <div
+      class={[
+        "p-3 rounded-lg cursor-pointer transition-colors",
+        "hover:bg-zinc-50 dark:hover:bg-zinc-700",
+        "aria-selected:bg-zinc-200 dark:aria-selected:bg-zinc-700"
+      ]}
+      role="option"
+      {@rest}
+    >
+      <div class="flex items-center space-x-3">
+        <div class="shrink-0 w-8 h-8 rounded-md bg-zinc-100 dark:bg-zinc-700 flex items-center justify-center">
+          <.icon name={@icon} class="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
+        </div>
+        <div class="min-w-0 flex-1">
+          <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+            {@label}
+          </p>
+        </div>
+        <span class="text-xs text-zinc-400 dark:text-zinc-500">
+          {gettext("Go to →")}
+        </span>
+      </div>
+    </div>
+    """
+  end
+
+  @doc """
   Renders a search result group with a title and items.
 
   ## Examples
