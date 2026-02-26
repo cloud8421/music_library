@@ -86,12 +86,6 @@ msgstr ""
 msgid "Genres"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Inserted at"
-msgstr ""
-
 #: lib/music_library_web/controllers/session_controller.ex
 #, elixir-autogen, elixir-format
 msgid "Invalid password"
@@ -115,8 +109,6 @@ msgstr ""
 
 #: lib/music_library_web/components/record_form.ex
 #: lib/music_library_web/live/artist_live/show.ex
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "MusicBrainz ID"
 msgstr ""
@@ -222,12 +214,6 @@ msgstr ""
 msgid "Types"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Updated at"
-msgstr ""
-
 #: lib/music_library_web/controllers/session_html/new.html.heex
 #, elixir-autogen, elixir-format
 msgid "Welcome to your Music Library"
@@ -248,8 +234,6 @@ msgid "You must be logged in to access this page"
 msgstr ""
 
 #: lib/music_library_web/live/artist_live/show.ex
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Copy MusicBrainz ID to clipboard"
 msgstr ""
@@ -410,18 +394,6 @@ msgid "1 scrobble"
 msgid_plural "%{count} scrobbles"
 msgstr[0] ""
 msgstr[1] ""
-
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Copy record ID to clipboard"
-msgstr ""
-
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "ID"
-msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/wishlist_live/show.ex
@@ -2016,4 +1988,34 @@ msgstr ""
 #: lib/music_library_web/components/add_record.ex
 #, elixir-autogen, elixir-format
 msgid "Could not search MusicBrainz. Please try again."
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Added %{date}"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "MusicBrainz"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Updated %{date}"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Copy ID"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Copy MB ID"
 msgstr ""

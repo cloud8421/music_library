@@ -49,13 +49,13 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
         |> assert_has("p", text: format_label(record.format))
         |> assert_has("p", text: type_label(record.type))
         |> assert_has("dd", text: Record.format_as_date(record.purchased_at))
-        |> assert_has("dd", text: record.id)
-        |> assert_has("a", text: record.musicbrainz_id)
+        |> assert_has("code#record-#{record.id}", text: record.id)
+        |> assert_has("code#mb-#{record.musicbrainz_id}", text: record.musicbrainz_id)
         |> assert_has("span", text: "Multi")
         |> assert_has("span", text: "03/05/2004")
         |> assert_has("span", text: "🇬🇧")
-        |> assert_has("dd", text: Record.format_as_date(record.inserted_at))
-        |> assert_has("dd", text: Record.format_as_date(record.updated_at))
+        |> assert_has("p", text: Record.format_as_date(record.inserted_at))
+        |> assert_has("p", text: Record.format_as_date(record.updated_at))
         |> assert_has("img[src='#{cover_url}']")
 
       for artist <- record.artists do

@@ -192,18 +192,46 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
               </span>
             </p>
           </div>
-
+          <div class="mt-2 flex items-center gap-2">
+            <code id={"record-#{@record.id}"} class="hidden">{@record.id}</code>
+            <code id={"mb-#{@record.musicbrainz_id}"} class="hidden">
+              {@record.musicbrainz_id}
+            </code>
+            <.button
+              href={MusicBrainz.ReleaseGroup.url(@record.musicbrainz_id)}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="ghost"
+              size="xs"
+            >
+              <.icon name="hero-arrow-top-right-on-square" class="h-3.5 w-3.5" aria-hidden="true" />
+              {gettext("MusicBrainz")}
+            </.button>
+            <.button
+              variant="ghost"
+              size="xs"
+              phx-click={
+                JS.dispatch("music_library:clipcopy", to: "#record-#{@record.id}")
+                |> JS.transition("animate-shake")
+              }
+            >
+              <.icon name="hero-clipboard-document" class="h-3.5 w-3.5" aria-hidden="true" />
+              {gettext("Copy ID")}
+            </.button>
+            <.button
+              variant="ghost"
+              size="xs"
+              phx-click={
+                JS.dispatch("music_library:clipcopy", to: "#mb-#{@record.musicbrainz_id}")
+                |> JS.transition("animate-shake")
+              }
+            >
+              <.icon name="hero-clipboard-document" class="h-3.5 w-3.5" aria-hidden="true" />
+              {gettext("Copy MB ID")}
+            </.button>
+          </div>
           <div class="mt-4 md:mt-8">
             <dl class="divide-y divide-zinc-100 dark:divide-slate-300/30">
-              <.dl_row label={gettext("ID")}>
-                <div class="flex justify-between">
-                  <code id={"record-#{@record.id}"}>{@record.id}</code>
-                  <.copy_to_clipboard
-                    target_id={"record-#{@record.id}"}
-                    label={gettext("Copy record ID to clipboard")}
-                  />
-                </div>
-              </.dl_row>
               <.dl_row label={gettext("Genres")}>
                 <.link
                   :for={genre <- @record.genres}
@@ -212,17 +240,6 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                 >
                   {genre}
                 </.link>
-              </.dl_row>
-              <.dl_row label={gettext("MusicBrainz ID")}>
-                <div class="flex justify-between">
-                  <a href={MusicBrainz.ReleaseGroup.url(@record.musicbrainz_id)}>
-                    <code id={"mb-#{@record.musicbrainz_id}"}>{@record.musicbrainz_id}</code>
-                  </a>
-                  <.copy_to_clipboard
-                    target_id={"mb-#{@record.musicbrainz_id}"}
-                    label={gettext("Copy MusicBrainz ID to clipboard")}
-                  />
-                </div>
               </.dl_row>
               <.dl_row label={gettext("Published releases")}>
                 <div class="flex justify-between">
@@ -283,13 +300,13 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                   </li>
                 </ul>
               </.dl_row>
-              <.dl_row label={gettext("Inserted at")}>
-                {Records.Record.format_as_date(@record.inserted_at)}
-              </.dl_row>
-              <.dl_row label={gettext("Updated at")}>
-                {Records.Record.format_as_date(@record.updated_at)}
-              </.dl_row>
             </dl>
+            <p class="mt-2 flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500">
+              <.icon name="hero-clock" class="h-3.5 w-3.5" aria-hidden="true" />
+              {gettext("Added %{date}", date: Records.Record.format_as_date(@record.inserted_at))}
+              <span>·</span>
+              {gettext("Updated %{date}", date: Records.Record.format_as_date(@record.updated_at))}
+            </p>
           </div>
         </div>
       </div>
