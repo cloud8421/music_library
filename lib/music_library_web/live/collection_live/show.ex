@@ -262,10 +262,11 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
               <.dl_row label={gettext("Genres")}>
                 <.link
                   :for={genre <- @record.genres}
-                  class="mr-2 text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
                   patch={~p"/collection?#{%{query: ~s(genre:"#{genre}")}}"}
                 >
-                  {genre}
+                  <.badge variant="soft">
+                    {genre}
+                  </.badge>
                 </.link>
               </.dl_row>
               <.dl_row label={gettext("Purchased on")}>
