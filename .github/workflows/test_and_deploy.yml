@@ -109,4 +109,8 @@ jobs:
         run: hurl --test --report-tap verification.tap test/prod.hurl
         env:
           HURL_api_token: ${{ secrets.API_TOKEN }}
+      - name: ⚡️ Notify honeybadger-io
+        uses: honeybadger-io/github-notify-deploy-action@v1
+        with:
+          api_key: ${{ secrets.HONEYBADGER_API_KEY }}
       - uses: pcolby/tap-summary@v1
