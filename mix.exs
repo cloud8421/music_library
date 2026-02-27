@@ -45,7 +45,7 @@ defmodule MusicLibrary.MixProject do
       # Low-level tooling
       {:jason, "~> 1.2"},
       # Version 0.4.2 and 1.0 are identical, so it's safe to override
-      {:circular_buffer, "~> 1.0", override: true},
+      {:circular_buffer, "~> 1.0"},
 
       # Translations
       {:gettext, "~> 1.0"},
