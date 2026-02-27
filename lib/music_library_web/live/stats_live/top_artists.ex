@@ -3,7 +3,7 @@ defmodule MusicLibraryWeb.StatsLive.TopArtists do
 
   import MusicLibraryWeb.RecordComponents, only: [artist_image: 1]
 
-  alias MusicLibrary.ScrobbleActivity
+  alias MusicLibrary.ListeningStats
 
   def live(assigns) do
     ~H"""
@@ -153,7 +153,7 @@ defmodule MusicLibraryWeb.StatsLive.TopArtists do
       :top_artists,
       fn ->
         top_artists =
-          ScrobbleActivity.get_top_artists_by_period(
+          ListeningStats.get_top_artists_by_period(
             limit: 10,
             current_time: current_time,
             timezone: timezone,

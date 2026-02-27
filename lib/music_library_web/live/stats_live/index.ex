@@ -8,7 +8,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   import MusicLibraryWeb.ScrobbleComponents
 
   alias MusicLibrary.Assets.Transform
-  alias MusicLibrary.{Collection, Records, ScrobbleActivity, Wishlist}
+  alias MusicLibrary.{Collection, ListeningStats, Records, Wishlist}
   alias MusicLibraryWeb.StatsLive.{TopAlbums, TopArtists}
 
   @impl true
@@ -461,9 +461,9 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     %{
       recent_tracks: recent_tracks,
       recent_albums: recent_albums
-    } = ScrobbleActivity.recent_activity(socket.assigns.timezone)
+    } = ListeningStats.recent_activity(socket.assigns.timezone)
 
-    scrobble_count = ScrobbleActivity.scrobble_count()
+    scrobble_count = ListeningStats.scrobble_count()
 
     last_updated_uts =
       if rt = List.first(recent_tracks) do

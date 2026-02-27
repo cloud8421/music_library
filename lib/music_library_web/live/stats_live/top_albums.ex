@@ -2,7 +2,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
   use MusicLibraryWeb, :live_component
 
   alias MusicLibrary.Assets.Transform
-  alias MusicLibrary.ScrobbleActivity
+  alias MusicLibrary.ListeningStats
 
   def live(assigns) do
     ~H"""
@@ -165,7 +165,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
       :top_albums,
       fn ->
         top_albums =
-          ScrobbleActivity.get_top_albums_by_period(
+          ListeningStats.get_top_albums_by_period(
             limit: 10,
             current_time: current_time,
             timezone: timezone,

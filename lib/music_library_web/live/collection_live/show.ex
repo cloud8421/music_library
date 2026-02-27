@@ -1,7 +1,7 @@
 defmodule MusicLibraryWeb.CollectionLive.Show do
   use MusicLibraryWeb, :live_view
 
-  import MusicLibrary.ScrobbleActivity, only: [localize_scrobbled_at: 2]
+  import MusicLibrary.ListeningStats, only: [localize_scrobbled_at: 2]
 
   import MusicLibraryWeb.RecordComponents,
     only: [

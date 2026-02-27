@@ -96,7 +96,8 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Notes` | Note | Free-text notes for records and artists |
 | `RecordSets` | RecordSet, RecordSetItem | User-curated record groupings with ordering |
 | `ScrobbleRules` | ScrobbleRule | Rules to remap Last.fm scrobble data to correct MusicBrainz IDs |
-| `ScrobbleActivity` | (LastFm.Track, ArtistRecord) | Scrobbling releases, listening stats, top albums/artists |
+| `ScrobbleActivity` | (LastFm.Track, ArtistRecord) | Scrobbling releases, track CRUD, data quality diagnostics |
+| `ListeningStats` | (LastFm.Track, ArtistRecord, ArtistInfo) | Read-only listening analytics: scrobble counts, recent activity, top albums/artists by period |
 | `OnlineStoreTemplates` | OnlineStoreTemplate | URL templates for buying records online |
 | `Search` | (cross-context) | Universal search across collection, wishlist, artists, record sets |
 | `Secrets` | Secret | Encrypted key-value storage |
