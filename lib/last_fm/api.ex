@@ -47,7 +47,7 @@ defmodule LastFm.API do
 
     config
     |> new_request()
-    |> Req.merge(url: "/", form: body)
+    |> Req.merge(url: "/", form: body, receive_timeout: 5_000)
     |> post_request()
   end
 
