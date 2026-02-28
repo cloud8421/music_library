@@ -24,15 +24,15 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
-      <div class="md:flex mt-4 px-4 md:gap-x-4">
-        <div class="drop-shadow-sm md:max-w-152 lg:min-w-152">
+      <div class="lg:grid lg:grid-cols-2 xl:grid-cols-5 mt-4 px-4 md:gap-x-4">
+        <div class="drop-shadow-sm xl:col-span-2">
           <.record_cover
             record={@record}
             class="w-full rounded-lg drop-shadow-sm"
           />
         </div>
 
-        <div class="grow">
+        <div class="xl:col-span-3">
           <div class="mt-4 md:mt-0 flex justify-between items-center">
             <h1 class="text-base font-medium leading-6 text-zinc-700">
               <.artist_links joinphrase_class="text-sm" artists={@record.artists} />
