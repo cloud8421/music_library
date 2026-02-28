@@ -198,11 +198,6 @@ msgstr ""
 msgid "Stats"
 msgstr ""
 
-#: lib/music_library_web/hooks/static_assets.ex
-#, elixir-autogen, elixir-format
-msgid "The application has been updated, please reload."
-msgstr ""
-
 #: lib/music_library_web/components/record_form.ex
 #, elixir-autogen, elixir-format
 msgid "Type"
@@ -2022,4 +2017,14 @@ msgstr ""
 #: lib/music_library_web/components/layouts/app.html.heex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Errors"
+msgstr ""
+
+#: lib/music_library_web/components/layouts/app.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Reload"
+msgstr ""
+
+#: lib/music_library_web/components/layouts/app.html.heex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "The application has been updated."
 msgstr ""
