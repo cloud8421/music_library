@@ -79,9 +79,8 @@ msgstr ""
 msgid "Formats"
 msgstr ""
 
+#: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/components/record_form.ex
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Genres"
 msgstr ""
@@ -263,8 +262,7 @@ msgstr ""
 msgid "Wishlisted"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "Includes"
 msgstr ""
@@ -389,7 +387,6 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: lib/music_library_web/components/record_components.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Unreleased"
 msgstr ""
@@ -471,8 +468,7 @@ msgstr ""
 msgid "Record added to the collection"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "Published releases"
 msgstr ""
@@ -1578,8 +1574,7 @@ msgstr ""
 msgid "Available releases"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "Show releases included in the record"
 msgstr ""
@@ -1881,14 +1876,12 @@ msgstr ""
 msgid "Try a different search term or check the spelling"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{collected}/%{total} collected"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Record sets"
 msgstr ""
@@ -1967,33 +1960,28 @@ msgstr ""
 msgid "Could not search MusicBrainz. Please try again."
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "Added %{date}"
 msgstr ""
 
+#: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/artist_live/show.ex
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "MusicBrainz"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Updated %{date}"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "Copy ID"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Copy MB ID"
 msgstr ""
@@ -2011,8 +1999,7 @@ msgstr ""
 msgid "Discogs"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "Embedding"
 msgstr ""

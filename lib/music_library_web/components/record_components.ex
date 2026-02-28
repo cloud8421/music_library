@@ -1,10 +1,12 @@
 defmodule MusicLibraryWeb.RecordComponents do
   use MusicLibraryWeb, :html
 
+  alias MusicBrainz.ReleaseGroup
   alias MusicBrainz.ReleaseSearchResult
   alias MusicLibrary.Assets.Transform
   alias MusicLibrary.Country
   alias MusicLibrary.Records
+  alias MusicLibrary.RecordSets.RecordSet
   alias Phoenix.LiveView.JS
 
   attr :record, :map, required: true
@@ -550,4 +552,201 @@ defmodule MusicLibraryWeb.RecordComponents do
     />
     """
   end
+
+  attr :record, Records.Record, required: true
+  attr :current_date, Date, default: nil
+
+  def record_title_and_metadata(assigns) do
+    ~H"""
+    <div>
+      <h2 class="mt-1 flex font-semibold text-lg md:text-2xl text-zinc-700 dark:text-zinc-300 text-wrap">
+        {@record.title}
+      </h2>
+      <p class="mt-2 flex items-center text-sm text-zinc-500 dark:text-zinc-400">
+        <.record_colors record={@record} />
+        <span class="ml-1">
+          <.icon
+            name="hero-calendar-days"
+            class="-mt-1 h-4 w-4"
+            aria-hidden="true"
+            data-slot="icon"
+          />
+          {Records.Record.format_release_date(@record.release_date)}
+          <span :if={@current_date && !Records.Record.released?(@record, @current_date)}>
+            ({gettext("Unreleased")})
+          </span>
+          · {format_label(@record.format)} · {type_label(@record.type)}
+        </span>
+      </p>
+    </div>
+    """
+  end
+
+  attr :record, Records.Record, required: true
+
+  def record_external_links(assigns) do
+    ~H"""
+    <div class="mt-2 flex items-center gap-2">
+      <code id={"record-#{@record.id}"} class="hidden">{@record.id}</code>
+      <code id={"mb-#{@record.musicbrainz_id}"} class="hidden">
+        {@record.musicbrainz_id}
+      </code>
+      <.button
+        href={ReleaseGroup.url(@record.musicbrainz_id)}
+        target="_blank"
+        rel="noopener noreferrer"
+        variant="ghost"
+        size="xs"
+      >
+        <.icon name="hero-arrow-top-right-on-square" class="h-3.5 w-3.5" aria-hidden="true" />
+        {gettext("MusicBrainz")}
+      </.button>
+      <.button
+        variant="ghost"
+        size="xs"
+        phx-click={
+          JS.dispatch("music_library:clipcopy", to: "#record-#{@record.id}")
+          |> JS.transition("animate-shake")
+        }
+      >
+        <.icon name="hero-clipboard-document" class="h-3.5 w-3.5" aria-hidden="true" />
+        {gettext("Copy ID")}
+      </.button>
+      <.button
+        variant="ghost"
+        size="xs"
+        phx-click={
+          JS.dispatch("music_library:clipcopy", to: "#mb-#{@record.musicbrainz_id}")
+          |> JS.transition("animate-shake")
+        }
+      >
+        <.icon name="hero-clipboard-document" class="h-3.5 w-3.5" aria-hidden="true" />
+        {gettext("Copy MB ID")}
+      </.button>
+    </div>
+    """
+  end
+
+  attr :record, Records.Record, required: true
+  attr :section, :atom, values: [:collection, :wishlist], required: true
+
+  def record_genres(assigns) do
+    ~H"""
+    <.dl_row label={gettext("Genres")}>
+      <.link
+        :for={genre <- @record.genres}
+        patch={genre_search_path(@section, genre)}
+      >
+        <.badge variant="soft">
+          {genre}
+        </.badge>
+      </.link>
+    </.dl_row>
+    """
+  end
+
+  attr :record, Records.Record, required: true
+
+  def record_published_releases(assigns) do
+    ~H"""
+    <.dl_row label={gettext("Published releases")}>
+      <div class="flex justify-between">
+        {Records.Record.release_count(@record)}
+        <.release_list record={@record} />
+        <button phx-click={Fluxon.open_dialog("release-list-" <> @record.id)}>
+          <span class="sr-only">
+            {gettext("Show releases included in the record")}
+          </span>
+          <.icon
+            name="hero-magnifying-glass-plus"
+            class="-mt-1 h-5 w-5"
+            aria-hidden="true"
+            data-slot="icon"
+          />
+        </button>
+      </div>
+    </.dl_row>
+    """
+  end
+
+  attr :record, Records.Record, required: true
+
+  def record_includes(assigns) do
+    ~H"""
+    <.dl_row
+      :if={Records.Record.included_release_groups_count(@record) > 0}
+      label={gettext("Includes")}
+    >
+      <ul>
+        <li :for={included_release_group <- Records.Record.included_release_groups(@record)}>
+          {included_release_group.artists} - {included_release_group.title}
+        </li>
+      </ul>
+    </.dl_row>
+    """
+  end
+
+  attr :record_sets, :list, required: true
+
+  def record_sets_list(assigns) do
+    ~H"""
+    <.dl_row :if={@record_sets != []} label={gettext("Record sets")}>
+      <ul>
+        <li :for={record_set <- @record_sets} class="flex items-baseline gap-2">
+          <.link
+            navigate={~p"/record-sets/#{record_set}"}
+            class="text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300 hover:underline"
+          >
+            {record_set.name}
+          </.link>
+          <span class="text-xs text-zinc-500 dark:text-zinc-400">
+            {gettext(
+              "%{collected}/%{total} collected",
+              RecordSet.count_by_status(record_set)
+            )}
+          </span>
+        </li>
+      </ul>
+    </.dl_row>
+    """
+  end
+
+  attr :record, Records.Record, required: true
+
+  def record_timestamps(assigns) do
+    ~H"""
+    <p class="mt-2 flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500">
+      <.icon name="hero-clock" class="h-3.5 w-3.5" aria-hidden="true" />
+      {gettext("Added %{date}", date: Records.Record.format_as_date(@record.inserted_at))}
+      <span>·</span>
+      {gettext("Updated %{date}", date: Records.Record.format_as_date(@record.updated_at))}
+    </p>
+    """
+  end
+
+  attr :record, Records.Record, required: true
+  attr :embedding_text, :string, required: true
+
+  def record_debug_sheet(assigns) do
+    ~H"""
+    <.debug_data_sheet
+      id="debug-data"
+      items={[
+        %{
+          name: "musicbrainz",
+          title: gettext("MusicBrainz"),
+          data: @record.musicbrainz_data,
+          type: :json
+        },
+        %{name: "embedding", title: gettext("Embedding"), data: @embedding_text, type: :text}
+      ]}
+    />
+    """
+  end
+
+  defp genre_search_path(:collection, genre),
+    do: ~p"/collection?#{%{query: ~s(genre:"#{genre}")}}"
+
+  defp genre_search_path(:wishlist, genre),
+    do: ~p"/wishlist?#{%{query: ~s(genre:"#{genre}")}}"
 end

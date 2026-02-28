@@ -5,19 +5,22 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
   import MusicLibraryWeb.RecordComponents,
     only: [
-      format_label: 1,
-      type_label: 1,
-      release_summary: 1,
       artist_links: 1,
-      record_colors: 1,
       record_cover: 1,
-      release_list: 1,
+      record_debug_sheet: 1,
+      record_external_links: 1,
+      record_genres: 1,
+      record_includes: 1,
+      record_published_releases: 1,
+      record_sets_list: 1,
+      record_timestamps: 1,
+      record_title_and_metadata: 1,
+      release_summary: 1,
       similar_records: 1
     ]
 
   alias MusicLibrary.{Records, RecordSets, ScrobbleActivity}
   alias MusicLibrary.Records.Similarity
-  alias MusicLibrary.RecordSets.RecordSet
   alias Phoenix.LiveView.JS
 
   @impl true
@@ -212,75 +215,11 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
               </.button_group>
             </div>
           </div>
-          <div>
-            <h2 class="mt-1 flex font-semibold text-lg md:text-2xl text-zinc-700 dark:text-zinc-300 text-wrap">
-              {@record.title}
-            </h2>
-            <p class="mt-2 flex items-center text-sm text-zinc-500 dark:text-zinc-400">
-              <.record_colors record={@record} />
-              <span class="ml-1">
-                <.icon
-                  name="hero-calendar-days"
-                  class="-mt-1 h-4 w-4"
-                  aria-hidden="true"
-                  data-slot="icon"
-                />
-                {Records.Record.format_release_date(@record.release_date)} · {format_label(
-                  @record.format
-                )} · {type_label(@record.type)}
-              </span>
-            </p>
-          </div>
-          <div class="mt-2 flex items-center gap-2">
-            <code id={"record-#{@record.id}"} class="hidden">{@record.id}</code>
-            <code id={"mb-#{@record.musicbrainz_id}"} class="hidden">
-              {@record.musicbrainz_id}
-            </code>
-            <.button
-              href={MusicBrainz.ReleaseGroup.url(@record.musicbrainz_id)}
-              target="_blank"
-              rel="noopener noreferrer"
-              variant="ghost"
-              size="xs"
-            >
-              <.icon name="hero-arrow-top-right-on-square" class="h-3.5 w-3.5" aria-hidden="true" />
-              {gettext("MusicBrainz")}
-            </.button>
-            <.button
-              variant="ghost"
-              size="xs"
-              phx-click={
-                JS.dispatch("music_library:clipcopy", to: "#record-#{@record.id}")
-                |> JS.transition("animate-shake")
-              }
-            >
-              <.icon name="hero-clipboard-document" class="h-3.5 w-3.5" aria-hidden="true" />
-              {gettext("Copy ID")}
-            </.button>
-            <.button
-              variant="ghost"
-              size="xs"
-              phx-click={
-                JS.dispatch("music_library:clipcopy", to: "#mb-#{@record.musicbrainz_id}")
-                |> JS.transition("animate-shake")
-              }
-            >
-              <.icon name="hero-clipboard-document" class="h-3.5 w-3.5" aria-hidden="true" />
-              {gettext("Copy MB ID")}
-            </.button>
-          </div>
+          <.record_title_and_metadata record={@record} />
+          <.record_external_links record={@record} />
           <div class="mt-4 md:mt-8">
             <dl class="divide-y divide-zinc-100 dark:divide-slate-300/30">
-              <.dl_row label={gettext("Genres")}>
-                <.link
-                  :for={genre <- @record.genres}
-                  patch={~p"/collection?#{%{query: ~s(genre:"#{genre}")}}"}
-                >
-                  <.badge variant="soft">
-                    {genre}
-                  </.badge>
-                </.link>
-              </.dl_row>
+              <.record_genres record={@record} section={:collection} />
               <.dl_row label={gettext("Purchased on")}>
                 {Records.Record.format_as_date(@record.purchased_at)}
               </.dl_row>
@@ -295,23 +234,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                   {ngettext("(1 scrobble)", "(%{count} scrobbles)", @play_count)}
                 </span>
               </.dl_row>
-              <.dl_row label={gettext("Published releases")}>
-                <div class="flex justify-between">
-                  {Records.Record.release_count(@record)}
-                  <.release_list record={@record} />
-                  <button phx-click={Fluxon.open_dialog("release-list-" <> @record.id)}>
-                    <span class="sr-only">
-                      {gettext("Show releases included in the record")}
-                    </span>
-                    <.icon
-                      name="hero-magnifying-glass-plus"
-                      class="-mt-1 h-5 w-5"
-                      aria-hidden="true"
-                      data-slot="icon"
-                    />
-                  </button>
-                </div>
-              </.dl_row>
+              <.record_published_releases record={@record} />
               <.dl_row label={gettext("Collected release")}>
                 <div class="flex justify-between space-x-2">
                   <span
@@ -338,41 +261,10 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                   />
                 </div>
               </.dl_row>
-              <.dl_row
-                :if={Records.Record.included_release_groups_count(@record) > 0}
-                label={gettext("Includes")}
-              >
-                <ul>
-                  <li :for={included_release_group <- Records.Record.included_release_groups(@record)}>
-                    {included_release_group.artists} - {included_release_group.title}
-                  </li>
-                </ul>
-              </.dl_row>
-              <.dl_row :if={@record_sets != []} label={gettext("Record sets")}>
-                <ul>
-                  <li :for={record_set <- @record_sets} class="flex items-baseline gap-2">
-                    <.link
-                      navigate={~p"/record-sets/#{record_set}"}
-                      class="text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300 hover:underline"
-                    >
-                      {record_set.name}
-                    </.link>
-                    <span class="text-xs text-zinc-500 dark:text-zinc-400">
-                      {gettext(
-                        "%{collected}/%{total} collected",
-                        RecordSet.count_by_status(record_set)
-                      )}
-                    </span>
-                  </li>
-                </ul>
-              </.dl_row>
+              <.record_includes record={@record} />
+              <.record_sets_list record_sets={@record_sets} />
             </dl>
-            <p class="mt-2 flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500">
-              <.icon name="hero-clock" class="h-3.5 w-3.5" aria-hidden="true" />
-              {gettext("Added %{date}", date: Records.Record.format_as_date(@record.inserted_at))}
-              <span>·</span>
-              {gettext("Updated %{date}", date: Records.Record.format_as_date(@record.updated_at))}
-            </p>
+            <.record_timestamps record={@record} />
           </div>
         </div>
       </div>
@@ -383,18 +275,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
         section={:collection}
       />
 
-      <.debug_data_sheet
-        id="debug-data"
-        items={[
-          %{
-            name: "musicbrainz",
-            title: gettext("MusicBrainz"),
-            data: @record.musicbrainz_data,
-            type: :json
-          },
-          %{name: "embedding", title: gettext("Embedding"), data: @embedding_text, type: :text}
-        ]}
-      />
+      <.record_debug_sheet record={@record} embedding_text={@embedding_text} />
 
       <.live_component
         id="release-with-tracks"
