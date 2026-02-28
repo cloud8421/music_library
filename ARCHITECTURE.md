@@ -250,7 +250,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | Module | Purpose |
 |--------|---------|
 | `CoreComponents` | Forms, buttons, icons, tables, flash messages |
-| `RecordComponents` | Record cards, cover images, artist images, labels, grids |
+| `RecordComponents` | Record cards, cover images, artist images, labels, grids, shared show-page sections (title, external links, genres, releases, timestamps, debug) |
 | `ChartComponents` | SVG charts for stats |
 | `StatsComponents` | Stats dashboard widgets |
 | `ScrobbleComponents` | Scrobble activity displays |
