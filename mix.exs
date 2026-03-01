@@ -179,13 +179,21 @@ defmodule MusicLibrary.MixProject do
     [
       file: "AGENTS.md",
       usage_rules: [
-        :elixir,
-        :otp,
-        "phoenix:all",
-        :usage_rules,
-        "usage_rules:all",
-        # link fluxon as it's HUGE
-        {:fluxon, link: :at}
+        "usage_rules:all"
+      ],
+      skills: [
+        location: ".claude/skills",
+        build: [
+          "ui-framework": [
+            description:
+              "Use this skill when working on the web layer and UI components using the Phoenix framework",
+            usage_rules: [
+              :phoenix,
+              ~r/^phoenix_/,
+              :fluxon
+            ]
+          ]
+        ]
       ]
     ]
   end
