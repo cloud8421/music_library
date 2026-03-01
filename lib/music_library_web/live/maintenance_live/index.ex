@@ -110,6 +110,19 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
                 <.loading :if={@refresh_artists_wikipedia_jobs > 0} class="size-4" />
                 {gettext("Refresh Wikipedia data")}
               </.button>
+              <.button
+                type="button"
+                phx-click="refresh_artists_lastfm_data"
+                disabled={@refresh_artists_lastfm_jobs > 0}
+                data-confirm={
+                  gettext(
+                    "Are you sure you want to refresh Last.fm data for all artists? This operation can take a long time to complete."
+                  )
+                }
+              >
+                <.loading :if={@refresh_artists_lastfm_jobs > 0} class="size-4" />
+                {gettext("Refresh Last.fm data")}
+              </.button>
             </.button_group>
           </li>
         </ul>
@@ -191,6 +204,10 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
       :refresh_artists_wikipedia_jobs,
       count_jobs("MusicLibrary.Worker.ArtistRefreshWikipediaData")
     )
+    |> assign(
+      :refresh_artists_lastfm_jobs,
+      count_jobs("MusicLibrary.Worker.FetchArtistLastFmData")
+    )
   end
 
   defp count_jobs(worker) do
@@ -238,6 +255,14 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
 
   def handle_event("refresh_artists_wikipedia_data", _params, socket) do
     Artists.Batch.refresh_wikipedia_data()
+
+    {:noreply,
+     socket
+     |> put_toast(:info, gettext("Operation started in the background."))}
+  end
+
+  def handle_event("refresh_artists_lastfm_data", _params, socket) do
+    Artists.Batch.refresh_lastfm_data()
 
     {:noreply,
      socket

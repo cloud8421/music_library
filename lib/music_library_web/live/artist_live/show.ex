@@ -198,6 +198,18 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                       />
                       {gettext("Refresh Wikipedia")}
                     </.dropdown_link>
+                    <.dropdown_link
+                      id={"actions-#{@artist.musicbrainz_id}-refresh-lastfm"}
+                      phx-click={JS.push("refresh_lastfm_data", value: %{id: @artist.musicbrainz_id})}
+                    >
+                      <.icon
+                        name="hero-arrow-path"
+                        class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
+                        aria-hidden="true"
+                        data-slot="icon"
+                      />
+                      {gettext("Refresh Last.fm")}
+                    </.dropdown_link>
                   </.focus_wrap>
                 </.dropdown>
               </.button_group>
@@ -444,6 +456,14 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                     data: @artist_info.wikipedia_data,
                     type: :json
                   }
+                ),
+                if(@artist_info.lastfm_data != %{},
+                  do: %{
+                    name: "lastfm",
+                    title: gettext("Last.fm"),
+                    data: @artist_info.lastfm_data,
+                    type: :json
+                  }
                 )
               ],
               & &1
@@ -534,6 +554,28 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
          |> put_toast(
            :error,
            gettext("Error refreshing Wikipedia data") <> "," <> inspect(reason)
+         )}
+    end
+  end
+
+  def handle_event("refresh_lastfm_data", %{"id" => id}, socket) do
+    case Artists.fetch_lastfm_data(id) do
+      {:ok, artist_info} ->
+        id
+        |> Records.get_artist_records()
+        |> Enum.each(&Records.generate_embedding_async/1)
+
+        {:noreply,
+         socket
+         |> assign(:artist_info, artist_info)
+         |> put_toast(:info, gettext("Last.fm data refreshed successfully"))}
+
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_toast(
+           :error,
+           gettext("Error refreshing Last.fm data") <> "," <> inspect(reason)
          )}
     end
   end

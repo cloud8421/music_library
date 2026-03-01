@@ -22,4 +22,10 @@ defmodule MusicLibrary.Artists.Batch do
       Artists.refresh_wikipedia_data_async(artist_info)
     end)
   end
+
+  def refresh_lastfm_data do
+    Batch.run_on_all(from(r in ArtistInfo), "artist_info", fn artist_info ->
+      Artists.fetch_lastfm_data_async(artist_info.id)
+    end)
+  end
 end

@@ -93,7 +93,7 @@ config :phoenix, :json_library, JSON
 
 config :music_library, Oban,
   engine: Oban.Engines.Lite,
-  queues: [default: 10, heavy_writes: 1, music_brainz: 1, discogs: 1, wikipedia: 1],
+  queues: [default: 10, heavy_writes: 1, music_brainz: 1, discogs: 1, wikipedia: 1, last_fm: 1],
   repo: MusicLibrary.BackgroundRepo,
   plugins: [
     {Oban.Plugins.Cron,
