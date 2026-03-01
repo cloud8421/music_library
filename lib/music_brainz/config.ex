@@ -1,12 +1,14 @@
 defmodule MusicBrainz.Config do
   @type t :: %__MODULE__{
           user_agent: String.t(),
-          req_options: Keyword.t()
+          req_options: Keyword.t(),
+          api_cooldown: non_neg_integer()
         }
 
   @enforce_keys [:user_agent]
   defstruct user_agent: "change me",
-            req_options: []
+            req_options: [],
+            api_cooldown: 500
 
   @schema NimbleOptions.new!(
             user_agent: [
@@ -18,6 +20,11 @@ defmodule MusicBrainz.Config do
               type: :keyword_list,
               required: false,
               default: []
+            ],
+            api_cooldown: [
+              type: :integer,
+              required: false,
+              default: 500
             ]
           )
 

@@ -52,11 +52,15 @@ config :music_library, LastFm,
   refresh_interval: System.convert_time_unit(300, :second, :millisecond),
   api_key: "change me",
   shared_secret: "change me",
-  user_agent: user_agent
+  user_agent: user_agent,
+  api_cooldown: 500
 
-config :music_library, MusicBrainz, user_agent: user_agent
+config :music_library, MusicBrainz, user_agent: user_agent, api_cooldown: 500
 
-config :music_library, Discogs, personal_access_token: "change me", user_agent: user_agent
+config :music_library, Discogs,
+  personal_access_token: "change me",
+  user_agent: user_agent,
+  api_cooldown: 1000
 
 config :music_library, Wikipedia, user_agent: user_agent
 

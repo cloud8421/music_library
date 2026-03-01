@@ -10,7 +10,7 @@ defmodule MusicLibrary.Worker.RecordRefreshMusicBrainzData do
         MusicLibrary.Records.notify_update(updated_record)
       end
 
-    Process.sleep(500)
+    Process.sleep(MusicBrainz.api_cooldown())
 
     result
   end

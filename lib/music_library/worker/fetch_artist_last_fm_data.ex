@@ -9,7 +9,7 @@ defmodule MusicLibrary.Worker.FetchArtistLastFmData do
         error -> error
       end
 
-    Process.sleep(500)
+    Process.sleep(LastFm.api_cooldown())
 
     result
   end

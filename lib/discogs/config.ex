@@ -2,13 +2,15 @@ defmodule Discogs.Config do
   @type t :: %__MODULE__{
           personal_access_token: String.t(),
           user_agent: String.t(),
-          req_options: Keyword.t()
+          req_options: Keyword.t(),
+          api_cooldown: non_neg_integer()
         }
 
   @enforce_keys [:personal_access_token]
   defstruct personal_access_token: "",
             user_agent: "change me",
-            req_options: []
+            req_options: [],
+            api_cooldown: 1000
 
   @schema NimbleOptions.new!(
             personal_access_token: [
@@ -24,6 +26,11 @@ defmodule Discogs.Config do
               type: :keyword_list,
               required: false,
               default: []
+            ],
+            api_cooldown: [
+              type: :integer,
+              required: false,
+              default: 1000
             ]
           )
 

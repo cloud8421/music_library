@@ -43,19 +43,22 @@ config :music_library, LastFm,
   req_options: [
     plug: {Req.Test, LastFm.API},
     max_retries: 0
-  ]
+  ],
+  api_cooldown: 0
 
 config :music_library, MusicBrainz,
   req_options: [
     plug: {Req.Test, MusicBrainz.API},
     max_retries: 0
-  ]
+  ],
+  api_cooldown: 0
 
 config :music_library, Discogs,
   req_options: [
     plug: {Req.Test, Discogs.API},
     max_retries: 0
-  ]
+  ],
+  api_cooldown: 0
 
 config :music_library, Wikipedia,
   req_options: [
