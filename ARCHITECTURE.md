@@ -69,7 +69,7 @@ write to it directly; insert/update the `records` table instead.
 | `Records.RecordRelease` | `record_releases` | none | record_id, release_id, cover_hash, purchased_at — read-only, no PK |
 | `Records.ArtistRecord` | `artist_records` | composite | musicbrainz_id, record_id — DB view joining artists to records |
 | `Artists.Artist` | — | — | Embedded schema (name, sort_name, musicbrainz_id, joinphrase) |
-| `Artists.ArtistInfo` | `artist_infos` | `id` | musicbrainz_data, discogs_data, wikipedia_data, image_data_hash |
+| `Artists.ArtistInfo` | `artist_infos` | `id` | musicbrainz_data, discogs_data, wikipedia_data, lastfm_data, image_data_hash |
 | `Assets.Asset` | `assets` | `hash` (SHA256) | content (binary), format, properties (map) |
 | `Notes.Note` | `notes` | `id` | entity (:record/:artist), content, musicbrainz_id |
 | `RecordSets.RecordSet` | `record_sets` | `id` | name, description, has_many :items |
@@ -91,7 +91,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Records` | Record, RecordEmbedding, SearchIndex | CRUD, search, import from MusicBrainz, cover/genre/embedding management, PubSub notifications |
 | `Collection` | Record (via SearchIndex) | Querying collected records (purchased_at != nil), stats |
 | `Wishlist` | Record (via SearchIndex) | Querying wishlisted records (purchased_at is nil) |
-| `Artists` | ArtistInfo, ArtistRecord | Artist metadata from MusicBrainz/Discogs/Wikipedia, images |
+| `Artists` | ArtistInfo, ArtistRecord | Artist metadata from MusicBrainz/Discogs/Wikipedia/Last.fm, images |
 | `Assets` | Asset | Binary asset storage (covers, artist images), cache tracking |
 | `Notes` | Note | Free-text notes for records and artists |
 | `RecordSets` | RecordSet, RecordSetItem | User-curated record groupings with ordering |
@@ -110,10 +110,10 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | Module | Purpose |
 |--------|---------|
 | `Records.SearchParser` | Parses search syntax: `artist:X`, `album:X`, `genre:"Y"`, `format:cd`, `type:album`, `purchase_year:2024`, free text |
-| `Records.Similarity` | Embedding generation (OpenAI), cosine-distance search (sqlite-vec) |
+| `Records.Similarity` | Embedding generation (OpenAI, enriched with Last.fm tags), cosine-distance search (sqlite-vec) |
 | `Batch` | Generic batch runner: stream + transaction + error accumulation |
 | `Records.Batch` | Batch operations: refresh all MusicBrainz data, generate all embeddings (uses `Batch`) |
-| `Artists.Batch` | Batch refresh: MusicBrainz, Discogs, Wikipedia for all artists (uses `Batch`) |
+| `Artists.Batch` | Batch refresh: MusicBrainz, Discogs, Wikipedia, Last.fm for all artists (uses `Batch`) |
 | `Assets.Cache` | ETS-based asset cache with TTL |
 | `Assets.Image` / `Assets.Transform` | Image processing via Vix (libvips) |
 | `Colors.ColorFrequencyExtractor` | Color extraction via pixel sampling/histogram |
@@ -130,7 +130,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | Module | API | Purpose |
 |--------|-----|---------|
 | `MusicBrainz` / `MusicBrainz.API` | musicbrainz.org | Release/artist metadata, search |
-| `LastFm` / `LastFm.API` | last.fm | Scrobbling, listening history, artist info |
+| `LastFm` / `LastFm.API` | last.fm | Scrobbling, listening history, artist info (tags, similar artists) |
 | `Discogs` / `Discogs.API` | discogs.com | Artist profiles, images |
 | `Wikipedia` / `Wikipedia.API` | wikipedia.org | Artist biographies |
 | `BraveSearch` / `BraveSearch.API` | search.brave.com | Cover art and artist image search |
@@ -152,12 +152,14 @@ stubbed via `Req.Test` (configured in `config/test.exs`).
 | `music_brainz` | 1 | Rate-limited MusicBrainz calls (500ms delay) |
 | `discogs` | 1 | Rate-limited Discogs calls (1s delay) |
 | `wikipedia` | 1 | Rate-limited Wikipedia calls |
+| `last_fm` | 1 | Rate-limited Last.fm calls (500ms delay) |
 
 ### On-Demand Workers
 
 | Worker | Queue | Trigger |
 |--------|-------|---------|
-| `FetchArtistInfo` | default | Artist page visit / import |
+| `FetchArtistInfo` | default | Artist page visit / import (also fetches Last.fm data inline) |
+| `FetchArtistLastFmData` | last_fm | Manual / batch |
 | `FetchArtistImage` | heavy_writes | Artist info fetched |
 | `RefreshCover` | heavy_writes | Manual action / import |
 | `ExtractColors` | heavy_writes | Manual action / import |
