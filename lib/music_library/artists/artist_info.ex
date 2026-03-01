@@ -11,6 +11,7 @@ defmodule MusicLibrary.Artists.ArtistInfo do
     field :musicbrainz_data, :map, default: %{}
     field :discogs_data, :map, default: %{}
     field :wikipedia_data, :map, default: %{}
+    field :lastfm_data, :map, default: %{}
     field :image_data_hash, :string
 
     has_one :note, Note, foreign_key: :musicbrainz_id
@@ -25,6 +26,7 @@ defmodule MusicLibrary.Artists.ArtistInfo do
       :musicbrainz_data,
       :discogs_data,
       :wikipedia_data,
+      :lastfm_data,
       :image_data_hash
     ])
     |> validate_required([:musicbrainz_data])
@@ -106,5 +108,13 @@ defmodule MusicLibrary.Artists.ArtistInfo do
 
   def wikipedia_description(artist_info) do
     get_in(artist_info.wikipedia_data, ["description"])
+  end
+
+  def lastfm_tags(artist_info) do
+    get_in(artist_info.lastfm_data, ["tags"]) || []
+  end
+
+  def lastfm_similar_artists(artist_info) do
+    get_in(artist_info.lastfm_data, ["similar_artists"]) || []
   end
 end

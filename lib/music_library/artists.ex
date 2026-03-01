@@ -191,6 +191,27 @@ defmodule MusicLibrary.Artists do
     end
   end
 
+  def fetch_lastfm_data(artist_id) do
+    artist_info = get_artist_info!(artist_id)
+    name = get_in(artist_info.musicbrainz_data, ["name"]) || ""
+
+    case LastFm.get_artist_tags(artist_id, name) do
+      {:ok, tags} ->
+        tag_names = Enum.map(tags, fn {tag_name, _count} -> tag_name end)
+
+        artist_info
+        |> ArtistInfo.changeset(%{lastfm_data: %{"tags" => tag_names}})
+        |> Repo.update()
+
+      {:error, _reason} ->
+        {:ok, artist_info}
+    end
+  end
+
+  def fetch_lastfm_data_async(artist_id) do
+    enqueue_worker(Worker.FetchArtistLastFmData, %{"id" => artist_id})
+  end
+
   def fetch_artist_info_async(artist_id) do
     enqueue_worker(Worker.FetchArtistInfo, %{"id" => artist_id})
   end

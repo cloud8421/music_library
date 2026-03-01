@@ -57,6 +57,23 @@ defmodule LastFm do
     end
   end
 
+  def get_artist_tags(musicbrainz_id, name) do
+    last_fm_config = last_fm_config()
+
+    case API.get_artist_tags({:musicbrainz_id, musicbrainz_id}, last_fm_config) do
+      {:ok, tags} ->
+        {:ok, tags}
+
+      {:error, :invalid_parameters} ->
+        # Sometimes the artist cannot be identified with the MusicBrainz ID,
+        # because Last.fm doesn't have that information. In that case, we try again with the artist name.
+        API.get_artist_tags({:name, name}, last_fm_config)
+
+      error ->
+        error
+    end
+  end
+
   def get_session(token) do
     last_fm_config = last_fm_config()
 

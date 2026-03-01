@@ -97,6 +97,20 @@ defmodule LastFm.API do
     |> get_request()
   end
 
+  def get_artist_tags(id_or_name_option, config) do
+    params =
+      config
+      |> base_params()
+      |> Keyword.put(:method, "artist.getTopTags")
+      |> put_musicbrainz_id_or_name(id_or_name_option)
+
+    config
+    |> new_request()
+    |> Req.merge(url: "/", params: params)
+    |> Req.Request.append_response_steps(parse_tags: &parse_artist_tags/1)
+    |> get_request()
+  end
+
   defp put_musicbrainz_id_or_name(params, {:musicbrainz_id, musicbrainz_id}) do
     Keyword.put(params, :mbid, musicbrainz_id)
   end
@@ -219,6 +233,34 @@ defmodule LastFm.API do
 
     {request, Map.put(response, :body, artists)}
   end
+
+  defp parse_artist_tags({request, response}) do
+    tags =
+      case get_in(response.body, ["toptags", "tag"]) do
+        nil ->
+          []
+
+        tags when is_list(tags) ->
+          tags
+          |> Enum.map(fn tag -> {tag["name"], parse_tag_count(tag["count"])} end)
+          |> Enum.filter(fn {_name, count} -> count >= 2 end)
+          |> Enum.sort_by(&elem(&1, 1), :desc)
+          |> Enum.take(15)
+      end
+
+    {request, Map.put(response, :body, tags)}
+  end
+
+  defp parse_tag_count(count) when is_integer(count), do: count
+
+  defp parse_tag_count(count) when is_binary(count) do
+    case Integer.parse(count) do
+      {n, _} -> n
+      :error -> 0
+    end
+  end
+
+  defp parse_tag_count(_), do: 0
 
   defp sanitize_url(url, api_key) do
     String.replace(url, api_key, "<redacted_api_key>")

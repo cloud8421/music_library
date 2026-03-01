@@ -8,6 +8,7 @@ defmodule MusicLibrary.Records.Similarity do
 
   alias MusicLibrary.Artists
   alias MusicLibrary.Artists.ArtistInfo
+  alias MusicLibrary.Notes
   alias MusicLibrary.Records
   alias MusicLibrary.Records.{Record, RecordEmbedding}
   alias MusicLibrary.Repo
@@ -24,18 +25,23 @@ defmodule MusicLibrary.Records.Similarity do
   - Genres
   - Release year
   - Type (album, EP, etc.)
-  - Artist musical style summaries (from Wikipedia, falling back to Discogs)
+  - Per-artist blocks: name, country, disambiguation, Wikipedia summary (500 chars),
+    Discogs profile excerpt (complementing Wikipedia when both available)
+  - Last.fm community tags and similar artists (when stored)
+  - User-written record notes (when present)
   """
   def text_representation(%Record{} = record) do
-    artist_infos =
+    artist_infos_map =
       record.artists
       |> Enum.map(& &1.musicbrainz_id)
       |> Artists.get_artist_infos()
+      |> Map.new(&{&1.id, &1})
 
     artist_names = Record.artist_names(record)
     genres = Enum.join(record.genres, ", ")
     year = extract_year(record.release_date)
     type = humanize_type(record.type)
+    note_text = record_note_text(record.musicbrainz_id)
 
     """
     Album: #{record.title}
@@ -44,30 +50,77 @@ defmodule MusicLibrary.Records.Similarity do
     Released: #{year}
     Type: #{type}
 
-    #{artist_infos_summary(artist_infos)}
+    #{artist_blocks_summary(record.artists, artist_infos_map)}
     """
     |> String.trim()
+    |> Kernel.<>(note_text)
   end
 
-  defp artist_infos_summary([]), do: ""
+  defp artist_blocks_summary([], _artist_infos_map), do: ""
 
-  defp artist_infos_summary(artist_infos) do
-    artist_infos
-    |> Enum.map(&artist_info_summary/1)
+  defp artist_blocks_summary(artists, artist_infos_map) do
+    artists
+    |> Enum.map(fn artist ->
+      artist_info = Map.get(artist_infos_map, artist.musicbrainz_id)
+      artist_block(artist, artist_info)
+    end)
     |> Enum.reject(&(&1 == ""))
     |> Enum.join("\n\n")
   end
 
-  defp artist_info_summary(artist_info) do
-    cond do
-      wikipedia_available?(artist_info) ->
-        wikipedia_artist_summary(artist_info)
+  defp artist_block(_artist, nil), do: ""
 
-      discogs_available?(artist_info) ->
-        discogs_artist_summary(artist_info)
+  defp artist_block(artist, artist_info) do
+    country = safe_artist_country(artist_info)
+    disambiguation = non_empty_string(Map.get(artist, :disambiguation))
 
-      true ->
-        ""
+    header_extras = [country, disambiguation] |> Enum.reject(&is_nil/1)
+
+    header =
+      if header_extras == [] do
+        artist.name
+      else
+        "#{artist.name} (#{Enum.join(header_extras, ", ")})"
+      end
+
+    content = artist_content(artist_info)
+
+    if content == "" do
+      ""
+    else
+      "#{header}:\n#{content}"
+    end
+  end
+
+  defp artist_content(artist_info) do
+    has_wikipedia = wikipedia_available?(artist_info)
+    has_discogs = discogs_available?(artist_info)
+
+    base_content =
+      cond do
+        has_wikipedia && has_discogs ->
+          wikipedia = wikipedia_artist_summary(artist_info)
+          discogs_excerpt = discogs_artist_excerpt(artist_info)
+          [wikipedia, discogs_excerpt] |> Enum.reject(&(&1 == "")) |> Enum.join("\n")
+
+        has_wikipedia ->
+          wikipedia_artist_summary(artist_info)
+
+        has_discogs ->
+          discogs_artist_summary(artist_info)
+
+        true ->
+          ""
+      end
+
+    tags_line = lastfm_tags_line(artist_info)
+    similar_line = lastfm_similar_line(artist_info)
+    extras = [tags_line, similar_line] |> Enum.reject(&(&1 == ""))
+
+    if extras == [] do
+      base_content
+    else
+      [base_content | extras] |> Enum.reject(&(&1 == "")) |> Enum.join("\n")
     end
   end
 
@@ -85,7 +138,7 @@ defmodule MusicLibrary.Records.Similarity do
   defp wikipedia_artist_summary(artist_info) do
     description = ArtistInfo.wikipedia_description(artist_info) || ""
     summary = ArtistInfo.wikipedia_summary(artist_info) || ""
-    truncated_summary = truncate_to_sentence(summary, 200)
+    truncated_summary = truncate_to_sentence(summary, 500)
 
     [description, truncated_summary]
     |> Enum.reject(&(&1 == ""))
@@ -100,6 +153,58 @@ defmodule MusicLibrary.Records.Similarity do
 
     truncate_to_sentence(profile, 200)
   end
+
+  defp discogs_artist_excerpt(artist_info) do
+    profile =
+      Map.get(artist_info.discogs_data, "profile_plaintext") ||
+        Map.get(artist_info.discogs_data, "profile") ||
+        ""
+
+    truncate_to_sentence(profile, 150)
+  end
+
+  defp lastfm_tags_line(artist_info) do
+    tags = ArtistInfo.lastfm_tags(artist_info)
+
+    if tags == [] do
+      ""
+    else
+      "Tags: #{tags |> Enum.take(10) |> Enum.join(", ")}"
+    end
+  end
+
+  defp lastfm_similar_line(artist_info) do
+    similar = ArtistInfo.lastfm_similar_artists(artist_info)
+
+    if similar == [] do
+      ""
+    else
+      "Similar artists: #{similar |> Enum.take(5) |> Enum.join(", ")}"
+    end
+  end
+
+  defp safe_artist_country(artist_info) do
+    case artist_info.musicbrainz_data do
+      %{"area" => %{"name" => name}} when is_binary(name) -> name
+      _ -> nil
+    end
+  end
+
+  defp record_note_text(nil), do: ""
+
+  defp record_note_text(musicbrainz_id) do
+    case Notes.get_note(:record, musicbrainz_id) do
+      %{content: content} when is_binary(content) and content != "" ->
+        "\n\nNotes: #{content}"
+
+      _ ->
+        ""
+    end
+  end
+
+  defp non_empty_string(nil), do: nil
+  defp non_empty_string(""), do: nil
+  defp non_empty_string(s), do: s
 
   @doc false
   def truncate_to_sentence(text, max_length) when byte_size(text) <= max_length, do: text
