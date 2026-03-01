@@ -31,12 +31,20 @@ import confetti from "canvas-confetti";
 import { createLiveToastHook } from "live_toast";
 import banner from "./banner";
 
+// the duration for each toast to stay on screen in ms
+const duration = 4000
+
+// how many toasts to show on screen at once
+const maxItems = 3
+
+const liveToastHook = createLiveToastHook(duration, maxItems)
+
 let Hooks = FluxonHooks;
 Hooks.FormatNumber = FormatNumberHook;
 Hooks.UniversalSearchNavigation = UniversalSearchNavigationHook;
 Hooks.RecordPickerNavigation = RecordPickerNavigationHook;
 Hooks.SortableList = SortableListHook;
-Hooks.LiveToast = createLiveToastHook();
+Hooks.LiveToast = liveToastHook;
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
