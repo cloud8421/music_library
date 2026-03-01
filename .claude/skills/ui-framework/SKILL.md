@@ -1,6 +1,6 @@
 ---
 name: ui-framework
-description: "Use this skill when working on the web layer and UI components using the Phoenix framework"
+description: "Use this skill when working with LiveViews, UI components using the Phoenix framework, and in general ANY FILE THAT CONTAINS HTML"
 metadata:
   managed-by: usage-rules
 ---
