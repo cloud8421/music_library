@@ -29,8 +29,6 @@ Rules extracted from commit history that are specific to this project and not al
 ## Template / UI
 
 - **Gettext wraps ALL user-facing strings.** Every commit that adds UI text must also update `.pot`/`.po` files.
-- **`@current_section`** assign set in `mount/3` for nav highlighting.
-- **`@page_title`** set in `handle_params/3` via a pattern-matched `page_title/2` helper.
 - **Dark mode always paired:** `text-zinc-900 dark:text-zinc-100`, `bg-zinc-50 dark:bg-zinc-800`.
 - **Wishlisted items get dimmed styling:** `opacity-60 hover:opacity-100 transition-opacity`.
 
@@ -44,7 +42,6 @@ Rules extracted from commit history that are specific to this project and not al
 
 ## Database
 
-- **Binary UUIDs everywhere:** `@primary_key {:id, :binary_id, autogenerate: true}`, `@foreign_key_type :binary_id`.
 - **SQLite JSON patterns:** `json_each()` and `json_extract()` via `fragment` for JSON column queries. Expression-based indexes on `json_extract` for performance.
 - **Materialized views via triggers** (SQLite lacks native materialized views). Use explicit `up`/`down` in migrations for non-reversible DDL.
 - **Read-only schemas** for materialized/view tables: `@primary_key false`, no changeset functions, no timestamps.
@@ -59,13 +56,9 @@ Rules extracted from commit history that are specific to this project and not al
 
 ## Testing
 
-- **`DataCase`** for context tests, **`ConnCase`** for controller/LiveView tests.
-- **Authenticated by default.** Use `@tag :logged_out` for public endpoints.
-- **`@tag :capture_log`** on tests with expected error log output.
-- **`Req.Test.stub/2`** for all HTTP mocking -- no real network calls.
-- **Fixture modules** in `test/support/fixtures/` use `System.unique_integer([:positive])` for unique names and call through context functions (not raw `Repo.insert`).
+- **`@tag :logged_out`** for public endpoint tests. **`@tag :capture_log`** on tests with expected error log output.
+- **Fixture modules** use `System.unique_integer([:positive])` for unique names and call through context functions (not raw `Repo.insert`).
 - **Verify outcomes through context modules**, not just UI assertions. Delete tests assert both `refute has_element?` and `assert_raise Ecto.NoResultsError`.
-- **PhoenixTest** (`visit/assert_has/click_link`) for declarative page assertions. **`Phoenix.LiveViewTest`** (`live/form/render_click/render_hook`) for interactive behavior.
 - **`render_hook/3`** for testing JS hook interactions.
 
 ## Tech Debt / Hygiene
