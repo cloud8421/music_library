@@ -15,5 +15,27 @@ config :music_library, monitoring_routes: true
 
 config :error_tracker, enabled: true
 
+config :music_library, Oban,
+  plugins: [
+    {Oban.Plugins.Cron,
+     crontab: [
+       # every 12 hours
+       {"0 */12 * * *", MusicLibrary.Worker.ApplyScrobbleRules},
+       {"0 */12 * * *", MusicLibrary.Worker.PruneAssetCache},
+       # every day at 2 am,
+       {"0 2 * * *", MusicLibrary.Worker.PruneAssets},
+       # every day at 3 am,
+       {"0 3 * * *", MusicLibrary.Worker.RepoVacuum},
+       # every day at 4 am,
+       {"0 4 * * *", MusicLibrary.Worker.RepoOptimize},
+       # every first day of the month, staggered hourly
+       {"0 6 1 * *", MusicLibrary.Worker.RecordRefreshAllMusicBrainzData},
+       {"0 7 1 * *", MusicLibrary.Worker.RecordGenerateAllEmbeddings},
+       {"0 8 1 * *", MusicLibrary.Worker.ArtistRefreshAllMusicBrainzData},
+       {"0 9 1 * *", MusicLibrary.Worker.ArtistRefreshAllDiscogsData},
+       {"0 10 1 * *", MusicLibrary.Worker.ArtistRefreshAllWikipediaData}
+     ]}
+  ]
+
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.
