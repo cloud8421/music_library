@@ -41,6 +41,7 @@ defmodule MusicLibrary.Worker.FetchArtistLastFmDataTest do
       assert "psychedelic" in tags
     end
 
+    @tag :capture_log
     test "returns ok when Last.fm returns an error", %{artist_id: artist_id} do
       Req.Test.stub(LastFm.API, fn conn ->
         Req.Test.json(conn, %{"error" => 6, "message" => "Artist not found"})
