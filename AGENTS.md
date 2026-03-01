@@ -1,10 +1,10 @@
 # Project architecture
 
-@architecture.md
+@docs/architecture.md
 
 # Project conventions
 
-@project-conventions.md
+@docs/project-conventions.md
 
 <!-- usage-rules-start -->
 <!-- usage_rules-start -->
