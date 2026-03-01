@@ -89,7 +89,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       |> unwrap(&render_async/1)
       |> assert_has("span", text: "United Kingdom")
       |> assert_has("span", text: "🇬🇧")
-      |> assert_has("dd", text: artist_musicbrainz_id)
+      |> assert_has("code", text: artist_musicbrainz_id)
     end
 
     test "it shows records from the collection and the wishlist", %{

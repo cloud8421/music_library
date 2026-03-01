@@ -107,7 +107,6 @@ msgid "Logout"
 msgstr ""
 
 #: lib/music_library_web/components/record_form.ex
-#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "MusicBrainz ID"
 msgstr ""
@@ -225,11 +224,6 @@ msgstr ""
 #: lib/music_library_web/auth.ex
 #, elixir-autogen, elixir-format
 msgid "You must be logged in to access this page"
-msgstr ""
-
-#: lib/music_library_web/live/artist_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Copy MusicBrainz ID to clipboard"
 msgstr ""
 
 #: lib/music_library_web/live/stats_live/index.ex
@@ -1977,6 +1971,7 @@ msgid "Copy ID"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
+#: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Copy MB ID"
 msgstr ""

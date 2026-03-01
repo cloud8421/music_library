@@ -262,22 +262,32 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                 image_hash={@artist_info.image_data_hash}
               />
             </.modal>
-            <dl>
-              <dt class="mt-4 text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
-                {gettext("MusicBrainz ID")}
-              </dt>
-              <dd class="mt-1 text-xs md:text-sm flex justify-between leading-6 text-zinc-700 dark:text-zinc-300">
-                <a href={MusicBrainz.Artist.url(@artist.musicbrainz_id)}>
-                  <code class="overflow-hidden text-clip" id={"mb-#{@artist.musicbrainz_id}"}>
-                    {@artist.musicbrainz_id}
-                  </code>
-                </a>
-                <.copy_to_clipboard
-                  target_id={"mb-#{@artist.musicbrainz_id}"}
-                  label={gettext("Copy MusicBrainz ID to clipboard")}
-                />
-              </dd>
-            </dl>
+            <div class="mt-2 flex items-center gap-2">
+              <code id={"mb-#{@artist.musicbrainz_id}"} class="hidden">
+                {@artist.musicbrainz_id}
+              </code>
+              <.button
+                href={MusicBrainz.Artist.url(@artist.musicbrainz_id)}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="ghost"
+                size="xs"
+              >
+                <.icon name="hero-arrow-top-right-on-square" class="h-3.5 w-3.5" aria-hidden="true" />
+                {gettext("MusicBrainz")}
+              </.button>
+              <.button
+                variant="ghost"
+                size="xs"
+                phx-click={
+                  JS.dispatch("music_library:clipcopy", to: "#mb-#{@artist.musicbrainz_id}")
+                  |> JS.transition("animate-shake")
+                }
+              >
+                <.icon name="hero-clipboard-document" class="h-3.5 w-3.5" aria-hidden="true" />
+                {gettext("Copy MB ID")}
+              </.button>
+            </div>
             <%= if @biography do %>
               <dt class="mt-4 text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
                 {gettext("Biography")}
