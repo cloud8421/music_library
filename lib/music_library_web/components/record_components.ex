@@ -388,7 +388,15 @@ defmodule MusicLibraryWeb.RecordComponents do
         <span>{country_label(@release.country)}</span>
       </div>
       <div class="col-span-2">
-        <span class="text-xs text-zinc-600 dark:text-zinc-500">{@release.disambiguation}</span>
+        <span
+          :if={@release.packaging != ""}
+          class="text-xs text-zinc-600 dark:text-zinc-500"
+        >
+          {@release.packaging}
+        </span>
+        <span :if={@release.disambiguation != ""} class="text-xs text-zinc-600 dark:text-zinc-500">
+          · {@release.disambiguation}
+        </span>
       </div>
     </div>
     """
