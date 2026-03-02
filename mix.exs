@@ -89,6 +89,7 @@ defmodule MusicLibrary.MixProject do
       # HTTP Clients
       {:finch, "~> 0.21.0"},
       {:req, "~> 0.5.8"},
+      {:server_sent_events, "~> 0.2"},
 
       # Parsing
       {:nimble_parsec, "~> 1.4"},

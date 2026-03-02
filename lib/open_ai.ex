@@ -2,18 +2,7 @@ defmodule OpenAI do
   alias OpenAI.API
 
   def gpt(completion) do
-    {:ok, collector} = Agent.start_link(fn -> "" end)
-
-    API.gpt_stream(completion, api_key(), fn data ->
-      case get_in(data, ["choices", Access.at(0), "delta", "content"]) do
-        nil -> :ok
-        data -> Agent.update(collector, fn current -> current <> data end)
-      end
-    end)
-
-    result = Agent.get(collector, & &1) |> JSON.decode!()
-    Agent.stop(collector)
-    {:ok, result}
+    API.gpt(completion, api_key())
   end
 
   def chat_stream(messages, opts \\ []) when is_list(messages) do
