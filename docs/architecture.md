@@ -114,6 +114,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Batch` | Generic batch runner: stream + transaction + error accumulation |
 | `Records.Batch` | Batch operations: refresh all MusicBrainz data, generate all embeddings (uses `Batch`) |
 | `Artists.Batch` | Batch refresh: MusicBrainz, Discogs, Wikipedia, Last.fm for all artists (uses `Batch`) |
+| `Req.RateLimiter` | ETS-backed Req request step enforcing per-API minimum intervals between requests |
 | `Assets.Cache` | ETS-based asset cache with TTL |
 | `Assets.Image` / `Assets.Transform` | Image processing via Vix (libvips) |
 | `Colors.ColorFrequencyExtractor` | Color extraction via pixel sampling/histogram |
@@ -149,10 +150,10 @@ stubbed via `Req.Test` (configured in `config/test.exs`).
 |-------|-------------|---------|
 | `default` | 10 | General async tasks |
 | `heavy_writes` | 1 | DB-intensive or serialized operations |
-| `music_brainz` | 1 | Rate-limited MusicBrainz calls (500ms delay) |
-| `discogs` | 1 | Rate-limited Discogs calls (1s delay) |
-| `wikipedia` | 1 | Rate-limited Wikipedia calls |
-| `last_fm` | 1 | Rate-limited Last.fm calls (500ms delay) |
+| `music_brainz` | 1 | MusicBrainz calls (rate-limited at Req layer via `Req.RateLimiter`) |
+| `discogs` | 1 | Discogs calls (rate-limited at Req layer via `Req.RateLimiter`) |
+| `wikipedia` | 1 | Wikipedia calls |
+| `last_fm` | 1 | Last.fm calls (rate-limited at Req layer via `Req.RateLimiter`) |
 
 ### On-Demand Workers
 

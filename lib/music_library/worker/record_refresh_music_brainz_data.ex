@@ -5,13 +5,8 @@ defmodule MusicLibrary.Worker.RecordRefreshMusicBrainzData do
   def perform(%Oban.Job{args: %{"id" => record_id}}) do
     record = MusicLibrary.Records.get_record!(record_id)
 
-    result =
-      with {:ok, updated_record} <- MusicLibrary.Records.refresh_musicbrainz_data(record) do
-        MusicLibrary.Records.notify_update(updated_record)
-      end
-
-    Process.sleep(MusicBrainz.api_cooldown())
-
-    result
+    with {:ok, updated_record} <- MusicLibrary.Records.refresh_musicbrainz_data(record) do
+      MusicLibrary.Records.notify_update(updated_record)
+    end
   end
 end

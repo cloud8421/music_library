@@ -36,7 +36,5 @@ defmodule MusicBrainz do
     API.get_artist(musicbrainz_id, music_brainz_config())
   end
 
-  def api_cooldown, do: music_brainz_config().api_cooldown
-
   defp music_brainz_config, do: MusicBrainz.Config.resolve(:music_library)
 end

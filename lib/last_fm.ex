@@ -93,7 +93,5 @@ defmodule LastFm do
     "https://www.last.fm/api/auth/?api_key=" <> last_fm_config.api_key
   end
 
-  def api_cooldown, do: last_fm_config().api_cooldown
-
   defp last_fm_config, do: LastFm.Config.resolve(:music_library)
 end

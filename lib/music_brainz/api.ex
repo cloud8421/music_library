@@ -492,6 +492,7 @@ defmodule MusicBrainz.API do
       user_agent: config.user_agent
     )
     |> Req.Request.merge_options(config.req_options)
+    |> Req.RateLimiter.attach(name: :music_brainz, cooldown: config.api_cooldown)
     |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
   end
 

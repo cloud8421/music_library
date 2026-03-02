@@ -10,6 +10,7 @@ defmodule MusicLibrary.Application do
   @impl true
   def start(_type, _args) do
     _ = Assets.Cache.new()
+    _ = Req.RateLimiter.new()
 
     children = [
       MusicLibrary.Vault,
