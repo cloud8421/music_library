@@ -35,8 +35,8 @@ MusicLibrary.Application (one_for_one)
 │   └── :telemetry_poller        # 30s periodic measurements
 ├── Oban                         # Background job engine
 ├── Ecto.Migrator                # Auto-migration on boot
-├── Phoenix.PubSub (:music_library)
 ├── Task.Supervisor (MusicLibrary.TaskSupervisor)
+├── Phoenix.PubSub (:music_library)
 ├── LastFm.Supervisor (one_for_one)
 │   ├── Phoenix.PubSub (:last_fm) # Last.fm-specific PubSub
 │   └── LastFm.Refresh            # GenServer, periodic scrobble fetch
@@ -122,6 +122,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Chat` | Behaviour for streaming AI chat (`stream_response/3` callback) |
 | `RecordChat` | Chat implementation for records (OpenAI streaming, web search enabled) |
 | `ArtistChat` | Chat implementation for artists (OpenAI streaming, uses Wikipedia/artist context) |
+| `Country` | Country code (alpha-2, alpha-3, subdivision, IETF) to flag emoji conversion |
 | `FormatNumber` | Number formatting utility |
 
 ---
@@ -230,7 +231,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `ScrobbledTracksLive.Index` | `/scrobbled-tracks` | Browse/search Last.fm history |
 | `ScrobbleRulesLive.Index` | `/scrobble-rules` | Manage scrobble remapping rules |
 | `OnlineStoreTemplateLive.Index` | `/online-store-templates` | Manage store URL templates |
-| `MaintenanceLive.Index` | `/dev/maintenance` | Admin: batch jobs, DB maintenance |
+| `MaintenanceLive.Index` | `/dev/maintenance` | Admin: batch jobs, DB maintenance (conditional on `:monitoring_routes` config, outside main `live_session`) |
 
 ### LiveComponents
 
@@ -247,12 +248,14 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `StatsLive.TopArtists` | StatsLive.Index | Top artists by period (assign_async) |
 | `UniversalSearchLive.Index` | Layout (global) | Cmd+K search modal |
 | `Chat` | CollectionLive.Show, WishlistLive.Show, ArtistLive.Show | AI chat sheet (OpenAI streaming, configurable per entity) |
+| `Notes` | CollectionLive.Show, WishlistLive.Show, ArtistLive.Show | Markdown note rendering and editing |
 
 ### Shared Component Modules (lib/music_library_web/components/)
 
 | Module | Purpose |
 |--------|---------|
 | `CoreComponents` | Forms, buttons, icons, tables, flash messages |
+| `Layouts` | Application layout templates |
 | `RecordComponents` | Record cards, cover images, artist images, labels, grids, shared show-page sections (title, external links, genres, releases, timestamps, debug) |
 | `ChartComponents` | SVG charts for stats |
 | `StatsComponents` | Stats dashboard widgets |
@@ -262,10 +265,14 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `AddRecord` | MusicBrainz import interface |
 | `BarcodeScanner` | Barcode scanning UI (uses barcode-detector JS) |
 | `Release` | MusicBrainz release display |
-| `Notes` | Markdown note rendering |
-| `Chat` | AI chat sheet with streaming responses (generic, used for records and artists) |
+
+### Web Utility Modules (lib/music_library_web/)
+
+| Module | Purpose |
+|--------|---------|
 | `Markdown` | Markdown-to-HTML conversion with `[[double bracket]]` link syntax |
 | `Duration` | Milliseconds to human-readable duration formatting |
+| `LiveHelpers.Params` | Pagination param parsing from URL query params |
 
 ### Controllers
 
@@ -274,8 +281,8 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `SessionController` | `/login`, `/sessions/create` | Login/logout |
 | `HealthController` | `/health` | Health check |
 | `LastFmController` | `/auth/last_fm/callback` | Last.fm OAuth |
-| `ArchiveController` | `/backup` | Database backup download |
-| `AssetController` | `/assets/:transform_payload` | Serve images with transforms |
+| `ArchiveController` | `/backup`, `/api/backup` | Database backup download (API route requires token) |
+| `AssetController` | `/assets/:transform_payload`, `/api/assets/:transform_payload` | Serve images with transforms (API route requires token) |
 | `CollectionController` | `/api/collection/*` | JSON API for collection queries |
 
 ---
@@ -294,15 +301,18 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `UniversalSearchNavigation` | External | Keyboard navigation in search modal (via `create-navigation-hook` factory) |
 | `RecordPickerNavigation` | External | Keyboard navigation in record picker (via `create-navigation-hook` factory) |
 | `SortableList` | External (`assets/js/hooks/`) | Drag-and-drop reordering of record set items (uses sortablejs) |
+| `LiveToast` | External (via `createLiveToastHook`) | Toast notification rendering |
 | Various `.ColocatedHooks` | Colocated (in .heex) | Inline hooks prefixed with `.` (includes `.ScrollBottom` for Chat) |
 
 ### JS Event Listeners (app.js)
 
+All events are namespaced with `music_library:` prefix.
+
 | Event | Action |
 |-------|--------|
-| `clipcopy` | Copy text to clipboard |
-| `scroll_top` | Scroll window to top |
-| `confetti` | Trigger canvas-confetti animation |
+| `music_library:clipcopy` | Copy text to clipboard |
+| `music_library:scroll_top` | Scroll window to top |
+| `music_library:confetti` | Trigger canvas-confetti animation |
 
 ### NPM Dependencies
 
