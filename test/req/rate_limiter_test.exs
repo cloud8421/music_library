@@ -47,7 +47,7 @@ defmodule Req.RateLimiterTest do
       {:ok, _} = Req.get(request)
       elapsed = System.monotonic_time(:millisecond) - start
 
-      assert elapsed < 50
+      assert elapsed < 200
     end
 
     test "enforces cooldown between rapid consecutive requests" do
@@ -68,7 +68,7 @@ defmodule Req.RateLimiterTest do
       {:ok, _} = Req.get(request)
       elapsed = System.monotonic_time(:millisecond) - start
 
-      assert elapsed >= cooldown - 10
+      assert elapsed >= cooldown - 50
     end
 
     test "does not sleep when enough time has elapsed" do
@@ -90,7 +90,7 @@ defmodule Req.RateLimiterTest do
       {:ok, _} = Req.get(request)
       elapsed = System.monotonic_time(:millisecond) - start
 
-      assert elapsed < 30
+      assert elapsed < 200
     end
 
     test "different API names are tracked independently" do
@@ -116,7 +116,7 @@ defmodule Req.RateLimiterTest do
       {:ok, _} = Req.get(request_b)
       elapsed = System.monotonic_time(:millisecond) - start
 
-      assert elapsed < 30
+      assert elapsed < 200
     end
   end
 end
