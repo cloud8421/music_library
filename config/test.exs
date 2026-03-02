@@ -6,13 +6,18 @@ import Config
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 config :music_library, MusicLibrary.Repo,
-  database: Path.expand("../data/music_library_test.db", __DIR__),
+  database:
+    Path.expand("../data/music_library_test#{System.get_env("MIX_TEST_PARTITION")}.db", __DIR__),
   # Double the amount of concurrent tests
   pool_size: 32,
   pool: Ecto.Adapters.SQL.Sandbox
 
 config :music_library, MusicLibrary.BackgroundRepo,
-  database: Path.expand("../data/music_library_background_test.db", __DIR__),
+  database:
+    Path.expand(
+      "../data/music_library_background_test#{System.get_env("MIX_TEST_PARTITION")}.db",
+      __DIR__
+    ),
   pool_size: 32,
   pool: Ecto.Adapters.SQL.Sandbox
 
