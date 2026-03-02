@@ -121,7 +121,7 @@ defmodule MusicBrainz.Release do
   end
 
   defp parse_catalog_number(label_infos) do
-    Enum.find_value(label_infos, fn li ->
+    Enum.map_join(label_infos, ", ", fn li ->
       li["catalog-number"]
     end)
   end
