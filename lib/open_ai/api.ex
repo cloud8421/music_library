@@ -1,7 +1,12 @@
 defmodule OpenAI.API do
-  def gpt(completion, api_key) do
+  require Logger
+
+  def gpt(completion, config) do
     resp =
-      Req.post!("https://api.openai.com/v1/chat/completions",
+      config
+      |> new_request()
+      |> Req.merge(
+        url: "/v1/chat/completions",
         receive_timeout: 10_000,
         connect_options: [timeout: 2_500],
         json: %{
@@ -9,9 +14,9 @@ defmodule OpenAI.API do
           messages: [Map.take(completion, [:content, :role])],
           response_format: %{type: "json_object"},
           temperature: completion.temperature
-        },
-        auth: {:bearer, api_key}
+        }
       )
+      |> Req.post!()
 
     if resp.status in 200..299 do
       content = get_in(resp.body, ["choices", Access.at(0), "message", "content"])
@@ -21,8 +26,11 @@ defmodule OpenAI.API do
     end
   end
 
-  def chat_stream(messages, instructions, model, temperature, api_key, cb) do
-    case Req.post("https://api.openai.com/v1/responses",
+  def chat_stream(messages, instructions, model, temperature, config, cb) do
+    case config
+         |> new_request()
+         |> Req.merge(
+           url: "/v1/responses",
            receive_timeout: 60_000,
            connect_options: [timeout: 5_000],
            json: %{
@@ -33,7 +41,6 @@ defmodule OpenAI.API do
              stream: true,
              temperature: temperature
            },
-           auth: {:bearer, api_key},
            into: fn {:data, data}, {req, resp} ->
              buffer = Req.Request.get_private(req, :sse_buffer, "")
              {events, buffer} = ServerSentEvents.parse(buffer <> data)
@@ -45,22 +52,26 @@ defmodule OpenAI.API do
 
              {:cont, {req, resp}}
            end
-         ) do
+         )
+         |> Req.post() do
       {:ok, %{status: status}} when status in 200..299 -> :ok
       {:ok, %{body: body}} -> {:error, "OpenAI API error: #{inspect(body)}"}
       {:error, exception} -> {:error, "Connection error: #{Exception.message(exception)}"}
     end
   end
 
-  def get_embeddings(text, api_key) do
+  def get_embeddings(text, config) do
     resp =
-      Req.post!("https://api.openai.com/v1/embeddings",
+      config
+      |> new_request()
+      |> Req.merge(
+        url: "/v1/embeddings",
         json: %{
           input: text,
           model: "text-embedding-3-small"
-        },
-        auth: {:bearer, api_key}
+        }
       )
+      |> Req.post!()
 
     if resp.status == 200 do
       embeddings = get_in(resp.body, ["data", Access.at(0), "embedding"])
@@ -70,10 +81,37 @@ defmodule OpenAI.API do
     end
   end
 
+  defp new_request(config) do
+    Req.new(
+      base_url: "https://api.openai.com",
+      auth: {:bearer, config.api_key}
+    )
+    |> Req.Request.merge_options(config.req_options)
+    |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
+    |> Req.Request.append_response_steps(log_error: &log_error/1)
+  end
+
   defp decode_responses_event(json, cb) do
     case JSON.decode!(json) do
       %{"type" => "response.output_text.delta", "delta" => delta} -> cb.(delta)
       _other -> :ok
     end
+  end
+
+  defp log_attempt(request) do
+    url = URI.to_string(request.url)
+    Logger.debug("Fetching data from #{url}")
+    request
+  end
+
+  defp log_error({request, response}) do
+    if response.status in 400..499 or response.status in 500..599 do
+      Logger.error(fn ->
+        url = URI.to_string(request.url)
+        "Failed to fetch data from #{url}, reason: #{inspect(response.body)}"
+      end)
+    end
+
+    {request, response}
   end
 end

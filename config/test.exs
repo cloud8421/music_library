@@ -78,6 +78,13 @@ config :music_library, BraveSearch,
     max_retries: 0
   ]
 
+config :music_library, OpenAI,
+  api_key: "test_key",
+  req_options: [
+    plug: {Req.Test, OpenAI.API},
+    max_retries: 0
+  ]
+
 config :phoenix_test, :endpoint, MusicLibraryWeb.Endpoint
 
 config :music_library, Oban, testing: :manual
