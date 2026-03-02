@@ -26,3 +26,6 @@ fd = 'latest'
 
 [task_config]
 includes = ["scripts"]
+
+[tasks.test]
+depends = ["dev:partitioned-test 1", "dev:partitioned-test 2"]

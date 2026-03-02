@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+#MISE description="Run project tests"
+#USAGE arg "<partition_number>" help="The number of the partition"
+
+set -e
+
+source "$(git rev-parse --show-toplevel)/scripts/_helpers.sh"
+
+ensure_working_directory!
+
+# shellcheck disable=SC2154
+MIX_TEST_PARTITION="${usage_partition_number}" mix test --partitions 2
