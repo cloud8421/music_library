@@ -521,7 +521,8 @@ defmodule MusicLibraryWeb.RecordComponents do
           :for={release <- Records.Record.releases(@record)}
           release={release}
           class={
-            @record.selected_release_id == release.id && "bg-zinc-100 dark:bg-zinc-800 p-2 rounded-lg"
+            @record.selected_release_id == release.id &&
+              "bg-zinc-100 outline-zinc-100 dark:bg-zinc-700 dark:outline-zinc-700 outline-4 rounded-lg"
           }
         />
       </div>
