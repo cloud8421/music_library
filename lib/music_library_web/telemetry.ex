@@ -69,6 +69,16 @@ defmodule MusicLibraryWeb.Telemetry do
         ]
       ),
 
+      # Rate Limiter
+      summary("req.rate_limiter.throttle.sleep_ms",
+        unit: :millisecond,
+        description: "Time spent waiting for rate limit cooldown",
+        tags: [:name],
+        reporter_options: [
+          nav: "External APIs"
+        ]
+      ),
+
       # Assets
       summary("music_library.assets.cache_size",
         unit: {:byte, :kilobyte},

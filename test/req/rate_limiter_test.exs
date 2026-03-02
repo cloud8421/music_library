@@ -93,6 +93,56 @@ defmodule Req.RateLimiterTest do
       assert elapsed < 200
     end
 
+    test "emits telemetry event when throttling" do
+      name = :"test_telemetry_#{System.unique_integer([:positive])}"
+      cooldown = 100
+
+      adapter = fn request ->
+        {request, Req.Response.new(status: 200, body: "ok")}
+      end
+
+      request =
+        Req.new(url: "https://example.com", adapter: adapter)
+        |> RateLimiter.attach(name: name, cooldown: cooldown)
+
+      ref =
+        :telemetry_test.attach_event_handlers(self(), [
+          [:req, :rate_limiter, :throttle]
+        ])
+
+      {:ok, _} = Req.get(request)
+      {:ok, _} = Req.get(request)
+
+      assert_received {[:req, :rate_limiter, :throttle], ^ref, %{sleep_ms: sleep_ms},
+                       %{name: ^name}}
+
+      assert sleep_ms > 0
+    end
+
+    test "does not emit telemetry event when no throttling needed" do
+      name = :"test_no_telemetry_#{System.unique_integer([:positive])}"
+      cooldown = 50
+
+      adapter = fn request ->
+        {request, Req.Response.new(status: 200, body: "ok")}
+      end
+
+      request =
+        Req.new(url: "https://example.com", adapter: adapter)
+        |> RateLimiter.attach(name: name, cooldown: cooldown)
+
+      ref =
+        :telemetry_test.attach_event_handlers(self(), [
+          [:req, :rate_limiter, :throttle]
+        ])
+
+      {:ok, _} = Req.get(request)
+      Process.sleep(cooldown + 10)
+      {:ok, _} = Req.get(request)
+
+      refute_received {[:req, :rate_limiter, :throttle], ^ref, _, _}
+    end
+
     test "different API names are tracked independently" do
       name_a = :"test_api_a_#{System.unique_integer([:positive])}"
       name_b = :"test_api_b_#{System.unique_integer([:positive])}"

@@ -56,6 +56,12 @@ defmodule Req.RateLimiter do
           remaining = cooldown - elapsed
 
           if remaining > 0 do
+            :telemetry.execute(
+              [:req, :rate_limiter, :throttle],
+              %{sleep_ms: remaining},
+              %{name: name}
+            )
+
             Process.sleep(remaining)
           end
 
