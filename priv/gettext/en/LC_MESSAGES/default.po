@@ -818,18 +818,6 @@ msgstr ""
 #: lib/music_library_web/live/collection_live/show.ex
 #: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
-msgid "Extract colors (fast)"
-msgstr ""
-
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Extract colors (slow)"
-msgstr ""
-
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
-#, elixir-autogen, elixir-format
 msgid "In progress - record will update automatically"
 msgstr ""
 
@@ -2065,6 +2053,19 @@ msgid "Failed to store cover image"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/show.ex
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Extract colors (accurate)"
+#: lib/music_library_web/live/wishlist_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Colors extracted"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Error extracting colors"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Extract colors"
 msgstr ""

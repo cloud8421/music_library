@@ -47,11 +47,11 @@ defmodule MusicLibrary.RecordsTest do
                "599407DDF69907D4A60FE13CCAA824D25CF08DC124FD6AA3E8E7ECD98C885FFE"
 
       assert record.dominant_colors == [
-               "#000000",
-               "#C0C0C0",
-               "#C08080",
-               "#404000",
-               "#804040"
+               "#101111",
+               "#d3b696",
+               "#836246",
+               "#5d412d",
+               "#3c2e22"
              ]
     end
 

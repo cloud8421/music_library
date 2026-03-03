@@ -7,6 +7,7 @@ defmodule MusicLibrary.Records do
 
   alias MusicLibrary.Artists
   alias MusicLibrary.Assets
+  alias MusicLibrary.Colors.KMeansExtractor
   alias MusicLibrary.Records.{ArtistRecord, Record, SearchIndex, SearchParser}
   alias MusicLibrary.{Repo, Worker}
 
@@ -304,12 +305,12 @@ defmodule MusicLibrary.Records do
     enqueue_worker(Worker.RefreshCover, %{"id" => record.id}, record_meta(record))
   end
 
-  def extract_colors_async(record, method) do
-    enqueue_worker(
-      Worker.ExtractColors,
-      %{"id" => record.id, "method" => method},
-      record_meta(record)
-    )
+  def extract_colors(record) do
+    asset = Assets.get!(record.cover_hash)
+
+    with {:ok, colors} <- KMeansExtractor.extract_dominant_colors(asset.content) do
+      update_record(record, %{dominant_colors: colors})
+    end
   end
 
   def generate_embedding_async(record) do
@@ -375,7 +376,7 @@ defmodule MusicLibrary.Records do
 
   def create_record(attrs \\ %{}) do
     with {:ok, record} <- do_create_record(attrs) do
-      extract_colors_async(record, :accurate)
+      {:ok, record} = extract_colors(record)
       generate_embedding_async(record)
 
       record

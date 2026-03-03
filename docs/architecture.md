@@ -117,8 +117,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Req.RateLimiter` | ETS-backed Req request step enforcing per-API minimum intervals between requests |
 | `Assets.Cache` | ETS-based asset cache with TTL |
 | `Assets.Image` / `Assets.Transform` | Image processing via Vix (libvips) |
-| `Colors.ColorFrequencyExtractor` | Color extraction via pixel sampling/histogram |
-| `Colors.EdgeWeightedExtractor` | Color extraction weighted by Sobel edge detection |
+| `Colors.KMeansExtractor` | Color extraction via K-Means clustering (dominant_colors library) |
 | `Chat` | Behaviour for streaming AI chat (`stream_response/3` callback) |
 | `RecordChat` | Chat implementation for records (OpenAI streaming, web search enabled) |
 | `ArtistChat` | Chat implementation for artists (OpenAI streaming, uses Wikipedia/artist context) |
@@ -164,7 +163,6 @@ stubbed via `Req.Test` (configured in `config/test.exs`).
 | `FetchArtistLastFmData` | last_fm | Manual / batch |
 | `FetchArtistImage` | heavy_writes | Artist info fetched |
 | `RefreshCover` | heavy_writes | Manual action / import |
-| `ExtractColors` | heavy_writes | Manual action / import |
 | `PopulateGenres` | heavy_writes | Manual action (chains → GenerateRecordEmbedding) |
 | `GenerateRecordEmbedding` | heavy_writes | Manual / after genre population |
 | `RecordRefreshMusicBrainzData` | music_brainz | Manual / batch |

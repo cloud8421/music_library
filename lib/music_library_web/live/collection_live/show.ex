@@ -170,8 +170,8 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                     </.dropdown_link>
 
                     <.dropdown_link
-                      id={"actions-#{@record.id}-extract-colors-fast"}
-                      phx-click={JS.push("extract_colors", value: %{id: @record.id, method: :fast})}
+                      id={"actions-#{@record.id}-extract-colors"}
+                      phx-click={JS.push("extract_colors", value: %{id: @record.id})}
                     >
                       <.icon
                         name="hero-paint-brush"
@@ -179,35 +179,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                         aria-hidden="true"
                         data-slot="icon"
                       />
-                      {gettext("Extract colors (fast)")}
-                    </.dropdown_link>
-
-                    <.dropdown_link
-                      id={"actions-#{@record.id}-extract-colors-slow"}
-                      phx-click={JS.push("extract_colors", value: %{id: @record.id, method: :slow})}
-                    >
-                      <.icon
-                        name="hero-paint-brush"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
-                        aria-hidden="true"
-                        data-slot="icon"
-                      />
-                      {gettext("Extract colors (slow)")}
-                    </.dropdown_link>
-
-                    <.dropdown_link
-                      id={"actions-#{@record.id}-extract-colors-accurate"}
-                      phx-click={
-                        JS.push("extract_colors", value: %{id: @record.id, method: :accurate})
-                      }
-                    >
-                      <.icon
-                        name="hero-paint-brush"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
-                        aria-hidden="true"
-                        data-slot="icon"
-                      />
-                      {gettext("Extract colors (accurate)")}
+                      {gettext("Extract colors")}
                     </.dropdown_link>
 
                     <.dropdown_separator />
@@ -442,22 +414,22 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     end
   end
 
-  def handle_event("extract_colors", %{"id" => id, "method" => method}, socket) do
+  def handle_event("extract_colors", %{"id" => id}, socket) do
     record = Records.get_record!(id)
-    method = String.to_existing_atom(method)
 
-    case Records.extract_colors_async(record, method) do
-      {:ok, _worker} ->
+    case Records.extract_colors(record) do
+      {:ok, updated_record} ->
         {:noreply,
          socket
-         |> put_toast(:info, gettext("In progress - record will update automatically"))}
+         |> assign(:record, updated_record)
+         |> put_toast(:info, gettext("Colors extracted"))}
 
       {:error, reason} ->
         {:noreply,
          socket
          |> put_toast(
            :error,
-           gettext("Error") <> "," <> inspect(reason)
+           gettext("Error extracting colors") <> ": " <> inspect(reason)
          )}
     end
   end
