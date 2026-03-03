@@ -1,4 +1,26 @@
 defmodule MusicLibraryWeb.Duration do
+  @moduledoc """
+  Formats durations from milliseconds to human-readable strings.
+  """
+
+  @doc """
+  Formats a duration in milliseconds as a human-readable string.
+
+  ## Examples
+
+      iex> MusicLibraryWeb.Duration.format_duration(30_000)
+      "0:30"
+
+      iex> MusicLibraryWeb.Duration.format_duration(90_000)
+      "1:30"
+
+      iex> MusicLibraryWeb.Duration.format_duration(3_723_000)
+      "1:02:03"
+
+      iex> MusicLibraryWeb.Duration.format_duration(0)
+      "0:00"
+
+  """
   def format_duration(milliseconds) do
     milliseconds
     |> System.convert_time_unit(:millisecond, :second)

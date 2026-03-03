@@ -16,6 +16,44 @@ defmodule MusicBrainz.ReleaseSearchResult do
     }
   end
 
+  @doc """
+  Returns the physical format of a release based on its media.
+
+  Returns `:multi` when a release contains different format types.
+
+  ## Examples
+
+      iex> MusicBrainz.ReleaseSearchResult.format(%MusicBrainz.ReleaseSearchResult{
+      ...>   id: "1", title: "T", release_group: nil, artists: "A", date: "2000", barcode: "0",
+      ...>   media: [%{format: "CD", disc_count: 1, track_count: 11}]
+      ...> })
+      :cd
+
+      iex> MusicBrainz.ReleaseSearchResult.format(%MusicBrainz.ReleaseSearchResult{
+      ...>   id: "1", title: "T", release_group: nil, artists: "A", date: "2000", barcode: "0",
+      ...>   media: [%{format: "12\\" Vinyl", disc_count: 0, track_count: 8}]
+      ...> })
+      :vinyl
+
+      iex> MusicBrainz.ReleaseSearchResult.format(%MusicBrainz.ReleaseSearchResult{
+      ...>   id: "1", title: "T", release_group: nil, artists: "A", date: "2000", barcode: "0",
+      ...>   media: [
+      ...>     %{format: "CD", disc_count: 1, track_count: 10},
+      ...>     %{format: "CD", disc_count: 1, track_count: 9}
+      ...>   ]
+      ...> })
+      :cd
+
+      iex> MusicBrainz.ReleaseSearchResult.format(%MusicBrainz.ReleaseSearchResult{
+      ...>   id: "1", title: "T", release_group: nil, artists: "A", date: "2000", barcode: "0",
+      ...>   media: [
+      ...>     %{format: "CD", disc_count: 0, track_count: 11},
+      ...>     %{format: "DVD-Video", disc_count: 0, track_count: 22}
+      ...>   ]
+      ...> })
+      :multi
+
+  """
   def format(release_search_result) do
     sorted_frequencies =
       release_search_result.media

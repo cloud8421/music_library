@@ -276,11 +276,44 @@ defmodule MusicLibrary.Country do
       iex> MusicLibrary.Country.to_emoji("US")
       "🇺🇸"
 
+      iex> MusicLibrary.Country.to_emoji("PL")
+      "🇵🇱"
+
+      iex> MusicLibrary.Country.to_emoji("GB")
+      "🇬🇧"
+
+      iex> MusicLibrary.Country.to_emoji("us")
+      "🇺🇸"
+
+      iex> MusicLibrary.Country.to_emoji("pl")
+      "🇵🇱"
+
       iex> MusicLibrary.Country.to_emoji("GB-SCT")
       "🏴󠁧󠁢󠁳󠁣󠁴󠁿"
 
+      iex> MusicLibrary.Country.to_emoji("GB-WLS")
+      "🏴󠁧󠁢󠁷󠁬󠁳󠁿"
+
+      iex> MusicLibrary.Country.to_emoji("GB-ENG")
+      "🏴󠁧󠁢󠁥󠁮󠁧󠁿"
+
+      iex> MusicLibrary.Country.to_emoji("GB-CYM") == MusicLibrary.Country.to_emoji("GB-WLS")
+      true
+
       iex> MusicLibrary.Country.to_emoji("USA")
       "🇺🇸"
+
+      iex> MusicLibrary.Country.to_emoji("GBR")
+      "🇬🇧"
+
+      iex> MusicLibrary.Country.to_emoji("POL")
+      "🇵🇱"
+
+      iex> MusicLibrary.Country.to_emoji("en-US")
+      "🇺🇸"
+
+      iex> MusicLibrary.Country.to_emoji("pl-PL")
+      "🇵🇱"
 
   """
   @spec to_emoji(String.t()) :: String.t()
