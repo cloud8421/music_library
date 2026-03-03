@@ -46,7 +46,8 @@
       "Bash(ls:*)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:hex.pm)"
+      "WebFetch(domain:hex.pm)",
+      "Bash(gh issue:*)"
     ]
   },
   "enableAllProjectMcpServers": false

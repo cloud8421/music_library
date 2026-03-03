@@ -583,27 +583,29 @@ defmodule MusicLibraryWeb.Components.RecordForm do
   end
 
   defp save_record(socket, record_params, uploaded_covers) do
-    params =
-      case uploaded_covers do
-        [] ->
-          record_params
+    with {:ok, params} <- maybe_store_uploaded_cover(record_params, uploaded_covers),
+         {:ok, record} <- Records.update_record(socket.assigns.record, params) do
+      notify_parent({:saved, record})
 
-        [cover_params] ->
-          {:ok, asset} = Assets.store_image(cover_params)
-          Map.put(record_params, "cover_hash", asset.hash)
-      end
-
-    case Records.update_record(socket.assigns.record, params) do
-      {:ok, record} ->
-        notify_parent({:saved, record})
-
-        {:noreply,
-         socket
-         |> put_toast(:info, gettext("Record updated successfully"))
-         |> push_patch(to: socket.assigns.patch)}
-
+      {:noreply,
+       socket
+       |> put_toast(:info, gettext("Record updated successfully"))
+       |> push_patch(to: socket.assigns.patch)}
+    else
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
+
+      {:error, _reason} ->
+        {:noreply, put_toast(socket, :error, gettext("Failed to store cover image"))}
+    end
+  end
+
+  defp maybe_store_uploaded_cover(params, []), do: {:ok, params}
+
+  defp maybe_store_uploaded_cover(params, [cover_params]) do
+    case Assets.store_image(cover_params) do
+      {:ok, asset} -> {:ok, Map.put(params, "cover_hash", asset.hash)}
+      {:error, reason} -> {:error, reason}
     end
   end
 

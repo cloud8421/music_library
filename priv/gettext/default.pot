@@ -2053,3 +2053,13 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Refresh Last.fm data"
 msgstr ""
+
+#: lib/music_library_web/live/artist_live/form.ex
+#, elixir-autogen, elixir-format
+msgid "Failed to store artist image"
+msgstr ""
+
+#: lib/music_library_web/components/record_form.ex
+#, elixir-autogen, elixir-format
+msgid "Failed to store cover image"
+msgstr ""

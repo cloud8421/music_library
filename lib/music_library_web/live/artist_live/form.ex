@@ -294,27 +294,29 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
   end
 
   defp save_artist_info(socket, artist_info_params, uploaded_images) do
-    params =
-      case uploaded_images do
-        [] ->
-          artist_info_params
+    with {:ok, params} <- maybe_store_uploaded_image(artist_info_params, uploaded_images),
+         {:ok, artist_info} <- Artists.update_artist_info(socket.assigns.artist_info, params) do
+      notify_parent({:saved, artist_info})
 
-        [image_params] ->
-          {:ok, asset} = Assets.store_image(image_params)
-          Map.put(artist_info_params, "image_data_hash", asset.hash)
-      end
-
-    case Artists.update_artist_info(socket.assigns.artist_info, params) do
-      {:ok, artist_info} ->
-        notify_parent({:saved, artist_info})
-
-        {:noreply,
-         socket
-         |> put_toast(:info, gettext("Artist updated successfully"))
-         |> push_patch(to: socket.assigns.patch)}
-
+      {:noreply,
+       socket
+       |> put_toast(:info, gettext("Artist updated successfully"))
+       |> push_patch(to: socket.assigns.patch)}
+    else
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
+
+      {:error, _reason} ->
+        {:noreply, put_toast(socket, :error, gettext("Failed to store artist image"))}
+    end
+  end
+
+  defp maybe_store_uploaded_image(params, []), do: {:ok, params}
+
+  defp maybe_store_uploaded_image(params, [image_params]) do
+    case Assets.store_image(image_params) do
+      {:ok, asset} -> {:ok, Map.put(params, "image_data_hash", asset.hash)}
+      {:error, reason} -> {:error, reason}
     end
   end
 
