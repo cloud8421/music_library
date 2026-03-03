@@ -195,6 +195,21 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                       {gettext("Extract colors (slow)")}
                     </.dropdown_link>
 
+                    <.dropdown_link
+                      id={"actions-#{@record.id}-extract-colors-accurate"}
+                      phx-click={
+                        JS.push("extract_colors", value: %{id: @record.id, method: :accurate})
+                      }
+                    >
+                      <.icon
+                        name="hero-paint-brush"
+                        class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
+                        aria-hidden="true"
+                        data-slot="icon"
+                      />
+                      {gettext("Extract colors (accurate)")}
+                    </.dropdown_link>
+
                     <.dropdown_separator />
                     <.dropdown_link
                       id={"actions-#{@record.id}-delete"}

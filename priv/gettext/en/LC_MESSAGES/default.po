@@ -2063,3 +2063,8 @@ msgstr ""
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Failed to store cover image"
 msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Extract colors (accurate)"
+msgstr ""

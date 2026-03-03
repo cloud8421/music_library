@@ -96,6 +96,8 @@ defmodule MusicLibrary.MixProject do
 
       # Image manipulation
       {:vix, "~> 0.38.0"},
+      {:dominant_colors, "~> 0.1.4"},
+      {:briefly, "~> 0.5.0"},
 
       # Notes
       {:earmark, "~> 1.4"},

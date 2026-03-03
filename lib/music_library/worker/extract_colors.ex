@@ -2,7 +2,7 @@ defmodule MusicLibrary.Worker.ExtractColors do
   use Oban.Worker, queue: :heavy_writes, max_attempts: 3
 
   alias MusicLibrary.{Assets, Records}
-  alias MusicLibrary.Colors.{ColorFrequencyExtractor, EdgeWeightedExtractor}
+  alias MusicLibrary.Colors.{ColorFrequencyExtractor, EdgeWeightedExtractor, KMeansExtractor}
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"id" => record_id, "method" => method}}) do
@@ -21,4 +21,7 @@ defmodule MusicLibrary.Worker.ExtractColors do
 
   defp extract_colors(image_data, :slow),
     do: EdgeWeightedExtractor.extract_dominant_colors(image_data)
+
+  defp extract_colors(image_data, :accurate),
+    do: KMeansExtractor.extract_dominant_colors(image_data)
 end

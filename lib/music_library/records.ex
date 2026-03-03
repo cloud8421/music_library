@@ -375,7 +375,7 @@ defmodule MusicLibrary.Records do
 
   def create_record(attrs \\ %{}) do
     with {:ok, record} <- do_create_record(attrs) do
-      extract_colors_async(record, :fast)
+      extract_colors_async(record, :accurate)
       generate_embedding_async(record)
 
       record
