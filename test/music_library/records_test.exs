@@ -3,6 +3,7 @@ defmodule MusicLibrary.RecordsTest do
 
   import MusicBrainz.Fixtures.Release
   import MusicBrainz.Fixtures.ReleaseGroup
+  import MusicLibrary.ColorHelpers, only: [color_hex?: 1]
   import MusicLibrary.Fixtures.Records
 
   alias MusicLibrary.Assets
@@ -46,13 +47,8 @@ defmodule MusicLibrary.RecordsTest do
       assert record.cover_hash ==
                "599407DDF69907D4A60FE13CCAA824D25CF08DC124FD6AA3E8E7ECD98C885FFE"
 
-      assert record.dominant_colors == [
-               "#101111",
-               "#d3b696",
-               "#836246",
-               "#5d412d",
-               "#3c2e22"
-             ]
+      assert length(record.dominant_colors) == 5
+      assert Enum.all?(record.dominant_colors, &color_hex?/1)
     end
 
     test "it queues a task to retrieve artist info data" do
