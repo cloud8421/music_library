@@ -112,6 +112,13 @@ config :oban_met, sketch_time_unit: :millisecond
 
 config :music_library, MusicLibrary.BackgroundRepo, priv: "priv/background_repo"
 
+config :swoosh, :api_client, Swoosh.ApiClient.Req
+
+config :music_library, MusicLibrary.Mailer,
+  adapter: Swoosh.Adapters.Mailgun,
+  api_key: "change me",
+  domain: "change me"
+
 config :fluxon, :translate_function, &MusicLibraryWeb.CoreComponents.translate_error/1
 
 # Import environment specific config. This must remain at the bottom

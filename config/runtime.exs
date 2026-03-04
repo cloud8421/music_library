@@ -74,6 +74,20 @@ if config_env() !== :test do
 end
 
 if config_env() == :prod do
+  mailgun_api_key =
+    System.get_env("MAILGUN_API_KEY") ||
+      raise """
+      environment variable MAILGUN_API_KEY is missing.
+      """
+
+  mailgun_domain =
+    System.get_env("MAILGUN_DOMAIN") ||
+      raise """
+      environment variable MAILGUN_DOMAIN is missing.
+      """
+
+  config :music_library, MusicLibrary.Mailer, api_key: mailgun_api_key, domain: mailgun_domain
+
   database_path =
     System.get_env("DATABASE_PATH") ||
       raise """
