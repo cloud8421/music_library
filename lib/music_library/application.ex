@@ -13,6 +13,7 @@ defmodule MusicLibrary.Application do
     _ = Req.RateLimiter.new()
 
     children = [
+      {ErrorTrackerNotifier, []},
       MusicLibrary.Vault,
       MusicLibrary.Repo,
       MusicLibrary.BackgroundRepo,

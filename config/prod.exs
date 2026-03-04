@@ -15,6 +15,13 @@ config :music_library, monitoring_routes: true
 
 config :error_tracker, enabled: true
 
+config :error_tracker_notifier,
+  notification_type: :email,
+  from_email: "postmaster@mailgun.fullyforged.com",
+  to_email: "claudio@fullyforged.com",
+  mailer: MusicLibrary.Mailer,
+  base_url: "https://music-library.claudio-ortolina.org"
+
 config :music_library, Oban,
   plugins: [
     {Oban.Plugins.Cron,
