@@ -1,4 +1,4 @@
-defmodule MusicLibrary.ErrorNotifier.Email do
+defmodule ErrorTracker.ErrorNotifier.Email do
   @moduledoc false
 
   import Swoosh.Email
@@ -134,6 +134,6 @@ defmodule MusicLibrary.ErrorNotifier.Email do
   end
 
   defp config do
-    Application.get_env(:music_library, MusicLibrary.ErrorNotifier, [])
+    Application.get_env(:music_library, ErrorTracker.ErrorNotifier, [])
   end
 end

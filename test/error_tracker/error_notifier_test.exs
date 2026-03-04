@@ -1,9 +1,9 @@
-defmodule MusicLibrary.ErrorNotifierTest do
+defmodule ErrorTracker.ErrorNotifierTest do
   use ExUnit.Case, async: false
 
   import Swoosh.TestAssertions
 
-  alias MusicLibrary.ErrorNotifier
+  alias ErrorTracker.ErrorNotifier
 
   @config [
     from_email: "test@example.com",

@@ -27,7 +27,7 @@ Key capabilities:
 
 ```
 MusicLibrary.Application (one_for_one)
-├── MusicLibrary.ErrorNotifier   # Telemetry-driven error email notifications
+├── ErrorTracker.ErrorNotifier    # Telemetry-driven error email notifications
 ├── MusicLibrary.Vault           # Cloak encryption vault
 ├── MusicLibrary.Repo            # Main SQLite repo
 ├── MusicLibrary.BackgroundRepo  # Oban SQLite repo (separate DB)
@@ -123,8 +123,8 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `RecordChat` | Chat implementation for records (OpenAI streaming, web search enabled) |
 | `ArtistChat` | Chat implementation for artists (OpenAI streaming, uses Wikipedia/artist context) |
 | `Country` | Country code (alpha-2, alpha-3, subdivision, IETF) to flag emoji conversion |
-| `ErrorNotifier` | GenServer: attaches to ErrorTracker telemetry, throttles repeated errors, dispatches email notifications |
-| `ErrorNotifier.Email` | Builds and sends Swoosh error notification emails with stack trace formatting |
+| `ErrorTracker.ErrorNotifier` | GenServer: attaches to ErrorTracker telemetry, throttles repeated errors, dispatches email notifications |
+| `ErrorTracker.ErrorNotifier.Email` | Builds and sends Swoosh error notification emails with stack trace formatting |
 | `FormatNumber` | Number formatting utility |
 
 ---

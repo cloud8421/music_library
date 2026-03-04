@@ -1,10 +1,10 @@
-defmodule MusicLibrary.ErrorNotifier do
+defmodule ErrorTracker.ErrorNotifier do
   @moduledoc false
 
   use GenServer
   require Logger
 
-  alias MusicLibrary.ErrorNotifier.Email
+  alias ErrorTracker.ErrorNotifier.Email
 
   @cleanup_interval :timer.minutes(5)
 

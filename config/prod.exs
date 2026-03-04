@@ -15,7 +15,7 @@ config :music_library, monitoring_routes: true
 
 config :error_tracker, enabled: true
 
-config :music_library, MusicLibrary.ErrorNotifier,
+config :music_library, ErrorTracker.ErrorNotifier,
   from_email: "postmaster@mailgun.fullyforged.com",
   to_email: "claudio@fullyforged.com",
   mailer: MusicLibrary.Mailer,
