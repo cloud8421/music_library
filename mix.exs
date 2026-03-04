@@ -90,6 +90,9 @@ defmodule MusicLibrary.MixProject do
       {:finch, "~> 0.21.0"},
       {:req, "~> 0.5.8"},
       {:server_sent_events, "~> 0.2"},
+
+      # Mailers
+      {:idna, "~> 7.1", override: true},
       {:swoosh, "~> 1.22"},
       {:multipart, "~> 0.6.0"},
 
