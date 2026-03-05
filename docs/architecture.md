@@ -125,6 +125,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Country` | Country code (alpha-2, alpha-3, subdivision, IETF) to flag emoji conversion |
 | `ErrorTracker.ErrorNotifier` | GenServer: attaches to ErrorTracker telemetry, throttles repeated errors, dispatches email notifications |
 | `ErrorTracker.ErrorNotifier.Email` | Builds and sends Swoosh error notification emails with stack trace formatting |
+| `MusicLibrary.Mailer` | Swoosh mailer (Mailgun in prod, local adapter in dev) |
 | `FormatNumber` | Number formatting utility |
 
 ---
@@ -139,6 +140,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Wikipedia` / `Wikipedia.API` | wikipedia.org | Artist biographies |
 | `BraveSearch` / `BraveSearch.API` | search.brave.com | Cover art and artist image search |
 | `OpenAI` / `OpenAI.API` | api.openai.com | Text embeddings for similarity, streaming chat via Responses API (gpt-4.1 + web search) |
+| `MusicLibrary.Mailer` | Mailgun (via Swoosh) | Transactional email delivery (error notifications) |
 
 Each has a `Config` module reading from application env. In tests, all HTTP calls are
 stubbed via `Req.Test` (configured in `config/test.exs`).
