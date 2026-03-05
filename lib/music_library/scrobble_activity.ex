@@ -67,35 +67,36 @@ defmodule MusicLibrary.ScrobbleActivity do
   end
 
   def scrobble_medium(number, release_with_tracks, {:finished_at, finished_at}) do
-    medium_duration =
-      release_with_tracks.media
-      |> Enum.find(fn medium -> medium.number == number end)
-      |> Release.medium_duration()
+    case find_medium(release_with_tracks, number) do
+      {:ok, medium} ->
+        medium_duration = Release.medium_duration(medium)
+        started_at = DateTime.add(finished_at, -medium_duration, :millisecond)
+        scrobble_medium(number, release_with_tracks, {:started_at, started_at})
 
-    started_at = DateTime.add(finished_at, -medium_duration, :millisecond)
-    scrobble_medium(number, release_with_tracks, {:started_at, started_at})
+      {:error, :medium_not_found} ->
+        {:error, :medium_not_found}
+    end
   end
 
   def scrobble_medium(number, release_with_tracks, {:started_at, started_at}) do
-    medium_duration =
-      release_with_tracks.media
-      |> Enum.find(fn medium -> medium.number == number end)
-      |> Release.medium_duration()
+    case find_medium(release_with_tracks, number) do
+      {:ok, medium} ->
+        medium_duration = Release.medium_duration(medium)
 
-    if medium_duration == 0 do
-      {:error, :no_duration}
-    else
-      with {:ok, session_key} <- fetch_session_key() do
-        medium =
-          release_with_tracks.media
-          |> Enum.find(fn medium -> medium.number == number end)
+        if medium_duration == 0 do
+          {:error, :no_duration}
+        else
+          with {:ok, session_key} <- fetch_session_key() do
+            {scrobbles, _finished_at} =
+              medium.tracks
+              |> to_scrobbles(release_with_tracks, started_at)
 
-        {scrobbles, _finished_at} =
-          medium.tracks
-          |> to_scrobbles(release_with_tracks, started_at)
+            LastFm.scrobble(scrobbles, session_key)
+          end
+        end
 
-        LastFm.scrobble(scrobbles, session_key)
-      end
+      {:error, :medium_not_found} ->
+        {:error, :medium_not_found}
     end
   end
 
@@ -174,6 +175,13 @@ defmodule MusicLibrary.ScrobbleActivity do
 
       {scrobble, time}
     end)
+  end
+
+  defp find_medium(release_with_tracks, number) do
+    case Enum.find(release_with_tracks.media, fn medium -> medium.number == number end) do
+      nil -> {:error, :medium_not_found}
+      medium -> {:ok, medium}
+    end
   end
 
   defp main_artist_name([]), do: nil
