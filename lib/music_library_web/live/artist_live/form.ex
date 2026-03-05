@@ -6,6 +6,7 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
   alias MusicLibrary.Artists
   alias MusicLibrary.Assets
   alias MusicLibrary.Assets.Image
+  alias MusicLibraryWeb.ErrorMessages
 
   @impl true
   def mount(socket) do
@@ -249,14 +250,20 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
   def handle_async(:image_search, {:ok, {:error, reason}}, socket) do
     {:noreply,
      socket
-     |> assign(:image_search_error, "Search failed: #{inspect(reason)}")
+     |> assign(
+       :image_search_error,
+       gettext("Search failed") <> ": " <> ErrorMessages.friendly_message(reason)
+     )
      |> assign(:image_search_loading, false)}
   end
 
   def handle_async(:image_search, {:exit, reason}, socket) do
     {:noreply,
      socket
-     |> assign(:image_search_error, "Search failed: #{inspect(reason)}")
+     |> assign(
+       :image_search_error,
+       gettext("Search failed") <> ": " <> ErrorMessages.friendly_message(reason)
+     )
      |> assign(:image_search_loading, false)}
   end
 
@@ -283,14 +290,20 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
   def handle_async(:image_download, {:ok, {:error, reason}}, socket) do
     {:noreply,
      socket
-     |> assign(:image_search_error, "Download failed: #{inspect(reason)}")
+     |> assign(
+       :image_search_error,
+       gettext("Download failed") <> ": " <> ErrorMessages.friendly_message(reason)
+     )
      |> assign(:image_search_loading, false)}
   end
 
   def handle_async(:image_download, {:exit, reason}, socket) do
     {:noreply,
      socket
-     |> assign(:image_search_error, "Download failed: #{inspect(reason)}")
+     |> assign(
+       :image_search_error,
+       gettext("Download failed") <> ": " <> ErrorMessages.friendly_message(reason)
+     )
      |> assign(:image_search_loading, false)}
   end
 

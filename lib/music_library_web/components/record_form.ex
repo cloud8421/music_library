@@ -7,6 +7,7 @@ defmodule MusicLibraryWeb.Components.RecordForm do
   alias MusicLibrary.{Assets, Records}
   alias MusicLibrary.Assets.Image
   alias MusicLibrary.Records.Record
+  alias MusicLibraryWeb.ErrorMessages
 
   @impl true
   def mount(socket) do
@@ -538,14 +539,20 @@ defmodule MusicLibraryWeb.Components.RecordForm do
   def handle_async(:cover_search, {:ok, {:error, reason}}, socket) do
     {:noreply,
      socket
-     |> assign(:cover_search_error, "Search failed: #{inspect(reason)}")
+     |> assign(
+       :cover_search_error,
+       gettext("Search failed") <> ": " <> ErrorMessages.friendly_message(reason)
+     )
      |> assign(:cover_search_loading, false)}
   end
 
   def handle_async(:cover_search, {:exit, reason}, socket) do
     {:noreply,
      socket
-     |> assign(:cover_search_error, "Search failed: #{inspect(reason)}")
+     |> assign(
+       :cover_search_error,
+       gettext("Search failed") <> ": " <> ErrorMessages.friendly_message(reason)
+     )
      |> assign(:cover_search_loading, false)}
   end
 
@@ -571,14 +578,20 @@ defmodule MusicLibraryWeb.Components.RecordForm do
   def handle_async(:cover_download, {:ok, {:error, reason}}, socket) do
     {:noreply,
      socket
-     |> assign(:cover_search_error, "Download failed: #{inspect(reason)}")
+     |> assign(
+       :cover_search_error,
+       gettext("Download failed") <> ": " <> ErrorMessages.friendly_message(reason)
+     )
      |> assign(:cover_search_loading, false)}
   end
 
   def handle_async(:cover_download, {:exit, reason}, socket) do
     {:noreply,
      socket
-     |> assign(:cover_search_error, "Download failed: #{inspect(reason)}")
+     |> assign(
+       :cover_search_error,
+       gettext("Download failed") <> ": " <> ErrorMessages.friendly_message(reason)
+     )
      |> assign(:cover_search_loading, false)}
   end
 

@@ -6,6 +6,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
 
   alias MusicLibrary.{Artists, Records}
   alias MusicLibrary.Artists.ArtistInfo
+  alias MusicLibraryWeb.ErrorMessages
 
   attr :country, :map, required: true
 
@@ -544,7 +545,8 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
          socket
          |> put_toast(
            :error,
-           gettext("Error refreshing artist info") <> "," <> inspect(reason)
+           gettext("Error refreshing artist info") <>
+             ": " <> ErrorMessages.friendly_message(reason)
          )}
     end
   end
@@ -563,7 +565,8 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
          socket
          |> put_toast(
            :error,
-           gettext("Error refreshing Wikipedia data") <> "," <> inspect(reason)
+           gettext("Error refreshing Wikipedia data") <>
+             ": " <> ErrorMessages.friendly_message(reason)
          )}
     end
   end
@@ -585,7 +588,8 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
          socket
          |> put_toast(
            :error,
-           gettext("Error refreshing Last.fm data") <> "," <> inspect(reason)
+           gettext("Error refreshing Last.fm data") <>
+             ": " <> ErrorMessages.friendly_message(reason)
          )}
     end
   end
@@ -603,7 +607,8 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
          socket
          |> put_toast(
            :error,
-           gettext("Error refreshing artist image") <> "," <> inspect(reason)
+           gettext("Error refreshing artist image") <>
+             ": " <> ErrorMessages.friendly_message(reason)
          )}
     end
   end
@@ -624,7 +629,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
          socket
          |> put_toast(
            :error,
-           gettext("Error importing record") <> "," <> inspect(changeset.errors)
+           gettext("Error importing record") <> ": " <> ErrorMessages.friendly_message(changeset)
          )}
     end
   end

@@ -9,6 +9,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
   alias MusicLibrary.Assets.Transform
   alias MusicLibrary.{Collection, ListeningStats, Records, Wishlist}
+  alias MusicLibraryWeb.ErrorMessages
   alias MusicLibraryWeb.StatsLive.{TopAlbums, TopArtists}
 
   @impl true
@@ -392,18 +393,13 @@ defmodule MusicLibraryWeb.StatsLive.Index do
          |> put_toast(:info, gettext("Record wishlisted successfully"))
          |> push_navigate(to: ~p"/wishlist/#{record.id}")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, reason} ->
         {:noreply,
          socket
          |> put_toast(
            :error,
-           gettext("Error wishlisting record") <> "," <> inspect(changeset.errors)
+           gettext("Error wishlisting record") <> ": " <> ErrorMessages.friendly_message(reason)
          )}
-
-      {:error, reason} ->
-        {:noreply,
-         socket
-         |> put_toast(:error, gettext("Error wishlisting record") <> "," <> inspect(reason))}
     end
   end
 

@@ -6,6 +6,7 @@ defmodule MusicLibraryWeb.Components.Release do
   alias MusicBrainz.Release
   alias MusicLibrary.ScrobbleActivity
   alias MusicLibraryWeb.Duration
+  alias MusicLibraryWeb.ErrorMessages
   alias Phoenix.LiveView.AsyncResult
 
   def open(id), do: Fluxon.open_dialog(id)
@@ -267,7 +268,7 @@ defmodule MusicLibraryWeb.Components.Release do
 
         put_toast!(
           :error,
-          gettext("Error scrobbling release") <> "," <> inspect(reason)
+          gettext("Error scrobbling release") <> ": " <> ErrorMessages.friendly_message(reason)
         )
 
         {:noreply, socket}
@@ -298,7 +299,7 @@ defmodule MusicLibraryWeb.Components.Release do
 
         put_toast!(
           :error,
-          gettext("Error scrobbling disc") <> "," <> inspect(reason)
+          gettext("Error scrobbling disc") <> ": " <> ErrorMessages.friendly_message(reason)
         )
 
         {:noreply, socket}
@@ -372,7 +373,8 @@ defmodule MusicLibraryWeb.Components.Release do
 
           put_toast!(
             :error,
-            gettext("Error scrobbling selected tracks") <> "," <> inspect(reason)
+            gettext("Error scrobbling selected tracks") <>
+              ": " <> ErrorMessages.friendly_message(reason)
           )
 
           {:noreply, socket}

@@ -9,6 +9,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
   alias MusicLibrary.Collection
   alias MusicLibrary.Records
   alias MusicLibraryWeb.CollectionLive.Show
+  alias MusicLibraryWeb.ErrorMessages
 
   @default_records_list_params %{
     query: "",
@@ -272,19 +273,13 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
          |> put_toast(:info, gettext("Record imported successfully"))
          |> push_navigate(to: ~p"/collection/#{record.id}")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, reason} ->
         {:noreply,
          socket
          |> put_toast(
            :error,
-           gettext("Error importing record") <> "," <> inspect(changeset.errors)
+           gettext("Error importing record") <> ": " <> ErrorMessages.friendly_message(reason)
          )
-         |> push_patch(to: ~p"/collection")}
-
-      {:error, reason} ->
-        {:noreply,
-         socket
-         |> put_toast(:error, gettext("Error importing record") <> "," <> inspect(reason))
          |> push_patch(to: ~p"/collection")}
     end
   end

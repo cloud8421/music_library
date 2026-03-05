@@ -6,6 +6,7 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
   alias MusicLibrary.Artists
   alias MusicLibrary.Maintenance
   alias MusicLibrary.Records
+  alias MusicLibraryWeb.ErrorMessages
 
   @poll_interval 2_000
 
@@ -268,7 +269,10 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
 
         {:noreply,
          socket
-         |> put_toast(:error, "Database vacuum failed: #{inspect(reason)}.")}
+         |> put_toast(
+           :error,
+           gettext("Database vacuum failed") <> ": " <> ErrorMessages.friendly_message(reason)
+         )}
     end
   end
 
@@ -284,7 +288,10 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
 
         {:noreply,
          socket
-         |> put_toast(:error, "Database optimize failed: #{inspect(reason)}.")}
+         |> put_toast(
+           :error,
+           gettext("Database optimize failed") <> ": " <> ErrorMessages.friendly_message(reason)
+         )}
     end
   end
 end

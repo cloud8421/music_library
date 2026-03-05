@@ -4,6 +4,7 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
   alias MusicBrainz.ReleaseGroupSearchResult
   alias MusicLibrary.BarcodeScan
   alias MusicLibrary.Records
+  alias MusicLibraryWeb.ErrorMessages
   alias MusicLibraryWeb.RecordComponents
 
   require Logger
@@ -410,7 +411,7 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
         errors ->
           errors_summary =
             Enum.map_join(errors, "\n", fn {number, reason} ->
-              "#{number}: #{inspect(reason)}"
+              "#{number}: #{ErrorMessages.friendly_message(reason)}"
             end)
 
           put_toast(

@@ -7,6 +7,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
 
   alias MusicLibrary.Records
   alias MusicLibrary.Wishlist
+  alias MusicLibraryWeb.ErrorMessages
   alias MusicLibraryWeb.WishlistLive.Show
 
   @default_records_list_params %{
@@ -242,19 +243,13 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
          |> put_toast(:info, gettext("Record wishlisted successfully"))
          |> push_navigate(to: ~p"/wishlist/#{record.id}")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, reason} ->
         {:noreply,
          socket
          |> put_toast(
            :error,
-           gettext("Error wishlisting record") <> "," <> inspect(changeset.errors)
+           gettext("Error wishlisting record") <> ": " <> ErrorMessages.friendly_message(reason)
          )
-         |> push_patch(to: ~p"/wishlist")}
-
-      {:error, reason} ->
-        {:noreply,
-         socket
-         |> put_toast(:error, gettext("Error wishlisting record") <> "," <> inspect(reason))
          |> push_patch(to: ~p"/wishlist")}
     end
   end

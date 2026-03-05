@@ -19,6 +19,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
   alias MusicLibrary.OnlineStoreTemplates
   alias MusicLibrary.{Records, RecordSets}
   alias MusicLibrary.Records.Similarity
+  alias MusicLibraryWeb.ErrorMessages
 
   @impl true
   def render(assigns) do
@@ -319,7 +320,8 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
          socket
          |> put_toast(
            :error,
-           gettext("Error refreshing MusicBrainz data") <> "," <> inspect(reason)
+           gettext("Error refreshing MusicBrainz data") <>
+             ": " <> ErrorMessages.friendly_message(reason)
          )}
     end
   end
@@ -339,7 +341,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
          socket
          |> put_toast(
            :error,
-           gettext("Error refreshing Cover") <> "," <> inspect(reason)
+           gettext("Error refreshing cover") <> ": " <> ErrorMessages.friendly_message(reason)
          )}
     end
   end
@@ -358,7 +360,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
          socket
          |> put_toast(
            :error,
-           gettext("Error") <> "," <> inspect(reason)
+           gettext("Error") <> ": " <> ErrorMessages.friendly_message(reason)
          )}
     end
   end
@@ -394,7 +396,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
          socket
          |> put_toast(
            :error,
-           gettext("Error extracting colors") <> ": " <> inspect(reason)
+           gettext("Error extracting colors") <> ": " <> ErrorMessages.friendly_message(reason)
          )}
     end
   end

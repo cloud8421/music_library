@@ -5,6 +5,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
   import MusicLibraryWeb.RecordComponents, only: [country_label: 1]
 
   alias MusicLibrary.ScrobbleActivity
+  alias MusicLibraryWeb.ErrorMessages
 
   @impl true
   def render(assigns) do
@@ -156,7 +157,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
          socket
          |> put_toast(
            :error,
-           gettext("Error scrobbling release") <> "," <> inspect(reason)
+           gettext("Error scrobbling release") <> ": " <> ErrorMessages.friendly_message(reason)
          )}
     end
   end
@@ -177,7 +178,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
          socket
          |> put_toast(
            :error,
-           gettext("Error scrobbling disc") <> "," <> inspect(reason)
+           gettext("Error scrobbling disc") <> ": " <> ErrorMessages.friendly_message(reason)
          )}
     end
   end
@@ -205,7 +206,8 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
            socket
            |> put_toast(
              :error,
-             gettext("Error scrobbling selected tracks") <> "," <> inspect(reason)
+             gettext("Error scrobbling selected tracks") <>
+               ": " <> ErrorMessages.friendly_message(reason)
            )}
       end
     end

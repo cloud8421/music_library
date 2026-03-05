@@ -21,6 +21,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
   alias MusicLibrary.{Records, RecordSets, ScrobbleActivity}
   alias MusicLibrary.Records.Similarity
+  alias MusicLibraryWeb.ErrorMessages
   alias Phoenix.LiveView.JS
 
   @impl true
@@ -370,7 +371,8 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
          socket
          |> put_toast(
            :error,
-           gettext("Error refreshing MusicBrainz data") <> "," <> inspect(reason)
+           gettext("Error refreshing MusicBrainz data") <>
+             ": " <> ErrorMessages.friendly_message(reason)
          )}
     end
   end
@@ -389,7 +391,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
          socket
          |> put_toast(
            :error,
-           gettext("Error") <> "," <> inspect(reason)
+           gettext("Error") <> ": " <> ErrorMessages.friendly_message(reason)
          )}
     end
   end
@@ -409,7 +411,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
          socket
          |> put_toast(
            :error,
-           gettext("Error refreshing cover") <> "," <> inspect(reason)
+           gettext("Error refreshing cover") <> ": " <> ErrorMessages.friendly_message(reason)
          )}
     end
   end
@@ -429,7 +431,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
          socket
          |> put_toast(
            :error,
-           gettext("Error extracting colors") <> ": " <> inspect(reason)
+           gettext("Error extracting colors") <> ": " <> ErrorMessages.friendly_message(reason)
          )}
     end
   end
@@ -448,7 +450,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
          socket
          |> put_toast(
            :error,
-           gettext("Error") <> "," <> inspect(reason)
+           gettext("Error") <> ": " <> ErrorMessages.friendly_message(reason)
          )}
     end
   end

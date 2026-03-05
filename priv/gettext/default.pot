@@ -279,12 +279,8 @@ msgstr ""
 msgid "Cover refreshed successfully"
 msgstr ""
 
-#: lib/music_library_web/live/wishlist_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Error refreshing Cover"
-msgstr ""
-
 #: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Error refreshing cover"
 msgstr ""
@@ -2068,4 +2064,151 @@ msgstr ""
 #: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Extract colors"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Database optimize failed"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Database vacuum failed"
+msgstr ""
+
+#: lib/music_library_web/components/record_form.ex
+#: lib/music_library_web/live/artist_live/form.ex
+#, elixir-autogen, elixir-format
+msgid "Download failed"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "Last.fm API key has been suspended"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "Last.fm API key is invalid"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "Last.fm authentication failed"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "Last.fm session has expired, please reconnect"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "Last.fm session key is not configured"
+msgstr ""
+
+#: lib/music_library_web/components/record_form.ex
+#: lib/music_library_web/live/artist_live/form.ex
+#, elixir-autogen, elixir-format
+msgid "Search failed"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "a connection error occurred, please try again"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "a temporary error occurred, please try again"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "cover art is not available"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "invalid parameters were provided"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "no Discogs profile available"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "no image could be found"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "rate limit exceeded, please try again later"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "release has no track duration information"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "service is currently offline, please try again later"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "something went wrong, please try again"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "the download failed"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "the operation failed, please try again"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "the request timed out, please try again"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "the requested resource does not exist"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "the resource was not found"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "the service could not be found"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "the service is not reachable"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "the specified disc was not found"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "this record is already in your collection"
+msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "validation failed"
 msgstr ""
