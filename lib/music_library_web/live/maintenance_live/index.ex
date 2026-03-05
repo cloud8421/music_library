@@ -1,14 +1,11 @@
 defmodule MusicLibraryWeb.MaintenanceLive.Index do
   use MusicLibraryWeb, :live_view
 
-  import Ecto.Query
-
   require Logger
 
   alias MusicLibrary.Artists
-  alias MusicLibrary.BackgroundRepo
+  alias MusicLibrary.Maintenance
   alias MusicLibrary.Records
-  alias MusicLibrary.Repo
 
   @poll_interval 2_000
 
@@ -186,38 +183,28 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
     socket
     |> assign(
       :refresh_records_musicbrainz_jobs,
-      count_jobs("MusicLibrary.Worker.RecordRefreshMusicBrainzData")
+      Maintenance.count_active_jobs("MusicLibrary.Worker.RecordRefreshMusicBrainzData")
     )
     |> assign(
       :generate_record_embeddings_jobs,
-      count_jobs("MusicLibrary.Worker.GenerateRecordEmbedding")
+      Maintenance.count_active_jobs("MusicLibrary.Worker.GenerateRecordEmbedding")
     )
     |> assign(
       :refresh_artists_musicbrainz_jobs,
-      count_jobs("MusicLibrary.Worker.ArtistRefreshMusicBrainzData")
+      Maintenance.count_active_jobs("MusicLibrary.Worker.ArtistRefreshMusicBrainzData")
     )
     |> assign(
       :refresh_artists_discogs_jobs,
-      count_jobs("MusicLibrary.Worker.ArtistRefreshDiscogsData")
+      Maintenance.count_active_jobs("MusicLibrary.Worker.ArtistRefreshDiscogsData")
     )
     |> assign(
       :refresh_artists_wikipedia_jobs,
-      count_jobs("MusicLibrary.Worker.ArtistRefreshWikipediaData")
+      Maintenance.count_active_jobs("MusicLibrary.Worker.ArtistRefreshWikipediaData")
     )
     |> assign(
       :refresh_artists_lastfm_jobs,
-      count_jobs("MusicLibrary.Worker.FetchArtistLastFmData")
+      Maintenance.count_active_jobs("MusicLibrary.Worker.FetchArtistLastFmData")
     )
-  end
-
-  defp count_jobs(worker) do
-    query =
-      from j in Oban.Job,
-        where: j.worker == ^worker,
-        where: j.state in ["available", "scheduled", "executing", "retryable"],
-        select: count(j.id)
-
-    BackgroundRepo.one(query)
   end
 
   @impl true
@@ -270,7 +257,7 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
   end
 
   def handle_event("db_vacuum", _params, socket) do
-    case Repo.vacuum() do
+    case Maintenance.vacuum() do
       {:ok, _result} ->
         {:noreply,
          socket
@@ -286,7 +273,7 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
   end
 
   def handle_event("db_optimize", _params, socket) do
-    case Repo.optimize() do
+    case Maintenance.optimize() do
       {:ok, _result} ->
         {:noreply,
          socket

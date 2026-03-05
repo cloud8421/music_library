@@ -105,6 +105,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Search` | (cross-context) | Universal search across collection, wishlist, artists, record sets |
 | `Secrets` | Secret | Encrypted key-value storage |
 | `BarcodeScan` | (Result struct) | Barcode → MusicBrainz lookup workflow |
+| `Maintenance` | (Oban.Job) | Background job monitoring, database vacuum/optimize |
 
 ---
 
