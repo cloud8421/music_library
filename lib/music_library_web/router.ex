@@ -32,6 +32,8 @@ defmodule MusicLibraryWeb.Router do
 
     get "/auth/last_fm/callback", LastFmController, :callback
 
+    get "/public/assets/:transform_payload", AssetController, :show
+
     scope "/" do
       pipe_through :logged_in
 

@@ -288,7 +288,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `HealthController` | `/health` | Health check |
 | `LastFmController` | `/auth/last_fm/callback` | Last.fm OAuth |
 | `ArchiveController` | `/backup`, `/api/backup` | Database backup download (API route requires token) |
-| `AssetController` | `/assets/:transform_payload`, `/api/assets/:transform_payload` | Serve images with transforms (API route requires token) |
+| `AssetController` | `/assets/:transform_payload`, `/public/assets/:transform_payload`, `/api/assets/:transform_payload` | Serve images with transforms (public route for emails, API route requires token) |
 | `CollectionController` | `/api/collection/*` | JSON API for collection queries |
 
 ---

@@ -44,11 +44,10 @@ defmodule MusicLibrary.RecordsOnThisDayEmail do
 
   defp build_html(records, date, conf) do
     base_url = Keyword.fetch!(conf, :base_url) |> String.trim_trailing("/")
-    api_token = Application.get_env(:music_library, MusicLibraryWeb)[:api_token]
     heading = date |> Calendar.strftime("Records on %-d %B") |> html_escape()
 
     records_html =
-      Enum.map_join(records, "\n", fn record -> record_html(record, date, base_url, api_token) end)
+      Enum.map_join(records, "\n", fn record -> record_html(record, date, base_url) end)
 
     """
     <div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: system-ui, -apple-system, sans-serif; background-color: #f4f4f5;">
@@ -62,9 +61,9 @@ defmodule MusicLibrary.RecordsOnThisDayEmail do
     """
   end
 
-  defp record_html(record, date, base_url, api_token) do
+  defp record_html(record, date, base_url) do
     years = Record.released_how_long_ago?(record, date)
-    cover_url = cover_image_url(record, base_url, api_token)
+    cover_url = cover_image_url(record, base_url)
     record_url = record_detail_url(record, base_url)
     artist_names = record |> Record.artist_names() |> html_escape()
     title = record.title |> html_escape()
@@ -106,11 +105,11 @@ defmodule MusicLibrary.RecordsOnThisDayEmail do
     "#{base_url}/collection/#{record.id}"
   end
 
-  defp cover_image_url(%{cover_hash: nil}, _base_url, _api_token), do: nil
+  defp cover_image_url(%{cover_hash: nil}, _base_url), do: nil
 
-  defp cover_image_url(record, base_url, api_token) do
+  defp cover_image_url(record, base_url) do
     payload = Transform.new(hash: record.cover_hash, width: 96) |> Transform.encode!()
-    "#{base_url}/api/assets/#{payload}?token=#{api_token}"
+    "#{base_url}/public/assets/#{payload}"
   end
 
   defp years_ago_label(nil), do: ""
