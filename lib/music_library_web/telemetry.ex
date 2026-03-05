@@ -89,6 +89,24 @@ defmodule MusicLibraryWeb.Telemetry do
         reporter_options: [nav: "Assets"]
       ),
 
+      # Error Tracker
+      counter("error_tracker.error.new.system_time",
+        description: "New errors tracked",
+        reporter_options: [nav: "Error Tracker"]
+      ),
+      counter("error_tracker.error.resolved.system_time",
+        description: "Errors marked as resolved",
+        reporter_options: [nav: "Error Tracker"]
+      ),
+      counter("error_tracker.error.unresolved.system_time",
+        description: "Errors marked as unresolved",
+        reporter_options: [nav: "Error Tracker"]
+      ),
+      counter("error_tracker.occurrence.new.system_time",
+        description: "New error occurrences",
+        reporter_options: [nav: "Error Tracker"]
+      ),
+
       # VM Metrics
       summary("vm.memory.total", unit: {:byte, :megabyte}),
       summary("vm.total_run_queue_lengths.total"),
