@@ -43,6 +43,8 @@ defmodule MusicLibraryWeb.Endpoint do
     plug Phoenix.Ecto.CheckRepoStatus, otp_app: :music_library
   end
 
+  plug :reject_bot_scanners
+
   plug Phoenix.LiveDashboard.RequestLogger,
     param_key: "request_logger",
     cookie_key: "request_logger"
@@ -59,4 +61,24 @@ defmodule MusicLibraryWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug MusicLibraryWeb.Router
+
+  defp reject_bot_scanners(%{request_path: "/wp-" <> _} = conn, _opts),
+    do: conn |> send_resp(404, "") |> halt()
+
+  defp reject_bot_scanners(%{request_path: "/wordpress" <> _} = conn, _opts),
+    do: conn |> send_resp(404, "") |> halt()
+
+  @blocked_paths [
+    "/.env",
+    "/grsiuk.php",
+    "/vgtyu.php",
+    "/vx.php",
+    "/xleet.php",
+    "/jq.php"
+  ]
+
+  defp reject_bot_scanners(%{request_path: path} = conn, _opts) when path in @blocked_paths,
+    do: conn |> send_resp(404, "") |> halt()
+
+  defp reject_bot_scanners(conn, _opts), do: conn
 end
