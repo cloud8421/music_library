@@ -53,7 +53,13 @@ defmodule MusicBrainz.Artist do
     end)
   end
 
-  defp parse_discogs_id("https://www.discogs.com/artist/" <> id), do: String.to_integer(id)
+  defp parse_discogs_id("https://www.discogs.com/artist/" <> id) do
+    case Integer.parse(id) do
+      {int, ""} -> int
+      _ -> nil
+    end
+  end
+
   defp parse_discogs_id(_other), do: nil
 
   defp parse_wikidata_id("https://www.wikidata.org/wiki/" <> id), do: id

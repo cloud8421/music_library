@@ -73,8 +73,10 @@ defmodule LastFm.Track do
   end
 
   defp parse_scrobble_at_uts(track) do
-    track["date"]["uts"]
-    |> String.to_integer()
+    case Integer.parse(track["date"]["uts"]) do
+      {int, ""} -> int
+      _ -> nil
+    end
   end
 
   def changeset(track, attrs) do

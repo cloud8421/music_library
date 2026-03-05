@@ -162,7 +162,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
   end
 
   def handle_event("scrobble_medium", %{"medium_number" => number}, socket) do
-    number = String.to_integer(number)
+    {number, ""} = Integer.parse(number)
 
     case ScrobbleActivity.scrobble_medium(number, socket.assigns.release,
            finished_at: DateTime.utc_now()

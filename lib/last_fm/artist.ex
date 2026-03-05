@@ -67,10 +67,18 @@ defmodule LastFm.Artist do
   end
 
   defp get_play_count(api_response) do
-    if play_count = get_in(api_response, ["stats", "userplaycount"]) do
-      String.to_integer(play_count)
-    else
-      0
+    case get_in(api_response, ["stats", "userplaycount"]) do
+      nil -> 0
+      value -> parse_play_count(value)
     end
   end
+
+  defp parse_play_count(value) when is_binary(value) do
+    case Integer.parse(value) do
+      {int, ""} -> int
+      _ -> 0
+    end
+  end
+
+  defp parse_play_count(_), do: 0
 end

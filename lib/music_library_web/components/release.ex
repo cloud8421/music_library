@@ -282,7 +282,7 @@ defmodule MusicLibraryWeb.Components.Release do
   def handle_event("scrobble_medium", %{"number" => number}, socket)
       when release_loaded?(socket.assigns) do
     release_with_tracks = socket.assigns.release_with_tracks.result
-    number = String.to_integer(number)
+    {number, ""} = Integer.parse(number)
 
     case ScrobbleActivity.scrobble_medium(number, release_with_tracks,
            finished_at: DateTime.utc_now()
@@ -324,7 +324,7 @@ defmodule MusicLibraryWeb.Components.Release do
   end
 
   def handle_event("toggle_medium", %{"medium-number" => number}, socket) do
-    number = String.to_integer(number)
+    {number, ""} = Integer.parse(number)
     selected_tracks = socket.assigns.selected_tracks
     release_with_tracks = socket.assigns.release_with_tracks.result
 

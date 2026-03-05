@@ -28,15 +28,8 @@ defmodule MusicLibraryWeb.CollectionController do
   end
 
   def index(conn, params) do
-    limit =
-      params
-      |> Map.get("limit", "20")
-      |> String.to_integer()
-
-    offset =
-      params
-      |> Map.get("offset", "0")
-      |> String.to_integer()
+    limit = parse_int(params["limit"], 20)
+    offset = parse_int(params["offset"], 0)
 
     total = Collection.search_records_count("")
 
@@ -44,4 +37,15 @@ defmodule MusicLibraryWeb.CollectionController do
 
     render(conn, :index, total: total, limit: limit, offset: offset, records: records)
   end
+
+  defp parse_int(nil, default), do: default
+
+  defp parse_int(value, default) when is_binary(value) do
+    case Integer.parse(value) do
+      {int, ""} -> int
+      _ -> default
+    end
+  end
+
+  defp parse_int(_, default), do: default
 end
