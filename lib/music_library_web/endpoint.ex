@@ -72,6 +72,7 @@ defmodule MusicLibraryWeb.Endpoint do
     "/.env",
     "/grsiuk.php",
     "/vgtyu.php",
+    "/xmlrpc.php",
     "/vx.php",
     "/xleet.php",
     "/jq.php"
