@@ -14,5 +14,6 @@ defmodule MusicLibrary.Secrets.Secret do
     secret
     |> cast(attrs, [:name, :value])
     |> validate_required([:name, :value])
+    |> validate_length(:name, min: 1, max: 100)
   end
 end

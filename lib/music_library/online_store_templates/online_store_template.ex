@@ -21,6 +21,7 @@ defmodule MusicLibrary.OnlineStoreTemplates.OnlineStoreTemplate do
     |> validate_required([:name, :url_template])
     |> validate_length(:name, min: 1, max: 100)
     |> validate_length(:url_template, min: 1, max: 500)
+    |> validate_length(:description, max: 1000)
     |> validate_url_template()
   end
 

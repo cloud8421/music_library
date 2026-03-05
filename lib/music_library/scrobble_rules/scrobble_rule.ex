@@ -29,6 +29,8 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRule do
     scrobble_rule
     |> cast(attrs, [:type, :match_value, :target_musicbrainz_id, :enabled, :description])
     |> validate_required([:type, :match_value, :target_musicbrainz_id])
+    |> validate_length(:match_value, min: 1, max: 500)
+    |> validate_length(:description, max: 1000)
     |> unique_constraint([:type, :match_value], error_key: :match_value)
   end
 end

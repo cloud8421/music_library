@@ -20,6 +20,8 @@ defmodule MusicLibrary.RecordSets.RecordSet do
     record_set
     |> cast(attrs, [:name, :description])
     |> validate_required([:name])
+    |> validate_length(:name, min: 1, max: 100)
+    |> validate_length(:description, max: 10_000)
   end
 
   def count_by_status(record_set) do
