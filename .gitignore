@@ -47,3 +47,4 @@ npm-debug.log
 
 # Database files in priv directory
 priv/**/*.db
+/.expert
