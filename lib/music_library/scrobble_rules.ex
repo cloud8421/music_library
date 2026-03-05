@@ -396,39 +396,7 @@ defmodule MusicLibrary.ScrobbleRules do
   def apply_all_album_rules([]), do: {:ok, 0}
 
   def apply_all_album_rules(rules) when is_list(rules) do
-    # Build CASE WHEN clauses dynamically
-    {case_clauses, case_params} =
-      rules
-      |> Enum.reduce({"", []}, fn rule, {sql_acc, params_acc} ->
-        clause =
-          "WHEN json_extract(album, '$.title') = ? THEN json_set(album, '$.musicbrainz_id', ?) "
-
-        {sql_acc <> clause, params_acc ++ [rule.match_value, rule.target_musicbrainz_id]}
-      end)
-
-    # Build complete UPDATE statement
-    case_sql = "CASE #{case_clauses}ELSE album END"
-
-    # Build WHERE IN clause
-    match_values = Enum.map(rules, & &1.match_value)
-    in_placeholders = Enum.map_join(match_values, ", ", fn _ -> "?" end)
-    where_sql = "json_extract(album, '$.title') IN (#{in_placeholders})"
-
-    # Complete SQL
-    sql = """
-    UPDATE scrobbled_tracks 
-    SET album = #{case_sql}
-    WHERE #{where_sql}
-    """
-
-    # All parameters: case params + where params
-    all_params = case_params ++ match_values
-
-    # Execute the query
-    case Repo.query(sql, all_params) do
-      {:ok, %{num_rows: count}} -> {:ok, count}
-      {:error, reason} -> {:error, reason}
-    end
+    apply_all_rules_for_column(rules, "album", "$.title", nil)
   end
 
   @doc """
@@ -447,46 +415,7 @@ defmodule MusicLibrary.ScrobbleRules do
   def apply_all_album_rules(_rules, []), do: {:ok, 0}
 
   def apply_all_album_rules(rules, tracks) when is_list(rules) and is_list(tracks) do
-    # Build CASE WHEN clauses dynamically
-    {case_clauses, case_params} =
-      rules
-      |> Enum.reduce({"", []}, fn rule, {sql_acc, params_acc} ->
-        clause =
-          "WHEN json_extract(album, '$.title') = ? THEN json_set(album, '$.musicbrainz_id', ?) "
-
-        {sql_acc <> clause, params_acc ++ [rule.match_value, rule.target_musicbrainz_id]}
-      end)
-
-    # Build complete UPDATE statement
-    case_sql = "CASE #{case_clauses}ELSE album END"
-
-    # Build WHERE IN clause for album titles
-    match_values = Enum.map(rules, & &1.match_value)
-    album_placeholders = Enum.map_join(match_values, ", ", fn _ -> "?" end)
-
-    # Build WHERE IN clause for track timestamps
-    track_scrobbled_at_uts = Enum.map(tracks, & &1.scrobbled_at_uts)
-    track_placeholders = Enum.map_join(track_scrobbled_at_uts, ", ", fn _ -> "?" end)
-
-    where_sql =
-      "json_extract(album, '$.title') IN (#{album_placeholders}) AND " <>
-        "scrobbled_at_uts IN (#{track_placeholders})"
-
-    # Complete SQL
-    sql = """
-    UPDATE scrobbled_tracks 
-    SET album = #{case_sql}
-    WHERE #{where_sql}
-    """
-
-    # All parameters: case params + album match values + track timestamps
-    all_params = case_params ++ match_values ++ track_scrobbled_at_uts
-
-    # Execute the query
-    case Repo.query(sql, all_params) do
-      {:ok, %{num_rows: count}} -> {:ok, count}
-      {:error, reason} -> {:error, reason}
-    end
+    apply_all_rules_for_column(rules, "album", "$.title", tracks)
   end
 
   @doc """
@@ -504,39 +433,7 @@ defmodule MusicLibrary.ScrobbleRules do
   def apply_all_artist_rules([]), do: {:ok, 0}
 
   def apply_all_artist_rules(rules) when is_list(rules) do
-    # Build CASE WHEN clauses dynamically
-    {case_clauses, case_params} =
-      rules
-      |> Enum.reduce({"", []}, fn rule, {sql_acc, params_acc} ->
-        clause =
-          "WHEN json_extract(artist, '$.name') = ? THEN json_set(artist, '$.musicbrainz_id', ?) "
-
-        {sql_acc <> clause, params_acc ++ [rule.match_value, rule.target_musicbrainz_id]}
-      end)
-
-    # Build complete UPDATE statement
-    case_sql = "CASE #{case_clauses}ELSE artist END"
-
-    # Build WHERE IN clause
-    match_values = Enum.map(rules, & &1.match_value)
-    in_placeholders = Enum.map_join(match_values, ", ", fn _ -> "?" end)
-    where_sql = "json_extract(artist, '$.name') IN (#{in_placeholders})"
-
-    # Complete SQL
-    sql = """
-    UPDATE scrobbled_tracks 
-    SET artist = #{case_sql}
-    WHERE #{where_sql}
-    """
-
-    # All parameters: case params + where params
-    all_params = case_params ++ match_values
-
-    # Execute the query
-    case Repo.query(sql, all_params) do
-      {:ok, %{num_rows: count}} -> {:ok, count}
-      {:error, reason} -> {:error, reason}
-    end
+    apply_all_rules_for_column(rules, "artist", "$.name", nil)
   end
 
   @doc """
@@ -555,46 +452,7 @@ defmodule MusicLibrary.ScrobbleRules do
   def apply_all_artist_rules(_rules, []), do: {:ok, 0}
 
   def apply_all_artist_rules(rules, tracks) when is_list(rules) and is_list(tracks) do
-    # Build CASE WHEN clauses dynamically
-    {case_clauses, case_params} =
-      rules
-      |> Enum.reduce({"", []}, fn rule, {sql_acc, params_acc} ->
-        clause =
-          "WHEN json_extract(artist, '$.name') = ? THEN json_set(artist, '$.musicbrainz_id', ?) "
-
-        {sql_acc <> clause, params_acc ++ [rule.match_value, rule.target_musicbrainz_id]}
-      end)
-
-    # Build complete UPDATE statement
-    case_sql = "CASE #{case_clauses}ELSE artist END"
-
-    # Build WHERE IN clause for artist names
-    match_values = Enum.map(rules, & &1.match_value)
-    artist_placeholders = Enum.map_join(match_values, ", ", fn _ -> "?" end)
-
-    # Build WHERE IN clause for track timestamps
-    track_scrobbled_at_uts = Enum.map(tracks, & &1.scrobbled_at_uts)
-    track_placeholders = Enum.map_join(track_scrobbled_at_uts, ", ", fn _ -> "?" end)
-
-    where_sql =
-      "json_extract(artist, '$.name') IN (#{artist_placeholders}) AND " <>
-        "scrobbled_at_uts IN (#{track_placeholders})"
-
-    # Complete SQL
-    sql = """
-    UPDATE scrobbled_tracks 
-    SET artist = #{case_sql}
-    WHERE #{where_sql}
-    """
-
-    # All parameters: case params + artist match values + track timestamps
-    all_params = case_params ++ match_values ++ track_scrobbled_at_uts
-
-    # Execute the query
-    case Repo.query(sql, all_params) do
-      {:ok, %{num_rows: count}} -> {:ok, count}
-      {:error, reason} -> {:error, reason}
-    end
+    apply_all_rules_for_column(rules, "artist", "$.name", tracks)
   end
 
   @doc """
@@ -815,5 +673,49 @@ defmodule MusicLibrary.ScrobbleRules do
           "with reason #{inspect(reason)}"
       end)
     end)
+  end
+
+  defp apply_all_rules_for_column(rules, column, json_path, tracks) do
+    {case_clauses, case_params} =
+      Enum.reduce(rules, {"", []}, fn rule, {sql_acc, params_acc} ->
+        clause =
+          "WHEN json_extract(#{column}, '#{json_path}') = ? THEN json_set(#{column}, '$.musicbrainz_id', ?) "
+
+        {sql_acc <> clause, params_acc ++ [rule.match_value, rule.target_musicbrainz_id]}
+      end)
+
+    case_sql = "CASE #{case_clauses}ELSE #{column} END"
+
+    match_values = Enum.map(rules, & &1.match_value)
+    match_placeholders = Enum.map_join(match_values, ", ", fn _ -> "?" end)
+
+    {where_sql, where_params} =
+      case tracks do
+        nil ->
+          {"json_extract(#{column}, '#{json_path}') IN (#{match_placeholders})", match_values}
+
+        tracks ->
+          track_scrobbled_at_uts = Enum.map(tracks, & &1.scrobbled_at_uts)
+          track_placeholders = Enum.map_join(track_scrobbled_at_uts, ", ", fn _ -> "?" end)
+
+          where =
+            "json_extract(#{column}, '#{json_path}') IN (#{match_placeholders}) AND " <>
+              "scrobbled_at_uts IN (#{track_placeholders})"
+
+          {where, match_values ++ track_scrobbled_at_uts}
+      end
+
+    sql = """
+    UPDATE scrobbled_tracks
+    SET #{column} = #{case_sql}
+    WHERE #{where_sql}
+    """
+
+    all_params = case_params ++ where_params
+
+    case Repo.query(sql, all_params) do
+      {:ok, %{num_rows: count}} -> {:ok, count}
+      {:error, reason} -> {:error, reason}
+    end
   end
 end
