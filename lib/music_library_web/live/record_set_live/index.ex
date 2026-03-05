@@ -306,21 +306,21 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
 
   defp apply_action(socket, :edit, %{"id" => id} = params) do
     socket
-    |> apply_fallback_index(params)
+    |> apply_fallback_index(params, :record_sets, &apply_action/3)
     |> assign(:page_title, gettext("Edit Set"))
     |> assign(:record_set, RecordSets.get_record_set!(id))
   end
 
   defp apply_action(socket, :new, params) do
     socket
-    |> apply_fallback_index(params)
+    |> apply_fallback_index(params, :record_sets, &apply_action/3)
     |> assign(:page_title, gettext("New Set"))
     |> assign(:record_set, %RecordSet{})
   end
 
   defp apply_action(socket, :add_record, %{"id" => id} = params) do
     socket
-    |> apply_fallback_index(params)
+    |> apply_fallback_index(params, :record_sets, &apply_action/3)
     |> assign(:page_title, gettext("Add Record"))
     |> assign(:record_set, RecordSets.get_record_set!(id))
   end
@@ -337,15 +337,6 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
       |> merge_pagination(params, total_sets)
 
     load_and_assign_sets(socket, list_params)
-  end
-
-  defp apply_fallback_index(socket, params) do
-    if get_in(socket.assigns, [:streams, :record_sets]) == nil do
-      socket
-      |> apply_action(:index, params)
-    else
-      socket
-    end
   end
 
   defp load_and_assign_sets(socket, list_params) do

@@ -163,14 +163,14 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
 
   defp apply_action(socket, :edit, %{"id" => id} = params) do
     socket
-    |> apply_fallback_index(params)
+    |> apply_fallback_index(params, :scrobble_rules, &apply_action/3)
     |> assign(:page_title, gettext("Edit Scrobble Rule"))
     |> assign(:scrobble_rule, ScrobbleRules.get_scrobble_rule!(id))
   end
 
   defp apply_action(socket, :new, params) do
     socket
-    |> apply_fallback_index(params)
+    |> apply_fallback_index(params, :scrobble_rules, &apply_action/3)
     |> assign(:page_title, gettext("New Scrobble Rule"))
     |> assign(:scrobble_rule, %ScrobbleRule{})
   end
@@ -183,15 +183,6 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
       |> merge_pagination(params, total_rules)
 
     load_and_assign_rules(socket, list_params)
-  end
-
-  def apply_fallback_index(socket, params) do
-    if get_in(socket.assigns, [:streams, :scrobble_rules]) == nil do
-      socket
-      |> apply_action(:index, params)
-    else
-      socket
-    end
   end
 
   defp load_and_assign_rules(socket, list_params) do

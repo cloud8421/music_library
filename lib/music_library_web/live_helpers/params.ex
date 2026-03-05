@@ -46,4 +46,12 @@ defmodule MusicLibraryWeb.LiveHelpers.Params do
   def merge_order(params, order) do
     Map.put(params, :order, order)
   end
+
+  def apply_fallback_index(socket, params, stream_key, apply_action_fn) do
+    if get_in(socket.assigns, [:streams, stream_key]) == nil do
+      apply_action_fn.(socket, :index, params)
+    else
+      socket
+    end
+  end
 end

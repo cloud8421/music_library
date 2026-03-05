@@ -179,7 +179,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
     import_query = params["import_query"] || ""
 
     socket
-    |> apply_fallback_index(params)
+    |> apply_fallback_index(params, :records, &apply_action/3)
     |> assign(:page_title, gettext("Add new Record · Wishlist"))
     |> assign(:import_query, import_query)
     |> assign(:record, nil)
@@ -189,7 +189,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
     record = Records.get_record!(id)
 
     socket
-    |> apply_fallback_index(params)
+    |> apply_fallback_index(params, :records, &apply_action/3)
     |> assign(:page_title, Show.page_title(socket.assigns.live_action, record))
     |> assign(:record, record)
   end
@@ -206,15 +206,6 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
       |> merge_pagination(params, total_records)
 
     load_and_assign_records(socket, record_list_params)
-  end
-
-  def apply_fallback_index(socket, params) do
-    if get_in(socket.assigns, [:streams, :records]) == nil do
-      socket
-      |> apply_action(:index, params)
-    else
-      socket
-    end
   end
 
   @impl true

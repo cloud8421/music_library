@@ -232,7 +232,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
     track = ScrobbleActivity.get_track!(id)
 
     socket
-    |> apply_fallback_index(params)
+    |> apply_fallback_index(params, :tracks, &apply_action/3)
     |> assign(:page_title, gettext("Edit Track"))
     |> assign(:track, track)
     |> assign(:form, to_form(Track.changeset(track, %{})))
@@ -250,15 +250,6 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
       |> merge_pagination(params, total_tracks, allowed_page_sizes: [20, 50, 100, 200, 500])
 
     load_and_assign_tracks(socket, track_list_params)
-  end
-
-  def apply_fallback_index(socket, params) do
-    if get_in(socket.assigns, [:streams, :tracks]) == nil do
-      socket
-      |> apply_action(:index, params)
-    else
-      socket
-    end
   end
 
   @impl true
