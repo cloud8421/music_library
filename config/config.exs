@@ -119,6 +119,12 @@ config :music_library, MusicLibrary.Mailer,
   api_key: "change me",
   domain: "change me"
 
+config :music_library, MusicLibrary.RecordsOnThisDayEmail,
+  from_email: "postmaster@mailgun.fullyforged.com",
+  to_email: "claudio@fullyforged.com",
+  mailer: MusicLibrary.Mailer,
+  base_url: "https://music-library.claudio-ortolina.org"
+
 config :fluxon, :translate_function, &MusicLibraryWeb.CoreComponents.translate_error/1
 
 # Import environment specific config. This must remain at the bottom

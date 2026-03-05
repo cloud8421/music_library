@@ -122,4 +122,12 @@ defmodule MusicLibraryWeb.Router do
       error_tracker_dashboard "/errors"
     end
   end
+
+  if Mix.env() == :dev do
+    scope "/dev" do
+      pipe_through [:browser, :logged_in]
+
+      forward "/mailbox", Plug.Swoosh.MailboxPreview
+    end
+  end
 end

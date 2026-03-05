@@ -24,6 +24,7 @@ config :music_library, ErrorTracker.ErrorNotifier,
 config :music_library, Oban,
   plugins: [
     {Oban.Plugins.Cron,
+     timezone: "Europe/London",
      crontab: [
        # every 12 hours
        {"0 */12 * * *", MusicLibrary.Worker.ApplyScrobbleRules},
@@ -39,7 +40,9 @@ config :music_library, Oban,
        {"0 7 1 * *", MusicLibrary.Worker.RecordGenerateAllEmbeddings},
        {"0 8 1 * *", MusicLibrary.Worker.ArtistRefreshAllMusicBrainzData},
        {"0 9 1 * *", MusicLibrary.Worker.ArtistRefreshAllDiscogsData},
-       {"0 10 1 * *", MusicLibrary.Worker.ArtistRefreshAllWikipediaData}
+       {"0 10 1 * *", MusicLibrary.Worker.ArtistRefreshAllWikipediaData},
+       # daily at 8 am
+       {"0 8 * * *", MusicLibrary.Worker.SendRecordsOnThisDayEmail}
      ]}
   ]
 
