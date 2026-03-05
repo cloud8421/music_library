@@ -42,3 +42,21 @@ Location: /login
 GET https://music-library.claudio-ortolina.org/dev/oban
 HTTP 302
 Location: /login
+
+# Bot scanner paths are blocked
+
+# WordPress admin
+GET https://music-library.claudio-ortolina.org/wp-admin/
+HTTP 404
+
+# WordPress directory
+GET https://music-library.claudio-ortolina.org/wordpress/
+HTTP 404
+
+# Dotenv file
+GET https://music-library.claudio-ortolina.org/.env
+HTTP 404
+
+# XML-RPC
+GET https://music-library.claudio-ortolina.org/xmlrpc.php
+HTTP 404
