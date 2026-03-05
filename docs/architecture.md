@@ -7,8 +7,8 @@
 ## Overview
 
 Phoenix LiveView application for managing a personal music collection and wishlist.
-Uses SQLite (via `ecto_sqlite3`) with two databases: one for the app, one for background
-jobs (Oban). All schemas use `binary_id` primary keys.
+Uses SQLite (via `ecto_sqlite3`) with three databases: one for the app, one for background
+jobs (Oban), and one for telemetry metrics. All schemas use `binary_id` primary keys.
 
 Key capabilities:
 - Browse/search collected and wishlisted records
@@ -31,8 +31,9 @@ MusicLibrary.Application (one_for_one)
 ├── MusicLibrary.Vault           # Cloak encryption vault
 ├── MusicLibrary.Repo            # Main SQLite repo
 ├── MusicLibrary.BackgroundRepo  # Oban SQLite repo (separate DB)
+├── MusicLibrary.TelemetryRepo   # Telemetry metrics SQLite repo
 ├── MusicLibraryWeb.Telemetry    # Telemetry supervisor
-│   ├── Telemetry.Storage        # Metrics storage (circular buffer)
+│   ├── Telemetry.Storage        # Metrics storage (SQLite-backed, persistent)
 │   └── :telemetry_poller        # 30s periodic measurements
 ├── Oban                         # Background job engine
 ├── Ecto.Migrator                # Auto-migration on boot
@@ -52,6 +53,7 @@ MusicLibrary.Application (one_for_one)
 |------|---------------|---------|
 | `MusicLibrary.Repo` | `data/music_library_dev.db` | All application data |
 | `MusicLibrary.BackgroundRepo` | `data/music_library_background_dev.db` | Oban job queue |
+| `MusicLibrary.TelemetryRepo` | `data/music_library_telemetry_dev.db` | Telemetry metrics history (persistent across restarts) |
 
 SQLite extensions loaded at runtime: `unicode`, `vec0` (vector search).
 

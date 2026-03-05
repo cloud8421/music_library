@@ -21,6 +21,15 @@ config :music_library, MusicLibrary.BackgroundRepo,
   pool_size: 32,
   pool: Ecto.Adapters.SQL.Sandbox
 
+config :music_library, MusicLibrary.TelemetryRepo,
+  database:
+    Path.expand(
+      "../data/music_library_telemetry_test#{System.get_env("MIX_TEST_PARTITION")}.db",
+      __DIR__
+    ),
+  pool_size: 5,
+  pool: Ecto.Adapters.SQL.Sandbox
+
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :music_library, MusicLibraryWeb.Endpoint,

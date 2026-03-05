@@ -17,6 +17,7 @@ defmodule MusicLibrary.Application do
       MusicLibrary.Vault,
       MusicLibrary.Repo,
       MusicLibrary.BackgroundRepo,
+      MusicLibrary.TelemetryRepo,
       MusicLibraryWeb.Telemetry,
       {Oban, Application.fetch_env!(:music_library, Oban)},
       {Ecto.Migrator,

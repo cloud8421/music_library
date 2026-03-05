@@ -117,6 +117,19 @@ if config_env() == :prod do
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5"),
     show_sensitive_data_on_connection_error: false
 
+  telemetry_database_path =
+    System.get_env("TELEMETRY_DATABASE_PATH") ||
+      raise """
+      environment variable TELEMETRY_DATABASE_PATH is missing.
+      For example: /etc/music_library/music_library_telemetry.db
+      """
+
+  config :music_library, MusicLibrary.TelemetryRepo,
+    database: telemetry_database_path,
+    cache_size: -4000,
+    pool_size: 2,
+    show_sensitive_data_on_connection_error: false
+
   # The secret key base is used to sign/encrypt cookies and other secrets.
   # A default value is used in config/dev.exs and config/test.exs but you
   # want to use a different value for prod and you most likely don't want

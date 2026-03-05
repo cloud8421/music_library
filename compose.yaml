@@ -24,6 +24,7 @@ services:
       - POOL_SIZE
       - PORT
       - SECRET_KEY_BASE
+      - TELEMETRY_DATABASE_PATH
       - TIMEZONE
     volumes:
       - /data/coolify/applications/music-library:/mnt/music_library

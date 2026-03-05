@@ -1,7 +1,11 @@
 defmodule MusicLibraryWeb.Telemetry.Storage do
   use GenServer
 
-  @history_buffer_size 50
+  @buffer_size Application.compile_env(
+                 :music_library,
+                 [__MODULE__, :buffer_size],
+                 50
+               )
 
   def metrics_history(metric) do
     GenServer.call(__MODULE__, {:data, metric})
@@ -15,14 +19,11 @@ defmodule MusicLibraryWeb.Telemetry.Storage do
   def init(metrics) do
     Process.flag(:trap_exit, true)
 
-    metric_histories_map =
-      metrics
-      |> Map.new(fn metric ->
-        attach_handler(metric)
-        {metric, CircularBuffer.new(@history_buffer_size)}
-      end)
+    for metric <- metrics do
+      attach_handler(metric)
+    end
 
-    {:ok, metric_histories_map}
+    {:ok, metrics}
   end
 
   @impl true
@@ -51,15 +52,68 @@ defmodule MusicLibraryWeb.Telemetry.Storage do
 
   @impl true
   def handle_cast({:telemetry_metric, data, metric}, state) do
-    {:noreply, update_in(state[metric], &CircularBuffer.insert(&1, data))}
+    key = metric_key(metric)
+    label = if is_map(data), do: Map.get(data, :label)
+    measurement = if is_map(data), do: Map.get(data, :measurement, 0), else: 0
+
+    time =
+      if is_map(data),
+        do: Map.get(data, :time, System.system_time(:microsecond)),
+        else: System.system_time(:microsecond)
+
+    insert_and_prune(key, label, measurement, time)
+
+    {:noreply, state}
   end
 
   @impl true
   def handle_call({:data, metric}, _from, state) do
-    if history = state[metric] do
-      {:reply, CircularBuffer.to_list(history), state}
-    else
-      {:reply, [], state}
+    key = metric_key(metric)
+    datapoints = fetch_datapoints(key)
+    {:reply, datapoints, state}
+  end
+
+  defp metric_key(metric) do
+    "#{inspect(metric.__struct__)}:#{Enum.join(metric.name, ".")}"
+  end
+
+  defp insert_and_prune(key, label, measurement, time) do
+    MusicLibrary.TelemetryRepo.query(
+      "INSERT INTO telemetry_datapoints (metric_key, label, measurement, time) VALUES (?1, ?2, ?3, ?4)",
+      [key, label, measurement, time]
+    )
+
+    MusicLibrary.TelemetryRepo.query(
+      """
+      DELETE FROM telemetry_datapoints
+      WHERE metric_key = ?1
+        AND id NOT IN (
+          SELECT id FROM telemetry_datapoints
+          WHERE metric_key = ?1
+          ORDER BY id DESC
+          LIMIT ?2
+        )
+      """,
+      [key, @buffer_size]
+    )
+  catch
+    _, _ -> :ok
+  end
+
+  defp fetch_datapoints(key) do
+    case MusicLibrary.TelemetryRepo.query(
+           "SELECT label, measurement, time FROM telemetry_datapoints WHERE metric_key = ?1 ORDER BY time ASC",
+           [key]
+         ) do
+      {:ok, %{rows: rows}} ->
+        Enum.map(rows, fn [label, measurement, time] ->
+          %{label: label, measurement: measurement, time: time}
+        end)
+
+      _ ->
+        []
     end
+  catch
+    _, _ -> []
   end
 end

@@ -14,6 +14,12 @@ config :music_library, MusicLibrary.BackgroundRepo,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true
 
+config :music_library, MusicLibrary.TelemetryRepo,
+  database: Path.expand("../data/music_library_telemetry_dev.db", __DIR__),
+  pool_size: 3,
+  stacktrace: true,
+  show_sensitive_data_on_connection_error: true
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #

@@ -14,7 +14,7 @@ config :elixir, :time_zone_database, TimeZoneInfo.TimeZoneDatabase
 config :time_zone_info, update: :daily
 
 config :music_library,
-  ecto_repos: [MusicLibrary.BackgroundRepo, MusicLibrary.Repo],
+  ecto_repos: [MusicLibrary.BackgroundRepo, MusicLibrary.Repo, MusicLibrary.TelemetryRepo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 
 config :music_library, default_timezone: "Europe/London"
@@ -111,6 +111,10 @@ config :music_library, Oban,
 config :oban_met, sketch_time_unit: :millisecond
 
 config :music_library, MusicLibrary.BackgroundRepo, priv: "priv/background_repo"
+
+config :music_library, MusicLibrary.TelemetryRepo, priv: "priv/telemetry_repo", log: false
+
+config :music_library, MusicLibraryWeb.Telemetry.Storage, buffer_size: 1024
 
 config :swoosh, :api_client, Swoosh.ApiClient.Req
 
