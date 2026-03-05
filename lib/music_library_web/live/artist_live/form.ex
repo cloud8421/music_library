@@ -265,10 +265,11 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
       {:ok, artist_info} ->
         notify_parent({:saved, artist_info})
 
+        put_toast!(:info, gettext("Artist image updated successfully"))
+
         {:noreply,
          socket
          |> assign(:image_search_loading, false)
-         |> put_toast(:info, gettext("Artist image updated successfully"))
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, _changeset} ->
@@ -298,16 +299,15 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
          {:ok, artist_info} <- Artists.update_artist_info(socket.assigns.artist_info, params) do
       notify_parent({:saved, artist_info})
 
-      {:noreply,
-       socket
-       |> put_toast(:info, gettext("Artist updated successfully"))
-       |> push_patch(to: socket.assigns.patch)}
+      put_toast!(:info, gettext("Artist updated successfully"))
+      {:noreply, push_patch(socket, to: socket.assigns.patch)}
     else
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
 
       {:error, _reason} ->
-        {:noreply, put_toast(socket, :error, gettext("Failed to store artist image"))}
+        put_toast!(:error, gettext("Failed to store artist image"))
+        {:noreply, socket}
     end
   end
 

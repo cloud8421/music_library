@@ -92,10 +92,8 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Form do
       {:ok, scrobble_rule} ->
         notify_parent({:updated, scrobble_rule})
 
-        {:noreply,
-         socket
-         |> put_toast(:info, gettext("Scrobble rule updated successfully"))
-         |> push_patch(to: socket.assigns.patch)}
+        put_toast!(:info, gettext("Scrobble rule updated successfully"))
+        {:noreply, push_patch(socket, to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
@@ -107,10 +105,8 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Form do
       {:ok, scrobble_rule} ->
         notify_parent({:created, scrobble_rule})
 
-        {:noreply,
-         socket
-         |> put_toast(:info, gettext("Scrobble rule created successfully"))
-         |> push_patch(to: socket.assigns.patch)}
+        put_toast!(:info, gettext("Scrobble rule created successfully"))
+        {:noreply, push_patch(socket, to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}

@@ -108,10 +108,8 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Form do
       {:ok, track} ->
         notify_parent({:saved, track})
 
-        {:noreply,
-         socket
-         |> put_toast(:info, gettext("Track updated successfully"))
-         |> push_patch(to: socket.assigns.patch)}
+        put_toast!(:info, gettext("Track updated successfully"))
+        {:noreply, push_patch(socket, to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}

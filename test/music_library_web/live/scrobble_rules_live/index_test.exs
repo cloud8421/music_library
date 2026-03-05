@@ -72,11 +72,11 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
              |> form("#scrobble_rule-form", scrobble_rule: @invalid_attrs)
              |> render_change() =~ "can&#39;t be blank"
 
-      html =
-        index_live
-        |> form("#scrobble_rule-form", scrobble_rule: @update_attrs)
-        |> render_submit()
+      index_live
+      |> form("#scrobble_rule-form", scrobble_rule: @update_attrs)
+      |> render_submit()
 
+      html = render(index_live)
       assert html =~ "Scrobble rule updated successfully"
       assert html =~ "some updated match_value"
     end

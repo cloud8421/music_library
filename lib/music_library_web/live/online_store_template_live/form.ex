@@ -116,10 +116,8 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Form do
       {:ok, template} ->
         notify_parent({:saved, template})
 
-        {:noreply,
-         socket
-         |> put_toast(:info, gettext("Online store template updated successfully"))
-         |> push_patch(to: socket.assigns.patch)}
+        put_toast!(:info, gettext("Online store template updated successfully"))
+        {:noreply, push_patch(socket, to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
@@ -131,10 +129,8 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Form do
       {:ok, template} ->
         notify_parent({:saved, template})
 
-        {:noreply,
-         socket
-         |> put_toast(:info, gettext("Online store template created successfully"))
-         |> push_patch(to: socket.assigns.patch)}
+        put_toast!(:info, gettext("Online store template created successfully"))
+        {:noreply, push_patch(socket, to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
