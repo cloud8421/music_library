@@ -125,6 +125,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Country` | Country code (alpha-2, alpha-3, subdivision, IETF) to flag emoji conversion |
 | `ErrorTracker.ErrorNotifier` | GenServer: attaches to ErrorTracker telemetry, throttles repeated errors, dispatches email notifications |
 | `ErrorTracker.ErrorNotifier.Email` | Builds and sends Swoosh error notification emails with stack trace formatting |
+| `RecordsOnThisDayEmail` | Builds and sends daily "records on this day" email with cover images, anniversary styling |
 | `MusicLibrary.Mailer` | Swoosh mailer (Mailgun in prod, local adapter in dev) |
 | `FormatNumber` | Number formatting utility |
 
@@ -140,7 +141,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Wikipedia` / `Wikipedia.API` | wikipedia.org | Artist biographies |
 | `BraveSearch` / `BraveSearch.API` | search.brave.com | Cover art and artist image search |
 | `OpenAI` / `OpenAI.API` | api.openai.com | Text embeddings for similarity, streaming chat via Responses API (gpt-4.1 + web search) |
-| `MusicLibrary.Mailer` | Mailgun (via Swoosh) | Transactional email delivery (error notifications) |
+| `MusicLibrary.Mailer` | Mailgun (via Swoosh) | Transactional email delivery (error notifications, daily digest) |
 
 Each has a `Config` module reading from application env. In tests, all HTTP calls are
 stubbed via `Req.Test` (configured in `config/test.exs`).
@@ -181,6 +182,7 @@ stubbed via `Req.Test` (configured in `config/test.exs`).
 | `ArtistRefreshAllDiscogsData` | discogs | Manual / cron (bulk refresh via Artists.Batch) |
 | `ArtistRefreshAllWikipediaData` | wikipedia | Manual / cron (bulk refresh via Artists.Batch) |
 | `LastFm.Worker.BackfillScrobbledTracks` | heavy_writes | Manual (self-chaining batch import) |
+| `SendRecordsOnThisDayEmail` | default | Cron (daily "records on this day" email) |
 
 ### Cron Workers
 
@@ -196,6 +198,7 @@ stubbed via `Req.Test` (configured in `config/test.exs`).
 | Monthly 1st, 8 AM | `ArtistRefreshAllMusicBrainzData` | music_brainz |
 | Monthly 1st, 9 AM | `ArtistRefreshAllDiscogsData` | discogs |
 | Monthly 1st, 10 AM | `ArtistRefreshAllWikipediaData` | wikipedia |
+| Daily 8 AM | `SendRecordsOnThisDayEmail` | default |
 
 ---
 
