@@ -6,6 +6,7 @@ defmodule MusicLibrary.Collection do
   alias MusicLibrary.Records.{Record, RecordRelease, SearchIndex}
   alias MusicLibrary.Repo
 
+  @excluded_genres Application.compile_env!(:music_library, :excluded_genres)
   @pagination Application.compile_env!(:music_library, :pagination)
 
   @spec search_records(String.t(), MusicLibrary.Types.pagination_opts()) :: [SearchIndex.t()]
@@ -122,8 +123,7 @@ defmodule MusicLibrary.Collection do
     q =
       from r in fragment("records, json_each(records.genres)"),
         where: fragment("records.purchased_at IS NOT NULL"),
-        # we remove rock as it's really generic and dwarfs other genres
-        where: fragment("? != 'rock'", r.value),
+        where: r.value not in @excluded_genres,
         group_by: r.value,
         order_by: [desc: fragment("count(1)")],
         select: {r.value, fragment("count(1)")},

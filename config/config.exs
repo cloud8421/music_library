@@ -21,6 +21,8 @@ config :music_library, default_timezone: "Europe/London"
 
 config :music_library, :similarity, max_distance: 0.45
 
+config :music_library, :excluded_genres, ["rock"]
+
 config :music_library, :pagination,
   default_page_size: 20,
   stats_limit: 30,
