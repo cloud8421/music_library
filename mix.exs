@@ -17,7 +17,10 @@ defmodule MusicLibrary.MixProject do
         ignore_modules: ignored_coverage_modules(),
         summary: [threshold: 75]
       ],
-      usage_rules: usage_rules()
+      usage_rules: usage_rules(),
+      dialyzer: [
+        plt_add_apps: [:mix, :ex_unit]
+      ]
     ]
   end
 
@@ -116,6 +119,7 @@ defmodule MusicLibrary.MixProject do
       {:usage_rules, "~> 1.1", only: [:dev]},
       {:tidewave, "~> 0.5", only: :dev},
       {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false, warn_if_outdated: true},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
 
       # HTTP Clients
       {:finch, "~> 0.21.0"},
