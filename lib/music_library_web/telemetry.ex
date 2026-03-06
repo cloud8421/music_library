@@ -98,6 +98,59 @@ defmodule MusicLibraryWeb.Telemetry do
         reporter_options: [nav: "Error Tracker"]
       ),
 
+      # Oban Job Metrics
+      summary("oban.job.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:queue, :worker],
+        tag_values: &normalize_oban_tags/1,
+        reporter_options: [nav: "Oban"]
+      ),
+      summary("oban.job.stop.queue_time",
+        unit: {:native, :millisecond},
+        tags: [:queue],
+        tag_values: &normalize_oban_tags/1,
+        reporter_options: [nav: "Oban"]
+      ),
+      counter("oban.job.exception.duration",
+        tags: [:queue, :worker],
+        tag_values: &normalize_oban_tags/1,
+        reporter_options: [nav: "Oban"]
+      ),
+
+      # Phoenix HTTP Metrics
+      summary("phoenix.router_dispatch.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:route],
+        tag_values: &phoenix_route_tag/1,
+        reporter_options: [nav: "HTTP"]
+      ),
+
+      # LiveView Metrics
+      summary("phoenix.live_view.mount.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:view],
+        tag_values: &live_view_tag/1,
+        reporter_options: [nav: "LiveView"]
+      ),
+      summary("phoenix.live_view.handle_params.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:view],
+        tag_values: &live_view_tag/1,
+        reporter_options: [nav: "LiveView"]
+      ),
+      summary("phoenix.live_view.render.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:view],
+        tag_values: &live_view_tag/1,
+        reporter_options: [nav: "LiveView"]
+      ),
+      summary("phoenix.live_view.handle_event.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:view, :event],
+        tag_values: &live_view_event_tag/1,
+        reporter_options: [nav: "LiveView"]
+      ),
+
       # VM Metrics
       summary("vm.memory.total", unit: {:byte, :megabyte}),
       summary("vm.total_run_queue_lengths.total"),
@@ -128,4 +181,27 @@ defmodule MusicLibraryWeb.Telemetry do
   defp drop_unwanted_hosts(metadata) do
     metadata.request.host =~ "archive.org"
   end
+
+  defp normalize_oban_tags(%{job: job}) do
+    worker = job.worker |> String.split(".") |> List.last()
+    %{queue: job.queue, worker: worker}
+  end
+
+  defp phoenix_route_tag(%{route: route}), do: %{route: route}
+  defp phoenix_route_tag(_metadata), do: %{route: "unknown"}
+
+  defp live_view_tag(%{socket: %{view: view}}) do
+    module = view |> inspect() |> String.split(".") |> Enum.take(-2) |> Enum.join(".")
+    %{view: module}
+  end
+
+  defp live_view_tag(_metadata), do: %{view: "unknown"}
+
+  defp live_view_event_tag(%{socket: %{view: view}, event: event}) do
+    module = view |> inspect() |> String.split(".") |> Enum.take(-2) |> Enum.join(".")
+    %{view: module, event: event}
+  end
+
+  defp live_view_event_tag(%{event: event}), do: %{view: "unknown", event: event}
+  defp live_view_event_tag(_metadata), do: %{view: "unknown", event: "unknown"}
 end
