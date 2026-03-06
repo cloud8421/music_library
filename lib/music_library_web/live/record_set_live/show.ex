@@ -70,7 +70,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
           >
             <div
               :for={item <- @record_set.items}
-              id={"record-#{item.record.id}"}
+              id={"record-item-#{item.id}"}
               data-sortable-item
               data-record-id={item.record.id}
               class={[
