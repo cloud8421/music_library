@@ -10,8 +10,8 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRule do
           target_musicbrainz_id: String.t(),
           enabled: boolean(),
           description: String.t() | nil,
-          inserted_at: NaiveDateTime.t() | nil,
-          updated_at: NaiveDateTime.t() | nil
+          inserted_at: DateTime.t() | nil,
+          updated_at: DateTime.t() | nil
         }
 
   schema "scrobble_rules" do
@@ -21,7 +21,7 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRule do
     field :enabled, :boolean, default: true
     field :description, :string
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false
