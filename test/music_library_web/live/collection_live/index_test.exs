@@ -59,17 +59,17 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
         session
         |> assert_has("#records-#{record.id}")
-        |> assert_has("#records-#{record.id} h2", text: escape(record.title))
-        |> assert_has("#records-#{record.id} p", text: record.release_date)
-        |> assert_has("#records-#{record.id} p", text: format_label(record.format))
-        |> assert_has("#records-#{record.id} p", text: type_label(record.type))
+        |> assert_has("#records-#{record.id} h2", escape(record.title))
+        |> assert_has("#records-#{record.id} p", record.release_date)
+        |> assert_has("#records-#{record.id} p", format_label(record.format))
+        |> assert_has("#records-#{record.id} p", type_label(record.type))
         |> assert_has("#records-#{record.id} span",
           text: Record.format_as_date(record.purchased_at)
         )
         |> assert_has("img[src='#{cover_url}']")
 
         for artist <- record.artists do
-          assert_has(session, "#records-#{record.id} a", text: escape(artist.name))
+          assert_has(session, "#records-#{record.id} a", escape(artist.name))
         end
       end
 
@@ -106,9 +106,9 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       end
 
       page_2_session
-      |> assert_has("#bottom_pagination a", text: "1")
-      |> refute_has("#bottom_pagination a", text: "2")
-      |> assert_has("#bottom_pagination a", text: "3")
+      |> assert_has("#bottom_pagination a", "1")
+      |> refute_has("#bottom_pagination a", "2")
+      |> assert_has("#bottom_pagination a", "3")
 
       {page_3_records, rest_of_records} = Enum.split(rest_of_records, page_size)
 
@@ -128,9 +128,9 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       end
 
       page_3_session
-      |> assert_has("#bottom_pagination a", text: "1")
-      |> assert_has("#bottom_pagination a", text: "2")
-      |> refute_has("#bottom_pagination a", text: "3")
+      |> assert_has("#bottom_pagination a", "1")
+      |> assert_has("#bottom_pagination a", "2")
+      |> refute_has("#bottom_pagination a", "3")
     end
   end
 
@@ -150,17 +150,17 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
       session
       |> assert_has("#records-#{record.id}")
-      |> assert_has("#records-#{record.id} h2", text: escape(record.title))
-      |> assert_has("#records-#{record.id} p", text: record.release_date)
-      |> assert_has("#records-#{record.id} p", text: format_label(record.format))
-      |> assert_has("#records-#{record.id} p", text: type_label(record.type))
+      |> assert_has("#records-#{record.id} h2", escape(record.title))
+      |> assert_has("#records-#{record.id} p", record.release_date)
+      |> assert_has("#records-#{record.id} p", format_label(record.format))
+      |> assert_has("#records-#{record.id} p", type_label(record.type))
       |> assert_has("#records-#{record.id} span",
         text: Record.format_as_date(record.purchased_at)
       )
       |> assert_has("img[src='#{cover_url}']")
 
       for artist <- record.artists do
-        assert_has(session, "#records-#{record.id} a", text: escape(artist.name))
+        assert_has(session, "#records-#{record.id} a", escape(artist.name))
       end
     end
 
@@ -194,17 +194,17 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
         session
         |> assert_has("#records-#{record.id}")
-        |> assert_has("#records-#{record.id} h2", text: escape(record.title))
-        |> assert_has("#records-#{record.id} p", text: record.release_date)
-        |> assert_has("#records-#{record.id} p", text: format_label(record.format))
-        |> assert_has("#records-#{record.id} p", text: type_label(record.type))
+        |> assert_has("#records-#{record.id} h2", escape(record.title))
+        |> assert_has("#records-#{record.id} p", record.release_date)
+        |> assert_has("#records-#{record.id} p", format_label(record.format))
+        |> assert_has("#records-#{record.id} p", type_label(record.type))
         |> assert_has("#records-#{record.id} span",
           text: Record.format_as_date(record.purchased_at)
         )
         |> assert_has("img[src='#{cover_url}']")
 
         for artist <- record.artists do
-          assert_has(session, "#records-#{record.id} a", text: escape(artist.name))
+          assert_has(session, "#records-#{record.id} a", escape(artist.name))
         end
       end
 
@@ -221,7 +221,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       conn
       |> visit(~p"/collection")
       |> click_link("#records-#{record.id} a", "Edit")
-      |> assert_has("h2", text: escape(record.title))
+      |> assert_has("h2", escape(record.title))
       |> assert_path(~p"/collection/#{record}/edit")
     end
 
@@ -238,7 +238,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         session
         |> upload("Cover art", raven_cover_fixture())
         |> click_button("Save")
-        |> assert_has("p", text: "Record updated successfully")
+        |> assert_has("p", "Record updated successfully")
 
       updated_record = MusicLibrary.Records.get_record!(record.id)
       updated_cover_url = cover_url(updated_record, 460)
@@ -253,8 +253,8 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       conn
       |> visit(~p"/collection")
       |> click_link("Add")
-      |> assert_has("label", text: "Search for a record")
-      |> assert_has("div", text: "No results")
+      |> assert_has("label", "Search for a record")
+      |> assert_has("div", "No results")
       |> assert_path(~p"/collection/import")
     end
 
@@ -294,9 +294,9 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         result = ReleaseGroupSearchResult.from_api_response(release_group_search_result)
 
         session
-        |> assert_has("h1", text: result.artists)
-        |> assert_has("h2", text: result.title)
-        |> assert_has("p", text: Record.format_release_date(result.release_date))
+        |> assert_has("h1", result.artists)
+        |> assert_has("h2", result.title)
+        |> assert_has("p", Record.format_release_date(result.release_date))
       end
 
       session =
@@ -352,7 +352,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       session =
         conn
         |> visit(~p"/collection/scan")
-        |> assert_has("h1", text: "Scan one or more barcodes")
+        |> assert_has("h1", "Scan one or more barcodes")
         |> assert_has("button#camera-button")
 
       session
@@ -405,8 +405,8 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     conn
     |> visit(~p"/collection/scan")
     |> trigger_hook("#barcode-scanner", "barcode_scanned", %{"number" => barcode})
-    |> assert_has("h2", text: "Marbles")
-    |> assert_has("span", text: "New")
+    |> assert_has("h2", "Marbles")
+    |> assert_has("span", "New")
     |> click_button("Add releases")
 
     [record] = MusicLibrary.Repo.all(MusicLibrary.Records.Record)

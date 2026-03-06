@@ -48,7 +48,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
     test "shows connect Last.fm button when not authenticated", %{conn: conn} do
       conn
       |> visit(~p"/scrobble")
-      |> assert_has("a", text: "Connect your Last.fm account")
+      |> assert_has("a", "Connect your Last.fm account")
     end
 
     test "search with results shows release groups", %{conn: conn} do
@@ -63,8 +63,8 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
         # Process the {:perform_search, query} message
         render(view)
       end)
-      |> assert_has("h3", text: "Release Groups")
-      |> assert_has("p", text: "Marbles")
+      |> assert_has("h3", "Release Groups")
+      |> assert_has("p", "Marbles")
     end
 
     test "search with empty query does not trigger search", %{conn: conn} do
@@ -76,7 +76,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
         |> form("form[phx-submit='search']", %{query: ""})
         |> render_submit()
       end)
-      |> refute_has("h3", text: "Release Groups")
+      |> refute_has("h3", "Release Groups")
     end
 
     test "select release group shows releases", %{conn: conn} do
@@ -102,8 +102,8 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
         # Process the {:fetch_releases, release_group} message
         render(view)
       end)
-      |> assert_has("h3", text: "Releases for")
-      |> assert_has("button", text: "Back")
+      |> assert_has("h3", "Releases for")
+      |> assert_has("button", "Back")
     end
 
     test "clear selection goes back to release groups", %{conn: conn} do
@@ -130,8 +130,8 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
         view
         |> render_click("clear_selection", %{})
       end)
-      |> assert_has("h3", text: "Release Groups")
-      |> refute_has("h3", text: "Releases for")
+      |> assert_has("h3", "Release Groups")
+      |> refute_has("h3", "Releases for")
     end
   end
 
@@ -149,7 +149,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
 
         render(view)
       end)
-      |> assert_has("p", text: "No release groups found")
+      |> assert_has("p", "No release groups found")
     end
   end
 end

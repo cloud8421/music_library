@@ -35,20 +35,20 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
       session =
         conn
         |> visit("/")
-        |> assert_has("dd", text: collection |> length() |> Integer.to_string())
+        |> assert_has("dd", collection |> length() |> Integer.to_string())
 
       collection
       |> Enum.frequencies_by(& &1.format)
       |> Enum.each(fn {format, count} ->
-        assert_has(session, "a", text: to_string(count))
-        assert_has(session, "dt", text: format_label(format))
+        assert_has(session, "a", to_string(count))
+        assert_has(session, "dt", format_label(format))
       end)
 
       collection
       |> Enum.frequencies_by(& &1.type)
       |> Enum.each(fn {type, count} ->
-        assert_has(session, "a", text: to_string(count))
-        assert_has(session, "dt", text: type_label(type))
+        assert_has(session, "a", to_string(count))
+        assert_has(session, "dt", type_label(type))
       end)
     end
 
@@ -58,17 +58,17 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
       session =
         conn
         |> visit("/")
-        |> assert_has("span", text: escape(latest_record.title))
+        |> assert_has("span", escape(latest_record.title))
 
       for artist <- latest_record.artists do
-        assert_has(session, "a", text: escape(artist.name))
+        assert_has(session, "a", escape(artist.name))
       end
     end
 
     test "it shows the wishlist total count", %{conn: conn, wishlist: wishlist} do
       conn
       |> visit("/")
-      |> assert_has("dd", text: wishlist |> length() |> Integer.to_string())
+      |> assert_has("dd", wishlist |> length() |> Integer.to_string())
     end
 
     test "it shows the scrobble activity", %{conn: conn} do
@@ -178,9 +178,9 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         |> assert_has("#album-#{machinarium_soundtrack_track.scrobbled_at_uts}",
           text: "Wishlisted"
         )
-        |> assert_has("[hidden] p", text: machinarium_soundtrack_track.title)
-        |> assert_has("p", text: machinarium_soundtrack_track.album.title)
-        |> assert_has("#album-#{the_last_flight_track.scrobbled_at_uts}", text: "Collected")
+        |> assert_has("[hidden] p", machinarium_soundtrack_track.title)
+        |> assert_has("p", machinarium_soundtrack_track.album.title)
+        |> assert_has("#album-#{the_last_flight_track.scrobbled_at_uts}", "Collected")
         |> assert_has("#album-#{the_mystery_of_time_track.scrobbled_at_uts}",
           text: "Choose which format to import"
         )
@@ -192,9 +192,9 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         |> assert_has("#track-#{machinarium_soundtrack_track.scrobbled_at_uts}",
           text: "Wishlisted"
         )
-        |> assert_has("p", text: machinarium_soundtrack_track.title)
-        |> assert_has("p", text: machinarium_soundtrack_track.album.title)
-        |> assert_has("#track-#{the_last_flight_track.scrobbled_at_uts}", text: "Collected")
+        |> assert_has("p", machinarium_soundtrack_track.title)
+        |> assert_has("p", machinarium_soundtrack_track.album.title)
+        |> assert_has("#track-#{the_last_flight_track.scrobbled_at_uts}", "Collected")
         |> assert_has("#track-#{the_mystery_of_time_track.scrobbled_at_uts}",
           text: "Choose which format to import"
         )
@@ -267,11 +267,11 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
 
       session = conn |> visit("/")
 
-      assert_has(session, "h1", text: "On This day")
+      assert_has(session, "h1", "On This day")
 
-      assert_has(session, "##{record_today.id} h2", text: escape(record_today.title))
+      assert_has(session, "##{record_today.id} h2", escape(record_today.title))
 
-      refute_has(session, "##{record_yesterday.id} h2", text: escape(record_yesterday.title))
+      refute_has(session, "##{record_yesterday.id} h2", escape(record_yesterday.title))
     end
 
     test "it updates the 'On This Day' records when the date is changed", %{
@@ -299,9 +299,9 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
 
       session = conn |> visit("/")
 
-      assert_has(session, "##{record_today.id} h2", text: escape(record_today.title))
+      assert_has(session, "##{record_today.id} h2", escape(record_today.title))
 
-      refute_has(session, "##{record_yesterday.id} h2", text: escape(record_yesterday.title))
+      refute_has(session, "##{record_yesterday.id} h2", escape(record_yesterday.title))
 
       session
       |> unwrap(fn view ->
@@ -310,9 +310,9 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         |> render_change()
       end)
 
-      refute_has(session, "##{record_today.id} h2", text: escape(record_today.title))
+      refute_has(session, "##{record_today.id} h2", escape(record_today.title))
 
-      assert_has(session, "##{record_yesterday.id} h2", text: escape(record_yesterday.title))
+      assert_has(session, "##{record_yesterday.id} h2", escape(record_yesterday.title))
     end
   end
 end

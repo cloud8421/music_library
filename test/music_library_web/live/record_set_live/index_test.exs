@@ -12,13 +12,13 @@ defmodule MusicLibraryWeb.RecordSetLive.IndexTest do
 
       conn
       |> visit(~p"/record-sets")
-      |> assert_has("h2", text: "My Favorites")
+      |> assert_has("h2", "My Favorites")
     end
 
     test "shows empty state when no sets exist", %{conn: conn} do
       conn
       |> visit(~p"/record-sets")
-      |> assert_has("p", text: "No record sets yet")
+      |> assert_has("p", "No record sets yet")
     end
   end
 
@@ -29,8 +29,8 @@ defmodule MusicLibraryWeb.RecordSetLive.IndexTest do
 
       conn
       |> visit(~p"/record-sets?query=Road")
-      |> assert_has("h2", text: "Road Trip")
-      |> refute_has("h2", text: "Unrelated Set")
+      |> assert_has("h2", "Road Trip")
+      |> refute_has("h2", "Unrelated Set")
     end
   end
 

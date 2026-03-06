@@ -49,20 +49,20 @@ defmodule MusicLibraryWeb.ScrobbleLive.ShowTest do
     test "renders release details", %{conn: conn} do
       conn
       |> visit(~p"/scrobble/#{@release_id}")
-      |> assert_has("h2", text: "Marbles")
-      |> assert_has("a", text: "Back to search")
+      |> assert_has("h2", "Marbles")
+      |> assert_has("a", "Back to search")
     end
 
     test "shows Last.fm not connected alert when no session key", %{conn: conn} do
       conn
       |> visit(~p"/scrobble/#{@release_id}")
-      |> assert_has("div", text: "You need to connect your Last.fm account")
+      |> assert_has("div", "You need to connect your Last.fm account")
     end
 
     test "displays tracks", %{conn: conn} do
       conn
       |> visit(~p"/scrobble/#{@release_id}")
-      |> assert_has("h3", text: "Tracks")
+      |> assert_has("h3", "Tracks")
     end
   end
 
@@ -72,7 +72,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.ShowTest do
     test "does not show Last.fm not connected alert", %{conn: conn} do
       conn
       |> visit(~p"/scrobble/#{@release_id}")
-      |> refute_has("[data-part='title']", text: "Last.fm not connected")
+      |> refute_has("[data-part='title']", "Last.fm not connected")
     end
 
     test "scrobble full release", %{conn: conn} do
@@ -82,7 +82,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.ShowTest do
       |> unwrap(fn view ->
         render_click(view, "scrobble_release", %{})
       end)
-      |> assert_has("#toast-group", text: "Release scrobbled successfully")
+      |> assert_has("#toast-group", "Release scrobbled successfully")
     end
 
     test "scrobble single medium", %{conn: conn} do
@@ -92,7 +92,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.ShowTest do
       |> unwrap(fn view ->
         render_click(view, "scrobble_medium", %{"medium_number" => "1"})
       end)
-      |> assert_has("#toast-group", text: "Disc scrobbled successfully")
+      |> assert_has("#toast-group", "Disc scrobbled successfully")
     end
 
     test "toggle track selection", %{conn: conn} do
@@ -120,7 +120,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.ShowTest do
         # Then scrobble selected
         render_click(view, "scrobble_selected_tracks", %{})
       end)
-      |> assert_has("#toast-group", text: "Selected tracks scrobbled successfully")
+      |> assert_has("#toast-group", "Selected tracks scrobbled successfully")
     end
   end
 

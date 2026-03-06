@@ -43,8 +43,8 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       conn
       |> visit(~p"/artists/#{artist_musicbrainz_id}")
       |> unwrap(&render_async/1)
-      |> assert_has("span", text: "123")
-      |> assert_has("dt", text: "Biography")
+      |> assert_has("span", "123")
+      |> assert_has("dt", "Biography")
     end
 
     test "it gracefully handles errors in fetching bio and play count", %{
@@ -64,10 +64,10 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       conn
       |> visit(~p"/artists/#{artist_musicbrainz_id}")
       |> unwrap(&render_async/1)
-      |> refute_has("span", text: "123")
-      |> refute_has("summary", text: "Biography")
-      |> assert_has("div", text: "Error loading play count")
-      |> assert_has("div", text: "Error loading biography")
+      |> refute_has("span", "123")
+      |> refute_has("summary", "Biography")
+      |> assert_has("div", "Error loading play count")
+      |> assert_has("div", "Error loading biography")
     end
 
     test "it shows the artist country and MB id", %{
@@ -87,9 +87,9 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       conn
       |> visit(~p"/artists/#{artist_musicbrainz_id}")
       |> unwrap(&render_async/1)
-      |> assert_has("span", text: "United Kingdom")
-      |> assert_has("span", text: "🇬🇧")
-      |> assert_has("code", text: artist_musicbrainz_id)
+      |> assert_has("span", "United Kingdom")
+      |> assert_has("span", "🇬🇧")
+      |> assert_has("code", artist_musicbrainz_id)
     end
 
     test "it shows records from the collection and the wishlist", %{
@@ -119,10 +119,10 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       conn
       |> visit(~p"/artists/#{artist_musicbrainz_id}")
       |> unwrap(&render_async/1)
-      |> assert_has("#collection p", text: escape(collection_record.title))
-      |> assert_has("#wishlist p", text: escape(wishlist_record.title))
-      |> refute_has("#collection p", text: escape(other_collection_record.title))
-      |> refute_has("#wishlist p", text: escape(other_collection_record.title))
+      |> assert_has("#collection p", escape(collection_record.title))
+      |> assert_has("#wishlist p", escape(wishlist_record.title))
+      |> refute_has("#collection p", escape(other_collection_record.title))
+      |> refute_has("#wishlist p", escape(other_collection_record.title))
     end
   end
 end

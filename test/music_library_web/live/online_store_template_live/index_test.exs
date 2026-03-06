@@ -13,9 +13,9 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.IndexTest do
 
       conn
       |> visit(~p"/online-store-templates")
-      |> assert_has("h1", text: "Online Store Templates")
-      |> assert_has("p", text: "Amazon UK")
-      |> assert_has("p", text: "Bandcamp")
+      |> assert_has("h1", "Online Store Templates")
+      |> assert_has("p", "Amazon UK")
+      |> assert_has("p", "Bandcamp")
     end
   end
 

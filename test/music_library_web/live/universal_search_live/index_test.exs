@@ -38,7 +38,7 @@ defmodule MusicLibraryWeb.UniversalSearchLive.IndexTest do
       conn
       |> visit(~p"/collection")
       |> click_button("Search (Cmd/Ctrl+K)")
-      |> assert_has("p", text: "to open this search")
+      |> assert_has("p", "to open this search")
     end
   end
 
@@ -48,8 +48,8 @@ defmodule MusicLibraryWeb.UniversalSearchLive.IndexTest do
       |> visit(~p"/collection")
       |> click_button("Search (Cmd/Ctrl+K)")
       |> fill_in("Universal Search", with: "nonexistent query xyz")
-      |> assert_has("p", text: "No results found for 'nonexistent query xyz'")
-      |> assert_has("a", text: "Add a record instead")
+      |> assert_has("p", "No results found for 'nonexistent query xyz'")
+      |> assert_has("a", "Add a record instead")
     end
 
     test "resets results when query is cleared", %{conn: conn} do
@@ -58,7 +58,7 @@ defmodule MusicLibraryWeb.UniversalSearchLive.IndexTest do
       |> click_button("Search (Cmd/Ctrl+K)")
       |> fill_in("Universal Search", with: "test query")
       |> fill_in("Universal Search", with: "")
-      |> assert_has("p", text: "to open this search")
+      |> assert_has("p", "to open this search")
     end
 
     test "searches collection records", %{
@@ -69,7 +69,7 @@ defmodule MusicLibraryWeb.UniversalSearchLive.IndexTest do
       |> visit(~p"/collection")
       |> click_button("Search (Cmd/Ctrl+K)")
       |> fill_in("Universal Search", with: collection_record.title)
-      |> assert_has("p", text: collection_record.title)
+      |> assert_has("p", collection_record.title)
     end
 
     test "searches wishlist records", %{
@@ -80,7 +80,7 @@ defmodule MusicLibraryWeb.UniversalSearchLive.IndexTest do
       |> visit(~p"/collection")
       |> click_button("Search (Cmd/Ctrl+K)")
       |> fill_in("Universal Search", with: wishlist_record.title)
-      |> assert_has("p", text: wishlist_record.title)
+      |> assert_has("p", wishlist_record.title)
     end
 
     test "searches artists", %{
@@ -93,7 +93,7 @@ defmodule MusicLibraryWeb.UniversalSearchLive.IndexTest do
       |> visit(~p"/collection")
       |> click_button("Search (Cmd/Ctrl+K)")
       |> fill_in("Universal Search", with: artist.name)
-      |> assert_has("p", text: artist.name)
+      |> assert_has("p", artist.name)
     end
 
     test "displays results count in footer", %{
@@ -104,7 +104,7 @@ defmodule MusicLibraryWeb.UniversalSearchLive.IndexTest do
       |> visit(~p"/collection")
       |> click_button("Search (Cmd/Ctrl+K)")
       |> fill_in("Universal Search", with: collection_record.title)
-      |> assert_has("div", text: "1 result")
+      |> assert_has("div", "1 result")
     end
   end
 
@@ -117,11 +117,11 @@ defmodule MusicLibraryWeb.UniversalSearchLive.IndexTest do
       |> visit(~p"/collection")
       |> click_button("Search (Cmd/Ctrl+K)")
       |> fill_in("Universal Search", with: collection_record.title)
-      |> assert_has("kbd", text: "↑")
-      |> assert_has("kbd", text: "↓")
-      |> assert_has("span", text: "Navigate")
-      |> assert_has("kbd", text: "Enter")
-      |> assert_has("span", text: "Select")
+      |> assert_has("kbd", "↑")
+      |> assert_has("kbd", "↓")
+      |> assert_has("span", "Navigate")
+      |> assert_has("kbd", "Enter")
+      |> assert_has("span", "Select")
     end
 
     test "search results have role=option for keyboard navigation", %{

@@ -12,7 +12,7 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
 
       conn
       |> visit(~p"/record-sets/#{set}")
-      |> assert_has("h1", text: "My Favorites")
+      |> assert_has("h1", "My Favorites")
     end
 
     test "displays collected/total count", %{conn: conn} do
@@ -20,7 +20,7 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
 
       conn
       |> visit(~p"/record-sets/#{set}")
-      |> assert_has("span", text: "2/2 records")
+      |> assert_has("span", "2/2 records")
     end
 
     test "displays records in the set", %{conn: conn} do
@@ -28,8 +28,8 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
 
       conn
       |> visit(~p"/record-sets/#{set}")
-      |> assert_has("h2", text: escape(r1.title))
-      |> assert_has("h2", text: escape(r2.title))
+      |> assert_has("h2", escape(r1.title))
+      |> assert_has("h2", escape(r2.title))
     end
 
     test "shows add record tile when set has no records", %{conn: conn} do
@@ -45,7 +45,7 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
 
       conn
       |> visit(~p"/record-sets/#{set}")
-      |> assert_has("article strong", text: "bold")
+      |> assert_has("article strong", "bold")
     end
   end
 
@@ -117,7 +117,7 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
       conn
       |> visit(~p"/record-sets")
       |> click_link("Linked Set")
-      |> assert_has("h1", text: "Linked Set")
+      |> assert_has("h1", "Linked Set")
       |> assert_path(~p"/record-sets/#{set}")
     end
   end

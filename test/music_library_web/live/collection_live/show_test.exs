@@ -21,7 +21,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
       conn
       |> visit(~p"/collection/#{record.id}")
       |> unwrap(&render_async/1)
-      |> assert_has("a", text: "Edit")
+      |> assert_has("a", "Edit")
       |> click_link("Edit")
       |> assert_path(~p"/collection/#{record}/show/edit")
     end
@@ -44,26 +44,26 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
         conn
         |> visit(~p"/collection/#{record.id}")
         |> unwrap(&render_async/1)
-        |> assert_has("h2", text: escape(record.title))
-        |> assert_has("p", text: record.release_date)
-        |> assert_has("p", text: format_label(record.format))
-        |> assert_has("p", text: type_label(record.type))
-        |> assert_has("dd", text: Record.format_as_date(record.purchased_at))
-        |> assert_has("code#record-#{record.id}", text: record.id)
-        |> assert_has("code#mb-#{record.musicbrainz_id}", text: record.musicbrainz_id)
-        |> assert_has("span", text: "Multi")
-        |> assert_has("span", text: "03/05/2004")
-        |> assert_has("span", text: "🇬🇧")
-        |> assert_has("p", text: Record.format_as_date(record.inserted_at))
-        |> assert_has("p", text: Record.format_as_date(record.updated_at))
+        |> assert_has("h2", escape(record.title))
+        |> assert_has("p", record.release_date)
+        |> assert_has("p", format_label(record.format))
+        |> assert_has("p", type_label(record.type))
+        |> assert_has("dd", Record.format_as_date(record.purchased_at))
+        |> assert_has("code#record-#{record.id}", record.id)
+        |> assert_has("code#mb-#{record.musicbrainz_id}", record.musicbrainz_id)
+        |> assert_has("span", "Multi")
+        |> assert_has("span", "03/05/2004")
+        |> assert_has("span", "🇬🇧")
+        |> assert_has("p", Record.format_as_date(record.inserted_at))
+        |> assert_has("p", Record.format_as_date(record.updated_at))
         |> assert_has("img[src='#{cover_url}']")
 
       for artist <- record.artists do
-        assert_has(session, "a", text: escape(artist.name))
+        assert_has(session, "a", escape(artist.name))
       end
 
       for genre <- record.genres do
-        assert_has(session, "a", text: genre)
+        assert_has(session, "a", genre)
       end
     end
   end
@@ -81,9 +81,9 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
       session =
         conn
         |> visit(~p"/collection/#{record.id}")
-        |> assert_has("button", text: "Show Tracks")
+        |> assert_has("button", "Show Tracks")
         |> unwrap(&render_async/1)
-        |> assert_has("a", text: "Connect your Last.fm account")
+        |> assert_has("a", "Connect your Last.fm account")
 
       release =
         MusicBrainz.Release.from_api_response(release_response)
@@ -93,7 +93,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
         |> within("#disc-#{medium.number}", fn inner_session ->
           for track <- medium.tracks do
             inner_session
-            |> assert_has("li", text: escape(track.title))
+            |> assert_has("li", escape(track.title))
           end
 
           inner_session

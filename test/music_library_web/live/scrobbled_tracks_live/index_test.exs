@@ -31,9 +31,9 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
     test "lists scrobbled tracks", %{conn: conn, track: track} do
       conn
       |> visit(~p"/scrobbled-tracks")
-      |> assert_has("p", text: track.title)
-      |> assert_has("p", text: track.artist.name)
-      |> assert_has("p", text: track.album.title)
+      |> assert_has("p", track.title)
+      |> assert_has("p", track.artist.name)
+      |> assert_has("p", track.album.title)
     end
 
     test "shows empty state when no tracks", %{conn: conn} do
@@ -42,7 +42,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
 
       conn
       |> visit(~p"/scrobbled-tracks")
-      |> assert_has("p", text: "No scrobbled tracks found")
+      |> assert_has("p", "No scrobbled tracks found")
     end
   end
 
@@ -60,7 +60,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
         |> form("form[phx-submit='search']", %{query: "Unique Track"})
         |> render_submit()
       end)
-      |> assert_has("p", text: "Unique Track Title")
+      |> assert_has("p", "Unique Track Title")
     end
 
     test "searches tracks by artist name", %{conn: conn} do
@@ -74,7 +74,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
         |> form("form[phx-submit='search']", %{query: "Unique Artist"})
         |> render_submit()
       end)
-      |> assert_has("p", text: "Unique Artist Name")
+      |> assert_has("p", "Unique Artist Name")
     end
 
     test "searches tracks by album title", %{conn: conn} do
@@ -88,7 +88,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
         |> form("form[phx-submit='search']", %{query: "Unique Album"})
         |> render_submit()
       end)
-      |> assert_has("p", text: "Unique Album Title")
+      |> assert_has("p", "Unique Album Title")
     end
   end
 
@@ -99,7 +99,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
       session =
         conn
         |> visit(~p"/scrobbled-tracks/#{track.scrobbled_at_uts}/edit")
-        |> assert_has("h1", text: "Edit Scrobbled Track")
+        |> assert_has("h1", "Edit Scrobbled Track")
         |> assert_path(~p"/scrobbled-tracks/#{track.scrobbled_at_uts}/edit")
 
       # Test validation errors with invalid attrs
@@ -119,8 +119,8 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
       |> fill_in("Album MusicBrainz ID", with: @valid_track_attrs.album.musicbrainz_id)
       |> fill_in("Cover Image URL (optional)", with: @valid_track_attrs.cover_url)
       |> click_button("Update Track")
-      |> assert_has("p", text: "Track updated successfully")
-      |> assert_has("p", text: "Updated Track Title")
+      |> assert_has("p", "Track updated successfully")
+      |> assert_has("p", "Updated Track Title")
     end
 
     test "shows validation errors", %{conn: conn, track: track} do
@@ -144,7 +144,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
 
       conn
       |> visit(~p"/scrobbled-tracks")
-      |> assert_has("a", text: "Next")
+      |> assert_has("a", "Next")
       |> assert_has("#bottom_pagination")
       |> click_link("a[href*='page=2']", "2")
     end
@@ -156,7 +156,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
 
       conn
       |> visit(~p"/scrobbled-tracks?query=Special")
-      |> assert_has("p", text: "Special Track")
+      |> assert_has("p", "Special Track")
     end
 
     test "handles page parameter", %{conn: conn} do
