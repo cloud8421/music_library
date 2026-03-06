@@ -74,7 +74,14 @@ defmodule MusicLibraryWeb.Telemetry.Storage do
   end
 
   defp metric_key(metric) do
-    "#{inspect(metric.__struct__)}:#{Enum.join(metric.name, ".")}"
+    Enum.join(
+      [
+        inspect(metric.__struct__),
+        Enum.join(metric.name, "."),
+        Enum.join(metric.tags, ".")
+      ],
+      ":"
+    )
   end
 
   defp insert_and_prune(key, label, measurement, time) do
