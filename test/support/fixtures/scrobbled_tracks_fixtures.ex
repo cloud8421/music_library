@@ -42,6 +42,34 @@ defmodule MusicLibrary.ScrobbledTracksFixtures do
   end
 
   @doc """
+  Generate a scrobbled track with nested artist/album maps.
+  """
+  def scrobbled_track_fixture(attrs \\ %{}) do
+    default_attrs = %{
+      scrobbled_at_uts: System.system_time(:second),
+      musicbrainz_id: "track-mbid-12345",
+      title: "Breathe",
+      cover_url: "http://example.com/cover.jpg",
+      scrobbled_at_label: "01 Jan 2023, 12:00",
+      artist: %{
+        musicbrainz_id: "",
+        name: "Pink Floyd"
+      },
+      album: %{
+        musicbrainz_id: "",
+        title: "Dark Side of the Moon"
+      },
+      last_fm_data: %{}
+    }
+
+    attrs = Enum.into(attrs, default_attrs)
+
+    %Track{}
+    |> Track.changeset(attrs)
+    |> Repo.insert!()
+  end
+
+  @doc """
   Generate multiple scrobbled tracks for testing pagination and search.
   """
   def create_test_tracks(count \\ 5) do

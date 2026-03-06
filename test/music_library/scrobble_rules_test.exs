@@ -2,6 +2,7 @@ defmodule MusicLibrary.ScrobbleRulesTest do
   use MusicLibrary.DataCase
 
   import MusicLibrary.ScrobbleRulesFixtures
+  import MusicLibrary.ScrobbledTracksFixtures
 
   alias LastFm.Track
   alias MusicLibrary.ScrobbleRules
@@ -25,31 +26,6 @@ defmodule MusicLibrary.ScrobbleRulesTest do
     }
 
     @invalid_attrs %{type: nil, match_value: nil, target_musicbrainz_id: nil}
-
-    def scrobbled_track_fixture(attrs \\ %{}) do
-      default_attrs = %{
-        scrobbled_at_uts: System.system_time(:second),
-        musicbrainz_id: "track-mbid-12345",
-        title: "Breathe",
-        cover_url: "http://example.com/cover.jpg",
-        scrobbled_at_label: "01 Jan 2023, 12:00",
-        artist: %{
-          musicbrainz_id: "",
-          name: "Pink Floyd"
-        },
-        album: %{
-          musicbrainz_id: "",
-          title: "Dark Side of the Moon"
-        },
-        last_fm_data: %{}
-      }
-
-      attrs = Enum.into(attrs, default_attrs)
-
-      %Track{}
-      |> Track.changeset(attrs)
-      |> Repo.insert!()
-    end
 
     test "list_scrobble_rules/0 returns all scrobble_rules" do
       scrobble_rule = scrobble_rule_fixture()
