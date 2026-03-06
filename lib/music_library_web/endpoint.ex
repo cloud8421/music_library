@@ -70,15 +70,15 @@ defmodule MusicLibraryWeb.Endpoint do
 
   @blocked_paths [
     "/.env",
+    "/admin",
+    "/files.php",
     "/grsiuk.php",
+    "/jq.php",
+    "/style.php",
     "/vgtyu.php",
-    "/xmlrpc.php",
     "/vx.php",
     "/xleet.php",
-    "/jq.php",
-    "/files.php",
-    "/style.php",
-    "/admin"
+    "/xmlrpc.php"
   ]
 
   defp reject_bot_scanners(%{request_path: path} = conn, _opts) when path in @blocked_paths,
