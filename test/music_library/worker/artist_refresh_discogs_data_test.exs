@@ -1,6 +1,7 @@
 defmodule MusicLibrary.Worker.ArtistRefreshDiscogsDataTest do
   use MusicLibrary.DataCase
 
+  import MusicLibrary.ArtistInfoFixtures
   import MusicLibrary.Fixtures.Records
 
   alias Discogs.Fixtures.Artist, as: ArtistFixture
@@ -27,14 +28,10 @@ defmodule MusicLibrary.Worker.ArtistRefreshDiscogsDataTest do
     end
 
     test "returns ok when no discogs data is available" do
-      artist_id = Ecto.UUID.generate()
+      artist_info =
+        artist_info_fixture(%{musicbrainz_data: %{"name" => "No Discogs Artist"}})
 
-      Repo.insert!(%Artists.ArtistInfo{
-        id: artist_id,
-        musicbrainz_data: %{"name" => "No Discogs Artist"}
-      })
-
-      assert {:ok, _} = perform_job(ArtistRefreshDiscogsData, %{"id" => artist_id})
+      assert {:ok, _} = perform_job(ArtistRefreshDiscogsData, %{"id" => artist_info.id})
     end
   end
 end

@@ -1,11 +1,10 @@
 defmodule MusicLibrary.Records.SimilarityTest do
   use MusicLibrary.DataCase
 
+  import MusicLibrary.ArtistInfoFixtures
   import MusicLibrary.Fixtures.Records
 
-  alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibrary.Records.{Record, Similarity}
-  alias MusicLibrary.Repo
 
   describe "text_representation/1" do
     test "generates text representation for a record" do
@@ -35,17 +34,15 @@ defmodule MusicLibrary.Records.SimilarityTest do
     end
 
     test "includes Wikipedia data when available" do
-      artist_id = Ecto.UUID.generate()
-
-      Repo.insert!(%ArtistInfo{
-        id: artist_id,
-        musicbrainz_data: %{"name" => "Radiohead"},
-        wikipedia_data: %{
-          "description" => "English rock band",
-          "extract" =>
-            "Radiohead are an English rock band formed in Abingdon. They are known for experimental music."
-        }
-      })
+      artist_info =
+        artist_info_fixture(%{
+          musicbrainz_data: %{"name" => "Radiohead"},
+          wikipedia_data: %{
+            "description" => "English rock band",
+            "extract" =>
+              "Radiohead are an English rock band formed in Abingdon. They are known for experimental music."
+          }
+        })
 
       record = %Record{
         title: "OK Computer",
@@ -53,7 +50,7 @@ defmodule MusicLibrary.Records.SimilarityTest do
           %{
             name: "Radiohead",
             sort_name: "Radiohead",
-            musicbrainz_id: artist_id,
+            musicbrainz_id: artist_info.id,
             disambiguation: "",
             joinphrase: ""
           }
@@ -71,17 +68,15 @@ defmodule MusicLibrary.Records.SimilarityTest do
     end
 
     test "falls back to truncated Discogs profile when Wikipedia unavailable" do
-      artist_id = Ecto.UUID.generate()
-
-      Repo.insert!(%ArtistInfo{
-        id: artist_id,
-        musicbrainz_data: %{"name" => "Some Artist"},
-        discogs_data: %{
-          "name" => "Some Artist",
-          "profile_plaintext" => "Some Artist is a funk band. They have released many albums.",
-          "members" => [%{"name" => "Member One"}, %{"name" => "Member Two"}]
-        }
-      })
+      artist_info =
+        artist_info_fixture(%{
+          musicbrainz_data: %{"name" => "Some Artist"},
+          discogs_data: %{
+            "name" => "Some Artist",
+            "profile_plaintext" => "Some Artist is a funk band. They have released many albums.",
+            "members" => [%{"name" => "Member One"}, %{"name" => "Member Two"}]
+          }
+        })
 
       record = %Record{
         title: "Funky Album",
@@ -89,7 +84,7 @@ defmodule MusicLibrary.Records.SimilarityTest do
           %{
             name: "Some Artist",
             sort_name: "Some Artist",
-            musicbrainz_id: artist_id,
+            musicbrainz_id: artist_info.id,
             disambiguation: "",
             joinphrase: ""
           }

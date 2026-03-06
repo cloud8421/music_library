@@ -1,20 +1,18 @@
 defmodule MusicLibrary.Worker.ArtistRefreshMusicBrainzDataTest do
   use MusicLibrary.DataCase
 
+  import MusicLibrary.ArtistInfoFixtures
+
   alias MusicBrainz.Fixtures.Artist, as: ArtistFixture
   alias MusicLibrary.Artists
   alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibrary.Worker.ArtistRefreshMusicBrainzData
 
   setup do
-    artist_id = Ecto.UUID.generate()
+    artist_info =
+      artist_info_fixture(%{musicbrainz_data: %{"name" => "Steven Wilson"}})
 
-    Repo.insert!(%ArtistInfo{
-      id: artist_id,
-      musicbrainz_data: %{"name" => "Steven Wilson"}
-    })
-
-    %{artist_id: artist_id}
+    %{artist_id: artist_info.id}
   end
 
   describe "perform/1" do

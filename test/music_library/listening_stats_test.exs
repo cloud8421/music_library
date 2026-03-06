@@ -1,6 +1,7 @@
 defmodule MusicLibrary.ListeningStatsTest do
   use MusicLibrary.DataCase
 
+  import MusicLibrary.ArtistInfoFixtures
   import MusicLibrary.ScrobbledTracksFixtures
 
   alias MusicLibrary.ListeningStats
@@ -19,13 +20,10 @@ defmodule MusicLibrary.ListeningStatsTest do
 
   describe "get_top_artists/1" do
     test "counts tracks with missing artist_infos records" do
-      artist_mbid = Ecto.UUID.generate()
+      artist_info =
+        artist_info_fixture(%{musicbrainz_data: %{"name" => "Thin Lizzy"}})
 
-      # Create an artist_info record for the known musicbrainz_id
-      MusicLibrary.Repo.insert!(%MusicLibrary.Artists.ArtistInfo{
-        id: artist_mbid,
-        musicbrainz_data: %{"name" => "Thin Lizzy"}
-      })
+      artist_mbid = artist_info.id
 
       now = System.system_time(:second)
 
@@ -62,13 +60,13 @@ defmodule MusicLibrary.ListeningStatsTest do
     end
 
     test "returns image_hash from artist_infos when available" do
-      artist_mbid = Ecto.UUID.generate()
+      artist_info =
+        artist_info_fixture(%{
+          musicbrainz_data: %{"name" => "Test Artist"},
+          image_data_hash: "abc123"
+        })
 
-      MusicLibrary.Repo.insert!(%MusicLibrary.Artists.ArtistInfo{
-        id: artist_mbid,
-        musicbrainz_data: %{"name" => "Test Artist"},
-        image_data_hash: "abc123"
-      })
+      artist_mbid = artist_info.id
 
       track_fixture(%{
         artist_name: "Test Artist",
@@ -98,12 +96,10 @@ defmodule MusicLibrary.ListeningStatsTest do
 
   describe "get_top_artists_by_days/2" do
     test "counts tracks with missing artist_infos records within date range" do
-      artist_mbid = Ecto.UUID.generate()
+      artist_info =
+        artist_info_fixture(%{musicbrainz_data: %{"name" => "Thin Lizzy"}})
 
-      MusicLibrary.Repo.insert!(%MusicLibrary.Artists.ArtistInfo{
-        id: artist_mbid,
-        musicbrainz_data: %{"name" => "Thin Lizzy"}
-      })
+      artist_mbid = artist_info.id
 
       now = DateTime.utc_now()
       now_unix = DateTime.to_unix(now)

@@ -1,6 +1,7 @@
 defmodule MusicLibrary.Worker.ArtistRefreshWikipediaDataTest do
   use MusicLibrary.DataCase
 
+  import MusicLibrary.ArtistInfoFixtures
   import MusicLibrary.Fixtures.Records
 
   alias MusicLibrary.Artists
@@ -38,16 +39,12 @@ defmodule MusicLibrary.Worker.ArtistRefreshWikipediaDataTest do
     end
 
     test "discards job when no wikidata_id exists in musicbrainz_data" do
-      artist_id = Ecto.UUID.generate()
-
-      Repo.insert!(%Artists.ArtistInfo{
-        id: artist_id,
-        musicbrainz_data: %{"name" => "No Wikipedia Artist"}
-      })
+      artist_info =
+        artist_info_fixture(%{musicbrainz_data: %{"name" => "No Wikipedia Artist"}})
 
       # No wikidata relation in musicbrainz_data → fetch_wikipedia_data returns {:ok, artist_info}
       # Worker wraps non-error returns with `with`, so it passes through as :ok
-      assert {:ok, _} = perform_job(ArtistRefreshWikipediaData, %{"id" => artist_id})
+      assert {:ok, _} = perform_job(ArtistRefreshWikipediaData, %{"id" => artist_info.id})
     end
   end
 end

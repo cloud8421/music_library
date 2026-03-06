@@ -1,6 +1,8 @@
 defmodule MusicLibrary.Worker.ApplyScrobbleRulesTest do
   use MusicLibrary.DataCase
 
+  import MusicLibrary.ScrobbledTracksFixtures
+
   alias LastFm.Track
   alias MusicLibrary.ScrobbleRules
   alias MusicLibrary.Worker.ApplyScrobbleRules
@@ -34,31 +36,21 @@ defmodule MusicLibrary.Worker.ApplyScrobbleRulesTest do
         })
 
       # Create test tracks
-      %Track{}
-      |> Track.changeset(%{
-        scrobbled_at_uts: System.system_time(:second),
+      scrobbled_track_fixture(%{
         musicbrainz_id: "track-mbid-1",
         title: "Breathe",
-        cover_url: "http://example.com/cover.jpg",
-        scrobbled_at_label: "01 Jan 2023, 12:00",
         artist: %{musicbrainz_id: "", name: "Pink Floyd"},
-        album: %{musicbrainz_id: "", title: "Dark Side of the Moon"},
-        last_fm_data: %{}
+        album: %{musicbrainz_id: "", title: "Dark Side of the Moon"}
       })
-      |> Repo.insert!()
 
-      %Track{}
-      |> Track.changeset(%{
+      scrobbled_track_fixture(%{
         scrobbled_at_uts: System.system_time(:second) + 1,
         musicbrainz_id: "track-mbid-2",
         title: "Money",
-        cover_url: "http://example.com/cover.jpg",
         scrobbled_at_label: "01 Jan 2023, 12:05",
         artist: %{musicbrainz_id: "", name: "Pink Floyd"},
-        album: %{musicbrainz_id: "", title: "Wish You Were Here"},
-        last_fm_data: %{}
+        album: %{musicbrainz_id: "", title: "Wish You Were Here"}
       })
-      |> Repo.insert!()
 
       # Execute the worker
       assert :ok = ApplyScrobbleRules.perform(%Oban.Job{args: %{}})

@@ -1,6 +1,7 @@
 defmodule MusicLibrary.Worker.PruneArtistInfoTest do
   use MusicLibrary.DataCase
 
+  import MusicLibrary.ArtistInfoFixtures
   import MusicLibrary.Fixtures.Records
 
   alias MusicLibrary.Artists
@@ -18,17 +19,13 @@ defmodule MusicLibrary.Worker.PruneArtistInfoTest do
     end
 
     test "deletes artist info when artist is not referenced by any record" do
-      artist_id = Ecto.UUID.generate()
+      artist_info =
+        artist_info_fixture(%{musicbrainz_data: %{"name" => "Orphaned Artist"}})
 
-      Repo.insert!(%Artists.ArtistInfo{
-        id: artist_id,
-        musicbrainz_data: %{"name" => "Orphaned Artist"}
-      })
-
-      assert :ok = perform_job(PruneArtistInfo, %{"id" => artist_id})
+      assert :ok = perform_job(PruneArtistInfo, %{"id" => artist_info.id})
 
       assert_raise Ecto.NoResultsError, fn ->
-        Artists.get_artist_info!(artist_id)
+        Artists.get_artist_info!(artist_info.id)
       end
     end
   end
