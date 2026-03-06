@@ -201,7 +201,7 @@ stubbed via `Req.Test` (configured in `config/test.exs`).
 | Monthly 1st, 8 AM | `ArtistRefreshAllMusicBrainzData` | music_brainz |
 | Monthly 1st, 9 AM | `ArtistRefreshAllDiscogsData` | discogs |
 | Monthly 1st, 10 AM | `ArtistRefreshAllWikipediaData` | wikipedia |
-| Daily 8 AM | `SendRecordsOnThisDayEmail` | default |
+| Daily 7 AM | `SendRecordsOnThisDayEmail` | default |
 
 ---
 

@@ -41,8 +41,8 @@ config :music_library, Oban,
        {"0 8 1 * *", MusicLibrary.Worker.ArtistRefreshAllMusicBrainzData},
        {"0 9 1 * *", MusicLibrary.Worker.ArtistRefreshAllDiscogsData},
        {"0 10 1 * *", MusicLibrary.Worker.ArtistRefreshAllWikipediaData},
-       # daily at 8 am
-       {"0 8 * * *", MusicLibrary.Worker.SendRecordsOnThisDayEmail}
+       # daily at 7 am
+       {"0 7 * * *", MusicLibrary.Worker.SendRecordsOnThisDayEmail}
      ]}
   ]
 
