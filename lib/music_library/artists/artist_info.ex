@@ -37,8 +37,7 @@ defmodule MusicLibrary.Artists.ArtistInfo do
 
   @spec country(t()) :: %{name: String.t(), code: String.t()}
   def country(artist_info) do
-    %{"area" => area} =
-      artist_info.musicbrainz_data
+    area = Map.get(artist_info.musicbrainz_data, "area", %{})
 
     country_code =
       case area["iso-3166-1-codes"] || area["iso-3166-2-codes"] do
