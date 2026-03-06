@@ -340,6 +340,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
       >
         <div
           :for={item <- @record_set.items}
+          :key={item.id}
           data-sortable-item
           data-record-id={item.record.id}
           class={[
