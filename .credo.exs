@@ -7,7 +7,6 @@
           {Credo.Check.Refactor.Nesting, max_nesting: 3}
         ],
         disabled: [
-          {Credo.Check.Refactor.CyclomaticComplexity, []},
           {Credo.Check.Readability.ModuleDoc, []}
         ]
       }

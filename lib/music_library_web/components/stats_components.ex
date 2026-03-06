@@ -254,6 +254,7 @@ defmodule MusicLibraryWeb.StatsComponents do
   # The Tailwind build step requires all needed classes to be explicitly referenced
   # in the source code, and not dynamically generated. This implies that one cannot
   # (for example) interpolate a number in a class name.
+  # credo:disable-for-next-line Credo.Check.Refactor.CyclomaticComplexity
   defp stats_class(collection) do
     case Enum.count(collection) do
       1 -> "grid-cols-1"

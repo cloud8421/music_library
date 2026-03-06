@@ -186,6 +186,7 @@ defmodule MusicLibraryWeb.Components.Pagination do
   @visible_left_pages 3
   @visible_right_pages 3
   @middle "..."
+  # credo:disable-for-next-line Credo.Check.Refactor.CyclomaticComplexity
   defp generate_page_links(pagination_params) do
     %{
       total_entries: total_entries,

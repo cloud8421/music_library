@@ -10,6 +10,7 @@ defmodule MusicLibrary.ScrobbledTracksFixtures do
   @doc """
   Generate a scrobbled track.
   """
+  # credo:disable-for-next-line Credo.Check.Refactor.CyclomaticComplexity
   def track_fixture(attrs \\ %{}) do
     scrobbled_at_uts =
       attrs[:scrobbled_at_uts] || System.system_time(:second) - Enum.random(0..86_400)
