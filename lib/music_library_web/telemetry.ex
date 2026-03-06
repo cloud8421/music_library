@@ -59,6 +59,15 @@ defmodule MusicLibraryWeb.Telemetry do
           nav: "External APIs"
         ]
       ),
+      summary("finch.request.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:host],
+        tag_values: &add_tags/1,
+        drop: &drop_unwanted_hosts/1,
+        reporter_options: [
+          nav: "External APIs"
+        ]
+      ),
 
       # Rate Limiter
       summary("req.rate_limiter.throttle.sleep_ms",
