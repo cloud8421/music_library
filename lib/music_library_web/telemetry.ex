@@ -151,6 +151,12 @@ defmodule MusicLibraryWeb.Telemetry do
         reporter_options: [nav: "LiveView"]
       ),
 
+      # Markdown Processing Metrics
+      summary("markdown.to_html.stop.duration",
+        unit: {:native, :millisecond},
+        reporter_options: [nav: "Markdown"]
+      ),
+
       # VM Metrics
       summary("vm.memory.total", unit: {:byte, :megabyte}),
       summary("vm.total_run_queue_lengths.total"),

@@ -14,9 +14,18 @@ defmodule MusicLibraryWeb.Markdown do
   """
   @spec to_html(String.t() | nil) :: String.t()
   def to_html(markdown_text) when is_binary(markdown_text) do
-    markdown_text
-    |> process_double_bracket_links()
-    |> Earmark.as_html!(%Earmark.Options{gfm: true})
+    :telemetry.span(
+      [:markdown, :to_html],
+      %{},
+      fn ->
+        result =
+          markdown_text
+          |> process_double_bracket_links()
+          |> Earmark.as_html!(%Earmark.Options{gfm: true})
+
+        {result, %{}}
+      end
+    )
   end
 
   def to_html(nil), do: ""
