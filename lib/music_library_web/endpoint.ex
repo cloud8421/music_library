@@ -76,6 +76,8 @@ defmodule MusicLibraryWeb.Endpoint do
     "/vx.php",
     "/xleet.php",
     "/jq.php",
+    "/files.php",
+    "/style.php",
     "/admin"
   ]
 
