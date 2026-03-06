@@ -19,6 +19,9 @@ defmodule MusicLibrary.Artists.ArtistInfo do
     timestamps(type: :utc_datetime)
   end
 
+  @type t :: %__MODULE__{}
+
+  @spec changeset(t() | Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
   def changeset(artist_info, attrs) do
     artist_info
     |> cast(attrs, [
@@ -32,6 +35,7 @@ defmodule MusicLibrary.Artists.ArtistInfo do
     |> validate_required([:musicbrainz_data])
   end
 
+  @spec country(t()) :: %{name: String.t(), code: String.t()}
   def country(artist_info) do
     %{"area" => area} =
       artist_info.musicbrainz_data
@@ -45,6 +49,9 @@ defmodule MusicLibrary.Artists.ArtistInfo do
     %{name: area["name"] || "World", code: country_code || "XW"}
   end
 
+  @spec extract_image(t()) ::
+          {:ok, %{url: String.t(), width: integer()}}
+          | {:error, :no_discogs_data | :image_not_found}
   def extract_image(artist_info) when is_nil(artist_info.discogs_data) do
     {:error, :no_discogs_data}
   end
@@ -71,9 +78,11 @@ defmodule MusicLibrary.Artists.ArtistInfo do
     "ProgArchives" => "progarchives.com"
   }
 
+  @spec external_links(t()) :: [map()]
   def external_links(artist_info),
     do: ExternalLink.external_links(artist_info.musicbrainz_data, @external_link_patterns)
 
+  @spec discogs_id(t()) :: integer() | nil
   def discogs_id(artist_info) do
     case artist_info.discogs_data do
       %{"id" => discogs_id} -> discogs_id
@@ -81,6 +90,7 @@ defmodule MusicLibrary.Artists.ArtistInfo do
     end
   end
 
+  @spec wikidata_id(t()) :: String.t() | nil
   def wikidata_id(artist_info) do
     relations = get_in(artist_info.musicbrainz_data, ["relations"]) || []
 
@@ -93,27 +103,33 @@ defmodule MusicLibrary.Artists.ArtistInfo do
     end)
   end
 
+  @spec wikipedia_bio(t()) :: String.t() | nil
   def wikipedia_bio(artist_info) do
     get_in(artist_info.wikipedia_data, ["intro_html"]) ||
       get_in(artist_info.wikipedia_data, ["extract_html"])
   end
 
+  @spec wikipedia_summary(t()) :: String.t() | nil
   def wikipedia_summary(artist_info) do
     get_in(artist_info.wikipedia_data, ["extract"])
   end
 
+  @spec wikipedia_url(t()) :: String.t() | nil
   def wikipedia_url(artist_info) do
     get_in(artist_info.wikipedia_data, ["content_urls", "desktop", "page"])
   end
 
+  @spec wikipedia_description(t()) :: String.t() | nil
   def wikipedia_description(artist_info) do
     get_in(artist_info.wikipedia_data, ["description"])
   end
 
+  @spec lastfm_tags(t()) :: [map()]
   def lastfm_tags(artist_info) do
     get_in(artist_info.lastfm_data, ["tags"]) || []
   end
 
+  @spec lastfm_similar_artists(t()) :: [map()]
   def lastfm_similar_artists(artist_info) do
     get_in(artist_info.lastfm_data, ["similar_artists"]) || []
   end

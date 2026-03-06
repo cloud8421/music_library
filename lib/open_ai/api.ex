@@ -1,6 +1,7 @@
 defmodule OpenAI.API do
   require Logger
 
+  @spec gpt(OpenAI.Completion.t(), OpenAI.Config.t()) :: {:ok, map()} | {:error, term()}
   def gpt(completion, config) do
     resp =
       config
@@ -26,6 +27,9 @@ defmodule OpenAI.API do
     end
   end
 
+  @spec chat_stream([map()], String.t(), String.t(), float(), OpenAI.Config.t(), (String.t() ->
+                                                                                    any())) ::
+          :ok | {:error, String.t()}
   def chat_stream(messages, instructions, model, temperature, config, cb) do
     case config
          |> new_request()
@@ -60,6 +64,7 @@ defmodule OpenAI.API do
     end
   end
 
+  @spec get_embeddings(String.t(), OpenAI.Config.t()) :: {:ok, [float()]} | {:error, term()}
   def get_embeddings(text, config) do
     resp =
       config

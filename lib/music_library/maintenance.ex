@@ -13,6 +13,7 @@ defmodule MusicLibrary.Maintenance do
 
   Active jobs are those in "available", "scheduled", "executing", or "retryable" states.
   """
+  @spec count_active_jobs(String.t()) :: non_neg_integer() | nil
   def count_active_jobs(worker) do
     query =
       from j in Oban.Job,
@@ -26,6 +27,7 @@ defmodule MusicLibrary.Maintenance do
   @doc """
   Runs VACUUM on the main database.
   """
+  @spec vacuum() :: :ok
   def vacuum do
     Repo.vacuum()
   end
@@ -33,6 +35,7 @@ defmodule MusicLibrary.Maintenance do
   @doc """
   Runs PRAGMA optimize on the main database.
   """
+  @spec optimize() :: :ok
   def optimize do
     Repo.optimize()
   end

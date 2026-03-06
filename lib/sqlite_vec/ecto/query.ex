@@ -75,6 +75,9 @@ defmodule SqliteVec.Ecto.Query do
     end
   end
 
+  @doc """
+  Matches a vector against a virtual table using the `match` operator.
+  """
   defmacro vec_match(a, b) do
     quote do
       fragment("? match ?", unquote(a), unquote(b))

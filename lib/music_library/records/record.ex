@@ -33,10 +33,14 @@ defmodule MusicLibrary.Records.Record do
     timestamps(type: :utc_datetime)
   end
 
+  @type t :: %__MODULE__{}
+
+  @spec artist_names(t()) :: String.t()
   def artist_names(record) do
     Enum.map_join(record.artists, ", ", fn artist -> artist.name end)
   end
 
+  @spec main_artist(t()) :: Artist.t() | nil
   def main_artist(record) do
     case record.artists do
       [] -> nil
@@ -44,27 +48,35 @@ defmodule MusicLibrary.Records.Record do
     end
   end
 
+  @spec artist_ids(t()) :: [String.t()]
   def artist_ids(record) do
     Enum.map(record.artists, fn artist -> artist.musicbrainz_id end)
   end
 
+  @spec formats() :: [atom()]
   def formats, do: @formats
+
+  @spec types() :: [atom()]
   def types, do: @types
 
+  @spec included_release_groups(t()) :: [map()]
   def included_release_groups(record) do
     record.musicbrainz_data
     |> ReleaseGroup.included_release_groups()
     |> Enum.filter(fn rg -> rg.id in record.included_release_group_ids end)
   end
 
+  @spec included_release_groups_count(t()) :: non_neg_integer()
   def included_release_groups_count(record) do
     Enum.count(record.included_release_group_ids)
   end
 
+  @spec release_count(t()) :: non_neg_integer()
   def release_count(record) do
     Enum.count(record.release_ids)
   end
 
+  @spec released?(t(), Date.t()) :: boolean()
   def released?(%{release_date: nil}, _current_day), do: true
 
   def released?(record, current_day) do
@@ -80,6 +92,7 @@ defmodule MusicLibrary.Records.Record do
     end
   end
 
+  @spec released_how_long_ago?(t(), Date.t()) :: non_neg_integer() | nil
   def released_how_long_ago?(%{release_date: nil}, _current_day), do: nil
 
   def released_how_long_ago?(record, current_day) do
@@ -95,6 +108,7 @@ defmodule MusicLibrary.Records.Record do
     end
   end
 
+  @spec releases(t()) :: [MusicBrainz.Release.t()]
   def releases(record) do
     record.musicbrainz_data
     |> ReleaseGroup.releases()
@@ -102,16 +116,19 @@ defmodule MusicLibrary.Records.Record do
     |> Enum.sort_by(fn r -> {r.date, r.country} end, :desc)
   end
 
+  @spec selected_release(t()) :: MusicBrainz.Release.t() | nil
   def selected_release(record) do
     find_release(record, record.selected_release_id)
   end
 
+  @spec find_release(t(), String.t() | nil) :: MusicBrainz.Release.t() | nil
   def find_release(record, release_id) do
     record
     |> releases()
     |> Enum.find(fn release -> release.id == release_id end)
   end
 
+  @spec changeset(t() | Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
   def changeset(record, attrs) do
     record
     |> cast(attrs, [
@@ -137,15 +154,18 @@ defmodule MusicLibrary.Records.Record do
     |> update_included_release_group_ids()
   end
 
+  @spec add_genres(t(), [String.t()]) :: Ecto.Changeset.t()
   def add_genres(record, genres) do
     change(record, genres: genres)
   end
 
+  @spec set_cover_hash(t(), String.t()) :: Ecto.Changeset.t()
   def set_cover_hash(record, cover_hash) do
     record
     |> change(cover_hash: cover_hash)
   end
 
+  @spec add_musicbrainz_data(t(), map()) :: Ecto.Changeset.t()
   def add_musicbrainz_data(record, musicbrainz_data) do
     record
     |> change()
@@ -156,6 +176,7 @@ defmodule MusicLibrary.Records.Record do
     |> update_musicbrainz_data_derived_fields()
   end
 
+  @spec rotate_dominant_colors(t() | Ecto.Changeset.t()) :: Ecto.Changeset.t()
   def rotate_dominant_colors(%__MODULE__{dominant_colors: dominant_colors} = record) do
     change(record, dominant_colors: rotate(dominant_colors))
   end
@@ -218,6 +239,7 @@ defmodule MusicLibrary.Records.Record do
     end
   end
 
+  @spec attrs_from_release_group(map()) :: map()
   def attrs_from_release_group(release_group) do
     musicbrainz_id = release_group["id"]
 
@@ -293,6 +315,7 @@ defmodule MusicLibrary.Records.Record do
     end
   end
 
+  @spec format_as_date(DateTime.t() | NaiveDateTime.t() | Date.t()) :: String.t()
   def format_as_date(dt) do
     Calendar.strftime(dt, "%d/%m/%Y")
   end

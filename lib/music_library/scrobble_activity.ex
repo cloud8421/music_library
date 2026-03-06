@@ -7,10 +7,12 @@ defmodule MusicLibrary.ScrobbleActivity do
 
   @pagination Application.compile_env!(:music_library, :pagination)
 
+  @spec can_scrobble?() :: boolean()
   def can_scrobble? do
     Secrets.get("last_fm_session_key") !== nil
   end
 
+  @spec scrobble_release(map(), keyword()) :: {:ok, term()} | {:error, term()}
   def scrobble_release(release_with_tracks, opts) when is_list(opts) do
     case Enum.sort(opts) do
       [finished_at: _, started_at: _] ->
@@ -27,12 +29,14 @@ defmodule MusicLibrary.ScrobbleActivity do
     end
   end
 
+  @spec scrobble_release(map(), {:finished_at, DateTime.t()}) :: {:ok, term()} | {:error, term()}
   def scrobble_release(release_with_tracks, {:finished_at, finished_at}) do
     release_duration = Release.release_duration(release_with_tracks)
     started_at = DateTime.add(finished_at, -release_duration, :millisecond)
     scrobble_release(release_with_tracks, {:started_at, started_at})
   end
 
+  @spec scrobble_release(map(), {:started_at, DateTime.t()}) :: {:ok, term()} | {:error, term()}
   def scrobble_release(release_with_tracks, {:started_at, started_at}) do
     release_duration = Release.release_duration(release_with_tracks)
 
@@ -50,6 +54,7 @@ defmodule MusicLibrary.ScrobbleActivity do
     end
   end
 
+  @spec scrobble_medium(integer(), map(), keyword()) :: {:ok, term()} | {:error, term()}
   def scrobble_medium(number, release_with_tracks, opts) when is_list(opts) do
     case Enum.sort(opts) do
       [finished_at: _, started_at: _] ->
@@ -66,6 +71,8 @@ defmodule MusicLibrary.ScrobbleActivity do
     end
   end
 
+  @spec scrobble_medium(integer(), map(), {:finished_at, DateTime.t()}) ::
+          {:ok, term()} | {:error, term()}
   def scrobble_medium(number, release_with_tracks, {:finished_at, finished_at}) do
     case find_medium(release_with_tracks, number) do
       {:ok, medium} ->
@@ -78,6 +85,8 @@ defmodule MusicLibrary.ScrobbleActivity do
     end
   end
 
+  @spec scrobble_medium(integer(), map(), {:started_at, DateTime.t()}) ::
+          {:ok, term()} | {:error, term()}
   def scrobble_medium(number, release_with_tracks, {:started_at, started_at}) do
     case find_medium(release_with_tracks, number) do
       {:ok, medium} ->
@@ -100,6 +109,7 @@ defmodule MusicLibrary.ScrobbleActivity do
     end
   end
 
+  @spec scrobble_tracks(MapSet.t(), map(), keyword()) :: {:ok, term()} | {:error, term()}
   def scrobble_tracks(selected_track_ids, release_with_tracks, opts) when is_list(opts) do
     case Enum.sort(opts) do
       [finished_at: _, started_at: _] ->
@@ -116,6 +126,8 @@ defmodule MusicLibrary.ScrobbleActivity do
     end
   end
 
+  @spec scrobble_tracks(MapSet.t(), map(), {:finished_at, DateTime.t()}) ::
+          {:ok, term()} | {:error, term()}
   def scrobble_tracks(selected_track_ids, release_with_tracks, {:finished_at, finished_at}) do
     all_tracks = Release.tracks(release_with_tracks)
 
@@ -127,6 +139,8 @@ defmodule MusicLibrary.ScrobbleActivity do
     scrobble_tracks(selected_track_ids, release_with_tracks, {:started_at, started_at})
   end
 
+  @spec scrobble_tracks(MapSet.t(), map(), {:started_at, DateTime.t()}) ::
+          {:ok, term()} | {:error, term()}
   def scrobble_tracks(selected_track_ids, release_with_tracks, {:started_at, started_at}) do
     all_tracks = Release.tracks(release_with_tracks)
 
@@ -187,9 +201,7 @@ defmodule MusicLibrary.ScrobbleActivity do
   defp main_artist_name([]), do: nil
   defp main_artist_name([artist | _rest]), do: artist.name
 
-  @doc """
-  Lists scrobbled tracks with pagination and search support.
-  """
+  @spec list_tracks(map()) :: [map()]
   def list_tracks(params \\ %{}) do
     query = Map.get(params, :query, "")
     page = Map.get(params, :page, 1)
@@ -250,23 +262,12 @@ defmodule MusicLibrary.ScrobbleActivity do
     |> Repo.all()
   end
 
-  @doc """
-  Returns the total number of scrobbled tracks.
-
-  This counts all tracks stored in the database using their `scrobbled_at_uts` as the primary key.
-
-  ## Examples
-
-      iex> MusicLibrary.ScrobbleActivity.count_tracks()
-      42
-  """
+  @spec count_tracks() :: non_neg_integer()
   def count_tracks do
     Repo.aggregate(Track, :count, :scrobbled_at_uts)
   end
 
-  @doc """
-  Gets a single track by scrobbled_at_uts.
-  """
+  @spec get_track!(integer() | String.t()) :: LastFm.Track.t()
   def get_track!(scrobbled_at_uts) when is_integer(scrobbled_at_uts) do
     Repo.get!(Track, scrobbled_at_uts)
   end
@@ -278,24 +279,19 @@ defmodule MusicLibrary.ScrobbleActivity do
     end
   end
 
-  @doc """
-  Updates a track with the given attributes.
-  """
+  @spec update_track(LastFm.Track.t(), map()) ::
+          {:ok, LastFm.Track.t()} | {:error, Ecto.Changeset.t()}
   def update_track(%Track{} = track, attrs) do
     changeset = Track.changeset(track, attrs)
     Repo.update(changeset)
   end
 
-  @doc """
-  Deletes a track.
-  """
+  @spec delete_track(LastFm.Track.t()) :: {:ok, LastFm.Track.t()} | {:error, Ecto.Changeset.t()}
   def delete_track(%Track{} = track) do
     Repo.delete(track)
   end
 
-  @doc """
-  Counts tracks matching the search query.
-  """
+  @spec search_tracks_count(String.t()) :: non_neg_integer()
   def search_tracks_count(query \\ "") do
     base_query = from(t in Track)
 
@@ -315,15 +311,7 @@ defmodule MusicLibrary.ScrobbleActivity do
     Repo.aggregate(search_query, :count, :scrobbled_at_uts)
   end
 
-  @doc """
-  Counts tracks with missing or empty artist MusicBrainz IDs.
-
-  ## Examples
-
-      iex> count_tracks_missing_artist_musicbrainz_id()
-      42
-
-  """
+  @spec count_tracks_missing_artist_musicbrainz_id() :: non_neg_integer()
   def count_tracks_missing_artist_musicbrainz_id do
     query =
       from t in Track,
@@ -335,15 +323,7 @@ defmodule MusicLibrary.ScrobbleActivity do
     Repo.one(query) || 0
   end
 
-  @doc """
-  Counts tracks with missing or empty album MusicBrainz IDs.
-
-  ## Examples
-
-      iex> count_tracks_missing_album_musicbrainz_id()
-      37
-
-  """
+  @spec count_tracks_missing_album_musicbrainz_id() :: non_neg_integer()
   def count_tracks_missing_album_musicbrainz_id do
     query =
       from t in Track,
@@ -359,13 +339,8 @@ defmodule MusicLibrary.ScrobbleActivity do
   Gets artists with missing MusicBrainz IDs, grouped by artist name.
 
   Returns a list of maps with artist name and track count.
-
-  ## Examples
-
-      iex> get_artists_missing_musicbrainz_id()
-      [%{artist_name: "Some Artist", track_count: 5}, ...]
-
   """
+  @spec get_artists_missing_musicbrainz_id(keyword()) :: [map()]
   def get_artists_missing_musicbrainz_id(opts \\ []) do
     limit = Keyword.get(opts, :limit)
 
@@ -395,13 +370,8 @@ defmodule MusicLibrary.ScrobbleActivity do
   Gets albums with missing MusicBrainz IDs, grouped by album title and artist.
 
   Returns a list of maps with album title, artist name, and track count.
-
-  ## Examples
-
-      iex> get_albums_missing_musicbrainz_id()
-      [%{album_title: "Some Album", artist_name: "Some Artist", track_count: 3}, ...]
-
   """
+  @spec get_albums_missing_musicbrainz_id(keyword()) :: [map()]
   def get_albums_missing_musicbrainz_id(opts \\ []) do
     limit = Keyword.get(opts, :limit)
 

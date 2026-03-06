@@ -6,6 +6,7 @@ defmodule MusicLibrary.RecordSets do
 
   @pagination Application.compile_env!(:music_library, :pagination)
 
+  @spec list_record_sets(MusicLibrary.Types.pagination_opts()) :: [RecordSet.t()]
   def list_record_sets(opts \\ []) do
     offset = Keyword.get(opts, :offset, 0)
     limit = Keyword.get(opts, :limit, @pagination[:default_page_size])
@@ -19,15 +20,18 @@ defmodule MusicLibrary.RecordSets do
     |> Repo.all()
   end
 
+  @spec count_record_sets() :: non_neg_integer()
   def count_record_sets do
     Repo.aggregate(RecordSet, :count)
   end
 
+  @spec count_record_sets(String.t()) :: non_neg_integer()
   def count_record_sets(query) do
     record_sets_search_query(query)
     |> Repo.aggregate(:count)
   end
 
+  @spec search_record_sets(String.t(), MusicLibrary.Types.pagination_opts()) :: [RecordSet.t()]
   def search_record_sets(query, opts \\ []) do
     offset = Keyword.get(opts, :offset, 0)
     limit = Keyword.get(opts, :limit, @pagination[:default_page_size])
@@ -49,12 +53,14 @@ defmodule MusicLibrary.RecordSets do
     order_by(query, [rs], desc: rs.updated_at)
   end
 
+  @spec get_record_set!(String.t()) :: RecordSet.t()
   def get_record_set!(id) do
     RecordSet
     |> Repo.get!(id)
     |> Repo.preload(items: :record)
   end
 
+  @spec create_record_set(map()) :: {:ok, RecordSet.t()} | {:error, Ecto.Changeset.t()}
   def create_record_set(attrs) do
     %RecordSet{}
     |> RecordSet.changeset(attrs)
@@ -65,6 +71,8 @@ defmodule MusicLibrary.RecordSets do
     end
   end
 
+  @spec update_record_set(RecordSet.t(), map()) ::
+          {:ok, RecordSet.t()} | {:error, Ecto.Changeset.t()}
   def update_record_set(%RecordSet{} = record_set, attrs) do
     record_set
     |> RecordSet.changeset(attrs)
@@ -75,14 +83,18 @@ defmodule MusicLibrary.RecordSets do
     end
   end
 
+  @spec delete_record_set(RecordSet.t()) :: {:ok, RecordSet.t()} | {:error, Ecto.Changeset.t()}
   def delete_record_set(%RecordSet{} = record_set) do
     Repo.delete(record_set)
   end
 
+  @spec change_record_set(RecordSet.t(), map()) :: Ecto.Changeset.t()
   def change_record_set(%RecordSet{} = record_set, attrs \\ %{}) do
     RecordSet.changeset(record_set, attrs)
   end
 
+  @spec add_record_to_set(RecordSet.t(), String.t()) ::
+          {:ok, RecordSet.t()} | {:error, Ecto.Changeset.t()}
   def add_record_to_set(%RecordSet{} = record_set, record_id) do
     next_position =
       from(i in RecordSetItem,
@@ -104,6 +116,7 @@ defmodule MusicLibrary.RecordSets do
     end
   end
 
+  @spec remove_record_from_set(RecordSet.t(), String.t()) :: {:ok, RecordSet.t()}
   def remove_record_from_set(%RecordSet{} = record_set, record_id) do
     item =
       from(i in RecordSetItem,
@@ -118,6 +131,7 @@ defmodule MusicLibrary.RecordSets do
     {:ok, get_record_set!(record_set.id)}
   end
 
+  @spec reorder_records_in_set(RecordSet.t(), [String.t()]) :: {:ok, RecordSet.t()}
   def reorder_records_in_set(%RecordSet{} = record_set, ordered_record_ids)
       when is_list(ordered_record_ids) do
     Repo.transaction(fn ->
@@ -134,6 +148,7 @@ defmodule MusicLibrary.RecordSets do
     {:ok, get_record_set!(record_set.id)}
   end
 
+  @spec move_record_in_set(RecordSet.t(), String.t(), :up | :down) :: {:ok, RecordSet.t()}
   def move_record_in_set(%RecordSet{} = record_set, record_id, direction)
       when direction in [:up, :down] do
     items =
@@ -169,6 +184,7 @@ defmodule MusicLibrary.RecordSets do
     {:ok, get_record_set!(record_set.id)}
   end
 
+  @spec list_record_sets_for_record(String.t()) :: [RecordSet.t()]
   def list_record_sets_for_record(record_id) do
     from(rs in RecordSet,
       join: i in RecordSetItem,

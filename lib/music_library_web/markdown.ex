@@ -12,6 +12,7 @@ defmodule MusicLibraryWeb.Markdown do
 
   Double square brackets are converted to search links before the markdown is processed.
   """
+  @spec to_html(String.t() | nil) :: String.t()
   def to_html(markdown_text) when is_binary(markdown_text) do
     markdown_text
     |> process_double_bracket_links()
@@ -41,6 +42,7 @@ defmodule MusicLibraryWeb.Markdown do
       iex> MusicLibraryWeb.Markdown.process_double_bracket_links(~s|[[genre:"psychedelic rock"]]|)
       ~s|[psychedelic rock](/collection?query=genre%3A%22psychedelic+rock%22)|
   """
+  @spec process_double_bracket_links(String.t()) :: String.t()
   def process_double_bracket_links(text) do
     ~r/\[\[([^\]]+)\]\]/
     |> Regex.replace(text, fn _match, content ->

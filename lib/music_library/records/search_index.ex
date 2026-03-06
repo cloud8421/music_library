@@ -31,4 +31,6 @@ defmodule MusicLibrary.Records.SearchIndex do
 
     timestamps(type: :utc_datetime)
   end
+
+  @type t :: %__MODULE__{}
 end

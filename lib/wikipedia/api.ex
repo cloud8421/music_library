@@ -5,6 +5,8 @@ defmodule Wikipedia.API do
 
   require Logger
 
+  @spec get_wikipedia_title(String.t(), Wikipedia.Config.t()) ::
+          {:ok, String.t() | nil} | {:error, term()}
   def get_wikipedia_title(wikidata_id, config) do
     request =
       Req.new(
@@ -41,6 +43,7 @@ defmodule Wikipedia.API do
     end
   end
 
+  @spec get_article_summary(String.t(), Wikipedia.Config.t()) :: {:ok, map()} | {:error, term()}
   def get_article_summary(title, config) do
     request =
       Req.new(
@@ -65,6 +68,8 @@ defmodule Wikipedia.API do
     end
   end
 
+  @spec get_article_extract(String.t(), Wikipedia.Config.t()) ::
+          {:ok, String.t() | nil} | {:error, term()}
   def get_article_extract(title, config) do
     request =
       Req.new(

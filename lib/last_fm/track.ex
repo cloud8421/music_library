@@ -35,6 +35,7 @@ defmodule LastFm.Track do
     field :last_fm_data, :map, default: %{}
   end
 
+  @spec from_api_response([map()]) :: [t()]
   def from_api_response(raw_tracks) do
     raw_tracks
     |> Enum.reject(&now_playing?/1)
@@ -79,6 +80,7 @@ defmodule LastFm.Track do
     end
   end
 
+  @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(track, attrs) do
     track
     |> cast(attrs, [

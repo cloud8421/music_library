@@ -3,6 +3,9 @@ defmodule MusicLibrary.Batch do
 
   require Logger
 
+  @spec run_on_all(Ecto.Queryable.t(), String.t(), (struct() ->
+                                                      :ok | {:ok, term()} | {:error, term()})) ::
+          {:ok, [String.t()]}
   def run_on_all(queryable, label, fun) do
     stream = Repo.stream(queryable, max_rows: 50)
 

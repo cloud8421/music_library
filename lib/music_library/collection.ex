@@ -8,6 +8,7 @@ defmodule MusicLibrary.Collection do
 
   @pagination Application.compile_env!(:music_library, :pagination)
 
+  @spec search_records(String.t(), MusicLibrary.Types.pagination_opts()) :: [SearchIndex.t()]
   def search_records(query, opts \\ []) do
     limit = Keyword.get(opts, :limit, @pagination[:default_page_size])
     offset = Keyword.get(opts, :offset, 0)
@@ -16,10 +17,12 @@ defmodule MusicLibrary.Collection do
     Records.search_records(base_search(), query, limit: limit, offset: offset, order: order)
   end
 
+  @spec search_records_count(String.t()) :: non_neg_integer()
   def search_records_count(query) do
     Records.search_records_count(base_search(), query)
   end
 
+  @spec count_records_by_format() :: [{String.t(), non_neg_integer()}]
   def count_records_by_format do
     q =
       from r in Record,
@@ -31,6 +34,7 @@ defmodule MusicLibrary.Collection do
     Repo.all(q)
   end
 
+  @spec count_records_by_type() :: [{String.t(), non_neg_integer()}]
   def count_records_by_type do
     q =
       from r in Record,
@@ -42,6 +46,7 @@ defmodule MusicLibrary.Collection do
     Repo.all(q)
   end
 
+  @spec get_records_on_this_day(Date.t()) :: [SearchIndex.t()]
   def get_records_on_this_day(date \\ Date.utc_today()) do
     month_day = Calendar.strftime(date, "%m-%d")
 
@@ -55,6 +60,7 @@ defmodule MusicLibrary.Collection do
     Repo.all(q)
   end
 
+  @spec get_latest_record() :: SearchIndex.t() | nil
   def get_latest_record do
     q =
       from r in Record,
@@ -66,6 +72,7 @@ defmodule MusicLibrary.Collection do
     Repo.one(q)
   end
 
+  @spec get_latest_record!() :: SearchIndex.t()
   def get_latest_record! do
     q =
       from r in Record,
@@ -77,6 +84,7 @@ defmodule MusicLibrary.Collection do
     Repo.one!(q)
   end
 
+  @spec get_random_record!() :: SearchIndex.t()
   def get_random_record! do
     q =
       from r in Record,
@@ -88,6 +96,7 @@ defmodule MusicLibrary.Collection do
     Repo.one!(q)
   end
 
+  @spec count_records_by_artist(keyword()) :: [map()]
   def count_records_by_artist(opts \\ []) do
     limit = Keyword.get(opts, :limit, @pagination[:stats_limit])
 
@@ -106,6 +115,7 @@ defmodule MusicLibrary.Collection do
     Repo.all(q)
   end
 
+  @spec count_records_by_genre(keyword()) :: [{String.t(), non_neg_integer()}]
   def count_records_by_genre(opts \\ []) do
     limit = Keyword.get(opts, :limit, @pagination[:stats_limit])
 
@@ -122,6 +132,7 @@ defmodule MusicLibrary.Collection do
     Repo.all(q)
   end
 
+  @spec collected_releases_query() :: Ecto.Query.t()
   def collected_releases_query do
     from rr in RecordRelease,
       where: not is_nil(rr.purchased_at),

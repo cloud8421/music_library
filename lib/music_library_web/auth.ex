@@ -5,10 +5,12 @@ defmodule MusicLibraryWeb.Auth do
   import Phoenix.Controller, only: [redirect: 2]
   import Plug.Conn
 
+  @spec correct_login_password?(String.t()) :: boolean()
   def correct_login_password?(password) do
     Plug.Crypto.secure_compare(login_password(), password)
   end
 
+  @spec require_api_token(Plug.Conn.t(), keyword()) :: Plug.Conn.t()
   def require_api_token(conn, _opts) do
     with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
          true <- Plug.Crypto.secure_compare(api_token(), token) do
@@ -31,6 +33,7 @@ defmodule MusicLibraryWeb.Auth do
     |> Keyword.fetch!(:api_token)
   end
 
+  @spec require_logged_in(Plug.Conn.t(), keyword()) :: Plug.Conn.t()
   def require_logged_in(conn, _opts) do
     if get_session(conn, :logged_in) do
       conn

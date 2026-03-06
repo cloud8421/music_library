@@ -41,6 +41,7 @@ defmodule SqliteVec.Float32 do
       iex> SqliteVec.Float32.new(Nx.tensor([1, 2], type: :f32))
       %SqliteVec.Float32{data: <<1.0::float-32-native, 2.0::float-32-native>>}
   """
+  @spec new(t() | [number()]) :: t()
   def new(vector_or_list_or_tensor)
 
   def new(%SqliteVec.Float32{} = vector) do
@@ -74,6 +75,7 @@ defmodule SqliteVec.Float32 do
   @doc """
   Creates a new vector from its binary representation
   """
+  @spec from_binary(binary()) :: t()
   def from_binary(binary) when is_binary(binary) do
     %SqliteVec.Float32{data: binary}
   end
@@ -81,6 +83,7 @@ defmodule SqliteVec.Float32 do
   @doc """
   Converts the vector to its binary representation
   """
+  @spec to_binary(t()) :: binary()
   def to_binary(vector) when is_struct(vector, SqliteVec.Float32) do
     vector.data
   end
@@ -88,6 +91,7 @@ defmodule SqliteVec.Float32 do
   @doc """
   Converts the vector to a list
   """
+  @spec to_list(t()) :: [float()]
   def to_list(vector) when is_struct(vector, SqliteVec.Float32) do
     <<bin::binary>> = vector.data
 

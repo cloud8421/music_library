@@ -12,6 +12,9 @@ defmodule MusicLibrary.Notes.Note do
     timestamps(type: :utc_datetime)
   end
 
+  @type t :: %__MODULE__{}
+
+  @spec changeset(t() | Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
   def changeset(note, attrs) do
     note
     |> cast(attrs, [

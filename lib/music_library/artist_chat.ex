@@ -4,6 +4,8 @@ defmodule MusicLibrary.ArtistChat do
   alias MusicLibrary.Artists.ArtistInfo
 
   @impl true
+  @spec stream_response([map()], {map(), ArtistInfo.t()}, (String.t() -> any())) ::
+          :ok | {:error, term()}
   def stream_response(messages, {artist, artist_info}, callback) do
     instructions = build_instructions(artist, artist_info)
 

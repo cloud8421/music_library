@@ -14,10 +14,19 @@ defmodule MusicLibrary.ListeningStats do
 
   @pagination Application.compile_env!(:music_library, :pagination)
 
+  @type period_opts :: [
+          period: atom(),
+          limit: non_neg_integer(),
+          current_time: DateTime.t(),
+          timezone: String.t()
+        ]
+
+  @spec scrobble_count() :: non_neg_integer()
   def scrobble_count do
     Repo.aggregate(Track, :count, :scrobbled_at_uts)
   end
 
+  @spec recent_activity(String.t(), non_neg_integer()) :: map()
   def recent_activity(timezone, limit \\ 100) do
     # When we get recent tracks, we need to:
     #
@@ -81,6 +90,7 @@ defmodule MusicLibrary.ListeningStats do
     }
   end
 
+  @spec localize_scrobbled_at(integer(), String.t()) :: String.t()
   def localize_scrobbled_at(uts, timezone) do
     ldt =
       uts
@@ -94,6 +104,7 @@ defmodule MusicLibrary.ListeningStats do
   Gets top albums for the specified time periods (7, 30, 90, 365 days) and all
   time. Returns a list of maps with album information and play counts.
   """
+  @spec get_top_albums_by_period(period_opts()) :: [map()]
   def get_top_albums_by_period(opts) do
     case Keyword.get(opts, :period, :last_7_days) do
       :all_time -> get_top_albums(opts)
@@ -107,6 +118,7 @@ defmodule MusicLibrary.ListeningStats do
   @doc """
   Gets top artists for a time period (7, 30, 90, 365 days) and all time.
   """
+  @spec get_top_artists_by_period(period_opts()) :: [map()]
   def get_top_artists_by_period(opts) do
     case Keyword.get(opts, :period, :last_7_days) do
       :all_time -> get_top_artists(opts)
@@ -121,6 +133,7 @@ defmodule MusicLibrary.ListeningStats do
   Gets the top albums by scrobble count across all time.
   Returns a list of maps with album information and play counts.
   """
+  @spec get_top_albums(period_opts()) :: [map()]
   def get_top_albums(opts) do
     limit = Keyword.get(opts, :limit, @pagination[:top_items_limit])
 
@@ -133,6 +146,7 @@ defmodule MusicLibrary.ListeningStats do
   Gets the top albums by scrobble count for the given number of days.
   Returns a list of maps with album information and play counts.
   """
+  @spec get_top_albums_by_days(pos_integer(), period_opts()) :: [map()]
   def get_top_albums_by_days(days, opts) do
     limit = Keyword.get(opts, :limit, @pagination[:top_items_limit])
     cutoff_timestamp = cutoff_timestamp(days, opts)
@@ -147,6 +161,7 @@ defmodule MusicLibrary.ListeningStats do
   Gets the top artists by scrobble count across all time.
   Returns a list of maps with artist information and play counts.
   """
+  @spec get_top_artists(period_opts()) :: [map()]
   def get_top_artists(opts) do
     limit = Keyword.get(opts, :limit, @pagination[:top_items_limit])
 
@@ -159,6 +174,7 @@ defmodule MusicLibrary.ListeningStats do
   Gets the top artists by scrobble count for the given number of days.
   Returns a list of maps with artist information and play counts.
   """
+  @spec get_top_artists_by_days(pos_integer(), period_opts()) :: [map()]
   def get_top_artists_by_days(days, opts) do
     limit = Keyword.get(opts, :limit, @pagination[:top_items_limit])
     cutoff_timestamp = cutoff_timestamp(days, opts)

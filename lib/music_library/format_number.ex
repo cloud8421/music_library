@@ -29,6 +29,7 @@ defmodule MusicLibrary.FormatNumber do
   Numbers less than 1,000 are returned as-is.
   Numbers 1,000 and above are formatted with appropriate suffix and one decimal place.
   """
+  @spec to_compact(integer()) :: String.t()
   def to_compact(number) when is_integer(number) and number < 1000 do
     Integer.to_string(number)
   end

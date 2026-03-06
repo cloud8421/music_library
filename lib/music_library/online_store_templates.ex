@@ -8,6 +8,7 @@ defmodule MusicLibrary.OnlineStoreTemplates do
   alias MusicLibrary.OnlineStoreTemplates.OnlineStoreTemplate
   alias MusicLibrary.Repo
 
+  @spec list_enabled_templates() :: [OnlineStoreTemplate.t()]
   def list_enabled_templates do
     OnlineStoreTemplate
     |> where([t], t.enabled == true)
@@ -15,34 +16,43 @@ defmodule MusicLibrary.OnlineStoreTemplates do
     |> Repo.all()
   end
 
+  @spec list_templates() :: [OnlineStoreTemplate.t()]
   def list_templates do
     OnlineStoreTemplate
     |> order_by([t], fragment("? COLLATE NOCASE ASC", t.name))
     |> Repo.all()
   end
 
+  @spec get_template!(String.t()) :: OnlineStoreTemplate.t()
   def get_template!(id), do: Repo.get!(OnlineStoreTemplate, id)
 
+  @spec create_template(map()) :: {:ok, OnlineStoreTemplate.t()} | {:error, Ecto.Changeset.t()}
   def create_template(attrs \\ %{}) do
     %OnlineStoreTemplate{}
     |> OnlineStoreTemplate.changeset(attrs)
     |> Repo.insert()
   end
 
+  @spec update_template(OnlineStoreTemplate.t(), map()) ::
+          {:ok, OnlineStoreTemplate.t()} | {:error, Ecto.Changeset.t()}
   def update_template(%OnlineStoreTemplate{} = template, attrs) do
     template
     |> OnlineStoreTemplate.changeset(attrs)
     |> Repo.update()
   end
 
+  @spec delete_template(OnlineStoreTemplate.t()) ::
+          {:ok, OnlineStoreTemplate.t()} | {:error, Ecto.Changeset.t()}
   def delete_template(%OnlineStoreTemplate{} = template) do
     Repo.delete(template)
   end
 
+  @spec change_template(OnlineStoreTemplate.t(), map()) :: Ecto.Changeset.t()
   def change_template(%OnlineStoreTemplate{} = template, attrs \\ %{}) do
     OnlineStoreTemplate.changeset(template, attrs)
   end
 
+  @spec generate_url(OnlineStoreTemplate.t(), map()) :: String.t()
   def generate_url(template, record) do
     artists_string = Enum.map_join(record.artists, " ", & &1.name)
     format_string = Atom.to_string(record.format)

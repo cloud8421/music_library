@@ -25,6 +25,7 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRule do
   end
 
   @doc false
+  @spec changeset(t() | Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
   def changeset(scrobble_rule, attrs) do
     scrobble_rule
     |> cast(attrs, [:type, :match_value, :target_musicbrainz_id, :enabled, :description])

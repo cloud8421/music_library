@@ -5,6 +5,7 @@ defmodule MusicLibrary.Assets.Transform do
   @type t :: %__MODULE__{}
   @type payload :: String.t()
 
+  @spec new(map()) :: t()
   def new(attrs \\ %{}), do: struct!(__MODULE__, attrs)
 
   @doc """

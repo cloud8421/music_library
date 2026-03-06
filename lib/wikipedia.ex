@@ -1,6 +1,7 @@
 defmodule Wikipedia do
   alias Wikipedia.API
 
+  @spec get_artist_summary(String.t()) :: {:ok, map()} | {:error, :no_english_wikipedia | term()}
   def get_artist_summary(wikidata_id) do
     config = wikipedia_config()
 

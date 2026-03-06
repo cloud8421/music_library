@@ -9,13 +9,16 @@ defmodule MusicLibrary.Assets.Image do
   @default_size 2000
   @default_format "image/jpeg"
 
+  @spec fallback_data() :: binary()
   def fallback_data, do: unquote(fallback_data)
 
+  @spec resize(binary(), pos_integer(), String.t()) :: {:ok, binary()} | {:error, term()}
   def resize(cover_data, size \\ @default_size, format \\ @default_format) do
     {:ok, thumb} = Operation.thumbnail_buffer(cover_data, size)
     Image.write_to_buffer(thumb, extension(format))
   end
 
+  @spec convert(binary(), String.t(), String.t()) :: {:ok, binary()}
   def convert(cover_data, data_format, target_format) do
     if data_format == target_format do
       {:ok, cover_data}

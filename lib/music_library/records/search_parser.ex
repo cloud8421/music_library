@@ -7,6 +7,17 @@ defmodule MusicLibrary.Records.SearchParser do
   edge cases I haven't thought about - not an expert in parsing.
   """
 
+  @type search_result :: %{
+          optional(:query) => String.t(),
+          optional(:artist) => String.t(),
+          optional(:album) => String.t(),
+          optional(:mbid) => String.t(),
+          optional(:genre) => String.t(),
+          optional(:format) => atom(),
+          optional(:type) => atom(),
+          optional(:purchase_year) => integer()
+        }
+
   import NimbleParsec
 
   word = utf8_string([not: ?\s, not: ?,], min: 1)
@@ -99,6 +110,7 @@ defmodule MusicLibrary.Records.SearchParser do
     iex> MusicLibrary.Records.SearchParser.parse("purchase_year:2024")
     {:ok, %{purchase_year: 2024}}
   """
+  @spec parse(String.t()) :: {:ok, search_result()}
   def parse(""), do: {:ok, %{query: ""}}
 
   def parse(query) do
@@ -107,11 +119,13 @@ defmodule MusicLibrary.Records.SearchParser do
     {:ok, normalize(result)}
   end
 
+  @spec resolve_format(String.t()) :: atom() | nil
   def resolve_format(format) do
     Ecto.Enum.mappings(MusicLibrary.Records.Record, :format)
     |> Enum.find_value(fn {key, value} -> if value == format, do: key end)
   end
 
+  @spec resolve_type(String.t()) :: atom() | nil
   def resolve_type(type) do
     Ecto.Enum.mappings(MusicLibrary.Records.Record, :type)
     |> Enum.find_value(fn {key, value} -> if value == type, do: key end)

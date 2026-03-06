@@ -1,6 +1,12 @@
 defmodule MusicBrainz.ExternalLink do
   defstruct [:name, :url]
 
+  @type t :: %__MODULE__{
+          name: atom(),
+          url: String.t()
+        }
+
+  @spec external_links(map(), map() | String.t() | nil) :: [t()] | [String.t()]
   def external_links(musicbrainz_data, patterns) when is_map(patterns) do
     Enum.reduce(patterns, [], fn {name, pattern}, acc ->
       case external_links(musicbrainz_data, pattern) do

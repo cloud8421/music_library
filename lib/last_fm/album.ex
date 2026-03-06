@@ -13,6 +13,7 @@ defmodule LastFm.Album do
     field :title, :string
   end
 
+  @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(album, attrs) do
     album
     |> cast(attrs, [:musicbrainz_id, :title])

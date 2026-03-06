@@ -17,6 +17,9 @@ defmodule MusicLibrary.RecordSets.RecordSetItem do
     timestamps(type: :utc_datetime)
   end
 
+  @type t :: %__MODULE__{}
+
+  @spec changeset(t() | Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
   def changeset(record_set_item, attrs) do
     record_set_item
     |> cast(attrs, [:position])

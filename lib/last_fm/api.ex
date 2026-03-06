@@ -4,6 +4,9 @@ defmodule LastFm.API do
 
   require Logger
 
+  @type id_or_name :: {:musicbrainz_id, String.t()} | {:name, String.t()}
+
+  @spec get_session(String.t(), LastFm.Config.t()) :: {:ok, Session.t()} | {:error, term()}
   def get_session(token, config) do
     params =
       %{
@@ -24,6 +27,7 @@ defmodule LastFm.API do
     |> get_request()
   end
 
+  @spec scrobble([map()], String.t(), LastFm.Config.t()) :: {:ok, map()} | {:error, term()}
   def scrobble(tracks, session_key, config) do
     params =
       %{"api_key" => config.api_key, "method" => "track.scrobble", "sk" => session_key}
@@ -51,6 +55,7 @@ defmodule LastFm.API do
     |> post_request()
   end
 
+  @spec get_recent_tracks(keyword(), LastFm.Config.t()) :: {:ok, [Track.t()]} | {:error, term()}
   def get_recent_tracks(opts \\ [], config) do
     to_uts = Keyword.get(opts, :to_uts)
     limit = Keyword.get(opts, :limit, 100)
@@ -69,6 +74,7 @@ defmodule LastFm.API do
     |> get_request()
   end
 
+  @spec get_artist_info(id_or_name(), LastFm.Config.t()) :: {:ok, Artist.t()} | {:error, term()}
   def get_artist_info(id_or_name_option, config) do
     params =
       config
@@ -83,6 +89,8 @@ defmodule LastFm.API do
     |> get_request()
   end
 
+  @spec get_similar_artists(id_or_name(), LastFm.Config.t()) ::
+          {:ok, [Artist.t()]} | {:error, term()}
   def get_similar_artists(id_or_name_option, config) do
     params =
       config
@@ -97,6 +105,8 @@ defmodule LastFm.API do
     |> get_request()
   end
 
+  @spec get_artist_tags(id_or_name(), LastFm.Config.t()) ::
+          {:ok, [{String.t(), integer()}]} | {:error, term()}
   def get_artist_tags(id_or_name_option, config) do
     params =
       config

@@ -20,6 +20,9 @@ defmodule Req.RateLimiter do
   Creates the ETS table used to track request timestamps.
   Call once at application startup.
   """
+  @type attach_opts :: [name: atom(), cooldown: non_neg_integer()]
+
+  @spec new() :: :ets.table()
   def new do
     :ets.new(@table, [:set, :public, :named_table])
   end
@@ -33,6 +36,7 @@ defmodule Req.RateLimiter do
     * `:cooldown` - minimum milliseconds between requests
 
   """
+  @spec attach(Req.Request.t(), attach_opts()) :: Req.Request.t()
   def attach(request, opts) do
     name = Keyword.fetch!(opts, :name)
     cooldown = Keyword.fetch!(opts, :cooldown)

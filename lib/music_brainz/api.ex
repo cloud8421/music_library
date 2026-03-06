@@ -206,6 +206,7 @@ defmodule MusicBrainz.API do
         }
   """
 
+  @spec get_release_group(String.t(), MusicBrainz.Config.t()) :: {:ok, map()} | {:error, term()}
   def get_release_group(id, config) do
     config
     |> new_request()
@@ -282,6 +283,7 @@ defmodule MusicBrainz.API do
         "title": "Clark (Soundtrack From the Netflix Series)"
       }
   """
+  @spec get_release(String.t(), MusicBrainz.Config.t()) :: {:ok, map()} | {:error, term()}
   def get_release(id, config) do
     config
     |> new_request()
@@ -295,6 +297,8 @@ defmodule MusicBrainz.API do
     |> get_request()
   end
 
+  @spec get_releases(String.t(), keyword(), MusicBrainz.Config.t()) ::
+          {:ok, map()} | {:error, term()}
   def get_releases(release_group_id, opts, config) do
     Keyword.validate!(opts, [:limit, :offset])
 
@@ -314,6 +318,8 @@ defmodule MusicBrainz.API do
     |> get_request()
   end
 
+  @spec search_release_by_barcode(String.t(), MusicBrainz.Config.t()) ::
+          {:ok, [ReleaseSearchResult.t()]} | {:error, term()}
   def search_release_by_barcode(barcode, config) do
     config
     |> new_request()
@@ -430,6 +436,9 @@ defmodule MusicBrainz.API do
         ]
       }
   """
+  @spec search_release_group(String.t(), keyword(), MusicBrainz.Config.t()) ::
+          {:ok, %{total_count: non_neg_integer(), release_groups: [ReleaseGroupSearchResult.t()]}}
+          | {:error, term()}
   def search_release_group(query, opts, config) do
     Keyword.validate!(opts, [:limit, :offset])
 
@@ -451,6 +460,7 @@ defmodule MusicBrainz.API do
     |> get_request()
   end
 
+  @spec get_artist(String.t(), MusicBrainz.Config.t()) :: {:ok, Artist.t()} | {:error, term()}
   def get_artist(musicbrainz_id, config) do
     config
     |> new_request()
@@ -468,6 +478,8 @@ defmodule MusicBrainz.API do
   @doc """
   Uses the [cover art](https://musicbrainz.org/doc/Cover_Art_Archive/API) endpoint with the release group id to get the cover image.
   """
+  @spec get_cover_art({:musicbrainz_id, String.t()} | {:url, String.t()}, MusicBrainz.Config.t()) ::
+          {:ok, binary()} | {:error, :cover_not_available}
   def get_cover_art({:musicbrainz_id, musicbrainz_id}, config) do
     url = "https://coverartarchive.org/release-group/#{musicbrainz_id}/front"
 

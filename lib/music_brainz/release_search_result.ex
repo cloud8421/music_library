@@ -4,6 +4,17 @@ defmodule MusicBrainz.ReleaseSearchResult do
   @enforce_keys [:id, :title, :release_group, :artists, :date, :barcode, :media]
   defstruct [:id, :title, :release_group, :artists, :date, :barcode, :media]
 
+  @type t :: %__MODULE__{
+          id: String.t(),
+          title: String.t(),
+          release_group: map() | nil,
+          artists: String.t(),
+          date: String.t() | nil,
+          barcode: String.t() | nil,
+          media: [map()]
+        }
+
+  @spec from_api_response(map()) :: t()
   def from_api_response(r) do
     %__MODULE__{
       id: r["id"],
@@ -54,6 +65,8 @@ defmodule MusicBrainz.ReleaseSearchResult do
       :multi
 
   """
+  @spec format(t()) ::
+          :cd | :vinyl | :dvd | :blu_ray | :digital_download | :vhs | :multi | :unknown
   def format(release_search_result) do
     sorted_frequencies =
       release_search_result.media
@@ -74,6 +87,7 @@ defmodule MusicBrainz.ReleaseSearchResult do
     }
   end
 
+  @spec parse_media([map()]) :: [map()]
   def parse_media(media) do
     Enum.map(media, fn m ->
       %{

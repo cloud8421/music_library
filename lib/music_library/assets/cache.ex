@@ -1,13 +1,16 @@
 defmodule MusicLibrary.Assets.Cache do
+  @spec new() :: :ets.table()
   def new do
     :ets.new(__MODULE__, [:named_table, :public, :compressed, read_concurrency: true])
   end
 
+  @spec set(String.t(), String.t(), binary()) :: true
   def set(payload, format, content) do
     inserted_at = DateTime.utc_now() |> DateTime.to_unix()
     :ets.insert(__MODULE__, {{payload, format}, inserted_at, content})
   end
 
+  @spec get(String.t(), String.t()) :: {:found, binary()} | :not_found
   def get(payload, format) do
     case :ets.lookup(__MODULE__, {payload, format}) do
       [{{^payload, ^format}, _inserted_at, content}] -> {:found, content}
@@ -15,6 +18,7 @@ defmodule MusicLibrary.Assets.Cache do
     end
   end
 
+  @spec total_content_size() :: non_neg_integer()
   def total_content_size do
     :ets.foldl(
       fn {_key, _inserted_at, content}, acc -> acc + byte_size(content) end,
@@ -23,6 +27,7 @@ defmodule MusicLibrary.Assets.Cache do
     )
   end
 
+  @spec prune(non_neg_integer()) :: non_neg_integer()
   def prune(older_than_seconds) do
     threshold =
       DateTime.utc_now()

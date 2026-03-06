@@ -28,6 +28,7 @@ defmodule LastFm.Artist do
     field :image_data_hash, :string
   end
 
+  @spec from_api_response(map()) :: t()
   def from_api_response(api_response) do
     %__MODULE__{
       musicbrainz_id: api_response["mbid"],
@@ -41,6 +42,7 @@ defmodule LastFm.Artist do
     }
   end
 
+  @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(artist, attrs) do
     artist
     |> cast(attrs, [
@@ -56,6 +58,7 @@ defmodule LastFm.Artist do
     |> validate_required([:name])
   end
 
+  @spec events_url(t()) :: String.t()
   def events_url(artist) do
     artist.base_url <> "/+events"
   end

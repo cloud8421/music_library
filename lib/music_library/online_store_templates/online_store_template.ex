@@ -14,7 +14,10 @@ defmodule MusicLibrary.OnlineStoreTemplates.OnlineStoreTemplate do
     timestamps(type: :utc_datetime)
   end
 
+  @type t :: %__MODULE__{}
+
   @doc false
+  @spec changeset(t() | Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
   def changeset(template, attrs) do
     template
     |> cast(attrs, [:name, :description, :url_template, :enabled])

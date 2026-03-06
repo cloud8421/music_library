@@ -9,6 +9,8 @@ defmodule MusicLibraryWeb.ErrorMessages do
 
   use Gettext, backend: MusicLibraryWeb.Gettext
 
+  @spec friendly_message(term()) :: String.t()
+
   # App error atoms
   def friendly_message(:cover_not_available), do: gettext("cover art is not available")
   def friendly_message(:no_duration), do: gettext("release has no track duration information")

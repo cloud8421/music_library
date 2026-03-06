@@ -5,6 +5,7 @@ defmodule Discogs.API do
 
   require Logger
 
+  @spec get_artist(integer() | String.t(), Discogs.Config.t()) :: {:ok, map()} | {:error, term()}
   def get_artist(id, config) do
     config
     |> new_request()
@@ -15,6 +16,8 @@ defmodule Discogs.API do
     |> get_request()
   end
 
+  @spec get_artist_image(String.t(), Discogs.Config.t()) ::
+          {:ok, binary()} | {:error, :cover_not_available}
   def get_artist_image(url, config) do
     case Req.new(url: url, max_retries: 1, user_agent: config.user_agent)
          |> Req.Request.merge_options(config.req_options)

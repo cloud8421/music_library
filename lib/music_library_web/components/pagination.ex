@@ -162,6 +162,7 @@ defmodule MusicLibraryWeb.Components.Pagination do
     """
   end
 
+  @spec page_to_offset(pos_integer(), pos_integer()) :: non_neg_integer()
   def page_to_offset(page, per_page) do
     (page - 1) * per_page
   end

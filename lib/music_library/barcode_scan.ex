@@ -2,6 +2,7 @@ defmodule MusicLibrary.BarcodeScan do
   alias MusicLibrary.BarcodeScan.Result
   alias MusicLibrary.Records
 
+  @spec scan(String.t()) :: {:ok, Result.t()} | {:error, term()}
   def scan(number) do
     case MusicBrainz.search_release_by_barcode(number) do
       {:ok, [best_match_release | _other_releases]} ->
@@ -26,6 +27,7 @@ defmodule MusicLibrary.BarcodeScan do
     end
   end
 
+  @spec import_results([Result.t()], DateTime.t()) :: [{String.t(), term()}]
   def import_results(scan_results, current_time) do
     Enum.reduce(scan_results, [], fn scan_result, errors ->
       case import_result(scan_result, current_time) do

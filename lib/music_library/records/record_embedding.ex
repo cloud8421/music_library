@@ -16,6 +16,9 @@ defmodule MusicLibrary.Records.RecordEmbedding do
     timestamps(type: :utc_datetime)
   end
 
+  @type t :: %__MODULE__{}
+
+  @spec changeset(t() | Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
   def changeset(record_embedding, attrs) do
     record_embedding
     |> cast(attrs, [:record_id, :embedding, :text_representation])

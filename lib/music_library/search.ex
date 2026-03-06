@@ -16,6 +16,8 @@ defmodule MusicLibrary.Search do
 
   @pagination Application.compile_env!(:music_library, :pagination)
 
+  @type search_opts :: [limit: non_neg_integer()]
+
   @doc """
   Performs a universal search across all entity types.
 
@@ -23,10 +25,8 @@ defmodule MusicLibrary.Search do
   - :collection - Records in the collection
   - :wishlist - Records in the wishlist
   - :artists - Artists
-
-  Options:
-  - :limit - Limit per category (default: 5)
   """
+  @spec universal_search(String.t(), search_opts()) :: map()
   def universal_search(query, opts \\ []) do
     limit = Keyword.get(opts, :limit, @pagination[:search_preview_limit])
 
@@ -41,6 +41,7 @@ defmodule MusicLibrary.Search do
   @doc """
   Searches records in the collection (purchased records).
   """
+  @spec search_collection(String.t(), non_neg_integer()) :: [map()]
   def search_collection(query, limit \\ @pagination[:search_preview_limit]) do
     Collection.search_records(query, limit: limit)
   end
@@ -48,6 +49,7 @@ defmodule MusicLibrary.Search do
   @doc """
   Searches records in the wishlist (unpurchased records).
   """
+  @spec search_wishlist(String.t(), non_neg_integer()) :: [map()]
   def search_wishlist(query, limit \\ @pagination[:search_preview_limit]) do
     Wishlist.search_records(query, limit: limit)
   end
@@ -58,6 +60,7 @@ defmodule MusicLibrary.Search do
   Searches across artist names in the artist_records table,
   returning distinct artists that match the query.
   """
+  @spec search_artists(String.t(), non_neg_integer()) :: [map()]
   def search_artists(query, limit \\ @pagination[:search_preview_limit]) do
     case String.trim(query) do
       "" ->
@@ -86,9 +89,10 @@ defmodule MusicLibrary.Search do
 
   Returns a map with counts for each category:
   - :collection_count
-  - :wishlist_count  
+  - :wishlist_count
   - :artists_count
   """
+  @spec search_counts(String.t()) :: map()
   def search_counts(query) do
     %{
       collection_count: Collection.search_records_count(query),
@@ -101,6 +105,7 @@ defmodule MusicLibrary.Search do
   @doc """
   Searches record sets by name, description, and contained records.
   """
+  @spec search_record_sets(String.t(), non_neg_integer()) :: [map()]
   def search_record_sets(query, limit \\ @pagination[:search_preview_limit]) do
     RecordSets.search_record_sets(query, limit: limit)
   end
@@ -108,6 +113,7 @@ defmodule MusicLibrary.Search do
   @doc """
   Gets the count of artists matching the search query.
   """
+  @spec search_artists_count(String.t()) :: non_neg_integer()
   def search_artists_count(query) do
     case String.trim(query) do
       "" ->

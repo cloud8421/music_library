@@ -10,6 +10,9 @@ defmodule MusicLibrary.Secrets.Secret do
     timestamps(type: :utc_datetime)
   end
 
+  @type t :: %__MODULE__{}
+
+  @spec changeset(t() | Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
   def changeset(secret, attrs) do
     secret
     |> cast(attrs, [:name, :value])

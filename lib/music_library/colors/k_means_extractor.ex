@@ -5,6 +5,7 @@ defmodule MusicLibrary.Colors.KMeansExtractor do
 
   alias Vix.Vips.Image
 
+  @spec extract_dominant_colors(binary(), pos_integer()) :: {:ok, [String.t()]} | {:error, term()}
   def extract_dominant_colors(image_data, num_colors \\ 5) do
     with {:ok, dir} <- Briefly.create(type: :directory),
          path = dir <> "/temp_image.jpg",

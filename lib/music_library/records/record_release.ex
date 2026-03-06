@@ -8,4 +8,6 @@ defmodule MusicLibrary.Records.RecordRelease do
     field :cover_hash, :string
     field :purchased_at, :utc_datetime
   end
+
+  @type t :: %__MODULE__{}
 end

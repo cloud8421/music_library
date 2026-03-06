@@ -5,6 +5,8 @@ defmodule BraveSearch.API do
 
   require Logger
 
+  @spec search_images(String.t(), keyword(), BraveSearch.Config.t()) ::
+          {:ok, [map()]} | {:error, term()}
   def search_images(query, opts, config) do
     params = [q: query, count: Keyword.get(opts, :count, 20)]
 
@@ -34,6 +36,8 @@ defmodule BraveSearch.API do
     end
   end
 
+  @spec download_image(String.t(), BraveSearch.Config.t()) ::
+          {:ok, binary()} | {:error, :download_failed}
   def download_image(url, config) do
     case Req.new(url: url, max_retries: 1, user_agent: config.user_agent)
          |> Req.Request.merge_options(config.req_options)

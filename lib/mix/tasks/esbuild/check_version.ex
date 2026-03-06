@@ -1,7 +1,7 @@
 defmodule Mix.Tasks.Esbuild.CheckVersion do
-  @shortdoc "Checks the the current Esbuild version is the latest"
+  @shortdoc "Checks the current Esbuild version is the latest"
   @moduledoc """
-  Checks the the current esbuild version is the latest.
+  Checks the current esbuild version is the latest.
 
   Exits with 0 if versions match, 1 if the esbuild needs to be updated.
   """

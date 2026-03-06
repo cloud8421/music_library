@@ -6,6 +6,7 @@ defmodule MusicLibrary.Artists do
   alias MusicLibrary.Records.{ArtistRecord, Record}
   alias MusicLibrary.{Repo, Worker}
 
+  @spec get_artist!(String.t()) :: map()
   def get_artist!(musicbrainz_id) do
     q =
       from ar in ArtistRecord,
@@ -16,6 +17,7 @@ defmodule MusicLibrary.Artists do
     Repo.one!(q)
   end
 
+  @spec get_similar_artists(map()) :: {:ok, [map()]} | {:error, term()}
   def get_similar_artists(artist) do
     case LastFm.get_similar_artists(artist.musicbrainz_id, artist.name) do
       {:ok, artists} ->
@@ -31,6 +33,7 @@ defmodule MusicLibrary.Artists do
     end
   end
 
+  @spec name_id_pairs([String.t()]) :: [{String.t(), String.t()}]
   def name_id_pairs(names) do
     q =
       from ar in ArtistRecord,
@@ -41,12 +44,14 @@ defmodule MusicLibrary.Artists do
     Repo.all(q)
   end
 
+  @spec get_all_artist_ids() :: MapSet.t(String.t())
   def get_all_artist_ids do
     q = from ar in ArtistRecord, distinct: true, select: ar.musicbrainz_id
 
     q |> Repo.all() |> MapSet.new()
   end
 
+  @spec get_all_artist_pairs() :: [map()]
   def get_all_artist_pairs do
     q =
       from ar in ArtistRecord,
@@ -56,6 +61,7 @@ defmodule MusicLibrary.Artists do
     q |> Repo.all()
   end
 
+  @spec get_image_hashes([map()]) :: %{String.t() => String.t() | nil}
   def get_image_hashes(lastfm_artists) do
     musicbrainz_ids = Enum.map(lastfm_artists, & &1.musicbrainz_id)
 
@@ -69,6 +75,7 @@ defmodule MusicLibrary.Artists do
     |> Enum.into(%{})
   end
 
+  @spec exists?(String.t()) :: boolean()
   def exists?(artist_id) do
     q =
       from ar in ArtistRecord,
@@ -77,10 +84,12 @@ defmodule MusicLibrary.Artists do
     Repo.exists?(q)
   end
 
+  @spec delete_artist_info(String.t()) :: {non_neg_integer(), nil | [term()]}
   def delete_artist_info(artist_id) do
     Repo.delete_all(from ai in ArtistInfo, where: ai.id == ^artist_id)
   end
 
+  @spec fetch_artist_info(String.t()) :: {:ok, ArtistInfo.t()} | {:error, term()}
   def fetch_artist_info(artist_id) do
     with {:ok, musicbrainz_artist} <- MusicBrainz.get_artist(artist_id) do
       if discogs_id = MusicBrainz.Artist.get_discogs_id(musicbrainz_artist) do
@@ -100,6 +109,7 @@ defmodule MusicLibrary.Artists do
     end
   end
 
+  @spec refresh_musicbrainz_data(String.t()) :: {:ok, ArtistInfo.t()} | {:error, term()}
   def refresh_musicbrainz_data(artist_id) do
     with {:ok, musicbrainz_artist} <- MusicBrainz.get_artist(artist_id) do
       get_artist_info!(artist_id)
@@ -108,10 +118,13 @@ defmodule MusicLibrary.Artists do
     end
   end
 
+  @spec refresh_musicbrainz_data_async(ArtistInfo.t()) ::
+          {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
   def refresh_musicbrainz_data_async(artist_info) do
     enqueue_worker(Worker.ArtistRefreshMusicBrainzData, %{"id" => artist_info.id})
   end
 
+  @spec refresh_discogs_data(String.t()) :: {:ok, ArtistInfo.t()} | {:error, term()}
   def refresh_discogs_data(artist_id) do
     artist_info = get_artist_info!(artist_id)
 
@@ -130,10 +143,13 @@ defmodule MusicLibrary.Artists do
     end
   end
 
+  @spec refresh_discogs_data_async(ArtistInfo.t()) ::
+          {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
   def refresh_discogs_data_async(artist_info) do
     enqueue_worker(Worker.ArtistRefreshDiscogsData, %{"id" => artist_info.id})
   end
 
+  @spec fetch_wikipedia_data(String.t()) :: {:ok, ArtistInfo.t()} | {:error, term()}
   def fetch_wikipedia_data(artist_id) do
     artist_info = get_artist_info!(artist_id)
 
@@ -152,24 +168,30 @@ defmodule MusicLibrary.Artists do
     end
   end
 
+  @spec refresh_wikipedia_data(String.t()) :: {:ok, ArtistInfo.t()} | {:error, term()}
   def refresh_wikipedia_data(artist_id) do
     fetch_wikipedia_data(artist_id)
   end
 
+  @spec refresh_wikipedia_data_async(ArtistInfo.t()) ::
+          {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
   def refresh_wikipedia_data_async(artist_info) do
     enqueue_worker(Worker.ArtistRefreshWikipediaData, %{"id" => artist_info.id})
   end
 
+  @spec create_artist_info(map()) :: {:ok, ArtistInfo.t()} | {:error, Ecto.Changeset.t()}
   def create_artist_info(attrs) do
     %ArtistInfo{}
     |> ArtistInfo.changeset(attrs)
     |> Repo.insert(on_conflict: {:replace, [:musicbrainz_data, :discogs_data]})
   end
 
+  @spec get_artist_info!(String.t()) :: ArtistInfo.t()
   def get_artist_info!(artist_id) do
     Repo.get!(ArtistInfo, artist_id)
   end
 
+  @spec get_artist_infos([String.t()]) :: [ArtistInfo.t()]
   def get_artist_infos(artist_ids) do
     q =
       from ai in ArtistInfo, where: ai.id in ^artist_ids
@@ -177,6 +199,7 @@ defmodule MusicLibrary.Artists do
     Repo.all(q)
   end
 
+  @spec fetch_image(String.t()) :: {:ok, ArtistInfo.t()} | {:error, term()}
   def fetch_image(artist_id) do
     artist_info = get_artist_info!(artist_id)
 
@@ -191,6 +214,7 @@ defmodule MusicLibrary.Artists do
     end
   end
 
+  @spec fetch_lastfm_data(String.t()) :: {:ok, ArtistInfo.t()} | {:error, term()}
   def fetch_lastfm_data(artist_id) do
     artist_info = get_artist_info!(artist_id)
     name = get_in(artist_info.musicbrainz_data, ["name"]) || ""
@@ -208,26 +232,36 @@ defmodule MusicLibrary.Artists do
     end
   end
 
+  @spec fetch_lastfm_data_async(String.t()) ::
+          {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
   def fetch_lastfm_data_async(artist_id) do
     enqueue_worker(Worker.FetchArtistLastFmData, %{"id" => artist_id})
   end
 
+  @spec fetch_artist_info_async(String.t()) ::
+          {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
   def fetch_artist_info_async(artist_id) do
     enqueue_worker(Worker.FetchArtistInfo, %{"id" => artist_id})
   end
 
+  @spec fetch_image_async(String.t()) :: {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
   def fetch_image_async(artist_id) do
     enqueue_worker(Worker.FetchArtistImage, %{"id" => artist_id})
   end
 
+  @spec prune_artist_info_async(String.t()) ::
+          {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
   def prune_artist_info_async(artist_id) do
     enqueue_worker(Worker.PruneArtistInfo, %{"id" => artist_id})
   end
 
+  @spec change_artist_info(ArtistInfo.t(), map()) :: Ecto.Changeset.t()
   def change_artist_info(artist_info, attrs \\ %{}) do
     ArtistInfo.changeset(artist_info, attrs)
   end
 
+  @spec update_artist_info(ArtistInfo.t(), map()) ::
+          {:ok, ArtistInfo.t()} | {:error, Ecto.Changeset.t()}
   def update_artist_info(artist_info, attrs) do
     artist_info
     |> ArtistInfo.changeset(attrs)

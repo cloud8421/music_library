@@ -16,4 +16,6 @@ defmodule MusicLibrary.Records.ArtistRecord do
 
     embeds_one :artist, Artist
   end
+
+  @type t :: %__MODULE__{}
 end

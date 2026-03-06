@@ -21,6 +21,7 @@ defmodule MusicLibraryWeb.Duration do
       "0:00"
 
   """
+  @spec format_duration(non_neg_integer()) :: String.t()
   def format_duration(milliseconds) do
     milliseconds
     |> System.convert_time_unit(:millisecond, :second)

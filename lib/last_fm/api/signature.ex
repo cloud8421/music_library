@@ -1,4 +1,5 @@
 defmodule LastFm.API.Signature do
+  @spec generate(map() | keyword(), String.t()) :: String.t()
   def generate(params, shared_secret) do
     encoded_params =
       params

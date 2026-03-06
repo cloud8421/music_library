@@ -16,6 +16,12 @@ defmodule MusicLibrary.Records.Similarity do
 
   @max_distance Application.compile_env!(:music_library, :similarity)[:max_distance]
 
+  @type find_opts :: [
+          limit: pos_integer(),
+          scope: :collection | :wishlist | nil,
+          max_distance: float()
+        ]
+
   @doc """
   Generates a text representation of a record for embedding generation.
 
@@ -30,6 +36,7 @@ defmodule MusicLibrary.Records.Similarity do
   - Last.fm community tags and similar artists (when stored)
   - User-written record notes (when present)
   """
+  @spec text_representation(Record.t()) :: String.t()
   def text_representation(%Record{} = record) do
     artist_infos_map =
       record.artists
@@ -231,13 +238,6 @@ defmodule MusicLibrary.Records.Similarity do
   @doc """
   Finds similar records based on embedding similarity.
 
-  ## Options
-
-  - `:limit` - Maximum number of similar records to return (default: 10)
-  - `:scope` - Filter by :collection or :wishlist (default: no filter)
-  - `:max_distance` - Maximum cosine distance threshold (default: #{@max_distance}).
-    Results with distance above this are excluded.
-
   ## Examples
 
       iex> find_similar("record-id-123", limit: 5)
@@ -246,6 +246,7 @@ defmodule MusicLibrary.Records.Similarity do
       iex> find_similar("record-id-123", scope: :collection)
       [%Record{}, ...]
   """
+  @spec find_similar(String.t(), find_opts()) :: [map()]
   def find_similar(record_id, opts \\ []) do
     limit = Keyword.get(opts, :limit, 10)
     scope = Keyword.get(opts, :scope)
@@ -282,9 +283,7 @@ defmodule MusicLibrary.Records.Similarity do
     end
   end
 
-  @doc """
-  Gets the embedding for a record.
-  """
+  @spec get_embedding(String.t()) :: {:ok, binary()} | {:error, :not_found}
   def get_embedding(record_id) do
     case Repo.get_by(RecordEmbedding, record_id: record_id) do
       nil -> {:error, :not_found}
@@ -292,6 +291,7 @@ defmodule MusicLibrary.Records.Similarity do
     end
   end
 
+  @spec get_embedding_text(String.t()) :: {:ok, String.t()} | {:error, :not_found}
   def get_embedding_text(record_id) do
     case Repo.get_by(RecordEmbedding, record_id: record_id) do
       nil -> {:error, :not_found}
@@ -299,9 +299,8 @@ defmodule MusicLibrary.Records.Similarity do
     end
   end
 
-  @doc """
-  Stores an embedding for a record.
-  """
+  @spec store_embedding(String.t(), binary(), String.t()) ::
+          {:ok, RecordEmbedding.t()} | {:error, Ecto.Changeset.t()}
   def store_embedding(record_id, embedding, text_representation) do
     attrs = %{
       record_id: record_id,
@@ -317,6 +316,7 @@ defmodule MusicLibrary.Records.Similarity do
     )
   end
 
+  @spec generate_embedding_async(Record.t()) :: {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
   def generate_embedding_async(record) do
     meta = %{title: record.title, artists: Enum.map(record.artists, & &1.name)}
     params = %{record_id: record.id}
@@ -326,6 +326,7 @@ defmodule MusicLibrary.Records.Similarity do
     |> Oban.insert()
   end
 
+  @spec generate_all_embeddings_async() :: non_neg_integer()
   def generate_all_embeddings_async do
     Record
     |> Repo.all()

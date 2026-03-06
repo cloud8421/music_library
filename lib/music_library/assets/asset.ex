@@ -14,6 +14,9 @@ defmodule MusicLibrary.Assets.Asset do
     timestamps(type: :utc_datetime)
   end
 
+  @type t :: %__MODULE__{}
+
+  @spec changeset(t() | Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
   def changeset(asset, attrs) do
     asset
     |> cast(attrs, [:content, :format, :properties])
@@ -22,6 +25,7 @@ defmodule MusicLibrary.Assets.Asset do
     |> unique_constraint(:hash)
   end
 
+  @spec image_changeset(t() | Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
   def image_changeset(asset, attrs) do
     asset
     |> cast(attrs, [:content, :format])
@@ -60,6 +64,7 @@ defmodule MusicLibrary.Assets.Asset do
     }
   end
 
+  @spec hash(binary()) :: String.t()
   def hash(content) do
     :crypto.hash(:sha256, content) |> Base.encode16()
   end

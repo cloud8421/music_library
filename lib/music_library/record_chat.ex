@@ -4,6 +4,8 @@ defmodule MusicLibrary.RecordChat do
   alias MusicLibrary.Records.Record
 
   @impl true
+  @spec stream_response([map()], {Record.t(), String.t() | nil}, (String.t() -> any())) ::
+          :ok | {:error, term()}
   def stream_response(messages, {record, embedding_text}, callback) do
     instructions = build_instructions(record, embedding_text)
 

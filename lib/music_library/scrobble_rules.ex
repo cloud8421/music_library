@@ -11,15 +11,14 @@ defmodule MusicLibrary.ScrobbleRules do
   alias MusicLibrary.Repo
   alias MusicLibrary.ScrobbleRules.ScrobbleRule
 
-  @doc """
-  Returns the list of scrobble_rules.
+  @type list_opts :: [
+          type: atom(),
+          enabled: boolean(),
+          offset: non_neg_integer(),
+          limit: non_neg_integer()
+        ]
 
-  ## Examples
-
-      iex> list_scrobble_rules()
-      [%ScrobbleRule{}, ...]
-
-  """
+  @spec list_scrobble_rules(list_opts()) :: [ScrobbleRule.t()]
   def list_scrobble_rules(opts \\ []) do
     query =
       from r in ScrobbleRule,
@@ -68,15 +67,7 @@ defmodule MusicLibrary.ScrobbleRules do
     Repo.all(query)
   end
 
-  @doc """
-  Returns the count of scrobble_rules.
-
-  ## Examples
-
-      iex> count_scrobble_rules()
-      42
-
-  """
+  @spec count_scrobble_rules(list_opts()) :: non_neg_integer()
   def count_scrobble_rules(opts \\ []) do
     query = from(r in ScrobbleRule)
 
@@ -103,112 +94,41 @@ defmodule MusicLibrary.ScrobbleRules do
     Repo.aggregate(query, :count)
   end
 
-  @doc """
-  Gets a single scrobble_rule.
-
-  Raises `Ecto.NoResultsError` if the Scrobble rule does not exist.
-
-  ## Examples
-
-      iex> get_scrobble_rule!(123)
-      %ScrobbleRule{}
-
-      iex> get_scrobble_rule!(456)
-      ** (Ecto.NoResultsError)
-
-  """
+  @spec get_scrobble_rule!(integer()) :: ScrobbleRule.t()
   def get_scrobble_rule!(id), do: Repo.get!(ScrobbleRule, id)
 
-  @doc """
-  Creates a scrobble_rule.
-
-  ## Examples
-
-      iex> create_scrobble_rule(%{field: value})
-      {:ok, %ScrobbleRule{}}
-
-      iex> create_scrobble_rule(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
+  @spec create_scrobble_rule(map()) :: {:ok, ScrobbleRule.t()} | {:error, Ecto.Changeset.t()}
   def create_scrobble_rule(attrs \\ %{}) do
     %ScrobbleRule{}
     |> ScrobbleRule.changeset(attrs)
     |> Repo.insert()
   end
 
-  @doc """
-  Updates a scrobble_rule.
-
-  ## Examples
-
-      iex> update_scrobble_rule(scrobble_rule, %{field: new_value})
-      {:ok, %ScrobbleRule{}}
-
-      iex> update_scrobble_rule(scrobble_rule, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
+  @spec update_scrobble_rule(ScrobbleRule.t(), map()) ::
+          {:ok, ScrobbleRule.t()} | {:error, Ecto.Changeset.t()}
   def update_scrobble_rule(%ScrobbleRule{} = scrobble_rule, attrs) do
     scrobble_rule
     |> ScrobbleRule.changeset(attrs)
     |> Repo.update()
   end
 
-  @doc """
-  Deletes a scrobble_rule.
-
-  ## Examples
-
-      iex> delete_scrobble_rule(scrobble_rule)
-      {:ok, %ScrobbleRule{}}
-
-      iex> delete_scrobble_rule(scrobble_rule)
-      {:error, %Ecto.Changeset{}}
-
-  """
+  @spec delete_scrobble_rule(ScrobbleRule.t()) ::
+          {:ok, ScrobbleRule.t()} | {:error, Ecto.Changeset.t()}
   def delete_scrobble_rule(%ScrobbleRule{} = scrobble_rule) do
     Repo.delete(scrobble_rule)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking scrobble_rule changes.
-
-  ## Examples
-
-      iex> change_scrobble_rule(scrobble_rule)
-      %Ecto.Changeset{data: %ScrobbleRule{}}
-
-  """
+  @spec change_scrobble_rule(ScrobbleRule.t(), map()) :: Ecto.Changeset.t()
   def change_scrobble_rule(%ScrobbleRule{} = scrobble_rule, attrs \\ %{}) do
     ScrobbleRule.changeset(scrobble_rule, attrs)
   end
 
-  @doc """
-  Returns the list of enabled scrobble_rules.
-
-  ## Examples
-
-      iex> list_enabled_rules()
-      [%ScrobbleRule{}, ...]
-
-  """
+  @spec list_enabled_rules() :: [ScrobbleRule.t()]
   def list_enabled_rules do
     list_scrobble_rules(enabled: true)
   end
 
-  @doc """
-  Applies an album rule to all matching scrobbled tracks.
-
-  ## Examples
-
-      iex> apply_album_rule(rule)
-      {:ok, 5}
-
-      iex> apply_album_rule(rule)
-      {:error, :invalid_rule_type}
-
-  """
+  @spec apply_album_rule(ScrobbleRule.t()) :: {:ok, non_neg_integer()} | {:error, term()}
   def apply_album_rule(%ScrobbleRule{type: :album} = rule) do
     update_query =
       from(t in Track,
@@ -231,18 +151,8 @@ defmodule MusicLibrary.ScrobbleRules do
     end
   end
 
-  @doc """
-  Applies an album rule to a specific set of scrobbled tracks.
-
-  ## Examples
-
-      iex> apply_album_rule(rule, tracks)
-      {:ok, 3}
-
-      iex> apply_album_rule(rule, tracks)
-      {:error, :invalid_rule_type}
-
-  """
+  @spec apply_album_rule(ScrobbleRule.t(), [LastFm.Track.t()]) ::
+          {:ok, non_neg_integer()} | {:error, term()}
   def apply_album_rule(%ScrobbleRule{type: :album} = rule, tracks) do
     track_scrobbled_at_uts = Enum.map(tracks, & &1.scrobbled_at_uts)
 
@@ -269,18 +179,7 @@ defmodule MusicLibrary.ScrobbleRules do
     end
   end
 
-  @doc """
-  Applies an artist rule to all matching scrobbled tracks.
-
-  ## Examples
-
-      iex> apply_artist_rule(rule)
-      {:ok, 10}
-
-      iex> apply_artist_rule(rule)
-      {:error, :invalid_rule_type}
-
-  """
+  @spec apply_artist_rule(ScrobbleRule.t()) :: {:ok, non_neg_integer()} | {:error, term()}
   def apply_artist_rule(%ScrobbleRule{type: :artist} = rule) do
     update_query =
       from(t in Track,
@@ -303,18 +202,8 @@ defmodule MusicLibrary.ScrobbleRules do
     end
   end
 
-  @doc """
-  Applies an artist rule to a specific set of scrobbled tracks.
-
-  ## Examples
-
-      iex> apply_artist_rule(rule, tracks)
-      {:ok, 7}
-
-      iex> apply_artist_rule(rule, tracks)
-      {:error, :invalid_rule_type}
-
-  """
+  @spec apply_artist_rule(ScrobbleRule.t(), [LastFm.Track.t()]) ::
+          {:ok, non_neg_integer()} | {:error, term()}
   def apply_artist_rule(%ScrobbleRule{type: :artist} = rule, tracks) do
     track_scrobbled_at_uts = Enum.map(tracks, & &1.scrobbled_at_uts)
 
@@ -341,18 +230,7 @@ defmodule MusicLibrary.ScrobbleRules do
     end
   end
 
-  @doc """
-  Applies a single rule based on its type.
-
-  ## Examples
-
-      iex> apply_rule(rule)
-      {:ok, 5}
-
-      iex> apply_rule(rule)
-      {:error, "Invalid rule type"}
-
-  """
+  @spec apply_rule(ScrobbleRule.t()) :: {:ok, non_neg_integer()} | {:error, term()}
   def apply_rule(%ScrobbleRule{type: :album} = rule) do
     apply_album_rule(rule)
   end
@@ -361,18 +239,8 @@ defmodule MusicLibrary.ScrobbleRules do
     apply_artist_rule(rule)
   end
 
-  @doc """
-  Applies a single rule to a specific set of tracks based on its type.
-
-  ## Examples
-
-      iex> apply_rule(rule, tracks)
-      {:ok, 3}
-
-      iex> apply_rule(rule, tracks)
-      {:error, "Invalid rule type"}
-
-  """
+  @spec apply_rule(ScrobbleRule.t(), [LastFm.Track.t()]) ::
+          {:ok, non_neg_integer()} | {:error, term()}
   def apply_rule(%ScrobbleRule{type: :album} = rule, tracks) do
     apply_album_rule(rule, tracks)
   end
@@ -386,13 +254,9 @@ defmodule MusicLibrary.ScrobbleRules do
 
   Uses a CASE statement to update the musicbrainz_id for all matching albums
   in one database operation, which is more efficient than applying rules individually.
-
-  ## Examples
-
-      iex> apply_all_album_rules([rule1, rule2])
-      {:ok, 15}
-
   """
+  @spec apply_all_album_rules([ScrobbleRule.t()]) ::
+          {:ok, non_neg_integer()} | {:error, term()}
   def apply_all_album_rules([]), do: {:ok, 0}
 
   def apply_all_album_rules(rules) when is_list(rules) do
@@ -404,13 +268,9 @@ defmodule MusicLibrary.ScrobbleRules do
 
   Uses a CASE statement to update the musicbrainz_id for all matching albums
   in one database operation, filtering by the provided tracks.
-
-  ## Examples
-
-      iex> apply_all_album_rules([rule1, rule2], tracks)
-      {:ok, 3}
-
   """
+  @spec apply_all_album_rules([ScrobbleRule.t()], [LastFm.Track.t()]) ::
+          {:ok, non_neg_integer()} | {:error, term()}
   def apply_all_album_rules([], _tracks), do: {:ok, 0}
   def apply_all_album_rules(_rules, []), do: {:ok, 0}
 
@@ -423,13 +283,9 @@ defmodule MusicLibrary.ScrobbleRules do
 
   Uses a CASE statement to update the musicbrainz_id for all matching artists
   in one database operation, which is more efficient than applying rules individually.
-
-  ## Examples
-
-      iex> apply_all_artist_rules([rule1, rule2])
-      {:ok, 25}
-
   """
+  @spec apply_all_artist_rules([ScrobbleRule.t()]) ::
+          {:ok, non_neg_integer()} | {:error, term()}
   def apply_all_artist_rules([]), do: {:ok, 0}
 
   def apply_all_artist_rules(rules) when is_list(rules) do
@@ -441,13 +297,9 @@ defmodule MusicLibrary.ScrobbleRules do
 
   Uses a CASE statement to update the musicbrainz_id for all matching artists
   in one database operation, filtering by the provided tracks.
-
-  ## Examples
-
-      iex> apply_all_artist_rules([rule1, rule2], tracks)
-      {:ok, 7}
-
   """
+  @spec apply_all_artist_rules([ScrobbleRule.t()], [LastFm.Track.t()]) ::
+          {:ok, non_neg_integer()} | {:error, term()}
   def apply_all_artist_rules([], _tracks), do: {:ok, 0}
   def apply_all_artist_rules(_rules, []), do: {:ok, 0}
 
@@ -461,13 +313,11 @@ defmodule MusicLibrary.ScrobbleRules do
   This optimized version groups rules by type and applies all rules of each type
   in a single database query, which is much more efficient than applying each rule
   individually.
-
-  ## Examples
-
-      iex> apply_all_rules()
-      {:ok, [{:album, 5}, {:artist, 10}]}
-
   """
+  @spec apply_all_rules() :: [
+          {:ok, {atom(), String.t(), non_neg_integer()}}
+          | {:error, {atom(), String.t(), term()}}
+        ]
   def apply_all_rules do
     :telemetry.span([:music_library, :scrobble_rules, :apply_all_rules], %{}, fn ->
       enabled_rules = list_enabled_rules()
@@ -519,13 +369,11 @@ defmodule MusicLibrary.ScrobbleRules do
 
   This optimized version groups rules by type and applies all rules of each type
   in a single database query, filtering by the provided tracks.
-
-  ## Examples
-
-      iex> apply_all_rules(tracks)
-      [{:ok, {:album, "Some Album", 5}}, {:error, {:artist, "Some Artist", "reason"}}]
-
   """
+  @spec apply_all_rules([LastFm.Track.t()]) :: [
+          {:ok, {atom(), String.t(), non_neg_integer()}}
+          | {:error, {atom(), String.t(), term()}}
+        ]
   def apply_all_rules([]) do
     list_enabled_rules()
     |> Enum.map(fn rule ->
@@ -575,15 +423,7 @@ defmodule MusicLibrary.ScrobbleRules do
     end)
   end
 
-  @doc """
-  Counts how many tracks would be affected by an album rule.
-
-  ## Examples
-
-      iex> count_album_matches(rule)
-      5
-
-  """
+  @spec count_album_matches(ScrobbleRule.t()) :: non_neg_integer()
   def count_album_matches(%ScrobbleRule{type: :album} = rule) do
     query =
       from(t in Track,
@@ -594,15 +434,7 @@ defmodule MusicLibrary.ScrobbleRules do
     Repo.one(query) || 0
   end
 
-  @doc """
-  Counts how many tracks would be affected by an artist rule.
-
-  ## Examples
-
-      iex> count_artist_matches(rule)
-      10
-
-  """
+  @spec count_artist_matches(ScrobbleRule.t()) :: non_neg_integer()
   def count_artist_matches(%ScrobbleRule{type: :artist} = rule) do
     query =
       from(t in Track,
@@ -613,15 +445,7 @@ defmodule MusicLibrary.ScrobbleRules do
     Repo.one(query) || 0
   end
 
-  @doc """
-  Counts how many tracks would be affected by a rule.
-
-  ## Examples
-
-      iex> count_rule_matches(rule)
-      5
-
-  """
+  @spec count_rule_matches(ScrobbleRule.t()) :: non_neg_integer()
   def count_rule_matches(%ScrobbleRule{type: :album} = rule) do
     count_album_matches(rule)
   end
@@ -635,13 +459,11 @@ defmodule MusicLibrary.ScrobbleRules do
 
   Takes a list of results from rule application and logs summary statistics
   and any errors that occurred.
-
-  ## Examples
-
-      iex> log_apply_results([{:ok, {:album, "Album", 5}}, {:error, {:artist, "Artist", "reason"}}])
-      :ok
-
   """
+  @spec log_apply_results([
+          {:ok, {atom(), String.t(), non_neg_integer()}}
+          | {:error, {atom(), String.t(), term()}}
+        ]) :: :ok
   def log_apply_results(results) do
     {applied, errors} =
       Enum.split_with(results, fn

@@ -3,6 +3,12 @@ defmodule LastFm.Session do
 
   defstruct [:name, :key, :pro]
 
+  @type t :: %__MODULE__{
+          name: String.t() | nil,
+          key: String.t() | nil,
+          pro: boolean() | nil
+        }
+
   Record.defrecord(
     :xmlAttribute,
     Record.extract(:xmlAttribute, from_lib: "xmerl/include/xmerl.hrl")
@@ -32,6 +38,7 @@ defmodule LastFm.Session do
         pro: true
       }
   """
+  @spec parse(String.t()) :: t()
   def parse(xml_string) do
     doc = scan(xml_string)
 
@@ -77,6 +84,7 @@ defmodule LastFm.Session do
     :xmerl_xpath.string(to_charlist(path), node)
   end
 
+  @spec text(tuple() | nil) :: String.t() | nil
   def text(node), do: node |> xpath(~c"./text()") |> extract_text()
 
   defp extract_text([xmlText(value: value)]), do: List.to_string(value)

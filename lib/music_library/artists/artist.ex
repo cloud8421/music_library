@@ -11,6 +11,9 @@ defmodule MusicLibrary.Artists.Artist do
     field :joinphrase, :string, default: ""
   end
 
+  @type t :: %__MODULE__{}
+
+  @spec changeset(t() | Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
   def changeset(artist, attrs) do
     artist
     |> cast(attrs, [:name, :sort_name, :disambiguation, :joinphrase, :musicbrainz_id])

@@ -11,10 +11,19 @@ defmodule MusicLibrary.Records do
   alias MusicLibrary.Records.{ArtistRecord, Record, SearchIndex, SearchParser}
   alias MusicLibrary.{Repo, Worker}
 
+  @type import_opts :: [
+          format: atom(),
+          purchased_at: DateTime.t() | nil,
+          selected_release_id: String.t() | nil
+        ]
+
+  @spec essential_fields() :: [atom()]
   def essential_fields do
     SearchIndex.__schema__(:fields)
   end
 
+  @spec search_records(Ecto.Queryable.t(), String.t(), MusicLibrary.Types.pagination_opts()) ::
+          [SearchIndex.t()]
   def search_records(initial_search, query, opts) do
     limit = Keyword.fetch!(opts, :limit)
     offset = Keyword.fetch!(opts, :offset)
@@ -30,6 +39,7 @@ defmodule MusicLibrary.Records do
     Repo.all(search)
   end
 
+  @spec search_records_count(Ecto.Queryable.t(), String.t()) :: non_neg_integer()
   def search_records_count(initial_search, query) do
     search = build_search(initial_search, query)
 
@@ -158,6 +168,7 @@ defmodule MusicLibrary.Records do
     end)
   end
 
+  @spec list_genres() :: [String.t()]
   def list_genres do
     q =
       from r in fragment("records, json_each(records.genres)"),
@@ -167,8 +178,11 @@ defmodule MusicLibrary.Records do
     Repo.all(q)
   end
 
+  @spec get_record!(String.t()) :: Record.t()
   def get_record!(id), do: Repo.get!(Record, id)
 
+  @spec get_release_status(String.t(), String.t()) ::
+          :new | {:wishlisted, String.t()} | {:collected, String.t()}
   def get_release_status(release_id, format) do
     q =
       from r in fragment("records, json_each(records.release_ids)"),
@@ -185,6 +199,7 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  @spec get_artist_records(String.t()) :: [SearchIndex.t()]
   def get_artist_records(musicbrainz_id) do
     q =
       from r in Record,
@@ -195,6 +210,8 @@ defmodule MusicLibrary.Records do
     Repo.all(q)
   end
 
+  @spec import_from_musicbrainz_release(String.t(), import_opts()) ::
+          {:ok, Record.t()} | {:error, term()}
   def import_from_musicbrainz_release(musicbrainz_id, opts \\ []) do
     case MusicBrainz.get_release(musicbrainz_id) do
       {:ok, release} ->
@@ -206,6 +223,8 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  @spec import_from_musicbrainz_release_group(String.t(), import_opts()) ::
+          {:ok, Record.t()} | {:error, term()}
   def import_from_musicbrainz_release_group(musicbrainz_id, opts \\ []) do
     format = Keyword.get(opts, :format, "cd")
     purchased_at = Keyword.get(opts, :purchased_at)
@@ -226,6 +245,7 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  @spec populate_genres(Record.t()) :: {:ok, Record.t()} | {:error, Ecto.Changeset.t()}
   def populate_genres(record) do
     artists = Enum.map_join(record.artists, ",", fn a -> a.name end)
 
@@ -246,6 +266,7 @@ defmodule MusicLibrary.Records do
     |> Repo.update()
   end
 
+  @spec populate_genres_async(Record.t()) :: {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
   def populate_genres_async(record) do
     enqueue_worker(Worker.PopulateGenres, %{"id" => record.id}, record_meta(record))
   end
@@ -257,6 +278,7 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  @spec get_last_listened_track(Record.t()) :: LastFm.Track.t() | nil
   def get_last_listened_track(record) do
     q =
       from t in scrobbles_for_record_query(record),
@@ -266,6 +288,7 @@ defmodule MusicLibrary.Records do
     Repo.one(q)
   end
 
+  @spec play_count(Record.t()) :: non_neg_integer()
   def play_count(record) do
     record
     |> scrobbles_for_record_query()
@@ -291,6 +314,7 @@ defmodule MusicLibrary.Records do
           fragment("? ->> '$.name'", t.artist) == ^main_artist_name
   end
 
+  @spec refresh_cover(Record.t()) :: {:ok, Record.t()} | {:error, term()}
   def refresh_cover(record) do
     with {:ok, cover_data} <- MusicBrainz.get_cover_art({:url, record.cover_url}),
          {:ok, thumb_data} <- Assets.Image.resize(cover_data),
@@ -301,10 +325,12 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  @spec refresh_cover_async(Record.t()) :: {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
   def refresh_cover_async(record) do
     enqueue_worker(Worker.RefreshCover, %{"id" => record.id}, record_meta(record))
   end
 
+  @spec extract_colors(Record.t()) :: {:ok, Record.t()} | {:error, term()}
   def extract_colors(record) do
     asset = Assets.get!(record.cover_hash)
 
@@ -313,6 +339,8 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  @spec generate_embedding_async(Record.t()) ::
+          {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
   def generate_embedding_async(record) do
     enqueue_worker(
       Worker.GenerateRecordEmbedding,
@@ -321,6 +349,7 @@ defmodule MusicLibrary.Records do
     )
   end
 
+  @spec resize_cover(Record.t()) :: {:ok, Record.t()} | {:error, term()}
   def resize_cover(record) do
     with {:ok, thumb_data} <- Assets.Image.resize(record.cover_data),
          {:ok, asset} <- Assets.store_image(%{content: thumb_data, format: "image/jpeg"}) do
@@ -330,6 +359,7 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  @spec refresh_musicbrainz_data(Record.t()) :: {:ok, Record.t()} | {:error, term()}
   def refresh_musicbrainz_data(record) do
     with {:ok, data} <- MusicBrainz.get_release_group(record.musicbrainz_id),
          {:ok, data_with_releases} <- merge_releases(record.musicbrainz_id, data) do
@@ -339,6 +369,8 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  @spec refresh_musicbrainz_data_async(Record.t()) ::
+          {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
   def refresh_musicbrainz_data_async(record) do
     enqueue_worker(Worker.RecordRefreshMusicBrainzData, %{"id" => record.id}, record_meta(record))
   end
@@ -374,6 +406,7 @@ defmodule MusicLibrary.Records do
     |> Map.merge(attrs)
   end
 
+  @spec create_record(map()) :: {:ok, Record.t()} | {:error, Ecto.Changeset.t()}
   def create_record(attrs \\ %{}) do
     with {:ok, record} <- do_create_record(attrs) do
       {:ok, record} = extract_colors(record)
@@ -395,12 +428,14 @@ defmodule MusicLibrary.Records do
     |> Repo.insert()
   end
 
+  @spec update_record(Record.t(), map()) :: {:ok, Record.t()} | {:error, Ecto.Changeset.t()}
   def update_record(%Record{} = record, attrs) do
     record
     |> Record.changeset(attrs)
     |> Repo.update()
   end
 
+  @spec delete_record(Record.t()) :: {:ok, Record.t()} | {:error, Ecto.Changeset.t()}
   def delete_record(%Record{} = record) do
     with {:ok, record} <- Repo.delete(record) do
       record
@@ -413,14 +448,17 @@ defmodule MusicLibrary.Records do
     end
   end
 
+  @spec change_record(Record.t(), map()) :: Ecto.Changeset.t()
   def change_record(%Record{} = record, attrs \\ %{}) do
     Record.changeset(record, attrs)
   end
 
+  @spec subscribe(String.t()) :: :ok | {:error, term()}
   def subscribe(record_id) do
     Phoenix.PubSub.subscribe(MusicLibrary.PubSub, "records:#{record_id}")
   end
 
+  @spec notify_update(Record.t()) :: :ok | {:error, term()}
   def notify_update(record) do
     Phoenix.PubSub.broadcast(
       MusicLibrary.PubSub,

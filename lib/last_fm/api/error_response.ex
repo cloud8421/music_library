@@ -1,6 +1,28 @@
 defmodule LastFm.API.ErrorResponse do
   defstruct [:error, :message]
 
+  @type error_atom ::
+          :invalid_service
+          | :invalid_method
+          | :authentication_failed
+          | :invalid_format
+          | :invalid_parameters
+          | :invalid_resource
+          | :operation_failed
+          | :invalid_session_key
+          | :invalid_api_key
+          | :service_offline
+          | :invalid_method_signature
+          | :transient_error
+          | :suspended_api_key
+          | :rate_limit_exceeded
+
+  @type t :: %__MODULE__{
+          error: error_atom(),
+          message: String.t()
+        }
+
+  @spec new(integer(), String.t()) :: t()
   def new(error_code, message) do
     %__MODULE__{error: map_error(error_code), message: message}
   end
@@ -23,6 +45,7 @@ defmodule LastFm.API.ErrorResponse do
   @doc """
   Returns true if the error is retryable, false otherwise.
   """
+  @spec retryable_error?(atom()) :: boolean()
   def retryable_error?(error)
       when error in [:transient_error, :service_offline, :rate_limit_exceeded, :operation_failed],
       do: true
@@ -33,6 +56,7 @@ defmodule LastFm.API.ErrorResponse do
   Returns the recommended retry delay in milliseconds for retryable errors.
   Returns nil for non-retryable errors.
   """
+  @spec retry_delay(atom()) :: pos_integer() | nil
   # 1 minute
   def retry_delay(:rate_limit_exceeded), do: 60_000
   # 30 seconds
