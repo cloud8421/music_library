@@ -351,6 +351,7 @@ All events are namespaced with `music_library:` prefix.
 | `MusicLibrary.RecordsFixtures` | Records with MusicBrainz data |
 | `MusicLibrary.RecordSetsFixtures` | Record sets with items |
 | `MusicLibrary.OnlineStoreTemplatesFixtures` | Store templates |
+| `MusicLibrary.ArtistInfoFixtures` | ArtistInfo records |
 | `ScrobbleRulesFixtures` | Scrobble rules |
 | `ScrobbledTracksFixtures` | Last.fm tracks |
 | `Discogs.ArtistFixtures` | Discogs API responses |
