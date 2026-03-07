@@ -5,6 +5,8 @@ defmodule MusicLibraryWeb.Router do
   import MusicLibraryWeb.Auth, only: [require_logged_in: 2, require_api_token: 2]
   import Oban.Web.Router
 
+  @csp_policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://rsms.me; font-src 'self' https://rsms.me; img-src 'self' data: https://lastfm.freetls.fastly.net; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'"
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -13,8 +15,7 @@ defmodule MusicLibraryWeb.Router do
     plug :protect_from_forgery
 
     plug :put_secure_browser_headers, %{
-      "content-security-policy" =>
-        "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://rsms.me; font-src 'self' https://rsms.me; img-src 'self' data: https://lastfm.freetls.fastly.net; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'"
+      "content-security-policy" => @csp_policy
     }
   end
 
@@ -113,20 +114,59 @@ defmodule MusicLibraryWeb.Router do
     import Phoenix.LiveDashboard.Router
     use ErrorTracker.Web, :router
 
+    pipeline :dev_dashboard do
+      plug :generate_csp_nonces
+      plug :put_dev_csp
+    end
+
     scope "/dev" do
-      pipe_through [:browser, :logged_in]
+      pipe_through [:browser, :logged_in, :dev_dashboard]
 
       live_dashboard "/dashboard",
         metrics: MusicLibraryWeb.Telemetry,
         metrics_history: {MusicLibraryWeb.Telemetry.Storage, :metrics_history, []},
-        ecto_repos: [MusicLibrary.Repo, MusicLibrary.BackgroundRepo, MusicLibrary.TelemetryRepo]
+        ecto_repos: [MusicLibrary.Repo, MusicLibrary.BackgroundRepo, MusicLibrary.TelemetryRepo],
+        csp_nonce_assign_key: %{
+          img: :img_nonce,
+          style: :style_nonce,
+          script: :script_nonce
+        }
 
-      oban_dashboard "/oban"
+      oban_dashboard "/oban",
+        csp_nonce_assign_key: %{
+          img: :img_nonce,
+          style: :style_nonce,
+          script: :script_nonce
+        }
 
       live "/maintenance", MusicLibraryWeb.MaintenanceLive.Index, :index
 
-      error_tracker_dashboard "/errors"
+      error_tracker_dashboard "/errors",
+        csp_nonce_assign_key: %{
+          img: :img_nonce,
+          style: :style_nonce,
+          script: :script_nonce
+        }
     end
+  end
+
+  defp generate_csp_nonces(conn, _opts) do
+    nonce = Base.encode64(:crypto.strong_rand_bytes(16), padding: false)
+
+    conn
+    |> assign(:img_nonce, nonce)
+    |> assign(:style_nonce, nonce)
+    |> assign(:script_nonce, nonce)
+  end
+
+  defp put_dev_csp(conn, _opts) do
+    nonce = conn.assigns[:script_nonce]
+
+    csp =
+      "default-src 'self'; script-src 'self' 'nonce-#{nonce}'; style-src 'self' 'unsafe-inline' 'nonce-#{nonce}' https://rsms.me; font-src 'self' data: https://rsms.me; img-src 'self' data: 'nonce-#{nonce}' https://lastfm.freetls.fastly.net; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'"
+
+    delete_resp_header(conn, "content-security-policy")
+    |> put_resp_header("content-security-policy", csp)
   end
 
   if Mix.env() == :dev do
