@@ -497,6 +497,9 @@ defmodule MusicLibrary.ScrobbleRules do
     end)
   end
 
+  # column and json_path are hardcoded string literals from internal callers,
+  # never user input. All user-derived values use parameterized ? placeholders.
+  # sobelow_skip ["SQL.Query"]
   defp apply_all_rules_for_column(rules, column, json_path, tracks) do
     {case_clauses, case_params} =
       Enum.reduce(rules, {"", []}, fn rule, {sql_acc, params_acc} ->

@@ -4,7 +4,9 @@
   ignore_files: [],
   ignore: [
     # Enabled via config/runtime.exs
-    "Config.HTTPS"
+    "Config.HTTPS",
+    # Placeholder values overridden in runtime.exs from env vars
+    "Config.Secrets"
   ],
   out: nil,
   private: false,

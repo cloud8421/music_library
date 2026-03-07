@@ -133,6 +133,8 @@ defmodule MusicLibraryWeb.CoreComponents do
     """
   end
 
+  # Renders syntax-highlighted JSON from internal debug structs, not user input.
+  # sobelow_skip ["XSS.Raw"]
   defp format_debug_data(%{type: :json, data: data}) do
     data
     |> Jason.encode!(pretty: true)

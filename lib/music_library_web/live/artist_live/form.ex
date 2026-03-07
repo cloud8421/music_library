@@ -195,6 +195,9 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
+  # path comes from Phoenix's consume_uploaded_entries callback —
+  # a framework-generated temp file path, not user input.
+  # sobelow_skip ["Traversal.FileModule"]
   def handle_event("save", params, socket) do
     artist_info_params = params["artist_info"] || %{}
 

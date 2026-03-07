@@ -430,6 +430,9 @@ defmodule MusicLibraryWeb.Components.RecordForm do
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
+  # path comes from Phoenix's consume_uploaded_entries callback —
+  # a framework-generated temp file path, not user input.
+  # sobelow_skip ["Traversal.FileModule"]
   def handle_event("save", %{"record" => record_params}, socket) do
     uploaded_covers =
       consume_uploaded_entries(socket, :cover_data, fn %{path: path}, entry ->
