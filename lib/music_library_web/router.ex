@@ -5,6 +5,9 @@ defmodule MusicLibraryWeb.Router do
   import MusicLibraryWeb.Auth, only: [require_logged_in: 2, require_api_token: 2]
   import Oban.Web.Router
 
+  # Content Security Policy: restricts resource loading to same-origin by default,
+  # allows inline styles and Inter font from rsms.me, album art from Last.fm CDN,
+  # and prevents framing by external sites.
   @csp_policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://rsms.me; font-src 'self' https://rsms.me; img-src 'self' data: https://lastfm.freetls.fastly.net; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'"
 
   pipeline :browser do
@@ -159,6 +162,9 @@ defmodule MusicLibraryWeb.Router do
     |> assign(:script_nonce, nonce)
   end
 
+  # Replaces the default CSP with a dev-specific policy that adds nonce-based
+  # exceptions for scripts, styles, and images, allowing Phoenix dev tools
+  # (live reload, debug toolbar) to load alongside the standard policy.
   defp put_dev_csp(conn, _opts) do
     nonce = conn.assigns[:script_nonce]
 
