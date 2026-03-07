@@ -71,6 +71,7 @@ defmodule MusicLibraryWeb.Endpoint do
   @blocked_paths [
     "/.env",
     "/admin",
+    "/blog/wp-includes/wlwmanifest.xml",
     "/files.php",
     "/grsiuk.php",
     "/jq.php",
