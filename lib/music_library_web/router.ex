@@ -11,7 +11,11 @@ defmodule MusicLibraryWeb.Router do
     plug :fetch_live_flash
     plug :put_root_layout, html: {MusicLibraryWeb.Layouts, :root}
     plug :protect_from_forgery
-    plug :put_secure_browser_headers
+
+    plug :put_secure_browser_headers, %{
+      "content-security-policy" =>
+        "default-src 'self'; script-src 'self'; style-src 'self' https://rsms.me; font-src 'self' https://rsms.me; img-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'"
+    }
   end
 
   pipeline :api do
