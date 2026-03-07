@@ -1,6 +1,9 @@
 defmodule MusicLibraryWeb.ArchiveController do
   use MusicLibraryWeb, :controller
 
+  # The database path is configuration controlled, and not derived from any
+  # user input, so we can safely skip the check.
+  # sobelow_skip ["Traversal.SendDownload"]
   def backup(conn, _params) do
     MusicLibrary.Repo.vacuum()
 
