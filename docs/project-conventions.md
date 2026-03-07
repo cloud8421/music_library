@@ -7,7 +7,7 @@ Rules extracted from commit history that are specific to this project and not al
 - Imperative present tense, single-line, under 60 characters
 - Describe intent/behavior, not implementation details
 - Reverts use `Revert "Original message"` convention
-- NEVER ADD a co-authored by reference in the message body
+- NEVER ADD a "Co-Authored-By" reference in the message body
 - If you're working on a GitHub issue, make sure to include the issue ID in the commit message body. Specifies if the commit closes the issue.
 
 ## Architecture
