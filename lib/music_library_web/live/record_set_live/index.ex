@@ -272,6 +272,16 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
   attr :list_params, :map, required: true
 
   defp record_set_card(assigns) do
+    assigns =
+      assigns
+      |> assign(:html_description, render_description(assigns.record_set.description))
+      |> assign(
+        :patch_params,
+        assigns.list_params
+        |> Map.take([:query, :page, :page_size, :order])
+        |> Enum.filter(fn {_, v} -> v not in ["", nil] end)
+      )
+
     ~H"""
     <li
       id={@id}
@@ -293,7 +303,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
             :if={@record_set.description}
             class="text-sm my-4 prose dark:prose-invert prose-zinc prose-sm prose-h1:text-sm max-w-none"
           >
-            {render_description(@record_set.description)}
+            {@html_description}
           </article>
         </div>
         <div class="flex items-center gap-2">
@@ -311,9 +321,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
             </:toggle>
             <.dropdown_link
               id={"set-actions-#{@record_set.id}-edit"}
-              patch={
-                ~p"/record-sets/#{@record_set}/edit?#{Map.take(@list_params, [:query, :page, :page_size, :order]) |> Enum.filter(fn {_, v} -> v not in ["", nil] end)}"
-              }
+              patch={~p"/record-sets/#{@record_set}/edit?#{@patch_params}"}
             >
               {gettext("Edit")}
             </.dropdown_link>
