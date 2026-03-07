@@ -83,6 +83,7 @@ defmodule MusicLibrary.MixProject do
       {:live_debugger, "~> 0.6.0", only: :dev},
       {:usage_rules, "~> 1.0"},
       {:tidewave, "~> 0.5", only: :dev},
+      {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false, warn_if_outdated: true},
 
       # HTTP Clients
       {:finch, "~> 0.21.0"},
