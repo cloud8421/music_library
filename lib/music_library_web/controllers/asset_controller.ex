@@ -73,6 +73,9 @@ defmodule MusicLibraryWeb.AssetController do
     |> send_resp(304, "")
   end
 
+  # Format is always resolved to either "image/webp" or "image/jpeg" in
+  # pick_format/1, so it's safe.
+  # sobelow_skip ["XSS.ContentType"]
   defp respond_with_cache(conn, data, format, etag) do
     conn
     |> put_resp_content_type(format, "utf-8")
