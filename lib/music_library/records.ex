@@ -330,6 +330,9 @@ defmodule MusicLibrary.Records do
     enqueue_worker(Worker.RefreshCover, %{"id" => record.id}, record_meta(record))
   end
 
+  defp maybe_extract_colors(%{dominant_colors: [_ | _]} = record), do: {:ok, record}
+  defp maybe_extract_colors(record), do: extract_colors(record)
+
   @spec extract_colors(Record.t()) :: {:ok, Record.t()} | {:error, term()}
   def extract_colors(record) do
     asset = Assets.get!(record.cover_hash)
@@ -409,7 +412,7 @@ defmodule MusicLibrary.Records do
   @spec create_record(map()) :: {:ok, Record.t()} | {:error, Ecto.Changeset.t()}
   def create_record(attrs \\ %{}) do
     with {:ok, record} <- do_create_record(attrs) do
-      {:ok, record} = extract_colors(record)
+      {:ok, record} = maybe_extract_colors(record)
       generate_embedding_async(record)
 
       record
