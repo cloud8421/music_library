@@ -31,9 +31,7 @@ config :music_library, :pagination,
   search_preview_limit: 5
 
 config :music_library, MusicLibraryWeb,
-  # TODO: either move to dev or sobelow ignore
   login_password: "change me",
-  # TODO: either move to dev or sobelow ignore
   api_token: "change me"
 
 # Configures the endpoint
@@ -55,7 +53,6 @@ config :music_library, LastFm,
   # refresh every 5 minutes
   refresh_interval: System.convert_time_unit(300, :second, :millisecond),
   api_key: "change me",
-  # TODO: either move to dev or sobelow ignore
   shared_secret: "change me",
   user_agent: user_agent,
   api_cooldown: 500
@@ -63,17 +60,14 @@ config :music_library, LastFm,
 config :music_library, MusicBrainz, user_agent: user_agent, api_cooldown: 500
 
 config :music_library, Discogs,
-  # TODO: either move to dev or sobelow ignore
   personal_access_token: "change me",
   user_agent: user_agent,
   api_cooldown: 1000
 
 config :music_library, Wikipedia, user_agent: user_agent
 
-# TODO: either move to dev or sobelow ignore
 config :music_library, BraveSearch, api_key: "change me", user_agent: user_agent
 
-# TODO: either move to dev or sobelow ignore
 config :music_library, OpenAI, api_key: "change me"
 
 # Configure esbuild (the version is required)
@@ -128,7 +122,6 @@ config :swoosh, :api_client, Swoosh.ApiClient.Req
 
 config :music_library, MusicLibrary.Mailer,
   adapter: Swoosh.Adapters.Mailgun,
-  # TODO: either move to dev or sobelow ignore
   api_key: "change me",
   domain: "change me"
 
