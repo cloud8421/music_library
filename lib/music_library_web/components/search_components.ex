@@ -346,6 +346,8 @@ defmodule MusicLibraryWeb.SearchComponents do
     """
   end
 
+  # sobelow_skip ["XSS.Raw"]
+  # Markdown.to_html/1 sanitizes HTML via HtmlSanitizeEx
   defp render_description(description) do
     description
     |> String.slice(0, 100)

@@ -156,6 +156,8 @@ defmodule MusicLibraryWeb.Components.Notes do
     end
   end
 
+  # sobelow_skip ["XSS.Raw"]
+  # Markdown.to_html/1 sanitizes HTML via HtmlSanitizeEx
   defp render_content(content) do
     content
     |> Markdown.to_html()

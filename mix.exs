@@ -105,6 +105,7 @@ defmodule MusicLibrary.MixProject do
 
       # Notes
       {:earmark, "~> 1.4"},
+      {:html_sanitize_ex, "~> 1.4"},
 
       # Syntax highlighting
       {:lumis, "~> 0.1"},

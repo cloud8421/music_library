@@ -22,6 +22,7 @@ defmodule MusicLibraryWeb.Markdown do
           markdown_text
           |> process_double_bracket_links()
           |> Earmark.as_html!(%Earmark.Options{gfm: true})
+          |> HtmlSanitizeEx.markdown_html()
 
         {result, %{}}
       end
