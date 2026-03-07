@@ -14,7 +14,7 @@ defmodule MusicLibraryWeb.Router do
 
     plug :put_secure_browser_headers, %{
       "content-security-policy" =>
-        "default-src 'self'; script-src 'self'; style-src 'self' https://rsms.me; font-src 'self' https://rsms.me; img-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'"
+        "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://rsms.me; font-src 'self' https://rsms.me; img-src 'self' data: https://lastfm.freetls.fastly.net; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'"
     }
   end
 
