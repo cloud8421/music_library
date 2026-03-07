@@ -8,7 +8,14 @@ defmodule MusicLibraryWeb.Router do
   # Content Security Policy: restricts resource loading to same-origin by default,
   # allows inline styles and Inter font from rsms.me, album art from Last.fm CDN,
   # and prevents framing by external sites.
-  @csp_policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://rsms.me; font-src 'self' https://rsms.me; img-src 'self' data: https://lastfm.freetls.fastly.net; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'"
+  @csp_policy "default-src 'self'" <>
+                "; script-src 'self'" <>
+                "; style-src 'self' 'unsafe-inline' https://rsms.me" <>
+                "; font-src 'self' https://rsms.me" <>
+                "; img-src 'self' data: https://lastfm.freetls.fastly.net" <>
+                "; connect-src 'self'" <>
+                "; frame-ancestors 'self'" <>
+                "; base-uri 'self'"
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -169,7 +176,14 @@ defmodule MusicLibraryWeb.Router do
     nonce = conn.assigns[:script_nonce]
 
     csp =
-      "default-src 'self'; script-src 'self' 'nonce-#{nonce}'; style-src 'self' 'unsafe-inline' 'nonce-#{nonce}' https://rsms.me; font-src 'self' data: https://rsms.me; img-src 'self' data: 'nonce-#{nonce}' https://lastfm.freetls.fastly.net; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'"
+      "default-src 'self'" <>
+        "; script-src 'self' 'nonce-#{nonce}'" <>
+        "; style-src 'self' 'unsafe-inline' 'nonce-#{nonce}' https://rsms.me" <>
+        "; font-src 'self' data: https://rsms.me" <>
+        "; img-src 'self' data: 'nonce-#{nonce}' https://lastfm.freetls.fastly.net" <>
+        "; connect-src 'self'" <>
+        "; frame-ancestors 'self'" <>
+        "; base-uri 'self'"
 
     delete_resp_header(conn, "content-security-policy")
     |> put_resp_header("content-security-policy", csp)
