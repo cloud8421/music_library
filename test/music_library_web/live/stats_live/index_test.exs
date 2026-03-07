@@ -71,6 +71,81 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
       |> assert_has("dd", wishlist |> length() |> Integer.to_string())
     end
 
+    test "it displays records for the current date in the 'On This Day' section", %{
+      conn: conn,
+      collection: collection
+    } do
+      today = Date.utc_today()
+      yesterday = Date.add(today, -1)
+
+      record_today =
+        List.first(collection)
+        |> Records.change_record(%{
+          release_date: Date.to_iso8601(today),
+          purchased_at: DateTime.utc_now()
+        })
+        |> Repo.update!()
+
+      record_yesterday =
+        List.last(collection)
+        |> Records.change_record(%{
+          release_date: Date.to_iso8601(yesterday),
+          purchased_at: DateTime.utc_now()
+        })
+        |> Repo.update!()
+
+      session = conn |> visit("/")
+
+      assert_has(session, "h1", "On This day")
+
+      assert_has(session, "##{record_today.id} h2", escape(record_today.title))
+
+      refute_has(session, "##{record_yesterday.id} h2", escape(record_yesterday.title))
+    end
+
+    test "it updates the 'On This Day' records when the date is changed", %{
+      conn: conn,
+      collection: collection
+    } do
+      today = Date.utc_today()
+      yesterday = Date.add(today, -1)
+
+      record_today =
+        List.first(collection)
+        |> Records.change_record(%{
+          release_date: Date.to_iso8601(today),
+          purchased_at: DateTime.utc_now()
+        })
+        |> Repo.update!()
+
+      record_yesterday =
+        List.last(collection)
+        |> Records.change_record(%{
+          release_date: Date.to_iso8601(yesterday),
+          purchased_at: DateTime.utc_now()
+        })
+        |> Repo.update!()
+
+      session = conn |> visit("/")
+
+      assert_has(session, "##{record_today.id} h2", escape(record_today.title))
+
+      refute_has(session, "##{record_yesterday.id} h2", escape(record_yesterday.title))
+
+      session
+      |> unwrap(fn view ->
+        view
+        |> form("[phx-change='set_current_date']", %{"current_date" => Date.to_iso8601(yesterday)})
+        |> render_change()
+      end)
+
+      refute_has(session, "##{record_today.id} h2", escape(record_today.title))
+
+      assert_has(session, "##{record_yesterday.id} h2", escape(record_yesterday.title))
+    end
+  end
+
+  describe "Scrobble activity" do
     test "it shows the scrobble activity", %{conn: conn} do
       # In test we don't run the LastFm.Refresh worker,
       # so we need to interact directly with the LastFm.Feed to have some data
@@ -240,79 +315,6 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
 
       assert [wishlisted_record] = Wishlist.search_records("mbid:#{release_group_id}")
       assert_path(session, ~p"/wishlist/#{wishlisted_record.id}")
-    end
-
-    test "it displays records for the current date in the 'On This Day' section", %{
-      conn: conn,
-      collection: collection
-    } do
-      today = Date.utc_today()
-      yesterday = Date.add(today, -1)
-
-      record_today =
-        List.first(collection)
-        |> Records.change_record(%{
-          release_date: Date.to_iso8601(today),
-          purchased_at: DateTime.utc_now()
-        })
-        |> Repo.update!()
-
-      record_yesterday =
-        List.last(collection)
-        |> Records.change_record(%{
-          release_date: Date.to_iso8601(yesterday),
-          purchased_at: DateTime.utc_now()
-        })
-        |> Repo.update!()
-
-      session = conn |> visit("/")
-
-      assert_has(session, "h1", "On This day")
-
-      assert_has(session, "##{record_today.id} h2", escape(record_today.title))
-
-      refute_has(session, "##{record_yesterday.id} h2", escape(record_yesterday.title))
-    end
-
-    test "it updates the 'On This Day' records when the date is changed", %{
-      conn: conn,
-      collection: collection
-    } do
-      today = Date.utc_today()
-      yesterday = Date.add(today, -1)
-
-      record_today =
-        List.first(collection)
-        |> Records.change_record(%{
-          release_date: Date.to_iso8601(today),
-          purchased_at: DateTime.utc_now()
-        })
-        |> Repo.update!()
-
-      record_yesterday =
-        List.last(collection)
-        |> Records.change_record(%{
-          release_date: Date.to_iso8601(yesterday),
-          purchased_at: DateTime.utc_now()
-        })
-        |> Repo.update!()
-
-      session = conn |> visit("/")
-
-      assert_has(session, "##{record_today.id} h2", escape(record_today.title))
-
-      refute_has(session, "##{record_yesterday.id} h2", escape(record_yesterday.title))
-
-      session
-      |> unwrap(fn view ->
-        view
-        |> form("[phx-change='set_current_date']", %{"current_date" => Date.to_iso8601(yesterday)})
-        |> render_change()
-      end)
-
-      refute_has(session, "##{record_today.id} h2", escape(record_today.title))
-
-      assert_has(session, "##{record_yesterday.id} h2", escape(record_yesterday.title))
     end
   end
 end

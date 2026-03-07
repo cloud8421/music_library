@@ -12,7 +12,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   alias MusicLibrary.Records.Record
 
   # make it a multiple of 4 for easier calculations
-  @default_records_page_size 8
+  @default_records_page_size 4
   @total_records @default_records_page_size + div(@default_records_page_size, 2)
 
   defp fill_collection(_) do
@@ -20,18 +20,11 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     %{collection: records}
   end
 
-  defp fill_wishlist(_) do
-    records = Enum.map(1..@total_records, fn _ -> record(%{purchased_at: nil}) end)
-    %{wishlist: records}
-  end
-
   describe "Collection" do
-    setup [:fill_collection, :fill_wishlist]
+    setup [:fill_collection]
 
-    test "does not show wishlist records", %{
-      conn: conn,
-      wishlist: wishlist_records
-    } do
+    test "does not show wishlist records", %{conn: conn} do
+      wishlist_records = Enum.map(1..3, fn _ -> record(%{purchased_at: nil}) end)
       session = visit(conn, ~p"/collection")
 
       for record <- wishlist_records do
