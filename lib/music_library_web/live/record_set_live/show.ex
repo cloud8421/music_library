@@ -303,7 +303,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
   defp page_title(:add_record, record_set), do: gettext("Add Record") <> " · " <> record_set.name
 
   # sobelow_skip ["XSS.Raw"]
-  # Markdown.to_html/1 sanitizes HTML via HtmlSanitizeEx
+  # Markdown.to_html/1 sanitizes HTML via MDEx (ammonia)
   defp render_description(description) do
     description
     |> Markdown.to_html()

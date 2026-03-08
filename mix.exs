@@ -104,8 +104,7 @@ defmodule MusicLibrary.MixProject do
       {:briefly, "~> 0.5.0"},
 
       # Notes
-      {:earmark, "~> 1.4"},
-      {:html_sanitize_ex, "~> 1.4"},
+      {:mdex, "~> 0.11.6"},
 
       # Syntax highlighting
       {:lumis, "~> 0.1"},

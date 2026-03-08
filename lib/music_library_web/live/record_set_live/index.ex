@@ -475,7 +475,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
   end
 
   # sobelow_skip ["XSS.Raw"]
-  # Markdown.to_html/1 sanitizes HTML via HtmlSanitizeEx
+  # Markdown.to_html/1 sanitizes HTML via MDEx (ammonia)
   defp render_description(description) do
     description
     |> Markdown.to_html()
