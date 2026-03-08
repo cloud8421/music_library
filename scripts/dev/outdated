@@ -11,36 +11,39 @@ ensure_working_directory!
 # Initialize arrays to track commands
 declare -a command_names
 declare -a command_results
+declare -a command_next_steps
 
 # Function to run and track commands
 run_and_track() {
   local name="$1"
-  shift
+  local next_step="$2"
+  shift 2
   "$@"
   local result=$?
   command_names+=("$name")
   command_results+=("$result")
+  command_next_steps+=("$next_step")
   return $result
 }
 
 debug_msg "Checking outdated NPM dependencies..."
-run_and_track "NPM dependencies" npm outdated --prefix assets
+run_and_track "NPM dependencies" "npm update --prefix assets" npm outdated --prefix assets
 
 debug_msg "Checking outdated tooling (tailwind, esbuild, sqlean)..."
-run_and_track "Tailwind" mix tailwind.check_version
-run_and_track "ESBuild" mix esbuild.check_version
-run_and_track "Sqlean" mix sqlean.check_version
+run_and_track "Tailwind" "mix tailwind.update_version" mix tailwind.check_version
+run_and_track "ESBuild" "mix esbuild.update_version" mix esbuild.check_version
+run_and_track "Sqlean" "mix sqlean.update_version" mix sqlean.check_version
 
 debug_msg "Checking outdated mix dependencies"
-run_and_track "Mix dependencies" mix hex.outdated --all
+run_and_track "Mix dependencies" "mix deps.update --all" mix hex.outdated --all
 
 # Print summary table
 echo ""
-echo "============================================="
+echo "========================================================================"
 echo "Summary"
-echo "============================================="
-printf "%-30s | %s\n" "Dependency" "Status"
-echo "---------------------------------------------"
+echo "========================================================================"
+printf "%-20s | %-16s | %s\n" "Dependency" "Status" "Next Step"
+echo "------------------------------------------------------------------------"
 
 red=$(tput setaf 1)
 green=$(tput setaf 2)
@@ -49,12 +52,13 @@ normal=$(tput sgr0)
 for i in "${!command_names[@]}"; do
   name="${command_names[$i]}"
   result="${command_results[$i]}"
+  next_step="${command_next_steps[$i]}"
 
   if [ "$result" -eq 0 ]; then
-    printf "%-30s | %s\n" "$name" "${green}✓ Up to date${normal}"
+    printf "%-20s | %s%-16s%s | %s\n" "$name" "$green" "✓ Up to date" "$normal" ""
   else
-    printf "%-30s | %s\n" "$name" "${red}✗ Outdated${normal}"
+    printf "%-20s | %s%-16s%s | %s\n" "$name" "$red" "✗ Outdated" "$normal" "$next_step"
   fi
 done
 
-echo "============================================="
+echo "========================================================================"
