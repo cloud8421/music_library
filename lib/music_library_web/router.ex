@@ -8,12 +8,15 @@ defmodule MusicLibraryWeb.Router do
   # Content Security Policy: restricts resource loading to same-origin by default,
   # allows inline styles and Inter font from rsms.me, album art from Last.fm CDN,
   # and prevents framing by external sites.
+  # In dev, allows LiveDebugger and Phoenix dev assets from 127.0.0.1:4007.
+  @dev_origins if(Mix.env() == :dev, do: " http://127.0.0.1:* ws://127.0.0.1:*", else: "")
+
   @csp_policy "default-src 'self'" <>
-                "; script-src 'self'" <>
-                "; style-src 'self' 'unsafe-inline' https://rsms.me" <>
+                "; script-src 'self'#{@dev_origins}" <>
+                "; style-src 'self' 'unsafe-inline' https://rsms.me#{@dev_origins}" <>
                 "; font-src 'self' https://rsms.me" <>
                 "; img-src 'self' data: https://lastfm.freetls.fastly.net" <>
-                "; connect-src 'self'" <>
+                "; connect-src 'self'#{@dev_origins}" <>
                 "; frame-ancestors 'self'" <>
                 "; base-uri 'self'"
 
