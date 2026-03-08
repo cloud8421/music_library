@@ -157,6 +157,22 @@ defmodule MusicLibraryWeb.Telemetry do
         reporter_options: [nav: "Markdown"]
       ),
 
+      # Color Extraction Metrics
+      summary("music_library.colors.extract.stop.duration",
+        unit: {:native, :millisecond},
+        reporter_options: [nav: "Image Processing"]
+      ),
+
+      # Image Processing Metrics
+      summary("music_library.assets.image.resize.stop.duration",
+        unit: {:native, :millisecond},
+        reporter_options: [nav: "Image Processing"]
+      ),
+      summary("music_library.assets.image.convert.stop.duration",
+        unit: {:native, :millisecond},
+        reporter_options: [nav: "Image Processing"]
+      ),
+
       # VM Metrics
       summary("vm.memory.total", unit: {:byte, :megabyte}),
       summary("vm.total_run_queue_lengths.total"),

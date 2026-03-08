@@ -14,8 +14,15 @@ defmodule MusicLibrary.Assets.Image do
 
   @spec resize(binary(), pos_integer(), String.t()) :: {:ok, binary()} | {:error, term()}
   def resize(cover_data, size \\ @default_size, format \\ @default_format) do
-    {:ok, thumb} = Operation.thumbnail_buffer(cover_data, size)
-    Image.write_to_buffer(thumb, extension(format))
+    :telemetry.span(
+      [:music_library, :assets, :image, :resize],
+      %{},
+      fn ->
+        {:ok, thumb} = Operation.thumbnail_buffer(cover_data, size)
+        result = Image.write_to_buffer(thumb, extension(format))
+        {result, %{}}
+      end
+    )
   end
 
   @spec convert(binary(), String.t(), String.t()) :: {:ok, binary()}
@@ -23,8 +30,15 @@ defmodule MusicLibrary.Assets.Image do
     if data_format == target_format do
       {:ok, cover_data}
     else
-      {:ok, image} = Image.new_from_buffer(cover_data)
-      Image.write_to_buffer(image, extension(target_format))
+      :telemetry.span(
+        [:music_library, :assets, :image, :convert],
+        %{},
+        fn ->
+          {:ok, image} = Image.new_from_buffer(cover_data)
+          result = Image.write_to_buffer(image, extension(target_format))
+          {result, %{}}
+        end
+      )
     end
   end
 
