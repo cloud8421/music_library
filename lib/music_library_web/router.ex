@@ -15,7 +15,7 @@ defmodule MusicLibraryWeb.Router do
                 "; script-src 'self'#{@dev_origins}" <>
                 "; style-src 'self' 'unsafe-inline' https://rsms.me#{@dev_origins}" <>
                 "; font-src 'self' https://rsms.me" <>
-                "; img-src 'self' data: https://lastfm.freetls.fastly.net" <>
+                "; img-src 'self' data: https://lastfm.freetls.fastly.net https://imgs.search.brave.com" <>
                 "; connect-src 'self'#{@dev_origins}" <>
                 "; frame-ancestors 'self'" <>
                 "; base-uri 'self'"
@@ -183,7 +183,7 @@ defmodule MusicLibraryWeb.Router do
         "; script-src 'self' 'nonce-#{nonce}'" <>
         "; style-src 'self' 'unsafe-inline' 'nonce-#{nonce}' https://rsms.me" <>
         "; font-src 'self' data: https://rsms.me" <>
-        "; img-src 'self' data: 'nonce-#{nonce}' https://lastfm.freetls.fastly.net" <>
+        "; img-src 'self' data: 'nonce-#{nonce}' https://lastfm.freetls.fastly.net https://imgs.search.brave.com" <>
         "; connect-src 'self'" <>
         "; frame-ancestors 'self'" <>
         "; base-uri 'self'"
