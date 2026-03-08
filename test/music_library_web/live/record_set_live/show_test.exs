@@ -64,23 +64,6 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
     end
   end
 
-  describe "Reorder records" do
-    test "moves a record right (down)", %{conn: conn} do
-      {set, [r1, r2 | _]} = record_set_with_records(3)
-
-      {:ok, view, _html} = live(conn, ~p"/record-sets/#{set}")
-
-      view
-      |> element("button[phx-click='move_down'][phx-value-record-id='#{r1.id}']")
-      |> render_click()
-
-      updated = RecordSets.get_record_set!(set.id)
-      ids_in_order = Enum.map(updated.items, & &1.record.id)
-      assert Enum.at(ids_in_order, 0) == r2.id
-      assert Enum.at(ids_in_order, 1) == r1.id
-    end
-  end
-
   describe "Drag-and-drop reorder" do
     test "reorders records via reorder event", %{conn: conn} do
       {set, [r1, r2, r3]} = record_set_with_records(3)

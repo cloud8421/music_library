@@ -1614,18 +1614,6 @@ msgstr ""
 msgid "Edit Set"
 msgstr ""
 
-#: lib/music_library_web/live/record_set_live/index.ex
-#: lib/music_library_web/live/record_set_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Move left"
-msgstr ""
-
-#: lib/music_library_web/live/record_set_live/index.ex
-#: lib/music_library_web/live/record_set_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Move right"
-msgstr ""
-
 #: lib/music_library_web/live/record_set_live/form.ex
 #, elixir-autogen, elixir-format
 msgid "Name"

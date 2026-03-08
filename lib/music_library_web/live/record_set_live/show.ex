@@ -109,47 +109,19 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
                   aria-hidden="true"
                 />
               </div>
-              <div class="absolute top-1 right-1 rounded-full bg-zinc-100/50 hover:bg-zinc-100/75 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/75 size-5">
-                <.dropdown
-                  id={"item-actions-#{item.record.id}"}
-                  placement="bottom-end"
-                >
-                  <:toggle>
-                    <span class="sr-only">{gettext("Actions")}</span>
-                    <.icon
-                      name="hero-ellipsis-vertical"
-                      class="size-5 text-zinc-800 dark:text-zinc-200 cursor-pointer"
-                      aria-hidden="true"
-                      data-slot="icon"
-                    />
-                  </:toggle>
-                  <.dropdown_button
-                    :if={item.position > 0}
-                    phx-click="move_up"
-                    phx-value-record-id={item.record.id}
-                  >
-                    {gettext("Move left")}
-                  </.dropdown_button>
-                  <.dropdown_button
-                    :if={item.position < length(@record_set.items) - 1}
-                    phx-click="move_down"
-                    phx-value-record-id={item.record.id}
-                  >
-                    {gettext("Move right")}
-                  </.dropdown_button>
-                  <.separator />
-                  <.dropdown_button
-                    phx-click="remove_record"
-                    phx-value-record-id={item.record.id}
-                    data-confirm={gettext("Remove this record from the set?")}
-                    class={[
-                      "text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
-                    ]}
-                  >
-                    {gettext("Remove")}
-                  </.dropdown_button>
-                </.dropdown>
-              </div>
+              <button
+                phx-click="remove_record"
+                phx-value-record-id={item.record.id}
+                data-confirm={gettext("Remove this record from the set?")}
+                class="absolute top-1 right-1 flex items-center justify-center rounded-full bg-zinc-100/50 hover:bg-red-100/75 dark:bg-zinc-700/50 dark:hover:bg-red-900/50 size-8 sm:size-5 cursor-pointer"
+              >
+                <span class="sr-only">{gettext("Remove")}</span>
+                <.icon
+                  name="hero-trash"
+                  class="size-3.5 text-zinc-800 hover:text-red-700 dark:text-zinc-200 dark:hover:text-red-400"
+                  aria-hidden="true"
+                />
+              </button>
               <h1 class="mt-1 text-sm sm:text-sm leading-6 text-zinc-700">
                 <.artist_links joinphrase_class="text-sm" artists={item.record.artists} />
               </h1>
@@ -273,20 +245,6 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
   def handle_event("remove_record", %{"record-id" => record_id}, socket) do
     {:ok, updated_set} =
       RecordSets.remove_record_from_set(socket.assigns.record_set, record_id)
-
-    {:noreply, assign(socket, :record_set, updated_set)}
-  end
-
-  def handle_event("move_up", %{"record-id" => record_id}, socket) do
-    {:ok, updated_set} =
-      RecordSets.move_record_in_set(socket.assigns.record_set, record_id, :up)
-
-    {:noreply, assign(socket, :record_set, updated_set)}
-  end
-
-  def handle_event("move_down", %{"record-id" => record_id}, socket) do
-    {:ok, updated_set} =
-      RecordSets.move_record_in_set(socket.assigns.record_set, record_id, :down)
 
     {:noreply, assign(socket, :record_set, updated_set)}
   end
