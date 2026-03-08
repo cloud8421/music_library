@@ -6,16 +6,17 @@ defmodule MusicLibraryWeb.Router do
   import Oban.Web.Router
 
   # Content Security Policy: restricts resource loading to same-origin by default,
-  # allows inline styles and Inter font from rsms.me, album art from Last.fm CDN,
-  # and prevents framing by external sites.
-  # In dev, allows LiveDebugger and Phoenix dev assets from 127.0.0.1:4007.
+  # allows inline styles/scripts and Inter font from rsms.me, album art from
+  # Last.fm CDN, Brave Search, and Cover Art Archive, and prevents framing.
+  # In dev, allows LiveDebugger and Phoenix dev assets from 127.0.0.1.
   @dev_origins if(Mix.env() == :dev, do: " http://127.0.0.1:* ws://127.0.0.1:*", else: "")
+  @img_origins "https://lastfm.freetls.fastly.net https://imgs.search.brave.com https://coverartarchive.org https://archive.org https://*.archive.org"
 
   @csp_policy "default-src 'self'" <>
                 "; script-src 'self' 'unsafe-inline'#{@dev_origins}" <>
                 "; style-src 'self' 'unsafe-inline' https://rsms.me#{@dev_origins}" <>
                 "; font-src 'self' https://rsms.me" <>
-                "; img-src 'self' data: https://lastfm.freetls.fastly.net https://imgs.search.brave.com https://coverartarchive.org https://archive.org https://*.archive.org" <>
+                "; img-src 'self' data: #{@img_origins}" <>
                 "; connect-src 'self'#{@dev_origins}" <>
                 "; frame-ancestors 'self'" <>
                 "; base-uri 'self'"
@@ -183,7 +184,7 @@ defmodule MusicLibraryWeb.Router do
         "; script-src 'self' 'nonce-#{nonce}'" <>
         "; style-src 'self' 'unsafe-inline' 'nonce-#{nonce}' https://rsms.me" <>
         "; font-src 'self' data: https://rsms.me" <>
-        "; img-src 'self' data: 'nonce-#{nonce}' https://lastfm.freetls.fastly.net https://imgs.search.brave.com https://coverartarchive.org https://archive.org https://*.archive.org" <>
+        "; img-src 'self' data: 'nonce-#{nonce}' #{@img_origins}" <>
         "; connect-src 'self'" <>
         "; frame-ancestors 'self'" <>
         "; base-uri 'self'"
