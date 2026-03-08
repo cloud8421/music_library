@@ -258,6 +258,9 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `UniversalSearchLive.Index` | Layout (global) | Cmd+K search modal |
 | `Chat` | CollectionLive.Show, WishlistLive.Show, ArtistLive.Show | AI chat sheet (OpenAI streaming, configurable per entity) |
 | `Notes` | CollectionLive.Show, WishlistLive.Show, ArtistLive.Show | Markdown note rendering and editing |
+| `AddRecord` | CollectionLive.Index, WishlistLive.Index | MusicBrainz import interface |
+| `BarcodeScanner` | CollectionLive.Index | Barcode scanning UI (uses barcode-detector JS) |
+| `Release` | CollectionLive.Show, ScrobbleLive.Show | MusicBrainz release display with scrobble |
 
 ### Shared Component Modules (lib/music_library_web/components/)
 
@@ -271,9 +274,6 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `ScrobbleComponents` | Scrobble activity displays |
 | `SearchComponents` | Search result rendering |
 | `Pagination` | Pagination UI and logic |
-| `AddRecord` | MusicBrainz import interface |
-| `BarcodeScanner` | Barcode scanning UI (uses barcode-detector JS) |
-| `Release` | MusicBrainz release display |
 
 ### Web Utility Modules (lib/music_library_web/)
 
@@ -282,6 +282,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `ErrorMessages` | Maps internal error terms (atoms, structs) to user-friendly gettext strings via `friendly_message/1` |
 | `Markdown` | Markdown-to-HTML conversion with `[[double bracket]]` link syntax |
 | `Duration` | Milliseconds to human-readable duration formatting |
+| `Auth` | Authentication plugs: login password check, API token validation, session enforcement |
 | `LiveHelpers.Params` | Pagination param parsing from URL query params |
 
 ### Controllers
