@@ -12,10 +12,10 @@ defmodule MusicLibraryWeb.Router do
   @dev_origins if(Mix.env() == :dev, do: " http://127.0.0.1:* ws://127.0.0.1:*", else: "")
 
   @csp_policy "default-src 'self'" <>
-                "; script-src 'self'#{@dev_origins}" <>
+                "; script-src 'self' 'unsafe-inline'#{@dev_origins}" <>
                 "; style-src 'self' 'unsafe-inline' https://rsms.me#{@dev_origins}" <>
                 "; font-src 'self' https://rsms.me" <>
-                "; img-src 'self' data: https://lastfm.freetls.fastly.net https://imgs.search.brave.com" <>
+                "; img-src 'self' data: https://lastfm.freetls.fastly.net https://imgs.search.brave.com https://coverartarchive.org https://archive.org https://*.archive.org" <>
                 "; connect-src 'self'#{@dev_origins}" <>
                 "; frame-ancestors 'self'" <>
                 "; base-uri 'self'"
@@ -183,7 +183,7 @@ defmodule MusicLibraryWeb.Router do
         "; script-src 'self' 'nonce-#{nonce}'" <>
         "; style-src 'self' 'unsafe-inline' 'nonce-#{nonce}' https://rsms.me" <>
         "; font-src 'self' data: https://rsms.me" <>
-        "; img-src 'self' data: 'nonce-#{nonce}' https://lastfm.freetls.fastly.net https://imgs.search.brave.com" <>
+        "; img-src 'self' data: 'nonce-#{nonce}' https://lastfm.freetls.fastly.net https://imgs.search.brave.com https://coverartarchive.org https://archive.org https://*.archive.org" <>
         "; connect-src 'self'" <>
         "; frame-ancestors 'self'" <>
         "; base-uri 'self'"
