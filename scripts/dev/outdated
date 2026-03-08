@@ -55,10 +55,19 @@ for i in "${!command_names[@]}"; do
   next_step="${command_next_steps[$i]}"
 
   if [ "$result" -eq 0 ]; then
-    printf "%-20s | %s%-16s%s | %s\n" "$name" "$green" "✓ Up to date" "$normal" ""
+    printf "%-20s | %s%-18s%s | %s\n" "$name" "$green" "✓ Up to date" "$normal" "Nothing to do"
   else
-    printf "%-20s | %s%-16s%s | %s\n" "$name" "$red" "✗ Outdated" "$normal" "$next_step"
+    printf "%-20s | %s%-18s%s | %s\n" "$name" "$red" "✗ Outdated" "$normal" "$next_step"
   fi
 done
 
 echo "========================================================================"
+
+# Print footer hint if anything is outdated
+for result in "${command_results[@]}"; do
+  if [ "$result" -ne 0 ]; then
+    echo ""
+    echo "To update everything, run \`mise run dev:update\`"
+    break
+  fi
+done
