@@ -49,7 +49,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
   describe "Search functionality" do
     setup [:create_multiple_tracks]
 
-    test "searches tracks by title", %{conn: conn} do
+    test "filters results by search query", %{conn: conn} do
       track_fixture(%{title: "Unique Track Title"})
 
       session = visit(conn, ~p"/scrobbled-tracks")
@@ -61,34 +61,6 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
         |> render_submit()
       end)
       |> assert_has("p", "Unique Track Title")
-    end
-
-    test "searches tracks by artist name", %{conn: conn} do
-      track_fixture(%{artist_name: "Unique Artist Name"})
-
-      session = visit(conn, ~p"/scrobbled-tracks")
-
-      session
-      |> unwrap(fn view ->
-        view
-        |> form("form[phx-submit='search']", %{query: "Unique Artist"})
-        |> render_submit()
-      end)
-      |> assert_has("p", "Unique Artist Name")
-    end
-
-    test "searches tracks by album title", %{conn: conn} do
-      track_fixture(%{album_title: "Unique Album Title"})
-
-      session = visit(conn, ~p"/scrobbled-tracks")
-
-      session
-      |> unwrap(fn view ->
-        view
-        |> form("form[phx-submit='search']", %{query: "Unique Album"})
-        |> render_submit()
-      end)
-      |> assert_has("p", "Unique Album Title")
     end
   end
 

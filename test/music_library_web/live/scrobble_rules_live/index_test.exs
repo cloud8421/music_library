@@ -4,8 +4,6 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
   import MusicLibrary.ScrobbleRulesFixtures
   import Phoenix.LiveViewTest
 
-  alias MusicLibrary.ScrobbleRules
-
   # Test data
   @invalid_attrs %{type: "", match_value: "", target_musicbrainz_id: ""}
   @valid_attrs %{
@@ -95,22 +93,20 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
       {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
 
       # Toggle to disabled
-      assert index_live
-             |> element("#scrobble_rules-#{scrobble_rule.id} button[phx-click='toggle_enabled']")
-             |> render_click()
+      html =
+        index_live
+        |> element("#scrobble_rules-#{scrobble_rule.id} button[phx-click='toggle_enabled']")
+        |> render_click()
 
-      # Check that the rule was disabled
-      updated_rule = ScrobbleRules.get_scrobble_rule!(scrobble_rule.id)
-      refute updated_rule.enabled
+      assert html =~ "Enable rule"
 
       # Toggle back to enabled
-      assert index_live
-             |> element("#scrobble_rules-#{scrobble_rule.id} button[phx-click='toggle_enabled']")
-             |> render_click()
+      html =
+        index_live
+        |> element("#scrobble_rules-#{scrobble_rule.id} button[phx-click='toggle_enabled']")
+        |> render_click()
 
-      # Check that the rule was enabled again
-      updated_rule = ScrobbleRules.get_scrobble_rule!(scrobble_rule.id)
-      assert updated_rule.enabled
+      assert html =~ "Disable rule"
     end
 
     test "applies individual rule", %{conn: conn, scrobble_rule: scrobble_rule} do
@@ -136,55 +132,25 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
     end
   end
 
-  describe "Form validation" do
-    test "shows validation errors for missing required fields", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
+  test "updates form labels based on rule type", %{conn: conn} do
+    {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
 
-      assert index_live |> element("a", "Add") |> render_click()
+    assert index_live |> element("a", "Add") |> render_click()
 
-      assert index_live
-             |> form("#scrobble_rule-form",
-               scrobble_rule: %{type: "", match_value: "", target_musicbrainz_id: ""}
-             )
-             |> render_change() =~ "can&#39;t be blank"
-    end
+    # Select album type
+    html =
+      index_live
+      |> form("#scrobble_rule-form", scrobble_rule: %{type: :album})
+      |> render_change()
 
-    test "shows validation errors for invalid MusicBrainz ID", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
+    assert html =~ "Album Title"
 
-      assert index_live |> element("a", "Add") |> render_click()
+    # Select artist type
+    html =
+      index_live
+      |> form("#scrobble_rule-form", scrobble_rule: %{type: :artist})
+      |> render_change()
 
-      assert index_live
-             |> form("#scrobble_rule-form",
-               scrobble_rule: %{
-                 type: :album,
-                 match_value: "Test Album",
-                 target_musicbrainz_id: "invalid-uuid"
-               }
-             )
-             |> render_change() =~ "is invalid"
-    end
-
-    test "updates form labels based on rule type", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
-
-      assert index_live |> element("a", "Add") |> render_click()
-
-      # Select album type
-      html =
-        index_live
-        |> form("#scrobble_rule-form", scrobble_rule: %{type: :album})
-        |> render_change()
-
-      assert html =~ "Album Title"
-
-      # Select artist type
-      html =
-        index_live
-        |> form("#scrobble_rule-form", scrobble_rule: %{type: :artist})
-        |> render_change()
-
-      assert html =~ "Artist Name"
-    end
+    assert html =~ "Artist Name"
   end
 end

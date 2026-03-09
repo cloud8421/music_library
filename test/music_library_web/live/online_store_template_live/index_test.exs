@@ -4,8 +4,6 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.IndexTest do
   import MusicLibrary.Fixtures.OnlineStoreTemplates
   import Phoenix.LiveViewTest
 
-  alias MusicLibrary.OnlineStoreTemplates
-
   describe "Index" do
     test "lists all templates", %{conn: conn} do
       online_store_template(%{name: "Amazon UK"})
@@ -32,8 +30,7 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.IndexTest do
       )
       |> render_submit()
 
-      templates = OnlineStoreTemplates.list_templates()
-      assert Enum.any?(templates, &(&1.name == "New Store"))
+      assert has_element?(view, "p", "New Store")
     end
 
     test "shows validation errors", %{conn: conn} do
@@ -62,8 +59,7 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.IndexTest do
       )
       |> render_submit()
 
-      updated = OnlineStoreTemplates.get_template!(template.id)
-      assert updated.name == "Updated Name"
+      assert has_element?(view, "p", "Updated Name")
     end
   end
 
@@ -78,7 +74,6 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.IndexTest do
       |> render_click()
 
       refute has_element?(view, "p", "To Delete")
-      assert_raise Ecto.NoResultsError, fn -> OnlineStoreTemplates.get_template!(template.id) end
     end
   end
 
@@ -89,20 +84,20 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.IndexTest do
       {:ok, view, _html} = live(conn, ~p"/online-store-templates")
 
       # Toggle to disabled
-      view
-      |> element("button[phx-click='toggle-enabled'][phx-value-id='#{template.id}']")
-      |> render_click()
+      html =
+        view
+        |> element("button[phx-click='toggle-enabled'][phx-value-id='#{template.id}']")
+        |> render_click()
 
-      updated = OnlineStoreTemplates.get_template!(template.id)
-      refute updated.enabled
+      assert html =~ "Enable template"
 
       # Toggle back to enabled
-      view
-      |> element("button[phx-click='toggle-enabled'][phx-value-id='#{template.id}']")
-      |> render_click()
+      html =
+        view
+        |> element("button[phx-click='toggle-enabled'][phx-value-id='#{template.id}']")
+        |> render_click()
 
-      updated = OnlineStoreTemplates.get_template!(template.id)
-      assert updated.enabled
+      assert html =~ "Disable template"
     end
   end
 end

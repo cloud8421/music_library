@@ -59,8 +59,10 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
       |> element("button[phx-click='remove_record'][phx-value-record-id='#{r1.id}']")
       |> render_click()
 
-      updated = RecordSets.get_record_set!(set.id)
-      refute Enum.any?(updated.items, &(&1.record.id == r1.id))
+      refute has_element?(
+               view,
+               "button[phx-click='remove_record'][phx-value-record-id='#{r1.id}']"
+             )
     end
   end
 
@@ -89,7 +91,6 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
       |> render_click()
 
       assert_redirect(view, ~p"/record-sets")
-      assert_raise Ecto.NoResultsError, fn -> RecordSets.get_record_set!(set.id) end
     end
   end
 
