@@ -16,19 +16,28 @@ defmodule MusicLibrary.Records.TracklistPdf do
   @spec generate(MusicLibrary.Records.Record.t(), Release.t()) ::
           {:ok, binary()} | {:error, term()}
   def generate(record, release) do
-    markup = build_markup(record, release)
+    markup = build_markup(record, release.media)
     Typst.render_to_pdf(markup)
   end
 
-  defp build_markup(record, release) do
-    media_count = Release.media_count(release)
-    track_count = Enum.sum(Enum.map(release.media, &length(&1.tracks)))
+  @spec generate_medium(MusicLibrary.Records.Record.t(), Release.t(), integer()) ::
+          {:ok, binary()} | {:error, term()}
+  def generate_medium(record, release, medium_number) do
+    case Release.get_medium(release, medium_number) do
+      nil -> {:error, :medium_not_found}
+      medium -> generate(record, %{release | media: [medium]})
+    end
+  end
+
+  defp build_markup(record, media) do
+    media_count = length(media)
+    track_count = Enum.sum(Enum.map(media, &length(&1.tracks)))
     header_count = if media_count > 1, do: media_count, else: 0
     total_items = track_count + header_count
 
     {columns, font_size, show_duration} = layout_params(total_items, media_count)
 
-    content = build_media(release, media_count, font_size, show_duration)
+    content = build_media(media, media_count, font_size, show_duration)
 
     """
     #set page(width: 120mm, height: 120mm, margin: 5mm, background: rect(width: 100%, height: 100%, stroke: 0.5pt + black))
@@ -56,8 +65,8 @@ defmodule MusicLibrary.Records.TracklistPdf do
     """
   end
 
-  defp build_media(release, media_count, font_size, show_duration) do
-    release.media
+  defp build_media(media, media_count, font_size, show_duration) do
+    media
     |> Enum.map_join("\n", fn medium ->
       build_medium(medium, media_count, font_size, show_duration)
     end)

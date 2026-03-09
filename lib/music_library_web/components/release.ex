@@ -136,6 +136,7 @@ defmodule MusicLibraryWeb.Components.Release do
               media_count={MusicBrainz.Release.media_count(release_with_tracks)}
               selected_tracks={@selected_tracks}
               myself={@myself}
+              record={@record}
             />
           </.async_result>
         </div>
@@ -151,6 +152,7 @@ defmodule MusicLibraryWeb.Components.Release do
   attr :already_scrobbled, :boolean, required: true
   attr :selected_tracks, :any, required: true
   attr :myself, :any, required: true
+  attr :record, :any, default: nil
 
   def medium(assigns) do
     ~H"""
@@ -174,17 +176,29 @@ defmodule MusicLibraryWeb.Components.Release do
           {@medium.format}
         </.badge>
       </label>
-      <.button
-        :if={@can_scrobble?}
-        size="sm"
-        disabled={@already_scrobbled || MapSet.size(@selected_tracks) > 0}
-        phx-click="scrobble_medium"
-        phx-value-number={@medium.number}
-        phx-target={@myself}
-        phx-disable-with={gettext("Scrobbling...")}
-      >
-        {medium_scrobble_label(@medium.format)}
-      </.button>
+      <div class="flex items-center gap-2">
+        <.button
+          :if={@record}
+          variant="ghost"
+          size="sm"
+          phx-click="print_medium_tracklist"
+          phx-value-medium-number={@medium.number}
+          phx-target={@myself}
+        >
+          <.icon name="hero-printer" class="h-4 w-4" />
+        </.button>
+        <.button
+          :if={@can_scrobble?}
+          size="sm"
+          disabled={@already_scrobbled || MapSet.size(@selected_tracks) > 0}
+          phx-click="scrobble_medium"
+          phx-value-number={@medium.number}
+          phx-target={@myself}
+          phx-disable-with={gettext("Scrobbling...")}
+        >
+          {medium_scrobble_label(@medium.format)}
+        </.button>
+      </div>
     </div>
     <.track_list
       medium_number={@medium.number}
@@ -428,6 +442,40 @@ defmodule MusicLibraryWeb.Components.Release do
   end
 
   def handle_event("print_tracklist", _params, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_event("print_medium_tracklist", %{"medium-number" => number}, socket)
+      when release_loaded?(socket.assigns) do
+    release = socket.assigns.release_with_tracks.result
+    record = socket.assigns.record
+    {number, ""} = Integer.parse(number)
+
+    case TracklistPdf.generate_medium(record, release, number) do
+      {:ok, pdf_binary} ->
+        filename = "#{record.title} - Disc #{number} - Tracklist.pdf"
+
+        {:noreply,
+         push_event(socket, "music_library:download", %{
+           data: Base.encode64(pdf_binary),
+           filename: filename,
+           content_type: "application/pdf"
+         })}
+
+      {:error, reason} ->
+        Logger.error("Error generating medium tracklist PDF: #{inspect(reason)}")
+
+        put_toast!(
+          :error,
+          gettext("Error generating tracklist PDF") <>
+            ": " <> ErrorMessages.friendly_message(reason)
+        )
+
+        {:noreply, socket}
+    end
+  end
+
+  def handle_event("print_medium_tracklist", _params, socket) do
     {:noreply, socket}
   end
 
