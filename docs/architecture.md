@@ -115,6 +115,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 |--------|---------|
 | `Records.SearchParser` | Parses search syntax: `artist:X`, `album:X`, `genre:"Y"`, `format:cd`, `type:album`, `purchase_year:2024`, free text |
 | `Records.Similarity` | Embedding generation (OpenAI, enriched with Last.fm tags), cosine-distance search (sqlite-vec) |
+| `Records.TracklistPdf` | Generates 120mm×120mm PDF tracklist from record + release data (Typst) |
 | `Batch` | Generic batch runner: stream + transaction + error accumulation |
 | `Records.Batch` | Batch operations: refresh all MusicBrainz data, generate all embeddings (uses `Batch`) |
 | `Artists.Batch` | Batch refresh: MusicBrainz, Discogs, Wikipedia, Last.fm for all artists (uses `Batch`) |
@@ -324,6 +325,7 @@ All events are namespaced with `music_library:` prefix.
 | `music_library:clipcopy` | Copy text to clipboard |
 | `music_library:scroll_top` | Scroll window to top |
 | `music_library:confetti` | Trigger canvas-confetti animation |
+| `music_library:download` | Decode base64 blob and trigger browser file download (dispatched via `push_event`, prefixed `phx:` on client) |
 
 ### NPM Dependencies
 

@@ -89,6 +89,19 @@ window.addEventListener("music_library:confetti", (_event) => {
     spread: 200,
   });
 });
+window.addEventListener("phx:music_library:download", (event) => {
+  const { data, filename, content_type } = event.detail;
+  const bytes = Uint8Array.from(atob(data), (c) => c.charCodeAt(0));
+  const blob = new Blob([bytes], { type: content_type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
 
 // connect if there are any LiveViews on the page
 liveSocket.connect();

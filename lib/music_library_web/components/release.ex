@@ -4,6 +4,7 @@ defmodule MusicLibraryWeb.Components.Release do
   require Logger
 
   alias MusicBrainz.Release
+  alias MusicLibrary.Records.TracklistPdf
   alias MusicLibrary.ScrobbleActivity
   alias MusicLibraryWeb.Duration
   alias MusicLibraryWeb.ErrorMessages
@@ -69,23 +70,34 @@ defmodule MusicLibraryWeb.Components.Release do
             />
             {gettext("Tracks")}
           </label>
-          <.button
-            :if={@can_scrobble? && @release_with_tracks.ok?}
-            size="sm"
-            disabled={@already_scrobbled}
-            phx-click={
-              if MapSet.size(@selected_tracks) > 0,
-                do: "scrobble_selected_tracks",
-                else: "scrobble_release"
-            }
-            phx-target={@myself}
-            phx-disable-with={gettext("Scrobbling...")}
-          >
-            {scrobble_button_label(@selected_tracks)}
-          </.button>
-          <.button :if={!@can_scrobble?} size="sm" href={LastFm.auth_url()}>
-            {gettext("Connect your Last.fm account")}
-          </.button>
+          <div class="flex items-center gap-2">
+            <.button
+              :if={@release_with_tracks.ok?}
+              variant="ghost"
+              size="sm"
+              phx-click="print_tracklist"
+              phx-target={@myself}
+            >
+              <.icon name="hero-printer" class="h-4 w-4" />
+            </.button>
+            <.button
+              :if={@can_scrobble? && @release_with_tracks.ok?}
+              size="sm"
+              disabled={@already_scrobbled}
+              phx-click={
+                if MapSet.size(@selected_tracks) > 0,
+                  do: "scrobble_selected_tracks",
+                  else: "scrobble_release"
+              }
+              phx-target={@myself}
+              phx-disable-with={gettext("Scrobbling...")}
+            >
+              {scrobble_button_label(@selected_tracks)}
+            </.button>
+            <.button :if={!@can_scrobble?} size="sm" href={LastFm.auth_url()}>
+              {gettext("Connect your Last.fm account")}
+            </.button>
+          </div>
         </div>
 
         <div :if={@release_with_tracks} class="space-y-4 mt-4">
@@ -384,6 +396,38 @@ defmodule MusicLibraryWeb.Components.Release do
 
   def handle_event("scrobble_selected_tracks", _params, socket) do
     put_toast!(:error, gettext("Error scrobbling selected tracks"))
+    {:noreply, socket}
+  end
+
+  def handle_event("print_tracklist", _params, socket) when release_loaded?(socket.assigns) do
+    release = socket.assigns.release_with_tracks.result
+    record = socket.assigns.record
+
+    case TracklistPdf.generate(record, release) do
+      {:ok, pdf_binary} ->
+        filename = "#{record.title} - Tracklist.pdf"
+
+        {:noreply,
+         push_event(socket, "music_library:download", %{
+           data: Base.encode64(pdf_binary),
+           filename: filename,
+           content_type: "application/pdf"
+         })}
+
+      {:error, reason} ->
+        Logger.error("Error generating tracklist PDF: #{inspect(reason)}")
+
+        put_toast!(
+          :error,
+          gettext("Error generating tracklist PDF") <>
+            ": " <> ErrorMessages.friendly_message(reason)
+        )
+
+        {:noreply, socket}
+    end
+  end
+
+  def handle_event("print_tracklist", _params, socket) do
     {:noreply, socket}
   end
 

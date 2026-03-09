@@ -2200,3 +2200,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "validation failed"
 msgstr ""
+
+#: lib/music_library_web/components/release.ex
+#, elixir-autogen, elixir-format
+msgid "Error generating tracklist PDF"
+msgstr ""
