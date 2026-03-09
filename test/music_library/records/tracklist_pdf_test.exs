@@ -80,6 +80,53 @@ defmodule MusicLibrary.Records.TracklistPdfTest do
     end
   end
 
+  describe "layout_params/2" do
+    test "single column for small track count" do
+      assert {1, 8, true} = TracklistPdf.layout_params(10, 1)
+    end
+
+    test "two columns for medium track count" do
+      assert {2, 8, true} = TracklistPdf.layout_params(30, 1)
+    end
+
+    test "scales up columns and reduces font for large track counts" do
+      assert {3, 7, true} = TracklistPdf.layout_params(55, 1)
+      assert {3, 6, true} = TracklistPdf.layout_params(80, 1)
+      assert {4, 6, false} = TracklistPdf.layout_params(100, 1)
+      assert {4, 5, false} = TracklistPdf.layout_params(120, 1)
+    end
+
+    test "accounts for medium headers in multi-medium releases" do
+      # 22 tracks + 2 medium headers = 24 items, exceeds single column capacity (23)
+      assert {2, 8, true} = TracklistPdf.layout_params(24, 2)
+    end
+  end
+
+  describe "generate/2 with many tracks" do
+    test "generates single-page PDF for large single-disc release" do
+      record = build_record(%{title: "Long Album", artists: [%{name: "Prolific Artist"}]})
+      tracks = Enum.map(1..40, &build_track(&1, "Track #{&1}", 180_000))
+
+      release = build_release([build_medium(1, tracks)])
+
+      assert {:ok, <<@pdf_magic_bytes, _::binary>>} = TracklistPdf.generate(record, release)
+    end
+
+    test "generates single-page PDF for large multi-disc release" do
+      record = build_record(%{title: "Box Set", artists: [%{name: "Band"}]})
+
+      media =
+        Enum.map(1..4, fn disc ->
+          tracks = Enum.map(1..20, &build_track(&1, "Disc #{disc} Track #{&1}", 200_000))
+          build_medium(disc, tracks)
+        end)
+
+      release = build_release(media)
+
+      assert {:ok, <<@pdf_magic_bytes, _::binary>>} = TracklistPdf.generate(record, release)
+    end
+  end
+
   defp build_record(attrs) do
     artists =
       Enum.map(Map.get(attrs, :artists, []), fn a ->
