@@ -10,7 +10,9 @@ defmodule MusicLibraryWeb.Router do
   # Last.fm CDN, Brave Search, and Cover Art Archive, and prevents framing.
   # In dev, allows LiveDebugger and Phoenix dev assets from 127.0.0.1.
   @dev_origins if(Mix.env() == :dev, do: " http://127.0.0.1:* ws://127.0.0.1:*", else: "")
-  @img_origins "https://lastfm.freetls.fastly.net https://imgs.search.brave.com https://coverartarchive.org https://archive.org https://*.archive.org"
+  @img_origins "https://lastfm.freetls.fastly.net https://imgs.search.brave.com " <>
+                 "https://coverartarchive.org https://archive.org " <>
+                 "https://*.archive.org https://www.google.com https://*.gstatic.com"
 
   @csp_policy "default-src 'self'" <>
                 "; script-src 'self' 'unsafe-inline'#{@dev_origins}" <>
