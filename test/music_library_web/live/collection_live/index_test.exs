@@ -158,7 +158,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     end
 
     test "supports filters", %{conn: conn, collection: records} do
-      {artist_with_most_records, _records_count} =
+      {artist_with_most_records, records_count} =
         records
         |> Enum.frequencies_by(fn r ->
           [artist] = r.artists
@@ -174,7 +174,9 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
       qs = [
         query: ~s(artist:"#{artist_with_most_records}"),
-        page_size: @default_records_page_size
+        # Sometimes we generate more reconrds than the default page size, so we
+        # need to make sure all of them are included in the results
+        page_size: max(@default_records_page_size, records_count)
       ]
 
       session =
