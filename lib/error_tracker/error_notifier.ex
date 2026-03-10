@@ -30,7 +30,7 @@ defmodule ErrorTracker.ErrorNotifier do
         reason = truncate_reason(metadata.occurrence.reason)
 
         {_result, new_state} =
-          maybe_notify(metadata.occurrence, metadata.error.muted, "New Error! (#{reason})", state)
+          maybe_notify(metadata.occurrence, false, "New Error! (#{reason})", state)
 
         {:noreply, new_state}
 
@@ -38,7 +38,7 @@ defmodule ErrorTracker.ErrorNotifier do
         reason = truncate_reason(metadata.occurrence.reason)
 
         {_result, new_state} =
-          maybe_notify(metadata.occurrence, metadata.error.muted, "Error: #{reason}", state)
+          maybe_notify(metadata.occurrence, metadata.muted, "Error: #{reason}", state)
 
         {:noreply, new_state}
 
