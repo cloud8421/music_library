@@ -3,7 +3,7 @@ defmodule ErrorTracker.ErrorNotifierTest do
 
   import Swoosh.TestAssertions
 
-  alias ErrorTracker.ErrorNotifier
+  alias ErrorTracker.{Error, ErrorNotifier, Occurrence}
 
   @config [
     from_email: "test@example.com",
@@ -13,8 +13,8 @@ defmodule ErrorTracker.ErrorNotifierTest do
   ]
 
   defp occurrence(attrs \\ %{}) do
-    Map.merge(
-      %{
+    struct!(
+      %Occurrence{
         error_id: 42,
         reason: "** (RuntimeError) something went wrong",
         context: %{"request.path" => "/test", "live_view.view" => "TestLive"},
@@ -115,7 +115,7 @@ defmodule ErrorTracker.ErrorNotifierTest do
       {:ok, pid} = ErrorNotifier.start_link([])
 
       :telemetry.execute([:error_tracker, :error, :new], %{}, %{
-        error: %{id: 1},
+        error: %ErrorTracker.Error{id: 1},
         occurrence: occurrence(%{error_id: 1})
       })
 
@@ -124,10 +124,27 @@ defmodule ErrorTracker.ErrorNotifierTest do
 
       # Second notification for same error: throttled
       :telemetry.execute([:error_tracker, :occurrence, :new], %{}, %{
+        error: %ErrorTracker.Error{id: 1},
         occurrence: occurrence(%{error_id: 1})
       })
 
       Process.sleep(50)
+      refute_email_sent()
+
+      GenServer.stop(pid)
+    end
+  end
+
+  describe "skipping" do
+    test "skips notification when error is muted" do
+      Application.put_env(:music_library, ErrorNotifier, @config)
+      {:ok, pid} = ErrorNotifier.start_link([])
+
+      :telemetry.execute([:error_tracker, :error, :new], %{}, %{
+        error: %Error{id: 1, muted: true},
+        occurrence: occurrence(%{error_id: 1})
+      })
+
       refute_email_sent()
 
       GenServer.stop(pid)
@@ -141,7 +158,7 @@ defmodule ErrorTracker.ErrorNotifierTest do
       {:ok, pid} = ErrorNotifier.start_link([])
 
       :telemetry.execute([:error_tracker, :error, :new], %{}, %{
-        error: %{id: 99},
+        error: %Error{id: 99},
         occurrence: occurrence(%{error_id: 99})
       })
 

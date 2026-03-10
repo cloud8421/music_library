@@ -28,12 +28,18 @@ defmodule ErrorTracker.ErrorNotifier do
     case event_name do
       [:error_tracker, :error, :new] ->
         reason = truncate_reason(metadata.occurrence.reason)
-        {_result, new_state} = maybe_notify(metadata.occurrence, "New Error! (#{reason})", state)
+
+        {_result, new_state} =
+          maybe_notify(metadata.occurrence, metadata.error.muted, "New Error! (#{reason})", state)
+
         {:noreply, new_state}
 
       [:error_tracker, :occurrence, :new] ->
         reason = truncate_reason(metadata.occurrence.reason)
-        {_result, new_state} = maybe_notify(metadata.occurrence, "Error: #{reason}", state)
+
+        {_result, new_state} =
+          maybe_notify(metadata.occurrence, metadata.error.muted, "Error: #{reason}", state)
+
         {:noreply, new_state}
 
       _ ->
@@ -74,7 +80,12 @@ defmodule ErrorTracker.ErrorNotifier do
     )
   end
 
-  defp maybe_notify(occurrence, header, state) do
+  defp maybe_notify(occurrence, true, _header, state) do
+    Logger.debug("Skipping notification for muted error #{occurrence.error_id}")
+    {:skipped, state}
+  end
+
+  defp maybe_notify(occurrence, _muted, header, state) do
     error_id = occurrence.error_id
     now = System.system_time(:second)
     throttle_seconds = config()[:throttle_seconds] || 10
