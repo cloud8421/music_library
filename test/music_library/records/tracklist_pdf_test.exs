@@ -18,7 +18,8 @@ defmodule MusicLibrary.Records.TracklistPdfTest do
           ])
         ])
 
-      assert {:ok, <<@pdf_magic_bytes, _::binary>>} = TracklistPdf.generate(record, release)
+      assert {:ok, <<@pdf_magic_bytes, _::binary>> = pdf} = TracklistPdf.generate(record, release)
+      assert pdf_page_count(pdf) == 1
     end
 
     test "generates PDF for multi-disc release" do
@@ -26,7 +27,8 @@ defmodule MusicLibrary.Records.TracklistPdfTest do
       api_response = MusicBrainz.Fixtures.Release.release_with_media(:marbles)
       release = Release.from_api_response(api_response)
 
-      assert {:ok, <<@pdf_magic_bytes, _::binary>>} = TracklistPdf.generate(record, release)
+      assert {:ok, <<@pdf_magic_bytes, _::binary>> = pdf} = TracklistPdf.generate(record, release)
+      assert pdf_page_count(pdf) == 1
     end
 
     test "renders artist joinphrase correctly" do
@@ -44,7 +46,8 @@ defmodule MusicLibrary.Records.TracklistPdfTest do
           build_medium(1, [build_track(1, "Track One", 200_000)])
         ])
 
-      assert {:ok, <<@pdf_magic_bytes, _::binary>>} = TracklistPdf.generate(record, release)
+      assert {:ok, <<@pdf_magic_bytes, _::binary>> = pdf} = TracklistPdf.generate(record, release)
+      assert pdf_page_count(pdf) == 1
     end
 
     test "handles track without duration" do
@@ -58,7 +61,8 @@ defmodule MusicLibrary.Records.TracklistPdfTest do
           ])
         ])
 
-      assert {:ok, <<@pdf_magic_bytes, _::binary>>} = TracklistPdf.generate(record, release)
+      assert {:ok, <<@pdf_magic_bytes, _::binary>> = pdf} = TracklistPdf.generate(record, release)
+      assert pdf_page_count(pdf) == 1
     end
 
     test "handles special characters in title" do
@@ -76,7 +80,8 @@ defmodule MusicLibrary.Records.TracklistPdfTest do
           ])
         ])
 
-      assert {:ok, <<@pdf_magic_bytes, _::binary>>} = TracklistPdf.generate(record, release)
+      assert {:ok, <<@pdf_magic_bytes, _::binary>> = pdf} = TracklistPdf.generate(record, release)
+      assert pdf_page_count(pdf) == 1
     end
   end
 
@@ -86,8 +91,10 @@ defmodule MusicLibrary.Records.TracklistPdfTest do
       api_response = MusicBrainz.Fixtures.Release.release_with_media(:marbles)
       release = Release.from_api_response(api_response)
 
-      assert {:ok, <<@pdf_magic_bytes, _::binary>>} =
+      assert {:ok, <<@pdf_magic_bytes, _::binary>> = pdf} =
                TracklistPdf.generate_medium(record, release, 1)
+
+      assert pdf_page_count(pdf) == 1
     end
 
     test "returns error for non-existent medium number" do
@@ -132,7 +139,8 @@ defmodule MusicLibrary.Records.TracklistPdfTest do
 
       release = build_release([build_medium(1, tracks)])
 
-      assert {:ok, <<@pdf_magic_bytes, _::binary>>} = TracklistPdf.generate(record, release)
+      assert {:ok, <<@pdf_magic_bytes, _::binary>> = pdf} = TracklistPdf.generate(record, release)
+      assert pdf_page_count(pdf) == 1
     end
 
     test "generates single-page PDF for large multi-disc release" do
@@ -146,7 +154,8 @@ defmodule MusicLibrary.Records.TracklistPdfTest do
 
       release = build_release(media)
 
-      assert {:ok, <<@pdf_magic_bytes, _::binary>>} = TracklistPdf.generate(record, release)
+      assert {:ok, <<@pdf_magic_bytes, _::binary>> = pdf} = TracklistPdf.generate(record, release)
+      assert pdf_page_count(pdf) == 1
     end
   end
 
@@ -206,5 +215,13 @@ defmodule MusicLibrary.Records.TracklistPdfTest do
       number: to_string(position),
       position: position
     }
+  end
+
+  defp pdf_page_count(pdf) when is_binary(pdf) do
+    # Count "/Type /Page" occurrences that are NOT "/Type /Pages" in the PDF binary
+    pdf
+    |> String.split("/Type /Page")
+    |> tl()
+    |> Enum.count(fn segment -> not String.starts_with?(segment, "s") end)
   end
 end
