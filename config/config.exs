@@ -7,7 +7,11 @@
 # General application configuration
 import Config
 
-config :error_tracker, repo: MusicLibrary.Repo, otp_app: :music_library, enabled: false
+config :error_tracker,
+  repo: MusicLibrary.Repo,
+  otp_app: :music_library,
+  enabled: false,
+  ignorer: MusicLibrary.ErrorIgnorer
 
 config :elixir, :time_zone_database, TimeZoneInfo.TimeZoneDatabase
 
