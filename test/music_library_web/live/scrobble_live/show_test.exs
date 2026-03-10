@@ -38,9 +38,26 @@ defmodule MusicLibraryWeb.ScrobbleLive.ShowTest do
     :ok
   end
 
+  defp stub_lastfm_scrobble_error(_) do
+    Req.Test.stub(LastFm.API, fn conn ->
+      Req.Test.json(conn, %{"error" => 11, "message" => "Service temporarily unavailable"})
+    end)
+
+    :ok
+  end
+
   defp store_lastfm_session_key(_) do
     Secrets.store("last_fm_session_key", "test_session_key")
     :ok
+  end
+
+  defp first_track_id do
+    ReleaseFixtures.release_with_media(:marbles)
+    |> Map.get("media")
+    |> List.first()
+    |> Map.get("tracks")
+    |> List.first()
+    |> Map.get("id")
   end
 
   describe "Show" do
@@ -95,32 +112,105 @@ defmodule MusicLibraryWeb.ScrobbleLive.ShowTest do
       |> assert_has("#toast-group", "Disc scrobbled successfully")
     end
 
-    test "toggle track selection", %{conn: conn} do
+    test "toggle track on and off changes button label", %{conn: conn} do
+      track_id = first_track_id()
+
       session = visit(conn, ~p"/scrobble/#{@release_id}")
 
-      # Get a track ID from the rendered page, then toggle it
+      # Toggle track on — button label changes
       session
       |> unwrap(fn view ->
-        # Toggle a track on
-        render_click(view, "toggle_track", %{"track-id" => "some-track-id"})
+        render_click(view, "toggle_track", %{"track-id" => track_id})
       end)
+      |> assert_has("button", "Scrobble selected tracks")
+
+      # Toggle track off — button label reverts
+      session
+      |> unwrap(fn view ->
+        render_click(view, "toggle_track", %{"track-id" => track_id})
+      end)
+      |> assert_has("button", "Scrobble release")
+    end
+
+    test "toggle medium selects and deselects all tracks in that medium", %{conn: conn} do
+      session = visit(conn, ~p"/scrobble/#{@release_id}")
+
+      # Toggle medium 1 on — button label changes
+      session
+      |> unwrap(fn view ->
+        render_click(view, "toggle_medium", %{"medium-number" => "1"})
+      end)
+      |> assert_has("button", "Scrobble selected tracks")
+
+      # Toggle medium 1 off — button label reverts
+      session
+      |> unwrap(fn view ->
+        render_click(view, "toggle_medium", %{"medium-number" => "1"})
+      end)
+      |> assert_has("button", "Scrobble release")
     end
 
     test "scrobble selected tracks", %{conn: conn} do
-      release_data = ReleaseFixtures.release_with_media(:marbles)
-      first_track = release_data["media"] |> List.first() |> Map.get("tracks") |> List.first()
-      track_id = first_track["id"]
+      track_id = first_track_id()
 
       session = visit(conn, ~p"/scrobble/#{@release_id}")
 
       session
       |> unwrap(fn view ->
-        # Select a track first
         render_click(view, "toggle_track", %{"track-id" => track_id})
-        # Then scrobble selected
         render_click(view, "scrobble_selected_tracks", %{})
       end)
       |> assert_has("#toast-group", "Selected tracks scrobbled successfully")
+    end
+
+    test "scrobble selected tracks with no selection shows error", %{conn: conn} do
+      session = visit(conn, ~p"/scrobble/#{@release_id}")
+
+      session
+      |> unwrap(fn view ->
+        render_click(view, "scrobble_selected_tracks", %{})
+      end)
+      |> assert_has("#toast-group", "No tracks selected")
+    end
+  end
+
+  describe "Show with Last.fm scrobble error" do
+    setup [:stub_musicbrainz_release, :stub_lastfm_scrobble_error, :store_lastfm_session_key]
+
+    @tag :capture_log
+    test "scrobble release shows error toast on failure", %{conn: conn} do
+      session = visit(conn, ~p"/scrobble/#{@release_id}")
+
+      session
+      |> unwrap(fn view ->
+        render_click(view, "scrobble_release", %{})
+      end)
+      |> assert_has("#toast-group", "Error scrobbling release")
+    end
+
+    @tag :capture_log
+    test "scrobble medium shows error toast on failure", %{conn: conn} do
+      session = visit(conn, ~p"/scrobble/#{@release_id}")
+
+      session
+      |> unwrap(fn view ->
+        render_click(view, "scrobble_medium", %{"number" => "1"})
+      end)
+      |> assert_has("#toast-group", "Error scrobbling disc")
+    end
+
+    @tag :capture_log
+    test "scrobble selected tracks shows error toast on failure", %{conn: conn} do
+      track_id = first_track_id()
+
+      session = visit(conn, ~p"/scrobble/#{@release_id}")
+
+      session
+      |> unwrap(fn view ->
+        render_click(view, "toggle_track", %{"track-id" => track_id})
+        render_click(view, "scrobble_selected_tracks", %{})
+      end)
+      |> assert_has("#toast-group", "Error scrobbling selected tracks")
     end
   end
 
