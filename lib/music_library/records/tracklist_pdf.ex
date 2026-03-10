@@ -13,7 +13,7 @@ defmodule MusicLibrary.Records.TracklistPdf do
     {4, 5, false}
   ]
 
-  # Empirically measured per-column capacities at block(spacing: 2pt),
+  # Empirically measured per-column capacities at block(spacing: 3pt),
   # including the header area consumed by artist name and album title.
   @capacities %{8 => 35, 7 => 38, 6 => 45, 5 => 53}
 
@@ -46,7 +46,7 @@ defmodule MusicLibrary.Records.TracklistPdf do
     """
     #set page(width: 120mm, height: 120mm, margin: 5mm, columns: #{columns}, background: rect(width: 100%, height: 100%, stroke: 0.5pt + black))
     #set text(font: "Liberation Sans", size: #{font_size}pt)
-    #set block(spacing: 2pt)
+    #set block(spacing: 3pt)
 
     #place(top + center, scope: "parent", float: true)[
       #align(center)[
