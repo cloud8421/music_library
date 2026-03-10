@@ -40,28 +40,19 @@ defmodule MusicLibrary.Records.TracklistPdf do
     content = build_media(media, media_count, font_size, show_duration)
 
     """
-    #set page(width: 120mm, height: 120mm, margin: 5mm, background: rect(width: 100%, height: 100%, stroke: 0.5pt + black))
+    #set page(width: 120mm, height: 120mm, margin: 5mm, columns: #{columns}, background: rect(width: 100%, height: 100%, stroke: 0.5pt + black))
     #set text(font: "Liberation Sans", size: #{font_size}pt)
 
-    #align(center)[
-      #text(size: 10pt, weight: "bold")[#{Format.escape(artist_names(record))}]
-      #linebreak()
-      #text(size: 9pt, style: "italic")[#{Format.escape(record.title)}]
+    #place(top + center, scope: "parent", float: true)[
+      #align(center)[
+        #text(size: 10pt, weight: "bold")[#{Format.escape(artist_names(record))}]
+        #linebreak()
+        #text(size: 9pt, style: "italic")[#{Format.escape(record.title)}]
+      ]
+      #v(3mm)
     ]
 
-    #v(3mm)
-
-    #{build_columns(columns, content)}
-    """
-  end
-
-  defp build_columns(1, content), do: content
-
-  defp build_columns(n, content) do
-    """
-    #columns(#{n}, gutter: 3mm)[
     #{content}
-    ]\
     """
   end
 
