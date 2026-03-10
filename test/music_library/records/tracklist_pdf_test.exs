@@ -108,19 +108,20 @@ defmodule MusicLibrary.Records.TracklistPdfTest do
     end
 
     test "two columns for medium track count" do
-      assert {2, 8, true} = TracklistPdf.layout_params(30, 1)
+      assert {2, 8, true} = TracklistPdf.layout_params(40, 1)
     end
 
     test "scales up columns and reduces font for large track counts" do
-      assert {3, 7, true} = TracklistPdf.layout_params(55, 1)
-      assert {3, 6, true} = TracklistPdf.layout_params(80, 1)
-      assert {4, 6, false} = TracklistPdf.layout_params(100, 1)
-      assert {4, 5, false} = TracklistPdf.layout_params(120, 1)
+      assert {2, 7, true} = TracklistPdf.layout_params(75, 1)
+      assert {3, 7, true} = TracklistPdf.layout_params(80, 1)
+      assert {3, 6, true} = TracklistPdf.layout_params(120, 1)
+      assert {4, 6, false} = TracklistPdf.layout_params(150, 1)
+      assert {4, 5, false} = TracklistPdf.layout_params(200, 1)
     end
 
     test "accounts for medium headers in multi-medium releases" do
-      # 22 tracks + 2 medium headers = 24 items, exceeds single column capacity (23)
-      assert {2, 8, true} = TracklistPdf.layout_params(24, 2)
+      # 34 tracks + 2 medium headers = 36 items, exceeds single column capacity (35)
+      assert {2, 8, true} = TracklistPdf.layout_params(36, 2)
     end
   end
 

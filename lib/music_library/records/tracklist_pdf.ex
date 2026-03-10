@@ -13,6 +13,10 @@ defmodule MusicLibrary.Records.TracklistPdf do
     {4, 5, false}
   ]
 
+  # Empirically measured per-column capacities at block(spacing: 2pt),
+  # including the header area consumed by artist name and album title.
+  @capacities %{8 => 35, 7 => 38, 6 => 45, 5 => 53}
+
   @spec generate(MusicLibrary.Records.Record.t(), Release.t()) ::
           {:ok, binary()} | {:error, term()}
   def generate(record, release) do
@@ -42,6 +46,7 @@ defmodule MusicLibrary.Records.TracklistPdf do
     """
     #set page(width: 120mm, height: 120mm, margin: 5mm, columns: #{columns}, background: rect(width: 100%, height: 100%, stroke: 0.5pt + black))
     #set text(font: "Liberation Sans", size: #{font_size}pt)
+    #set block(spacing: 2pt)
 
     #place(top + center, scope: "parent", float: true)[
       #align(center)[
@@ -125,11 +130,8 @@ defmodule MusicLibrary.Records.TracklistPdf do
     end)
   end
 
-  # Row height in mm: font size converted to mm (× 0.353) scaled by ~1.2 for
-  # ascender + descender, plus grid gutter (2pt = 0.706mm).
   defp capacity(columns, font_size) do
-    row_height_mm = font_size * 0.353 * 1.2 + 0.706
-    floor(95 / row_height_mm) * columns
+    Map.fetch!(@capacities, font_size) * columns
   end
 
   defp artist_names(record) do
