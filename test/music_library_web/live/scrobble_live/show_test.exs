@@ -90,7 +90,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.ShowTest do
 
       session
       |> unwrap(fn view ->
-        render_click(view, "scrobble_medium", %{"medium_number" => "1"})
+        render_click(view, "scrobble_medium", %{"number" => "1"})
       end)
       |> assert_has("#toast-group", "Disc scrobbled successfully")
     end

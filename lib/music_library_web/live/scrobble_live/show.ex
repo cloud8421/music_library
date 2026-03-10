@@ -4,6 +4,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
   import(MusicLibraryWeb.Components.Release, only: [medium: 1, scrobble_button_label: 1])
   import MusicLibraryWeb.RecordComponents, only: [country_label: 1]
 
+  alias MusicBrainz.Release
   alias MusicLibrary.ScrobbleActivity
   alias MusicLibraryWeb.ErrorMessages
 
@@ -162,7 +163,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
     end
   end
 
-  def handle_event("scrobble_medium", %{"medium_number" => number}, socket) do
+  def handle_event("scrobble_medium", %{"number" => number}, socket) do
     {number, ""} = Integer.parse(number)
 
     case ScrobbleActivity.scrobble_medium(number, socket.assigns.release,
@@ -211,6 +212,27 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
            )}
       end
     end
+  end
+
+  def handle_event("toggle_medium", %{"medium-number" => number}, socket) do
+    {number, ""} = Integer.parse(number)
+    selected_tracks = socket.assigns.selected_tracks
+    release = socket.assigns.release
+
+    medium_tracks =
+      release
+      |> Release.medium_tracks(number)
+      |> Enum.map(& &1.id)
+      |> MapSet.new()
+
+    updated_tracks =
+      if MapSet.subset?(medium_tracks, selected_tracks) do
+        MapSet.difference(selected_tracks, medium_tracks)
+      else
+        MapSet.union(selected_tracks, medium_tracks)
+      end
+
+    {:noreply, assign(socket, :selected_tracks, updated_tracks)}
   end
 
   def handle_event("toggle_track", %{"track-id" => track_id}, socket) do
