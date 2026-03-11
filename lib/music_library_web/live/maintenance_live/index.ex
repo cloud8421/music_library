@@ -4,8 +4,11 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
   require Logger
 
   alias MusicLibrary.Artists
+  alias MusicLibrary.Assets.Cache
   alias MusicLibrary.Maintenance
   alias MusicLibrary.Records
+  alias MusicLibrary.RecordsOnThisDayEmail
+  alias MusicLibrary.Worker.PruneAssets
   alias MusicLibraryWeb.ErrorMessages
 
   @poll_interval 2_000
@@ -153,6 +156,56 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
             </.button_group>
           </li>
         </ul>
+        <h3 class="mt-4 text-base font-semibold text-zinc-900 dark:text-white">
+          {gettext("Assets")}
+        </h3>
+        <p class="mt-2 max-w-4xl text-sm text-zinc-500 dark:text-zinc-400">
+          {gettext("Manage cached and stored assets.")}
+        </p>
+        <ul class="mt-4">
+          <li class="space-y-4">
+            <.button_group>
+              <.button
+                type="button"
+                phx-click="prune_asset_cache"
+                phx-disable-with={gettext("Pruning...")}
+              >
+                {gettext("Prune asset cache")}
+              </.button>
+              <.button
+                type="button"
+                phx-click="prune_assets"
+                phx-disable-with={gettext("Pruning...")}
+                data-confirm={
+                  gettext(
+                    "Are you sure you want to prune unreferenced assets? This will permanently delete data."
+                  )
+                }
+              >
+                {gettext("Prune unreferenced assets")}
+              </.button>
+            </.button_group>
+          </li>
+        </ul>
+        <h3 class="mt-4 text-base font-semibold text-zinc-900 dark:text-white">
+          {gettext("Emails")}
+        </h3>
+        <p class="mt-2 max-w-4xl text-sm text-zinc-500 dark:text-zinc-400">
+          {gettext("Manually trigger email notifications.")}
+        </p>
+        <ul class="mt-4">
+          <li class="space-y-4">
+            <.button_group>
+              <.button
+                type="button"
+                phx-click="send_records_on_this_day_email"
+                phx-disable-with={gettext("Sending...")}
+              >
+                {gettext("Send records on this day")}
+              </.button>
+            </.button_group>
+          </li>
+        </ul>
       </div>
     </Layouts.app>
     """
@@ -255,6 +308,43 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
     {:noreply,
      socket
      |> put_toast(:info, gettext("Operation started in the background."))}
+  end
+
+  def handle_event("prune_asset_cache", _params, socket) do
+    prune_count = Cache.prune()
+
+    {:noreply,
+     put_toast(socket, :info, gettext("Pruned %{count} cached assets.", count: prune_count))}
+  end
+
+  def handle_event("prune_assets", _params, socket) do
+    %{} |> PruneAssets.new() |> Oban.insert()
+
+    {:noreply, put_toast(socket, :info, gettext("Asset pruning started in the background."))}
+  end
+
+  def handle_event("send_records_on_this_day_email", _params, socket) do
+    today = DateTime.now!(MusicLibrary.default_timezone()) |> DateTime.to_date()
+
+    socket =
+      case RecordsOnThisDayEmail.send(today) do
+        {:ok, :sent} ->
+          put_toast(socket, :info, gettext("Email sent successfully."))
+
+        {:ok, :no_records} ->
+          put_toast(socket, :info, gettext("No records on this day."))
+
+        {:error, reason} ->
+          Logger.error("Failed to send records on this day email: #{inspect(reason)}.")
+
+          put_toast(
+            socket,
+            :error,
+            gettext("Failed to send email") <> ": " <> ErrorMessages.friendly_message(reason)
+          )
+      end
+
+    {:noreply, socket}
   end
 
   def handle_event("db_vacuum", _params, socket) do

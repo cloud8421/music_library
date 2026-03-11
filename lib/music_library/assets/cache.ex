@@ -27,8 +27,10 @@ defmodule MusicLibrary.Assets.Cache do
     )
   end
 
+  @one_week_seconds 60 * 60 * 24 * 7
+
   @spec prune(non_neg_integer()) :: non_neg_integer()
-  def prune(older_than_seconds) do
+  def prune(older_than_seconds \\ @one_week_seconds) do
     threshold =
       DateTime.utc_now()
       |> DateTime.add(older_than_seconds * -1, :second)

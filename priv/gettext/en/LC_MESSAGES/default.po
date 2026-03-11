@@ -2205,3 +2205,78 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Error generating tracklist PDF"
 msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Are you sure you want to prune unreferenced assets? This will permanently delete data."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Asset pruning started in the background."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Assets"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Email sent successfully."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Emails"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Failed to send email"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Manage cached and stored assets."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Manually trigger email notifications."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "No records on this day."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Prune asset cache"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Prune unreferenced assets"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Pruned %{count} cached assets."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Pruning..."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Send records on this day"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Sending..."
+msgstr ""
