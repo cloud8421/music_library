@@ -56,6 +56,8 @@ Rules extracted from commit history that are specific to this project and not al
 - **User-facing error reasons use `ErrorMessages.friendly_message/1`** — never `inspect(reason)`. Call sites keep their contextual prefix (e.g. `gettext("Error refreshing cover")`) and append `": " <> ErrorMessages.friendly_message(reason)` for the reason part. `Logger.error` calls keep `inspect` for debugging.
 - **`handle_async` always handles three cases:** `{:ok, {:ok, result}}`, `{:ok, {:error, reason}}`, and `{:exit, reason}`.
 - **Data cascade on upstream changes:** When artist metadata changes, regenerate dependent record embeddings.
+- **Non-actionable errors use `ErrorTracker.Ignorer`** behaviour to filter (e.g., NoRouteError from bot scanners) rather than blocking paths in the endpoint.
+- **Muted errors skip notifications.** `ErrorTracker.ErrorNotifier` checks the `muted` flag before sending email notifications.
 
 ## Testing
 
@@ -71,6 +73,8 @@ Rules extracted from commit history that are specific to this project and not al
 - **Never leak sensitive data in prod.** `show_sensitive_data_on_connection_error: false`.
 - **Commits are small and single-purpose.** One logical change per commit.
 - **Unused aliases are removed** when their module is no longer referenced. Aliases stay alphabetically sorted.
+- **Markdown sanitization via MDEx (ammonia).** Use `Markdown.to_html/1` for user content. Annotate raw output with `# sobelow_skip ["XSS.Raw"]` and a comment explaining the sanitization.
+- **Sobelow runs on CI** in skip mode for security analysis.
 
 ## JavaScript
 

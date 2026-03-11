@@ -127,8 +127,9 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `RecordChat` | Chat implementation for records (OpenAI streaming, web search enabled) |
 | `ArtistChat` | Chat implementation for artists (OpenAI streaming, uses Wikipedia/artist context) |
 | `Country` | Country code (alpha-2, alpha-3, subdivision, IETF) to flag emoji conversion |
-| `ErrorTracker.ErrorNotifier` | GenServer: attaches to ErrorTracker telemetry, throttles repeated errors, dispatches email notifications |
+| `ErrorTracker.ErrorNotifier` | GenServer: attaches to ErrorTracker telemetry, skips muted errors, throttles repeated errors, dispatches email notifications |
 | `ErrorTracker.ErrorNotifier.Email` | Builds and sends Swoosh error notification emails with stack trace formatting |
+| `ErrorIgnorer` | ErrorTracker.Ignorer implementation: filters non-actionable errors (e.g., NoRouteError from bot scanners) |
 | `RecordsOnThisDayEmail` | Builds and sends daily "records on this day" email with cover images, anniversary styling |
 | `MusicLibrary.Mailer` | Swoosh mailer (Mailgun in prod, local adapter in dev) |
 | `FormatNumber` | Number formatting utility |
@@ -281,7 +282,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | Module | Purpose |
 |--------|---------|
 | `ErrorMessages` | Maps internal error terms (atoms, structs) to user-friendly gettext strings via `friendly_message/1` |
-| `Markdown` | Markdown-to-HTML conversion with `[[double bracket]]` link syntax |
+| `Markdown` | Markdown-to-HTML conversion (MDEx with ammonia sanitization) with `[[double bracket]]` link syntax |
 | `Duration` | Milliseconds to human-readable duration formatting |
 | `Auth` | Authentication plugs: login password check, API token validation, session enforcement |
 | `LiveHelpers.Params` | Pagination param parsing from URL query params |
