@@ -124,6 +124,11 @@ defmodule MusicLibraryWeb.Telemetry do
         tag_values: &phoenix_route_tag/1,
         reporter_options: [nav: "HTTP"]
       ),
+      counter("phoenix.router_dispatch.stop.duration",
+        tags: [:status],
+        tag_values: &phoenix_status_tag/1,
+        reporter_options: [nav: "HTTP"]
+      ),
 
       # LiveView Metrics
       summary("phoenix.live_view.mount.stop.duration",
@@ -211,6 +216,9 @@ defmodule MusicLibraryWeb.Telemetry do
 
   defp phoenix_route_tag(%{route: route}), do: %{route: route}
   defp phoenix_route_tag(_metadata), do: %{route: "unknown"}
+
+  defp phoenix_status_tag(%{conn: %{status: status}}), do: %{status: to_string(status)}
+  defp phoenix_status_tag(_metadata), do: %{status: "unknown"}
 
   defp live_view_tag(%{socket: %{view: view}}) do
     module = view |> inspect() |> String.split(".") |> Enum.take(-2) |> Enum.join(".")
