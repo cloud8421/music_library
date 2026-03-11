@@ -74,7 +74,7 @@ defmodule MusicLibrary.RecordsOnThisDayEmail do
 
     purchased_label =
       if record.purchased_at do
-        " · #{Record.format_as_date(record.purchased_at)}"
+        " · Purchased on #{Record.format_as_date(record.purchased_at)}"
       else
         ""
       end
