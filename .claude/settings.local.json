@@ -26,6 +26,7 @@
       "Bash(find:*)",
       "Bash(xargs sed:*)",
       "Bash(git show:*)",
+      "Bash(head:*)",
       "Bash(cat:*)",
       "Bash(mise tasks:*)",
       "Bash(mix run:*)",
