@@ -67,9 +67,13 @@ config :music_library, MusicLibraryWeb.Endpoint,
   live_reload: [
     web_console_logger: true,
     patterns: [
-      ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
-      ~r"priv/gettext/.*(po)$",
-      ~r"lib/music_library_web/(?:controllers|live|components|router)/?.*\.(ex|heex)$"
+      # Static assets, except user uploads
+      ~r"priv/static/(?!uploads/).*\.(js|css|png|jpeg|jpg|gif|svg)$"E,
+      # Gettext translations
+      ~r"priv/gettext/.*\.po$"E,
+      # Router, Controllers, LiveViews and LiveComponents
+      ~r"lib/music_library_web/router\.ex$"E,
+      ~r"lib/music_library_web/(controllers|live|components)/.*\.(ex|heex)$"E
     ]
   ]
 
