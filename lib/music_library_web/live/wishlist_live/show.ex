@@ -436,13 +436,13 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
     )
   end
 
+  defp title_segment(:show), do: gettext("Details")
+  defp title_segment(:edit), do: gettext("Edit")
+
   defp assign_embedding_text(socket) do
     case Similarity.get_embedding_text(socket.assigns.record.id) do
       {:ok, text} -> assign(socket, :embedding_text, text)
       {:error, _reason} -> assign(socket, :embedding_text, gettext("Not available"))
     end
   end
-
-  defp title_segment(:show), do: gettext("Show")
-  defp title_segment(:edit), do: gettext("Edit")
 end

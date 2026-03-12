@@ -535,21 +535,6 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
      |> assign_embedding_text()}
   end
 
-  defp page_title(:show, record) do
-    Enum.join(
-      [
-        Records.Record.artist_names(record),
-        "-",
-        record.title,
-        "·",
-        gettext("Details"),
-        "·",
-        gettext("Collection")
-      ],
-      " "
-    )
-  end
-
   defp page_title(action, record) do
     Enum.join(
       [
@@ -565,7 +550,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     )
   end
 
-  defp title_segment(:show), do: gettext("Show")
+  defp title_segment(:show), do: gettext("Details")
   defp title_segment(:edit), do: gettext("Edit")
 
   defp assign_similar_records(socket) do

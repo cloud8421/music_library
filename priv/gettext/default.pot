@@ -187,12 +187,6 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Show"
-msgstr ""
-
 #: lib/music_library_web/components/layouts/app.html.heex
 #: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format
@@ -294,6 +288,7 @@ msgstr ""
 
 #: lib/music_library_web/live/artist_live/show.ex
 #: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Details"
 msgstr ""
