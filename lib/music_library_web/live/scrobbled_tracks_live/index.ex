@@ -7,7 +7,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
 
   alias LastFm.Track
   alias MusicLibrary.Assets.Transform
-  alias MusicLibrary.ScrobbleActivity
+  alias MusicLibrary.ListeningStats
 
   @default_tracks_list_params %{
     query: "",
@@ -229,7 +229,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
   end
 
   defp apply_action(socket, :edit, %{"scrobbled_at_uts" => id} = params) do
-    track = ScrobbleActivity.get_track!(id)
+    track = ListeningStats.get_track!(id)
 
     socket
     |> apply_fallback_index(params, :tracks, &apply_action/3)
@@ -241,7 +241,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
   defp apply_action(socket, :index, params) do
     query = params["query"] || ""
     order = parse_order(params["order"] || "scrobbled_at")
-    total_tracks = ScrobbleActivity.search_tracks_count(query)
+    total_tracks = ListeningStats.search_tracks_count(query)
 
     track_list_params =
       @default_tracks_list_params
@@ -267,8 +267,8 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
 
   @impl true
   def handle_event("delete", %{"scrobbled-at-uts" => scrobbled_at_uts}, socket) do
-    track = ScrobbleActivity.get_track!(scrobbled_at_uts)
-    {:ok, _} = ScrobbleActivity.delete_track(track)
+    track = ListeningStats.get_track!(scrobbled_at_uts)
+    {:ok, _} = ListeningStats.delete_track(track)
 
     {:noreply, stream_delete(socket, :tracks, %{track: track})}
   end
@@ -294,7 +294,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
   defp parse_order(_), do: :scrobbled_at
 
   defp load_and_assign_tracks(socket, track_list_params) do
-    tracks = ScrobbleActivity.list_tracks(track_list_params)
+    tracks = ListeningStats.list_tracks(track_list_params)
     tracks_empty? = tracks == []
 
     socket

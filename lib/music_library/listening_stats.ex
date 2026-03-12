@@ -1,10 +1,10 @@
 defmodule MusicLibrary.ListeningStats do
   @moduledoc """
-  Read-only listening analytics derived from Last.fm scrobble data.
+  Listening analytics and track management derived from Last.fm scrobble data.
 
-  Provides scrobble counts, recent activity feeds, and top albums/artists
-  by time period. All queries are read-only joins across LastFm.Track,
-  Collection, Wishlist, and ArtistInfo.
+  Provides scrobble counts, recent activity feeds, top albums/artists
+  by time period, and track CRUD/search/listing. All queries join across
+  LastFm.Track, Collection, Wishlist, and ArtistInfo.
   """
 
   import Ecto.Query
@@ -36,27 +36,10 @@ defmodule MusicLibrary.ListeningStats do
     #   not have the necessary information. In that case we can go from
     #   track -> album -> record -> artist
 
-    all_artists_query =
-      from ar in ArtistRecord,
-        distinct: true
-
     tracks_query =
-      from t in Track,
-        left_join: cr in subquery(Collection.collected_releases_query()),
-        on: cr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
-        left_join: wr in subquery(Wishlist.wishlisted_releases_query()),
-        on: wr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
-        left_join: ar in subquery(all_artists_query),
-        on: wr.record_id == ar.record_id or cr.record_id == ar.record_id,
+      from [t, cr, wr, ar] in tracks_with_record_info_query(),
         order_by: [desc: t.scrobbled_at_uts],
-        limit: ^limit,
-        select: %{
-          track: t,
-          collected_record_id: cr.record_id,
-          wishlisted_record_id: wr.record_id,
-          artist_id: ar.musicbrainz_id,
-          cover_hash: coalesce(cr.cover_hash, wr.cover_hash)
-        }
+        limit: ^limit
 
     recent_tracks = Repo.all(tracks_query)
 
@@ -99,6 +82,99 @@ defmodule MusicLibrary.ListeningStats do
 
     Calendar.strftime(ldt, "%d/%m/%Y %X")
   end
+
+  # Track CRUD + listing
+
+  @spec list_tracks(map()) :: [map()]
+  def list_tracks(params \\ %{}) do
+    query = Map.get(params, :query, "")
+    page = Map.get(params, :page, 1)
+    page_size = Map.get(params, :page_size, @pagination[:tracks_page_size])
+    order = Map.get(params, :order, :scrobbled_at)
+
+    base_query = tracks_with_record_info_query()
+
+    search_query =
+      if query == "" do
+        base_query
+      else
+        query_term = "%#{String.downcase(query)}%"
+
+        from [t, cr, wr, ar] in base_query,
+          where:
+            like(fragment("lower(?)", t.title), ^query_term) or
+              like(fragment("lower(json_extract(?, '$.name'))", t.artist), ^query_term) or
+              like(fragment("lower(json_extract(?, '$.title'))", t.album), ^query_term)
+      end
+
+    ordered_query =
+      case order do
+        :scrobbled_at ->
+          from [t] in search_query, order_by: [desc: t.scrobbled_at_uts]
+
+        :title ->
+          from [t] in search_query, order_by: [asc: t.title]
+
+        :artist ->
+          from [t] in search_query,
+            order_by: [asc: fragment("json_extract(?, '$.name')", t.artist)]
+
+        :album ->
+          from [t] in search_query,
+            order_by: [asc: fragment("json_extract(?, '$.title')", t.album)]
+      end
+
+    offset = (page - 1) * page_size
+
+    from(t in ordered_query, limit: ^page_size, offset: ^offset)
+    |> Repo.all()
+  end
+
+  @spec get_track!(integer() | String.t()) :: LastFm.Track.t()
+  def get_track!(scrobbled_at_uts) when is_integer(scrobbled_at_uts) do
+    Repo.get!(Track, scrobbled_at_uts)
+  end
+
+  def get_track!(scrobbled_at_uts) when is_binary(scrobbled_at_uts) do
+    case Integer.parse(scrobbled_at_uts) do
+      {id, ""} -> get_track!(id)
+      _ -> raise Ecto.NoResultsError, queryable: Track
+    end
+  end
+
+  @spec update_track(LastFm.Track.t(), map()) ::
+          {:ok, LastFm.Track.t()} | {:error, Ecto.Changeset.t()}
+  def update_track(%Track{} = track, attrs) do
+    changeset = Track.changeset(track, attrs)
+    Repo.update(changeset)
+  end
+
+  @spec delete_track(LastFm.Track.t()) :: {:ok, LastFm.Track.t()} | {:error, Ecto.Changeset.t()}
+  def delete_track(%Track{} = track) do
+    Repo.delete(track)
+  end
+
+  @spec search_tracks_count(String.t()) :: non_neg_integer()
+  def search_tracks_count(query \\ "") do
+    base_query = from(t in Track)
+
+    search_query =
+      if query == "" do
+        base_query
+      else
+        query_term = "%#{String.downcase(query)}%"
+
+        from t in base_query,
+          where:
+            like(fragment("lower(?)", t.title), ^query_term) or
+              like(fragment("lower(json_extract(artist, '$.name'))"), ^query_term) or
+              like(fragment("lower(json_extract(album, '$.title'))"), ^query_term)
+      end
+
+    Repo.aggregate(search_query, :count, :scrobbled_at_uts)
+  end
+
+  # Top albums/artists by period
 
   @doc """
   Gets top albums for the specified time periods (7, 30, 90, 365 days) and all
@@ -186,6 +262,27 @@ defmodule MusicLibrary.ListeningStats do
   end
 
   # Shared base queries
+
+  defp tracks_with_record_info_query do
+    all_artists_query =
+      from ar in ArtistRecord,
+        distinct: true
+
+    from t in Track,
+      left_join: cr in subquery(Collection.collected_releases_query()),
+      on: cr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
+      left_join: wr in subquery(Wishlist.wishlisted_releases_query()),
+      on: wr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
+      left_join: ar in subquery(all_artists_query),
+      on: wr.record_id == ar.record_id or cr.record_id == ar.record_id,
+      select: %{
+        track: t,
+        collected_record_id: cr.record_id,
+        wishlisted_record_id: wr.record_id,
+        artist_id: ar.musicbrainz_id,
+        cover_hash: coalesce(cr.cover_hash, wr.cover_hash)
+      }
+  end
 
   defp top_albums_base_query do
     from t in Track,

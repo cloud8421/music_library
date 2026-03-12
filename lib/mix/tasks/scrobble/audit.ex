@@ -37,7 +37,7 @@ defmodule Mix.Tasks.Scrobble.Audit do
   import Ecto.Query
 
   alias LastFm.Track
-  alias MusicLibrary.{Repo, ScrobbleActivity}
+  alias MusicLibrary.{ListeningStats, Maintenance, Repo}
 
   @impl Mix.Task
   def run(args) do
@@ -102,7 +102,7 @@ defmodule Mix.Tasks.Scrobble.Audit do
 
   defp generate_audit_report(:all, verbose) do
     %{
-      total_tracks: ScrobbleActivity.count_tracks(),
+      total_tracks: ListeningStats.scrobble_count(),
       artist_issues: audit_artist_musicbrainz_ids(verbose),
       album_issues: audit_album_musicbrainz_ids(verbose)
     }
@@ -110,20 +110,20 @@ defmodule Mix.Tasks.Scrobble.Audit do
 
   defp generate_audit_report(:artist, verbose) do
     %{
-      total_tracks: ScrobbleActivity.count_tracks(),
+      total_tracks: ListeningStats.scrobble_count(),
       artist_issues: audit_artist_musicbrainz_ids(verbose)
     }
   end
 
   defp generate_audit_report(:album, verbose) do
     %{
-      total_tracks: ScrobbleActivity.count_tracks(),
+      total_tracks: ListeningStats.scrobble_count(),
       album_issues: audit_album_musicbrainz_ids(verbose)
     }
   end
 
   defp audit_artist_musicbrainz_ids(verbose) do
-    results = ScrobbleActivity.get_artists_missing_musicbrainz_id()
+    results = Maintenance.get_artists_missing_musicbrainz_id()
 
     total_tracks_affected =
       Enum.reduce(results, 0, fn %{track_count: count}, acc -> acc + count end)
@@ -145,7 +145,7 @@ defmodule Mix.Tasks.Scrobble.Audit do
   end
 
   defp audit_album_musicbrainz_ids(verbose) do
-    results = ScrobbleActivity.get_albums_missing_musicbrainz_id()
+    results = Maintenance.get_albums_missing_musicbrainz_id()
 
     total_tracks_affected =
       Enum.reduce(results, 0, fn %{track_count: count}, acc -> acc + count end)

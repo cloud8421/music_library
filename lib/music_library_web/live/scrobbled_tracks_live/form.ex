@@ -2,7 +2,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Form do
   use MusicLibraryWeb, :live_component
 
   alias LastFm.Track
-  alias MusicLibrary.ScrobbleActivity
+  alias MusicLibrary.ListeningStats
 
   @impl true
   def render(assigns) do
@@ -104,7 +104,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Form do
   end
 
   defp save_track(socket, track_params) do
-    case ScrobbleActivity.update_track(socket.assigns.track, track_params) do
+    case ListeningStats.update_track(socket.assigns.track, track_params) do
       {:ok, track} ->
         notify_parent({:saved, track})
 

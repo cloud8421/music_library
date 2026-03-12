@@ -99,13 +99,13 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Notes` | Note | Free-text notes for records and artists |
 | `RecordSets` | RecordSet, RecordSetItem | User-curated record groupings with ordering |
 | `ScrobbleRules` | ScrobbleRule | Rules to remap Last.fm scrobble data to correct MusicBrainz IDs |
-| `ScrobbleActivity` | (LastFm.Track, ArtistRecord) | Scrobbling releases, track CRUD, data quality diagnostics |
-| `ListeningStats` | (LastFm.Track, ArtistRecord, ArtistInfo) | Read-only listening analytics: scrobble counts, recent activity, top albums/artists by period |
+| `ScrobbleActivity` | — | Scrobbling releases/media/tracks to Last.fm |
+| `ListeningStats` | (LastFm.Track, ArtistRecord, ArtistInfo) | Listening analytics, track CRUD, search, listing: scrobble counts, recent activity, top albums/artists by period |
 | `OnlineStoreTemplates` | OnlineStoreTemplate | URL templates for buying records online |
 | `Search` | (cross-context) | Universal search across collection, wishlist, artists, record sets |
 | `Secrets` | Secret | Encrypted key-value storage |
 | `BarcodeScan` | (Result struct) | Barcode → MusicBrainz lookup workflow |
-| `Maintenance` | (Oban.Job) | Background job monitoring, database vacuum/optimize |
+| `Maintenance` | (Oban.Job, LastFm.Track) | Background job monitoring, database vacuum/optimize, scrobble data quality diagnostics |
 
 ---
 

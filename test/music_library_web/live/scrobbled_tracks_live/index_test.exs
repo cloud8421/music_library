@@ -4,7 +4,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
   import MusicLibrary.ScrobbledTracksFixtures
   import Phoenix.LiveViewTest, only: [render_submit: 1, render_change: 1, form: 3]
 
-  alias MusicLibrary.ScrobbleActivity
+  alias MusicLibrary.ListeningStats
 
   # Test data
   @invalid_track_attrs %{title: "", artist: %{name: ""}, album: %{title: ""}}
@@ -38,7 +38,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
 
     test "shows empty state when no tracks", %{conn: conn} do
       # Delete the created track
-      ScrobbleActivity.delete_track(track_fixture())
+      ListeningStats.delete_track(track_fixture())
 
       conn
       |> visit(~p"/scrobbled-tracks")
