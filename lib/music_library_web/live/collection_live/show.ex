@@ -21,7 +21,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
       similar_records: 1
     ]
 
-  alias MusicLibrary.{Records, RecordSets, ScrobbleActivity}
+  alias MusicLibrary.{ListeningStats, Records, RecordSets, ScrobbleActivity}
   alias MusicLibrary.Records.Similarity
   alias MusicLibraryWeb.ErrorMessages
   alias Phoenix.LiveView.JS
@@ -346,8 +346,8 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
     record = Records.get_record!(id)
-    last_listened_track = Records.get_last_listened_track(record)
-    play_count = Records.play_count(record) || 0
+    last_listened_track = ListeningStats.get_last_listened_track(record)
+    play_count = ListeningStats.play_count(record) || 0
 
     socket =
       if record.selected_release_id do

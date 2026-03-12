@@ -278,42 +278,6 @@ defmodule MusicLibrary.Records do
     end
   end
 
-  @spec get_last_listened_track(Record.t()) :: LastFm.Track.t() | nil
-  def get_last_listened_track(record) do
-    q =
-      from t in scrobbles_for_record_query(record),
-        order_by: [desc: t.scrobbled_at_uts],
-        limit: 1
-
-    Repo.one(q)
-  end
-
-  @spec play_count(Record.t()) :: non_neg_integer()
-  def play_count(record) do
-    record
-    |> scrobbles_for_record_query()
-    |> Repo.aggregate(:count)
-  end
-
-  defp scrobbles_for_record_query(record) do
-    record_id = record.id
-
-    q =
-      from r in fragment("records, json_each(records.release_ids)"),
-        where: fragment("records.id = ?", ^record_id),
-        select: r.value
-
-    release_ids = Repo.all(q)
-    main_artist_name = Record.main_artist(record).name
-    record_title = record.title
-
-    from t in LastFm.Track,
-      where: fragment("? ->> '$.musicbrainz_id'", t.album) in ^release_ids,
-      or_where:
-        fragment("? ->> '$.title'", t.album) == ^record_title and
-          fragment("? ->> '$.name'", t.artist) == ^main_artist_name
-  end
-
   @spec refresh_cover(Record.t()) :: {:ok, Record.t()} | {:error, term()}
   def refresh_cover(record) do
     with {:ok, cover_data} <- MusicBrainz.get_cover_art({:url, record.cover_url}),

@@ -4,7 +4,9 @@ defmodule MusicLibrary.ListeningStatsTest do
   import MusicLibrary.ArtistInfoFixtures
   import MusicLibrary.ScrobbledTracksFixtures
 
+  alias MusicLibrary.Fixtures.Records, as: RecordsFixtures
   alias MusicLibrary.ListeningStats
+  alias MusicLibrary.Records.Record
 
   describe "scrobble_count/0" do
     test "returns correct count" do
@@ -91,6 +93,65 @@ defmodule MusicLibrary.ListeningStatsTest do
       [result] = ListeningStats.get_top_artists(limit: 10)
 
       assert result.image_hash == nil
+    end
+  end
+
+  describe "get_last_listened_track/1" do
+    test "returns the most recent scrobbled track for a record" do
+      record = RecordsFixtures.record()
+      main_artist = Record.main_artist(record)
+      now = System.system_time(:second)
+
+      _older =
+        track_fixture(%{
+          artist_name: main_artist.name,
+          album_title: record.title,
+          title: "Older Track",
+          scrobbled_at_uts: now - 200
+        })
+
+      track_fixture(%{
+        artist_name: main_artist.name,
+        album_title: record.title,
+        title: "Newer Track",
+        scrobbled_at_uts: now - 100
+      })
+
+      result = ListeningStats.get_last_listened_track(record)
+
+      assert result.title == "Newer Track"
+      assert result.scrobbled_at_uts == now - 100
+    end
+
+    test "returns nil when no scrobbles exist for the record" do
+      record = RecordsFixtures.record()
+
+      assert ListeningStats.get_last_listened_track(record) == nil
+    end
+  end
+
+  describe "play_count/1" do
+    test "returns the correct scrobble count for a record" do
+      record = RecordsFixtures.record()
+      main_artist = Record.main_artist(record)
+      now = System.system_time(:second)
+
+      for i <- 1..3 do
+        track_fixture(%{
+          artist_name: main_artist.name,
+          album_title: record.title,
+          title: "Track #{i}",
+          scrobbled_at_uts: now - i * 100
+        })
+      end
+
+      assert ListeningStats.play_count(record) == 3
+    end
+
+    test "returns 0 when no scrobbles exist for the record" do
+      record = RecordsFixtures.record()
+
+      assert ListeningStats.play_count(record) == 0
     end
   end
 
