@@ -146,6 +146,7 @@ defmodule MusicLibrary.MixProject do
       precommit: [
         "shellcheck",
         "credo --strict",
+        "sobelow --compact --exit",
         "gettext.extract --check-up-to-date",
         "format --check-formatted",
         "deps.unlock --unused",
