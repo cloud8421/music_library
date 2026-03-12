@@ -156,6 +156,30 @@ defmodule MusicLibrary.CollectionTest do
     end
   end
 
+  describe "collected_artist_ids/0" do
+    setup [:fill_collection]
+
+    test "returns musicbrainz_ids for artists on collected records" do
+      result = Collection.collected_artist_ids()
+
+      assert is_struct(result, MapSet)
+      assert MapSet.size(result) > 0
+    end
+
+    test "does not include artists only on wishlisted records" do
+      wishlisted =
+        record_with_artist("Wishlist Only Artist", %{
+          title: "Not Purchased",
+          purchased_at: nil
+        })
+
+      wishlisted_artist = hd(wishlisted.artists)
+      result = Collection.collected_artist_ids()
+
+      refute MapSet.member?(result, wishlisted_artist.musicbrainz_id)
+    end
+  end
+
   describe "get_latest_record!/0" do
     setup [:fill_collection]
 

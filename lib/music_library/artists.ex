@@ -3,7 +3,8 @@ defmodule MusicLibrary.Artists do
 
   alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibrary.Assets
-  alias MusicLibrary.Records.{ArtistRecord, Record}
+  alias MusicLibrary.Collection
+  alias MusicLibrary.Records.ArtistRecord
   alias MusicLibrary.{Repo, Worker}
 
   @spec get_artist!(String.t()) :: map()
@@ -21,7 +22,7 @@ defmodule MusicLibrary.Artists do
   def get_similar_artists(artist) do
     case LastFm.get_similar_artists(artist.musicbrainz_id, artist.name) do
       {:ok, artists} ->
-        collected_artist_ids = get_collected_artist_ids()
+        collected_artist_ids = Collection.collected_artist_ids()
 
         {:ok,
          Enum.filter(artists, fn a ->
@@ -307,18 +308,6 @@ defmodule MusicLibrary.Artists do
     artist_info
     |> ArtistInfo.changeset(attrs)
     |> Repo.update()
-  end
-
-  defp get_collected_artist_ids do
-    q =
-      from ar in ArtistRecord,
-        join: r in Record,
-        on: r.id == ar.record_id,
-        where: not is_nil(r.purchased_at),
-        distinct: true,
-        select: ar.musicbrainz_id
-
-    q |> Repo.all() |> MapSet.new()
   end
 
   defp enqueue_worker(worker, params) do

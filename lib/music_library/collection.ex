@@ -3,7 +3,7 @@ defmodule MusicLibrary.Collection do
   import MusicLibrary.Records, only: [order_alphabetically: 0]
 
   alias MusicLibrary.Records
-  alias MusicLibrary.Records.{Record, RecordRelease, SearchIndex}
+  alias MusicLibrary.Records.{ArtistRecord, Record, RecordRelease, SearchIndex}
   alias MusicLibrary.Repo
 
   @excluded_genres Application.compile_env!(:music_library, :excluded_genres)
@@ -162,6 +162,19 @@ defmodule MusicLibrary.Collection do
     from rr in RecordRelease,
       where: not is_nil(rr.purchased_at),
       select: %{record_id: rr.record_id, cover_hash: rr.cover_hash, release_id: rr.release_id}
+  end
+
+  @spec collected_artist_ids() :: MapSet.t(String.t())
+  def collected_artist_ids do
+    from(ar in ArtistRecord,
+      join: r in Record,
+      on: r.id == ar.record_id,
+      where: not is_nil(r.purchased_at),
+      distinct: true,
+      select: ar.musicbrainz_id
+    )
+    |> Repo.all()
+    |> MapSet.new()
   end
 
   defp base_search do
