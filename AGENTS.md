@@ -6,6 +6,12 @@
 
 @docs/project-conventions.md
 
+# Commands and tasks
+
+The project uses [mise](https://mise.jdx.dev/) to manage high level configuration and tasks.
+
+@docs/available-tasks.md
+
 <!-- usage-rules-start -->
 <!-- usage_rules-start -->
 ## usage_rules usage
