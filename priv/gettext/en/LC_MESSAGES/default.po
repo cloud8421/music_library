@@ -851,8 +851,7 @@ msgstr ""
 msgid "Top Artists"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/top_albums.ex
-#: lib/music_library_web/live/stats_live/top_artists.ex
+#: lib/music_library_web/live/stats_live/top_by_period.ex
 #, elixir-autogen, elixir-format
 msgid "All time"
 msgstr ""
@@ -1304,26 +1303,22 @@ msgstr ""
 msgid "Read"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/top_albums.ex
-#: lib/music_library_web/live/stats_live/top_artists.ex
+#: lib/music_library_web/live/stats_live/top_by_period.ex
 #, elixir-autogen, elixir-format
 msgid "1y"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/top_albums.ex
-#: lib/music_library_web/live/stats_live/top_artists.ex
+#: lib/music_library_web/live/stats_live/top_by_period.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "30d"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/top_albums.ex
-#: lib/music_library_web/live/stats_live/top_artists.ex
+#: lib/music_library_web/live/stats_live/top_by_period.ex
 #, elixir-autogen, elixir-format
 msgid "7d"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/top_albums.ex
-#: lib/music_library_web/live/stats_live/top_artists.ex
+#: lib/music_library_web/live/stats_live/top_by_period.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "90d"
 msgstr ""

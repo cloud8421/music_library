@@ -1,111 +1,27 @@
 defmodule MusicLibraryWeb.StatsLive.TopAlbums do
-  use MusicLibraryWeb, :live_component
+  use MusicLibraryWeb, :html
 
   alias MusicLibrary.Assets.Transform
   alias MusicLibrary.ListeningStats
+  alias MusicLibraryWeb.StatsLive.TopByPeriod
+
+  attr :id, :string, required: true
+  attr :timezone, :string, required: true
+  attr :last_updated_uts, :any
 
   def live(assigns) do
     ~H"""
-    <.live_component module={__MODULE__} {assigns} id={@id} />
-    """
-  end
-
-  @impl true
-  def render(assigns) do
-    ~H"""
-    <div>
-      <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
-        {gettext("Top Albums")}
-      </h1>
-      <.tabs class="mt-4">
-        <.tabs_list active_tab={name_from_period(@period)} variant="segmented" size="xs">
-          <:tab
-            class="flex-1"
-            name="top_albums_last_7_days"
-            phx-click={JS.push("set_period", value: %{period: "last_7_days"})}
-            phx-target={@myself}
-          >
-            {gettext("7d")}
-          </:tab>
-          <:tab
-            class="flex-1"
-            name="top_albums_last_30_days"
-            phx-click={JS.push("set_period", value: %{period: "last_30_days"})}
-            phx-target={@myself}
-          >
-            {gettext("30d")}
-          </:tab>
-          <:tab
-            class="flex-1"
-            name="top_albums_last_90_days"
-            phx-click={JS.push("set_period", value: %{period: "last_90_days"})}
-            phx-target={@myself}
-          >
-            {gettext("90d")}
-          </:tab>
-          <:tab
-            class="flex-1"
-            name="top_albums_last_365_days"
-            phx-click={JS.push("set_period", value: %{period: "last_365_days"})}
-            phx-target={@myself}
-          >
-            {gettext("1y")}
-          </:tab>
-          <:tab
-            class="flex-1"
-            name="top_albums_all_time"
-            phx-click={JS.push("set_period", value: %{period: "all_time"})}
-            phx-target={@myself}
-          >
-            {gettext("All time")}
-          </:tab>
-        </.tabs_list>
-        <.async_result :let={top_albums} assign={@top_albums}>
-          <:loading>
-            <div class="h-182 flex items-center justify-center">
-              <.loading />
-            </div>
-          </:loading>
-          <.top_albums_by_period albums={top_albums} />
-        </.async_result>
-      </.tabs>
-    </div>
-    """
-  end
-
-  defp name_from_period(period), do: "top_albums_#{period}"
-
-  @impl true
-  def mount(socket) do
-    {:ok,
-     socket
-     |> assign(:period, :last_7_days)}
-  end
-
-  @impl true
-  def update(assigns, socket) do
-    {:ok,
-     socket
-     |> assign(assigns)
-     |> assign_top_albums()}
-  end
-
-  @impl true
-  def handle_event("set_period", %{"period" => period}, socket) do
-    {:noreply,
-     socket
-     |> assign(:period, String.to_existing_atom(period))
-     |> assign_top_albums()}
-  end
-
-  attr :albums, :list, required: true
-
-  defp top_albums_by_period(assigns) do
-    ~H"""
-    <div class="mt-4 p-4 bg-white dark:bg-zinc-800 rounded-md shadow-sm">
-      <div class="space-y-2">
+    <TopByPeriod.live
+      id={@id}
+      timezone={@timezone}
+      last_updated_uts={@last_updated_uts}
+      title={gettext("Top Albums")}
+      key={:top_albums}
+      fetch_fn={&ListeningStats.get_top_albums_by_period/1}
+    >
+      <:item :let={albums}>
         <div
-          :for={album <- @albums}
+          :for={album <- albums}
           phx-click={navigate_to_record(album)}
           class={[
             "flex items-center space-x-3 p-2",
@@ -151,31 +67,9 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
             {album.play_count}
           </.badge>
         </div>
-      </div>
-    </div>
+      </:item>
+    </TopByPeriod.live>
     """
-  end
-
-  defp assign_top_albums(socket) do
-    %{timezone: timezone, period: period} = socket.assigns
-    current_time = DateTime.utc_now()
-
-    assign_async(
-      socket,
-      :top_albums,
-      fn ->
-        top_albums =
-          ListeningStats.get_top_albums_by_period(
-            limit: 10,
-            current_time: current_time,
-            timezone: timezone,
-            period: period
-          )
-
-        {:ok, %{top_albums: top_albums}}
-      end,
-      reset: true
-    )
   end
 
   defp navigate_to_record(album) do
