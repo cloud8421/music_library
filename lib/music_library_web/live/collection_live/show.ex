@@ -1,6 +1,8 @@
 defmodule MusicLibraryWeb.CollectionLive.Show do
   use MusicLibraryWeb, :live_view
 
+  require Logger
+
   import MusicLibrary.ListeningStats, only: [localize_scrobbled_at: 2]
 
   import MusicLibraryWeb.RecordComponents,
@@ -24,6 +26,8 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   alias MusicLibraryWeb.ErrorMessages
   alias Phoenix.LiveView.JS
 
+  alias MusicBrainz
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -44,12 +48,13 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
             <div class="min-w-12">
               <.button_group>
                 <.button
+                  :if={@can_scrobble? and @record.selected_release_id}
                   variant="soft"
-                  phx-click={MusicLibraryWeb.Components.Notes.open("record-notes-sheet")}
+                  phx-click="scrobble_release"
                 >
-                  <span class="sr-only">{gettext("Open Notes")}</span>
+                  <span class="sr-only">{gettext("Scrobble release")}</span>
                   <.icon
-                    name="hero-pencil"
+                    name="hero-play"
                     class="h-5 w-5"
                     aria-hidden="true"
                     data-slot="icon"
@@ -80,18 +85,6 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                     data-slot="icon"
                   />
                 </.button>
-                <.button
-                  variant="soft"
-                  phx-click={Fluxon.open_dialog("debug-data")}
-                >
-                  <span class="sr-only">{gettext("Debug data")}</span>
-                  <.icon
-                    name="hero-code-bracket"
-                    class="h-5 w-5"
-                    aria-hidden="true"
-                    data-slot="icon"
-                  />
-                </.button>
                 <.dropdown id={"actions-#{@record.id}"} placement="bottom-end">
                   <:toggle>
                     <.button variant="soft">
@@ -105,6 +98,34 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                     </.button>
                   </:toggle>
                   <.focus_wrap id={"actions-#{@record.id}-focus-wrap"}>
+                    <.dropdown_link
+                      id={"actions-#{@record.id}-notes"}
+                      phx-click={MusicLibraryWeb.Components.Notes.open("record-notes-sheet")}
+                    >
+                      <.icon
+                        name="hero-pencil"
+                        class="h-4 w-4 mr-1"
+                        aria-hidden="true"
+                        data-slot="icon"
+                      />
+                      {gettext("Notes")}
+                    </.dropdown_link>
+
+                    <.dropdown_link
+                      id={"actions-#{@record.id}-debug"}
+                      phx-click={Fluxon.open_dialog("debug-data")}
+                    >
+                      <.icon
+                        name="hero-code-bracket"
+                        class="h-4 w-4 mr-1"
+                        aria-hidden="true"
+                        data-slot="icon"
+                      />
+                      {gettext("Debug data")}
+                    </.dropdown_link>
+
+                    <.dropdown_separator />
+
                     <.dropdown_link
                       id={"actions-#{@record.id}-edit"}
                       patch={~p"/collection/#{@record}/show/edit"}
@@ -453,6 +474,46 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
            gettext("Error") <> ": " <> ErrorMessages.friendly_message(reason)
          )}
     end
+  end
+
+  def handle_event("scrobble_release", _params, socket) do
+    record = socket.assigns.record
+
+    {:noreply,
+     start_async(socket, :scrobble_release, fn ->
+       with {:ok, release} <- MusicBrainz.get_release(record.selected_release_id) do
+         release_with_tracks = MusicBrainz.Release.from_api_response(release)
+
+         ScrobbleActivity.scrobble_release(release_with_tracks,
+           finished_at: DateTime.utc_now()
+         )
+       end
+     end)}
+  end
+
+  @impl true
+  def handle_async(:scrobble_release, {:ok, {:ok, _result}}, socket) do
+    {:noreply, put_toast(socket, :info, gettext("Release scrobbled successfully"))}
+  end
+
+  def handle_async(:scrobble_release, {:ok, {:error, reason}}, socket) do
+    {:noreply,
+     put_toast(
+       socket,
+       :error,
+       gettext("Error scrobbling release") <> ": " <> ErrorMessages.friendly_message(reason)
+     )}
+  end
+
+  def handle_async(:scrobble_release, {:exit, reason}, socket) do
+    Logger.error("Scrobble release failed: #{inspect(reason)}")
+
+    {:noreply,
+     put_toast(
+       socket,
+       :error,
+       gettext("Error scrobbling release") <> ": " <> ErrorMessages.friendly_message(reason)
+     )}
   end
 
   @impl true

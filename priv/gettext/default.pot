@@ -674,12 +674,14 @@ msgid "Successfully connected your Last.fm account"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
+#: lib/music_library_web/live/collection_live/show.ex
 #: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Error scrobbling release"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
+#: lib/music_library_web/live/collection_live/show.ex
 #: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Release scrobbled successfully"
@@ -697,6 +699,7 @@ msgid "Scrobbling..."
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
+#: lib/music_library_web/live/collection_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Scrobble release"
 msgstr ""
@@ -1295,7 +1298,6 @@ msgid "Note updated successfully"
 msgstr ""
 
 #: lib/music_library_web/live/artist_live/show.ex
-#: lib/music_library_web/live/collection_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Open Notes"
 msgstr ""
@@ -2276,4 +2278,9 @@ msgstr ""
 #: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Sending..."
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Notes"
 msgstr ""

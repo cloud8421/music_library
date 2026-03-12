@@ -52,18 +52,6 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                     data-slot="icon"
                   />
                 </.button>
-                <.button
-                  variant="soft"
-                  phx-click={Fluxon.open_dialog("debug-data")}
-                >
-                  <span class="sr-only">{gettext("Debug data")}</span>
-                  <.icon
-                    name="hero-code-bracket"
-                    class="h-5 w-5"
-                    aria-hidden="true"
-                    data-slot="icon"
-                  />
-                </.button>
                 <.dropdown id={"actions-#{@record.id}"} placement="bottom-end">
                   <:toggle>
                     <.button variant="soft">
@@ -77,6 +65,21 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                     </.button>
                   </:toggle>
                   <.focus_wrap id={"actions-#{@record.id}-focus-wrap"}>
+                    <.dropdown_link
+                      id={"actions-#{@record.id}-debug"}
+                      phx-click={Fluxon.open_dialog("debug-data")}
+                    >
+                      <.icon
+                        name="hero-code-bracket"
+                        class="h-4 w-4 mr-1"
+                        aria-hidden="true"
+                        data-slot="icon"
+                      />
+                      {gettext("Debug data")}
+                    </.dropdown_link>
+
+                    <.dropdown_separator />
+
                     <.dropdown_link
                       id={"actions-#{@record.id}-edit"}
                       patch={~p"/wishlist/#{@record}/show/edit"}
