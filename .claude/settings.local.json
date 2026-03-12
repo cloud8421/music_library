@@ -49,7 +49,8 @@
       "WebFetch(domain:github.com)",
       "WebFetch(domain:hex.pm)",
       "Bash(gh issue:*)",
-      "Bash(mise run:*)"
+      "Bash(mise run:*)",
+      "Bash(gh label:*)"
     ]
   },
   "enableAllProjectMcpServers": false
