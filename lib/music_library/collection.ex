@@ -61,6 +61,31 @@ defmodule MusicLibrary.Collection do
     Repo.all(q)
   end
 
+  @type grouped_record ::
+          {:single, SearchIndex.t()}
+          | {:group, %{representative: SearchIndex.t(), records: [SearchIndex.t()]}}
+
+  @spec group_records_by_release_group([SearchIndex.t()]) :: [grouped_record()]
+  def group_records_by_release_group(records) do
+    records
+    |> Enum.group_by(& &1.musicbrainz_id)
+    |> Enum.map(fn
+      {_mbid, [single]} ->
+        {:single, single}
+
+      {_mbid, [first | _] = group} ->
+        sorted = Enum.sort_by(group, & &1.purchased_at, DateTime)
+        {:group, %{representative: first, records: sorted}}
+    end)
+    |> Enum.sort_by(
+      fn
+        {:single, r} -> r.release_date
+        {:group, %{representative: r}} -> r.release_date
+      end,
+      :desc
+    )
+  end
+
   @spec get_latest_record() :: SearchIndex.t() | nil
   def get_latest_record do
     q =

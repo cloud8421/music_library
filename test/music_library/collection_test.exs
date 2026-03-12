@@ -87,6 +87,75 @@ defmodule MusicLibrary.CollectionTest do
     end
   end
 
+  describe "group_records_by_release_group/1" do
+    test "wraps single records in {:single, record} tuples" do
+      record =
+        record_with_artist("Marillion", %{
+          title: "Brave",
+          release_date: "2020",
+          purchased_at: ~U[2024-12-27 16:50:57Z]
+        })
+
+      assert [{:single, ^record}] = Collection.group_records_by_release_group([record])
+    end
+
+    test "groups records sharing the same musicbrainz_id" do
+      shared_mbid = Ecto.UUID.generate()
+
+      cd =
+        record_with_artist("Marillion", %{
+          title: "Brave",
+          musicbrainz_id: shared_mbid,
+          format: :cd,
+          release_date: "2020",
+          purchased_at: ~U[2024-12-27 16:50:57Z]
+        })
+
+      vinyl =
+        record_with_artist("Marillion", %{
+          title: "Brave",
+          musicbrainz_id: shared_mbid,
+          format: :vinyl,
+          release_date: "2020",
+          purchased_at: ~U[2024-12-28 16:50:57Z]
+        })
+
+      result = Collection.group_records_by_release_group([cd, vinyl])
+
+      assert [{:group, %{representative: rep, records: records}}] = result
+      assert rep.id == cd.id
+      assert length(records) == 2
+      # Sorted by purchased_at ascending
+      assert Enum.map(records, & &1.id) == [cd.id, vinyl.id]
+    end
+
+    test "sorts groups by release_date descending" do
+      older =
+        record_with_artist("Marillion", %{
+          title: "Script for a Jester's Tear",
+          release_date: "1983",
+          purchased_at: ~U[2024-12-27 16:50:57Z]
+        })
+
+      newer =
+        record_with_artist("Marillion", %{
+          title: "Brave",
+          release_date: "1994",
+          purchased_at: ~U[2024-12-28 16:50:57Z]
+        })
+
+      result = Collection.group_records_by_release_group([older, newer])
+
+      assert [{:single, first}, {:single, second}] = result
+      assert first.id == newer.id
+      assert second.id == older.id
+    end
+
+    test "returns empty list for empty input" do
+      assert [] == Collection.group_records_by_release_group([])
+    end
+  end
+
   describe "get_latest_record!/0" do
     setup [:fill_collection]
 

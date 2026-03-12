@@ -163,45 +163,119 @@ defmodule MusicLibraryWeb.StatsComponents do
       >
         {gettext("No records released on this day.")}
       </li>
-      <li
-        :for={record <- @records}
-        phx-click={JS.navigate(@record_show_path.(record))}
-        class="flex justify-between gap-x-6 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-700 px-2 md:px-4 cursor-pointer"
-        id={record.id}
-      >
-        <div class="flex min-w-0 gap-x-4 items-center">
-          <div class="relative w-12 flex-none">
-            <.record_cover record={record} width={96} />
-            <.release_groups_badge record={record} />
-          </div>
-          <div class="min-w-0 flex-auto">
-            <h1 class="text-sm leading-6 text-zinc-700">
-              <.artist_links joinphrase_class="text-xs" artists={record.artists} />
-            </h1>
-            <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
-              {record.title}
-            </h2>
-            <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-              <.released_how_long_ago record={record} current_date={@current_date} />
-              · {format_label(record.format)} · {type_label(record.type)}
-              <span :if={record.purchased_at}>
-                ·
-                <span class="sr-only">
-                  {gettext("Purchased on")}
-                </span>
-                <.icon
-                  name="hero-banknotes"
-                  class="h-4 w-4"
-                  aria-hidden="true"
-                  data-slot="icon"
-                />
-                {Records.Record.format_as_date(record.purchased_at)}
-              </span>
-            </p>
-          </div>
-        </div>
-      </li>
+      <%= for entry <- @records do %>
+        <%= case entry do %>
+          <% {:single, record} -> %>
+            <.record_on_this_day_item
+              record={record}
+              current_date={@current_date}
+              record_show_path={@record_show_path}
+            />
+          <% {:group, %{representative: rep, records: records}} -> %>
+            <li id={"group-#{rep.musicbrainz_id}"} class="py-2 px-2 md:px-4">
+              <details class="group/details">
+                <summary class="flex justify-between gap-x-6 cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:bg-zinc-50 dark:hover:bg-zinc-700 rounded-md -mx-2 px-2 py-1">
+                  <div class="flex min-w-0 gap-x-4 items-center">
+                    <div class="relative w-12 flex-none">
+                      <.record_cover record={rep} width={96} />
+                      <.release_groups_badge record={rep} />
+                    </div>
+                    <div class="min-w-0 flex-auto">
+                      <h1 class="text-sm leading-6 text-zinc-700">
+                        <.artist_links joinphrase_class="text-xs" artists={rep.artists} />
+                      </h1>
+                      <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+                        {rep.title}
+                      </h2>
+                      <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+                        <.released_how_long_ago record={rep} current_date={@current_date} />
+                        · {ngettext("1 release", "%{count} releases", length(records))}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="flex items-center">
+                    <.icon
+                      name="hero-chevron-right"
+                      class="h-4 w-4 text-zinc-400 transition-transform group-open/details:rotate-90"
+                    />
+                  </div>
+                </summary>
+                <ul class="ml-16 mt-1 border-l border-zinc-200 dark:border-zinc-700 pl-4">
+                  <li
+                    :for={record <- records}
+                    phx-click={JS.navigate(@record_show_path.(record))}
+                    class="flex justify-between gap-x-6 py-1.5 hover:bg-zinc-50 dark:hover:bg-zinc-700 px-2 rounded-md cursor-pointer"
+                    id={record.id}
+                  >
+                    <p class="text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+                      {format_label(record.format)} · {type_label(record.type)}
+                      <span :if={record.purchased_at}>
+                        ·
+                        <span class="sr-only">
+                          {gettext("Purchased on")}
+                        </span>
+                        <.icon
+                          name="hero-banknotes"
+                          class="h-4 w-4"
+                          aria-hidden="true"
+                          data-slot="icon"
+                        />
+                        {Records.Record.format_as_date(record.purchased_at)}
+                      </span>
+                    </p>
+                  </li>
+                </ul>
+              </details>
+            </li>
+        <% end %>
+      <% end %>
     </ul>
+    """
+  end
+
+  attr :record, Records.Record, required: true
+  attr :current_date, Date, required: true
+  attr :record_show_path, :any, required: true
+
+  defp record_on_this_day_item(assigns) do
+    ~H"""
+    <li
+      phx-click={JS.navigate(@record_show_path.(@record))}
+      class="flex justify-between gap-x-6 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-700 px-2 md:px-4 cursor-pointer"
+      id={@record.id}
+    >
+      <div class="flex min-w-0 gap-x-4 items-center">
+        <div class="relative w-12 flex-none">
+          <.record_cover record={@record} width={96} />
+          <.release_groups_badge record={@record} />
+        </div>
+        <div class="min-w-0 flex-auto">
+          <h1 class="text-sm leading-6 text-zinc-700">
+            <.artist_links joinphrase_class="text-xs" artists={@record.artists} />
+          </h1>
+          <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+            {@record.title}
+          </h2>
+          <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+            <.released_how_long_ago record={@record} current_date={@current_date} />
+            · {format_label(@record.format)} · {type_label(@record.type)}
+            <span :if={@record.purchased_at}>
+              ·
+              <span class="sr-only">
+                {gettext("Purchased on")}
+              </span>
+              <.icon
+                name="hero-banknotes"
+                class="h-4 w-4"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+              {Records.Record.format_as_date(@record.purchased_at)}
+            </span>
+          </p>
+        </div>
+      </div>
+    </li>
     """
   end
 

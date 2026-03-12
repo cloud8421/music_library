@@ -348,7 +348,11 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     latest_record = Collection.get_latest_record()
     records_by_artists = Collection.count_records_by_artist(limit: 20)
     records_by_genre = Collection.count_records_by_genre(limit: 20)
-    records_on_this_day = Collection.get_records_on_this_day(current_date)
+
+    records_on_this_day =
+      current_date
+      |> Collection.get_records_on_this_day()
+      |> Collection.group_records_by_release_group()
 
     if connected?(socket) do
       LastFm.subscribe_to_feed()
@@ -413,7 +417,10 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   def handle_event("set_current_date", %{"current_date" => current_date}, socket) do
     case Date.from_iso8601(current_date) do
       {:ok, date} ->
-        records_on_this_day = Collection.get_records_on_this_day(date)
+        records_on_this_day =
+          date
+          |> Collection.get_records_on_this_day()
+          |> Collection.group_records_by_release_group()
 
         {:noreply,
          socket
