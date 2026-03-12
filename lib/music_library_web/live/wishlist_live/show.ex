@@ -418,7 +418,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
      |> assign_embedding_text()}
   end
 
-  def page_title(action, record) do
+  defp page_title(action, record) do
     Enum.join(
       [
         Records.Record.artist_names(record),

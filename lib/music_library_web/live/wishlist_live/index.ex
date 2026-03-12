@@ -8,7 +8,6 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
   alias MusicLibrary.Records
   alias MusicLibrary.Wishlist
   alias MusicLibraryWeb.ErrorMessages
-  alias MusicLibraryWeb.WishlistLive.Show
 
   @default_records_list_params %{
     query: "",
@@ -191,7 +190,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
 
     socket
     |> apply_fallback_index(params, :records, &apply_action/3)
-    |> assign(:page_title, Show.page_title(socket.assigns.live_action, record))
+    |> assign(:page_title, page_title(:edit, record))
     |> assign(:record, record)
   end
 
@@ -321,4 +320,21 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
 
     ~p"/wishlist?#{qs}"
   end
+
+  defp page_title(action, record) do
+    Enum.join(
+      [
+        Records.Record.artist_names(record),
+        "-",
+        record.title,
+        "·",
+        title_segment(action),
+        "·",
+        gettext("Wishlist")
+      ],
+      " "
+    )
+  end
+
+  defp title_segment(:edit), do: gettext("Edit")
 end

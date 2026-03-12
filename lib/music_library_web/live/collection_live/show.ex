@@ -474,7 +474,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
      |> assign_embedding_text()}
   end
 
-  def page_title(:show, record) do
+  defp page_title(:show, record) do
     Enum.join(
       [
         Records.Record.artist_names(record),
@@ -489,7 +489,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     )
   end
 
-  def page_title(action, record) do
+  defp page_title(action, record) do
     Enum.join(
       [
         Records.Record.artist_names(record),

@@ -8,7 +8,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
   alias MusicLibrary.Collection
   alias MusicLibrary.Records
-  alias MusicLibraryWeb.CollectionLive.Show
+
   alias MusicLibraryWeb.ErrorMessages
 
   @default_records_list_params %{
@@ -220,7 +220,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
     socket
     |> apply_fallback_index(params, :records, &apply_action/3)
-    |> assign(:page_title, Show.page_title(socket.assigns.live_action, record))
+    |> assign(:page_title, page_title(:edit, record))
     |> assign(:record, record)
   end
 
@@ -337,4 +337,21 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
     ~p"/collection?#{qs}"
   end
+
+  defp page_title(action, record) do
+    Enum.join(
+      [
+        Records.Record.artist_names(record),
+        "-",
+        record.title,
+        "·",
+        title_segment(action),
+        "·",
+        gettext("Collection")
+      ],
+      " "
+    )
+  end
+
+  defp title_segment(:edit), do: gettext("Edit")
 end
