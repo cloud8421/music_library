@@ -37,8 +37,6 @@ defmodule LastFm.Refresh do
 
   alias LastFm.{API, Config, Feed}
 
-  require Logger
-
   @type config :: Config.t()
 
   @spec start_link(config) :: GenServer.on_start()
