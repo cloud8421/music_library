@@ -14,6 +14,7 @@ defmodule MusicLibrary.RecordsOnThisDayEmail do
     if records == [] do
       {:ok, :no_records}
     else
+      grouped = Collection.group_records_by_release_group(records)
       conf = config()
       from_email = Keyword.fetch!(conf, :from_email)
       to_email = Keyword.fetch!(conf, :to_email)
@@ -26,7 +27,7 @@ defmodule MusicLibrary.RecordsOnThisDayEmail do
         |> to(to_email)
         |> from({"MusicLibrary", from_email})
         |> subject("[MusicLibrary] #{heading}")
-        |> html_body(build_html(records, date, conf))
+        |> html_body(build_html(grouped, date, conf))
 
       case mailer.deliver(email) do
         {:ok, _} ->
@@ -42,12 +43,15 @@ defmodule MusicLibrary.RecordsOnThisDayEmail do
 
   # -- Private --
 
-  defp build_html(records, date, conf) do
+  defp build_html(grouped, date, conf) do
     base_url = Keyword.fetch!(conf, :base_url) |> String.trim_trailing("/")
     heading = date |> Calendar.strftime("Records on %-d %B") |> html_escape()
 
     records_html =
-      Enum.map_join(records, "\n", fn record -> record_html(record, date, base_url) end)
+      Enum.map_join(grouped, "\n", fn
+        {:single, record} -> record_html(record, date, base_url)
+        {:group, group} -> grouped_record_html(group, date, base_url)
+      end)
 
     """
     <div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: system-ui, -apple-system, sans-serif; background-color: #f4f4f5;">
@@ -98,6 +102,58 @@ defmodule MusicLibrary.RecordsOnThisDayEmail do
         </p>
       </div>
     </a>
+    """
+  end
+
+  defp grouped_record_html(%{representative: rep, records: records}, date, base_url) do
+    years = Record.released_how_long_ago?(rep, date)
+    cover_url = cover_image_url(rep, base_url)
+    artist_names = rep |> Record.artist_names() |> html_escape()
+    title = rep.title |> html_escape()
+    years_label = years_ago_label(years)
+    {years_color, years_weight} = anniversary_style(years)
+
+    cover_html =
+      if cover_url do
+        ~s(<img src="#{html_escape(cover_url)}" width="48" height="48" style="width: 48px; height: 48px; object-fit: cover; border-radius: 4px; display: block;" alt="" />)
+      else
+        ~s(<div style="width: 48px; height: 48px; background-color: #e4e4e7; border-radius: 4px;"></div>)
+      end
+
+    releases_html =
+      Enum.map_join(records, "\n", fn record ->
+        record_url = record_detail_url(record, base_url)
+        format = format_label(record.format)
+        type = type_label(record.type)
+
+        purchased_label =
+          if record.purchased_at do
+            " · Purchased on #{Record.format_as_date(record.purchased_at)}"
+          else
+            ""
+          end
+
+        """
+        <a href="#{html_escape(record_url)}" style="display: block; padding: 8px 0 4px 12px; text-decoration: none; color: inherit;">
+          <p style="margin: 0; font-size: 12px; color: #71717a; line-height: 1.4;">#{format} · #{type}#{purchased_label}</p>
+        </a>
+        """
+      end)
+
+    """
+    <div style="padding: 8px 0; border-bottom: 1px solid #f4f4f5;">
+      <div style="display: flex; gap: 12px; align-items: center;">
+        #{cover_html}
+        <div style="min-width: 0; flex: 1;">
+          <p style="margin: 0; font-size: 13px; color: #52525b; line-height: 1.4;">#{artist_names}</p>
+          <p style="margin: 2px 0 0 0; font-size: 15px; font-weight: 600; color: #18181b; line-height: 1.4;">#{title}</p>
+          <p style="margin: 2px 0 0 0; font-size: 12px; color: #71717a; line-height: 1.4;">
+            <span style="color: #{years_color}; font-weight: #{years_weight};">#{years_label}</span>
+          </p>
+        </div>
+      </div>
+      #{releases_html}
+    </div>
     """
   end
 

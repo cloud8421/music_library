@@ -52,6 +52,42 @@ defmodule MusicLibrary.RecordsOnThisDayEmailTest do
       refute_email_sent()
     end
 
+    test "groups records with the same musicbrainz_id" do
+      shared_mbid = Ecto.UUID.generate()
+
+      cd =
+        Fixtures.Records.record(%{
+          release_date: "2020-03-05",
+          title: "Grouped Album",
+          musicbrainz_id: shared_mbid,
+          format: :cd
+        })
+
+      vinyl =
+        Fixtures.Records.record(%{
+          release_date: "2020-03-05",
+          title: "Grouped Album",
+          musicbrainz_id: shared_mbid,
+          format: :vinyl
+        })
+
+      date = ~D[2025-03-05]
+      assert {:ok, :sent} = RecordsOnThisDayEmail.send(date)
+
+      assert_email_sent(fn email ->
+        html = email.html_body
+        # Title appears once as group header
+        assert html =~ "Grouped Album"
+        assert html =~ "5 years ago"
+        # Both formats appear as sub-items
+        assert html =~ "CD"
+        assert html =~ "Vinyl"
+        # Both records have detail links
+        assert html =~ "/collection/#{cd.id}"
+        assert html =~ "/collection/#{vinyl.id}"
+      end)
+    end
+
     test "shows anniversary styling for milestone years" do
       # 10 year anniversary (gold)
       Fixtures.Records.record(%{
