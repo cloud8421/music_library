@@ -8,11 +8,7 @@ defmodule MusicLibrary.Search do
   - Artists
   """
 
-  import Ecto.Query, warn: false
-
-  alias MusicLibrary.Artists.ArtistInfo
-  alias MusicLibrary.{Collection, RecordSets, Repo, Wishlist}
-  alias MusicLibrary.Records.ArtistRecord
+  alias MusicLibrary.{Artists, Collection, RecordSets, Wishlist}
 
   @pagination Application.compile_env!(:music_library, :pagination)
 
@@ -62,26 +58,7 @@ defmodule MusicLibrary.Search do
   """
   @spec search_artists(String.t(), non_neg_integer()) :: [map()]
   def search_artists(query, limit \\ @pagination[:search_preview_limit]) do
-    case String.trim(query) do
-      "" ->
-        []
-
-      trimmed_query ->
-        normalized_query = String.downcase(trimmed_query)
-
-        q =
-          from ar in ArtistRecord,
-            join: ai in ArtistInfo,
-            on: ar.musicbrainz_id == ai.id,
-            where:
-              fragment("lower(unaccent(artist ->> '$.name')) LIKE ?", ^"%#{normalized_query}%"),
-            group_by: ar.musicbrainz_id,
-            select: %{artist: ar.artist, image_data_hash: ai.image_data_hash},
-            limit: ^limit,
-            order_by: fragment("artist ->> '$.name'")
-
-        Repo.all(q)
-    end
+    Artists.search_by_name(query, limit)
   end
 
   @doc """
@@ -115,25 +92,6 @@ defmodule MusicLibrary.Search do
   """
   @spec search_artists_count(String.t()) :: non_neg_integer()
   def search_artists_count(query) do
-    case String.trim(query) do
-      "" ->
-        0
-
-      trimmed_query ->
-        normalized_query = String.downcase(trimmed_query)
-
-        # Use a subquery to count distinct musicbrainz_ids
-        subquery =
-          from ar in ArtistRecord,
-            where: fragment("lower(artist ->> '$.name') LIKE ?", ^"%#{normalized_query}%"),
-            select: ar.musicbrainz_id,
-            distinct: true
-
-        q =
-          from s in subquery(subquery),
-            select: count()
-
-        Repo.one(q) || 0
-    end
+    Artists.search_by_name_count(query)
   end
 end

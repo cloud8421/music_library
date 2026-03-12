@@ -31,6 +31,57 @@ defmodule MusicLibrary.ArtistsTest do
     end
   end
 
+  describe "search_by_name/2" do
+    test "returns artists matching the query" do
+      record = record_with_artist("Marillion")
+      [artist] = record.artists
+      artist_info(artist.musicbrainz_id)
+
+      results = Artists.search_by_name("Marillion", 10)
+
+      assert length(results) == 1
+      assert hd(results).artist.name == "Marillion"
+    end
+
+    test "returns empty list for empty query" do
+      assert Artists.search_by_name("", 10) == []
+      assert Artists.search_by_name("   ", 10) == []
+    end
+
+    test "respects limit" do
+      for name <- ["Marillion", "Steven Wilson"] do
+        record = record_with_artist(name)
+        [artist] = record.artists
+        artist_info(artist.musicbrainz_id)
+      end
+
+      results = Artists.search_by_name("i", 1)
+
+      assert length(results) == 1
+    end
+  end
+
+  describe "search_by_name_count/1" do
+    test "returns count of matching artists" do
+      record = record_with_artist("Marillion")
+      _other = record_with_artist("Marillion")
+
+      [artist] = record.artists
+      artist_info(artist.musicbrainz_id)
+
+      assert Artists.search_by_name_count("Marillion") == 1
+    end
+
+    test "returns 0 for empty query" do
+      assert Artists.search_by_name_count("") == 0
+      assert Artists.search_by_name_count("   ") == 0
+    end
+
+    test "returns 0 for no matches" do
+      assert Artists.search_by_name_count("zzz_nonexistent_zzz") == 0
+    end
+  end
+
   describe "fetch_artist_info/1" do
     test "it stores musicbrainz and discogs data" do
       steven_wilson_musicbrainz_id = "3a51b862-0144-40f6-aa17-6aaeefea29d9"

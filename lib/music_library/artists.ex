@@ -75,6 +75,47 @@ defmodule MusicLibrary.Artists do
     |> Enum.into(%{})
   end
 
+  @spec search_by_name(String.t(), non_neg_integer()) :: [map()]
+  def search_by_name(query, limit) do
+    case String.trim(query) do
+      "" ->
+        []
+
+      trimmed_query ->
+        normalized_query = String.downcase(trimmed_query)
+
+        from(ar in ArtistRecord,
+          join: ai in ArtistInfo,
+          on: ar.musicbrainz_id == ai.id,
+          where:
+            fragment("lower(unaccent(artist ->> '$.name')) LIKE ?", ^"%#{normalized_query}%"),
+          group_by: ar.musicbrainz_id,
+          select: %{artist: ar.artist, image_data_hash: ai.image_data_hash},
+          limit: ^limit,
+          order_by: fragment("artist ->> '$.name'")
+        )
+        |> Repo.all()
+    end
+  end
+
+  @spec search_by_name_count(String.t()) :: non_neg_integer()
+  def search_by_name_count(query) do
+    case String.trim(query) do
+      "" ->
+        0
+
+      trimmed_query ->
+        normalized_query = String.downcase(trimmed_query)
+
+        from(ar in ArtistRecord,
+          where: fragment("lower(artist ->> '$.name') LIKE ?", ^"%#{normalized_query}%"),
+          select: ar.musicbrainz_id,
+          distinct: true
+        )
+        |> Repo.aggregate(:count, :musicbrainz_id)
+    end
+  end
+
   @spec exists?(String.t()) :: boolean()
   def exists?(artist_id) do
     q =
