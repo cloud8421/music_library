@@ -92,9 +92,9 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | Context | Schemas | Responsibility |
 |---------|---------|---------------|
 | `Records` | Record, RecordEmbedding, SearchIndex | CRUD, search, import from MusicBrainz, cover/genre/embedding management, PubSub notifications |
-| `Collection` | Record (via SearchIndex) | Querying collected records (purchased_at != nil), stats |
+| `Collection` | Record (via SearchIndex) | Querying collected records (purchased_at != nil), stats, collected artist IDs |
 | `Wishlist` | Record (via SearchIndex) | Querying wishlisted records (purchased_at is nil) |
-| `Artists` | ArtistInfo, ArtistRecord | Artist metadata from MusicBrainz/Discogs/Wikipedia/Last.fm, images |
+| `Artists` | ArtistInfo, ArtistRecord | Artist metadata from MusicBrainz/Discogs/Wikipedia/Last.fm, images, search |
 | `Assets` | Asset | Binary asset storage (covers, artist images), cache tracking |
 | `Notes` | Note | Free-text notes for records and artists |
 | `RecordSets` | RecordSet, RecordSetItem | User-curated record groupings with ordering |
@@ -102,7 +102,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `ScrobbleActivity` | — | Scrobbling releases/media/tracks to Last.fm |
 | `ListeningStats` | (LastFm.Track, ArtistRecord, ArtistInfo) | Listening analytics, track CRUD, search, listing: scrobble counts, recent activity, top albums/artists by period |
 | `OnlineStoreTemplates` | OnlineStoreTemplate | URL templates for buying records online |
-| `Search` | (cross-context) | Universal search across collection, wishlist, artists, record sets |
+| `Search` | (cross-context) | Universal search dispatcher across collection, wishlist, artists, record sets (delegates to domain contexts) |
 | `Secrets` | Secret | Encrypted key-value storage |
 | `BarcodeScan` | (Result struct) | Barcode → MusicBrainz lookup workflow |
 | `Maintenance` | (Oban.Job, LastFm.Track) | Background job monitoring, database vacuum/optimize, scrobble data quality diagnostics |
@@ -255,8 +255,9 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `ScrobbledTracksLive.Form` | ScrobbledTracksLive.Index | Edit scrobbled track |
 | `ScrobbleRulesLive.Form` | ScrobbleRulesLive.Index | Create/edit scrobble rule |
 | `OnlineStoreTemplateLive.Form` | OnlineStoreTemplateLive.Index | Create/edit store template |
-| `StatsLive.TopAlbums` | StatsLive.Index | Top albums by period (assign_async) |
-| `StatsLive.TopArtists` | StatsLive.Index | Top artists by period (assign_async) |
+| `StatsLive.TopByPeriod` | StatsLive.TopAlbums, StatsLive.TopArtists | Generic period-tabbed stats display (7d, 30d, 90d, 1y, all-time) |
+| `StatsLive.TopAlbums` | StatsLive.Index | Top albums by period (uses TopByPeriod) |
+| `StatsLive.TopArtists` | StatsLive.Index | Top artists by period (uses TopByPeriod) |
 | `UniversalSearchLive.Index` | Layout (global) | Cmd+K search modal |
 | `Chat` | CollectionLive.Show, WishlistLive.Show, ArtistLive.Show | AI chat sheet (OpenAI streaming, configurable per entity) |
 | `Notes` | CollectionLive.Show, WishlistLive.Show, ArtistLive.Show | Markdown note rendering and editing |
