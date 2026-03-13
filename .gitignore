@@ -22,9 +22,6 @@ erl_crash.dump
 # Temporary files, for example, from tests.
 /tmp/
 
-# Ignore package tarball (built via "mix hex.build").
-music_library-*.tar
-
 # Ignore assets that are produced by build tools.
 /priv/static/assets/
 
@@ -45,6 +42,4 @@ npm-debug.log
 # LSP Servers
 /.lexical
 
-# Database files in priv directory
-priv/**/*.db
 /.expert

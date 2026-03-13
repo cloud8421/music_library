@@ -33,12 +33,15 @@
 /.shellcheckrc
 .credo.exs
 .formatter.exs
+.sobelow-conf
 
 compose.yaml
+Dockerfile
 
 # Mix artifacts
 /_build/
 /deps/
+/.fetch
 *.ez
 
 # Scripts
@@ -68,3 +71,8 @@ CLAUDE.md
 /mise.toml
 /mise.local.toml
 /.tool-versions
+/.lexical
+.env.example
+
+# Benchmarks
+/bench
