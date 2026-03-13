@@ -3,7 +3,6 @@ import Config
 # Configure your database
 config :music_library, MusicLibrary.Repo,
   database: Path.expand("../data/music_library_dev.db", __DIR__),
-  cache_size: -64_000,
   pool_size: 10,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true
