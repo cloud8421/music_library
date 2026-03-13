@@ -135,19 +135,24 @@ defmodule MusicLibrary.RecordSets do
     {:ok, get_record_set!(record_set.id)}
   end
 
+  # sobelow_skip ["SQL.Query"]
   @spec reorder_records_in_set(RecordSet.t(), [String.t()]) :: {:ok, RecordSet.t()}
   def reorder_records_in_set(%RecordSet{} = record_set, ordered_record_ids)
       when is_list(ordered_record_ids) do
-    Repo.transaction(fn ->
+    {case_clauses, params} =
       ordered_record_ids
       |> Enum.with_index()
-      |> Enum.each(fn {record_id, position} ->
-        from(i in RecordSetItem,
-          where: i.record_set_id == ^record_set.id and i.record_id == ^record_id
-        )
-        |> Repo.update_all(set: [position: position])
+      |> Enum.reduce({"", []}, fn {record_id, position}, {sql_acc, params_acc} ->
+        {"#{sql_acc}WHEN record_id = ? THEN ? ", params_acc ++ [record_id, position]}
       end)
-    end)
+
+    sql = """
+    UPDATE record_set_items
+    SET position = CASE #{case_clauses}ELSE position END
+    WHERE record_set_id = ?
+    """
+
+    Repo.query(sql, params ++ [record_set.id])
 
     {:ok, get_record_set!(record_set.id)}
   end
