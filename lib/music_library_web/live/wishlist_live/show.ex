@@ -121,7 +121,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
                     <.dropdown_link
                       id={"actions-#{@record.id}-populate-genres"}
-                      phx-click={JS.push("populate_genres", value: %{id: @record.id})}
+                      phx-click={JS.push("populate_genres")}
                     >
                       <.icon
                         name="hero-sparkles"
@@ -349,8 +349,8 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
     end
   end
 
-  def handle_event("populate_genres", %{"id" => id}, socket) do
-    record = Records.get_record!(id)
+  def handle_event("populate_genres", _params, socket) do
+    record = socket.assigns.record
 
     case Records.populate_genres_async(record) do
       {:ok, _worker} ->

@@ -167,7 +167,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
                     <.dropdown_link
                       id={"actions-#{@record.id}-populate-genres"}
-                      phx-click={JS.push("populate_genres", value: %{id: @record.id})}
+                      phx-click={JS.push("populate_genres")}
                     >
                       <.icon
                         name="hero-sparkles"
@@ -180,7 +180,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
                     <.dropdown_link
                       id={"actions-#{@record.id}-regenerate-embeddings"}
-                      phx-click={JS.push("regenerate_embeddings", value: %{id: @record.id})}
+                      phx-click={JS.push("regenerate_embeddings")}
                     >
                       <.icon
                         name="hero-sparkles"
@@ -398,8 +398,8 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     end
   end
 
-  def handle_event("populate_genres", %{"id" => id}, socket) do
-    record = Records.get_record!(id)
+  def handle_event("populate_genres", _params, socket) do
+    record = socket.assigns.record
 
     case Records.populate_genres_async(record) do
       {:ok, _worker} ->
@@ -457,8 +457,8 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     end
   end
 
-  def handle_event("regenerate_embeddings", %{"id" => id}, socket) do
-    record = Records.get_record!(id)
+  def handle_event("regenerate_embeddings", _params, socket) do
+    record = socket.assigns.record
 
     case Similarity.generate_embedding_async(record) do
       {:ok, _worker} ->
