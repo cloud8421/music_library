@@ -1,4 +1,6 @@
 defmodule MusicLibraryWeb.Auth do
+  @moduledoc false
+
   use Gettext, backend: MusicLibraryWeb.Gettext
 
   import LiveToast, only: [put_toast: 3]

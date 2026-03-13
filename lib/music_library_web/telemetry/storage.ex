@@ -1,4 +1,6 @@
 defmodule MusicLibraryWeb.Telemetry.Storage do
+  @moduledoc false
+
   use GenServer
 
   @buffer_size Application.compile_env(

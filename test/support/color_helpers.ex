@@ -1,4 +1,6 @@
 defmodule MusicLibrary.ColorHelpers do
+  @moduledoc false
+
   @doc """
   Returns true if the given string is a valid lowercase hex color code.
 

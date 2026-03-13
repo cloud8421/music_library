@@ -1,4 +1,6 @@
 defmodule MusicBrainz.ReleaseGroup do
+  @moduledoc false
+
   alias MusicBrainz.ReleaseGroupSearchResult
 
   @spec included_release_groups(map()) :: [ReleaseGroupSearchResult.t()]

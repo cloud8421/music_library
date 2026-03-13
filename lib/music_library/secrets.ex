@@ -1,4 +1,8 @@
 defmodule MusicLibrary.Secrets do
+  @moduledoc """
+  Encrypted key-value storage for API keys and credentials.
+  """
+
   alias MusicLibrary.Repo
   alias MusicLibrary.Secrets.Secret
 

@@ -1,4 +1,8 @@
 defmodule LastFm do
+  @moduledoc """
+  Last.fm API facade for scrobbling and listening history.
+  """
+
   alias LastFm.{API, Feed, Refresh, Scrobble, Track, Worker}
   alias MusicLibrary.{BackgroundRepo, Repo}
 

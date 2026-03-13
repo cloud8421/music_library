@@ -1,4 +1,8 @@
 defmodule MusicLibrary.ArtistChat do
+  @moduledoc """
+  Chat implementation for artists using OpenAI streaming with Wikipedia context.
+  """
+
   @behaviour MusicLibrary.Chat
 
   alias MusicLibrary.Artists.ArtistInfo

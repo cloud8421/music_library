@@ -1,4 +1,8 @@
 defmodule MusicLibrary.Artists do
+  @moduledoc """
+  Artist metadata management from MusicBrainz, Discogs, Wikipedia, and Last.fm.
+  """
+
   import Ecto.Query, warn: false
 
   alias MusicLibrary.Artists.ArtistInfo

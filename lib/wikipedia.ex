@@ -1,4 +1,8 @@
 defmodule Wikipedia do
+  @moduledoc """
+  Wikipedia API facade for artist biographies.
+  """
+
   alias Wikipedia.API
 
   @spec get_artist_summary(String.t()) :: {:ok, map()} | {:error, :no_english_wikipedia | term()}

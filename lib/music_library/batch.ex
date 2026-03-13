@@ -1,4 +1,8 @@
 defmodule MusicLibrary.Batch do
+  @moduledoc """
+  Generic batch runner: streams records through a transaction with error accumulation.
+  """
+
   alias MusicLibrary.Repo
 
   require Logger

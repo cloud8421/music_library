@@ -1,4 +1,8 @@
 defmodule MusicLibrary.Assets.Cache do
+  @moduledoc """
+  ETS-based asset cache with TTL for serving frequently accessed images.
+  """
+
   @spec new() :: :ets.table()
   def new do
     :ets.new(__MODULE__, [:named_table, :public, :compressed, read_concurrency: true])

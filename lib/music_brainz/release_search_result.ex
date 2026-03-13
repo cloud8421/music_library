@@ -1,4 +1,6 @@
 defmodule MusicBrainz.ReleaseSearchResult do
+  @moduledoc false
+
   alias MusicBrainz.ReleaseGroup
 
   @enforce_keys [:id, :title, :release_group, :artists, :date, :barcode, :media]

@@ -1,4 +1,8 @@
 defmodule MusicBrainz do
+  @moduledoc """
+  MusicBrainz API facade for release and artist metadata search.
+  """
+
   alias MusicBrainz.API
 
   @type search_opts :: [limit: non_neg_integer(), offset: non_neg_integer()]

@@ -1,4 +1,6 @@
 defmodule MusicLibraryWeb.Hooks.ShowToast do
+  @moduledoc false
+
   import Phoenix.LiveView
   import LiveToast, only: [put_toast: 3]
 

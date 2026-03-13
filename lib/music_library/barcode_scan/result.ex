@@ -1,4 +1,6 @@
 defmodule MusicLibrary.BarcodeScan.Result do
+  @moduledoc false
+
   defstruct [:status, :number, :record_id, :release]
 
   @type t :: %__MODULE__{

@@ -1,4 +1,6 @@
 defmodule LastFm.Session do
+  @moduledoc false
+
   require Record
 
   defstruct [:name, :key, :pro]

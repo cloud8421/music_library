@@ -1,4 +1,8 @@
 defmodule BraveSearch do
+  @moduledoc """
+  Brave Search API facade for cover art and artist image search.
+  """
+
   alias BraveSearch.API
 
   @spec search_images(String.t(), keyword()) :: {:ok, [map()]} | {:error, term()}

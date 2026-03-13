@@ -1,4 +1,6 @@
 defmodule MusicBrainz.ExternalLink do
+  @moduledoc false
+
   defstruct [:name, :url]
 
   @type t :: %__MODULE__{

@@ -1,4 +1,8 @@
 defmodule MusicLibrary.RecordChat do
+  @moduledoc """
+  Chat implementation for records using OpenAI streaming with web search.
+  """
+
   @behaviour MusicLibrary.Chat
 
   alias MusicLibrary.Records.Record

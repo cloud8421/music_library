@@ -1,4 +1,6 @@
 defmodule LastFm.Scrobble do
+  @moduledoc false
+
   defstruct [:track, :artist, :timestamp, :album, :album_artist, :mbid]
 
   @type t :: %__MODULE__{

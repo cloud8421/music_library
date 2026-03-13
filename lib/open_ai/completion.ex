@@ -1,4 +1,6 @@
 defmodule OpenAI.Completion do
+  @moduledoc false
+
   @enforce_keys [:content]
   defstruct content: "",
             temperature: 0.2,

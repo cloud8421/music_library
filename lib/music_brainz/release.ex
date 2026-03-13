@@ -1,4 +1,6 @@
 defmodule MusicBrainz.Release do
+  @moduledoc false
+
   @enforce_keys [
     :id,
     :title,
@@ -38,6 +40,8 @@ defmodule MusicBrainz.Release do
         }
 
   defmodule Artist do
+    @moduledoc false
+
     @enforce_keys [:id, :name, :sort_name]
     defstruct [:id, :name, :sort_name]
 
@@ -49,6 +53,8 @@ defmodule MusicBrainz.Release do
   end
 
   defmodule Medium do
+    @moduledoc false
+
     @enforce_keys [:title, :format, :number, :track_count, :tracks]
     defstruct [:title, :format, :number, :track_count, :tracks]
 
@@ -62,6 +68,8 @@ defmodule MusicBrainz.Release do
   end
 
   defmodule Track do
+    @moduledoc false
+
     @enforce_keys [:id, :title, :artists, :length, :number, :position]
     defstruct [:id, :title, :artists, :length, :number, :position]
 

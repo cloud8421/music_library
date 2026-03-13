@@ -1,4 +1,8 @@
 defmodule MusicLibrary.Notes do
+  @moduledoc """
+  Free-text notes attached to records and artists.
+  """
+
   alias MusicLibrary.Notes.Note
   alias MusicLibrary.Repo
 

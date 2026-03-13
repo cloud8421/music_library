@@ -1,4 +1,8 @@
 defmodule MusicLibrary.Artists.Batch do
+  @moduledoc """
+  Batch operations for artists: refresh MusicBrainz, Discogs, Wikipedia, and Last.fm data.
+  """
+
   import Ecto.Query
 
   alias MusicLibrary.Artists

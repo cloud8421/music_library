@@ -1,4 +1,8 @@
 defmodule MusicLibrary.Assets.Transform do
+  @moduledoc """
+  Represents an image transformation (hash + target width) for asset serving.
+  """
+
   @derive JSON.Encoder
   defstruct [:hash, :width]
 

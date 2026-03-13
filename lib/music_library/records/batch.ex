@@ -1,4 +1,8 @@
 defmodule MusicLibrary.Records.Batch do
+  @moduledoc """
+  Batch operations for records: refresh MusicBrainz data and generate embeddings.
+  """
+
   import Ecto.Query
 
   alias MusicLibrary.Batch

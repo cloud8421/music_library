@@ -1,4 +1,6 @@
 defmodule MusicLibraryWeb.LiveTestHelpers do
+  @moduledoc false
+
   def escape(string) do
     LazyHTML.html_escape(string)
   end

@@ -1,4 +1,8 @@
 defmodule OpenAI do
+  @moduledoc """
+  OpenAI API facade for text embeddings and streaming chat.
+  """
+
   alias OpenAI.API
 
   @type chat_stream_opts :: [

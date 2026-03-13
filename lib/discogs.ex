@@ -1,4 +1,8 @@
 defmodule Discogs do
+  @moduledoc """
+  Discogs API facade for artist profiles and images.
+  """
+
   alias Discogs.API
 
   @spec get_artist(integer() | String.t()) :: {:ok, map()} | {:error, term()}

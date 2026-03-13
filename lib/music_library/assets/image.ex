@@ -1,4 +1,8 @@
 defmodule MusicLibrary.Assets.Image do
+  @moduledoc """
+  Image processing via Vix (libvips) for covers and artist images.
+  """
+
   alias Vix.Vips.{Image, Operation}
 
   fallback_path = Application.app_dir(:music_library, ["priv", "image-not-found.jpg"])

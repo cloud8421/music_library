@@ -1,4 +1,8 @@
 defmodule MusicLibrary.Collection do
+  @moduledoc """
+  Queries for collected records (where `purchased_at` is set).
+  """
+
   import Ecto.Query, warn: false
   import MusicLibrary.Records, only: [order_alphabetically: 0]
 

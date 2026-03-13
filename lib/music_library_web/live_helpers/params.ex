@@ -1,4 +1,6 @@
 defmodule MusicLibraryWeb.LiveHelpers.Params do
+  @moduledoc false
+
   @pagination Application.compile_env!(:music_library, :pagination)
 
   @spec parse_page(String.t() | nil | term()) :: pos_integer()

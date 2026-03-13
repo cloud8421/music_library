@@ -1,4 +1,8 @@
 defmodule MusicLibrary.RecordSets do
+  @moduledoc """
+  User-curated record groupings with ordered items.
+  """
+
   import Ecto.Query, warn: false
 
   alias MusicLibrary.RecordSets.{RecordSet, RecordSetItem}

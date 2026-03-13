@@ -1,4 +1,8 @@
 defmodule MusicLibrary.BarcodeScan do
+  @moduledoc """
+  Barcode-to-MusicBrainz lookup workflow.
+  """
+
   alias MusicLibrary.BarcodeScan.Result
   alias MusicLibrary.Records
 

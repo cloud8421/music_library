@@ -1,4 +1,6 @@
 defmodule MusicBrainz.Artist do
+  @moduledoc false
+
   @enforce_keys [:id, :name, :sort_name]
   defstruct [:id, :name, :sort_name, :country, :relations, :musicbrainz_data]
 

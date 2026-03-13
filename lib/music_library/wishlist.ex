@@ -1,4 +1,8 @@
 defmodule MusicLibrary.Wishlist do
+  @moduledoc """
+  Queries for wishlisted records (where `purchased_at` is nil).
+  """
+
   import Ecto.Query, warn: false
 
   alias MusicLibrary.Records

@@ -1,4 +1,8 @@
 defmodule MusicLibrary.Records.TracklistPdf do
+  @moduledoc """
+  Generates 120mm x 120mm PDF tracklists from record and release data via Typst.
+  """
+
   alias MusicBrainz.Release
   alias MusicLibraryWeb.Duration
   alias Typst.Format

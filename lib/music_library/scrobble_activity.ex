@@ -1,4 +1,8 @@
 defmodule MusicLibrary.ScrobbleActivity do
+  @moduledoc """
+  Scrobbling releases, media, and tracks to Last.fm.
+  """
+
   alias LastFm.Scrobble
   alias MusicBrainz.Release
   alias MusicLibrary.Secrets

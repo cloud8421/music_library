@@ -1,4 +1,8 @@
 defmodule MusicLibrary.Assets do
+  @moduledoc """
+  Binary asset storage and retrieval for covers and artist images.
+  """
+
   alias MusicLibrary.Assets.{Asset, Cache}
   alias MusicLibrary.Repo
 
