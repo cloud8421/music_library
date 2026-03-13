@@ -19,6 +19,7 @@ defmodule MusicLibraryWeb.Router do
                 "; style-src 'self' 'unsafe-inline' https://rsms.me#{@dev_origins}" <>
                 "; font-src 'self' https://rsms.me" <>
                 "; img-src 'self' data: blob: #{@img_origins}" <>
+                "; worker-src 'self' blob:" <>
                 "; connect-src 'self'#{@dev_origins}" <>
                 "; frame-ancestors 'self'" <>
                 "; base-uri 'self'"
