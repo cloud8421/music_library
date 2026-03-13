@@ -15,7 +15,7 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
     <button
       type="button"
       class="text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-300"
-      phx-click={JS.push("refresh_lastfm_feed")}
+      phx-click="refresh_lastfm_feed"
     >
       <span class="sr-only">{gettext("Refresh LastFm Feed")}</span>
       <.icon

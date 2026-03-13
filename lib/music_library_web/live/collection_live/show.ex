@@ -141,7 +141,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
                     <.dropdown_link
                       id={"actions-#{@record.id}-refresh-cover"}
-                      phx-click={JS.push("refresh_cover", value: %{id: @record.id})}
+                      phx-click="refresh_cover"
                     >
                       <.icon
                         name="hero-photo"
@@ -154,7 +154,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
                     <.dropdown_link
                       id={"actions-#{@record.id}-refresh-mb-data"}
-                      phx-click={JS.push("refresh_musicbrainz_data", value: %{id: @record.id})}
+                      phx-click="refresh_musicbrainz_data"
                     >
                       <.icon
                         name="hero-arrow-path"
@@ -167,7 +167,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
                     <.dropdown_link
                       id={"actions-#{@record.id}-populate-genres"}
-                      phx-click={JS.push("populate_genres")}
+                      phx-click="populate_genres"
                     >
                       <.icon
                         name="hero-sparkles"
@@ -180,7 +180,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
                     <.dropdown_link
                       id={"actions-#{@record.id}-regenerate-embeddings"}
-                      phx-click={JS.push("regenerate_embeddings")}
+                      phx-click="regenerate_embeddings"
                     >
                       <.icon
                         name="hero-sparkles"
@@ -193,7 +193,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
                     <.dropdown_link
                       id={"actions-#{@record.id}-extract-colors"}
-                      phx-click={JS.push("extract_colors", value: %{id: @record.id})}
+                      phx-click="extract_colors"
                     >
                       <.icon
                         name="hero-paint-brush"
@@ -207,7 +207,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                     <.dropdown_separator />
                     <.dropdown_link
                       id={"actions-#{@record.id}-delete"}
-                      phx-click={JS.push("delete", value: %{id: @record.id})}
+                      phx-click="delete"
                       data-confirm={gettext("Are you sure?")}
                       class="text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
                     >
@@ -370,15 +370,14 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   end
 
   @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    record = Records.get_record!(id)
-    {:ok, _} = Records.delete_record(record)
+  def handle_event("delete", _params, socket) do
+    {:ok, _} = Records.delete_record(socket.assigns.record)
 
     {:noreply, push_navigate(socket, to: ~p"/collection")}
   end
 
-  def handle_event("refresh_musicbrainz_data", %{"id" => id}, socket) do
-    record = Records.get_record!(id)
+  def handle_event("refresh_musicbrainz_data", _params, socket) do
+    record = socket.assigns.record
 
     case Records.refresh_musicbrainz_data(record) do
       {:ok, updated_record} ->
@@ -417,8 +416,8 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     end
   end
 
-  def handle_event("refresh_cover", %{"id" => id}, socket) do
-    record = Records.get_record!(id)
+  def handle_event("refresh_cover", _params, socket) do
+    record = socket.assigns.record
 
     case Records.refresh_cover(record) do
       {:ok, record} ->
@@ -437,8 +436,8 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     end
   end
 
-  def handle_event("extract_colors", %{"id" => id}, socket) do
-    record = Records.get_record!(id)
+  def handle_event("extract_colors", _params, socket) do
+    record = socket.assigns.record
 
     case Records.extract_colors(record) do
       {:ok, updated_record} ->

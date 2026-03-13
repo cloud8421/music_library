@@ -160,9 +160,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                     </.dropdown_link>
                     <.dropdown_link
                       id={"actions-#{@artist.musicbrainz_id}-refresh-image"}
-                      phx-click={
-                        JS.push("refresh_artist_image", value: %{id: @artist.musicbrainz_id})
-                      }
+                      phx-click="refresh_artist_image"
                     >
                       <.icon
                         name="hero-photo"
@@ -175,7 +173,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
 
                     <.dropdown_link
                       id={"actions-#{@artist.musicbrainz_id}-refresh-artist-info"}
-                      phx-click={JS.push("refresh_artist_info", value: %{id: @artist.musicbrainz_id})}
+                      phx-click="refresh_artist_info"
                     >
                       <.icon
                         name="hero-arrow-path"
@@ -187,9 +185,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                     </.dropdown_link>
                     <.dropdown_link
                       id={"actions-#{@artist.musicbrainz_id}-refresh-wikipedia"}
-                      phx-click={
-                        JS.push("refresh_wikipedia_data", value: %{id: @artist.musicbrainz_id})
-                      }
+                      phx-click="refresh_wikipedia_data"
                     >
                       <.icon
                         name="hero-arrow-path"
@@ -201,7 +197,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                     </.dropdown_link>
                     <.dropdown_link
                       id={"actions-#{@artist.musicbrainz_id}-refresh-lastfm"}
-                      phx-click={JS.push("refresh_lastfm_data", value: %{id: @artist.musicbrainz_id})}
+                      phx-click="refresh_lastfm_data"
                     >
                       <.icon
                         name="hero-arrow-path"
@@ -531,8 +527,8 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
   end
 
   @impl true
-  def handle_event("refresh_artist_info", %{"id" => id}, socket) do
-    case Artists.fetch_artist_info(id) do
+  def handle_event("refresh_artist_info", _params, socket) do
+    case Artists.fetch_artist_info(socket.assigns.artist.musicbrainz_id) do
       {:ok, artist_info} ->
         {:noreply,
          socket
@@ -551,8 +547,8 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     end
   end
 
-  def handle_event("refresh_wikipedia_data", %{"id" => id}, socket) do
-    case Artists.refresh_wikipedia_data(id) do
+  def handle_event("refresh_wikipedia_data", _params, socket) do
+    case Artists.refresh_wikipedia_data(socket.assigns.artist.musicbrainz_id) do
       {:ok, artist_info} ->
         {:noreply,
          socket
@@ -571,10 +567,12 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     end
   end
 
-  def handle_event("refresh_lastfm_data", %{"id" => id}, socket) do
-    case Artists.fetch_lastfm_data(id) do
+  def handle_event("refresh_lastfm_data", _params, socket) do
+    musicbrainz_id = socket.assigns.artist.musicbrainz_id
+
+    case Artists.fetch_lastfm_data(musicbrainz_id) do
       {:ok, artist_info} ->
-        id
+        musicbrainz_id
         |> Records.get_artist_records()
         |> Enum.each(&Records.generate_embedding_async/1)
 
@@ -594,8 +592,8 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     end
   end
 
-  def handle_event("refresh_artist_image", %{"id" => id}, socket) do
-    case Artists.fetch_image(id) do
+  def handle_event("refresh_artist_image", _params, socket) do
+    case Artists.fetch_image(socket.assigns.artist.musicbrainz_id) do
       {:ok, artist_info} ->
         {:noreply,
          socket
