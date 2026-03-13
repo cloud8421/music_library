@@ -30,7 +30,7 @@ defmodule MusicLibraryWeb.Endpoint do
     gzip: not code_reloading?,
     only: MusicLibraryWeb.static_paths()
 
-  if Code.ensure_loaded?(Tidewave) do
+  if Mix.env() == :dev do
     plug Tidewave
   end
 
