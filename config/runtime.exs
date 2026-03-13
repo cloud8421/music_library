@@ -43,6 +43,10 @@ config :music_library, MusicLibrary.Repo,
     MusicLibrary.Repo.extension_path("vec0")
   ]
 
+config :music_library, MusicLibrary.BackgroundRepo, auto_vacuum: :incremental
+
+config :music_library, MusicLibrary.TelemetryRepo, auto_vacuum: :incremental
+
 cloak_encryption_key =
   System.get_env("CLOAK_ENCRYPTION_KEY") ||
     raise """
