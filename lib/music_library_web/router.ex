@@ -18,7 +18,7 @@ defmodule MusicLibraryWeb.Router do
                 "; script-src 'self' 'unsafe-inline'#{@dev_origins}" <>
                 "; style-src 'self' 'unsafe-inline' https://rsms.me#{@dev_origins}" <>
                 "; font-src 'self' https://rsms.me" <>
-                "; img-src 'self' data: #{@img_origins}" <>
+                "; img-src 'self' data: blob: #{@img_origins}" <>
                 "; connect-src 'self'#{@dev_origins}" <>
                 "; frame-ancestors 'self'" <>
                 "; base-uri 'self'"
@@ -186,7 +186,7 @@ defmodule MusicLibraryWeb.Router do
         "; script-src 'self' 'nonce-#{nonce}'" <>
         "; style-src 'self' 'unsafe-inline' 'nonce-#{nonce}' https://rsms.me" <>
         "; font-src 'self' data: https://rsms.me" <>
-        "; img-src 'self' data: 'nonce-#{nonce}' #{@img_origins}" <>
+        "; img-src 'self' data: blob: 'nonce-#{nonce}' #{@img_origins}" <>
         "; connect-src 'self'" <>
         "; frame-ancestors 'self'" <>
         "; base-uri 'self'"
