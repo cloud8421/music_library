@@ -2286,3 +2286,8 @@ msgid "1 release"
 msgid_plural "%{count} releases"
 msgstr[0] ""
 msgstr[1] ""
+
+#: lib/music_library_web/components/release.ex
+#, elixir-autogen, elixir-format
+msgid "Print tracklist"
+msgstr ""

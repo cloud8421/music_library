@@ -78,14 +78,16 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
 
                 <.button
                   :if={@can_scrobble}
+                  variant="soft"
+                  size="sm"
                   phx-click={
                     if MapSet.size(@selected_tracks) > 0,
                       do: "scrobble_selected_tracks",
                       else: "scrobble_release"
                   }
-                  size="sm"
                 >
-                  {scrobble_button_label(@selected_tracks)}
+                  <span class="sr-only">{scrobble_button_label(@selected_tracks)}</span>
+                  <.icon name="hero-play" class="h-4 w-4" aria-hidden="true" data-slot="icon" />
                 </.button>
               </div>
 

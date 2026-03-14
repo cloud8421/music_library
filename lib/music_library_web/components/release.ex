@@ -70,18 +70,20 @@ defmodule MusicLibraryWeb.Components.Release do
             />
             {gettext("Tracks")}
           </label>
-          <div class="flex items-center gap-2">
+          <.button_group>
             <.button
               :if={@release_with_tracks.ok?}
-              variant="ghost"
+              variant="soft"
               size="sm"
               phx-click="print_tracklist"
               phx-target={@myself}
             >
-              <.icon name="hero-printer" class="h-4 w-4" />
+              <span class="sr-only">{gettext("Print tracklist")}</span>
+              <.icon name="hero-printer" class="h-4 w-4" aria-hidden="true" data-slot="icon" />
             </.button>
             <.button
               :if={@can_scrobble? && @release_with_tracks.ok?}
+              variant="soft"
               size="sm"
               disabled={@already_scrobbled}
               phx-click={
@@ -92,12 +94,14 @@ defmodule MusicLibraryWeb.Components.Release do
               phx-target={@myself}
               phx-disable-with={gettext("Scrobbling...")}
             >
-              {scrobble_button_label(@selected_tracks)}
+              <span class="sr-only">{scrobble_button_label(@selected_tracks)}</span>
+              <.icon name="hero-play" class="h-4 w-4" aria-hidden="true" data-slot="icon" />
             </.button>
-            <.button :if={!@can_scrobble?} size="sm" href={LastFm.auth_url()}>
-              {gettext("Connect your Last.fm account")}
+            <.button :if={!@can_scrobble?} variant="soft" size="sm" href={LastFm.auth_url()}>
+              <span class="sr-only">{gettext("Connect your Last.fm account")}</span>
+              <.icon name="hero-link" class="h-4 w-4" aria-hidden="true" data-slot="icon" />
             </.button>
-          </div>
+          </.button_group>
         </div>
 
         <div :if={@release_with_tracks} class="space-y-4 mt-4">
@@ -176,19 +180,21 @@ defmodule MusicLibraryWeb.Components.Release do
           {@medium.format}
         </.badge>
       </label>
-      <div class="flex items-center gap-2">
+      <.button_group>
         <.button
           :if={@record}
-          variant="ghost"
+          variant="soft"
           size="sm"
           phx-click="print_medium_tracklist"
           phx-value-medium-number={@medium.number}
           phx-target={@myself}
         >
-          <.icon name="hero-printer" class="h-4 w-4" />
+          <span class="sr-only">{gettext("Print tracklist")}</span>
+          <.icon name="hero-printer" class="h-4 w-4" aria-hidden="true" data-slot="icon" />
         </.button>
         <.button
           :if={@can_scrobble?}
+          variant="soft"
           size="sm"
           disabled={@already_scrobbled || MapSet.size(@selected_tracks) > 0}
           phx-click="scrobble_medium"
@@ -196,9 +202,10 @@ defmodule MusicLibraryWeb.Components.Release do
           phx-target={@myself}
           phx-disable-with={gettext("Scrobbling...")}
         >
-          {medium_scrobble_label(@medium.format)}
+          <span class="sr-only">{medium_scrobble_label(@medium.format)}</span>
+          <.icon name="hero-play" class="h-4 w-4" aria-hidden="true" data-slot="icon" />
         </.button>
-      </div>
+      </.button_group>
     </div>
     <.track_list
       medium_number={@medium.number}
