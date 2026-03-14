@@ -250,6 +250,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
       session =
         conn
         |> visit("/")
+        |> assert_has("dd", "4")
         |> assert_has("#album-#{machinarium_soundtrack_track.scrobbled_at_uts}",
           text: "Wishlisted"
         )

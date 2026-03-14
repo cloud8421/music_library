@@ -36,6 +36,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
             title={gettext("Scrobbles")}
             count={to_compact(@scrobble_count)}
             tooltip={@scrobble_count}
+            path={~p"/scrobbled-tracks"}
           />
         </dl>
       </div>
