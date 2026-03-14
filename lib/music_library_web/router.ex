@@ -7,8 +7,8 @@ defmodule MusicLibraryWeb.Router do
 
   # Content Security Policy: restricts resource loading to same-origin by default,
   # allows inline styles/scripts and Inter font from rsms.me, album art from
-  # Last.fm CDN, Brave Search, and Cover Art Archive, and prevents framing.
-  # In dev, allows LiveDebugger and Phoenix dev assets from 127.0.0.1.
+  # Last.fm CDN, Brave Search, and Cover Art Archive, WASM from jsdelivr (barcode-detector),
+  # and prevents framing. In dev, allows LiveDebugger and Phoenix dev assets from 127.0.0.1.
   @dev_origins if(Mix.env() == :dev, do: " http://127.0.0.1:* ws://127.0.0.1:*", else: "")
   @img_origins "https://lastfm.freetls.fastly.net https://imgs.search.brave.com " <>
                  "https://coverartarchive.org https://archive.org " <>
@@ -20,7 +20,7 @@ defmodule MusicLibraryWeb.Router do
                 "; font-src 'self' https://rsms.me" <>
                 "; img-src 'self' data: blob: #{@img_origins}" <>
                 "; worker-src 'self' blob:" <>
-                "; connect-src 'self'#{@dev_origins}" <>
+                "; connect-src 'self' https://fastly.jsdelivr.net#{@dev_origins}" <>
                 "; frame-ancestors 'self'" <>
                 "; base-uri 'self'"
 
@@ -188,7 +188,7 @@ defmodule MusicLibraryWeb.Router do
         "; style-src 'self' 'unsafe-inline' 'nonce-#{nonce}' https://rsms.me" <>
         "; font-src 'self' data: https://rsms.me" <>
         "; img-src 'self' data: blob: 'nonce-#{nonce}' #{@img_origins}" <>
-        "; connect-src 'self'" <>
+        "; connect-src 'self' https://fastly.jsdelivr.net" <>
         "; frame-ancestors 'self'" <>
         "; base-uri 'self'"
 
