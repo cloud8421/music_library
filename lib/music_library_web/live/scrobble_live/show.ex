@@ -147,8 +147,10 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
 
   @impl true
   def handle_event("scrobble_release", _params, socket) do
-    case ScrobbleActivity.scrobble_release(socket.assigns.release,
-           finished_at: DateTime.utc_now()
+    case ScrobbleActivity.scrobble_release(
+           socket.assigns.release,
+           :finished_at,
+           DateTime.utc_now()
          ) do
       {:ok, _} ->
         {:noreply,
@@ -168,8 +170,11 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
   def handle_event("scrobble_medium", %{"number" => number}, socket) do
     {number, ""} = Integer.parse(number)
 
-    case ScrobbleActivity.scrobble_medium(number, socket.assigns.release,
-           finished_at: DateTime.utc_now()
+    case ScrobbleActivity.scrobble_medium(
+           number,
+           socket.assigns.release,
+           :finished_at,
+           DateTime.utc_now()
          ) do
       {:ok, _} ->
         {:noreply,
@@ -196,7 +201,8 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
       case ScrobbleActivity.scrobble_tracks(
              selected_track_ids,
              release_with_tracks,
-             finished_at: DateTime.utc_now()
+             :finished_at,
+             DateTime.utc_now()
            ) do
         {:ok, _} ->
           {:noreply,

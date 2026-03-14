@@ -289,7 +289,7 @@ defmodule MusicLibraryWeb.Components.Release do
   def handle_event("scrobble_release", _params, socket) when release_loaded?(socket.assigns) do
     release_with_tracks = socket.assigns.release_with_tracks.result
 
-    case ScrobbleActivity.scrobble_release(release_with_tracks, finished_at: DateTime.utc_now()) do
+    case ScrobbleActivity.scrobble_release(release_with_tracks, :finished_at, DateTime.utc_now()) do
       {:ok, _} ->
         send_update_after(socket.assigns.myself, %{already_scrobbled: false}, 3000)
         put_toast!(:info, gettext("Release scrobbled successfully"))
@@ -318,8 +318,11 @@ defmodule MusicLibraryWeb.Components.Release do
     release_with_tracks = socket.assigns.release_with_tracks.result
     {number, ""} = Integer.parse(number)
 
-    case ScrobbleActivity.scrobble_medium(number, release_with_tracks,
-           finished_at: DateTime.utc_now()
+    case ScrobbleActivity.scrobble_medium(
+           number,
+           release_with_tracks,
+           :finished_at,
+           DateTime.utc_now()
          ) do
       {:ok, _} ->
         send_update_after(socket.assigns.myself, %{already_scrobbled: false}, 3000)
@@ -390,7 +393,8 @@ defmodule MusicLibraryWeb.Components.Release do
       case ScrobbleActivity.scrobble_tracks(
              selected_track_ids,
              release_with_tracks,
-             finished_at: DateTime.utc_now()
+             :finished_at,
+             DateTime.utc_now()
            ) do
         {:ok, _} ->
           send_update_after(socket.assigns.myself, %{already_scrobbled: false}, 3000)

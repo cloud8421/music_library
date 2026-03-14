@@ -12,32 +12,15 @@ defmodule MusicLibrary.ScrobbleActivity do
     Secrets.get("last_fm_session_key") !== nil
   end
 
-  @spec scrobble_release(map(), keyword()) :: {:ok, term()} | {:error, term()}
-  def scrobble_release(release_with_tracks, opts) when is_list(opts) do
-    case Enum.sort(opts) do
-      [finished_at: _, started_at: _] ->
-        raise ArgumentError, """
-        Cannot scrobble a release with both started_at and finished_at.
-          Remove either of them.
-        """
-
-      [started_at: started_at] ->
-        scrobble_release(release_with_tracks, {:started_at, started_at})
-
-      [finished_at: finished_at] ->
-        scrobble_release(release_with_tracks, {:finished_at, finished_at})
-    end
-  end
-
-  @spec scrobble_release(map(), {:finished_at, DateTime.t()}) :: {:ok, term()} | {:error, term()}
-  def scrobble_release(release_with_tracks, {:finished_at, finished_at}) do
+  @spec scrobble_release(map(), :started_at | :finished_at, DateTime.t()) ::
+          {:ok, term()} | {:error, term()}
+  def scrobble_release(release_with_tracks, :finished_at, finished_at) do
     release_duration = Release.release_duration(release_with_tracks)
     started_at = DateTime.add(finished_at, -release_duration, :millisecond)
-    scrobble_release(release_with_tracks, {:started_at, started_at})
+    scrobble_release(release_with_tracks, :started_at, started_at)
   end
 
-  @spec scrobble_release(map(), {:started_at, DateTime.t()}) :: {:ok, term()} | {:error, term()}
-  def scrobble_release(release_with_tracks, {:started_at, started_at}) do
+  def scrobble_release(release_with_tracks, :started_at, started_at) do
     release_duration = Release.release_duration(release_with_tracks)
 
     if release_duration == 0 do
@@ -54,40 +37,21 @@ defmodule MusicLibrary.ScrobbleActivity do
     end
   end
 
-  @spec scrobble_medium(integer(), map(), keyword()) :: {:ok, term()} | {:error, term()}
-  def scrobble_medium(number, release_with_tracks, opts) when is_list(opts) do
-    case Enum.sort(opts) do
-      [finished_at: _, started_at: _] ->
-        raise ArgumentError, """
-        Cannot scrobble a medium with both started_at and finished_at.
-          Remove either of them.
-        """
-
-      [started_at: started_at] ->
-        scrobble_medium(number, release_with_tracks, {:started_at, started_at})
-
-      [finished_at: finished_at] ->
-        scrobble_medium(number, release_with_tracks, {:finished_at, finished_at})
-    end
-  end
-
-  @spec scrobble_medium(integer(), map(), {:finished_at, DateTime.t()}) ::
+  @spec scrobble_medium(integer(), map(), :started_at | :finished_at, DateTime.t()) ::
           {:ok, term()} | {:error, term()}
-  def scrobble_medium(number, release_with_tracks, {:finished_at, finished_at}) do
+  def scrobble_medium(number, release_with_tracks, :finished_at, finished_at) do
     case find_medium(release_with_tracks, number) do
       {:ok, medium} ->
         medium_duration = Release.medium_duration(medium)
         started_at = DateTime.add(finished_at, -medium_duration, :millisecond)
-        scrobble_medium(number, release_with_tracks, {:started_at, started_at})
+        scrobble_medium(number, release_with_tracks, :started_at, started_at)
 
       {:error, :medium_not_found} ->
         {:error, :medium_not_found}
     end
   end
 
-  @spec scrobble_medium(integer(), map(), {:started_at, DateTime.t()}) ::
-          {:ok, term()} | {:error, term()}
-  def scrobble_medium(number, release_with_tracks, {:started_at, started_at}) do
+  def scrobble_medium(number, release_with_tracks, :started_at, started_at) do
     case find_medium(release_with_tracks, number) do
       {:ok, medium} ->
         medium_duration = Release.medium_duration(medium)
@@ -109,26 +73,9 @@ defmodule MusicLibrary.ScrobbleActivity do
     end
   end
 
-  @spec scrobble_tracks(MapSet.t(), map(), keyword()) :: {:ok, term()} | {:error, term()}
-  def scrobble_tracks(selected_track_ids, release_with_tracks, opts) when is_list(opts) do
-    case Enum.sort(opts) do
-      [finished_at: _, started_at: _] ->
-        raise ArgumentError, """
-        Cannot scrobble tracks with both started_at and finished_at.
-          Remove either of them.
-        """
-
-      [started_at: started_at] ->
-        scrobble_tracks(selected_track_ids, release_with_tracks, {:started_at, started_at})
-
-      [finished_at: finished_at] ->
-        scrobble_tracks(selected_track_ids, release_with_tracks, {:finished_at, finished_at})
-    end
-  end
-
-  @spec scrobble_tracks(MapSet.t(), map(), {:finished_at, DateTime.t()}) ::
+  @spec scrobble_tracks(MapSet.t(), map(), :started_at | :finished_at, DateTime.t()) ::
           {:ok, term()} | {:error, term()}
-  def scrobble_tracks(selected_track_ids, release_with_tracks, {:finished_at, finished_at}) do
+  def scrobble_tracks(selected_track_ids, release_with_tracks, :finished_at, finished_at) do
     all_tracks = Release.tracks(release_with_tracks)
 
     selected_tracks =
@@ -136,12 +83,10 @@ defmodule MusicLibrary.ScrobbleActivity do
 
     tracks_duration = Enum.sum_by(selected_tracks, fn track -> track.length || 0 end)
     started_at = DateTime.add(finished_at, -tracks_duration, :millisecond)
-    scrobble_tracks(selected_track_ids, release_with_tracks, {:started_at, started_at})
+    scrobble_tracks(selected_track_ids, release_with_tracks, :started_at, started_at)
   end
 
-  @spec scrobble_tracks(MapSet.t(), map(), {:started_at, DateTime.t()}) ::
-          {:ok, term()} | {:error, term()}
-  def scrobble_tracks(selected_track_ids, release_with_tracks, {:started_at, started_at}) do
+  def scrobble_tracks(selected_track_ids, release_with_tracks, :started_at, started_at) do
     all_tracks = Release.tracks(release_with_tracks)
 
     selected_tracks =

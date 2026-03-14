@@ -483,9 +483,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
        with {:ok, release} <- MusicBrainz.get_release(record.selected_release_id) do
          release_with_tracks = MusicBrainz.Release.from_api_response(release)
 
-         ScrobbleActivity.scrobble_release(release_with_tracks,
-           finished_at: DateTime.utc_now()
-         )
+         ScrobbleActivity.scrobble_release(release_with_tracks, :finished_at, DateTime.utc_now())
        end
      end)}
   end
