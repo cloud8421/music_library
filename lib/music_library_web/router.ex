@@ -15,7 +15,7 @@ defmodule MusicLibraryWeb.Router do
                  "https://*.archive.org https://www.google.com https://*.gstatic.com"
 
   @csp_policy "default-src 'self'" <>
-                "; script-src 'self' 'unsafe-inline'#{@dev_origins}" <>
+                "; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' #{@dev_origins}" <>
                 "; style-src 'self' 'unsafe-inline' https://rsms.me#{@dev_origins}" <>
                 "; font-src 'self' https://rsms.me" <>
                 "; img-src 'self' data: blob: #{@img_origins}" <>
