@@ -74,7 +74,8 @@ Rules extracted from commit history that are specific to this project and not al
 - **Commits are small and single-purpose.** One logical change per commit.
 - **Unused aliases are removed** when their module is no longer referenced. Aliases stay alphabetically sorted.
 - **Markdown sanitization via MDEx (ammonia).** Use `Markdown.to_html/1` for user content. Annotate raw output with `# sobelow_skip ["XSS.Raw"]` and a comment explaining the sanitization.
-- **Sobelow runs on CI** in skip mode for security analysis.
+- **Sobelow runs on CI and pre-commit** in skip mode for security analysis.
+- **All modules require `@moduledoc`.** The Credo `ModuleDoc` check is enforced in strict mode.
 
 ## JavaScript
 
