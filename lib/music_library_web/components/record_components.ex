@@ -228,10 +228,11 @@ defmodule MusicLibraryWeb.RecordComponents do
   attr :record_edit_path, :any, required: true
   attr :display_artist_names, :boolean, default: false
   attr :density, :atom, values: [:low, :high], default: :low
+  attr :container_class, :string, default: "mt-6"
 
   def record_grid(assigns) do
     ~H"""
-    <div class="mt-4">
+    <div class={@container_class}>
       <header
         :if={@title}
         class="flex items-baseline justify-start"

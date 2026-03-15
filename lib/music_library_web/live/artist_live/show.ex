@@ -397,6 +397,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
               records_count={@collection_records_count}
               record_show_path={fn record -> ~p"/collection/#{record}" end}
               record_edit_path={fn record -> ~p"/collection/#{record}/show/edit" end}
+              container_class="mt-4"
             />
             <.separator
               :if={@collection_records_count > 0 && @wishlist_records_count > 0}
@@ -410,6 +411,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
               records_count={@wishlist_records_count}
               record_show_path={fn record -> ~p"/wishlist/#{record}" end}
               record_edit_path={fn record -> ~p"/wishlist/#{record}/show/edit" end}
+              container_class="mt-4"
             />
 
             <.async_result :let={similar_artists} assign={@similar_artists}>
