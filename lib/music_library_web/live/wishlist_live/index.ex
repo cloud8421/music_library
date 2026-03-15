@@ -34,7 +34,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
         </div>
       </header>
 
-      <div class="flex items-end justify-between gap-6 mt-8">
+      <div class="flex items-end justify-between gap-6 mt-6">
         <.button_group>
           <.button
             patch={order_path(@record_list_params, :insertion)}

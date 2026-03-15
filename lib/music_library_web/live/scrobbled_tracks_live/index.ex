@@ -27,7 +27,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
           </div>
         </header>
 
-        <div class="flex items-end gap-6 mt-8 justify-between">
+        <div class="flex items-end gap-6 mt-6 justify-between">
           <.button_group>
             <.button
               patch={order_path(@track_list_params, :scrobbled_at)}
