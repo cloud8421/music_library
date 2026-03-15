@@ -134,9 +134,9 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
 
       session
       |> unwrap(fn view ->
-        view
-        |> form("[phx-change='set_current_date']", %{"current_date" => Date.to_iso8601(yesterday)})
-        |> render_change()
+        # We simulate clicking on the date picker and picking yesterday - the
+        # following event matches the datepicker phx-click attribute
+        render_click(view, :set_current_date, %{"current_date" => Date.to_iso8601(yesterday)})
       end)
 
       refute_has(session, "##{record_today.id} h2", escape(record_today.title))

@@ -30,6 +30,7 @@ defmodule MusicLibraryWeb.ConnCase do
         only: [
           render_async: 1,
           render_change: 1,
+          render_click: 3,
           render_hook: 2,
           render_hook: 3,
           element: 2,
