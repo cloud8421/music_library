@@ -1,10 +1,20 @@
 defmodule MusicLibrary.Records.SearchParser do
   @moduledoc """
-  This module includes functions to parse a search string containing tagged entities,
-  e.g. artists or albums.
+  Parses structured search queries into filter maps.
 
-  Implementation is most likely suboptimal, non-idiomatic and failing against specific
-  edge cases I haven't thought about - not an expert in parsing.
+  Supports the following filters:
+
+  - `artist:value` — filter by artist name
+  - `album:value` — filter by album name
+  - `mbid:value` — filter by MusicBrainz ID
+  - `genre:value` — filter by genre
+  - `format:value` — filter by format (e.g. `cd`, `vinyl`)
+  - `type:value` — filter by type (e.g. `album`, `single`)
+  - `purchase_year:YYYY` — filter by purchase year
+
+  Multi-word values can be quoted: `artist:"the pineapple thief"`.
+  Unrecognized format/type values are silently ignored.
+  Bare words become free-text query terms.
   """
 
   @type search_result :: %{
@@ -105,6 +115,10 @@ defmodule MusicLibrary.Records.SearchParser do
     {:ok, %{query: ""}}
     iex> MusicLibrary.Records.SearchParser.parse("type:alb")
     {:ok, %{query: ""}}
+    iex> MusicLibrary.Records.SearchParser.parse("artist:marillion format:vin")
+    {:ok, %{artist: "marillion"}}
+    iex> MusicLibrary.Records.SearchParser.parse("artist:marillion type:alb")
+    {:ok, %{artist: "marillion"}}
     iex> MusicLibrary.Records.SearchParser.parse("type:album")
     {:ok, %{type: :album}}
     iex> MusicLibrary.Records.SearchParser.parse("purchase_year:2024")
@@ -157,7 +171,7 @@ defmodule MusicLibrary.Records.SearchParser do
       {:query, [value]}, acc ->
         Map.update(acc, :query, value, &(&1 <> " " <> value))
 
-      _, %{} ->
+      _, acc when map_size(acc) == 0 ->
         %{query: ""}
 
       _, acc ->
