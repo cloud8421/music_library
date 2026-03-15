@@ -1251,11 +1251,6 @@ msgstr ""
 msgid "No scrobbled tracks found"
 msgstr ""
 
-#: lib/music_library_web/live/scrobbled_tracks_live/index.ex
-#, elixir-autogen, elixir-format
-msgid "Scrobbled"
-msgstr ""
-
 #: lib/music_library_web/components/layouts/app.html.heex
 #: lib/music_library_web/live/scrobbled_tracks_live/index.ex
 #, elixir-autogen, elixir-format
@@ -2290,4 +2285,9 @@ msgstr[1] ""
 #: lib/music_library_web/components/release.ex
 #, elixir-autogen, elixir-format
 msgid "Print tracklist"
+msgstr ""
+
+#: lib/music_library_web/live/scrobbled_tracks_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Timestamp"
 msgstr ""

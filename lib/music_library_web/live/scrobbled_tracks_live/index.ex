@@ -31,7 +31,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
           <.button_group>
             <.button
               patch={order_path(@track_list_params, :scrobbled_at)}
-              size="xs"
+              size="sm"
               class={[
                 @track_list_params.order == :scrobbled_at && "bg-zinc-100! dark:bg-zinc-700!"
               ]}
@@ -42,37 +42,37 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
                 aria-hidden="true"
                 data-slot="icon"
               />
-              {gettext("Scrobbled")}
+              <span class="sr-only sm:not-sr-only">{gettext("Timestamp")}</span>
             </.button>
             <.button
               patch={order_path(@track_list_params, :title)}
-              size="xs"
+              size="sm"
               class={[
                 @track_list_params.order == :title && "bg-zinc-100! dark:bg-zinc-700!"
               ]}
             >
               <.icon name="hero-musical-note-solid" class="icon" aria-hidden="true" data-slot="icon" />
-              {gettext("Title")}
+              <span class="sr-only sm:not-sr-only">{gettext("Title")}</span>
             </.button>
             <.button
               patch={order_path(@track_list_params, :artist)}
-              size="xs"
+              size="sm"
               class={[
                 @track_list_params.order == :artist && "bg-zinc-100! dark:bg-zinc-700!"
               ]}
             >
               <.icon name="hero-user-solid" class="icon" aria-hidden="true" data-slot="icon" />
-              {gettext("Artist")}
+              <span class="sr-only sm:not-sr-only">{gettext("Artist")}</span>
             </.button>
             <.button
               patch={order_path(@track_list_params, :album)}
-              size="xs"
+              size="sm"
               class={[
                 @track_list_params.order == :album && "bg-zinc-100! dark:bg-zinc-700!"
               ]}
             >
-              <.icon name="hero-musical-note-solid" class="icon" aria-hidden="true" data-slot="icon" />
-              {gettext("Album")}
+              <.icon name="hero-numbered-list-solid" class="icon" aria-hidden="true" data-slot="icon" />
+              <span class="sr-only sm:not-sr-only">{gettext("Album")}</span>
             </.button>
           </.button_group>
           <.refresh_lastfm_feed_button />
