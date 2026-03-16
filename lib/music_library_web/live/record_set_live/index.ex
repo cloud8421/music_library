@@ -271,7 +271,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
     ~H"""
     <li
       id={@id}
-      class="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-700 p-4"
+      class="bg-white dark:bg-zinc-900 rounded-md shadow-sm border-zinc-200 dark:border-zinc-700 p-4"
     >
       <div class="flex items-baseline justify-between mb-3">
         <div class="grow">
