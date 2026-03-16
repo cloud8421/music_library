@@ -105,6 +105,14 @@
             >
               {gettext("Online Store Templates")}
             </.dropdown_nav>
+            <.dropdown_nav
+              current_section={@current_section}
+              section={:maintenance}
+              route={~p"/dev/maintenance"}
+              icon="hero-wrench-screwdriver"
+            >
+              {gettext("Maintenance")}
+            </.dropdown_nav>
             <.dropdown_separator />
             <.dropdown_link href={~p"/dev/dashboard"}>
               <.icon
@@ -122,15 +130,6 @@
             <.dropdown_link href={~p"/dev/errors"}>
               <.icon name="hero-bug-ant" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
               {gettext("Errors")}
-            </.dropdown_link>
-            <.dropdown_link href={~p"/dev/maintenance"}>
-              <.icon
-                name="hero-wrench-screwdriver"
-                class="h-4 w-4 mr-2"
-                aria-hidden="true"
-                data-slot="icon"
-              />
-              {gettext("Maintenance")}
             </.dropdown_link>
             <.dropdown_separator />
             <.dropdown_link href={~p"/login"}>
