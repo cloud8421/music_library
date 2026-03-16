@@ -15,6 +15,7 @@ defmodule MusicLibrary.ScrobbleRules do
           type: atom(),
           enabled: boolean(),
           query: String.t(),
+          order: :inserted_at | :alphabetical,
           offset: non_neg_integer(),
           limit: non_neg_integer()
         ]
@@ -22,7 +23,8 @@ defmodule MusicLibrary.ScrobbleRules do
   @spec list_scrobble_rules(list_opts()) :: [ScrobbleRule.t()]
   def list_scrobble_rules(opts \\ []) do
     query =
-      from(r in ScrobbleRule, order_by: [desc: r.inserted_at])
+      from(r in ScrobbleRule)
+      |> order_scrobble_rules(Keyword.get(opts, :order, :inserted_at))
       |> filter_scrobble_rules(opts)
 
     query =
@@ -492,6 +494,14 @@ defmodule MusicLibrary.ScrobbleRules do
               like(r.target_musicbrainz_id, ^like) or
               like(r.description, ^like)
     end
+  end
+
+  defp order_scrobble_rules(query, :alphabetical) do
+    from r in query, order_by: [asc: r.match_value]
+  end
+
+  defp order_scrobble_rules(query, _inserted_at) do
+    from r in query, order_by: [desc: r.inserted_at]
   end
 
   # column and json_path are hardcoded string literals from internal callers,

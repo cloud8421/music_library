@@ -42,6 +42,31 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
         </div>
       </header>
 
+      <div class="flex items-end justify-between gap-6 mt-6">
+        <.button_group>
+          <.button
+            patch={order_path(@list_params, :alphabetical)}
+            size="sm"
+            class={[
+              @list_params.order == :alphabetical && "bg-zinc-100! dark:bg-zinc-700!"
+            ]}
+          >
+            <.icon name="hero-user-solid" class="icon" aria-hidden="true" data-slot="icon" />
+            <span class="sr-only sm:not-sr-only">{gettext("A->Z")}</span>
+          </.button>
+          <.button
+            patch={order_path(@list_params, :inserted_at)}
+            size="sm"
+            class={[
+              @list_params.order == :inserted_at && "bg-zinc-100! dark:bg-zinc-700!"
+            ]}
+          >
+            <.icon name="hero-clock" class="icon" aria-hidden="true" data-slot="icon" />
+            <span class="sr-only sm:not-sr-only">{gettext("Updated")}</span>
+          </.button>
+        </.button_group>
+      </div>
+
       <div class="mt-6 space-y-4">
         <ul phx-update="stream" id="scrobble-rules-list" class="space-y-4">
           <li
@@ -172,12 +197,14 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
 
   defp apply_action(socket, :index, params) do
     query = params["query"]
+    order = parse_order(params["order"] || "inserted_at")
 
     total_rules = ScrobbleRules.count_scrobble_rules(query: query)
 
     list_params =
       @default_list_params
       |> merge_query(query)
+      |> merge_order(order)
       |> merge_pagination(params, total_rules)
 
     load_and_assign_rules(socket, list_params)
@@ -189,6 +216,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
     rules =
       ScrobbleRules.list_scrobble_rules(
         query: list_params.query,
+        order: list_params.order,
         offset: offset,
         limit: list_params.page_size
       )
@@ -203,7 +231,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
   def back_path(list_params) do
     qs =
       list_params
-      |> Map.take([:page, :page_size, :query])
+      |> Map.take([:page, :page_size, :query, :order])
       |> Enum.filter(fn {_, v} -> v not in ["", nil] end)
 
     ~p"/scrobble-rules?#{qs}"
@@ -287,9 +315,23 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
     qs =
       @default_list_params
       |> Map.put(:query, query)
-      |> Map.take([:query, :page, :page_size])
+      |> Map.put(:order, socket.assigns.list_params.order)
+      |> Map.take([:query, :page, :page_size, :order])
 
     {:noreply, push_patch(socket, to: ~p"/scrobble-rules?#{qs}")}
+  end
+
+  defp parse_order("alphabetical"), do: :alphabetical
+  defp parse_order(_), do: :inserted_at
+
+  defp order_path(list_params, order) do
+    qs =
+      list_params
+      |> Map.take([:query])
+      |> Map.put(:order, order)
+      |> Enum.filter(fn {_, v} -> v not in ["", nil] end)
+
+    ~p"/scrobble-rules?#{qs}"
   end
 
   attr :type, :atom, required: true, values: [:album, :artist]

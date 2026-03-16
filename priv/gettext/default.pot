@@ -344,6 +344,7 @@ msgstr ""
 
 #: lib/music_library_web/live/collection_live/index.ex
 #: lib/music_library_web/live/record_set_live/index.ex
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
 #: lib/music_library_web/live/wishlist_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "A->Z"
@@ -1687,6 +1688,7 @@ msgid "%{collected}/%{total} records"
 msgstr ""
 
 #: lib/music_library_web/live/record_set_live/index.ex
+#: lib/music_library_web/live/scrobble_rules_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Updated"
 msgstr ""
