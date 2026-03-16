@@ -41,7 +41,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         </dl>
       </div>
 
-      <div class="grid lg:grid-cols-2 gap-x-5">
+      <div class="grid lg:grid-cols-2 gap-5">
         <div>
           <h1 class="mt-5 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
             {gettext("Formats")}
@@ -261,7 +261,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         </.tabs>
       </div>
 
-      <div class="mt-5 grid grid-cols-1 lg:grid-cols-11 gap-4">
+      <div class="mt-5 grid grid-cols-1 lg:grid-cols-11 gap-5">
         <div class="lg:col-span-3">
           <div class="flex justify-between items-center">
             <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
