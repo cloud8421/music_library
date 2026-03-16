@@ -73,78 +73,38 @@
                 />
               </.button>
             </:toggle>
-            <.dropdown_link
-              href={~p"/scrobble"}
-              class={[
-                "rounded-none border-l-2",
-                if(@current_section == :scrobble,
-                  do: "border-l-red-500",
-                  else: "border-l-transparent"
-                )
-              ]}
+            <.dropdown_nav
+              current_section={@current_section}
+              section={:scrobble}
+              route={~p"/scrobble"}
+              icon="hero-play"
             >
-              <.icon
-                name="hero-play"
-                class="h-4 w-4 mr-2"
-                aria-hidden="true"
-                data-slot="icon"
-              />
               {gettext("Scrobble Anything")}
-            </.dropdown_link>
-            <.dropdown_link
-              href={~p"/scrobbled-tracks"}
-              class={[
-                "rounded-none border-l-2",
-                if(@current_section == :scrobble_activity,
-                  do: "border-l-red-500",
-                  else: "border-l-transparent"
-                )
-              ]}
+            </.dropdown_nav>
+            <.dropdown_nav
+              current_section={@current_section}
+              section={:scrobble_activity}
+              route={~p"/scrobbled-tracks"}
+              icon="hero-musical-note"
             >
-              <.icon
-                name="hero-musical-note"
-                class="h-4 w-4 mr-2"
-                aria-hidden="true"
-                data-slot="icon"
-              />
               {gettext("Scrobbled Tracks")}
-            </.dropdown_link>
-            <.dropdown_link
-              href={~p"/scrobble-rules"}
-              class={[
-                "rounded-none border-l-2",
-                if(@current_section == :scrobble_rules,
-                  do: "border-l-red-500",
-                  else: "border-l-transparent"
-                )
-              ]}
+            </.dropdown_nav>
+            <.dropdown_nav
+              current_section={@current_section}
+              section={:scrobble_rules}
+              route={~p"/scrobble-rules"}
+              icon="hero-adjustments-horizontal"
             >
-              <.icon
-                name="hero-adjustments-horizontal"
-                class="h-4 w-4 mr-2"
-                aria-hidden="true"
-                data-slot="icon"
-              />
               {gettext("Scrobble Rules")}
-            </.dropdown_link>
-            <.dropdown_link
-              href={~p"/online-store-templates"}
-              class={[
-                "rounded-none border-l-2",
-                if(@current_section == :online_store_templates,
-                  do: "border-l-red-500",
-                  else: "border-l-transparent"
-                )
-              ]}
+            </.dropdown_nav>
+            <.dropdown_nav
+              current_section={@current_section}
+              section={:online_store_templates}
+              route={~p"/online-store-templates"}
+              icon="hero-building-storefront"
             >
-              <.icon
-                name="hero-building-storefront"
-                class="h-4 w-4 mr-2"
-                aria-hidden="true"
-                data-slot="icon"
-              />
               {gettext("Online Store Templates")}
-            </.dropdown_link>
+            </.dropdown_nav>
             <.dropdown_separator />
             <.dropdown_link href={~p"/dev/dashboard"}>
               <.icon

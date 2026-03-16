@@ -37,6 +37,31 @@ defmodule MusicLibraryWeb.Layouts do
     """
   end
 
+  attr :current_section, :atom, required: true
+  attr :section, :atom, required: true
+  attr :route, :string, required: true
+  attr :icon, :string, required: true
+
+  slot :inner_block, required: true
+
+  def dropdown_nav(assigns) do
+    ~H"""
+    <.dropdown_link
+      href={@route}
+      class={[
+        "rounded-none border-l-2",
+        if(@current_section == @section,
+          do: "border-l-red-500",
+          else: "border-l-transparent"
+        )
+      ]}
+    >
+      <.icon name={@icon} class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
+      {render_slot(@inner_block)}
+    </.dropdown_link>
+    """
+  end
+
   defp toast_class_fn(assigns) do
     [
       # base classes
