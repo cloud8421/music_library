@@ -20,7 +20,7 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
     ~H"""
     <div class="w-full">
       <header>
-        <h1 class="text-base font-medium leading-6 text-zinc-700 dark:text-zinc-300">
+        <h1 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
           {@artist.name}
         </h1>
       </header>

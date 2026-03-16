@@ -21,7 +21,7 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
         <h1 class="mt-2 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
           {gettext("Maintenance")}
         </h1>
-        <h3 class="mt-4 text-base font-semibold text-zinc-900 dark:text-white">
+        <h3 class="mt-4 text-base font-semibold text-zinc-900 dark:text-zinc-200">
           {gettext("Records")}
         </h3>
         <p class="mt-2 max-w-4xl text-sm text-zinc-500 dark:text-zinc-400">
@@ -61,7 +61,7 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
             </.button_group>
           </li>
         </ul>
-        <h3 class="mt-4 text-base font-semibold text-zinc-900 dark:text-white">
+        <h3 class="mt-4 text-base font-semibold text-zinc-900 dark:text-zinc-200">
           {gettext("Artists")}
         </h3>
         <p class="mt-2 max-w-4xl text-sm text-zinc-500 dark:text-zinc-400">
@@ -127,7 +127,7 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
             </.button_group>
           </li>
         </ul>
-        <h3 class="mt-4 text-base font-semibold text-zinc-900 dark:text-white">
+        <h3 class="mt-4 text-base font-semibold text-zinc-900 dark:text-zinc-200">
           {gettext("Database")}
         </h3>
         <p class="mt-2 max-w-4xl text-sm text-zinc-500 dark:text-zinc-400">
@@ -156,7 +156,7 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
             </.button_group>
           </li>
         </ul>
-        <h3 class="mt-4 text-base font-semibold text-zinc-900 dark:text-white">
+        <h3 class="mt-4 text-base font-semibold text-zinc-900 dark:text-zinc-200">
           {gettext("Assets")}
         </h3>
         <p class="mt-2 max-w-4xl text-sm text-zinc-500 dark:text-zinc-400">
@@ -187,7 +187,7 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
             </.button_group>
           </li>
         </ul>
-        <h3 class="mt-4 text-base font-semibold text-zinc-900 dark:text-white">
+        <h3 class="mt-4 text-base font-semibold text-zinc-900 dark:text-zinc-200">
           {gettext("Emails")}
         </h3>
         <p class="mt-2 max-w-4xl text-sm text-zinc-500 dark:text-zinc-400">

@@ -407,7 +407,7 @@ defmodule MusicLibraryWeb.RecordComponents do
 
   defp format_badge(assigns) do
     ~H"""
-    <.badge class="text-xs md:text-sm">
+    <.badge size="xs">
       {@release |> ReleaseSearchResult.format() |> format_label()}
     </.badge>
     """

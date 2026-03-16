@@ -74,7 +74,9 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
 
             <div :if={@release.media != []} class="mt-6 space-y-4">
               <div class="flex justify-between items-center">
-                <h3 class="text-lg font-semibold">{gettext("Tracks")}</h3>
+                <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-200">
+                  {gettext("Tracks")}
+                </h3>
 
                 <.button
                   :if={@can_scrobble}

@@ -234,6 +234,11 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
               <span class="text-sm font-medium text-zinc-900 dark:text-white">
                 {template.name}
               </span>
+              <.icon
+                name="hero-arrow-top-right-on-square"
+                class="h-3.5 w-3.5 text-zinc-400"
+                aria-hidden="true"
+              />
             </.button>
           </div>
         </details>

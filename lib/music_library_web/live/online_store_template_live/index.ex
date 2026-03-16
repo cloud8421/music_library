@@ -27,7 +27,7 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
       <div class="mt-6 space-y-4">
         <ul
           role="list"
-          class="divide-y divide-gray-200 dark:divide-gray-800"
+          class="divide-y divide-zinc-100 dark:divide-zinc-300/20"
           phx-update="stream"
           id="templates"
         >
@@ -42,7 +42,7 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
                   src={favicon_url(template.url_template)}
                   alt={template.name}
                 />
-                <p class="text-sm font-semibold text-gray-900 dark:text-white">
+                <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
                   {template.name}
                 </p>
                 <.badge :if={template.enabled} color="success">
@@ -52,10 +52,10 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
                   {gettext("Disabled")}
                 </.badge>
               </div>
-              <div class="mt-1 flex items-center gap-x-2 text-xs text-gray-500 dark:text-gray-400">
+              <div class="mt-1 flex items-center gap-x-2 text-xs text-zinc-500 dark:text-zinc-400">
                 <p class="truncate font-mono">{template.url_template}</p>
               </div>
-              <p :if={template.description} class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              <p :if={template.description} class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
                 {template.description}
               </p>
             </div>
@@ -83,7 +83,7 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
                 >
                   {gettext("Edit")}
                 </.dropdown_link>
-                <.separator />
+                <.dropdown_separator />
                 <.dropdown_button
                   phx-click="delete"
                   phx-value-id={template.id}
@@ -133,19 +133,19 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
 
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
-    |> assign(:page_title, "Edit Online Store Template")
+    |> assign(:page_title, gettext("Edit Online Store Template"))
     |> assign(:template, OnlineStoreTemplates.get_template!(id))
   end
 
   defp apply_action(socket, :new, _params) do
     socket
-    |> assign(:page_title, "New Online Store Template")
+    |> assign(:page_title, gettext("New Online Store Template"))
     |> assign(:template, %OnlineStoreTemplate{})
   end
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Online Store Templates")
+    |> assign(:page_title, gettext("Online Store Templates"))
     |> assign(:template, nil)
   end
 

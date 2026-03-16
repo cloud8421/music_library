@@ -311,7 +311,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
             >
               {gettext("Edit")}
             </.dropdown_link>
-            <.separator />
+            <.dropdown_separator />
             <.dropdown_button
               phx-click="delete_set"
               phx-value-id={@record_set.id}
@@ -387,12 +387,12 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
               aria-hidden="true"
             />
           </button>
-          <h1 class="mt-1 text-sm sm:text-sm leading-6 text-zinc-700">
+          <h2 class="mt-1 text-sm leading-6 text-zinc-700">
             <.artist_links joinphrase_class="text-sm" artists={item.record.artists} />
-          </h1>
-          <h2 class="flex font-semibold text-sm sm:text-sm leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
-            {item.record.title}
           </h2>
+          <h3 class="flex font-semibold text-sm leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+            {item.record.title}
+          </h3>
           <p class="pointer-events-none block text-sm font-medium text-zinc-500">
             {format_label(item.record.format)} · {type_label(item.record.type)}
           </p>

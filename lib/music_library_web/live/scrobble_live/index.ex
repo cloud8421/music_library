@@ -22,7 +22,9 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
         </header>
         <%= if @search_results != [] && @selected_release_group == nil do %>
           <div class="space-y-3">
-            <h3 class="text-lg font-semibold">{gettext("Release Groups")}</h3>
+            <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-200">
+              {gettext("Release Groups")}
+            </h3>
             <ul class={[
               "mt-5 divide-y divide-zinc-100 dark:divide-slate-300/30",
               "max-h-125 overflow-y-auto"

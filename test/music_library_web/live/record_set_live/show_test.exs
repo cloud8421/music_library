@@ -28,8 +28,8 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
 
       conn
       |> visit(~p"/record-sets/#{set}")
-      |> assert_has("h2", escape(r1.title))
-      |> assert_has("h2", escape(r2.title))
+      |> assert_has("h3", escape(r1.title))
+      |> assert_has("h3", escape(r2.title))
     end
 
     test "shows add record tile when set has no records", %{conn: conn} do

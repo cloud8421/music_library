@@ -134,7 +134,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
                 >
                   {gettext("Edit")}
                 </.dropdown_link>
-                <.separator />
+                <.dropdown_separator />
                 <.dropdown_button
                   phx-click="delete"
                   phx-value-id={scrobble_rule.id}
