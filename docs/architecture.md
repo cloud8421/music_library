@@ -101,7 +101,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `ScrobbleRules` | ScrobbleRule | Rules to remap Last.fm scrobble data to correct MusicBrainz IDs; searchable by match_value/target/description, orderable by alphabetical or inserted_at |
 | `ScrobbleActivity` | — | Scrobbling releases/media/tracks to Last.fm |
 | `ListeningStats` | (LastFm.Track, ArtistRecord, ArtistInfo) | Listening analytics, track CRUD, search, listing: scrobble counts, recent activity, top albums/artists by period |
-| `OnlineStoreTemplates` | OnlineStoreTemplate | URL templates for buying records online |
+| `OnlineStoreTemplates` | OnlineStoreTemplate | URL templates for buying records online; searchable by name/description |
 | `Search` | (cross-context) | Universal search dispatcher across collection, wishlist, artists, record sets (delegates to domain contexts) |
 | `Secrets` | Secret | Encrypted key-value storage |
 | `BarcodeScan` | (Result struct) | Barcode → MusicBrainz lookup workflow |
@@ -120,6 +120,8 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Records.Batch` | Batch operations: refresh all MusicBrainz data, generate all embeddings (uses `Batch`) |
 | `Artists.Batch` | Batch refresh: MusicBrainz, Discogs, Wikipedia, Last.fm for all artists (uses `Batch`) |
 | `Req.RateLimiter` | ETS-backed Req request step enforcing per-API minimum intervals between requests |
+| `Req.RateLimiter.Clock` | Behaviour for time operations (allows test clock injection) |
+| `Req.RateLimiter.SystemClock` | Real clock implementation using System.monotonic_time |
 | `Assets.Cache` | ETS-based asset cache with TTL |
 | `Assets.Image` / `Assets.Transform` | Image processing via Vix (libvips) |
 | `Colors.KMeansExtractor` | Color extraction via K-Means clustering (dominant_colors library) |
@@ -270,7 +272,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | Module | Purpose |
 |--------|---------|
 | `CoreComponents` | Forms, buttons, icons, tables, flash messages |
-| `Layouts` | Application layout templates |
+| `Layouts` | Application layout templates, navigation components (`dropdown_nav/1`) |
 | `RecordComponents` | Record cards, cover images, artist images, labels, grids, shared show-page sections (title, external links, genres, releases, timestamps, debug) |
 | `ChartComponents` | SVG charts for stats |
 | `StatsComponents` | Stats dashboard widgets |
