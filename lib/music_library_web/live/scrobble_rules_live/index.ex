@@ -67,7 +67,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
         </.button_group>
       </div>
 
-      <div class="mt-6 space-y-4">
+      <div class="mt-6">
         <ul
           phx-update="stream"
           id="scrobble-rules-list"
