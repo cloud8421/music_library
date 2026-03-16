@@ -68,7 +68,11 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
       </div>
 
       <div class="mt-6 space-y-4">
-        <ul phx-update="stream" id="scrobble-rules-list" class="space-y-4">
+        <ul
+          phx-update="stream"
+          id="scrobble-rules-list"
+          class="divide-y divide-zinc-100 dark:divide-zinc-300/20"
+        >
           <li
             id="no-scrobble-rules"
             class="hidden only:block p-8 text-center bg-zinc-50 dark:bg-zinc-800 rounded-lg"
@@ -82,32 +86,31 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
           <li
             :for={{dom_id, scrobble_rule} <- @streams.scrobble_rules}
             id={dom_id}
-            class="flex items-center gap-2"
+            class="flex items-center justify-between gap-2 py-5"
           >
-            <div class="grow min-w-0">
-              <div class="lg:flex lg:items-center lg:gap-2">
-                <p class="text-sm text-zinc-900 dark:text-zinc-100">
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <.type_badge type={scrobble_rule.type} />
+                <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
                   {scrobble_rule.match_value}
                 </p>
-                <p class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mt-1 lg:mt-0 truncate">
-                  {scrobble_rule.target_musicbrainz_id}
-                </p>
               </div>
+              <p class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mt-1 truncate">
+                {scrobble_rule.target_musicbrainz_id}
+              </p>
               <p
                 :if={scrobble_rule.description}
                 class="text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate"
               >
                 {scrobble_rule.description}
               </p>
-            </div>
-            <div class="flex flex-col lg:flex-row items-end lg:items-center gap-1 lg:gap-2 shrink-0">
-              <.type_badge type={scrobble_rule.type} />
-              <.status_badge enabled={scrobble_rule.enabled} />
-              <span class="text-xs text-zinc-500 dark:text-zinc-400 text-nowrap">
+              <div class="flex items-center gap-1 mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                <.icon name="hero-clock" class="h-3.5 w-3.5" aria-hidden="true" />
                 {Calendar.strftime(scrobble_rule.inserted_at, "%Y-%m-%d")}
-              </span>
+              </div>
             </div>
-            <div class="flex items-center shrink-0">
+            <div class="flex items-center gap-2 shrink-0">
+              <.status_badge enabled={scrobble_rule.enabled} />
               <.dropdown id={"actions-#{scrobble_rule.id}"} placement="bottom-end">
                 <:toggle>
                   <.button variant="ghost">
@@ -338,8 +341,14 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
 
   defp type_badge(assigns) do
     ~H"""
-    <.badge :if={@type == :album} color="danger">{gettext("Album")}</.badge>
-    <.badge :if={@type == :artist} color="info">{gettext("Artist")}</.badge>
+    <.badge :if={@type == :album} color="danger">
+      <.icon name="hero-numbered-list" class="icon" aria-hidden="true" data-slot="icon" />
+      <span class="sr-only">{gettext("Album")}</span>
+    </.badge>
+    <.badge :if={@type == :artist} color="info">
+      <.icon name="hero-user" class="icon" aria-hidden="true" data-slot="icon" />
+      <span class="sr-only">{gettext("Artist")}</span>
+    </.badge>
     """
   end
 

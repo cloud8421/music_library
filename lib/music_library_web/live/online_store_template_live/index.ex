@@ -58,12 +58,6 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
                 <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
                   {template.name}
                 </p>
-                <.badge :if={template.enabled} color="success">
-                  {gettext("Enabled")}
-                </.badge>
-                <.badge :if={!template.enabled} color="warning">
-                  {gettext("Disabled")}
-                </.badge>
               </div>
               <div class="mt-1 flex items-center gap-x-2 text-xs text-zinc-500 dark:text-zinc-400">
                 <p class="truncate font-mono">{template.url_template}</p>
@@ -72,7 +66,8 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
                 {template.description}
               </p>
             </div>
-            <div class="flex items-center">
+            <div class="flex items-center gap-2">
+              <.status_badge enabled={template.enabled} />
               <.dropdown id={"actions-#{template.id}"} placement="bottom-end">
                 <:toggle>
                   <.button variant="ghost">
@@ -234,5 +229,14 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
       |> Map.take([:query, :page, :page_size])
 
     {:noreply, push_patch(socket, to: ~p"/online-store-templates?#{qs}")}
+  end
+
+  attr :enabled, :boolean, required: true
+
+  defp status_badge(assigns) do
+    ~H"""
+    <.badge :if={@enabled} color="success">{gettext("Enabled")}</.badge>
+    <.badge :if={!@enabled} color="warning">{gettext("Disabled")}</.badge>
+    """
   end
 end
