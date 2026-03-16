@@ -18,37 +18,29 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
-      <header class="mb-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-              {gettext("Scrobble Rules")}
-            </h1>
-          </div>
-          <div>
-            <.button_group>
-              <.button
-                variant="solid"
-                size="sm"
-                patch={~p"/scrobble-rules/new"}
-              >
-                <.icon name="hero-plus" class="icon" aria-hidden="true" data-slot="icon" />
-                {gettext("Add")}
-              </.button>
-              <.button
-                variant="solid"
-                size="sm"
-                phx-click="apply_all_rules"
-              >
-                <.icon name="hero-play" class="icon" />
-                {gettext("Apply")}
-              </.button>
-            </.button_group>
-          </div>
+      <header class="gap-6 mb-2">
+        <div class="flex items-center justify-between gap-6 mb-2 mt-2">
+          <.search_form query={@list_params.query} />
+          <.button_group>
+            <.button
+              variant="solid"
+              size="sm"
+              patch={~p"/scrobble-rules/new"}
+            >
+              <.icon name="hero-plus" class="icon" aria-hidden="true" data-slot="icon" />
+              {gettext("Add")}
+            </.button>
+            <.button
+              variant="solid"
+              size="sm"
+              phx-click="apply_all_rules"
+            >
+              <.icon name="hero-play" class="icon" />
+              {gettext("Apply")}
+            </.button>
+          </.button_group>
         </div>
       </header>
-
-      <.search_form query={@list_params.query} />
 
       <div class="mt-6 space-y-4">
         <ul phx-update="stream" id="scrobble-rules-list" class="space-y-4">
