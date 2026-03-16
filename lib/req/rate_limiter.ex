@@ -12,15 +12,22 @@ defmodule Req.RateLimiter do
       |> Req.RateLimiter.attach(name: :music_brainz, cooldown: 500)
 
   When `cooldown` is 0, the step is a no-op.
+
+  ## Clock
+
+  Time operations are delegated to a clock module implementing
+  `Req.RateLimiter.Clock`. Defaults to `Req.RateLimiter.SystemClock`.
+  Pass `:clock` in `attach/2` opts to override (useful in tests).
   """
 
   @table __MODULE__
+  @default_clock Req.RateLimiter.SystemClock
 
   @doc """
   Creates the ETS table used to track request timestamps.
   Call once at application startup.
   """
-  @type attach_opts :: [name: atom(), cooldown: non_neg_integer()]
+  @type attach_opts :: [name: atom(), cooldown: non_neg_integer(), clock: module()]
 
   @spec new() :: :ets.table()
   def new do
@@ -34,16 +41,19 @@ defmodule Req.RateLimiter do
 
     * `:name` - atom identifying the API (e.g. `:music_brainz`)
     * `:cooldown` - minimum milliseconds between requests
+    * `:clock` - module implementing `Req.RateLimiter.Clock` (default: `Req.RateLimiter.SystemClock`)
 
   """
   @spec attach(Req.Request.t(), attach_opts()) :: Req.Request.t()
   def attach(request, opts) do
     name = Keyword.fetch!(opts, :name)
     cooldown = Keyword.fetch!(opts, :cooldown)
+    clock = Keyword.get(opts, :clock, @default_clock)
 
     request
     |> Req.Request.put_private(:rate_limiter_name, name)
     |> Req.Request.put_private(:rate_limiter_cooldown, cooldown)
+    |> Req.Request.put_private(:rate_limiter_clock, clock)
     |> Req.Request.prepend_request_steps(rate_limiter: &throttle/1)
   end
 
@@ -52,7 +62,8 @@ defmodule Req.RateLimiter do
 
     if cooldown > 0 do
       name = Req.Request.get_private(request, :rate_limiter_name)
-      now = System.monotonic_time(:millisecond)
+      clock = Req.Request.get_private(request, :rate_limiter_clock)
+      now = clock.now()
 
       case :ets.lookup(@table, name) do
         [{^name, last_at}] ->
@@ -66,14 +77,14 @@ defmodule Req.RateLimiter do
               %{name: name}
             )
 
-            Process.sleep(remaining)
+            clock.sleep(remaining)
           end
 
         [] ->
           :ok
       end
 
-      :ets.insert(@table, {name, System.monotonic_time(:millisecond)})
+      :ets.insert(@table, {name, clock.now()})
     end
 
     request
