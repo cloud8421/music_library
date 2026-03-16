@@ -72,25 +72,17 @@ defmodule MusicLibraryWeb.Components.RecordForm do
             value={genre}
           />
           <div class="flex flex-wrap gap-2">
-            <span
+            <.badge
               :for={genre <- get_current_genres(assigns)}
-              class={[
-                "inline-flex items-center gap-x-1",
-                "rounded-md bg-zinc-100 dark:bg-zinc-700",
-                "px-2 py-1 text-sm text-zinc-700 dark:text-zinc-300"
-              ]}
+              variant="soft"
+              phx-click="remove_genre"
+              phx-value-genre={genre}
+              phx-target={@myself}
+              class="cursor-pointer"
             >
               {genre}
-              <button
-                type="button"
-                phx-click="remove_genre"
-                phx-value-genre={genre}
-                phx-target={@myself}
-                class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
-              >
-                <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
-              </button>
-            </span>
+              <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
+            </.badge>
           </div>
           <div class="relative" id="genre-input-container" phx-hook=".GenreInput" phx-target={@myself}>
             <.input
