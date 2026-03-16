@@ -89,7 +89,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
                   }
                 >
                   <span class="sr-only">{scrobble_button_label(@selected_tracks)}</span>
-                  <.icon name="hero-play" class="h-4 w-4" aria-hidden="true" data-slot="icon" />
+                  <.icon name="hero-play" class="icon" aria-hidden="true" data-slot="icon" />
                 </.button>
               </div>
 

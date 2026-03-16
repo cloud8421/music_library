@@ -55,7 +55,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                   <span class="sr-only">{gettext("Scrobble release")}</span>
                   <.icon
                     name="hero-play"
-                    class="h-5 w-5"
+                    class="icon"
                     aria-hidden="true"
                     data-slot="icon"
                   />
