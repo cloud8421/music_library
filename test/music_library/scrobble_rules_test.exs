@@ -119,6 +119,75 @@ defmodule MusicLibrary.ScrobbleRulesTest do
 
       assert ScrobbleRules.list_enabled_rules() == [enabled_rule]
     end
+
+    test "list_scrobble_rules/1 filters by query on match_value" do
+      rule = scrobble_rule_fixture(@valid_album_attrs)
+
+      _other =
+        scrobble_rule_fixture(%{
+          match_value: "Unrelated Album",
+          description: "Other rule"
+        })
+
+      assert ScrobbleRules.list_scrobble_rules(query: "Dark Side") == [rule]
+    end
+
+    test "list_scrobble_rules/1 filters by query on target_musicbrainz_id" do
+      rule = scrobble_rule_fixture(@valid_album_attrs)
+
+      _other =
+        scrobble_rule_fixture(%{
+          match_value: "Unrelated Album",
+          target_musicbrainz_id: "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+          description: "Other rule"
+        })
+
+      assert ScrobbleRules.list_scrobble_rules(query: "12345678") == [rule]
+    end
+
+    test "list_scrobble_rules/1 filters by query on description" do
+      rule = scrobble_rule_fixture(@valid_album_attrs)
+      _other = scrobble_rule_fixture(%{match_value: "Unrelated Album", description: "Other rule"})
+
+      assert ScrobbleRules.list_scrobble_rules(query: "Fix Pink Floyd album") == [rule]
+    end
+
+    test "count_scrobble_rules/1 filters by query" do
+      _rule = scrobble_rule_fixture(@valid_album_attrs)
+      _other = scrobble_rule_fixture(%{match_value: "Unrelated Album", description: "Other rule"})
+
+      assert ScrobbleRules.count_scrobble_rules(query: "Dark Side") == 1
+      assert ScrobbleRules.count_scrobble_rules(query: "") == 2
+      assert ScrobbleRules.count_scrobble_rules() == 2
+    end
+
+    test "list_scrobble_rules/1 orders alphabetically" do
+      rule_b = scrobble_rule_fixture(%{match_value: "Beta Album"})
+      rule_a = scrobble_rule_fixture(%{match_value: "Alpha Album"})
+
+      assert ScrobbleRules.list_scrobble_rules(order: :alphabetical) == [rule_a, rule_b]
+    end
+
+    test "list_scrobble_rules/1 orders by inserted_at descending by default" do
+      rule_first = scrobble_rule_fixture(%{match_value: "First Album"})
+      rule_second = scrobble_rule_fixture(%{match_value: "Second Album"})
+
+      # Both may have the same inserted_at due to SQLite second precision,
+      # so set them explicitly
+      import Ecto.Query
+
+      now = DateTime.utc_now()
+      earlier = DateTime.add(now, -60, :second)
+
+      from(r in ScrobbleRule, where: r.id == ^rule_first.id)
+      |> Repo.update_all(set: [inserted_at: earlier])
+
+      from(r in ScrobbleRule, where: r.id == ^rule_second.id)
+      |> Repo.update_all(set: [inserted_at: now])
+
+      rules = ScrobbleRules.list_scrobble_rules(order: :inserted_at)
+      assert Enum.map(rules, & &1.id) == [rule_second.id, rule_first.id]
+    end
   end
 
   describe "rule application" do

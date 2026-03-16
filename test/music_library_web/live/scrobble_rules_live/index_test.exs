@@ -130,6 +130,43 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
       # Should show success message
       assert render(index_live) =~ "All rules applied successfully"
     end
+
+    test "searches scrobble rules by match_value", %{conn: conn, scrobble_rule: scrobble_rule} do
+      _other_rule =
+        MusicLibrary.ScrobbleRulesFixtures.scrobble_rule_fixture(%{
+          match_value: "Unrelated Album"
+        })
+
+      {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
+
+      index_live
+      |> form("form[phx-change='search']", query: scrobble_rule.match_value)
+      |> render_change()
+
+      assert_patch(index_live)
+
+      html = render(index_live)
+      assert html =~ scrobble_rule.match_value
+      refute html =~ "Unrelated Album"
+    end
+
+    test "switches sort order", %{conn: conn} do
+      {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
+
+      # Switch to alphabetical
+      index_live
+      |> element("a[href*='order=alphabetical']")
+      |> render_click()
+
+      assert_patch(index_live)
+
+      # Switch back to inserted_at
+      index_live
+      |> element("a[href*='order=inserted_at']")
+      |> render_click()
+
+      assert_patch(index_live)
+    end
   end
 
   test "updates form labels based on rule type", %{conn: conn} do
