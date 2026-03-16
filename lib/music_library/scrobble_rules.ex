@@ -14,6 +14,7 @@ defmodule MusicLibrary.ScrobbleRules do
   @type list_opts :: [
           type: atom(),
           enabled: boolean(),
+          query: String.t(),
           offset: non_neg_integer(),
           limit: non_neg_integer()
         ]
@@ -21,28 +22,8 @@ defmodule MusicLibrary.ScrobbleRules do
   @spec list_scrobble_rules(list_opts()) :: [ScrobbleRule.t()]
   def list_scrobble_rules(opts \\ []) do
     query =
-      from r in ScrobbleRule,
-        order_by: [desc: r.inserted_at]
-
-    query =
-      case Keyword.get(opts, :type) do
-        nil ->
-          query
-
-        type ->
-          from r in query,
-            where: r.type == ^type
-      end
-
-    query =
-      case Keyword.get(opts, :enabled) do
-        nil ->
-          query
-
-        enabled ->
-          from r in query,
-            where: r.enabled == ^enabled
-      end
+      from(r in ScrobbleRule, order_by: [desc: r.inserted_at])
+      |> filter_scrobble_rules(opts)
 
     query =
       case Keyword.get(opts, :offset) do
@@ -69,29 +50,9 @@ defmodule MusicLibrary.ScrobbleRules do
 
   @spec count_scrobble_rules(list_opts()) :: non_neg_integer()
   def count_scrobble_rules(opts \\ []) do
-    query = from(r in ScrobbleRule)
-
-    query =
-      case Keyword.get(opts, :type) do
-        nil ->
-          query
-
-        type ->
-          from r in query,
-            where: r.type == ^type
-      end
-
-    query =
-      case Keyword.get(opts, :enabled) do
-        nil ->
-          query
-
-        enabled ->
-          from r in query,
-            where: r.enabled == ^enabled
-      end
-
-    Repo.aggregate(query, :count)
+    from(r in ScrobbleRule)
+    |> filter_scrobble_rules(opts)
+    |> Repo.aggregate(:count)
   end
 
   @spec get_scrobble_rule!(integer()) :: ScrobbleRule.t()
@@ -495,6 +456,42 @@ defmodule MusicLibrary.ScrobbleRules do
           "with reason #{inspect(reason)}"
       end)
     end)
+  end
+
+  defp filter_scrobble_rules(query, opts) do
+    query =
+      case Keyword.get(opts, :type) do
+        nil ->
+          query
+
+        type ->
+          from r in query,
+            where: r.type == ^type
+      end
+
+    query =
+      case Keyword.get(opts, :enabled) do
+        nil ->
+          query
+
+        enabled ->
+          from r in query,
+            where: r.enabled == ^enabled
+      end
+
+    case Keyword.get(opts, :query) do
+      q when q in [nil, ""] ->
+        query
+
+      q ->
+        like = "%#{q}%"
+
+        from r in query,
+          where:
+            like(r.match_value, ^like) or
+              like(r.target_musicbrainz_id, ^like) or
+              like(r.description, ^like)
+    end
   end
 
   # column and json_path are hardcoded string literals from internal callers,

@@ -9,7 +9,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
 
   @default_list_params %{
     page: 1,
-    page_size: 20,
+    page_size: 50,
     query: "",
     order: :inserted_at
   }
@@ -48,6 +48,8 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
         </div>
       </header>
 
+      <.search_form query={@list_params.query} />
+
       <div class="mt-6 space-y-4">
         <ul phx-update="stream" id="scrobble-rules-list" class="space-y-4">
           <li
@@ -63,31 +65,32 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
           <li
             :for={{dom_id, scrobble_rule} <- @streams.scrobble_rules}
             id={dom_id}
-            class="flex justify-between"
+            class="flex items-center gap-2"
           >
-            <div class="flex items-center">
-              <.type_badge type={scrobble_rule.type} />
-            </div>
-            <div class="grow p-2">
-              <p class="text-sm text-zinc-900 dark:text-zinc-100">
-                {scrobble_rule.match_value}
-              </p>
-              <p class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mt-2">
-                {scrobble_rule.target_musicbrainz_id}
-              </p>
-              <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-2">
+            <div class="grow min-w-0">
+              <div class="lg:flex lg:items-center lg:gap-2">
+                <p class="text-sm text-zinc-900 dark:text-zinc-100">
+                  {scrobble_rule.match_value}
+                </p>
+                <p class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mt-1 lg:mt-0 truncate">
+                  {scrobble_rule.target_musicbrainz_id}
+                </p>
+              </div>
+              <p
+                :if={scrobble_rule.description}
+                class="text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate"
+              >
                 {scrobble_rule.description}
               </p>
             </div>
-            <div class="flex flex-col justify-center text-right">
-              <span>
-                <.status_badge enabled={scrobble_rule.enabled} />
-              </span>
-              <span class="text-xs text-zinc-500 dark:text-zinc-400 text-nowrap mt-2">
+            <div class="flex flex-col lg:flex-row items-end lg:items-center gap-1 lg:gap-2 shrink-0">
+              <.type_badge type={scrobble_rule.type} />
+              <.status_badge enabled={scrobble_rule.enabled} />
+              <span class="text-xs text-zinc-500 dark:text-zinc-400 text-nowrap">
                 {Calendar.strftime(scrobble_rule.inserted_at, "%Y-%m-%d")}
               </span>
             </div>
-            <div class="flex items-center p-2">
+            <div class="flex items-center shrink-0">
               <.dropdown id={"actions-#{scrobble_rule.id}"} placement="bottom-end">
                 <:toggle>
                   <.button variant="ghost">
@@ -109,7 +112,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
                 <.dropdown_link
                   id={"actions-#{scrobble_rule.id}-edit"}
                   patch={
-                    ~p"/scrobble-rules/#{scrobble_rule}/edit?#{Map.take(@list_params, [:page, :page_size])}"
+                    ~p"/scrobble-rules/#{scrobble_rule}/edit?#{@list_params |> Map.take([:page, :page_size, :query]) |> Enum.filter(fn {_, v} -> v not in ["", nil] end)}"
                   }
                 >
                   {gettext("Edit")}
@@ -176,10 +179,13 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
   end
 
   defp apply_action(socket, :index, params) do
-    total_rules = ScrobbleRules.count_scrobble_rules()
+    query = params["query"]
+
+    total_rules = ScrobbleRules.count_scrobble_rules(query: query)
 
     list_params =
       @default_list_params
+      |> merge_query(query)
       |> merge_pagination(params, total_rules)
 
     load_and_assign_rules(socket, list_params)
@@ -190,6 +196,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
 
     rules =
       ScrobbleRules.list_scrobble_rules(
+        query: list_params.query,
         offset: offset,
         limit: list_params.page_size
       )
@@ -204,7 +211,8 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
   def back_path(list_params) do
     qs =
       list_params
-      |> Map.take([:page, :page_size])
+      |> Map.take([:page, :page_size, :query])
+      |> Enum.filter(fn {_, v} -> v not in ["", nil] end)
 
     ~p"/scrobble-rules?#{qs}"
   end
@@ -281,6 +289,15 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
       )
 
     {:noreply, put_toast(socket, :info, message)}
+  end
+
+  def handle_event("search", %{"query" => query}, socket) do
+    qs =
+      @default_list_params
+      |> Map.put(:query, query)
+      |> Map.take([:query, :page, :page_size])
+
+    {:noreply, push_patch(socket, to: ~p"/scrobble-rules?#{qs}")}
   end
 
   attr :type, :atom, required: true, values: [:album, :artist]
