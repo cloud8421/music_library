@@ -61,7 +61,7 @@
       <div class="flex items-center">
         <.button_group>
           <.universal_search_trigger />
-          <.dropdown placement="bottom-end">
+          <.dropdown placement="bottom-end" class="pl-0">
             <:toggle>
               <.button variant="soft">
                 <span class="sr-only">{gettext("Actions")}</span>
@@ -73,7 +73,16 @@
                 />
               </.button>
             </:toggle>
-            <.dropdown_link href={~p"/scrobble"}>
+            <.dropdown_link
+              href={~p"/scrobble"}
+              class={[
+                "rounded-none border-l-2",
+                if(@current_section == :scrobble,
+                  do: "border-l-red-500",
+                  else: "border-l-transparent"
+                )
+              ]}
+            >
               <.icon
                 name="hero-play"
                 class="h-4 w-4 mr-2"
@@ -82,7 +91,16 @@
               />
               {gettext("Scrobble Anything")}
             </.dropdown_link>
-            <.dropdown_link href={~p"/scrobbled-tracks"}>
+            <.dropdown_link
+              href={~p"/scrobbled-tracks"}
+              class={[
+                "rounded-none border-l-2",
+                if(@current_section == :scrobble_activity,
+                  do: "border-l-red-500",
+                  else: "border-l-transparent"
+                )
+              ]}
+            >
               <.icon
                 name="hero-musical-note"
                 class="h-4 w-4 mr-2"
@@ -91,7 +109,16 @@
               />
               {gettext("Scrobbled Tracks")}
             </.dropdown_link>
-            <.dropdown_link href={~p"/scrobble-rules"}>
+            <.dropdown_link
+              href={~p"/scrobble-rules"}
+              class={[
+                "rounded-none border-l-2",
+                if(@current_section == :scrobble_rules,
+                  do: "border-l-red-500",
+                  else: "border-l-transparent"
+                )
+              ]}
+            >
               <.icon
                 name="hero-adjustments-horizontal"
                 class="h-4 w-4 mr-2"
@@ -100,7 +127,16 @@
               />
               {gettext("Scrobble Rules")}
             </.dropdown_link>
-            <.dropdown_link href={~p"/online-store-templates"}>
+            <.dropdown_link
+              href={~p"/online-store-templates"}
+              class={[
+                "rounded-none border-l-2",
+                if(@current_section == :online_store_templates,
+                  do: "border-l-red-500",
+                  else: "border-l-transparent"
+                )
+              ]}
+            >
               <.icon
                 name="hero-building-storefront"
                 class="h-4 w-4 mr-2"
