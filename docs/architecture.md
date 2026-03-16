@@ -98,7 +98,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Assets` | Asset | Binary asset storage (covers, artist images), cache tracking |
 | `Notes` | Note | Free-text notes for records and artists |
 | `RecordSets` | RecordSet, RecordSetItem | User-curated record groupings with ordering |
-| `ScrobbleRules` | ScrobbleRule | Rules to remap Last.fm scrobble data to correct MusicBrainz IDs |
+| `ScrobbleRules` | ScrobbleRule | Rules to remap Last.fm scrobble data to correct MusicBrainz IDs; searchable by match_value/target/description, orderable by alphabetical or inserted_at |
 | `ScrobbleActivity` | — | Scrobbling releases/media/tracks to Last.fm |
 | `ListeningStats` | (LastFm.Track, ArtistRecord, ArtistInfo) | Listening analytics, track CRUD, search, listing: scrobble counts, recent activity, top albums/artists by period |
 | `OnlineStoreTemplates` | OnlineStoreTemplate | URL templates for buying records online |
@@ -240,7 +240,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `ScrobbleLive.Index` | `/scrobble` | Search MusicBrainz releases to scrobble |
 | `ScrobbleLive.Show` | `/scrobble/:release_id` | Select tracks and scrobble |
 | `ScrobbledTracksLive.Index` | `/scrobbled-tracks` | Browse/search Last.fm history |
-| `ScrobbleRulesLive.Index` | `/scrobble-rules` | Manage scrobble remapping rules |
+| `ScrobbleRulesLive.Index` | `/scrobble-rules` | Browse/search/sort scrobble remapping rules (paginated, 50 per page) |
 | `OnlineStoreTemplateLive.Index` | `/online-store-templates` | Manage store URL templates |
 | `MaintenanceLive.Index` | `/dev/maintenance` | Admin: batch jobs, DB maintenance (conditional on `:monitoring_routes` config, outside main `live_session`) |
 
