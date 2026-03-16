@@ -79,7 +79,7 @@ defmodule MusicLibraryWeb.Components.Release do
               phx-target={@myself}
             >
               <span class="sr-only">{gettext("Print tracklist")}</span>
-              <.icon name="hero-printer" class="h-4 w-4" aria-hidden="true" data-slot="icon" />
+              <.icon name="hero-printer" class="icon" aria-hidden="true" data-slot="icon" />
             </.button>
             <.button
               :if={@can_scrobble? && @release_with_tracks.ok?}
@@ -95,11 +95,11 @@ defmodule MusicLibraryWeb.Components.Release do
               phx-disable-with={gettext("Scrobbling...")}
             >
               <span class="sr-only">{scrobble_button_label(@selected_tracks)}</span>
-              <.icon name="hero-play" class="h-4 w-4" aria-hidden="true" data-slot="icon" />
+              <.icon name="hero-play" class="icon" aria-hidden="true" data-slot="icon" />
             </.button>
             <.button :if={!@can_scrobble?} variant="soft" size="sm" href={LastFm.auth_url()}>
               <span class="sr-only">{gettext("Connect your Last.fm account")}</span>
-              <.icon name="hero-link" class="h-4 w-4" aria-hidden="true" data-slot="icon" />
+              <.icon name="hero-link" class="icon" aria-hidden="true" data-slot="icon" />
             </.button>
           </.button_group>
         </div>
@@ -190,7 +190,7 @@ defmodule MusicLibraryWeb.Components.Release do
           phx-target={@myself}
         >
           <span class="sr-only">{gettext("Print tracklist")}</span>
-          <.icon name="hero-printer" class="h-4 w-4" aria-hidden="true" data-slot="icon" />
+          <.icon name="hero-printer" class="icon" aria-hidden="true" data-slot="icon" />
         </.button>
         <.button
           :if={@can_scrobble?}
@@ -203,7 +203,7 @@ defmodule MusicLibraryWeb.Components.Release do
           phx-disable-with={gettext("Scrobbling...")}
         >
           <span class="sr-only">{medium_scrobble_label(@medium.format)}</span>
-          <.icon name="hero-play" class="h-4 w-4" aria-hidden="true" data-slot="icon" />
+          <.icon name="hero-play" class="icon" aria-hidden="true" data-slot="icon" />
         </.button>
       </.button_group>
     </div>

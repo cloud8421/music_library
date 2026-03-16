@@ -104,7 +104,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                   <span class="sr-only">{gettext("Open Notes")}</span>
                   <.icon
                     name="hero-pencil"
-                    class="h-5 w-5"
+                    class="icon"
                     aria-hidden="true"
                     data-slot="icon"
                   />
@@ -116,7 +116,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                   <span class="sr-only">{gettext("Chat about artist")}</span>
                   <.icon
                     name="hero-chat-bubble-left-right"
-                    class="h-5 w-5"
+                    class="icon"
                     aria-hidden="true"
                     data-slot="icon"
                   />
@@ -128,7 +128,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                   <span class="sr-only">{gettext("Debug data")}</span>
                   <.icon
                     name="hero-code-bracket"
-                    class="h-5 w-5"
+                    class="icon"
                     aria-hidden="true"
                     data-slot="icon"
                   />
@@ -139,7 +139,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                       <span class="sr-only">{gettext("Actions")}</span>
                       <.icon
                         name="hero-ellipsis-vertical"
-                        class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                        class="icon text-zinc-500 dark:text-zinc-400 cursor-pointer"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -270,7 +270,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                 variant="ghost"
                 size="xs"
               >
-                <.icon name="hero-arrow-top-right-on-square" class="h-3.5 w-3.5" aria-hidden="true" />
+                <.icon name="hero-arrow-top-right-on-square" class="icon" aria-hidden="true" />
                 {gettext("MusicBrainz")}
               </.button>
               <.button
@@ -281,7 +281,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                   |> JS.transition("animate-shake")
                 }
               >
-                <.icon name="hero-clipboard-document" class="h-3.5 w-3.5" aria-hidden="true" />
+                <.icon name="hero-clipboard-document" class="icon" aria-hidden="true" />
                 {gettext("Copy MB ID")}
               </.button>
             </div>

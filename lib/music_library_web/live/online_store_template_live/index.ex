@@ -74,7 +74,7 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
                     <span class="sr-only">{gettext("Actions")}</span>
                     <.icon
                       name="hero-ellipsis-vertical"
-                      class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                      class="icon text-zinc-500 dark:text-zinc-400 cursor-pointer"
                       aria-hidden="true"
                       data-slot="icon"
                     />

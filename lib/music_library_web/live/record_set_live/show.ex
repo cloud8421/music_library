@@ -29,7 +29,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
                   <span class="sr-only">{gettext("Actions")}</span>
                   <.icon
                     name="hero-ellipsis-vertical"
-                    class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                    class="icon text-zinc-500 dark:text-zinc-400 cursor-pointer"
                     aria-hidden="true"
                     data-slot="icon"
                   />
@@ -118,7 +118,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
                 <span class="sr-only">{gettext("Remove")}</span>
                 <.icon
                   name="hero-trash"
-                  class="size-3.5 text-zinc-800 hover:text-red-700 dark:text-zinc-200 dark:hover:text-red-400"
+                  class="icon text-zinc-800 hover:text-red-700 dark:text-zinc-200 dark:hover:text-red-400"
                   aria-hidden="true"
                 />
               </button>

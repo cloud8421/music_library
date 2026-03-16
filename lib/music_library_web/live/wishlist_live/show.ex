@@ -47,7 +47,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                   <span class="sr-only">{gettext("Chat about album")}</span>
                   <.icon
                     name="hero-chat-bubble-left-right"
-                    class="h-5 w-5"
+                    class="icon"
                     aria-hidden="true"
                     data-slot="icon"
                   />
@@ -58,7 +58,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                       <span class="sr-only">{gettext("Actions")}</span>
                       <.icon
                         name="hero-ellipsis-vertical"
-                        class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                        class="icon text-zinc-500 dark:text-zinc-400 cursor-pointer"
                         aria-hidden="true"
                         data-slot="icon"
                       />

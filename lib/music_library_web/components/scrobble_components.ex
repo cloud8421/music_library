@@ -162,7 +162,7 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
           <span class="sr-only">{gettext("Choose which format to import")}</span>
           <.icon
             name="hero-star"
-            class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+            class="icon text-zinc-500 dark:text-zinc-400 cursor-pointer"
             aria-hidden="true"
             data-slot="icon"
           />

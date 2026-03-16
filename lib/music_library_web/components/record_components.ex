@@ -162,7 +162,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                 <span class="sr-only">{gettext("Actions")}</span>
                 <.icon
                   name="hero-ellipsis-vertical"
-                  class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                  class="icon text-zinc-500 dark:text-zinc-400 cursor-pointer"
                   aria-hidden="true"
                   data-slot="icon"
                 />
@@ -376,7 +376,7 @@ defmodule MusicLibraryWeb.RecordComponents do
     ~H"""
     <div class={[
       @class,
-      "grid grid-cols-2 w-full auto-cols-min space-x-1 text-zinc-700 dark:text-zinc-300"
+      "grid grid-cols-2 w-full auto-cols-min items-center space-x-1 text-zinc-700 dark:text-zinc-300"
     ]}>
       <div class="space-x-1">
         <.format_badge release={@release} />
@@ -608,7 +608,7 @@ defmodule MusicLibraryWeb.RecordComponents do
         variant="ghost"
         size="xs"
       >
-        <.icon name="hero-arrow-top-right-on-square" class="h-3.5 w-3.5" aria-hidden="true" />
+        <.icon name="hero-arrow-top-right-on-square" class="icon" aria-hidden="true" />
         {gettext("MusicBrainz")}
       </.button>
       <.button
@@ -619,7 +619,7 @@ defmodule MusicLibraryWeb.RecordComponents do
           |> JS.transition("animate-shake")
         }
       >
-        <.icon name="hero-clipboard-document" class="h-3.5 w-3.5" aria-hidden="true" />
+        <.icon name="hero-clipboard-document" class="icon" aria-hidden="true" />
         {gettext("Copy ID")}
       </.button>
       <.button
@@ -630,7 +630,7 @@ defmodule MusicLibraryWeb.RecordComponents do
           |> JS.transition("animate-shake")
         }
       >
-        <.icon name="hero-clipboard-document" class="h-3.5 w-3.5" aria-hidden="true" />
+        <.icon name="hero-clipboard-document" class="icon" aria-hidden="true" />
         {gettext("Copy MB ID")}
       </.button>
     </div>
@@ -669,7 +669,7 @@ defmodule MusicLibraryWeb.RecordComponents do
           </span>
           <.icon
             name="hero-magnifying-glass-plus"
-            class="-mt-1 h-5 w-5"
+            class="icon -mt-1"
             aria-hidden="true"
             data-slot="icon"
           />

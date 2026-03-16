@@ -19,6 +19,7 @@ defmodule MusicLibraryWeb.CoreComponents do
 
   alias Phoenix.LiveView.JS
 
+  import Fluxon.Components.Button
   import Fluxon.Components.Input
   import Fluxon.Components.Sheet
   import Fluxon.Components.Tabs
@@ -181,7 +182,7 @@ defmodule MusicLibraryWeb.CoreComponents do
         {gettext("External Links")}
       </summary>
       <div class="mt-4 space-y-2">
-        <Fluxon.Components.Button.button
+        <.button
           :for={external_link <- @external_links}
           href={external_link.url}
           target="_blank"
@@ -199,7 +200,7 @@ defmodule MusicLibraryWeb.CoreComponents do
           <span class="text-sm font-medium text-zinc-900 dark:text-white">
             {external_link.name}
           </span>
-        </Fluxon.Components.Button.button>
+        </.button>
       </div>
     </details>
     """
@@ -215,13 +216,17 @@ defmodule MusicLibraryWeb.CoreComponents do
 
   def copy_to_clipboard(assigns) do
     ~H"""
-    <button phx-click={
-      JS.dispatch("music_library:clipcopy", to: "#" <> @target_id)
-      |> JS.transition("animate-shake")
-    }>
+    <.button
+      variant="ghost"
+      size="sm"
+      phx-click={
+        JS.dispatch("music_library:clipcopy", to: "#" <> @target_id)
+        |> JS.transition("animate-shake")
+      }
+    >
       <span class="sr-only">{@label}</span>
-      <.icon name="hero-clipboard-document" class="-mt-1 h-5 w-5" aria-hidden="true" data-slot="icon" />
-    </button>
+      <.icon name="hero-clipboard-document" class="icon -mt-1" aria-hidden="true" data-slot="icon" />
+    </.button>
     """
   end
 

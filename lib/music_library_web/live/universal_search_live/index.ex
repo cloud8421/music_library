@@ -182,7 +182,7 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
       phx-hook=".SearchGlobalShortcut"
     >
       <span class="sr-only">{gettext("Search (Cmd/Ctrl+K)")}</span>
-      <.icon name="hero-magnifying-glass" class="h-5 w-5" />
+      <.icon name="hero-magnifying-glass" class="icon" />
     </.button>
     """
   end
