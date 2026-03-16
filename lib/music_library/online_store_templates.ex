@@ -23,6 +23,37 @@ defmodule MusicLibrary.OnlineStoreTemplates do
     |> Repo.all()
   end
 
+  @type list_opts :: [query: String.t(), offset: non_neg_integer(), limit: non_neg_integer()]
+
+  @spec list_templates(list_opts()) :: [OnlineStoreTemplate.t()]
+  def list_templates(opts) do
+    query =
+      OnlineStoreTemplate
+      |> order_by([t], fragment("? COLLATE NOCASE ASC", t.name))
+      |> filter_templates(opts)
+
+    query =
+      case Keyword.get(opts, :offset) do
+        nil -> query
+        offset -> from(t in query, offset: ^offset)
+      end
+
+    query =
+      case Keyword.get(opts, :limit) do
+        nil -> query
+        limit -> from(t in query, limit: ^limit)
+      end
+
+    Repo.all(query)
+  end
+
+  @spec count_templates(list_opts()) :: non_neg_integer()
+  def count_templates(opts \\ []) do
+    OnlineStoreTemplate
+    |> filter_templates(opts)
+    |> Repo.aggregate(:count)
+  end
+
   @spec get_template!(String.t()) :: OnlineStoreTemplate.t()
   def get_template!(id), do: Repo.get!(OnlineStoreTemplate, id)
 
@@ -61,5 +92,18 @@ defmodule MusicLibrary.OnlineStoreTemplates do
     |> String.replace("{artist}", URI.encode_www_form(artists_string))
     |> String.replace("{title}", URI.encode_www_form(record.title))
     |> String.replace("{format}", URI.encode_www_form(format_string))
+  end
+
+  defp filter_templates(query, opts) do
+    case Keyword.get(opts, :query) do
+      q when q in [nil, ""] ->
+        query
+
+      q ->
+        like = "%#{q}%"
+
+        from t in query,
+          where: like(t.name, ^like) or like(t.description, ^like)
+    end
   end
 end

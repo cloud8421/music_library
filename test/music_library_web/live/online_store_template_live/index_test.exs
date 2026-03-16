@@ -11,9 +11,27 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.IndexTest do
 
       conn
       |> visit(~p"/online-store-templates")
-      |> assert_has("h1", "Online Store Templates")
       |> assert_has("p", "Amazon UK")
       |> assert_has("p", "Bandcamp")
+    end
+
+    test "search filters templates", %{conn: conn} do
+      online_store_template(%{name: "Amazon UK"})
+      online_store_template(%{name: "Bandcamp"})
+
+      {:ok, view, _html} = live(conn, ~p"/online-store-templates")
+
+      assert has_element?(view, "p", "Amazon UK")
+      assert has_element?(view, "p", "Bandcamp")
+
+      view
+      |> form("form", query: "Amazon")
+      |> render_change()
+
+      assert_patch(view, ~p"/online-store-templates?page=1&page_size=50&query=Amazon")
+
+      assert has_element?(view, "p", "Amazon UK")
+      refute has_element?(view, "p", "Bandcamp")
     end
   end
 

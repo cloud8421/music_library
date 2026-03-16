@@ -1,26 +1,29 @@
 defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
   use MusicLibraryWeb, :live_view
 
+  import MusicLibraryWeb.Components.Pagination
+  import MusicLibraryWeb.LiveHelpers.Params
+
   alias MusicLibrary.OnlineStoreTemplates
   alias MusicLibrary.OnlineStoreTemplates.OnlineStoreTemplate
+
+  @default_list_params %{
+    page: 1,
+    page_size: 50,
+    query: ""
+  }
 
   @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
-      <header class="mb-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-              {gettext("Online Store Templates")}
-            </h1>
-          </div>
-          <div>
-            <.button variant="solid" size="sm" patch={~p"/online-store-templates/new"}>
-              <.icon name="hero-plus" class="icon" aria-hidden="true" data-slot="icon" />
-              {gettext("Add")}
-            </.button>
-          </div>
+      <header class="gap-6 mb-2">
+        <div class="flex items-center justify-between gap-6 mb-2 mt-2">
+          <.search_form query={@list_params.query} />
+          <.button variant="solid" size="sm" patch={~p"/online-store-templates/new"}>
+            <.icon name="hero-plus" class="icon" aria-hidden="true" data-slot="icon" />
+            {gettext("Add")}
+          </.button>
         </div>
       </header>
 
@@ -31,6 +34,16 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
           phx-update="stream"
           id="templates"
         >
+          <li
+            id="no-templates"
+            class="hidden only:block p-8 text-center bg-zinc-50 dark:bg-zinc-800 rounded-lg"
+          >
+            <.icon name="hero-building-storefront" class="h-12 w-12 text-zinc-400 mx-auto mb-4" />
+            <p class="text-zinc-600 dark:text-zinc-400">
+              {gettext("No online store templates found")}
+            </p>
+          </li>
+
           <li
             :for={{id, template} <- @streams.templates}
             id={id}
@@ -98,12 +111,14 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
             </div>
           </li>
         </ul>
+
+        <.pagination id={:bottom_pagination} pagination_params={@list_params} />
       </div>
 
       <.structured_modal
         :if={@live_action in [:new, :edit]}
         id="template-modal"
-        on_close={JS.patch(~p"/online-store-templates")}
+        on_close={JS.patch(back_path(@list_params))}
       >
         <.live_component
           module={MusicLibraryWeb.OnlineStoreTemplateLive.Form}
@@ -111,7 +126,7 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
           title={@page_title}
           action={@live_action}
           template={@template}
-          patch={~p"/online-store-templates"}
+          patch={back_path(@list_params)}
         />
       </.structured_modal>
     </Layouts.app>
@@ -120,10 +135,7 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok,
-     socket
-     |> assign(:current_section, :online_store_templates)
-     |> stream(:templates, OnlineStoreTemplates.list_templates())}
+    {:ok, assign(socket, :current_section, :online_store_templates)}
   end
 
   @impl true
@@ -131,22 +143,56 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
+  defp apply_action(socket, :edit, %{"id" => id} = params) do
     socket
+    |> apply_fallback_index(params, :templates, &apply_action/3)
     |> assign(:page_title, gettext("Edit Online Store Template"))
     |> assign(:template, OnlineStoreTemplates.get_template!(id))
   end
 
-  defp apply_action(socket, :new, _params) do
+  defp apply_action(socket, :new, params) do
     socket
+    |> apply_fallback_index(params, :templates, &apply_action/3)
     |> assign(:page_title, gettext("New Online Store Template"))
     |> assign(:template, %OnlineStoreTemplate{})
   end
 
-  defp apply_action(socket, :index, _params) do
+  defp apply_action(socket, :index, params) do
+    query = params["query"]
+    total_templates = OnlineStoreTemplates.count_templates(query: query)
+
+    list_params =
+      @default_list_params
+      |> merge_query(query)
+      |> merge_pagination(params, total_templates)
+
+    load_and_assign_templates(socket, list_params)
+  end
+
+  defp load_and_assign_templates(socket, list_params) do
+    offset = page_to_offset(list_params.page, list_params.page_size)
+
+    templates =
+      OnlineStoreTemplates.list_templates(
+        query: list_params.query,
+        offset: offset,
+        limit: list_params.page_size
+      )
+
     socket
+    |> assign(:list_params, list_params)
     |> assign(:page_title, gettext("Online Store Templates"))
     |> assign(:template, nil)
+    |> stream(:templates, templates, reset: true)
+  end
+
+  defp back_path(list_params) do
+    qs =
+      list_params
+      |> Map.take([:page, :page_size, :query])
+      |> Enum.filter(fn {_, v} -> v not in ["", nil] end)
+
+    ~p"/online-store-templates?#{qs}"
   end
 
   @impl true
@@ -154,7 +200,10 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
         {MusicLibraryWeb.OnlineStoreTemplateLive.Form, {:saved, template}},
         socket
       ) do
-    {:noreply, stream_insert(socket, :templates, template)}
+    {:noreply,
+     socket
+     |> stream_insert(:templates, template)
+     |> load_and_assign_templates(socket.assigns.list_params)}
   end
 
   @impl true
@@ -162,7 +211,10 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
     template = OnlineStoreTemplates.get_template!(id)
     {:ok, _} = OnlineStoreTemplates.delete_template(template)
 
-    {:noreply, stream_delete(socket, :templates, template)}
+    {:noreply,
+     socket
+     |> stream_delete(:templates, template)
+     |> load_and_assign_templates(socket.assigns.list_params)}
   end
 
   @impl true
@@ -173,5 +225,14 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
       OnlineStoreTemplates.update_template(template, %{enabled: !template.enabled})
 
     {:noreply, stream_insert(socket, :templates, updated_template)}
+  end
+
+  def handle_event("search", %{"query" => query}, socket) do
+    qs =
+      @default_list_params
+      |> Map.put(:query, query)
+      |> Map.take([:query, :page, :page_size])
+
+    {:noreply, push_patch(socket, to: ~p"/online-store-templates?#{qs}")}
   end
 end

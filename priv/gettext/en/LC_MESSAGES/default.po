@@ -2303,3 +2303,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "New Online Store Template"
 msgstr ""
+
+#: lib/music_library_web/live/online_store_template_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "No online store templates found"
+msgstr ""

@@ -28,6 +28,49 @@ defmodule MusicLibrary.OnlineStoreTemplatesTest do
     end
   end
 
+  describe "list_templates/1" do
+    test "filters by name" do
+      online_store_template(%{name: "Amazon UK"})
+      online_store_template(%{name: "Bandcamp"})
+
+      results = OnlineStoreTemplates.list_templates(query: "Amazon")
+      assert length(results) == 1
+      assert hd(results).name == "Amazon UK"
+    end
+
+    test "filters by description" do
+      online_store_template(%{name: "Store A", description: "vinyl marketplace"})
+      online_store_template(%{name: "Store B", description: "digital downloads"})
+
+      results = OnlineStoreTemplates.list_templates(query: "vinyl")
+      assert length(results) == 1
+      assert hd(results).name == "Store A"
+    end
+
+    test "respects offset and limit" do
+      for i <- 1..3, do: online_store_template(%{name: "Store #{i}"})
+
+      results = OnlineStoreTemplates.list_templates(limit: 1)
+      assert length(results) == 1
+    end
+  end
+
+  describe "count_templates/1" do
+    test "counts all templates" do
+      online_store_template(%{name: "Amazon"})
+      online_store_template(%{name: "Bandcamp"})
+
+      assert OnlineStoreTemplates.count_templates() == 2
+    end
+
+    test "counts filtered templates" do
+      online_store_template(%{name: "Amazon UK"})
+      online_store_template(%{name: "Bandcamp"})
+
+      assert OnlineStoreTemplates.count_templates(query: "Amazon") == 1
+    end
+  end
+
   describe "create_template/1" do
     test "creates with valid attrs" do
       assert {:ok, template} =
