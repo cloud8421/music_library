@@ -33,6 +33,7 @@ Rules extracted from commit history that are specific to this project and not al
 - **Gettext wraps ALL user-facing strings.** Every commit that adds UI text must also update `.pot`/`.po` files.
 - **Dark mode always paired:** `text-zinc-900 dark:text-zinc-100`, `bg-zinc-50 dark:bg-zinc-800`.
 - **Wishlisted items get dimmed styling:** `opacity-60 hover:opacity-100 transition-opacity`.
+- **Icons inside buttons use the `icon` class** instead of explicit size classes (`h-5 w-5`, `size-3.5`, etc.). The `icon` class is provided by Fluxon and auto-sizes icons based on the button's `size` prop.
 
 ## Routes / Navigation
 
