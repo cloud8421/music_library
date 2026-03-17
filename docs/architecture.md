@@ -168,6 +168,14 @@ stubbed via `Req.Test` (configured in `config/test.exs`).
 | `wikipedia` | 1 | Wikipedia calls |
 | `last_fm` | 1 | Last.fm calls (rate-limited at Req layer via `Req.RateLimiter`) |
 
+### Plugins (prod)
+
+| Plugin | Config | Purpose |
+|--------|--------|---------|
+| `Oban.Plugins.Pruner` | `max_age: 43200` (12h) | Prune completed/cancelled/discarded jobs older than 12 hours |
+| `Oban.Plugins.Reindexer` | `schedule: "@weekly"` | Weekly reindex of Oban tables for query performance |
+| `Oban.Plugins.Cron` | `timezone: "Europe/London"` | Scheduled recurring workers (see Cron Workers table) |
+
 ### On-Demand Workers
 
 | Worker | Queue | Trigger |
