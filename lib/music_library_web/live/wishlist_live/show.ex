@@ -251,6 +251,8 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
         sheet_id="record-chat-sheet"
         module={MusicLibraryWeb.Components.Chat}
         title={@record.title}
+        entity={:record}
+        musicbrainz_id={@record.musicbrainz_id}
         chat_module={MusicLibrary.RecordChat}
         chat_context={{@record, @embedding_text}}
         placeholder={gettext("Ask about this album...")}

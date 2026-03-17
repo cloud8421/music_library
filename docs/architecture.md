@@ -80,6 +80,8 @@ write to it directly; insert/update the `records` table instead.
 | `ScrobbleRules.ScrobbleRule` | `scrobble_rules` | `id` (integer) | type (:album/:artist), match_value, target_musicbrainz_id, enabled |
 | `OnlineStoreTemplates.OnlineStoreTemplate` | `online_store_templates` | `id` | name, url_template, enabled |
 | `Secrets.Secret` | `secrets` | `name` (string) | value (encrypted binary) |
+| `Chats.Chat` | `chats` | `id` (binary_id) | entity (:record/:artist), musicbrainz_id, topic, has_many :messages |
+| `Chats.Message` | `chat_messages` | `id` (binary_id) | role, content, position, belongs_to :chat |
 
 Last.fm schemas (separate, not Ecto-persisted to main DB):
 - `LastFm.Track` — scrobbled tracks stored in Last.fm's own tables via `LastFm.Feed`
@@ -97,6 +99,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Artists` | ArtistInfo, ArtistRecord | Artist metadata from MusicBrainz/Discogs/Wikipedia/Last.fm, images, search |
 | `Assets` | Asset | Binary asset storage (covers, artist images), cache tracking |
 | `Notes` | Note | Free-text notes for records and artists |
+| `Chats` | Chat, Message | Persistent AI chat conversations for records and artists |
 | `RecordSets` | RecordSet, RecordSetItem | User-curated record groupings with ordering |
 | `ScrobbleRules` | ScrobbleRule | Rules to remap Last.fm scrobble data to correct MusicBrainz IDs; searchable by match_value/target/description, orderable by alphabetical or inserted_at |
 | `ScrobbleActivity` | — | Scrobbling releases/media/tracks to Last.fm |

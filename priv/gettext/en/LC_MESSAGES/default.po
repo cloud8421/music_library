@@ -1874,11 +1874,6 @@ msgstr ""
 
 #: lib/music_library_web/components/chat.ex
 #, elixir-autogen, elixir-format
-msgid "Clear chat"
-msgstr ""
-
-#: lib/music_library_web/components/chat.ex
-#, elixir-autogen, elixir-format
 msgid "Send message"
 msgstr ""
 
@@ -2307,4 +2302,36 @@ msgstr ""
 #: lib/music_library_web/live/online_store_template_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "No online store templates found"
+msgstr ""
+
+#: lib/music_library_web/components/chat.ex
+#, elixir-autogen, elixir-format
+msgid "%{count} message"
+msgid_plural "%{count} messages"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/music_library_web/components/chat.ex
+#, elixir-autogen, elixir-format
+msgid "Chat history"
+msgstr ""
+
+#: lib/music_library_web/components/chat.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Delete chat"
+msgstr ""
+
+#: lib/music_library_web/components/chat.ex
+#, elixir-autogen, elixir-format
+msgid "New chat"
+msgstr ""
+
+#: lib/music_library_web/components/chat.ex
+#, elixir-autogen, elixir-format
+msgid "No previous chats"
+msgstr ""
+
+#: lib/music_library_web/components/chat.ex
+#, elixir-autogen, elixir-format
+msgid "Untitled"
 msgstr ""

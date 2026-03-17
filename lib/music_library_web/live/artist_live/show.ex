@@ -494,6 +494,8 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
         sheet_id="artist-chat-sheet"
         module={MusicLibraryWeb.Components.Chat}
         title={@artist.name}
+        entity={:artist}
+        musicbrainz_id={@artist.musicbrainz_id}
         chat_module={MusicLibrary.ArtistChat}
         chat_context={{@artist, @artist_info}}
         placeholder={gettext("Ask about this artist...")}
