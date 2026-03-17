@@ -496,7 +496,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
         title={@artist.name}
         entity={:artist}
         musicbrainz_id={@artist.musicbrainz_id}
-        chat_module={MusicLibrary.ArtistChat}
+        chat_module={MusicLibrary.Chats.ArtistChat}
         chat_context={{@artist, @artist_info}}
         placeholder={gettext("Ask about this artist...")}
         empty_prompt={gettext("Ask anything about this artist")}

@@ -1,8 +1,8 @@
-defmodule MusicLibrary.RecordChatTest do
+defmodule MusicLibrary.Chats.RecordChatTest do
   use ExUnit.Case
 
   alias MusicLibrary.Artists.Artist
-  alias MusicLibrary.RecordChat
+  alias MusicLibrary.Chats.RecordChat
   alias MusicLibrary.Records.Record
 
   defp build_record(attrs \\ %{}) do

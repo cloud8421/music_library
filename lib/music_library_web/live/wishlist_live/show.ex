@@ -253,7 +253,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
         title={@record.title}
         entity={:record}
         musicbrainz_id={@record.musicbrainz_id}
-        chat_module={MusicLibrary.RecordChat}
+        chat_module={MusicLibrary.Chats.RecordChat}
         chat_context={{@record, @embedding_text}}
         placeholder={gettext("Ask about this album...")}
         empty_prompt={gettext("Ask anything about this album")}

@@ -1,4 +1,4 @@
-defmodule MusicLibrary.Chat do
+defmodule MusicLibrary.Chats.StreamProvider do
   @moduledoc """
   Behaviour for streaming AI chat with entity-specific context.
   """

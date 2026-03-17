@@ -1,8 +1,8 @@
-defmodule MusicLibrary.ArtistChatTest do
+defmodule MusicLibrary.Chats.ArtistChatTest do
   use ExUnit.Case
 
-  alias MusicLibrary.ArtistChat
   alias MusicLibrary.Artists.{Artist, ArtistInfo}
+  alias MusicLibrary.Chats.ArtistChat
 
   defp build_artist(attrs \\ %{}) do
     defaults = %{
