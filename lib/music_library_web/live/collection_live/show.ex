@@ -350,14 +350,6 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     record = Records.get_record!(id)
     last_listened_track = ListeningStats.get_last_listened_track(record)
     play_count = ListeningStats.play_count(record) || 0
-
-    socket =
-      if record.selected_release_id do
-        socket
-      else
-        socket
-      end
-
     record_sets = RecordSets.list_record_sets_for_record(record.id)
 
     {:noreply,
