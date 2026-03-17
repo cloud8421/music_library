@@ -10,7 +10,8 @@ config :music_library, MusicLibrary.Repo,
     Path.expand("../data/music_library_test#{System.get_env("MIX_TEST_PARTITION")}.db", __DIR__),
   # Double the amount of concurrent tests
   pool_size: 32,
-  pool: Ecto.Adapters.SQL.Sandbox
+  pool: Ecto.Adapters.SQL.Sandbox,
+  busy_timeout: 10_000
 
 config :music_library, MusicLibrary.BackgroundRepo,
   database:
