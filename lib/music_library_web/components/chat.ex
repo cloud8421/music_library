@@ -67,6 +67,7 @@ defmodule MusicLibraryWeb.Components.Chat do
         id={@sheet_id}
         placement="right"
         class="w-md sm:min-w-lg lg:min-w-2xl flex flex-col h-full"
+        hide_close_button
       >
         <%= if @view == :list do %>
           {render_list_view(assigns)}
@@ -102,10 +103,20 @@ defmodule MusicLibraryWeb.Components.Chat do
       <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
         {gettext("Chat history")}
       </h2>
-      <.button size="sm" variant="soft" phx-click="new_chat" phx-target={@myself}>
-        <.icon name="hero-plus" class="icon" data-slot="icon" />
-        {gettext("New chat")}
-      </.button>
+      <div class="flex items-center gap-2">
+        <.button size="sm" variant="soft" phx-click="new_chat" phx-target={@myself}>
+          <.icon name="hero-plus" class="icon" data-slot="icon" />
+          {gettext("New chat")}
+        </.button>
+        <.button
+          size="icon-sm"
+          variant="ghost"
+          phx-click={Fluxon.close_dialog(@sheet_id)}
+          aria-label={gettext("Close")}
+        >
+          <.icon name="hero-x-mark" class="icon" />
+        </.button>
+      </div>
     </div>
 
     <div class="flex-1 overflow-y-auto py-4">
@@ -157,7 +168,7 @@ defmodule MusicLibraryWeb.Components.Chat do
   defp render_active_view(assigns) do
     ~H"""
     <div class="flex items-center gap-2 pb-4 border-b border-zinc-200 dark:border-zinc-700">
-      <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+      <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 flex-1">
         {gettext("Chat about %{title}", title: @title)}
       </h2>
       <.button
@@ -179,6 +190,14 @@ defmodule MusicLibraryWeb.Components.Chat do
         aria-label={gettext("New chat")}
       >
         <.icon name="hero-plus" class="icon" />
+      </.button>
+      <.button
+        size="icon-sm"
+        variant="ghost"
+        phx-click={Fluxon.close_dialog(@sheet_id)}
+        aria-label={gettext("Close")}
+      >
+        <.icon name="hero-x-mark" class="icon" />
       </.button>
     </div>
 

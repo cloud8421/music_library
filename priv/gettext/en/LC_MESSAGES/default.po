@@ -1053,6 +1053,7 @@ msgid_plural "%{count} results"
 msgstr[0] ""
 msgstr[1] ""
 
+#: lib/music_library_web/components/chat.ex
 #: lib/music_library_web/components/search_components.ex
 #, elixir-autogen, elixir-format
 msgid "Close"
