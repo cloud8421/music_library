@@ -21,8 +21,12 @@ config :music_library, ErrorTracker.ErrorNotifier,
   mailer: MusicLibrary.Mailer,
   base_url: "https://music-library.claudio-ortolina.org"
 
+twelve_hours_in_seconds = 12 * 60 * 60
+
 config :music_library, Oban,
   plugins: [
+    {Oban.Plugins.Pruner, max_age: twelve_hours_in_seconds},
+    {Oban.Plugins.Reindexer, schedule: "@weekly"},
     {Oban.Plugins.Cron,
      timezone: "Europe/London",
      crontab: [
