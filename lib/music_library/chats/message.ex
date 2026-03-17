@@ -25,5 +25,6 @@ defmodule MusicLibrary.Chats.Message do
     |> cast(attrs, [:role, :content, :position])
     |> validate_required([:role, :content, :position])
     |> validate_inclusion(:role, ["user", "assistant"])
+    |> validate_length(:content, max: 50_000)
   end
 end
