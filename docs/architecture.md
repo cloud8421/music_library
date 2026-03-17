@@ -99,7 +99,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Artists` | ArtistInfo, ArtistRecord | Artist metadata from MusicBrainz/Discogs/Wikipedia/Last.fm, images, search |
 | `Assets` | Asset | Binary asset storage (covers, artist images), cache tracking |
 | `Notes` | Note | Free-text notes for records and artists |
-| `Chats` | Chat, Message | Persistent AI chat conversations for records and artists |
+| `Chats` | Chat, Message, StreamProvider, RecordChat, ArtistChat | Persistent AI chat conversations for records and artists, streaming AI chat behaviour and entity-specific implementations |
 | `RecordSets` | RecordSet, RecordSetItem | User-curated record groupings with ordering |
 | `ScrobbleRules` | ScrobbleRule | Rules to remap Last.fm scrobble data to correct MusicBrainz IDs; searchable by match_value/target/description, orderable by alphabetical or inserted_at |
 | `ScrobbleActivity` | — | Scrobbling releases/media/tracks to Last.fm |
@@ -128,9 +128,9 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Assets.Cache` | ETS-based asset cache with TTL |
 | `Assets.Image` / `Assets.Transform` | Image processing via Vix (libvips) |
 | `Colors.KMeansExtractor` | Color extraction via K-Means clustering (dominant_colors library) |
-| `Chat` | Behaviour for streaming AI chat (`stream_response/3` callback) |
-| `RecordChat` | Chat implementation for records (OpenAI streaming, web search enabled) |
-| `ArtistChat` | Chat implementation for artists (OpenAI streaming, uses Wikipedia/artist context) |
+| `Chats.StreamProvider` | Behaviour for streaming AI chat (`stream_response/3` callback) |
+| `Chats.RecordChat` | Chat implementation for records (OpenAI streaming, web search enabled) |
+| `Chats.ArtistChat` | Chat implementation for artists (OpenAI streaming, uses Wikipedia/artist context) |
 | `Country` | Country code (alpha-2, alpha-3, subdivision, IETF) to flag emoji conversion |
 | `ErrorTracker.ErrorNotifier` | GenServer: attaches to ErrorTracker telemetry, skips muted errors, throttles repeated errors, dispatches email notifications |
 | `ErrorTracker.ErrorNotifier.Email` | Builds and sends Swoosh error notification emails with stack trace formatting |
