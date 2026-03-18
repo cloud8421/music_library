@@ -17,8 +17,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
       record_sets_list: 1,
       record_timestamps: 1,
       record_title_and_metadata: 1,
-      release_summary: 1,
-      similar_records: 1
+      release_summary: 1
     ]
 
   alias MusicLibrary.{ListeningStats, Records, RecordSets, ScrobbleActivity}
@@ -278,11 +277,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
         </div>
       </div>
 
-      <.similar_records
-        similar_records={@similar_records}
-        record_show_path={fn record -> ~p"/collection/#{record}" end}
-        section={:collection}
-      />
+      <.similar_records similar_records={@similar_records} />
 
       <.record_debug_sheet record={@record} embedding_text={@embedding_text} />
 
@@ -543,6 +538,52 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
   defp title_segment(:show), do: gettext("Details")
   defp title_segment(:edit), do: gettext("Edit")
+
+  attr :similar_records, :list, required: true
+
+  defp similar_records(assigns) do
+    ~H"""
+    <div :if={@similar_records != []} class="mt-8 px-4">
+      <header class="flex items-baseline justify-start">
+        <h2 class="font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300">
+          {gettext("Similar Records")}
+        </h2>
+        <span class="ml-2 text-xs font-normal text-zinc-500 dark:text-zinc-400">
+          {gettext("Based on genres, artists, and musical style")}
+        </span>
+      </header>
+
+      <ul
+        role="list"
+        class="mt-4 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 sm:gap-x-6"
+      >
+        <li
+          :for={%{record: record, similarity: similarity} <- @similar_records}
+          class="relative cursor-pointer"
+          phx-click={JS.patch(~p"/collection/#{record}")}
+        >
+          <div class="group">
+            <.record_cover
+              record={record}
+              class="aspect-square object-cover rounded-lg group-hover:shadow-lg/20"
+              width={300}
+            />
+            <span class="absolute top-2 right-2 rounded-full px-2 py-0.5 text-xs font-medium bg-zinc-900/75 text-white backdrop-blur-sm">
+              {Float.round(100 - similarity * 100, 0)}%
+            </span>
+          </div>
+
+          <p class="pointer-events-none mt-2 block truncate text-sm font-medium text-zinc-900 dark:text-zinc-300">
+            {record.title}
+          </p>
+          <p class="pointer-events-none block truncate text-xs text-zinc-500 dark:text-zinc-400">
+            {Records.Record.artist_names(record)}
+          </p>
+        </li>
+      </ul>
+    </div>
+    """
+  end
 
   defp assign_similar_records(socket) do
     similar_records =
