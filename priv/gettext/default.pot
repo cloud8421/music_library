@@ -859,16 +859,6 @@ msgstr ""
 
 #: lib/music_library_web/components/scrobble_components.ex
 #, elixir-autogen, elixir-format
-msgid "Album ID:"
-msgstr ""
-
-#: lib/music_library_web/components/scrobble_components.ex
-#, elixir-autogen, elixir-format
-msgid "Artist ID:"
-msgstr ""
-
-#: lib/music_library_web/components/scrobble_components.ex
-#, elixir-autogen, elixir-format
 msgid "Copy album MusicBrainz ID to clipboard"
 msgstr ""
 
@@ -880,11 +870,6 @@ msgstr ""
 #: lib/music_library_web/components/scrobble_components.ex
 #, elixir-autogen, elixir-format
 msgid "Copy track MusicBrainz ID to clipboard"
-msgstr ""
-
-#: lib/music_library_web/components/scrobble_components.ex
-#, elixir-autogen, elixir-format
-msgid "Track ID:"
 msgstr ""
 
 #: lib/music_library_web/live/scrobble_rules_live/form.ex
@@ -2335,4 +2320,19 @@ msgstr ""
 #: lib/music_library_web/components/chat.ex
 #, elixir-autogen, elixir-format
 msgid "Untitled"
+msgstr ""
+
+#: lib/music_library_web/components/scrobble_components.ex
+#, elixir-autogen, elixir-format
+msgid "Album ID"
+msgstr ""
+
+#: lib/music_library_web/components/scrobble_components.ex
+#, elixir-autogen, elixir-format
+msgid "Artist ID"
+msgstr ""
+
+#: lib/music_library_web/components/scrobble_components.ex
+#, elixir-autogen, elixir-format
+msgid "Track ID"
 msgstr ""

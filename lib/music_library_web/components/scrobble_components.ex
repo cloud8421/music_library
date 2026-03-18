@@ -32,7 +32,7 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
 
   def track_metadata_tooltip(assigns) do
     ~H"""
-    <.tooltip>
+    <.tooltip class="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-lg ring-1 ring-zinc-200 dark:ring-zinc-700">
       <.icon
         name="hero-information-circle"
         class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
@@ -40,46 +40,25 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
         data-slot="icon"
       />
       <:content>
-        <dl class="p-2">
-          <div class="flex gap-2 w-full">
-            <dt>{gettext("Track ID:")}</dt>
-            <dd class="font-mono">
-              <code id={"tooltip-track-#{@track.scrobbled_at_uts}"}>
-                {@track.musicbrainz_id || gettext("Unknown")}
-              </code>
-              <.copy_to_clipboard
-                :if={@track.musicbrainz_id not in ["", nil]}
-                target_id={"tooltip-track-#{@track.scrobbled_at_uts}"}
-                label={gettext("Copy track MusicBrainz ID to clipboard")}
-              />
-            </dd>
-          </div>
-          <div class="flex gap-2 w-full mt-2">
-            <dt>{gettext("Album ID:")}</dt>
-            <dd class="font-mono">
-              <code id={"tooltip-track-album-#{@track.scrobbled_at_uts}"}>
-                {@track.album.musicbrainz_id || gettext("Unknown")}
-              </code>
-              <.copy_to_clipboard
-                :if={@track.album.musicbrainz_id not in ["", nil]}
-                target_id={"tooltip-track-album-#{@track.scrobbled_at_uts}"}
-                label={gettext("Copy album MusicBrainz ID to clipboard")}
-              />
-            </dd>
-          </div>
-          <div class="flex gap-2 w-full mt-2">
-            <dt>{gettext("Artist ID:")}</dt>
-            <dd class="font-mono">
-              <code id={"tooltip-track-artist-#{@track.scrobbled_at_uts}"}>
-                {@track.artist.musicbrainz_id || gettext("Unknown")}
-              </code>
-              <.copy_to_clipboard
-                :if={@track.artist.musicbrainz_id not in ["", nil]}
-                target_id={"tooltip-track-artist-#{@track.scrobbled_at_uts}"}
-                label={gettext("Copy artist MusicBrainz ID to clipboard")}
-              />
-            </dd>
-          </div>
+        <dl class="divide-y divide-zinc-200 dark:divide-zinc-700">
+          <.metadata_row
+            label={gettext("Track ID")}
+            value={@track.musicbrainz_id}
+            id_prefix={"tooltip-track-#{@track.scrobbled_at_uts}"}
+            copy_label={gettext("Copy track MusicBrainz ID to clipboard")}
+          />
+          <.metadata_row
+            label={gettext("Album ID")}
+            value={@track.album.musicbrainz_id}
+            id_prefix={"tooltip-track-album-#{@track.scrobbled_at_uts}"}
+            copy_label={gettext("Copy album MusicBrainz ID to clipboard")}
+          />
+          <.metadata_row
+            label={gettext("Artist ID")}
+            value={@track.artist.musicbrainz_id}
+            id_prefix={"tooltip-track-artist-#{@track.scrobbled_at_uts}"}
+            copy_label={gettext("Copy artist MusicBrainz ID to clipboard")}
+          />
         </dl>
       </:content>
     </.tooltip>
@@ -90,7 +69,7 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
 
   def album_metadata_tooltip(assigns) do
     ~H"""
-    <.tooltip>
+    <.tooltip class="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-lg ring-1 ring-zinc-200 dark:ring-zinc-700">
       <.icon
         name="hero-information-circle"
         class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
@@ -98,33 +77,19 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
         data-slot="icon"
       />
       <:content>
-        <dl class="p-2">
-          <div class="flex gap-2 w-full">
-            <dt>{gettext("Album ID:")}</dt>
-            <dd class="font-mono">
-              <code id={"tooltip-album-#{@album.scrobbled_at_uts}"}>
-                {@album.metadata.musicbrainz_id || gettext("Unknown")}
-              </code>
-              <.copy_to_clipboard
-                :if={@album.metadata.musicbrainz_id not in ["", nil]}
-                target_id={"tooltip-album-#{@album.scrobbled_at_uts}"}
-                label={gettext("Copy album MusicBrainz ID to clipboard")}
-              />
-            </dd>
-          </div>
-          <div class="flex gap-2 w-full mt-2">
-            <dt>{gettext("Artist ID:")}</dt>
-            <dd class="font-mono">
-              <code id={"tooltip-artist-#{@album.scrobbled_at_uts}"}>
-                {@album.artist.musicbrainz_id || gettext("Unknown")}
-              </code>
-              <.copy_to_clipboard
-                :if={@album.artist.musicbrainz_id not in ["", nil]}
-                target_id={"tooltip-artist-#{@album.scrobbled_at_uts}"}
-                label={gettext("Copy artist MusicBrainz ID to clipboard")}
-              />
-            </dd>
-          </div>
+        <dl class="divide-y divide-zinc-200 dark:divide-zinc-700">
+          <.metadata_row
+            label={gettext("Album ID")}
+            value={@album.metadata.musicbrainz_id}
+            id_prefix={"tooltip-album-#{@album.scrobbled_at_uts}"}
+            copy_label={gettext("Copy album MusicBrainz ID to clipboard")}
+          />
+          <.metadata_row
+            label={gettext("Artist ID")}
+            value={@album.artist.musicbrainz_id}
+            id_prefix={"tooltip-artist-#{@album.scrobbled_at_uts}"}
+            copy_label={gettext("Copy artist MusicBrainz ID to clipboard")}
+          />
         </dl>
       </:content>
     </.tooltip>
@@ -183,6 +148,40 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
         </.dropdown_link>
       </.focus_wrap>
     </.dropdown>
+    """
+  end
+
+  attr :label, :string, required: true
+  attr :value, :string, required: true
+  attr :id_prefix, :string, required: true
+  attr :copy_label, :string, required: true
+
+  defp metadata_row(assigns) do
+    ~H"""
+    <div class="px-3 py-2 first:pt-1.5 last:pb-1.5">
+      <dt class="text-[0.65rem] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+        {@label}
+      </dt>
+      <dd class="mt-0.5 flex items-center justify-between gap-2">
+        <code
+          id={@id_prefix}
+          class={[
+            "text-xs font-mono truncate",
+            if(@value not in ["", nil],
+              do: "text-zinc-800 dark:text-zinc-200",
+              else: "text-zinc-400 dark:text-zinc-500 italic"
+            )
+          ]}
+        >
+          {@value || gettext("Unknown")}
+        </code>
+        <.copy_to_clipboard
+          :if={@value not in ["", nil]}
+          target_id={@id_prefix}
+          label={@copy_label}
+        />
+      </dd>
+    </div>
     """
   end
 end
