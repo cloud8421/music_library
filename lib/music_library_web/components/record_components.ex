@@ -488,7 +488,7 @@ defmodule MusicLibraryWeb.RecordComponents do
         <li
           :for={%{record: record, similarity: similarity} <- @similar_records}
           class="relative cursor-pointer"
-          phx-click={JS.navigate(@record_show_path.(record))}
+          phx-click={JS.patch(@record_show_path.(record))}
         >
           <div class="group">
             <.record_cover
