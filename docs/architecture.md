@@ -255,7 +255,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `ScrobbledTracksLive.Index` | `/scrobbled-tracks` | Browse/search Last.fm history |
 | `ScrobbleRulesLive.Index` | `/scrobble-rules` | Browse/search/sort scrobble remapping rules (paginated, 50 per page) |
 | `OnlineStoreTemplateLive.Index` | `/online-store-templates` | Manage store URL templates |
-| `MaintenanceLive.Index` | `/dev/maintenance` | Admin: batch jobs, DB maintenance (conditional on `:monitoring_routes` config, outside main `live_session`) |
+| `MaintenanceLive.Index` | `/maintenance` | Admin: batch jobs, DB maintenance |
 
 ### LiveComponents
 

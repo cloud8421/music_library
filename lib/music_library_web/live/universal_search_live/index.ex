@@ -411,7 +411,7 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
       },
       %{
         label: "Maintenance",
-        path: ~p"/dev/maintenance",
+        path: ~p"/maintenance",
         icon: "hero-wrench-screwdriver",
         keywords: ["maintenance", "admin", "vacuum"]
       }

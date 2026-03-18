@@ -112,6 +112,8 @@ defmodule MusicLibraryWeb.Router do
 
         live "/scrobble", ScrobbleLive.Index, :index
         live "/scrobble/:release_id", ScrobbleLive.Show, :show
+
+        live "/maintenance", MaintenanceLive.Index, :index
       end
     end
   end
@@ -155,8 +157,6 @@ defmodule MusicLibraryWeb.Router do
           style: :style_nonce,
           script: :script_nonce
         }
-
-      live "/maintenance", MusicLibraryWeb.MaintenanceLive.Index, :index
 
       error_tracker_dashboard "/errors",
         csp_nonce_assign_key: %{
