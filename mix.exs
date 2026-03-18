@@ -80,7 +80,7 @@ defmodule MusicLibrary.MixProject do
       {:benchee, "~> 1.3", only: :dev, runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:quokka, "~> 2.6", only: [:dev, :test], runtime: false},
-      {:live_debugger, "~> 0.6.0", only: :dev},
+      {:live_debugger, "~> 0.7.0", only: :dev},
       {:usage_rules, "~> 1.0"},
       {:tidewave, "~> 0.5", only: :dev},
       {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false, warn_if_outdated: true},
