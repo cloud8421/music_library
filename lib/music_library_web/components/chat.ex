@@ -336,6 +336,7 @@ defmodule MusicLibraryWeb.Components.Chat do
   def handle_event("delete_chat", %{"id" => id}, socket) do
     chat = Chats.get_chat!(id)
     {:ok, _} = Chats.delete_chat(chat)
+    send(self(), {__MODULE__, :chats_changed})
 
     chats = Chats.list_chats(socket.assigns.entity, socket.assigns.musicbrainz_id)
 
@@ -418,6 +419,7 @@ defmodule MusicLibraryWeb.Components.Chat do
             %{role: user_message.role, content: user_message.content}
           )
 
+        send(self(), {__MODULE__, :chats_changed})
         chat
 
       chat ->

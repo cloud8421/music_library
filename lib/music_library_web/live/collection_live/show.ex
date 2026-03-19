@@ -20,7 +20,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
       release_summary: 1
     ]
 
-  alias MusicLibrary.{ListeningStats, Records, RecordSets, ScrobbleActivity}
+  alias MusicLibrary.{Chats, ListeningStats, Records, RecordSets, ScrobbleActivity}
   alias MusicLibrary.Records.Similarity
   alias MusicLibraryWeb.ErrorMessages
   alias Phoenix.LiveView.JS
@@ -70,6 +70,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                     aria-hidden="true"
                     data-slot="icon"
                   />
+                  <span :if={@chat_count > 0} class="text-xs font-medium">{@chat_count}</span>
                 </.button>
                 <.button
                   :if={@record.selected_release_id}
@@ -354,6 +355,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
      |> assign(:last_listened_track, last_listened_track)
      |> assign(:play_count, play_count)
      |> assign(:record_sets, record_sets)
+     |> assign(:chat_count, Chats.count_chats(:record, record.musicbrainz_id))
      |> assign_embedding_text()
      |> assign_similar_records()}
   end
@@ -509,6 +511,11 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
      |> assign(:record, record)
      |> assign_similar_records()
      |> assign_embedding_text()}
+  end
+
+  def handle_info({MusicLibraryWeb.Components.Chat, :chats_changed}, socket) do
+    {:noreply,
+     assign(socket, :chat_count, Chats.count_chats(:record, socket.assigns.record.musicbrainz_id))}
   end
 
   @impl true

@@ -25,6 +25,14 @@ defmodule MusicLibrary.Chats do
     |> Repo.all()
   end
 
+  @spec count_chats(atom(), String.t()) :: non_neg_integer()
+  def count_chats(entity, musicbrainz_id) do
+    from(c in Chat,
+      where: c.entity == ^entity and c.musicbrainz_id == ^musicbrainz_id
+    )
+    |> Repo.aggregate(:count)
+  end
+
   @spec has_any_chats?(atom(), String.t()) :: boolean()
   def has_any_chats?(entity, musicbrainz_id) do
     from(c in Chat,

@@ -16,6 +16,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
       release_summary: 1
     ]
 
+  alias MusicLibrary.Chats
   alias MusicLibrary.OnlineStoreTemplates
   alias MusicLibrary.{Records, RecordSets}
   alias MusicLibrary.Records.Similarity
@@ -51,6 +52,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                     aria-hidden="true"
                     data-slot="icon"
                   />
+                  <span :if={@chat_count > 0} class="text-xs font-medium">{@chat_count}</span>
                 </.button>
                 <.dropdown id={"actions-#{@record.id}"} placement="bottom-end">
                   <:toggle>
@@ -304,6 +306,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
      |> assign(:record, record)
      |> assign(:online_store_templates, online_store_templates)
      |> assign(:record_sets, record_sets)
+     |> assign(:chat_count, Chats.count_chats(:record, record.musicbrainz_id))
      |> assign_embedding_text()}
   end
 
@@ -416,6 +419,11 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
      socket
      |> assign(:record, record)
      |> assign_embedding_text()}
+  end
+
+  def handle_info({MusicLibraryWeb.Components.Chat, :chats_changed}, socket) do
+    {:noreply,
+     assign(socket, :chat_count, Chats.count_chats(:record, socket.assigns.record.musicbrainz_id))}
   end
 
   @impl true

@@ -4,7 +4,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
   import MusicLibraryWeb.RecordComponents,
     only: [record_grid: 1, country_label: 1, artist_image: 1]
 
-  alias MusicLibrary.{Artists, Records}
+  alias MusicLibrary.{Artists, Chats, Records}
   alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibraryWeb.ErrorMessages
 
@@ -120,6 +120,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                     aria-hidden="true"
                     data-slot="icon"
                   />
+                  <span :if={@chat_count > 0} class="text-xs font-medium">{@chat_count}</span>
                 </.button>
                 <.button
                   variant="soft"
@@ -646,6 +647,16 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
      |> put_toast(:info, gettext("Record deleted"))}
   end
 
+  @impl true
+  def handle_info({MusicLibraryWeb.Components.Chat, :chats_changed}, socket) do
+    {:noreply,
+     assign(
+       socket,
+       :chat_count,
+       Chats.count_chats(:artist, socket.assigns.artist.musicbrainz_id)
+     )}
+  end
+
   defp apply_action(socket, :show, %{"musicbrainz_id" => musicbrainz_id}) do
     artist = Artists.get_artist!(musicbrainz_id)
     artist_info = Artists.get_artist_info!(musicbrainz_id)
@@ -655,6 +666,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     |> assign(:current_section, :artists)
     |> assign(:artist, artist)
     |> assign(:artist_info, artist_info)
+    |> assign(:chat_count, Chats.count_chats(:artist, musicbrainz_id))
     |> assign(:biography, build_biography(artist_info))
     |> assign(:external_links, ArtistInfo.external_links(artist_info))
     |> assign(:country, ArtistInfo.country(artist_info))

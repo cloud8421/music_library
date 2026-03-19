@@ -16,6 +16,35 @@ defmodule MusicLibrary.ChatsTest do
     %{chat: chat}
   end
 
+  describe "count_chats/2" do
+    test "returns 0 when no chats exist" do
+      assert Chats.count_chats(:record, Ecto.UUID.generate()) == 0
+    end
+
+    test "returns the number of chats for an entity" do
+      Chats.create_chat_with_message(
+        %{entity: :record, musicbrainz_id: @musicbrainz_id},
+        %{role: "user", content: "First chat"}
+      )
+
+      Chats.create_chat_with_message(
+        %{entity: :record, musicbrainz_id: @musicbrainz_id},
+        %{role: "user", content: "Second chat"}
+      )
+
+      assert Chats.count_chats(:record, @musicbrainz_id) == 2
+    end
+
+    test "does not count chats for different entity" do
+      Chats.create_chat_with_message(
+        %{entity: :record, musicbrainz_id: @musicbrainz_id},
+        %{role: "user", content: "A chat"}
+      )
+
+      assert Chats.count_chats(:artist, @musicbrainz_id) == 0
+    end
+  end
+
   describe "list_chats/2" do
     setup [:create_chat]
 
