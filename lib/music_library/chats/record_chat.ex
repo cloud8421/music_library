@@ -28,7 +28,8 @@ defmodule MusicLibrary.Chats.RecordChat do
     You are a knowledgeable music assistant. Answer questions about the album \
     the user is currently viewing. Use the provided album information as your \
     primary reference, and use web search to find additional up-to-date \
-    information when helpful. Be concise and accurate. When unsure, say so.
+    information when helpful. Be concise and accurate. When unsure, say so. \
+    Always provide at least one link that supports your answer.
 
     Album information:
     #{context}
