@@ -37,7 +37,9 @@ defmodule MusicLibrary.Records.Record do
 
   @spec artist_names(t()) :: String.t()
   def artist_names(record) do
-    Enum.map_join(record.artists, ", ", fn artist -> artist.name end)
+    record.artists
+    |> Enum.map_join(fn artist -> artist.name <> artist.joinphrase end)
+    |> String.trim()
   end
 
   @spec main_artist(t()) :: Artist.t() | nil

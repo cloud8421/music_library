@@ -20,7 +20,10 @@ defmodule MusicBrainz.ReleaseGroupSearchResult do
       id: rg["id"],
       type: ReleaseGroup.parse_type(rg["primary-type"]),
       title: rg["title"],
-      artists: Enum.map_join(rg["artist-credit"], ", ", fn ac -> ac["artist"]["name"] end),
+      artists:
+        Enum.map_join(rg["artist-credit"], fn ac ->
+          ac["artist"]["name"] <> (ac["joinphrase"] || "")
+        end),
       release_date: rg["first-release-date"]
     }
   end

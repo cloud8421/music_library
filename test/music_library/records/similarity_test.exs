@@ -171,8 +171,7 @@ defmodule MusicLibrary.Records.SimilarityTest do
 
       text = Similarity.text_representation(record)
 
-      # Record.artist_names joins with ", " not with joinphrase
-      assert text =~ "Artists: Artist One, Artist Two"
+      assert text =~ "Artists: Artist One & Artist Two"
     end
   end
 

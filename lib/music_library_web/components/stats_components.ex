@@ -41,13 +41,7 @@ defmodule MusicLibraryWeb.StatsComponents do
           <span class="text-sm md:text-base lg:text-2xl block text-zinc-900 dark:text-zinc-300">
             {@record.title}
           </span>
-          <.link
-            :for={artist <- @record.artists}
-            class="text-sm md:text-base text-zinc-600 dark:text-zinc-300 hover:text-zinc-500 dark:hover:text-zinc-200"
-            navigate={~p"/artists/#{artist.musicbrainz_id}"}
-          >
-            {artist.name}
-          </.link>
+          <.artist_links artists={@record.artists} joinphrase_class="text-sm md:text-base" />
         </p>
       </div>
     </div>
