@@ -2,8 +2,8 @@ name: Test & Deploy
 on: push
 
 jobs:
-  test:
-    name: Test
+  lint:
+    name: Lint
     runs-on: ubuntu-24.04
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -32,7 +32,7 @@ jobs:
         id: cache-build
         uses: actions/cache@v5
         env:
-          cache-name: cache-compiled-build
+          cache-name: cache-compiled-build-lint
         with:
           path: _build
           key: ${{ runner.os }}-otp-${{ steps.setup-beam.outputs.otp-version }}-elixir-${{ steps.setup-beam.outputs.elixir-version }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
@@ -71,13 +71,6 @@ jobs:
           # Half the number of available cores
           # See https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories
           MIX_OS_DEPS_COMPILE_PARTITION_COUNT: 2
-      - name: 🔮 Compile for TEST
-        run: mix compile
-        env:
-          MIX_ENV: test
-          # Half the number of available cores
-          # See https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories
-          MIX_OS_DEPS_COMPILE_PARTITION_COUNT: 2
       - name: 🌍 Check translations
         run: mix gettext.extract --check-up-to-date
       - name: 💅 Check formatting
@@ -86,6 +79,74 @@ jobs:
         run: mix credo --strict
       - name: 👮 Run Sobelow
         run: mix sobelow
+
+  test:
+    name: Test
+    runs-on: ubuntu-24.04
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - uses: actions/checkout@v6
+      - uses: erlef/setup-beam@v1
+        id: setup-beam
+        with:
+          version-type: strict
+          version-file: .tool-versions
+      - name: Cache deps
+        id: cache-deps
+        uses: actions/cache@v5
+        env:
+          cache-name: cache-elixir-deps
+        with:
+          path: deps
+          key: ${{ runner.os }}-otp-${{ steps.setup-beam.outputs.otp-version }}-elixir-${{ steps.setup-beam.outputs.elixir-version }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-otp-${{ steps.setup-beam.outputs.otp-version }}-elixir-${{ steps.setup-beam.outputs.elixir-version }}-mix-${{ env.cache-name }}-
+
+      # Step: Define how to cache the `_build` directory. After the first run,
+      # this speeds up tests runs a lot. This includes not re-compiling our
+      # project's downloaded deps every run.
+      - name: Cache compiled build
+        id: cache-build
+        uses: actions/cache@v5
+        env:
+          cache-name: cache-compiled-build-test
+        with:
+          path: _build
+          key: ${{ runner.os }}-otp-${{ steps.setup-beam.outputs.otp-version }}-elixir-${{ steps.setup-beam.outputs.elixir-version }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-otp-${{ steps.setup-beam.outputs.otp-version }}-elixir-${{ steps.setup-beam.outputs.elixir-version }}-mix-${{ env.cache-name }}-
+            ${{ runner.os }}-otp-${{ steps.setup-beam.outputs.otp-version }}-elixir-${{ steps.setup-beam.outputs.elixir-version }}-mix-
+
+      # Step: Conditionally bust the cache when job is re-run.
+      # Sometimes, we may have issues with incremental builds that are fixed by
+      # doing a full recompile. In order to not waste dev time on such trivial
+      # issues (while also reaping the time savings of incremental builds for
+      # *most* day-to-day development), force a full recompile only on builds
+      # that are retried.
+      - name: Clean to rule out incremental build as a source of flakiness
+        if: github.run_attempt != '1'
+        run: |
+          mix deps.clean --all
+          mix clean
+        shell: sh
+      - name: Add Fluxon UI repo
+        run: |
+          mix hex.repo add fluxon https://repo.fluxonui.com \
+            --fetch-public-key $FLUXON_KEY_FINGERPRINT \
+            --auth-key $FLUXON_LICENSE_KEY
+        env:
+          FLUXON_LICENSE_KEY: ${{ secrets.FLUXON_LICENSE_KEY }}
+          FLUXON_KEY_FINGERPRINT: ${{ secrets.FLUXON_KEY_FINGERPRINT }}
+      - name: Fetch dependencies
+        run: mix deps.get
+      - name: 🔮 Compile for TEST
+        run: mix compile
+        env:
+          MIX_ENV: test
+          # Half the number of available cores
+          # See https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories
+          MIX_OS_DEPS_COMPILE_PARTITION_COUNT: 2
       - name: 🧪 Run tests
         run: mix test
         env:
@@ -93,7 +154,7 @@ jobs:
 
   deploy:
     name: Deploy
-    needs: test
+    needs: [lint, test]
     runs-on: ubuntu-latest
     environment: production
     if: github.ref == 'refs/heads/main'
