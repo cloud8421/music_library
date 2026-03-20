@@ -1,21 +1,22 @@
 ---
 name: update-documentation
-description: Use when the user asks to update project documentation, or after significant code changes that may have made docs/architecture.md or docs/project-conventions.md stale
+description: Use when the user asks to update project documentation, or after significant code changes that may have made docs/architecture.md, docs/project-conventions.md, or docs/production-infrastructure.md stale
 ---
 
 # Update Documentation
 
-Updates `docs/architecture.md` and `docs/project-conventions.md` to reflect recent codebase changes.
+Updates `docs/architecture.md`, `docs/project-conventions.md`, and `docs/production-infrastructure.md` to reflect recent codebase changes.
 
 ## Workflow
 
-For each documentation file (`docs/architecture.md`, `docs/project-conventions.md`):
+For each documentation file (`docs/architecture.md`, `docs/project-conventions.md`, `docs/production-infrastructure.md`):
 
 ### 1. Find the last documentation update
 
 ```bash
 git log -1 --format="%H %as %s" -- docs/architecture.md
 git log -1 --format="%H %as %s" -- docs/project-conventions.md
+git log -1 --format="%H %as %s" -- docs/production-infrastructure.md
 ```
 
 ### 2. List all commits since then
@@ -32,6 +33,7 @@ For each commit, check if it introduced changes relevant to the documentation fi
 
 - **architecture.md**: new/removed/renamed modules, schemas, contexts, workers, routes, external integrations, supervision tree changes, database changes, PubSub topics, LiveView/LiveComponent additions
 - **project-conventions.md**: new patterns established across 3+ commits, new conventions visible in code review, changed testing patterns, new error handling approaches, new UI/template conventions
+- **production-infrastructure.md**: hosting/deployment changes, database configuration, backup strategy, environment variables, monitoring/observability, CI/CD pipeline, external service integrations, Docker/release configuration
 
 Use `git show --stat <hash>` and `git show <hash>` to understand each commit. Focus on structural changes, not bug fixes or minor tweaks.
 
