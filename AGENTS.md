@@ -150,4 +150,10 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 - Use `Task.async_stream/3` for concurrent enumeration with back-pressure
 
 <!-- usage_rules:otp-end -->
+<!-- mdex-start -->
+## mdex usage
+_Fast and extensible Markdown for Elixir_
+
+@deps/mdex/usage-rules.md
+<!-- mdex-end -->
 <!-- usage-rules-end -->

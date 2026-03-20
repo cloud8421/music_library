@@ -188,7 +188,8 @@ defmodule MusicLibrary.MixProject do
     [
       file: "AGENTS.md",
       usage_rules: [
-        "usage_rules:all"
+        "usage_rules:all",
+        {:mdex, link: :at}
       ],
       skills: [
         location: ".claude/skills",
