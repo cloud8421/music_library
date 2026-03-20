@@ -99,26 +99,26 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
                   width={468}
                 />
               </.link>
-              <div
+              <button
                 data-sortable-handle
-                class="absolute top-1 left-1 flex items-center justify-center rounded-full bg-zinc-100/50 hover:bg-zinc-100/75 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/75 size-8 sm:size-5 cursor-grab active:cursor-grabbing"
+                class="absolute top-1 left-1 flex items-center justify-center rounded-full bg-zinc-100/50 hover:bg-zinc-100/75 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/75 size-8 sm:size-6 cursor-grab active:cursor-grabbing"
               >
                 <.icon
                   name="hero-bars-2"
                   class="size-3.5 text-zinc-800 dark:text-zinc-200"
                   aria-hidden="true"
                 />
-              </div>
+              </button>
               <button
                 phx-click="remove_record"
                 phx-value-record-id={item.record.id}
                 data-confirm={gettext("Remove this record from the set?")}
-                class="absolute top-1 right-1 flex items-center justify-center rounded-full bg-zinc-100/50 hover:bg-red-100/75 dark:bg-zinc-700/50 dark:hover:bg-red-900/50 size-8 sm:size-5 cursor-pointer"
+                class="absolute top-1 right-1 flex items-center justify-center rounded-full bg-zinc-100/50 hover:bg-red-100/75 dark:bg-zinc-700/50 dark:hover:bg-red-900/50 size-8 sm:size-6 cursor-pointer"
               >
                 <span class="sr-only">{gettext("Remove")}</span>
                 <.icon
                   name="hero-trash"
-                  class="icon text-zinc-800 hover:text-red-700 dark:text-zinc-200 dark:hover:text-red-400"
+                  class="size-3.5 text-zinc-800 hover:text-red-700 dark:text-zinc-200 dark:hover:text-red-400"
                   aria-hidden="true"
                 />
               </button>
