@@ -15,7 +15,6 @@ metadata:
 - [phoenix](references/phoenix.md)
 - [phoenix_ecto](references/phoenix_ecto.md)
 - [phoenix_html](references/phoenix_html.md)
-- [phoenix_html_helpers](references/phoenix_html_helpers.md)
 - [phoenix_live_dashboard](references/phoenix_live_dashboard.md)
 - [phoenix_live_reload](references/phoenix_live_reload.md)
 - [phoenix_live_view](references/phoenix_live_view.md)
@@ -24,7 +23,7 @@ metadata:
 ## Searching Documentation
 
 ```sh
-mix usage_rules.search_docs "search term" -p phoenix -p phoenix_ecto -p phoenix_html -p phoenix_html_helpers -p phoenix_live_dashboard -p phoenix_live_reload -p phoenix_live_view -p fluxon
+mix usage_rules.search_docs "search term" -p phoenix -p phoenix_ecto -p phoenix_html -p phoenix_live_dashboard -p phoenix_live_reload -p phoenix_live_view -p fluxon
 ```
 
 ## Available Mix Tasks
