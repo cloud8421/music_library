@@ -286,6 +286,82 @@ defmodule MusicLibrary.ListeningStatsTest do
     end
   end
 
+  describe "deduplication when multiple records share release IDs" do
+    setup do
+      # Create two collected records that share the same MusicBrainz release IDs
+      # (both use the default marbles fixture with identical musicbrainz_data).
+      # This produces two rows per release_id in record_releases, which previously
+      # caused fan-out in ListeningStats joins.
+      record_a = RecordsFixtures.record(%{title: "Marbles Copy A"})
+      record_b = RecordsFixtures.record(%{title: "Marbles Copy B"})
+
+      # Pick a release_id shared by both records
+      shared_release_id = "d3f9b9e2-73f5-4b47-a2a7-2c2199aad608"
+      now = System.system_time(:second)
+
+      track_fixture(%{
+        title: "The Invisible Man",
+        album_title: "Marbles",
+        album_musicbrainz_id: shared_release_id,
+        artist_name: "Marillion",
+        scrobbled_at_uts: now - 100
+      })
+
+      track_fixture(%{
+        title: "You're Gone",
+        album_title: "Marbles",
+        album_musicbrainz_id: shared_release_id,
+        artist_name: "Marillion",
+        scrobbled_at_uts: now - 200
+      })
+
+      # The lexicographically smaller record_id should consistently win (MIN)
+      expected_record_id = Enum.min([record_a.id, record_b.id])
+
+      %{
+        expected_record_id: expected_record_id,
+        shared_release_id: shared_release_id
+      }
+    end
+
+    test "list_tracks returns one row per track", %{expected_record_id: expected_record_id} do
+      tracks = ListeningStats.list_tracks()
+
+      titles = Enum.map(tracks, & &1.track.title)
+      assert length(titles) == length(Enum.uniq(titles)), "list_tracks returned duplicate rows"
+
+      # Both tracks should map to the same deterministic record_id
+      for result <- tracks do
+        assert result.collected_record_id == expected_record_id
+      end
+    end
+
+    test "recent_activity returns one row per track", %{expected_record_id: expected_record_id} do
+      %{recent_tracks: recent_tracks} =
+        ListeningStats.recent_activity("Etc/UTC", 20)
+
+      titles = Enum.map(recent_tracks, & &1.track.title)
+
+      assert length(titles) == length(Enum.uniq(titles)),
+             "recent_activity returned duplicate rows"
+
+      for result <- recent_tracks do
+        assert result.collected_record_id == expected_record_id
+      end
+    end
+
+    test "get_top_albums returns one entry per album", %{expected_record_id: expected_record_id} do
+      results = ListeningStats.get_top_albums(limit: 10)
+
+      marbles_entries = Enum.filter(results, fn r -> r.album_title == "Marbles" end)
+      assert length(marbles_entries) == 1, "get_top_albums returned duplicate album entries"
+
+      [entry] = marbles_entries
+      assert entry.play_count == 2
+      assert entry.collected_record_id == expected_record_id
+    end
+  end
+
   describe "get_top_artists/1" do
     test "counts tracks with missing artist_infos records" do
       artist_info =

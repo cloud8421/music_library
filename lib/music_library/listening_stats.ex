@@ -269,9 +269,9 @@ defmodule MusicLibrary.ListeningStats do
         distinct: true
 
     from t in Track,
-      left_join: cr in subquery(Collection.collected_releases_query()),
+      left_join: cr in subquery(unique_collected_releases_query()),
       on: cr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
-      left_join: wr in subquery(Wishlist.wishlisted_releases_query()),
+      left_join: wr in subquery(unique_wishlisted_releases_query()),
       on: wr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
       left_join: ar in subquery(all_artists_query),
       on: wr.record_id == ar.record_id or cr.record_id == ar.record_id,
@@ -286,9 +286,9 @@ defmodule MusicLibrary.ListeningStats do
 
   defp top_albums_base_query do
     from t in Track,
-      left_join: cr in subquery(Collection.collected_releases_query()),
+      left_join: cr in subquery(unique_collected_releases_query()),
       on: cr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
-      left_join: wr in subquery(Wishlist.wishlisted_releases_query()),
+      left_join: wr in subquery(unique_wishlisted_releases_query()),
       on: wr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
       where: fragment("json_extract(album, '$.title') != ''"),
       group_by: [
@@ -323,6 +323,26 @@ defmodule MusicLibrary.ListeningStats do
         play_count: count(t.scrobbled_at_uts, :distinct)
       },
       order_by: [desc: count(t.scrobbled_at_uts, :distinct)]
+  end
+
+  defp unique_collected_releases_query do
+    from rr in subquery(Collection.collected_releases_query()),
+      group_by: rr.release_id,
+      select: %{
+        record_id: min(rr.record_id),
+        cover_hash: min(rr.cover_hash),
+        release_id: rr.release_id
+      }
+  end
+
+  defp unique_wishlisted_releases_query do
+    from rr in subquery(Wishlist.wishlisted_releases_query()),
+      group_by: rr.release_id,
+      select: %{
+        record_id: min(rr.record_id),
+        cover_hash: min(rr.cover_hash),
+        release_id: rr.release_id
+      }
   end
 
   defp cutoff_timestamp(days, opts) do
