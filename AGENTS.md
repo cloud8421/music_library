@@ -6,6 +6,10 @@
 
 @docs/project-conventions.md
 
+# Production infrastructure
+
+@docs/production-infrastructure.md
+
 # Commands and tasks
 
 The project uses [mise](https://mise.jdx.dev/) to manage high level configuration and tasks.
