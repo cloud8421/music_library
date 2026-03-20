@@ -46,21 +46,21 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Form do
 
         <.switch field={@form[:enabled]} label={gettext("Enable this template")} />
 
-        <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">
+        <div class="mt-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
+          <h4 class="mb-2 text-sm font-medium text-gray-900 dark:text-white">
             {gettext("Available Variables")}
           </h4>
           <div class="text-sm text-gray-600 dark:text-gray-400">
             <p>
-              <code class="bg-gray-200 dark:bg-gray-700 px-1 rounded">{"{artist}"}</code>
+              <code class="rounded bg-gray-200 px-1 dark:bg-gray-700">{"{artist}"}</code>
               - {gettext("Artist name(s)")}
             </p>
             <p>
-              <code class="bg-gray-200 dark:bg-gray-700 px-1 rounded">{"{title}"}</code>
+              <code class="rounded bg-gray-200 px-1 dark:bg-gray-700">{"{title}"}</code>
               - {gettext("Record title")}
             </p>
             <p>
-              <code class="bg-gray-200 dark:bg-gray-700 px-1 rounded">{"{format}"}</code>
+              <code class="rounded bg-gray-200 px-1 dark:bg-gray-700">{"{format}"}</code>
               - {gettext("Record format")}
             </p>
           </div>

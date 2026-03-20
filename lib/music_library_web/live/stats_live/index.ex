@@ -17,7 +17,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     ~H"""
     <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
       <div>
-        <h1 class="mt-5 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
+        <h1 class="mt-5 text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
           {gettext("Records")}
         </h1>
         <dl class="mt-5 grid grid-cols-3 gap-5 sm:grid-cols-5">
@@ -41,9 +41,9 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         </dl>
       </div>
 
-      <div class="grid lg:grid-cols-2 gap-5">
+      <div class="grid gap-5 lg:grid-cols-2">
         <div>
-          <h1 class="mt-5 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
+          <h1 class="mt-5 text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
             {gettext("Formats")}
           </h1>
           <.counters_by_category
@@ -54,7 +54,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         </div>
 
         <div>
-          <h1 class="mt-5 text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
+          <h1 class="mt-5 text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
             {gettext("Types")}
           </h1>
           <.counters_by_category
@@ -66,15 +66,15 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       </div>
 
       <div>
-        <div class="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
           <TopArtists.live id="top-artists" timezone={@timezone} last_updated_uts={@last_updated_uts} />
           <TopAlbums.live id="top-albums" timezone={@timezone} last_updated_uts={@last_updated_uts} />
         </div>
       </div>
 
       <div class="flow-root">
-        <div class="mt-5 flex justify-between items-center">
-          <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
+        <div class="mt-5 flex items-center justify-between">
+          <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
             {gettext("Scrobble activity")}
           </h1>
           <.refresh_lastfm_feed_button />
@@ -99,7 +99,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
             <ul
               id="scrobble-activity-albums"
               role="list"
-              class="mt-5 p-6 bg-white dark:bg-zinc-800 rounded-md shadow-sm"
+              class="mt-5 rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800"
               phx-update="stream"
             >
               <li
@@ -118,37 +118,37 @@ defmodule MusicLibraryWeb.StatsLive.Index do
               >
                 <div class="relative pb-4 group-last:pb-0">
                   <span
-                    class="group-last:hidden absolute left-6 top-6 -ml-px h-full w-0.5 bg-zinc-200"
+                    class="absolute top-6 left-6 -ml-px h-full w-0.5 bg-zinc-200 group-last:hidden"
                     aria-hidden="true"
                   >
                   </span>
-                  <div class="relative flex space-x-3 items-center justify-between">
-                    <div class="flex min-w-0 justify-between space-x-4 items-center">
+                  <div class="relative flex items-center justify-between space-x-3">
+                    <div class="flex min-w-0 items-center justify-between space-x-4">
                       <img
-                        class="h-12 w-12 rounded-md shadow-sm"
+                        class="size-12 rounded-md shadow-sm"
                         src={track_or_album_cover_url(album, cover_hash)}
                         alt={album.metadata.title}
                       />
                       <div>
                         <p
                           :if={!artist_id(album, artist_id)}
-                          class="font-semibold text-sm block text-zinc-500 dark:text-zinc-400"
+                          class="block text-sm font-semibold text-zinc-500 dark:text-zinc-400"
                         >
                           {album.artist.name}
                         </p>
                         <.link
                           :if={artist_id(album, artist_id)}
-                          class="font-semibold text-sm block text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
+                          class="block text-sm font-semibold text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
                           navigate={~p"/artists/#{artist_id(album, artist_id)}"}
                         >
                           {album.artist.name}
                         </.link>
-                        <p class="font-semibold text-sm md:text-base text-zinc-700 dark:text-zinc-300">
+                        <p class="text-sm font-semibold text-zinc-700 md:text-base dark:text-zinc-300">
                           {album.metadata.title}
                         </p>
                         <time
                           datetime={format_scrobbled_at_uts(album.scrobbled_at_uts)}
-                          class="whitespace-nowrap text-right text-xs sm:text-sm text-zinc-500 dark:text-zinc-400"
+                          class="text-right text-xs whitespace-nowrap text-zinc-500 sm:text-sm dark:text-zinc-400"
                         >
                           {album.scrobbled_at_label}
                         </time>
@@ -179,7 +179,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
             <ul
               id="scrobble-activity-tracks"
               role="list"
-              class="mt-5 p-6 bg-white dark:bg-zinc-800 rounded-md shadow-sm"
+              class="mt-5 rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800"
               phx-update="stream"
             >
               <li
@@ -198,40 +198,40 @@ defmodule MusicLibraryWeb.StatsLive.Index do
               >
                 <div class="relative pb-4 group-last:pb-0">
                   <span
-                    class="group-last:hidden absolute left-6 top-6 -ml-px h-full w-0.5 bg-zinc-200"
+                    class="absolute top-6 left-6 -ml-px h-full w-0.5 bg-zinc-200 group-last:hidden"
                     aria-hidden="true"
                   >
                   </span>
-                  <div class="relative flex space-x-3 items-center justify-between">
-                    <div class="flex min-w-0 justify-between space-x-4 items-center">
+                  <div class="relative flex items-center justify-between space-x-3">
+                    <div class="flex min-w-0 items-center justify-between space-x-4">
                       <img
-                        class="h-12 w-12 rounded-md shadow-sm"
+                        class="size-12 rounded-md shadow-sm"
                         src={track_or_album_cover_url(track, cover_hash)}
                         alt={track.title}
                       />
                       <div>
                         <p
                           :if={!artist_id(track, artist_id)}
-                          class="font-semibold text-sm block text-zinc-500 dark:text-zinc-400"
+                          class="block text-sm font-semibold text-zinc-500 dark:text-zinc-400"
                         >
                           {track.artist.name}
                         </p>
                         <.link
                           :if={artist_id(track, artist_id)}
-                          class="font-semibold text-sm block text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
+                          class="block text-sm font-semibold text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
                           navigate={~p"/artists/#{artist_id(track, artist_id)}"}
                         >
                           {track.artist.name}
                         </.link>
-                        <p class="font-semibold text-sm md:text-base text-zinc-700 dark:text-zinc-300">
+                        <p class="text-sm font-semibold text-zinc-700 md:text-base dark:text-zinc-300">
                           {track.title}
                         </p>
-                        <p class="font-semibold text-sm text-zinc-500 dark:text-zinc-400">
+                        <p class="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
                           {track.album.title}
                         </p>
                         <time
                           datetime={format_scrobbled_at_uts(track.scrobbled_at_uts)}
-                          class="whitespace-nowrap text-right text-xs sm:text-sm text-zinc-500 dark:text-zinc-400"
+                          class="text-right text-xs whitespace-nowrap text-zinc-500 sm:text-sm dark:text-zinc-400"
                         >
                           {track.scrobbled_at_label}
                         </time>
@@ -261,10 +261,10 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         </.tabs>
       </div>
 
-      <div class="mt-5 grid grid-cols-1 lg:grid-cols-11 gap-5">
+      <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-11">
         <div class="lg:col-span-3">
-          <div class="flex justify-between items-center">
-            <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
+          <div class="flex items-center justify-between">
+            <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
               {gettext("On This day")}
             </h1>
             <.form
@@ -287,7 +287,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
               </.date_picker>
             </.form>
           </div>
-          <div class="bg-white dark:bg-zinc-800 rounded-md shadow-sm">
+          <div class="rounded-md bg-white shadow-sm dark:bg-zinc-800">
             <.records_on_this_day
               current_date={@current_date}
               records={@records_on_this_day}
@@ -296,10 +296,10 @@ defmodule MusicLibraryWeb.StatsLive.Index do
           </div>
         </div>
         <div class="lg:col-span-4">
-          <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
+          <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
             {gettext("Top %{n} Collection Artists", %{n: length(@records_by_artist)})}
           </h1>
-          <div class="mt-5 bg-white dark:bg-zinc-800 rounded-md shadow-sm">
+          <div class="mt-5 rounded-md bg-white shadow-sm dark:bg-zinc-800">
             <.vertical_bar_chart
               data={@records_by_artist}
               width={600}
@@ -318,10 +318,10 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         </div>
 
         <div class="lg:col-span-4">
-          <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
+          <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
             {gettext("Top %{n} Collection Genres", %{n: length(@records_by_genre)})}
           </h1>
-          <div class="mt-5 bg-white dark:bg-zinc-800 rounded-md shadow-sm">
+          <div class="mt-5 rounded-md bg-white shadow-sm dark:bg-zinc-800">
             <.vertical_bar_chart
               data={@records_by_genre}
               width={600}

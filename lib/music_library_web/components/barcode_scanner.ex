@@ -22,16 +22,16 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
     ~H"""
     <div class="min-w-72" id="barcode-scanner" phx-hook=".BarcodeScanner" phx-target={@myself}>
       <header>
-        <h1 class="text-sm font-medium leading-6 text-zinc-700 dark:text-zinc-400">
+        <h1 class="text-sm/6 font-medium text-zinc-700 dark:text-zinc-400">
           {gettext("Scan one or more barcodes")}
         </h1>
       </header>
       <div class="mt-4">
         <.camera_button camera={@camera} />
-        <video :if={!(@camera == :denied)} class="w-full hidden h-96" id="camera-preview" playsinline />
+        <video :if={!(@camera == :denied)} class="hidden h-96 w-full" id="camera-preview" playsinline />
       </div>
 
-      <ul class="divide-y divide-zinc-100 dark:divide-slate-300/30 mt-5">
+      <ul class="mt-5 divide-y divide-zinc-100 dark:divide-slate-300/30">
         <li
           :for={scan_result <- @scan_results}
           id={scan_result.number}
@@ -141,7 +141,7 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
         |> JS.dispatch("camera_request", to: "#barcode-scanner")
         |> JS.hide(to: "#camera-button")
       }
-      class="relative block w-full h-96 rounded-lg border-2 border-dashed border-zinc-300 p-12 text-center hover:border-zinc-400 outline-hidden"
+      class="relative block h-96 w-full rounded-lg border-2 border-dashed border-zinc-300 p-12 text-center outline-hidden hover:border-zinc-400"
     >
       <svg
         class="mx-auto size-12 text-zinc-400"
@@ -316,11 +316,11 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
 
   defp barcode_not_found(assigns) do
     ~H"""
-    <div class="w-full bg-red-50 dark:bg-red-950 p-4">
-      <h1 class="text-sm leading-6 text-zinc-700 dark:text-zinc-400">
+    <div class="w-full bg-red-50 p-4 dark:bg-red-950">
+      <h1 class="text-sm/6 text-zinc-700 dark:text-zinc-400">
         {gettext("Barcode not found")}
       </h1>
-      <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+      <h2 class="mt-1 flex text-sm/5 font-semibold text-wrap text-zinc-700 sm:text-base dark:text-zinc-300">
         {@number}
       </h2>
     </div>
@@ -333,21 +333,21 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
 
   defp release(assigns) do
     ~H"""
-    <div class="flex items-center justify-between w-full">
+    <div class="flex w-full items-center justify-between">
       <img
-        class="w-16 md:w-20 flex-none rounded-lg mr-4"
+        class="mr-4 w-16 flex-none rounded-lg md:w-20"
         alt={@release.release_group.title}
         src={ReleaseGroupSearchResult.thumb_url(@release.release_group)}
         onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
       />
       <div class="min-w-0 flex-auto">
-        <h1 class="text-sm leading-6 text-zinc-700 dark:text-zinc-400">
+        <h1 class="text-sm/6 text-zinc-700 dark:text-zinc-400">
           {@release.artists}
         </h1>
-        <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+        <h2 class="mt-1 flex text-sm/5 font-semibold text-wrap text-zinc-700 sm:text-base dark:text-zinc-300">
           {@release.title}
         </h2>
-        <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+        <p class="mt-1 text-xs/5 text-zinc-500 dark:text-zinc-400">
           {release_format_label(@release)} · {Records.Record.format_release_date(@release.date)} · {RecordComponents.type_label(
             @release.release_group.type
           )}

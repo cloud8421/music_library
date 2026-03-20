@@ -29,7 +29,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Form do
 
         <.textarea
           class={[
-            "w-full min-h-128 md:min-h-164 overflow-scroll font-mono"
+            "min-h-128 w-full overflow-scroll font-mono md:min-h-164"
           ]}
           field={@form[:description]}
           label={gettext("Description (optional)")}

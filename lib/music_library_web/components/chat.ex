@@ -66,7 +66,7 @@ defmodule MusicLibraryWeb.Components.Chat do
       <.sheet
         id={@sheet_id}
         placement="right"
-        class="w-md sm:min-w-lg lg:min-w-2xl flex flex-col h-full"
+        class="flex h-full w-md flex-col sm:min-w-lg lg:min-w-2xl"
         hide_close_button
       >
         <%= if @view == :list do %>
@@ -99,7 +99,7 @@ defmodule MusicLibraryWeb.Components.Chat do
 
   defp render_list_view(assigns) do
     ~H"""
-    <div class="flex items-center justify-between pb-4 border-b border-zinc-200 dark:border-zinc-700">
+    <div class="flex items-center justify-between border-b border-zinc-200 pb-4 dark:border-zinc-700">
       <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
         {gettext("Chat history")}
       </h2>
@@ -122,11 +122,11 @@ defmodule MusicLibraryWeb.Components.Chat do
     <div class="flex-1 overflow-y-auto py-4">
       <div
         :if={@chats == []}
-        class="flex flex-col items-center justify-center h-full text-center text-zinc-500 dark:text-zinc-400"
+        class="flex h-full flex-col items-center justify-center text-center text-zinc-500 dark:text-zinc-400"
       >
         <.icon
           name="hero-chat-bubble-left-right"
-          class="size-12 mb-4 text-zinc-300 dark:text-zinc-600"
+          class="mb-4 size-12 text-zinc-300 dark:text-zinc-600"
         />
         <p class="text-sm font-medium">{gettext("No previous chats")}</p>
       </div>
@@ -136,12 +136,12 @@ defmodule MusicLibraryWeb.Components.Chat do
           phx-click="select_chat"
           phx-value-id={chat.id}
           phx-target={@myself}
-          class="w-full text-left px-3 py-3 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+          class="w-full rounded-lg p-3 text-left transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800"
         >
-          <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+          <p class="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
             {chat.topic || gettext("Untitled")}
           </p>
-          <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+          <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
             {ngettext("%{count} message", "%{count} messages", chat.message_count)} · {Calendar.strftime(
               chat.updated_at,
               "%b %-d, %Y"
@@ -156,7 +156,7 @@ defmodule MusicLibraryWeb.Components.Chat do
           phx-value-id={chat.id}
           phx-target={@myself}
           aria-label={gettext("Delete chat")}
-          class="absolute top-3 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+          class="absolute top-3 right-2 opacity-0 transition-opacity group-hover:opacity-100"
         >
           <.icon name="hero-trash" class="icon" />
         </.button>
@@ -167,8 +167,8 @@ defmodule MusicLibraryWeb.Components.Chat do
 
   defp render_active_view(assigns) do
     ~H"""
-    <div class="flex items-center gap-2 pb-4 border-b border-zinc-200 dark:border-zinc-700">
-      <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 flex-1">
+    <div class="flex items-center gap-2 border-b border-zinc-200 pb-4 dark:border-zinc-700">
+      <h2 class="flex-1 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
         {gettext("Chat about %{title}", title: @title)}
       </h2>
       <.button
@@ -203,16 +203,16 @@ defmodule MusicLibraryWeb.Components.Chat do
 
     <div
       id={"#{@id}-messages"}
-      class="flex-1 overflow-y-auto py-4 space-y-4"
+      class="flex-1 space-y-4 overflow-y-auto py-4"
       phx-hook=".ScrollBottom"
     >
       <div
         :if={@messages == [] and @current_response == ""}
-        class="flex flex-col items-center justify-center h-full text-center text-zinc-500 dark:text-zinc-400"
+        class="flex h-full flex-col items-center justify-center text-center text-zinc-500 dark:text-zinc-400"
       >
         <.icon
           name="hero-chat-bubble-left-right"
-          class="size-12 mb-4 text-zinc-300 dark:text-zinc-600"
+          class="mb-4 size-12 text-zinc-300 dark:text-zinc-600"
         />
         <p class="text-sm font-medium">{@empty_prompt}</p>
       </div>
@@ -225,16 +225,16 @@ defmodule MusicLibraryWeb.Components.Chat do
         ]}
       >
         <p :if={message.role == "user"} class="whitespace-pre-wrap">{message.content}</p>
-        <div :if={message.role == "assistant"} class="prose prose-sm dark:prose-invert">
+        <div :if={message.role == "assistant"} class="dark:prose-invert prose prose-sm">
           {raw(Markdown.to_html(message.content))}
         </div>
       </div>
 
       <div
         :if={@current_response != ""}
-        class="max-w-[85%] rounded-lg px-4 py-2 text-sm bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100"
+        class="max-w-[85%] rounded-lg bg-zinc-100 px-4 py-2 text-sm text-zinc-900 dark:bg-zinc-700 dark:text-zinc-100"
       >
-        <div class="prose prose-sm dark:prose-invert">
+        <div class="dark:prose-invert prose prose-sm">
           {raw(Markdown.to_html(@current_response))}
         </div>
       </div>
@@ -249,7 +249,7 @@ defmodule MusicLibraryWeb.Components.Chat do
 
       <div
         :if={@error}
-        class="max-w-[85%] rounded-lg px-4 py-2 text-sm bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300"
+        class="max-w-[85%] rounded-lg bg-red-50 px-4 py-2 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-300"
       >
         <p>{@error}</p>
         <.button
@@ -265,7 +265,7 @@ defmodule MusicLibraryWeb.Components.Chat do
       </div>
     </div>
 
-    <div class="pt-4 border-t border-zinc-200 dark:border-zinc-700">
+    <div class="border-t border-zinc-200 pt-4 dark:border-zinc-700">
       <form
         id={"#{@id}-form"}
         phx-submit="send_message"

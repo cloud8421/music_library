@@ -29,7 +29,7 @@ defmodule MusicLibraryWeb.Layouts do
         @current_section == @section &&
           "border-red-500 text-zinc-900 dark:text-zinc-100",
         @current_section !== @section &&
-          "border-transparent text-zinc-500 hover:border-red-300 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200 dark:hover:border-red-700"
+          "border-transparent text-zinc-500 hover:border-red-300 hover:text-zinc-700 dark:text-zinc-300 dark:hover:border-red-700 dark:hover:text-zinc-200"
       ]}
     >
       {render_slot(@inner_block)}
@@ -56,7 +56,7 @@ defmodule MusicLibraryWeb.Layouts do
         )
       ]}
     >
-      <.icon name={@icon} class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
+      <.icon name={@icon} class="mr-2 size-4" aria-hidden="true" data-slot="icon" />
       {render_slot(@inner_block)}
     </.dropdown_link>
     """

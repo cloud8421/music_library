@@ -20,7 +20,7 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
       <span class="sr-only">{gettext("Refresh LastFm Feed")}</span>
       <.icon
         name="hero-arrow-path"
-        class="phx-click-loading:animate-spin h-5 w-5"
+        class="phx-click-loading:animate-spin size-5"
         aria-hidden="true"
         data-slot="icon"
       />
@@ -32,10 +32,10 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
 
   def track_metadata_tooltip(assigns) do
     ~H"""
-    <.tooltip class="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-lg ring-1 ring-zinc-200 dark:ring-zinc-700">
+    <.tooltip class="bg-white text-zinc-900 shadow-lg ring-1 ring-zinc-200 dark:bg-zinc-800 dark:text-zinc-100 dark:ring-zinc-700">
       <.icon
         name="hero-information-circle"
-        class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+        class="size-5 cursor-pointer text-zinc-500 dark:text-zinc-400"
         aria-hidden="true"
         data-slot="icon"
       />
@@ -69,10 +69,10 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
 
   def album_metadata_tooltip(assigns) do
     ~H"""
-    <.tooltip class="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-lg ring-1 ring-zinc-200 dark:ring-zinc-700">
+    <.tooltip class="bg-white text-zinc-900 shadow-lg ring-1 ring-zinc-200 dark:bg-zinc-800 dark:text-zinc-100 dark:ring-zinc-700">
       <.icon
         name="hero-information-circle"
-        class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+        class="size-5 cursor-pointer text-zinc-500 dark:text-zinc-400"
         aria-hidden="true"
         data-slot="icon"
       />
@@ -102,7 +102,7 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
 
   def record_status_badges(assigns) do
     ~H"""
-    <div class="flex gap-1 flex-col text-right">
+    <div class="flex flex-col gap-1 text-right">
       <.badge :if={@musicbrainz_id == ""}>
         {gettext("No MB ID")}
       </.badge>
@@ -127,7 +127,7 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
           <span class="sr-only">{gettext("Choose which format to import")}</span>
           <.icon
             name="hero-star"
-            class="icon text-zinc-500 dark:text-zinc-400 cursor-pointer"
+            class="icon cursor-pointer text-zinc-500 dark:text-zinc-400"
             aria-hidden="true"
             data-slot="icon"
           />
@@ -159,17 +159,17 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
   defp metadata_row(assigns) do
     ~H"""
     <div class="px-3 py-2 first:pt-1.5 last:pb-1.5">
-      <dt class="text-[0.65rem] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+      <dt class="text-[0.65rem] font-medium tracking-wider text-zinc-400 uppercase dark:text-zinc-500">
         {@label}
       </dt>
       <dd class="mt-0.5 flex items-center justify-between gap-2">
         <code
           id={@id_prefix}
           class={[
-            "text-xs font-mono truncate",
+            "truncate font-mono text-xs",
             if(@value not in ["", nil],
               do: "text-zinc-800 dark:text-zinc-200",
-              else: "text-zinc-400 dark:text-zinc-500 italic"
+              else: "text-zinc-400 italic dark:text-zinc-500"
             )
           ]}
         >

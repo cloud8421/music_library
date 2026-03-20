@@ -20,7 +20,7 @@ defmodule MusicLibraryWeb.StatsLive.TopByPeriod do
   def render(assigns) do
     ~H"""
     <div>
-      <h1 class="text-base lg:text-2xl text-zinc-900 dark:text-zinc-200 font-semibold">
+      <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
         {@title}
       </h1>
       <.tabs class="mt-4">
@@ -68,11 +68,11 @@ defmodule MusicLibraryWeb.StatsLive.TopByPeriod do
         </.tabs_list>
         <.async_result :let={items} assign={assigns[@key]}>
           <:loading>
-            <div class="h-182 flex items-center justify-center">
+            <div class="flex h-182 items-center justify-center">
               <.loading />
             </div>
           </:loading>
-          <div class="mt-4 p-4 bg-white dark:bg-zinc-800 rounded-md shadow-sm">
+          <div class="mt-4 rounded-md bg-white p-4 shadow-sm dark:bg-zinc-800">
             <div class="space-y-2">
               {render_slot(@item, items)}
             </div>

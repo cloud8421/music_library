@@ -29,7 +29,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
                   <span class="sr-only">{gettext("Actions")}</span>
                   <.icon
                     name="hero-ellipsis-vertical"
-                    class="icon text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                    class="icon cursor-pointer text-zinc-500 dark:text-zinc-400"
                     aria-hidden="true"
                     data-slot="icon"
                   />
@@ -57,14 +57,14 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
 
         <article
           :if={@record_set.description}
-          class="mt-4 prose dark:prose-invert prose-zinc prose-sm prose-h1:text-sm max-w-none"
+          class="dark:prose-invert prose prose-h1:text-sm prose-sm prose-zinc mt-4 max-w-none"
         >
           {render_description(@record_set.description)}
         </article>
 
         <div class="mt-6">
           <div
-            class="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-8 gap-4"
+            class="grid grid-cols-3 gap-4 sm:grid-cols-6 lg:grid-cols-8"
             id="record-set-records"
             phx-hook="SortableList"
           >
@@ -76,7 +76,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
               class={[
                 "group relative",
                 is_nil(item.record.purchased_at) &&
-                  "opacity-60 dark:opacity-40 hover:opacity-100 transition-opacity"
+                  "opacity-60 transition-opacity hover:opacity-100 dark:opacity-40"
               ]}
             >
               <.link
@@ -85,7 +85,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
               >
                 <MusicLibraryWeb.RecordComponents.record_cover
                   record={item.record}
-                  class="rounded-lg aspect-square object-cover"
+                  class="aspect-square rounded-lg object-cover"
                   width={468}
                 />
               </.link>
@@ -95,13 +95,13 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
               >
                 <MusicLibraryWeb.RecordComponents.record_cover
                   record={item.record}
-                  class="rounded-lg aspect-square object-cover"
+                  class="aspect-square rounded-lg object-cover"
                   width={468}
                 />
               </.link>
               <button
                 data-sortable-handle
-                class="absolute top-1 left-1 flex items-center justify-center rounded-full bg-zinc-100/50 hover:bg-zinc-100/75 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/75 size-8 sm:size-6 cursor-grab active:cursor-grabbing"
+                class="absolute top-1 left-1 flex size-8 cursor-grab items-center justify-center rounded-full bg-zinc-100/50 hover:bg-zinc-100/75 active:cursor-grabbing sm:size-6 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/75"
               >
                 <.icon
                   name="hero-bars-2"
@@ -113,7 +113,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
                 phx-click="remove_record"
                 phx-value-record-id={item.record.id}
                 data-confirm={gettext("Remove this record from the set?")}
-                class="absolute top-1 right-1 flex items-center justify-center rounded-full bg-zinc-100/50 hover:bg-red-100/75 dark:bg-zinc-700/50 dark:hover:bg-red-900/50 size-8 sm:size-6 cursor-pointer"
+                class="absolute top-1 right-1 flex size-8 cursor-pointer items-center justify-center rounded-full bg-zinc-100/50 hover:bg-red-100/75 sm:size-6 dark:bg-zinc-700/50 dark:hover:bg-red-900/50"
               >
                 <span class="sr-only">{gettext("Remove")}</span>
                 <.icon
@@ -122,10 +122,10 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
                   aria-hidden="true"
                 />
               </button>
-              <h2 class="mt-1 text-sm leading-6 text-zinc-700">
+              <h2 class="mt-1 text-sm/6 text-zinc-700">
                 <.artist_links joinphrase_class="text-sm" artists={item.record.artists} />
               </h2>
-              <h3 class="flex font-semibold text-sm leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+              <h3 class="flex text-sm/5 font-semibold text-wrap text-zinc-700 dark:text-zinc-300">
                 {item.record.title}
               </h3>
               <p class="pointer-events-none block text-sm font-medium text-zinc-500">
@@ -134,7 +134,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
               <p class="pointer-events-none block text-sm font-medium text-zinc-500">
                 <.icon
                   name="hero-calendar-days"
-                  class="-mt-1 h-4 w-4"
+                  class="-mt-1 size-4"
                   aria-hidden="true"
                   data-slot="icon"
                 />
@@ -146,15 +146,15 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
               class={[
                 "aspect-square",
                 "border-2 border-dashed border-zinc-300 dark:border-zinc-600",
-                "rounded-lg flex items-center justify-center",
+                "flex items-center justify-center rounded-lg",
                 "hover:border-zinc-400 dark:hover:border-zinc-500",
                 "hover:bg-zinc-50 dark:hover:bg-zinc-800",
-                "transition-colors cursor-pointer"
+                "cursor-pointer transition-colors"
               ]}
             >
               <.icon
                 name="hero-plus"
-                class="h-8 w-8 text-zinc-400 dark:text-zinc-500"
+                class="size-8 text-zinc-400 dark:text-zinc-500"
                 aria-hidden="true"
                 data-slot="icon"
               />

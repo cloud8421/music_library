@@ -17,12 +17,12 @@ defmodule MusicLibraryWeb.RecordComponents do
     <span
       :if={Records.Record.included_release_groups_count(@record) > 0}
       class={[
-        "absolute right-0 bottom-0 rounded-br-lg rounded-tl-lg",
+        "absolute right-0 bottom-0 rounded-tl-lg rounded-br-lg",
         "font-medium",
         "border border-zinc-600/20 dark:border-zinc-500/20",
         @size == :sm &&
-          "px-1 text-xs bg-zinc-200/80 dark:bg-zinc-500/70 text-zinc-700 dark:text-zinc-200",
-        @size == :md && "px-2 text-sm bg-zinc-50 dark:bg-zinc-500/10 text-zinc-700 dark:text-zinc-400"
+          "bg-zinc-200/80 px-1 text-xs text-zinc-700 dark:bg-zinc-500/70 dark:text-zinc-200",
+        @size == :md && "bg-zinc-50 px-2 text-sm text-zinc-700 dark:bg-zinc-500/10 dark:text-zinc-400"
       ]}
     >
       {Records.Record.included_release_groups_count(@record)}
@@ -77,7 +77,7 @@ defmodule MusicLibraryWeb.RecordComponents do
   def record_list(assigns) do
     ~H"""
     <ul
-      class="divide-y divide-zinc-100 dark:divide-zinc-300/20 mt-5"
+      class="mt-5 divide-y divide-zinc-100 dark:divide-zinc-300/20"
       role="list"
       id="records"
       phx-update="stream"
@@ -85,28 +85,28 @@ defmodule MusicLibraryWeb.RecordComponents do
       <li
         :for={{id, record} <- @records}
         phx-click={JS.navigate(@record_show_path.(record))}
-        class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-800 px-2 -mx-2 md:px-4 md:-mx-4 cursor-pointer"
+        class="-mx-2 flex cursor-pointer justify-between gap-x-6 px-2 py-5 hover:bg-zinc-50 md:-mx-4 md:px-4 dark:hover:bg-zinc-800"
         id={id}
       >
-        <div class="flex min-w-0 gap-x-4 items-center">
+        <div class="flex min-w-0 items-center gap-x-4">
           <div class="relative w-20 flex-none">
             <.record_cover record={record} width={160} />
             <.release_groups_badge record={record} />
           </div>
           <div class="min-w-0 flex-auto">
-            <h1 class="text-sm leading-6 text-zinc-700">
+            <h1 class="text-sm/6 text-zinc-700">
               <.artist_links joinphrase_class="text-xs" artists={record.artists} />
             </h1>
-            <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+            <h2 class="mt-1 flex text-sm/5 font-semibold text-wrap text-zinc-700 sm:text-base dark:text-zinc-300">
               {record.title}
             </h2>
-            <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+            <p class="mt-1 text-xs/5 text-zinc-500 dark:text-zinc-400">
               {Records.Record.format_release_date(record.release_date)}
               <span :if={@current_date && !Records.Record.released?(record, @current_date)}>
                 ({gettext("Unreleased")})
               </span>
             </p>
-            <p class="sm:hidden mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+            <p class="mt-1 text-xs/5 text-zinc-500 sm:hidden dark:text-zinc-400">
               {format_label(record.format)} · {type_label(record.type)}
               <span :if={record.purchased_at}>
                 ·
@@ -115,7 +115,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                 </span>
                 <.icon
                   name="hero-banknotes"
-                  class="h-4 w-4"
+                  class="size-4"
                   aria-hidden="true"
                   data-slot="icon"
                 />
@@ -126,7 +126,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                 <span class="sr-only">
                   {gettext("Wishlisted on")}
                 </span>
-                <.icon name="hero-star" class="h-4 w-4" aria-hidden="true" data-slot="icon" />
+                <.icon name="hero-star" class="size-4" aria-hidden="true" data-slot="icon" />
                 {Records.Record.format_as_date(record.inserted_at)}
               </span>
             </p>
@@ -134,21 +134,21 @@ defmodule MusicLibraryWeb.RecordComponents do
         </div>
         <div class="flex shrink-0 items-center gap-x-6">
           <div class="hidden sm:flex sm:flex-col sm:items-end">
-            <p class="text-xs leading-6 text-zinc-900 dark:text-zinc-300">
+            <p class="text-xs/6 text-zinc-900 dark:text-zinc-300">
               {format_label(record.format)} · {type_label(record.type)}
             </p>
-            <p :if={record.purchased_at} class="text-xs leading-6 text-zinc-900 dark:text-zinc-300">
+            <p :if={record.purchased_at} class="text-xs/6 text-zinc-900 dark:text-zinc-300">
               <span class="sr-only">
                 {gettext("Purchased on")}
               </span>
-              <.icon name="hero-banknotes" class="h-4 w-4" aria-hidden="true" data-slot="icon" />
+              <.icon name="hero-banknotes" class="size-4" aria-hidden="true" data-slot="icon" />
               {Records.Record.format_as_date(record.purchased_at)}
             </p>
-            <p :if={!record.purchased_at} class="text-xs leading-6 text-zinc-900 dark:text-zinc-300">
+            <p :if={!record.purchased_at} class="text-xs/6 text-zinc-900 dark:text-zinc-300">
               <span class="sr-only">
                 {gettext("Wishlisted on")}
               </span>
-              <.icon name="hero-star" class="h-4 w-4" aria-hidden="true" data-slot="icon" />
+              <.icon name="hero-star" class="size-4" aria-hidden="true" data-slot="icon" />
               {Records.Record.format_as_date(record.inserted_at)}
             </p>
           </div>
@@ -162,7 +162,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                 <span class="sr-only">{gettext("Actions")}</span>
                 <.icon
                   name="hero-ellipsis-vertical"
-                  class="icon text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                  class="icon cursor-pointer text-zinc-500 dark:text-zinc-400"
                   aria-hidden="true"
                   data-slot="icon"
                 />
@@ -172,7 +172,7 @@ defmodule MusicLibraryWeb.RecordComponents do
               <.dropdown_link id={"actions-#{record.id}-edit"} patch={@record_edit_path.(record)}>
                 <.icon
                   name="hero-pencil-square"
-                  class="h-4 w-4 mr-1 phx-click-loading:animate-bounce"
+                  class="phx-click-loading:animate-bounce mr-1 size-4"
                   aria-hidden="true"
                   data-slot="icon"
                 />
@@ -189,7 +189,7 @@ defmodule MusicLibraryWeb.RecordComponents do
               >
                 <.icon
                   name="hero-banknotes"
-                  class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
+                  class="phx-click-loading:animate-shake mr-1 size-4"
                   aria-hidden="true"
                   data-slot="icon"
                 />
@@ -206,7 +206,7 @@ defmodule MusicLibraryWeb.RecordComponents do
               >
                 <.icon
                   name="hero-trash"
-                  class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
+                  class="phx-click-loading:animate-spin mr-1 size-4"
                   aria-hidden="true"
                   data-slot="icon"
                 />
@@ -237,7 +237,7 @@ defmodule MusicLibraryWeb.RecordComponents do
         :if={@title}
         class="flex items-baseline justify-start"
       >
-        <h2 class="font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300">
+        <h2 class="text-base/5 font-semibold text-zinc-700 sm:text-lg dark:text-zinc-300">
           {@title}
         </h2>
         <span class="ml-2 text-xs font-normal text-zinc-700 dark:text-zinc-300">
@@ -257,22 +257,22 @@ defmodule MusicLibraryWeb.RecordComponents do
       >
         <li :for={{id, record} <- @records} id={id} class="relative">
           <div
-            class="relative cursor-pointer group"
+            class="group relative cursor-pointer"
             phx-click={JS.navigate(@record_show_path.(record))}
           >
             <.record_cover
               record={record}
-              class="aspect-square object-cover rounded-lg group-hover:shadow-lg/20"
+              class="aspect-square rounded-lg object-cover group-hover:shadow-lg/20"
               width={460}
             />
             <.release_groups_badge record={record} size={:md} />
-            <div class="absolute right-2 top-2 rounded-full bg-zinc-100/50 hover:bg-zinc-100/75 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/75 size-5">
+            <div class="absolute top-2 right-2 size-5 rounded-full bg-zinc-100/50 hover:bg-zinc-100/75 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/75">
               <.dropdown id={"actions-#{record.id}"} placement="bottom-end">
                 <:toggle>
                   <span class="sr-only">{gettext("Actions")}</span>
                   <.icon
                     name="hero-ellipsis-vertical"
-                    class="size-5 text-zinc-800 dark:text-zinc-200 cursor-pointer"
+                    class="size-5 cursor-pointer text-zinc-800 dark:text-zinc-200"
                     aria-hidden="true"
                     data-slot="icon"
                     phx-click={JS.toggle_class("pointer-events-none", to: "#{@id} > li")}
@@ -286,7 +286,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                   >
                     <.icon
                       name="hero-pencil-square"
-                      class="h-4 w-4 mr-1 phx-click-loading:animate-bounce"
+                      class="phx-click-loading:animate-bounce mr-1 size-4"
                       aria-hidden="true"
                       data-slot="icon"
                     />
@@ -303,7 +303,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                   >
                     <.icon
                       name="hero-banknotes"
-                      class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
+                      class="phx-click-loading:animate-shake mr-1 size-4"
                       aria-hidden="true"
                       data-slot="icon"
                     />
@@ -318,7 +318,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                   >
                     <.icon
                       name="hero-trash"
-                      class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
+                      class="phx-click-loading:animate-spin mr-1 size-4"
                       aria-hidden="true"
                       data-slot="icon"
                     />
@@ -331,7 +331,7 @@ defmodule MusicLibraryWeb.RecordComponents do
           <div class="mt-2">
             <h1
               :if={@display_artist_names}
-              class="text-sm leading-6 text-zinc-700"
+              class="text-sm/6 text-zinc-700"
             >
               <.artist_links joinphrase_class="text-xs" artists={record.artists} />
             </h1>
@@ -345,7 +345,7 @@ defmodule MusicLibraryWeb.RecordComponents do
           <p class="pointer-events-none block text-sm font-medium text-zinc-500">
             <.icon
               name="hero-calendar-days"
-              class="-mt-1 h-4 w-4"
+              class="-mt-1 size-4"
               aria-hidden="true"
               data-slot="icon"
             />
@@ -356,7 +356,7 @@ defmodule MusicLibraryWeb.RecordComponents do
             >
               <.icon
                 name="hero-banknotes"
-                class="h-4 w-4"
+                class="size-4"
                 aria-hidden="true"
                 data-slot="icon"
               />
@@ -376,7 +376,7 @@ defmodule MusicLibraryWeb.RecordComponents do
     ~H"""
     <div class={[
       @class,
-      "grid grid-cols-2 w-full auto-cols-min items-center space-x-1 text-zinc-700 dark:text-zinc-300"
+      "grid w-full auto-cols-min grid-cols-2 items-center space-x-1 text-zinc-700 dark:text-zinc-300"
     ]}>
       <div class="space-x-1">
         <.format_badge release={@release} />
@@ -454,10 +454,10 @@ defmodule MusicLibraryWeb.RecordComponents do
 
   def record_colors(assigns) do
     ~H"""
-    <span class="inline-flex items-end gap-0.5 w-5.5 h-3.5">
+    <span class="inline-flex h-3.5 w-5.5 items-end gap-0.5">
       <span
         :for={{color, i} <- Enum.with_index(@record.dominant_colors)}
-        class="w-0.75 rounded-sm animate-equalizer-bar"
+        class="animate-equalizer-bar w-0.75 rounded-sm"
         style={"background-color: #{color}; animation-delay: #{i * -0.45}s"}
       >
       </span>
@@ -483,7 +483,7 @@ defmodule MusicLibraryWeb.RecordComponents do
           release={release}
           class={
             @record.selected_release_id == release.id &&
-              "bg-zinc-100 outline-zinc-100 dark:bg-zinc-700 dark:outline-zinc-700 outline-4 rounded-lg"
+              "rounded-lg bg-zinc-100 outline-4 outline-zinc-100 dark:bg-zinc-700 dark:outline-zinc-700"
           }
         />
       </div>
@@ -521,7 +521,7 @@ defmodule MusicLibraryWeb.RecordComponents do
   def record_title_and_metadata(assigns) do
     ~H"""
     <div>
-      <h2 class="mt-1 flex font-semibold text-lg md:text-2xl text-zinc-700 dark:text-zinc-300 text-wrap">
+      <h2 class="mt-1 flex text-lg font-semibold text-wrap text-zinc-700 md:text-2xl dark:text-zinc-300">
         {@record.title}
       </h2>
       <p class="mt-2 flex items-center text-sm text-zinc-500 dark:text-zinc-400">
@@ -529,7 +529,7 @@ defmodule MusicLibraryWeb.RecordComponents do
         <span class="ml-1">
           <.icon
             name="hero-calendar-days"
-            class="-mt-1 h-4 w-4"
+            class="-mt-1 size-4"
             aria-hidden="true"
             data-slot="icon"
           />
@@ -657,7 +657,7 @@ defmodule MusicLibraryWeb.RecordComponents do
         <li :for={record_set <- @record_sets} class="flex items-baseline gap-2">
           <.link
             navigate={~p"/record-sets/#{record_set}"}
-            class="text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300 hover:underline"
+            class="text-zinc-700 hover:text-zinc-500 hover:underline dark:text-zinc-400 dark:hover:text-zinc-300"
           >
             {record_set.name}
           </.link>
@@ -678,7 +678,7 @@ defmodule MusicLibraryWeb.RecordComponents do
   def record_timestamps(assigns) do
     ~H"""
     <p class="mt-2 flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500">
-      <.icon name="hero-clock" class="h-3.5 w-3.5" aria-hidden="true" />
+      <.icon name="hero-clock" class="size-3.5" aria-hidden="true" />
       {gettext("Added %{date}", date: Records.Record.format_as_date(@record.inserted_at))}
       <span>·</span>
       {gettext("Updated %{date}", date: Records.Record.format_as_date(@record.updated_at))}

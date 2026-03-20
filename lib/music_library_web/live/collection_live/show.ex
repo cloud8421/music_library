@@ -31,7 +31,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
-      <div class="lg:grid lg:grid-cols-2 xl:grid-cols-5 mt-4 px-4 md:gap-x-4">
+      <div class="mt-4 px-4 md:gap-x-4 lg:grid lg:grid-cols-2 xl:grid-cols-5">
         <div class="drop-shadow-sm xl:col-span-2">
           <.record_cover
             record={@record}
@@ -40,8 +40,8 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
         </div>
 
         <div class="xl:col-span-3">
-          <div class="mt-4 md:mt-0 flex justify-between items-center">
-            <h1 class="text-base font-medium leading-6 text-zinc-700">
+          <div class="mt-4 flex items-center justify-between md:mt-0">
+            <h1 class="text-base/6 font-medium text-zinc-700">
               <.artist_links joinphrase_class="text-sm" artists={@record.artists} />
             </h1>
             <div class="min-w-12">
@@ -91,7 +91,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                       <span class="sr-only">{gettext("Actions")}</span>
                       <.icon
                         name="hero-ellipsis-vertical"
-                        class="icon text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                        class="icon cursor-pointer text-zinc-500 dark:text-zinc-400"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -104,7 +104,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                     >
                       <.icon
                         name="hero-pencil"
-                        class="h-4 w-4 mr-1"
+                        class="mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -117,7 +117,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                     >
                       <.icon
                         name="hero-code-bracket"
-                        class="h-4 w-4 mr-1"
+                        class="mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -132,7 +132,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                     >
                       <.icon
                         name="hero-pencil-square"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-bounce"
+                        class="phx-click-loading:animate-bounce mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -145,7 +145,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                     >
                       <.icon
                         name="hero-photo"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-bounce"
+                        class="phx-click-loading:animate-bounce mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -158,7 +158,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                     >
                       <.icon
                         name="hero-arrow-path"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
+                        class="phx-click-loading:animate-spin mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -171,7 +171,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                     >
                       <.icon
                         name="hero-sparkles"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
+                        class="phx-click-loading:animate-shake mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -184,7 +184,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                     >
                       <.icon
                         name="hero-sparkles"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
+                        class="phx-click-loading:animate-shake mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -197,7 +197,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                     >
                       <.icon
                         name="hero-paint-brush"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
+                        class="phx-click-loading:animate-shake mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -213,7 +213,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                     >
                       <.icon
                         name="hero-trash"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
+                        class="phx-click-loading:animate-spin mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -248,7 +248,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                 <div class="flex justify-between space-x-2">
                   <span
                     :if={!@record.selected_release_id}
-                    class="text-xs md:text-sm text-zinc-700 dark:text-zinc-300"
+                    class="text-xs text-zinc-700 md:text-sm dark:text-zinc-300"
                   >
                     {gettext("No release selected")}
                   </span>
@@ -552,7 +552,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     ~H"""
     <div :if={@similar_records != []} class="mt-8 px-4">
       <header class="flex items-baseline justify-start">
-        <h2 class="font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300">
+        <h2 class="text-base/5 font-semibold text-zinc-700 sm:text-lg dark:text-zinc-300">
           {gettext("Similar Records")}
         </h2>
         <span class="ml-2 text-xs font-normal text-zinc-500 dark:text-zinc-400">
@@ -562,7 +562,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
       <ul
         role="list"
-        class="mt-4 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 sm:gap-x-6"
+        class="mt-4 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 sm:gap-x-6 md:grid-cols-4 lg:grid-cols-6"
       >
         <li
           :for={%{record: record, similarity: similarity} <- @similar_records}
@@ -572,10 +572,10 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
           <div class="group">
             <.record_cover
               record={record}
-              class="aspect-square object-cover rounded-lg group-hover:shadow-lg/20"
+              class="aspect-square rounded-lg object-cover group-hover:shadow-lg/20"
               width={300}
             />
-            <span class="absolute top-2 right-2 rounded-full px-2 py-0.5 text-xs font-medium bg-zinc-900/75 text-white backdrop-blur-sm">
+            <span class="absolute top-2 right-2 rounded-full bg-zinc-900/75 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-sm">
               {Float.round(100 - similarity * 100, 0)}%
             </span>
           </div>

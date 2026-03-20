@@ -18,8 +18,8 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
-      <header class="gap-6 mb-2">
-        <div class="flex items-center justify-between gap-6 mb-2 mt-2">
+      <header class="mb-2 gap-6">
+        <div class="my-2 flex items-center justify-between gap-6">
           <.search_form query={@list_params.query} />
           <.button_group>
             <.button
@@ -42,7 +42,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
         </div>
       </header>
 
-      <div class="flex items-end justify-between gap-6 mt-6">
+      <div class="mt-6 flex items-end justify-between gap-6">
         <.button_group>
           <.button
             patch={order_path(@list_params, :alphabetical)}
@@ -75,9 +75,9 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
         >
           <li
             id="no-scrobble-rules"
-            class="hidden only:block p-8 text-center bg-zinc-50 dark:bg-zinc-800 rounded-lg"
+            class="hidden rounded-lg bg-zinc-50 p-8 text-center only:block dark:bg-zinc-800"
           >
-            <.icon name="hero-beaker" class="h-12 w-12 text-zinc-400 mx-auto mb-4" />
+            <.icon name="hero-beaker" class="mx-auto mb-4 size-12 text-zinc-400" />
             <p class="text-zinc-600 dark:text-zinc-400">
               {gettext("No scrobble rules found")}
             </p>
@@ -91,25 +91,25 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
             <div class="min-w-0">
               <div class="flex items-center gap-2">
                 <.type_badge type={scrobble_rule.type} />
-                <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+                <p class="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">
                   {scrobble_rule.match_value}
                 </p>
               </div>
-              <p class="text-xs font-mono text-zinc-500 dark:text-zinc-400 mt-1 truncate">
+              <p class="mt-1 truncate font-mono text-xs text-zinc-500 dark:text-zinc-400">
                 {scrobble_rule.target_musicbrainz_id}
               </p>
               <p
                 :if={scrobble_rule.description}
-                class="text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate"
+                class="mt-1 truncate text-xs text-zinc-500 dark:text-zinc-400"
               >
                 {scrobble_rule.description}
               </p>
-              <div class="flex items-center gap-1 mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                <.icon name="hero-clock" class="h-3.5 w-3.5" aria-hidden="true" />
+              <div class="mt-1 flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400">
+                <.icon name="hero-clock" class="size-3.5" aria-hidden="true" />
                 {Calendar.strftime(scrobble_rule.inserted_at, "%Y-%m-%d")}
               </div>
             </div>
-            <div class="flex items-center gap-2 shrink-0">
+            <div class="flex shrink-0 items-center gap-2">
               <.status_badge enabled={scrobble_rule.enabled} />
               <.dropdown id={"actions-#{scrobble_rule.id}"} placement="bottom-end">
                 <:toggle>
@@ -117,7 +117,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLive.Index do
                     <span class="sr-only">{gettext("Actions")}</span>
                     <.icon
                       name="hero-ellipsis-vertical"
-                      class="icon text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                      class="icon cursor-pointer text-zinc-500 dark:text-zinc-400"
                       aria-hidden="true"
                       data-slot="icon"
                     />

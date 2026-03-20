@@ -20,7 +20,7 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
           <div class="relative">
             <.icon
               name="hero-magnifying-glass"
-              class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-zinc-400"
+              class="absolute top-1/2 left-3 size-5 -translate-y-1/2 transform text-zinc-400"
             />
             <label for="universal-search-input" class="sr-only">Universal Search</label>
             <.input
@@ -38,7 +38,7 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
 
         <.no_results :if={@search_query != "" and @total_results == 0} query={@search_query} />
 
-        <div :if={@total_results > 0} class="max-h-148 md:max-h-164 overflow-y-auto mt-4">
+        <div :if={@total_results > 0} class="mt-4 max-h-148 overflow-y-auto md:max-h-164">
           <.search_result_group
             :if={length(@navigation_links_results) > 0}
             title={gettext("Go to")}

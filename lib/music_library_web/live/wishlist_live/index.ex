@@ -21,7 +21,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
     ~H"""
     <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
       <header class="mb-2">
-        <div class="flex items-center justify-between gap-6 mb-2 mt-2">
+        <div class="my-2 flex items-center justify-between gap-6">
           <.search_form query={@record_list_params.query} />
           <.button
             variant="solid"
@@ -34,7 +34,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
         </div>
       </header>
 
-      <div class="flex items-end justify-between gap-6 mt-6">
+      <div class="mt-6 flex items-end justify-between gap-6">
         <.button_group>
           <.button
             patch={order_path(@record_list_params, :insertion)}

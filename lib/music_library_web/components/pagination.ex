@@ -12,7 +12,7 @@ defmodule MusicLibraryWeb.Components.Pagination do
     <div
       :if={@page_links.total_pages > 1}
       id={@id}
-      class="flex items-center justify-between px-4 py-6 mb-4"
+      class="mb-4 flex items-center justify-between px-4 py-6"
     >
       <%!-- Only on smallest viewport --%>
       <div class={[
@@ -34,7 +34,7 @@ defmodule MusicLibraryWeb.Components.Pagination do
           {gettext("Next")}
         </.button>
       </div>
-      <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-items-center sm:justify-center">
+      <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-center sm:justify-items-center">
         <div>
           <.button_group>
             <.prev_link

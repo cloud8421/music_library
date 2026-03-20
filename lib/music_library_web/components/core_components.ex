@@ -113,7 +113,7 @@ defmodule MusicLibraryWeb.CoreComponents do
   def debug_data_sheet(assigns) do
     ~H"""
     <.sheet :if={@items != []} id={@id} placement="right" class="w-md sm:min-w-lg lg:min-w-2xl">
-      <h2 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
+      <h2 class="mb-4 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
         {gettext("Debug data")}
       </h2>
       <.tabs id={"#{@id}-tabs"}>
@@ -122,11 +122,11 @@ defmodule MusicLibraryWeb.CoreComponents do
         </.tabs_list>
         <.tabs_panel :for={item <- @items} name={item.name} active={item == hd(@items)}>
           <%= if item.type == :json do %>
-            <div class="mt-4 overflow-auto text-xs rounded-lg [&_pre]:p-4 [&_pre]:rounded-lg">
+            <div class="mt-4 overflow-auto rounded-lg text-xs [&_pre]:rounded-lg [&_pre]:p-4">
               {format_debug_data(item)}
             </div>
           <% else %>
-            <pre class="mt-4 overflow-auto text-xs font-mono text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-800 rounded-lg p-4"><code>{format_debug_data(item)}</code></pre>
+            <pre class="mt-4 overflow-auto rounded-lg bg-zinc-50 p-4 font-mono text-xs text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"><code>{format_debug_data(item)}</code></pre>
           <% end %>
         </.tabs_panel>
       </.tabs>
@@ -160,7 +160,7 @@ defmodule MusicLibraryWeb.CoreComponents do
     ~H"""
     <Fluxon.Components.Modal.modal
       id={@id}
-      class="mx-auto sm:min-w-2xl max-w-sm md:max-w-3xl mt-8"
+      class="mx-auto mt-8 max-w-sm sm:min-w-2xl md:max-w-3xl"
       placement="top"
       open={@open}
       on_close={@on_close}
@@ -178,7 +178,7 @@ defmodule MusicLibraryWeb.CoreComponents do
       :if={@external_links != []}
       class="mt-4 text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
     >
-      <summary class="text-xs sm:text-sm font-medium cursor-pointer">
+      <summary class="cursor-pointer text-xs font-medium sm:text-sm">
         {gettext("External Links")}
       </summary>
       <div class="mt-4 space-y-2">
@@ -236,10 +236,10 @@ defmodule MusicLibraryWeb.CoreComponents do
   def dl_row(assigns) do
     ~H"""
     <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-      <dt class="text-xs md:text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+      <dt class="text-xs/6 font-medium text-zinc-900 md:text-sm dark:text-zinc-400">
         {@label}
       </dt>
-      <dd class="mt-1 text-xs md:text-sm leading-6 text-zinc-700 dark:text-zinc-300 sm:col-span-2 sm:mt-0">
+      <dd class="mt-1 text-xs/6 text-zinc-700 sm:col-span-2 sm:mt-0 md:text-sm dark:text-zinc-300">
         {render_slot(@inner_block)}
       </dd>
     </div>

@@ -21,7 +21,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
     ~H"""
     <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
       <header class="mb-6">
-        <div class="flex items-center justify-between gap-6 mb-2 mt-2">
+        <div class="my-2 flex items-center justify-between gap-6">
           <.search_form query={@list_params.query} />
           <.button
             variant="solid"
@@ -34,7 +34,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
         </div>
       </header>
 
-      <div class="flex items-end justify-between gap-6 mt-4">
+      <div class="mt-4 flex items-end justify-between gap-6">
         <.button_group>
           <.button
             patch={order_path(@list_params, :updated_at)}
@@ -59,9 +59,9 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
         <ul id="record-sets-list" class="space-y-6" phx-update="stream">
           <li
             id="no-record-sets"
-            class="hidden only:block p-8 text-center bg-zinc-50 dark:bg-zinc-800 rounded-lg"
+            class="hidden rounded-lg bg-zinc-50 p-8 text-center only:block dark:bg-zinc-800"
           >
-            <.icon name="hero-rectangle-stack" class="h-12 w-12 text-zinc-400 mx-auto mb-4" />
+            <.icon name="hero-rectangle-stack" class="mx-auto mb-4 size-12 text-zinc-400" />
             <p class="text-zinc-600 dark:text-zinc-400">
               {gettext("No record sets yet")}
             </p>
@@ -271,23 +271,23 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
     ~H"""
     <li
       id={@id}
-      class="bg-white dark:bg-zinc-900 rounded-md shadow-sm border-zinc-200 dark:border-zinc-700 p-4"
+      class="rounded-md border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-700 dark:bg-zinc-900"
     >
-      <div class="flex items-baseline justify-between mb-3">
+      <div class="mb-3 flex items-baseline justify-between">
         <div class="grow">
-          <header class="sm:flex items-baseline justify-start">
+          <header class="items-baseline justify-start sm:flex">
             <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
               <.link navigate={~p"/record-sets/#{@record_set}"} class="hover:underline">
                 {@record_set.name}
               </.link>
             </h2>
-            <span class="sm:ml-2 text-xs text-zinc-500 dark:text-zinc-400">
+            <span class="text-xs text-zinc-500 sm:ml-2 dark:text-zinc-400">
               {gettext("%{collected}/%{total} records", RecordSet.count_by_status(@record_set))}
             </span>
           </header>
           <article
             :if={@record_set.description}
-            class="text-sm my-4 prose dark:prose-invert prose-zinc prose-sm prose-h1:text-sm max-w-none"
+            class="dark:prose-invert prose prose-h1:text-sm prose-sm prose-zinc my-4 max-w-none text-sm"
           >
             {@html_description}
           </article>
@@ -299,7 +299,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
                 <span class="sr-only">{gettext("Actions")}</span>
                 <.icon
                   name="hero-ellipsis-vertical"
-                  class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                  class="size-5 cursor-pointer text-zinc-500 dark:text-zinc-400"
                   aria-hidden="true"
                   data-slot="icon"
                 />
@@ -327,7 +327,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
       </div>
 
       <div
-        class="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12 gap-3 pb-2"
+        class="grid grid-cols-3 gap-3 pb-2 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12"
         id={"record-set-#{@record_set.id}-items"}
         phx-hook="SortableList"
         data-set-id={@record_set.id}
@@ -338,9 +338,9 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
           data-sortable-item
           data-record-id={item.record.id}
           class={[
-            "flex-none group relative",
+            "group relative flex-none",
             is_nil(item.record.purchased_at) &&
-              "opacity-60 dark:opacity-40 hover:opacity-100 transition-opacity"
+              "opacity-60 transition-opacity hover:opacity-100 dark:opacity-40"
           ]}
         >
           <.link
@@ -349,7 +349,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
           >
             <MusicLibraryWeb.RecordComponents.record_cover
               record={item.record}
-              class="rounded-lg aspect-square object-cover"
+              class="aspect-square rounded-lg object-cover"
               width={256}
             />
           </.link>
@@ -359,13 +359,13 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
           >
             <MusicLibraryWeb.RecordComponents.record_cover
               record={item.record}
-              class="rounded-lg aspect-square object-cover"
+              class="aspect-square rounded-lg object-cover"
               width={256}
             />
           </.link>
           <div
             data-sortable-handle
-            class="absolute top-1 left-1 flex items-center justify-center rounded-full bg-zinc-100/50 hover:bg-zinc-100/75 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/75 size-8 sm:size-5 cursor-grab active:cursor-grabbing"
+            class="absolute top-1 left-1 flex size-8 cursor-grab items-center justify-center rounded-full bg-zinc-100/50 hover:bg-zinc-100/75 active:cursor-grabbing sm:size-5 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/75"
           >
             <.icon
               name="hero-bars-2"
@@ -378,7 +378,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
             phx-value-set-id={@record_set.id}
             phx-value-record-id={item.record.id}
             data-confirm={gettext("Remove this record from the set?")}
-            class="absolute top-1 right-1 flex items-center justify-center rounded-full bg-zinc-100/50 hover:bg-red-100/75 dark:bg-zinc-700/50 dark:hover:bg-red-900/50 size-8 sm:size-5 cursor-pointer"
+            class="absolute top-1 right-1 flex size-8 cursor-pointer items-center justify-center rounded-full bg-zinc-100/50 hover:bg-red-100/75 sm:size-5 dark:bg-zinc-700/50 dark:hover:bg-red-900/50"
           >
             <span class="sr-only">{gettext("Remove")}</span>
             <.icon
@@ -387,10 +387,10 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
               aria-hidden="true"
             />
           </button>
-          <h2 class="mt-1 text-sm leading-6 text-zinc-700">
+          <h2 class="mt-1 text-sm/6 text-zinc-700">
             <.artist_links joinphrase_class="text-sm" artists={item.record.artists} />
           </h2>
-          <h3 class="flex font-semibold text-sm leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+          <h3 class="flex text-sm/5 font-semibold text-wrap text-zinc-700 dark:text-zinc-300">
             {item.record.title}
           </h3>
           <p class="pointer-events-none block text-sm font-medium text-zinc-500">
@@ -399,7 +399,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
           <p class="pointer-events-none block text-sm font-medium text-zinc-500">
             <.icon
               name="hero-calendar-days"
-              class="-mt-1 h-4 w-4"
+              class="-mt-1 size-4"
               aria-hidden="true"
               data-slot="icon"
             />
@@ -410,17 +410,17 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
         <.link
           patch={~p"/record-sets/#{@record_set}/add-record"}
           class={[
-            "flex-none aspect-square",
+            "aspect-square flex-none",
             "border-2 border-dashed border-zinc-300 dark:border-zinc-600",
-            "rounded-lg flex items-center justify-center",
+            "flex items-center justify-center rounded-lg",
             "hover:border-zinc-400 dark:hover:border-zinc-500",
             "hover:bg-zinc-50 dark:hover:bg-zinc-800",
-            "transition-colors cursor-pointer"
+            "cursor-pointer transition-colors"
           ]}
         >
           <.icon
             name="hero-plus"
-            class="h-8 w-8 text-zinc-400 dark:text-zinc-500"
+            class="size-8 text-zinc-400 dark:text-zinc-500"
             aria-hidden="true"
             data-slot="icon"
           />

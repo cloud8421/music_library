@@ -21,7 +21,7 @@ defmodule MusicLibraryWeb.StatsComponents do
     <div
       :if={@record}
       class={[
-        "flex items-center rounded-md bg-white dark:bg-zinc-800 px-4 pb-5 pt-5 shadow-sm sm:px-6 sm:pt-6 cursor-pointer",
+        "flex cursor-pointer items-center rounded-md bg-white px-4 py-5 shadow-sm sm:px-6 sm:pt-6 dark:bg-zinc-800",
         @class
       ]}
       phx-click={JS.navigate(~p"/collection/#{@record}")}
@@ -29,16 +29,16 @@ defmodule MusicLibraryWeb.StatsComponents do
       <div>
         <.record_cover
           record={@record}
-          class="w-20 md:w-24 rounded-md shadow-sm"
+          class="w-20 rounded-md shadow-sm md:w-24"
           width={192}
         />
       </div>
       <div class="ml-4">
-        <p class="truncate text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400">
+        <p class="truncate text-xs font-medium text-zinc-500 sm:text-sm dark:text-zinc-400">
           {@title}
         </p>
         <p class="font-semibold">
-          <span class="text-sm md:text-base lg:text-2xl block text-zinc-900 dark:text-zinc-300">
+          <span class="block text-sm text-zinc-900 md:text-base lg:text-2xl dark:text-zinc-300">
             {@record.title}
           </span>
           <.artist_links artists={@record.artists} joinphrase_class="text-sm md:text-base" />
@@ -48,11 +48,11 @@ defmodule MusicLibraryWeb.StatsComponents do
     <div
       :if={!@record}
       class={[
-        "flex items-center rounded-md bg-white dark:bg-zinc-800 px-4 pb-5 pt-5 shadow-sm sm:px-6 sm:pt-6 cursor-pointer",
+        "flex cursor-pointer items-center rounded-md bg-white px-4 py-5 shadow-sm sm:px-6 sm:pt-6 dark:bg-zinc-800",
         @class
       ]}
     >
-      <p class="truncate text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400">
+      <p class="truncate text-xs font-medium text-zinc-500 sm:text-sm dark:text-zinc-400">
         {gettext("No record found")}
       </p>
     </div>
@@ -66,10 +66,10 @@ defmodule MusicLibraryWeb.StatsComponents do
 
   def counter(assigns) do
     ~H"""
-    <div class="overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow-sm flex justify-center items-center">
+    <div class="flex items-center justify-center overflow-hidden rounded-md bg-white shadow-sm dark:bg-zinc-800">
       <div class="p-4 md:p-0">
         <dt>
-          <p class="truncate text-sm font-medium text-center text-zinc-500 dark:text-zinc-400">
+          <p class="truncate text-center text-sm font-medium text-zinc-500 dark:text-zinc-400">
             {@title}
           </p>
         </dt>
@@ -77,13 +77,13 @@ defmodule MusicLibraryWeb.StatsComponents do
           <.link
             :if={@path}
             navigate={@path}
-            class="block text-2xl sm:text-3xl font-semibold text-center text-zinc-900 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
+            class="block text-center text-2xl font-semibold text-zinc-900 hover:text-zinc-500 sm:text-3xl dark:text-zinc-300 dark:hover:text-zinc-200"
           >
             {@count}
           </.link>
           <p
             :if={!@path}
-            class="block cursor-default text-2xl sm:text-3xl font-semibold text-center text-zinc-900 dark:text-zinc-300"
+            class="block cursor-default text-center text-2xl font-semibold text-zinc-900 sm:text-3xl dark:text-zinc-300"
           >
             {@count}
           </p>
@@ -96,13 +96,13 @@ defmodule MusicLibraryWeb.StatsComponents do
             <.link
               :if={@path}
               navigate={@path}
-              class="block text-2xl sm:text-3xl font-semibold text-center text-zinc-900 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
+              class="block text-center text-2xl font-semibold text-zinc-900 hover:text-zinc-500 sm:text-3xl dark:text-zinc-300 dark:hover:text-zinc-200"
             >
               {@count}
             </.link>
             <p
               :if={!@path}
-              class="block cursor-default text-2xl sm:text-3xl font-semibold text-center text-zinc-900 dark:text-zinc-300"
+              class="block cursor-default text-center text-2xl font-semibold text-zinc-900 sm:text-3xl dark:text-zinc-300"
             >
               {@count}
             </p>
@@ -120,16 +120,16 @@ defmodule MusicLibraryWeb.StatsComponents do
   def counters_by_category(assigns) do
     ~H"""
     <dl class={[
-      "mt-5 grid divide-zinc-200 dark:divide-zinc-900 overflow-hidden rounded-md bg-white dark:bg-zinc-800 shadow-sm divide-x",
+      "mt-5 grid divide-x divide-zinc-200 overflow-hidden rounded-md bg-white shadow-sm dark:divide-zinc-900 dark:bg-zinc-800",
       stats_class(@categories_with_counts)
     ]}>
       <div :for={{category, count} <- @categories_with_counts} class="px-2 py-5 sm:px-4">
-        <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center max-sm:text-xs break-keep">
+        <dt class="text-center text-sm font-medium break-keep text-zinc-500 max-sm:text-xs dark:text-zinc-400">
           {@category_format_fn.(category)}
         </dt>
         <dd class="mt-1 text-center">
           <.link
-            class="text-xl lg:text-2xl font-semibold hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200"
+            class="text-xl font-semibold hover:text-zinc-500 lg:text-2xl dark:text-zinc-300 dark:hover:text-zinc-200"
             navigate={@category_path_fn.(category)}
           >
             {count}
@@ -153,7 +153,7 @@ defmodule MusicLibraryWeb.StatsComponents do
     >
       <li
         id="no-records-on-this-day"
-        class="hidden py-8 only:flex items-center justify-center text-sm text-zinc-500 dark:text-zinc-400"
+        class="hidden items-center justify-center py-8 text-sm text-zinc-500 only:flex dark:text-zinc-400"
       >
         {gettext("No records released on this day.")}
       </li>
@@ -166,22 +166,22 @@ defmodule MusicLibraryWeb.StatsComponents do
               record_show_path={@record_show_path}
             />
           <% {:group, %{representative: rep, records: records}} -> %>
-            <li id={"group-#{rep.musicbrainz_id}"} class="py-2 px-2 md:px-4">
+            <li id={"group-#{rep.musicbrainz_id}"} class="p-2 md:px-4">
               <details class="group/details">
-                <summary class="flex justify-between gap-x-6 cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:bg-zinc-50 dark:hover:bg-zinc-700 rounded-md -mx-2 px-2 py-1">
-                  <div class="flex min-w-0 gap-x-4 items-center">
+                <summary class="-mx-2 flex cursor-pointer list-none justify-between gap-x-6 rounded-md px-2 py-1 hover:bg-zinc-50 dark:hover:bg-zinc-700 [&::-webkit-details-marker]:hidden">
+                  <div class="flex min-w-0 items-center gap-x-4">
                     <div class="relative w-12 flex-none">
                       <.record_cover record={rep} width={96} />
                       <.release_groups_badge record={rep} />
                     </div>
                     <div class="min-w-0 flex-auto">
-                      <h1 class="text-sm leading-6 text-zinc-700">
+                      <h1 class="text-sm/6 text-zinc-700">
                         <.artist_links joinphrase_class="text-xs" artists={rep.artists} />
                       </h1>
-                      <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+                      <h2 class="mt-1 flex text-sm/5 font-semibold text-wrap text-zinc-700 sm:text-base dark:text-zinc-300">
                         {rep.title}
                       </h2>
-                      <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+                      <p class="mt-1 text-xs/5 text-zinc-500 dark:text-zinc-400">
                         <.released_how_long_ago record={rep} current_date={@current_date} />
                         · {ngettext("1 release", "%{count} releases", length(records))}
                       </p>
@@ -190,18 +190,18 @@ defmodule MusicLibraryWeb.StatsComponents do
                   <div class="flex items-center">
                     <.icon
                       name="hero-chevron-right"
-                      class="h-4 w-4 text-zinc-400 transition-transform group-open/details:rotate-90"
+                      class="size-4 text-zinc-400 transition-transform group-open/details:rotate-90"
                     />
                   </div>
                 </summary>
-                <ul class="ml-16 mt-1 border-l border-zinc-200 dark:border-zinc-700 pl-4">
+                <ul class="mt-1 ml-16 border-l border-zinc-200 pl-4 dark:border-zinc-700">
                   <li
                     :for={record <- records}
                     phx-click={JS.navigate(@record_show_path.(record))}
-                    class="flex justify-between gap-x-6 py-1.5 hover:bg-zinc-50 dark:hover:bg-zinc-700 px-2 rounded-md cursor-pointer"
+                    class="flex cursor-pointer justify-between gap-x-6 rounded-md px-2 py-1.5 hover:bg-zinc-50 dark:hover:bg-zinc-700"
                     id={record.id}
                   >
-                    <p class="text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+                    <p class="text-xs/5 text-zinc-500 dark:text-zinc-400">
                       {format_label(record.format)} · {type_label(record.type)}
                       <span :if={record.purchased_at}>
                         ·
@@ -210,7 +210,7 @@ defmodule MusicLibraryWeb.StatsComponents do
                         </span>
                         <.icon
                           name="hero-banknotes"
-                          class="h-4 w-4"
+                          class="size-4"
                           aria-hidden="true"
                           data-slot="icon"
                         />
@@ -235,22 +235,22 @@ defmodule MusicLibraryWeb.StatsComponents do
     ~H"""
     <li
       phx-click={JS.navigate(@record_show_path.(@record))}
-      class="flex justify-between gap-x-6 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-700 px-2 md:px-4 cursor-pointer"
+      class="flex cursor-pointer justify-between gap-x-6 p-2 hover:bg-zinc-50 md:px-4 dark:hover:bg-zinc-700"
       id={@record.id}
     >
-      <div class="flex min-w-0 gap-x-4 items-center">
+      <div class="flex min-w-0 items-center gap-x-4">
         <div class="relative w-12 flex-none">
           <.record_cover record={@record} width={96} />
           <.release_groups_badge record={@record} />
         </div>
         <div class="min-w-0 flex-auto">
-          <h1 class="text-sm leading-6 text-zinc-700">
+          <h1 class="text-sm/6 text-zinc-700">
             <.artist_links joinphrase_class="text-xs" artists={@record.artists} />
           </h1>
-          <h2 class="mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+          <h2 class="mt-1 flex text-sm/5 font-semibold text-wrap text-zinc-700 sm:text-base dark:text-zinc-300">
             {@record.title}
           </h2>
-          <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+          <p class="mt-1 text-xs/5 text-zinc-500 dark:text-zinc-400">
             <.released_how_long_ago record={@record} current_date={@current_date} />
             · {format_label(@record.format)} · {type_label(@record.type)}
             <span :if={@record.purchased_at}>
@@ -260,7 +260,7 @@ defmodule MusicLibraryWeb.StatsComponents do
               </span>
               <.icon
                 name="hero-banknotes"
-                class="h-4 w-4"
+                class="size-4"
                 aria-hidden="true"
                 data-slot="icon"
               />
@@ -288,8 +288,8 @@ defmodule MusicLibraryWeb.StatsComponents do
     <span
       :if={same_year?(@years)}
       class={[
-        "text-xs leading-5",
-        "font-semibold bg-linear-to-r bg-clip-text text-transparent from-red-500 via-red-200 to-red-700 animate-shine"
+        "text-xs/5",
+        "animate-shine bg-linear-to-r from-red-500 via-red-200 to-red-700 bg-clip-text font-semibold text-transparent"
       ]}
     >
       {gettext("Today")}
@@ -297,12 +297,12 @@ defmodule MusicLibraryWeb.StatsComponents do
     <span
       :if={!same_year?(@years)}
       class={[
-        "text-xs leading-5",
+        "text-xs/5",
         normal_year?(@years) && "text-zinc-500 dark:text-zinc-400",
         gold_year?(@years) &&
-          "font-semibold bg-linear-to-r bg-clip-text text-transparent from-yellow-500 via-yellow-200 to-yellow-700 animate-shine",
+          "animate-shine bg-linear-to-r from-yellow-500 via-yellow-200 to-yellow-700 bg-clip-text font-semibold text-transparent",
         silver_year?(@years) &&
-          "font-semibold bg-linear-to-r bg-clip-text text-transparent from-gray-500 via-gray-200 to-gray-700 animate-shine"
+          "animate-shine bg-linear-to-r from-gray-500 via-gray-200 to-gray-700 bg-clip-text font-semibold text-transparent"
       ]}
     >
       {ngettext(

@@ -39,10 +39,10 @@ defmodule MusicLibraryWeb.Components.Notes do
       <.sheet
         id={@sheet_id}
         placement="right"
-        class="w-md sm:min-w-lg lg:min-w-2xl py-16"
+        class="w-md py-16 sm:min-w-lg lg:min-w-2xl"
       >
         <.tabs>
-          <.tabs_list variant="segmented" class="w-48 mx-auto md:mx-0" active_tab={@mode}>
+          <.tabs_list variant="segmented" class="mx-auto w-48 md:mx-0" active_tab={@mode}>
             <:tab name="read" phx-click="set_mode" phx-value-mode="read" phx-target={@myself}>
               {gettext("Read")}
             </:tab>
@@ -51,7 +51,7 @@ defmodule MusicLibraryWeb.Components.Notes do
             </:tab>
           </.tabs_list>
           <.tabs_panel active={@mode == "read"} name="read">
-            <article class="w-full mt-5 prose dark:prose-invert prose-zinc prose-sm prose-h1:text-sm">
+            <article class="dark:prose-invert prose prose-h1:text-sm prose-sm prose-zinc mt-5 w-full">
               {render_content(@form[:content].value)}
             </article>
           </.tabs_panel>
@@ -66,7 +66,7 @@ defmodule MusicLibraryWeb.Components.Notes do
             >
               <.textarea
                 class={[
-                  "w-full min-h-128 md:min-h-164 overflow-scroll font-mono",
+                  "min-h-128 w-full overflow-scroll font-mono md:min-h-164",
                   @form[:content].value != @note.content &&
                     "border-amber-300 focus-visible:border-amber-300"
                 ]}

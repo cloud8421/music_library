@@ -56,7 +56,7 @@ defmodule MusicLibraryWeb.Components.AddRecord do
       <div
         :if={@release_groups_count == 0}
         id="release-groups-empty"
-        class="flex items-center justify-center h-32 md:h-64 text-md text-zinc-500"
+        class="text-md flex h-32 items-center justify-center text-zinc-500 md:h-64"
       >
         {gettext("No results")}
       </div>
@@ -72,21 +72,21 @@ defmodule MusicLibraryWeb.Components.AddRecord do
   defp result(assigns) do
     ~H"""
     <li id={@id} class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700">
-      <div class="shrink-0 flex items-center justify-between w-full px-4">
+      <div class="flex w-full shrink-0 items-center justify-between px-4">
         <img
-          class="w-20 flex-none rounded-lg mr-4"
+          class="mr-4 w-20 flex-none rounded-lg"
           alt={@release_group.title}
           src={ReleaseGroupSearchResult.thumb_url(@release_group)}
           onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
         />
         <div class="min-w-0 flex-auto">
-          <h1 class="truncate text-sm leading-6 text-zinc-700 dark:text-zinc-400">
+          <h1 class="truncate text-sm/6 text-zinc-700 dark:text-zinc-400">
             {@release_group.artists}
           </h1>
-          <h2 class="truncate mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+          <h2 class="mt-1 flex truncate text-sm/5 font-semibold text-wrap text-zinc-700 sm:text-base dark:text-zinc-300">
             {@release_group.title}
           </h2>
-          <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+          <p class="mt-1 text-xs/5 text-zinc-500 dark:text-zinc-400">
             {Records.Record.format_release_date(@release_group.release_date)} · {type_label(
               @release_group.type
             )}
@@ -98,7 +98,7 @@ defmodule MusicLibraryWeb.Components.AddRecord do
             <span class="sr-only">{gettext("Choose which format to import")}</span>
             <.icon
               name="hero-plus"
-              class="h-5 w-5 text-zinc-500 dark:text-zinc-400 cursor-pointer"
+              class="size-5 cursor-pointer text-zinc-500 dark:text-zinc-400"
               aria-hidden="true"
               data-slot="icon"
             />

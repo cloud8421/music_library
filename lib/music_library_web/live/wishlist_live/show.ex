@@ -26,7 +26,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
-      <div class="lg:grid lg:grid-cols-2 xl:grid-cols-5 mt-4 px-4 md:gap-x-4">
+      <div class="mt-4 px-4 md:gap-x-4 lg:grid lg:grid-cols-2 xl:grid-cols-5">
         <div class="drop-shadow-sm xl:col-span-2">
           <.record_cover
             record={@record}
@@ -35,8 +35,8 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
         </div>
 
         <div class="xl:col-span-3">
-          <div class="mt-4 md:mt-0 flex justify-between items-center">
-            <h1 class="text-base font-medium leading-6 text-zinc-700">
+          <div class="mt-4 flex items-center justify-between md:mt-0">
+            <h1 class="text-base/6 font-medium text-zinc-700">
               <.artist_links joinphrase_class="text-sm" artists={@record.artists} />
             </h1>
             <div class="min-w-12">
@@ -60,7 +60,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                       <span class="sr-only">{gettext("Actions")}</span>
                       <.icon
                         name="hero-ellipsis-vertical"
-                        class="icon text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                        class="icon cursor-pointer text-zinc-500 dark:text-zinc-400"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -73,7 +73,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                     >
                       <.icon
                         name="hero-code-bracket"
-                        class="h-4 w-4 mr-1"
+                        class="mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -88,7 +88,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                     >
                       <.icon
                         name="hero-pencil-square"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-bounce"
+                        class="phx-click-loading:animate-bounce mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -101,7 +101,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                     >
                       <.icon
                         name="hero-photo"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-bounce"
+                        class="phx-click-loading:animate-bounce mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -114,7 +114,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                     >
                       <.icon
                         name="hero-arrow-path"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
+                        class="phx-click-loading:animate-spin mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -127,7 +127,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                     >
                       <.icon
                         name="hero-sparkles"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
+                        class="phx-click-loading:animate-shake mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -144,7 +144,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                     >
                       <.icon
                         name="hero-banknotes"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
+                        class="phx-click-loading:animate-shake mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -157,7 +157,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                     >
                       <.icon
                         name="hero-paint-brush"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-shake"
+                        class="phx-click-loading:animate-shake mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -173,7 +173,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                     >
                       <.icon
                         name="hero-trash"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
+                        class="phx-click-loading:animate-spin mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -194,7 +194,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                 <div class="flex justify-between space-x-2">
                   <span
                     :if={!@record.selected_release_id}
-                    class="text-xs md:text-sm text-zinc-700 dark:text-zinc-300"
+                    class="text-xs text-zinc-700 md:text-sm dark:text-zinc-300"
                   >
                     {gettext("No release selected")}
                   </span>
@@ -214,7 +214,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
       <div :if={@online_store_templates != []} class="mt-4">
         <details class="px-4 text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300">
-          <summary class="text-xs sm:text-sm font-medium cursor-pointer">
+          <summary class="cursor-pointer text-xs font-medium sm:text-sm">
             {gettext("Check Online Stores")}
           </summary>
           <div class="mt-4 space-y-2">
@@ -238,7 +238,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
               </span>
               <.icon
                 name="hero-arrow-top-right-on-square"
-                class="h-3.5 w-3.5 text-zinc-400"
+                class="size-3.5 text-zinc-400"
                 aria-hidden="true"
               />
             </.button>

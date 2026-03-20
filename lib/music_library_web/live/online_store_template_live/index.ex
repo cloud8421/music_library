@@ -17,8 +17,8 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
-      <header class="gap-6 mb-2">
-        <div class="flex items-center justify-between gap-6 mb-2 mt-2">
+      <header class="mb-2 gap-6">
+        <div class="my-2 flex items-center justify-between gap-6">
           <.search_form query={@list_params.query} />
           <.button variant="solid" size="sm" patch={~p"/online-store-templates/new"}>
             <.icon name="hero-plus" class="icon" aria-hidden="true" data-slot="icon" />
@@ -36,9 +36,9 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
         >
           <li
             id="no-templates"
-            class="hidden only:block p-8 text-center bg-zinc-50 dark:bg-zinc-800 rounded-lg"
+            class="hidden rounded-lg bg-zinc-50 p-8 text-center only:block dark:bg-zinc-800"
           >
-            <.icon name="hero-building-storefront" class="h-12 w-12 text-zinc-400 mx-auto mb-4" />
+            <.icon name="hero-building-storefront" class="mx-auto mb-4 size-12 text-zinc-400" />
             <p class="text-zinc-600 dark:text-zinc-400">
               {gettext("No online store templates found")}
             </p>
@@ -74,7 +74,7 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.Index do
                     <span class="sr-only">{gettext("Actions")}</span>
                     <.icon
                       name="hero-ellipsis-vertical"
-                      class="icon text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                      class="icon cursor-pointer text-zinc-500 dark:text-zinc-400"
                       aria-hidden="true"
                       data-slot="icon"
                     />

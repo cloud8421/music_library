@@ -21,10 +21,10 @@ defmodule MusicLibraryWeb.Components.RecordForm do
     ~H"""
     <div class="w-full">
       <header>
-        <h1 class="text-base font-medium leading-6 text-zinc-700 dark:text-zinc-300">
+        <h1 class="text-base/6 font-medium text-zinc-700 dark:text-zinc-300">
           {Record.artist_names(@record)}
         </h1>
-        <h2 class="mt-1 flex font-semibold text-lg md:text-2xl leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+        <h2 class="mt-1 flex text-lg/5 font-semibold text-wrap text-zinc-700 md:text-2xl dark:text-zinc-300">
           {@record.title}
         </h2>
       </header>
@@ -38,7 +38,7 @@ defmodule MusicLibraryWeb.Components.RecordForm do
         phx-submit="save"
       >
         <.input field={@form[:title]} label={gettext("Title")} />
-        <div class="sm:columns-2 space-y-2">
+        <div class="space-y-2 sm:columns-2">
           <.select field={@form[:type]} label={gettext("Type")} options={types_with_labels()} />
           <.select field={@form[:format]} label={gettext("Format")} options={formats_with_labels()} />
         </div>
@@ -81,7 +81,7 @@ defmodule MusicLibraryWeb.Components.RecordForm do
               class="cursor-pointer"
             >
               {genre}
-              <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
+              <.icon name="hero-x-mark" class="size-3.5" />
             </.badge>
           </div>
           <div class="relative" id="genre-input-container" phx-hook=".GenreInput" phx-target={@myself}>
@@ -113,7 +113,7 @@ defmodule MusicLibraryWeb.Components.RecordForm do
                 phx-value-genre={suggestion}
                 phx-target={@myself}
                 class={[
-                  "cursor-pointer select-none px-3 py-2 text-sm",
+                  "cursor-pointer px-3 py-2 text-sm select-none",
                   "text-zinc-700 dark:text-zinc-300",
                   "hover:bg-zinc-100 dark:hover:bg-zinc-700",
                   "aria-selected:bg-zinc-100 dark:aria-selected:bg-zinc-700"
@@ -134,8 +134,8 @@ defmodule MusicLibraryWeb.Components.RecordForm do
                 phx-value-genre={String.downcase(String.trim(@genre_query))}
                 phx-target={@myself}
                 class={[
-                  "cursor-pointer select-none px-3 py-2 text-sm",
-                  "text-zinc-500 dark:text-zinc-400 italic",
+                  "cursor-pointer px-3 py-2 text-sm select-none",
+                  "text-zinc-500 italic dark:text-zinc-400",
                   "hover:bg-zinc-100 dark:hover:bg-zinc-700",
                   "aria-selected:bg-zinc-100 dark:aria-selected:bg-zinc-700"
                 ]}
@@ -236,9 +236,9 @@ defmodule MusicLibraryWeb.Components.RecordForm do
                 type="color"
                 name="record[dominant_colors][]"
                 value={color}
-                class="size-12 md:size-16 rounded border border-zinc-300 cursor-pointer"
+                class="size-12 cursor-pointer rounded border border-zinc-300 md:size-16"
               />
-              <span class="text-xs md:text-sm mt-1 text-zinc-600 dark:text-zinc-400">
+              <span class="mt-1 text-xs text-zinc-600 md:text-sm dark:text-zinc-400">
                 {String.upcase(color)}
               </span>
             </div>
@@ -276,7 +276,7 @@ defmodule MusicLibraryWeb.Components.RecordForm do
                   for={@uploads.cover_data.ref}
                   class={[
                     "cursor-pointer rounded-md font-semibold",
-                    "focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2",
+                    "focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 focus-within:outline-none",
                     "hover:text-zinc-200"
                   ]}
                 >
@@ -335,7 +335,7 @@ defmodule MusicLibraryWeb.Components.RecordForm do
           <div
             :if={@cover_search_results != []}
             id="cover-search-results"
-            class="grid grid-cols-3 sm:grid-cols-4 gap-2"
+            class="grid grid-cols-3 gap-2 sm:grid-cols-4"
           >
             <button
               :for={result <- @cover_search_results}
@@ -348,8 +348,8 @@ defmodule MusicLibraryWeb.Components.RecordForm do
                 "group relative overflow-hidden rounded-md",
                 "border border-zinc-200 dark:border-zinc-700",
                 "hover:ring-2 hover:ring-indigo-500",
-                "focus:outline-none focus:ring-2 focus:ring-indigo-500",
-                "disabled:opacity-50 disabled:cursor-not-allowed"
+                "focus:ring-2 focus:ring-indigo-500 focus:outline-none",
+                "disabled:cursor-not-allowed disabled:opacity-50"
               ]}
             >
               <img
@@ -361,8 +361,8 @@ defmodule MusicLibraryWeb.Components.RecordForm do
               <span
                 :if={result.width && result.height}
                 class={[
-                  "absolute bottom-0 inset-x-0",
-                  "bg-black/60 text-white text-xs text-center",
+                  "absolute inset-x-0 bottom-0",
+                  "bg-black/60 text-center text-xs text-white",
                   "py-0.5"
                 ]}
               >
@@ -388,7 +388,7 @@ defmodule MusicLibraryWeb.Components.RecordForm do
   defp release_option(assigns) do
     ~H"""
     <div class={[
-      "cursor-default px-2 py-1 md:px-3 md:py-2 rounded-md",
+      "cursor-default rounded-md px-2 py-1 md:px-3 md:py-2",
       "in-data-highlighted:bg-zinc-100 dark:in-data-highlighted:bg-zinc-600",
       "[[data-highlighted]_&]:flx-focus:bg-zinc-100"
     ]}>

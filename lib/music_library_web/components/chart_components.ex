@@ -39,7 +39,7 @@ defmodule MusicLibraryWeb.ChartComponents do
       <svg
         viewBox={"0 0 #{@width} #{@height}"}
         preserveAspectRatio="xMidYMid meet"
-        class="w-full h-full"
+        class="size-full"
       >
         <%!-- Bars and labels --%>
         <%= for {datum, index} <- Enum.with_index(@data) do %>
@@ -52,7 +52,7 @@ defmodule MusicLibraryWeb.ChartComponents do
             y={y + @bar_height / 2 + 4}
             text-anchor="end"
             class={[
-              "text-xs font-medium fill-zinc-500 hover:fill-zinc-700 dark:fill-zinc-400 dark:hover:fill-zinc-200",
+              "fill-zinc-500 text-xs font-medium hover:fill-zinc-700 dark:fill-zinc-400 dark:hover:fill-zinc-200",
               @datum_click && "cursor-pointer"
             ]}
             phx-click={@datum_click && @datum_click.(datum)}
@@ -68,7 +68,7 @@ defmodule MusicLibraryWeb.ChartComponents do
             height={@bar_height}
             rx="4"
             class={[
-              "opacity-80 hover:opacity-100 transition-opacity",
+              "opacity-80 transition-opacity hover:opacity-100",
               @color_class,
               @datum_click && "cursor-pointer"
             ]}
@@ -82,7 +82,7 @@ defmodule MusicLibraryWeb.ChartComponents do
             x={150 + bar_width + 5}
             y={y + @bar_height / 2 + 4}
             class={[
-              "text-xs font-semibold fill-zinc-500 dark:fill-zinc-400",
+              "fill-zinc-500 text-xs font-semibold dark:fill-zinc-400",
               @datum_click && "cursor-pointer"
             ]}
             phx-click={@datum_click && @datum_click.(datum)}

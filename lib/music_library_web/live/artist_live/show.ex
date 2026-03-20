@@ -36,10 +36,10 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
 
   defp play_count(assigns) do
     ~H"""
-    <span :if={@play_count > 0} class="text-xs font-medium text-zinc-700 dark:text-zinc-300 grow">
+    <span :if={@play_count > 0} class="grow text-xs font-medium text-zinc-700 dark:text-zinc-300">
       {ngettext("1 scrobble", "%{count} scrobbles", @play_count)}
     </span>
-    <span :if={@play_count == 0} class="text-xs font-medium text-zinc-700 dark:text-zinc-300 grow">
+    <span :if={@play_count == 0} class="grow text-xs font-medium text-zinc-700 dark:text-zinc-300">
       {gettext("No scrobbles")}
     </span>
     """
@@ -52,7 +52,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     ~H"""
     <div class="mt-4">
       <header class="flex items-baseline justify-start">
-        <h2 class="font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300">
+        <h2 class="text-base/5 font-semibold text-zinc-700 sm:text-lg dark:text-zinc-300">
           {@title}
         </h2>
       </header>
@@ -69,7 +69,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
             }
           >
             <.artist_image
-              class="aspect-square object-cover rounded-lg hover:shadow-lg/20"
+              class="aspect-square rounded-lg object-cover hover:shadow-lg/20"
               artist={artist}
               image_hash={artist.image_data_hash}
             />
@@ -90,7 +90,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
       <div class="mt-4 px-4 sm:px-6 lg:px-8">
         <header class="mt-1 gap-1">
           <div class="flex items-center justify-between">
-            <h1 class="font-semibold text-2xl leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+            <h1 class="text-2xl/5 font-semibold text-wrap text-zinc-700 dark:text-zinc-300">
               {@artist.name}
               <.country_flag country={@country} />
             </h1>
@@ -140,7 +140,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                       <span class="sr-only">{gettext("Actions")}</span>
                       <.icon
                         name="hero-ellipsis-vertical"
-                        class="icon text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                        class="icon cursor-pointer text-zinc-500 dark:text-zinc-400"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -153,7 +153,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                     >
                       <.icon
                         name="hero-pencil-square"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-bounce"
+                        class="phx-click-loading:animate-bounce mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -165,7 +165,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                     >
                       <.icon
                         name="hero-photo"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-bounce"
+                        class="phx-click-loading:animate-bounce mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -178,7 +178,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                     >
                       <.icon
                         name="hero-arrow-path"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
+                        class="phx-click-loading:animate-spin mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -190,7 +190,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                     >
                       <.icon
                         name="hero-arrow-path"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
+                        class="phx-click-loading:animate-spin mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -202,7 +202,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                     >
                       <.icon
                         name="hero-arrow-path"
-                        class="h-4 w-4 mr-1 phx-click-loading:animate-spin"
+                        class="phx-click-loading:animate-spin mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
@@ -221,10 +221,10 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                 <.loading />
               </:loading>
               <:failed :let={_failure}>
-                <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
+                <div class="mt-4 text-sm/5 text-zinc-500 dark:text-zinc-400">
                   <.icon
                     name="hero-exclamation-triangle"
-                    class="-mt-1 mr-1 ml-2 h-5 w-5"
+                    class="-mt-1 mr-1 ml-2 size-5"
                     aria-hidden="true"
                     data-slot="icon"
                   />
@@ -238,24 +238,24 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
         </header>
 
         <div class="mt-4 grid md:grid-cols-10 md:gap-4">
-          <div class="md:col-span-3 mt-4 order-2 md:order-1">
-            <h2 class="font-semibold text-base sm:text-lg leading-5 text-zinc-700 dark:text-zinc-300">
+          <div class="order-2 mt-4 md:order-1 md:col-span-3">
+            <h2 class="text-base/5 font-semibold text-zinc-700 sm:text-lg dark:text-zinc-300">
               {gettext("Meta")}
             </h2>
             <.artist_image
-              class="w-full rounded-md shadow-sm mt-4 cursor-pointer"
+              class="mt-4 w-full cursor-pointer rounded-md shadow-sm"
               artist={@artist}
               image_hash={@artist_info.image_data_hash}
               phx-click={Fluxon.open_dialog("artist-image-modal")}
             />
             <.modal
               id="artist-image-modal"
-              class="mx-auto sm:min-w-2xl max-w-sm md:max-w-3xl lg:max-w-5xl mt-8"
+              class="mx-auto mt-8 max-w-sm sm:min-w-2xl md:max-w-3xl lg:max-w-5xl"
               placement="center"
               open={false}
             >
               <.artist_image
-                class="w-full rounded-md shadow-sm mt-8"
+                class="mt-8 w-full rounded-md shadow-sm"
                 artist={@artist}
                 image_hash={@artist_info.image_data_hash}
               />
@@ -287,25 +287,25 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
               </.button>
             </div>
             <%= if @biography do %>
-              <dt class="mt-4 text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400">
+              <dt class="mt-4 text-sm/6 font-medium text-zinc-900 dark:text-zinc-400">
                 {gettext("Biography")}
                 <.badge variant="soft" class="ml-1">{@biography.source}</.badge>
               </dt>
               <dd class="text-zinc-700 dark:text-zinc-300">
                 <p
                   :if={@biography.description}
-                  class="mt-2 text-sm italic text-zinc-500 dark:text-zinc-400"
+                  class="mt-2 text-sm text-zinc-500 italic dark:text-zinc-400"
                 >
                   {@biography.description}
                 </p>
                 <p class="mt-2 text-sm/7">{@biography.summary_html}</p>
                 <.link
-                  class="block mt-2 text-sm font-medium text-zinc-900 dark:text-zinc-400"
+                  class="mt-2 block text-sm font-medium text-zinc-900 dark:text-zinc-400"
                   phx-click={Fluxon.open_dialog("bio")}
                 >
                   <.icon
                     name="hero-arrow-right-end-on-rectangle"
-                    class="-mt-1 mr-1 h-5 w-5"
+                    class="-mt-1 mr-1 size-5"
                     aria-hidden="true"
                     data-slot="icon"
                   />
@@ -317,19 +317,19 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                 class="max-w-2xl text-zinc-700 dark:text-zinc-300"
                 placement="left"
               >
-                <div class="prose prose-sm dark:prose-invert">
+                <div class="dark:prose-invert prose prose-sm">
                   {Phoenix.HTML.raw(@biography.bio_html)}
                 </div>
                 <a
                   :if={@biography.url}
                   href={@biography.url}
                   target="_blank"
-                  class="mt-4 block text-sm font-medium text-zinc-900 dark:text-zinc-400 hover:text-zinc-500"
+                  class="mt-4 block text-sm font-medium text-zinc-900 hover:text-zinc-500 dark:text-zinc-400"
                 >
                   {gettext("Read full article on Wikipedia")}
                   <.icon
                     name="hero-arrow-top-right-on-square"
-                    class="-mt-1 ml-1 h-4 w-4"
+                    class="-mt-1 ml-1 size-4"
                     aria-hidden="true"
                     data-slot="icon"
                   />
@@ -338,15 +338,15 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
             <% else %>
               <.async_result :let={lastfm_artist_info} assign={@lastfm_artist_info}>
                 <:loading>
-                  <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
+                  <div class="mt-4 text-sm/5 text-zinc-500 dark:text-zinc-400">
                     {gettext("Loading biography")}
                   </div>
                 </:loading>
                 <:failed :let={_failure}>
-                  <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
+                  <div class="mt-4 text-sm/5 text-zinc-500 dark:text-zinc-400">
                     <.icon
                       name="hero-exclamation-triangle"
-                      class="-mt-1 mr-1 h-5 w-5"
+                      class="-mt-1 mr-1 size-5"
                       aria-hidden="true"
                       data-slot="icon"
                     />
@@ -355,7 +355,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                 </:failed>
                 <dt
                   :if={lastfm_artist_info.bio not in [nil, ""]}
-                  class="mt-4 text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-400"
+                  class="mt-4 text-sm/6 font-medium text-zinc-900 dark:text-zinc-400"
                 >
                   {gettext("Biography")}
                 </dt>
@@ -365,12 +365,12 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                 >
                   {remove_read_more_link(lastfm_artist_info.summary)}
                   <.link
-                    class="block mt-2 text-sm font-medium text-zinc-900 dark:text-zinc-400"
+                    class="mt-2 block text-sm font-medium text-zinc-900 dark:text-zinc-400"
                     phx-click={Fluxon.open_dialog("lastfm-bio")}
                   >
                     <.icon
                       name="hero-arrow-right-end-on-rectangle"
-                      class="-mt-1 mr-1 h-5 w-5"
+                      class="-mt-1 mr-1 size-5"
                       aria-hidden="true"
                       data-slot="icon"
                     />
@@ -389,7 +389,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
             <% end %>
             <.external_links external_links={@external_links} />
           </div>
-          <div class="md:col-span-7 md:order-1">
+          <div class="md:order-1 md:col-span-7">
             <.record_grid
               :if={@collection_records_count > 0}
               title={gettext("Collection")}
@@ -402,7 +402,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
             />
             <.separator
               :if={@collection_records_count > 0 && @wishlist_records_count > 0}
-              class="mt-8 mb-8"
+              class="my-8"
             />
             <.record_grid
               :if={@wishlist_records_count > 0}
@@ -417,22 +417,22 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
 
             <.async_result :let={similar_artists} assign={@similar_artists}>
               <:loading>
-                <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
+                <div class="mt-4 text-sm/5 text-zinc-500 dark:text-zinc-400">
                   {gettext("Loading similar artists")}
                 </div>
               </:loading>
               <:failed :let={_failure}>
-                <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
+                <div class="mt-4 text-sm/5 text-zinc-500 dark:text-zinc-400">
                   <.icon
                     name="hero-exclamation-triangle"
-                    class="-mt-1 mr-1 h-5 w-5"
+                    class="-mt-1 mr-1 size-5"
                     aria-hidden="true"
                     data-slot="icon"
                   />
                   {gettext("Error loading similar artists")}
                 </div>
               </:failed>
-              <.separator class="mt-8 mb-8" />
+              <.separator class="my-8" />
               <.artist_grid title={gettext("Similar artists")} artists={similar_artists} />
             </.async_result>
           </div>

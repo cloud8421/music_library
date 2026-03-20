@@ -35,19 +35,19 @@ defmodule MusicLibraryWeb.StatsLive.TopArtists do
         >
           <.artist_image
             :if={artist.musicbrainz_id != ""}
-            class="w-12 h-12 rounded-md shadow-sm object-cover"
+            class="size-12 rounded-md object-cover shadow-sm"
             artist={artist}
             width={96}
             image_hash={artist.image_hash}
           />
           <div
             :if={artist.musicbrainz_id == ""}
-            class="w-12 h-12 rounded-md bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center"
+            class="flex size-12 items-center justify-center rounded-md bg-zinc-200 dark:bg-zinc-700"
           >
-            <.icon name="hero-user" class="w-6 h-6 text-zinc-400" />
+            <.icon name="hero-user" class="size-6 text-zinc-400" />
           </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-zinc-900 dark:text-zinc-300 truncate">
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-sm font-medium text-zinc-900 dark:text-zinc-300">
               {artist.name}
             </p>
           </div>

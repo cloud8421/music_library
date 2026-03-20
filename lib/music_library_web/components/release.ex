@@ -48,8 +48,8 @@ defmodule MusicLibraryWeb.Components.Release do
         placement="right"
         class="min-w-xs sm:min-w-sm"
       >
-        <div class="mt-6 flex justify-between items-center gap-4">
-          <label class="text-lg font-semibold text-zinc-700 dark:text-zinc-300 cursor-pointer">
+        <div class="mt-6 flex items-center justify-between gap-4">
+          <label class="cursor-pointer text-lg font-semibold text-zinc-700 dark:text-zinc-300">
             <input
               :if={
                 @can_scrobble? && @release_with_tracks.ok? &&
@@ -66,7 +66,7 @@ defmodule MusicLibraryWeb.Components.Release do
               phx-click="toggle_medium"
               phx-value-medium-number={1}
               phx-target={@myself}
-              class="w-4 h-4 mr-2 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              class="mr-2 size-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
             />
             {gettext("Tracks")}
           </label>
@@ -104,19 +104,19 @@ defmodule MusicLibraryWeb.Components.Release do
           </.button_group>
         </div>
 
-        <div :if={@release_with_tracks} class="space-y-4 mt-4">
+        <div :if={@release_with_tracks} class="mt-4 space-y-4">
           <.async_result :let={release_with_tracks} assign={@release_with_tracks}>
             <:loading>
-              <div class="flex items-center justify-center mt-48">
+              <div class="mt-48 flex items-center justify-center">
                 <span class="sr-only">{gettext("Loading release with tracks")}</span>
                 <.loading />
               </div>
             </:loading>
             <:failed :let={_failure}>
-              <div class="mt-4 text-sm leading-5 text-zinc-500 dark:text-zinc-400">
+              <div class="mt-4 text-sm/5 text-zinc-500 dark:text-zinc-400">
                 <.icon
                   name="hero-exclamation-triangle"
-                  class="h-5 w-5"
+                  class="size-5"
                   aria-hidden="true"
                   data-slot="icon"
                 />
@@ -125,7 +125,7 @@ defmodule MusicLibraryWeb.Components.Release do
                   variant="ghost"
                   size="xs"
                   phx-click={JS.push("load_release_tracks", target: @myself)}
-                  class="ml-2  cursor-pointer"
+                  class="ml-2 cursor-pointer"
                 >
                   {gettext("Retry")}
                 </.button>
@@ -162,9 +162,9 @@ defmodule MusicLibraryWeb.Components.Release do
     ~H"""
     <div
       :if={@media_count > 1}
-      class="flex justify-between items-center gap-4"
+      class="flex items-center justify-between gap-4"
     >
-      <label class="text-sm md:text-md font-semibold text-zinc-700 dark:text-zinc-300 cursor-pointer">
+      <label class="md:text-md cursor-pointer text-sm font-semibold text-zinc-700 dark:text-zinc-300">
         <input
           :if={@can_scrobble?}
           type="checkbox"
@@ -173,7 +173,7 @@ defmodule MusicLibraryWeb.Components.Release do
           phx-click="toggle_medium"
           phx-value-medium-number={@medium.number}
           phx-target={@myself}
-          class="w-4 h-4 mr-2 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+          class="mr-2 size-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
         />
         {medium_title(@medium)}
         <.badge variant="soft" class="text-xs">
@@ -216,7 +216,7 @@ defmodule MusicLibraryWeb.Components.Release do
       myself={@myself}
     />
     <.separator />
-    <p class="text-xs md:text-sm text-right text-zinc-700 dark:text-zinc-300">
+    <p class="text-right text-xs text-zinc-700 md:text-sm dark:text-zinc-300">
       {medium_duration(@medium)}
     </p>
     """
@@ -239,10 +239,10 @@ defmodule MusicLibraryWeb.Components.Release do
 
   def track_list(assigns) do
     ~H"""
-    <ul id={"disc-#{@medium_number}"} class="w-full table table-auto">
+    <ul id={"disc-#{@medium_number}"} class="table w-full table-auto">
       <li
         :for={track <- @tracks}
-        class="leading-5 text-zinc-700 dark:text-zinc-300 list-none"
+        class="list-none leading-5 text-zinc-700 dark:text-zinc-300"
       >
         <label class="contents cursor-pointer">
           <div class="table-row">
@@ -254,16 +254,16 @@ defmodule MusicLibraryWeb.Components.Release do
                 phx-click="toggle_track"
                 phx-value-track-id={track.id}
                 phx-target={@myself}
-                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                class="size-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
               />
             </span>
-            <span class="table-cell text-xs text-right pr-1 text-nowrap">
+            <span class="table-cell pr-1 text-right text-xs text-nowrap">
               {track.number || track.position}
             </span>
-            <span class="table-cell text-xs md:text-sm font-medium leading-8 w-full">
+            <span class="table-cell w-full text-xs/8 font-medium md:text-sm">
               {track.title}
             </span>
-            <span class="table-cell text-xs md:text-sm text-right pl-2">
+            <span class="table-cell pl-2 text-right text-xs md:text-sm">
               {track.length && Duration.format_duration(track.length)}
             </span>
           </div>

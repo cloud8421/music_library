@@ -26,7 +26,7 @@ defmodule MusicLibraryWeb.SearchComponents do
     ~H"""
     <div
       class={[
-        "p-3 rounded-lg cursor-pointer transition-colors",
+        "cursor-pointer rounded-lg p-3 transition-colors",
         "hover:bg-zinc-50 dark:hover:bg-zinc-700",
         "aria-selected:bg-zinc-200 dark:aria-selected:bg-zinc-700"
       ]}
@@ -37,22 +37,22 @@ defmodule MusicLibraryWeb.SearchComponents do
         <div class="shrink-0">
           <.record_cover
             record={@record}
-            class="w-12 h-12 rounded-md aspect-square object-cover"
+            class="aspect-square size-12 rounded-md object-cover"
             width={96}
           />
         </div>
         <div class="min-w-0 flex-1">
-          <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+          <p class="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
             {@record.title}
           </p>
-          <p class="text-sm text-zinc-500 font-medium dark:text-zinc-400 truncate">
+          <p class="truncate text-sm font-medium text-zinc-500 dark:text-zinc-400">
             {Record.artist_names(@record)}
           </p>
           <p class="pointer-events-none block text-sm text-zinc-500">
             {format_label(@record.format)} · {type_label(@record.type)} ·
             <.icon
               name="hero-calendar-days"
-              class="-mt-1 h-4 w-4"
+              class="-mt-1 size-4"
               aria-hidden="true"
               data-slot="icon"
             />
@@ -61,7 +61,7 @@ defmodule MusicLibraryWeb.SearchComponents do
               ·
               <.icon
                 name="hero-banknotes"
-                class="h-4 w-4"
+                class="size-4"
                 aria-hidden="true"
                 data-slot="icon"
               />
@@ -89,7 +89,7 @@ defmodule MusicLibraryWeb.SearchComponents do
     ~H"""
     <div
       class={[
-        "p-3 rounded-lg cursor-pointer transition-colors",
+        "cursor-pointer rounded-lg p-3 transition-colors",
         "hover:bg-zinc-50 dark:hover:bg-zinc-700",
         "aria-selected:bg-zinc-200 dark:aria-selected:bg-zinc-700"
       ]}
@@ -99,17 +99,17 @@ defmodule MusicLibraryWeb.SearchComponents do
       <div class="flex items-center space-x-3">
         <div class="shrink-0">
           <.artist_image
-            class="w-12 h-12 rounded-md aspect-square object-cover"
+            class="aspect-square size-12 rounded-md object-cover"
             artist={@artist}
             width={96}
             image_hash={@image_data_hash}
           />
         </div>
         <div class="min-w-0 flex-1">
-          <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+          <p class="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
             {@artist.name}
           </p>
-          <p :if={@artist.disambiguation} class="text-sm text-zinc-500 dark:text-zinc-400 truncate">
+          <p :if={@artist.disambiguation} class="truncate text-sm text-zinc-500 dark:text-zinc-400">
             {@artist.disambiguation}
           </p>
         </div>
@@ -132,7 +132,7 @@ defmodule MusicLibraryWeb.SearchComponents do
     ~H"""
     <div
       class={[
-        "p-3 rounded-lg cursor-pointer transition-colors",
+        "cursor-pointer rounded-lg p-3 transition-colors",
         "hover:bg-zinc-50 dark:hover:bg-zinc-700",
         "aria-selected:bg-zinc-200 dark:aria-selected:bg-zinc-700"
       ]}
@@ -140,16 +140,16 @@ defmodule MusicLibraryWeb.SearchComponents do
       {@rest}
     >
       <div class="flex items-center space-x-3">
-        <div class="shrink-0 w-12 h-12 rounded-md bg-zinc-100 dark:bg-zinc-700 flex items-center justify-center">
-          <.icon name="hero-queue-list" class="h-6 w-6 text-zinc-400 dark:text-zinc-500" />
+        <div class="flex size-12 shrink-0 items-center justify-center rounded-md bg-zinc-100 dark:bg-zinc-700">
+          <.icon name="hero-queue-list" class="size-6 text-zinc-400 dark:text-zinc-500" />
         </div>
         <div class="min-w-0 flex-1">
-          <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+          <p class="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
             {@record_set.name}
           </p>
           <div
             :if={@record_set.description}
-            class="prose prose-zinc dark:prose-invert prose-sm"
+            class="dark:prose-invert prose prose-sm prose-zinc"
           >
             {render_description(@record_set.description)}
           </div>
@@ -174,7 +174,7 @@ defmodule MusicLibraryWeb.SearchComponents do
     ~H"""
     <div
       class={[
-        "p-3 rounded-lg cursor-pointer transition-colors",
+        "cursor-pointer rounded-lg p-3 transition-colors",
         "hover:bg-zinc-50 dark:hover:bg-zinc-700",
         "aria-selected:bg-zinc-200 dark:aria-selected:bg-zinc-700"
       ]}
@@ -182,8 +182,8 @@ defmodule MusicLibraryWeb.SearchComponents do
       {@rest}
     >
       <div class="flex items-center space-x-3">
-        <div class="shrink-0 w-8 h-8 rounded-md bg-zinc-100 dark:bg-zinc-700 flex items-center justify-center">
-          <.icon name={@icon} class="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
+        <div class="flex size-8 shrink-0 items-center justify-center rounded-md bg-zinc-100 dark:bg-zinc-700">
+          <.icon name={@icon} class="size-4 text-zinc-500 dark:text-zinc-400" />
         </div>
         <div class="min-w-0 flex-1">
           <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100">
@@ -221,7 +221,7 @@ defmodule MusicLibraryWeb.SearchComponents do
   def search_result_group(assigns) do
     ~H"""
     <div class={["p-2", @class]}>
-      <h3 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1 uppercase tracking-wide">
+      <h3 class="mb-1 text-sm font-medium tracking-wide text-zinc-700 uppercase dark:text-zinc-300">
         {@title}
         <span :if={@total_count && @total_count > @count}>
           {gettext("(%{count} of %{total})", count: @count, total: @total_count)}
@@ -235,7 +235,7 @@ defmodule MusicLibraryWeb.SearchComponents do
         {render_slot(@inner_block)}
       </div>
 
-      <div :for={action <- @actions} class="px-2 mt-2">
+      <div :for={action <- @actions} class="mt-2 px-2">
         {render_slot(action)}
       </div>
     </div>
@@ -257,7 +257,7 @@ defmodule MusicLibraryWeb.SearchComponents do
     ~H"""
     <button
       role="option"
-      class="aria-selected:bg-zinc-200 dark:aria-selected:bg-zinc-700 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+      class="text-sm text-blue-600 transition-colors hover:text-blue-800 aria-selected:bg-zinc-200 dark:text-blue-400 dark:hover:text-blue-300 dark:aria-selected:bg-zinc-700"
       {@rest}
     >
       {gettext("View all %{count} %{target} results →", count: @count, target: @target)}
@@ -276,20 +276,20 @@ defmodule MusicLibraryWeb.SearchComponents do
 
   def results_footer(assigns) do
     ~H"""
-    <div class="p-2 bg-zinc-50 dark:bg-zinc-900 rounded-b-lg border-t border-zinc-200 dark:border-zinc-700">
+    <div class="rounded-b-lg border-t border-zinc-200 bg-zinc-50 p-2 dark:border-zinc-700 dark:bg-zinc-900">
       <div class="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
         <div class="flex items-center space-x-4">
           <div :if={@total_results > 0} class="flex items-center">
-            <kbd class="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded">↑</kbd>
-            <kbd class="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded ml-1">↓</kbd>
+            <kbd class="rounded bg-zinc-200 px-2 py-1 dark:bg-zinc-700">↑</kbd>
+            <kbd class="ml-1 rounded bg-zinc-200 px-2 py-1 dark:bg-zinc-700">↓</kbd>
             <span class="ml-1">{gettext("Navigate")}</span>
           </div>
           <div :if={@total_results > 0} class="flex items-center">
-            <kbd class="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded">Enter</kbd>
+            <kbd class="rounded bg-zinc-200 px-2 py-1 dark:bg-zinc-700">Enter</kbd>
             <span class="ml-1">{gettext("Select")}</span>
           </div>
           <div class="flex items-center">
-            <kbd class="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded">Esc</kbd>
+            <kbd class="rounded bg-zinc-200 px-2 py-1 dark:bg-zinc-700">Esc</kbd>
             <span class="ml-1">{gettext("Close")}</span>
           </div>
         </div>
@@ -311,9 +311,9 @@ defmodule MusicLibraryWeb.SearchComponents do
   def empty_state(assigns) do
     ~H"""
     <div class="p-8 text-center">
-      <.icon name="hero-magnifying-glass" class="h-12 w-12 text-zinc-400 mx-auto mb-4" />
-      <p class="text-sm text-zinc-500 dark:text-zinc-500 mt-2">
-        <kbd class="px-2 py-1 bg-zinc-100 dark:bg-zinc-700 rounded text-xs">Cmd/Ctrl+K</kbd>
+      <.icon name="hero-magnifying-glass" class="mx-auto mb-4 size-12 text-zinc-400" />
+      <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-500">
+        <kbd class="rounded bg-zinc-100 px-2 py-1 text-xs dark:bg-zinc-700">Cmd/Ctrl+K</kbd>
         {gettext("to open this search")}
       </p>
     </div>
@@ -332,12 +332,12 @@ defmodule MusicLibraryWeb.SearchComponents do
   def no_results(assigns) do
     ~H"""
     <div class="p-8 text-center">
-      <.icon name="hero-face-frown" class="h-12 w-12 text-zinc-400 mx-auto mb-4" />
+      <.icon name="hero-face-frown" class="mx-auto mb-4 size-12 text-zinc-400" />
       <p class="text-zinc-600 dark:text-zinc-400">
         {gettext("No results found for '%{query}'", query: @query)}
       </p>
       <.link
-        class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate"
+        class="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100"
         navigate={~p"/wishlist/import?#{[import_query: @query]}"}
       >
         {gettext("Add a record instead", query: @query)}

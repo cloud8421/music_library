@@ -15,7 +15,7 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
         <h1 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
           {@title}
         </h1>
-        <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+        <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
           {gettext("Search your records to add a record to this set.")}
         </p>
       </header>
@@ -51,7 +51,7 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
         </p>
 
         <div :if={@collected_results != []}>
-          <h3 class="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mb-1">
+          <h3 class="mb-1 text-xs font-medium tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
             {gettext("Collected")}
           </h3>
           <ul class="divide-y divide-zinc-100 dark:divide-zinc-700">
@@ -60,7 +60,7 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
         </div>
 
         <div :if={@wishlisted_results != []} class={[@collected_results != [] && "mt-4"]}>
-          <h3 class="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mb-1">
+          <h3 class="mb-1 text-xs font-medium tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
             {gettext("Wishlisted")}
           </h3>
           <ul class="divide-y divide-zinc-100 dark:divide-zinc-700">
@@ -77,7 +77,7 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
     <li
       role="option"
       class={[
-        "flex items-center gap-3 py-3 px-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer rounded-lg",
+        "flex cursor-pointer items-center gap-3 rounded-lg px-2 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800",
         "aria-selected:bg-zinc-100 dark:aria-selected:bg-zinc-700"
       ]}
       phx-click="add_record"
@@ -87,18 +87,18 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
       <div class="w-12 flex-none">
         <MusicLibraryWeb.RecordComponents.record_cover
           record={@record}
-          class="rounded aspect-square object-cover"
+          class="aspect-square rounded object-cover"
           width={96}
         />
       </div>
       <div class="min-w-0 flex-auto">
-        <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+        <p class="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
           {@record.title}
         </p>
-        <p class="text-xs text-zinc-500 dark:text-zinc-400 truncate">
+        <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">
           {Record.artist_names(@record)}
         </p>
-        <p class="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+        <p class="mt-1 text-xs/5 text-zinc-500 dark:text-zinc-400">
           {Record.format_release_date(@record.release_date)} · {format_label(@record.format)} · {type_label(
             @record.type
           )}
@@ -110,7 +110,7 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
             </span>
             <.icon
               name="hero-banknotes"
-              class="h-4 w-4"
+              class="size-4"
               aria-hidden="true"
               data-slot="icon"
             />
@@ -121,7 +121,7 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
       <div class="flex-none">
         <.icon
           name="hero-plus-circle"
-          class="h-5 w-5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+          class="size-5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
           aria-hidden="true"
           data-slot="icon"
         />

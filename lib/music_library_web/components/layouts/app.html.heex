@@ -1,9 +1,9 @@
 <div
   :if={assigns[:static_changed]}
-  class="bg-yellow-100 dark:bg-yellow-900 border-b border-yellow-300 dark:border-yellow-700 px-4 py-2 text-center text-sm text-yellow-700 dark:text-yellow-200"
+  class="border-b border-yellow-300 bg-yellow-100 px-4 py-2 text-center text-sm text-yellow-700 dark:border-yellow-700 dark:bg-yellow-900 dark:text-yellow-200"
 >
   {gettext("The application has been updated.")}
-  <a href="" onclick="window.location.reload()" class="underline font-medium">
+  <a href="" onclick="window.location.reload()" class="font-medium underline">
     {gettext("Reload")}
   </a>
 </div>
@@ -15,7 +15,7 @@
           <.nav_link route={~p"/"} section={:stats} current_section={@current_section}>
             <.icon
               name="hero-chart-pie"
-              class="max-sm:hidden h-4 w-4 mr-2"
+              class="mr-2 size-4 max-sm:hidden"
               aria-hidden="true"
               data-slot="icon"
             />
@@ -28,7 +28,7 @@
           >
             <.icon
               name="hero-circle-stack"
-              class="max-sm:hidden h-4 w-4 mr-2"
+              class="mr-2 size-4 max-sm:hidden"
               aria-hidden="true"
               data-slot="icon"
             />
@@ -37,7 +37,7 @@
           <.nav_link route={~p"/wishlist"} section={:wishlist} current_section={@current_section}>
             <.icon
               name="hero-star"
-              class="max-sm:hidden h-4 w-4 mr-2"
+              class="mr-2 size-4 max-sm:hidden"
               aria-hidden="true"
               data-slot="icon"
             />
@@ -50,7 +50,7 @@
           >
             <.icon
               name="hero-rectangle-stack"
-              class="max-sm:hidden h-4 w-4 mr-2"
+              class="mr-2 size-4 max-sm:hidden"
               aria-hidden="true"
               data-slot="icon"
             />
@@ -67,7 +67,7 @@
                 <span class="sr-only">{gettext("Actions")}</span>
                 <.icon
                   name="hero-ellipsis-vertical"
-                  class="icon text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                  class="icon cursor-pointer text-zinc-500 dark:text-zinc-400"
                   aria-hidden="true"
                   data-slot="icon"
                 />
@@ -117,25 +117,25 @@
             <.dropdown_link href={~p"/dev/dashboard"}>
               <.icon
                 name="hero-chart-bar"
-                class="h-4 w-4 mr-2"
+                class="mr-2 size-4"
                 aria-hidden="true"
                 data-slot="icon"
               />
               {gettext("Live Dashboard")}
             </.dropdown_link>
             <.dropdown_link href={~p"/dev/oban"}>
-              <.icon name="hero-cog" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
+              <.icon name="hero-cog" class="mr-2 size-4" aria-hidden="true" data-slot="icon" />
               {gettext("Oban")}
             </.dropdown_link>
             <.dropdown_link href={~p"/dev/errors"}>
-              <.icon name="hero-bug-ant" class="h-4 w-4 mr-2" aria-hidden="true" data-slot="icon" />
+              <.icon name="hero-bug-ant" class="mr-2 size-4" aria-hidden="true" data-slot="icon" />
               {gettext("Errors")}
             </.dropdown_link>
             <.dropdown_separator />
             <.dropdown_link href={~p"/login"}>
               <.icon
                 name="hero-arrow-left-start-on-rectangle"
-                class="h-4 w-4 mr-2"
+                class="mr-2 size-4"
                 aria-hidden="true"
                 data-slot="icon"
               />
@@ -147,7 +147,7 @@
     </div>
   </div>
 </nav>
-<main class="px-4 py-4 sm:px-6 lg:px-8">
+<main class="p-4 sm:px-6 lg:px-8">
   <div class="mx-auto max-w-screen-2xl">
     <LiveToast.toast_group
       flash={@flash}

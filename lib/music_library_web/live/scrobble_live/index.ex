@@ -12,8 +12,8 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
     ~H"""
     <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
       <div>
-        <header class="gap-6 mb-2">
-          <div class="flex items-center justify-between gap-6 mb-2 mt-2">
+        <header class="mb-2 gap-6">
+          <div class="my-2 flex items-center justify-between gap-6">
             <.search_form query={@search_query} />
             <.button :if={!@can_scrobble?} size="sm" href={LastFm.auth_url()}>
               {gettext("Connect your Last.fm account")}
@@ -33,23 +33,23 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
                 :for={release_group <- @search_results}
                 phx-click="select_release_group"
                 phx-value-release_group_id={release_group.id}
-                class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700 cursor-pointer"
+                class="flex cursor-pointer justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700"
               >
-                <div class="shrink-0 flex items-center justify-between w-full px-4">
+                <div class="flex w-full shrink-0 items-center justify-between px-4">
                   <img
-                    class="w-20 flex-none rounded-lg mr-4"
+                    class="mr-4 w-20 flex-none rounded-lg"
                     alt={release_group.title}
                     src={ReleaseGroupSearchResult.thumb_url(release_group)}
                     onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
                   />
                   <div class="min-w-0 flex-auto">
-                    <p class="truncate text-sm leading-6 text-zinc-700 dark:text-zinc-400">
+                    <p class="truncate text-sm/6 text-zinc-700 dark:text-zinc-400">
                       {release_group.artists}
                     </p>
-                    <p class="truncate mt-1 flex font-semibold text-sm sm:text-base leading-5 text-zinc-700 dark:text-zinc-300 text-wrap">
+                    <p class="mt-1 flex truncate text-sm/5 font-semibold text-wrap text-zinc-700 sm:text-base dark:text-zinc-300">
                       {release_group.title}
                     </p>
-                    <p class="mt-1 flex items-center gap-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+                    <p class="mt-1 flex items-center gap-1 text-xs/5 text-zinc-500 dark:text-zinc-400">
                       {Records.Record.format_release_date(release_group.release_date)}
                       <span>&middot;</span>
                       <.badge variant="soft" size="xs">{type_label(release_group.type)}</.badge>
@@ -81,7 +81,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
               <li :for={release <- @releases}>
                 <.link
                   navigate={~p"/scrobble/#{release.id}"}
-                  class="flex items-center gap-x-4 py-5 px-4 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
+                  class="flex items-center gap-x-4 px-4 py-5 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-700"
                 >
                   <img
                     class="w-20 flex-none rounded-lg"
@@ -113,9 +113,9 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
         <% end %>
 
         <%= if @loading && @search_query != "" do %>
-          <div class="text-center py-8">
-            <.loading class="size-8 mx-auto text-zinc-400" />
-            <p class="text-zinc-600 dark:text-zinc-400 mt-2">
+          <div class="py-8 text-center">
+            <.loading class="mx-auto size-8 text-zinc-400" />
+            <p class="mt-2 text-zinc-600 dark:text-zinc-400">
               <%= if @selected_release_group do %>
                 {gettext("Loading releases...")}
               <% else %>
@@ -126,15 +126,15 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
         <% end %>
 
         <%= if @search_query != "" && @search_results == [] && not @loading do %>
-          <div class="text-center py-8">
+          <div class="py-8 text-center">
             <.icon
               name="hero-magnifying-glass"
-              class="h-12 w-12 mx-auto text-zinc-300 dark:text-zinc-600"
+              class="mx-auto size-12 text-zinc-300 dark:text-zinc-600"
             />
-            <p class="text-zinc-600 dark:text-zinc-400 mt-3">
+            <p class="mt-3 text-zinc-600 dark:text-zinc-400">
               {gettext("No release groups found for \"%{query}\"", query: @search_query)}
             </p>
-            <p class="text-sm text-zinc-500 dark:text-zinc-500 mt-1">
+            <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-500">
               {gettext("Try a different search term or check the spelling")}
             </p>
           </div>

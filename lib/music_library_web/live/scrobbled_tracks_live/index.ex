@@ -22,12 +22,12 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
     <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
       <div>
         <header class="gap-6">
-          <div class="mb-2 mt-2">
+          <div class="my-2">
             <.search_form query={@track_list_params.query} />
           </div>
         </header>
 
-        <div class="flex items-end gap-6 mt-6 justify-between">
+        <div class="mt-6 flex items-end justify-between gap-6">
           <.button_group>
             <.button
               patch={order_path(@track_list_params, :scrobbled_at)}
@@ -81,16 +81,16 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
 
       <div class="mt-6">
         <ul
-          class="divide-y divide-zinc-100 dark:divide-zinc-300/20 mt-5"
+          class="mt-5 divide-y divide-zinc-100 dark:divide-zinc-300/20"
           role="list"
           id="tracks"
           phx-update="stream"
         >
           <li
             id="no-scrobbled-tracks"
-            class="hidden only:block p-8 text-center bg-zinc-50 dark:bg-zinc-800 rounded-lg"
+            class="hidden rounded-lg bg-zinc-50 p-8 text-center only:block dark:bg-zinc-800"
           >
-            <.icon name="hero-musical-note" class="h-12 w-12 text-zinc-400 mx-auto mb-4" />
+            <.icon name="hero-musical-note" class="mx-auto mb-4 size-12 text-zinc-400" />
             <p class="text-zinc-600 dark:text-zinc-400">
               {gettext("No scrobbled tracks found")}
             </p>
@@ -108,12 +108,12 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
                }} <- @streams.tracks
             }
             id={id}
-            class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-800 px-2 -mx-2 md:px-4 md:-mx-4 cursor-pointer"
+            class="-mx-2 flex cursor-pointer justify-between gap-x-6 px-2 py-5 hover:bg-zinc-50 md:-mx-4 md:px-4 dark:hover:bg-zinc-800"
           >
-            <div class="flex items-center space-x-4 flex-1 min-w-0">
+            <div class="flex min-w-0 flex-1 items-center space-x-4">
               <div class="shrink-0">
                 <img
-                  class="h-12 w-12 rounded-md shadow-sm"
+                  class="size-12 rounded-md shadow-sm"
                   src={track_cover_url(track, cover_hash)}
                   alt={track.title}
                   onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
@@ -121,18 +121,18 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
               </div>
 
               <div class="min-w-0 flex-1">
-                <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+                <p class="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
                   {track.title}
                 </p>
-                <p class="text-sm text-zinc-600 dark:text-zinc-400 truncate">
+                <p class="truncate text-sm text-zinc-600 dark:text-zinc-400">
                   {track.artist.name}
                 </p>
-                <p class="text-sm text-zinc-500 dark:text-zinc-500 truncate">
+                <p class="truncate text-sm text-zinc-500 dark:text-zinc-500">
                   {track.album.title}
                 </p>
                 <time
                   datetime={format_scrobbled_at_uts(track.scrobbled_at_uts)}
-                  class="whitespace-nowrap text-right text-xs sm:text-sm text-zinc-500 dark:text-zinc-400"
+                  class="text-right text-xs whitespace-nowrap text-zinc-500 sm:text-sm dark:text-zinc-400"
                 >
                   {track.scrobbled_at_label}
                 </time>
@@ -161,7 +161,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
                     <span class="sr-only">{gettext("Actions")}</span>
                     <.icon
                       name="hero-ellipsis-vertical"
-                      class="icon text-zinc-500 dark:text-zinc-400 cursor-pointer"
+                      class="icon cursor-pointer text-zinc-500 dark:text-zinc-400"
                       aria-hidden="true"
                       data-slot="icon"
                     />

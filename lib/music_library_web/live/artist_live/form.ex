@@ -48,7 +48,7 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
             <div class="text-center">
               <.artist_image
                 :if={@uploads.image_data.entries == []}
-                class="rounded-lg mx-auto w-full"
+                class="mx-auto w-full rounded-lg"
                 artist={@artist}
                 image_hash={@artist_info.image_data_hash}
               />
@@ -67,7 +67,7 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
                   for={@uploads.image_data.ref}
                   class={[
                     "relative cursor-pointer rounded-md font-semibold",
-                    "focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2",
+                    "focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 focus-within:outline-none",
                     "hover:text-zinc-200"
                   ]}
                 >
@@ -126,7 +126,7 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
           <div
             :if={@image_search_results != []}
             id="image-search-results"
-            class="grid grid-cols-3 sm:grid-cols-4 gap-2"
+            class="grid grid-cols-3 gap-2 sm:grid-cols-4"
           >
             <button
               :for={result <- @image_search_results}
@@ -139,8 +139,8 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
                 "group relative overflow-hidden rounded-md",
                 "border border-zinc-200 dark:border-zinc-700",
                 "hover:ring-2 hover:ring-indigo-500",
-                "focus:outline-none focus:ring-2 focus:ring-indigo-500",
-                "disabled:opacity-50 disabled:cursor-not-allowed"
+                "focus:ring-2 focus:ring-indigo-500 focus:outline-none",
+                "disabled:cursor-not-allowed disabled:opacity-50"
               ]}
             >
               <img
@@ -152,8 +152,8 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
               <span
                 :if={result.width && result.height}
                 class={[
-                  "absolute bottom-0 inset-x-0",
-                  "bg-black/60 text-white text-xs text-center",
+                  "absolute inset-x-0 bottom-0",
+                  "bg-black/60 text-center text-xs text-white",
                   "py-0.5"
                 ]}
               >

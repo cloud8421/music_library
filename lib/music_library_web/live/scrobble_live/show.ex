@@ -31,7 +31,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
           </.button>
         </div>
 
-        <div class="md:flex mt-4 px-4 md:gap-x-4">
+        <div class="mt-4 px-4 md:flex md:gap-x-4">
           <div class="drop-shadow-sm md:max-w-152 lg:min-w-152">
             <img
               src={MusicBrainz.Release.thumb_url(@release)}
@@ -43,12 +43,12 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
           </div>
 
           <div class="grow">
-            <div class="mt-4 md:mt-0 flex justify-between items-center">
-              <h1 :if={@release.artists != []} class="text-base font-medium leading-6 text-zinc-700">
+            <div class="mt-4 flex items-center justify-between md:mt-0">
+              <h1 :if={@release.artists != []} class="text-base/6 font-medium text-zinc-700">
                 {@release.artists |> Enum.map(& &1.name) |> Enum.join(", ")}
               </h1>
             </div>
-            <h2 class="mt-1 flex font-semibold text-lg md:text-2xl text-zinc-700 dark:text-zinc-300 text-wrap">
+            <h2 class="mt-1 flex text-lg font-semibold text-wrap text-zinc-700 md:text-2xl dark:text-zinc-300">
               {@release.title}
             </h2>
 
@@ -73,7 +73,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
             </div>
 
             <div :if={@release.media != []} class="mt-6 space-y-4">
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-200">
                   {gettext("Tracks")}
                 </h3>

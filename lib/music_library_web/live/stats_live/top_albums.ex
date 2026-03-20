@@ -30,18 +30,18 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
           ]}
         >
           <img
-            class="w-12 h-12 rounded-md shadow-sm object-cover"
+            class="size-12 rounded-md object-cover shadow-sm"
             src={cover_url(album)}
             alt={album.album_title}
           />
-          <div class="flex-1 min-w-0">
+          <div class="min-w-0 flex-1">
             <.link
-              class="text-xs text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300 truncate"
+              class="truncate text-xs text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
               navigate={~p"/artists/#{album.artist_musicbrainz_id}"}
             >
               {album.artist_name}
             </.link>
-            <p class="text-sm font-medium text-zinc-900 dark:text-zinc-300 truncate">
+            <p class="truncate text-sm font-medium text-zinc-900 dark:text-zinc-300">
               {album.album_title}
             </p>
           </div>
