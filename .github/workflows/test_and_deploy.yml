@@ -62,6 +62,8 @@ jobs:
           FLUXON_KEY_FINGERPRINT: ${{ secrets.FLUXON_KEY_FINGERPRINT }}
       - name: Fetch dependencies
         run: mix deps.get
+      - name: 💨 Install Tailwind (needed for formatter)
+        run: mix tailwind.install
       - name: 📦 Check unused dependencies
         run: mix deps.unlock --check-unused
       - name: 🔮 Compile for DEV
