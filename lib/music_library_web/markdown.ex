@@ -1,11 +1,18 @@
 defmodule MusicLibraryWeb.Markdown do
   @moduledoc """
-  Custom markdown processor that handles double square bracket links.
+  Custom markdown processor that handles double square bracket links
+  and streaming markdown rendering for chat.
 
-  Text wrapped in double square brackets like `[[Foo]]` will be rendered as 
+  Text wrapped in double square brackets like `[[Foo]]` will be rendered as
   search links to the collection page.
   """
   alias MusicLibrary.Records
+
+  @mdex_options [
+    extension: [autolink: true, strikethrough: true, table: true],
+    render: [unsafe: true],
+    sanitize: MDEx.Document.default_sanitize_options()
+  ]
 
   @doc """
   Converts markdown with custom `[[link]]` syntax to HTML.
@@ -21,11 +28,7 @@ defmodule MusicLibraryWeb.Markdown do
         result =
           markdown_text
           |> process_double_bracket_links()
-          |> MDEx.to_html!(
-            extension: [autolink: true, strikethrough: true, table: true],
-            render: [unsafe: true],
-            sanitize: MDEx.Document.default_sanitize_options()
-          )
+          |> MDEx.to_html!(@mdex_options)
 
         {result, %{}}
       end
@@ -33,6 +36,29 @@ defmodule MusicLibraryWeb.Markdown do
   end
 
   def to_html(nil), do: ""
+
+  @doc """
+  Creates a new streaming MDEx document for incremental markdown rendering.
+  """
+  @spec new_streaming_doc() :: MDEx.Document.t()
+  def new_streaming_doc do
+    MDEx.new([streaming: true] ++ @mdex_options)
+  end
+
+  @doc """
+  Renders a streaming MDEx document to HTML.
+  """
+  @spec streaming_to_html(MDEx.Document.t()) :: String.t()
+  def streaming_to_html(%MDEx.Document{} = doc) do
+    :telemetry.span(
+      [:markdown, :streaming_to_html],
+      %{},
+      fn ->
+        result = MDEx.to_html!(doc)
+        {result, %{}}
+      end
+    )
+  end
 
   @doc """
   Processes text to convert [[text]] patterns into markdown links.

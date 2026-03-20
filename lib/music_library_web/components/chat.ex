@@ -19,12 +19,18 @@ defmodule MusicLibraryWeb.Components.Chat do
      |> assign(:view, :active)
      |> assign(:chat, nil)
      |> assign(:chats, [])
+     |> assign(:streaming_doc, nil)
      |> assign(:has_history, false)}
   end
 
   @impl true
   def update(%{chunk: chunk}, socket) do
-    {:ok, update(socket, :current_response, &(&1 <> chunk))}
+    doc = socket.assigns.streaming_doc || Markdown.new_streaming_doc()
+
+    {:ok,
+     socket
+     |> update(:current_response, &(&1 <> chunk))
+     |> assign(:streaming_doc, MDEx.Document.put_markdown(doc, chunk))}
   end
 
   def update(%{done: true}, socket) do
@@ -36,6 +42,7 @@ defmodule MusicLibraryWeb.Components.Chat do
      socket
      |> update(:messages, &(&1 ++ [completed_message]))
      |> assign(:current_response, "")
+     |> assign(:streaming_doc, nil)
      |> assign(:loading, false)}
   end
 
@@ -207,7 +214,7 @@ defmodule MusicLibraryWeb.Components.Chat do
       phx-hook=".ScrollBottom"
     >
       <div
-        :if={@messages == [] and @current_response == ""}
+        :if={@messages == [] and @streaming_doc == nil}
         class="flex h-full flex-col items-center justify-center text-center text-zinc-500 dark:text-zinc-400"
       >
         <.icon
@@ -231,16 +238,16 @@ defmodule MusicLibraryWeb.Components.Chat do
       </div>
 
       <div
-        :if={@current_response != ""}
+        :if={@streaming_doc != nil}
         class="max-w-[85%] rounded-lg bg-zinc-100 px-4 py-2 text-sm text-zinc-900 dark:bg-zinc-700 dark:text-zinc-100"
       >
         <div class="dark:prose-invert prose prose-sm">
-          {raw(Markdown.to_html(@current_response))}
+          {raw(Markdown.streaming_to_html(@streaming_doc))}
         </div>
       </div>
 
       <div
-        :if={@loading and @current_response == ""}
+        :if={@loading and @streaming_doc == nil}
         class="flex items-center gap-2 text-zinc-500 dark:text-zinc-400"
       >
         <.loading class="size-4" />
@@ -306,6 +313,7 @@ defmodule MusicLibraryWeb.Components.Chat do
      socket
      |> assign(:messages, [])
      |> assign(:current_response, "")
+     |> assign(:streaming_doc, nil)
      |> assign(:error, nil)
      |> assign(:chat, nil)
      |> assign(:view, :active)}
@@ -329,6 +337,7 @@ defmodule MusicLibraryWeb.Components.Chat do
      |> assign(:chat, chat)
      |> assign(:messages, messages)
      |> assign(:current_response, "")
+     |> assign(:streaming_doc, nil)
      |> assign(:error, nil)
      |> assign(:view, :active)}
   end
@@ -346,6 +355,7 @@ defmodule MusicLibraryWeb.Components.Chat do
         |> assign(:chat, nil)
         |> assign(:messages, [])
         |> assign(:current_response, "")
+        |> assign(:streaming_doc, nil)
         |> assign(:error, nil)
       else
         socket
@@ -407,6 +417,7 @@ defmodule MusicLibraryWeb.Components.Chat do
      |> assign(:has_history, true)
      |> assign(:loading, true)
      |> assign(:current_response, "")
+     |> assign(:streaming_doc, nil)
      |> assign(:error, nil)}
   end
 

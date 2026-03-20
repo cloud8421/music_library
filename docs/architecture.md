@@ -296,7 +296,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | Module | Purpose |
 |--------|---------|
 | `ErrorMessages` | Maps internal error terms (atoms, structs) to user-friendly gettext strings via `friendly_message/1` |
-| `Markdown` | Markdown-to-HTML conversion (MDEx with ammonia sanitization) with `[[double bracket]]` link syntax |
+| `Markdown` | Markdown-to-HTML conversion (MDEx with ammonia sanitization) with `[[double bracket]]` link syntax and streaming document support for chat |
 | `Duration` | Milliseconds to human-readable duration formatting |
 | `Auth` | Authentication plugs: login password check, API token validation, session enforcement |
 | `LiveHelpers.Params` | Pagination param parsing from URL query params |
