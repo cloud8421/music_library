@@ -7,6 +7,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
   alias MusicLibrary.{Artists, Chats, Records}
   alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibraryWeb.ErrorMessages
+  alias MusicLibraryWeb.Markdown
 
   attr :country, :map, required: true
 
@@ -363,7 +364,9 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                   :if={lastfm_artist_info.bio not in [nil, ""]}
                   class="text-zinc-700 dark:text-zinc-300"
                 >
-                  {remove_read_more_link(lastfm_artist_info.summary)}
+                  <div class="dark:prose-invert prose prose-sm">
+                    {remove_read_more_link(lastfm_artist_info.summary)}
+                  </div>
                   <.link
                     class="mt-2 block text-sm font-medium text-zinc-900 dark:text-zinc-400"
                     phx-click={Fluxon.open_dialog("lastfm-bio")}
@@ -383,7 +386,9 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                   class="max-w-2xl text-zinc-700 dark:text-zinc-300"
                   placement="left"
                 >
-                  {render_bio(lastfm_artist_info.bio)}
+                  <div class="dark:prose-invert prose prose-sm">
+                    {render_bio(lastfm_artist_info.bio)}
+                  </div>
                 </.sheet>
               </.async_result>
             <% end %>
@@ -777,10 +782,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
             ""
           )
 
-        PhoenixHTMLHelpers.Format.text_to_html(reformatted_bio,
-          escape: false,
-          attributes: [class: "mt-2 text-sm/7"]
-        )
+        render_content(reformatted_bio)
 
       [text, link, license] ->
         reformatted_bio =
@@ -793,16 +795,10 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
             ""
           )
 
-        PhoenixHTMLHelpers.Format.text_to_html(reformatted_bio,
-          escape: false,
-          attributes: [class: "mt-2 text-sm/7"]
-        )
+        render_content(reformatted_bio)
 
       other ->
-        PhoenixHTMLHelpers.Format.text_to_html(other,
-          escape: false,
-          attributes: [class: "mt-2 text-sm/7"]
-        )
+        render_content(other)
     end
   end
 
@@ -810,9 +806,14 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     last_fm_link_regex = ~r/<a.*Read more on Last\.fm<\/a>\.*\s*/
     reformatted_summary = String.replace(summary, last_fm_link_regex, "")
 
-    PhoenixHTMLHelpers.Format.text_to_html(reformatted_summary,
-      escape: false,
-      attributes: [class: "mt-2 text-sm/7"]
-    )
+    render_content(reformatted_summary)
+  end
+
+  # sobelow_skip ["XSS.Raw"]
+  # Markdown.to_html/1 sanitizes HTML via MDEx (ammonia)
+  defp render_content(content) do
+    content
+    |> Markdown.to_html()
+    |> raw()
   end
 end
