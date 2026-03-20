@@ -81,7 +81,7 @@ defmodule MusicLibrary.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:quokka, "~> 2.6", only: [:dev, :test], runtime: false},
       {:live_debugger, "~> 0.7.0", only: :dev},
-      {:usage_rules, "~> 1.0"},
+      {:usage_rules, "~> 1.1", only: [:dev]},
       {:tidewave, "~> 0.5", only: :dev},
       {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false, warn_if_outdated: true},
 
@@ -103,7 +103,7 @@ defmodule MusicLibrary.MixProject do
       {:dominant_colors, "~> 0.1.4"},
       {:briefly, "~> 0.5.0"},
 
-      # Notes
+      # Markdown rendering
       {:mdex, "~> 0.11.6"},
 
       # PDF generation
