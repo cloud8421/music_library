@@ -20,52 +20,54 @@ defmodule MusicLibraryWeb.StatsLive.TopByPeriod do
   def render(assigns) do
     ~H"""
     <div>
-      <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
-        {@title}
-      </h1>
-      <.tabs class="mt-4">
-        <.tabs_list active_tab={name_from_period(@key, @period)} variant="segmented" size="xs">
-          <:tab
-            class="flex-1"
-            name={"#{@key}_last_7_days"}
-            phx-click={JS.push("set_period", value: %{period: "last_7_days"})}
-            phx-target={@myself}
-          >
-            {gettext("7d")}
-          </:tab>
-          <:tab
-            class="flex-1"
-            name={"#{@key}_last_30_days"}
-            phx-click={JS.push("set_period", value: %{period: "last_30_days"})}
-            phx-target={@myself}
-          >
-            {gettext("30d")}
-          </:tab>
-          <:tab
-            class="flex-1"
-            name={"#{@key}_last_90_days"}
-            phx-click={JS.push("set_period", value: %{period: "last_90_days"})}
-            phx-target={@myself}
-          >
-            {gettext("90d")}
-          </:tab>
-          <:tab
-            class="flex-1"
-            name={"#{@key}_last_365_days"}
-            phx-click={JS.push("set_period", value: %{period: "last_365_days"})}
-            phx-target={@myself}
-          >
-            {gettext("1y")}
-          </:tab>
-          <:tab
-            class="flex-1"
-            name={"#{@key}_all_time"}
-            phx-click={JS.push("set_period", value: %{period: "all_time"})}
-            phx-target={@myself}
-          >
-            {gettext("All time")}
-          </:tab>
-        </.tabs_list>
+      <.tabs>
+        <div class="flex justify-between">
+          <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
+            {@title}
+          </h1>
+          <.tabs_list active_tab={name_from_period(@key, @period)} variant="segmented" size="xs">
+            <:tab
+              class="flex-1"
+              name={"#{@key}_last_7_days"}
+              phx-click={JS.push("set_period", value: %{period: "last_7_days"})}
+              phx-target={@myself}
+            >
+              {gettext("7d")}
+            </:tab>
+            <:tab
+              class="flex-1"
+              name={"#{@key}_last_30_days"}
+              phx-click={JS.push("set_period", value: %{period: "last_30_days"})}
+              phx-target={@myself}
+            >
+              {gettext("30d")}
+            </:tab>
+            <:tab
+              class="flex-1"
+              name={"#{@key}_last_90_days"}
+              phx-click={JS.push("set_period", value: %{period: "last_90_days"})}
+              phx-target={@myself}
+            >
+              {gettext("90d")}
+            </:tab>
+            <:tab
+              class="flex-1"
+              name={"#{@key}_last_365_days"}
+              phx-click={JS.push("set_period", value: %{period: "last_365_days"})}
+              phx-target={@myself}
+            >
+              {gettext("1y")}
+            </:tab>
+            <:tab
+              class="flex-1"
+              name={"#{@key}_all_time"}
+              phx-click={JS.push("set_period", value: %{period: "all_time"})}
+              phx-target={@myself}
+            >
+              {gettext("∞")}
+            </:tab>
+          </.tabs_list>
+        </div>
         <.async_result :let={items} assign={assigns[@key]}>
           <:loading>
             <div class="flex h-182 items-center justify-center">

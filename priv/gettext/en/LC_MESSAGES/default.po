@@ -852,11 +852,6 @@ msgstr ""
 msgid "Top Artists"
 msgstr ""
 
-#: lib/music_library_web/live/stats_live/top_by_period.ex
-#, elixir-autogen, elixir-format
-msgid "All time"
-msgstr ""
-
 #: lib/music_library_web/components/scrobble_components.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Copy album MusicBrainz ID to clipboard"
@@ -2340,4 +2335,9 @@ msgstr ""
 #: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Top 20 Release Years"
+msgstr ""
+
+#: lib/music_library_web/live/stats_live/top_by_period.ex
+#, elixir-autogen, elixir-format
+msgid "∞"
 msgstr ""
