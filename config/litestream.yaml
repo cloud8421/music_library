@@ -6,5 +6,6 @@ dbs:
       bucket: ffmusiclibrary
       path: prod
       endpoint: https://nbg1.your-objectstorage.com
-      sync-interval: 1m
-      retention: 672h # 4 weeks
+      sync-interval: 24h
+      snapshot-interval: 24h
+      retention: 168h # 1 week
