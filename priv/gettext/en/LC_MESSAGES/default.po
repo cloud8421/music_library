@@ -1269,11 +1269,6 @@ msgstr ""
 msgid "Note updated successfully"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Open Notes"
-msgstr ""
-
 #: lib/music_library_web/components/notes.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Read"
@@ -2248,6 +2243,7 @@ msgstr ""
 msgid "Sending..."
 msgstr ""
 
+#: lib/music_library_web/live/artist_live/show.ex
 #: lib/music_library_web/live/collection_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Notes"

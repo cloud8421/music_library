@@ -100,18 +100,6 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
               <.button_group>
                 <.button
                   variant="soft"
-                  phx-click={MusicLibraryWeb.Components.Notes.open("artist-notes-sheet")}
-                >
-                  <span class="sr-only">{gettext("Open Notes")}</span>
-                  <.icon
-                    name="hero-pencil"
-                    class="icon"
-                    aria-hidden="true"
-                    data-slot="icon"
-                  />
-                </.button>
-                <.button
-                  variant="soft"
                   phx-click={MusicLibraryWeb.Components.Chat.open("artist-chat-sheet")}
                 >
                   <span class="sr-only">{gettext("Chat about artist")}</span>
@@ -122,18 +110,6 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                     data-slot="icon"
                   />
                   <span :if={@chat_count > 0} class="text-xs font-medium">{@chat_count}</span>
-                </.button>
-                <.button
-                  variant="soft"
-                  phx-click={Fluxon.open_dialog("debug-data")}
-                >
-                  <span class="sr-only">{gettext("Debug data")}</span>
-                  <.icon
-                    name="hero-code-bracket"
-                    class="icon"
-                    aria-hidden="true"
-                    data-slot="icon"
-                  />
                 </.button>
                 <.dropdown id={"actions-#{@artist.musicbrainz_id}"} placement="bottom-end">
                   <:toggle>
@@ -148,6 +124,34 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                     </.button>
                   </:toggle>
                   <.focus_wrap id={"actions-#{@artist.musicbrainz_id}-focus-wrap"}>
+                    <.dropdown_link
+                      id={"actions-#{@artist.musicbrainz_id}-notes"}
+                      phx-click={MusicLibraryWeb.Components.Notes.open("artist-notes-sheet")}
+                    >
+                      <.icon
+                        name="hero-pencil"
+                        class="mr-1 size-4"
+                        aria-hidden="true"
+                        data-slot="icon"
+                      />
+                      {gettext("Notes")}
+                    </.dropdown_link>
+
+                    <.dropdown_link
+                      id={"actions-#{@artist.musicbrainz_id}-debug"}
+                      phx-click={Fluxon.open_dialog("debug-data")}
+                    >
+                      <.icon
+                        name="hero-code-bracket"
+                        class="mr-1 size-4"
+                        aria-hidden="true"
+                        data-slot="icon"
+                      />
+                      {gettext("Debug data")}
+                    </.dropdown_link>
+
+                    <.dropdown_separator />
+
                     <.dropdown_link
                       id={"actions-#{@artist.musicbrainz_id}-edit"}
                       patch={~p"/artists/#{@artist.musicbrainz_id}/edit"}
