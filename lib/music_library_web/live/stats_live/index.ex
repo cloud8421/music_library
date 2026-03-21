@@ -65,10 +65,41 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         </div>
       </div>
 
-      <div>
-        <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
-          <TopArtists.live id="top-artists" timezone={@timezone} last_updated_uts={@last_updated_uts} />
-          <TopAlbums.live id="top-albums" timezone={@timezone} last_updated_uts={@last_updated_uts} />
+      <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-3">
+        <TopArtists.live id="top-artists" timezone={@timezone} last_updated_uts={@last_updated_uts} />
+        <TopAlbums.live id="top-albums" timezone={@timezone} last_updated_uts={@last_updated_uts} />
+        <div>
+          <div class="flex items-center justify-between">
+            <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
+              {gettext("On This day")}
+            </h1>
+            <.form
+              :let={f}
+              for={to_form(%{"current_date" => @current_date})}
+              phx-change="set_current_date"
+            >
+              <.date_picker size="xs" field={f[:current_date]}>
+                <:outer_suffix>
+                  <.button
+                    size="xs"
+                    type="button"
+                    phx-click={
+                      JS.push("set_current_date", value: %{"current_date" => Date.utc_today()})
+                    }
+                  >
+                    Today
+                  </.button>
+                </:outer_suffix>
+              </.date_picker>
+            </.form>
+          </div>
+          <div class="rounded-md bg-white shadow-sm dark:bg-zinc-800">
+            <.records_on_this_day
+              current_date={@current_date}
+              records={@records_on_this_day}
+              record_show_path={fn record -> ~p"/collection/#{record}" end}
+            />
+          </div>
         </div>
       </div>
 
@@ -261,41 +292,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         </.tabs>
       </div>
 
-      <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-11">
-        <div class="lg:col-span-3">
-          <div class="flex items-center justify-between">
-            <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
-              {gettext("On This day")}
-            </h1>
-            <.form
-              :let={f}
-              for={to_form(%{"current_date" => @current_date})}
-              phx-change="set_current_date"
-            >
-              <.date_picker size="xs" field={f[:current_date]}>
-                <:outer_suffix>
-                  <.button
-                    size="xs"
-                    type="button"
-                    phx-click={
-                      JS.push("set_current_date", value: %{"current_date" => Date.utc_today()})
-                    }
-                  >
-                    Today
-                  </.button>
-                </:outer_suffix>
-              </.date_picker>
-            </.form>
-          </div>
-          <div class="rounded-md bg-white shadow-sm dark:bg-zinc-800">
-            <.records_on_this_day
-              current_date={@current_date}
-              records={@records_on_this_day}
-              record_show_path={fn record -> ~p"/collection/#{record}" end}
-            />
-          </div>
-        </div>
-        <div class="lg:col-span-4">
+      <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
+        <div>
           <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
             {gettext("Top %{n} Collection Artists", %{n: length(@records_by_artist)})}
           </h1>
@@ -317,7 +315,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
           </div>
         </div>
 
-        <div class="lg:col-span-4">
+        <div>
           <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
             {gettext("Top %{n} Collection Genres", %{n: length(@records_by_genre)})}
           </h1>
