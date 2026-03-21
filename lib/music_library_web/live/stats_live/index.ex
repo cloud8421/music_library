@@ -349,6 +349,11 @@ defmodule MusicLibraryWeb.StatsLive.Index do
               color_class="fill-red-500"
               label_fn={fn {year, _count} -> year end}
               value_fn={fn {_year, count} -> count end}
+              datum_click={
+                fn {year, _count} ->
+                  JS.navigate(~p"/collection?#{%{query: "release_year:#{year}"}}")
+                end
+              }
               class="w-full"
             />
           </div>
