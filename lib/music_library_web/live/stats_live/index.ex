@@ -66,33 +66,30 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       </div>
 
       <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-3">
-        <TopArtists.live id="top-artists" timezone={@timezone} last_updated_uts={@last_updated_uts} />
-        <TopAlbums.live id="top-albums" timezone={@timezone} last_updated_uts={@last_updated_uts} />
         <div>
-          <div class="flex items-center justify-between">
-            <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
-              {gettext("On This day")}
-            </h1>
-            <.form
-              :let={f}
-              for={to_form(%{"current_date" => @current_date})}
-              phx-change="set_current_date"
-            >
-              <.date_picker size="xs" field={f[:current_date]}>
-                <:outer_suffix>
-                  <.button
-                    size="xs"
-                    type="button"
-                    phx-click={
-                      JS.push("set_current_date", value: %{"current_date" => Date.utc_today()})
-                    }
-                  >
-                    Today
-                  </.button>
-                </:outer_suffix>
-              </.date_picker>
-            </.form>
-          </div>
+          <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
+            {gettext("On This day")}
+          </h1>
+          <.form
+            :let={f}
+            for={to_form(%{"current_date" => @current_date})}
+            phx-change="set_current_date"
+            class="mt-4 w-fit"
+          >
+            <.date_picker size="xs" field={f[:current_date]}>
+              <:outer_suffix>
+                <.button
+                  size="xs"
+                  type="button"
+                  phx-click={
+                    JS.push("set_current_date", value: %{"current_date" => Date.utc_today()})
+                  }
+                >
+                  Today
+                </.button>
+              </:outer_suffix>
+            </.date_picker>
+          </.form>
           <div class="rounded-md bg-white shadow-sm dark:bg-zinc-800">
             <.records_on_this_day
               current_date={@current_date}
@@ -101,6 +98,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
             />
           </div>
         </div>
+        <TopArtists.live id="top-artists" timezone={@timezone} last_updated_uts={@last_updated_uts} />
+        <TopAlbums.live id="top-albums" timezone={@timezone} last_updated_uts={@last_updated_uts} />
       </div>
 
       <div class="flow-root">
