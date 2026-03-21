@@ -20,4 +20,13 @@ retry: 40
 retry-interval: 10s
 HTTP 200
 [Asserts]
+jsonpath "$.status" != "in_progress"
+
+# Verify the deployment actually succeeded - due to Coolify's architecture, we
+# need to perform another request to isolate assertions
+
+GET {{coolify_host}}/api/v1/deployments/{{deployment_uuid}}
+Authorization: Bearer {{coolify_token}}
+HTTP 200
+[Asserts]
 jsonpath "$.status" == "finished"
