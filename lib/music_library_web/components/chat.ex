@@ -299,7 +299,6 @@ defmodule MusicLibraryWeb.Components.Chat do
           class="flex-1"
           disabled={@loading}
           autocomplete="off"
-          autofocus
         />
         <.button
           type="submit"
