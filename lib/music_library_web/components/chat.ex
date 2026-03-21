@@ -58,7 +58,20 @@ defmodule MusicLibraryWeb.Components.Chat do
 
     socket =
       if changed?(socket, :entity) or changed?(socket, :musicbrainz_id) do
-        assign(socket, :has_history, check_chat_history(socket.assigns))
+        has_history = check_chat_history(socket.assigns)
+
+        if has_history do
+          chats = Chats.list_chats(socket.assigns.entity, socket.assigns.musicbrainz_id)
+
+          socket
+          |> assign(:has_history, true)
+          |> assign(:chats, chats)
+          |> assign(:view, :list)
+        else
+          socket
+          |> assign(:has_history, false)
+          |> assign(:view, :active)
+        end
       else
         socket
       end
