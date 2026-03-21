@@ -42,6 +42,17 @@ defmodule MusicLibrary.WishlistTest do
     end
   end
 
+  describe "search_records/2 with release_year" do
+    test "filters by release year" do
+      record(%{purchased_at: nil, title: "Album 1994", release_date: "1994-09-13"})
+      record(%{purchased_at: nil, title: "Album 2020", release_date: "2020"})
+
+      assert [%{title: "Album 1994"}] = Wishlist.search_records("release_year:1994")
+      assert [%{title: "Album 2020"}] = Wishlist.search_records("release_year:2020")
+      assert [] = Wishlist.search_records("release_year:2000")
+    end
+  end
+
   describe "count/0" do
     setup [:fill_wishlist]
 

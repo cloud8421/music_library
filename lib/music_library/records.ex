@@ -157,6 +157,10 @@ defmodule MusicLibrary.Records do
           )
         )
 
+      {:release_year, year}, search ->
+        search
+        |> where([r], fragment("substr(?, 1, 4) = ?", r.release_date, ^to_string(year)))
+
       {:query, ""}, search ->
         search
 

@@ -11,6 +11,7 @@ defmodule MusicLibrary.Records.SearchParser do
   - `format:value` — filter by format (e.g. `cd`, `vinyl`)
   - `type:value` — filter by type (e.g. `album`, `single`)
   - `purchase_year:YYYY` — filter by purchase year
+  - `release_year:YYYY` — filter by release year
 
   Multi-word values can be quoted: `artist:"the pineapple thief"`.
   Unrecognized format/type values are silently ignored.
@@ -25,7 +26,8 @@ defmodule MusicLibrary.Records.SearchParser do
           optional(:genre) => String.t(),
           optional(:format) => atom(),
           optional(:type) => atom(),
-          optional(:purchase_year) => integer()
+          optional(:purchase_year) => integer(),
+          optional(:release_year) => integer()
         }
 
   import NimbleParsec
@@ -53,6 +55,9 @@ defmodule MusicLibrary.Records.SearchParser do
   year = integer(4) |> tag(:year)
   purchase_year_filter = ignore(string("purchase_year:"))
   purchase_year = concat(purchase_year_filter, year) |> tag(:purchase_year)
+
+  release_year_filter = ignore(string("release_year:"))
+  release_year = concat(release_year_filter, year) |> tag(:release_year)
 
   genre_filter = ignore(string("genre:"))
   genre = concat(genre_filter, query) |> tag(:genre)
@@ -86,7 +91,21 @@ defmodule MusicLibrary.Records.SearchParser do
     |> tag(:type)
 
   search =
-    repeat(choice([artist, album, mbid, genre, space, comma, format, type, purchase_year, query]))
+    repeat(
+      choice([
+        artist,
+        album,
+        mbid,
+        genre,
+        space,
+        comma,
+        format,
+        type,
+        purchase_year,
+        release_year,
+        query
+      ])
+    )
 
   defparsecp(:search_parser, search)
 
@@ -123,6 +142,8 @@ defmodule MusicLibrary.Records.SearchParser do
     {:ok, %{type: :album}}
     iex> MusicLibrary.Records.SearchParser.parse("purchase_year:2024")
     {:ok, %{purchase_year: 2024}}
+    iex> MusicLibrary.Records.SearchParser.parse("release_year:2024")
+    {:ok, %{release_year: 2024}}
   """
   @spec parse(String.t()) :: {:ok, search_result()}
   def parse(""), do: {:ok, %{query: ""}}
@@ -167,6 +188,9 @@ defmodule MusicLibrary.Records.SearchParser do
 
       {:purchase_year, [{:year, [value]}]}, acc ->
         Map.put(acc, :purchase_year, value)
+
+      {:release_year, [{:year, [value]}]}, acc ->
+        Map.put(acc, :release_year, value)
 
       {:query, [value]}, acc ->
         Map.update(acc, :query, value, &(&1 <> " " <> value))

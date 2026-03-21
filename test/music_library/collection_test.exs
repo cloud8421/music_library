@@ -229,6 +229,26 @@ defmodule MusicLibrary.CollectionTest do
     end
   end
 
+  describe "search_records/2 with release_year" do
+    test "filters by release year" do
+      record_with_artist("Artist A", %{
+        title: "Album 1994",
+        release_date: "1994-09-13",
+        purchased_at: ~U[2024-12-27 16:50:57Z]
+      })
+
+      record_with_artist("Artist B", %{
+        title: "Album 2020",
+        release_date: "2020",
+        purchased_at: ~U[2024-12-28 16:50:57Z]
+      })
+
+      assert [%{title: "Album 1994"}] = Collection.search_records("release_year:1994")
+      assert [%{title: "Album 2020"}] = Collection.search_records("release_year:2020")
+      assert [] = Collection.search_records("release_year:2000")
+    end
+  end
+
   describe "collected_artist_ids/0" do
     setup [:fill_collection]
 
