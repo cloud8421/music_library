@@ -340,7 +340,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
           <div class="mt-5 rounded-md bg-white shadow-sm dark:bg-zinc-800">
             <.vertical_bar_chart
               data={@records_by_release_year}
-              color_class="bg-red-500"
+              color_class="bg-zinc-800 dark:bg-zinc-300"
               label_fn={fn {year, _count} -> year end}
               value_fn={fn {_year, count} -> count end}
               datum_click={
