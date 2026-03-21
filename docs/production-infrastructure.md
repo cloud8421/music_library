@@ -70,8 +70,9 @@ Configured in `config/litestream.yaml`. Runs as a separate Docker Compose servic
 |---------|-------|
 | S3 endpoint | `https://nbg1.your-objectstorage.com` |
 | Bucket | `ffmusiclibrary` |
-| Sync interval | 1 minute |
-| Retention | 672 hours (4 weeks) |
+| Sync interval | 24 hours |
+| Snapshot interval | 24 hours |
+| Retention | 168 hours (1 week) |
 
 Credentials via environment: `LITESTREAM_ACCESS_KEY_ID`, `LITESTREAM_SECRET_ACCESS_KEY`.
 

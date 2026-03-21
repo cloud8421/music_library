@@ -116,7 +116,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 
 | Module | Purpose |
 |--------|---------|
-| `Records.SearchParser` | Parses search syntax: `artist:X`, `album:X`, `genre:"Y"`, `format:cd`, `type:album`, `purchase_year:2024`, free text |
+| `Records.SearchParser` | Parses search syntax: `artist:X`, `album:X`, `genre:"Y"`, `format:cd`, `type:album`, `purchase_year:2024`, `release_year:2024`, free text |
 | `Records.Similarity` | Embedding generation (OpenAI, enriched with Last.fm tags), cosine-distance search (sqlite-vec) |
 | `Records.TracklistPdf` | Generates 120mm×120mm PDF tracklist from record + release data (Typst) |
 | `Batch` | Generic batch runner: stream + transaction + error accumulation |
