@@ -292,7 +292,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         </.tabs>
       </div>
 
-      <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
+      <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-3">
         <div>
           <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
             {gettext("Top %{n} Collection Artists", %{n: length(@records_by_artist)})}
@@ -336,6 +336,23 @@ defmodule MusicLibraryWeb.StatsLive.Index do
             />
           </div>
         </div>
+
+        <div>
+          <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
+            {gettext("Top 20 Release Years")}
+          </h1>
+          <div class="mt-5 rounded-md bg-white shadow-sm dark:bg-zinc-800">
+            <.vertical_bar_chart
+              data={@records_by_release_year}
+              width={600}
+              height={26 * length(@records_by_release_year)}
+              color_class="fill-red-500"
+              label_fn={fn {year, _count} -> year end}
+              value_fn={fn {_year, count} -> count end}
+              class="w-full"
+            />
+          </div>
+        </div>
       </div>
     </Layouts.app>
     """
@@ -347,6 +364,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     latest_record = Collection.get_latest_record()
     records_by_artists = Collection.count_records_by_artist(limit: 20)
     records_by_genre = Collection.count_records_by_genre(limit: 20)
+    records_by_release_year = Collection.count_records_by_release_year(limit: 20)
 
     records_on_this_day =
       current_date
@@ -375,6 +393,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        current_section: :stats,
        records_by_artist: records_by_artists,
        records_by_genre: records_by_genre,
+       records_by_release_year: records_by_release_year,
        records_on_this_day: records_on_this_day
      )}
   end

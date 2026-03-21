@@ -2336,3 +2336,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Track ID"
 msgstr ""
+
+#: lib/music_library_web/live/stats_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Top 20 Release Years"
+msgstr ""

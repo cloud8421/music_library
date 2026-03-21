@@ -156,6 +156,79 @@ defmodule MusicLibrary.CollectionTest do
     end
   end
 
+  describe "count_records_by_release_year/1" do
+    test "returns counts grouped by release year, ordered by count descending" do
+      record_with_artist("Artist A", %{
+        release_date: "1994-09-13",
+        purchased_at: ~U[2024-12-27 16:50:57Z]
+      })
+
+      record_with_artist("Artist B", %{
+        release_date: "1994-03-01",
+        purchased_at: ~U[2024-12-28 16:50:57Z]
+      })
+
+      record_with_artist("Artist C", %{
+        release_date: "2020",
+        purchased_at: ~U[2024-12-29 16:50:57Z]
+      })
+
+      assert [{"1994", 2}, {"2020", 1}] = Collection.count_records_by_release_year()
+    end
+
+    test "excludes wishlisted records" do
+      record_with_artist("Artist A", %{
+        release_date: "2020",
+        purchased_at: ~U[2024-12-27 16:50:57Z]
+      })
+
+      record_with_artist("Artist B", %{
+        release_date: "2020",
+        purchased_at: nil
+      })
+
+      assert [{"2020", 1}] = Collection.count_records_by_release_year()
+    end
+
+    test "excludes records without a release date" do
+      record_with_artist("Artist A", %{
+        release_date: "2020",
+        purchased_at: ~U[2024-12-27 16:50:57Z]
+      })
+
+      record_with_artist("Artist B", %{
+        release_date: nil,
+        purchased_at: ~U[2024-12-28 16:50:57Z]
+      })
+
+      record_with_artist("Artist C", %{
+        release_date: "",
+        purchased_at: ~U[2024-12-29 16:50:57Z]
+      })
+
+      assert [{"2020", 1}] = Collection.count_records_by_release_year()
+    end
+
+    test "respects limit" do
+      record_with_artist("Artist A", %{
+        release_date: "1994",
+        purchased_at: ~U[2024-12-27 16:50:57Z]
+      })
+
+      record_with_artist("Artist B", %{
+        release_date: "1994",
+        purchased_at: ~U[2024-12-28 16:50:57Z]
+      })
+
+      record_with_artist("Artist C", %{
+        release_date: "2020",
+        purchased_at: ~U[2024-12-29 16:50:57Z]
+      })
+
+      assert [{"1994", 2}] = Collection.count_records_by_release_year(limit: 1)
+    end
+  end
+
   describe "collected_artist_ids/0" do
     setup [:fill_collection]
 

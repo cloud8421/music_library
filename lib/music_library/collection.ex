@@ -161,6 +161,23 @@ defmodule MusicLibrary.Collection do
     Repo.all(q)
   end
 
+  @spec count_records_by_release_year(keyword()) :: [{String.t(), non_neg_integer()}]
+  def count_records_by_release_year(opts \\ []) do
+    limit = Keyword.get(opts, :limit, @pagination[:stats_limit])
+
+    q =
+      from r in Record,
+        where: not is_nil(r.purchased_at),
+        where: not is_nil(r.release_date),
+        where: r.release_date != "",
+        group_by: fragment("substr(?, 1, 4)", r.release_date),
+        order_by: [desc: fragment("count(1)")],
+        select: {fragment("substr(?, 1, 4)", r.release_date), fragment("count(1)")},
+        limit: ^limit
+
+    Repo.all(q)
+  end
+
   @spec collected_releases_query() :: Ecto.Query.t()
   def collected_releases_query do
     from rr in RecordRelease,
