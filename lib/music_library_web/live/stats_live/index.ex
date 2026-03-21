@@ -300,9 +300,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
           <div class="mt-5 rounded-md bg-white shadow-sm dark:bg-zinc-800">
             <.vertical_bar_chart
               data={@records_by_artist}
-              width={600}
-              height={26 * length(@records_by_artist)}
-              color_class="fill-red-500"
+              color_class="bg-red-500"
               label_fn={fn datum -> datum.name end}
               value_fn={fn datum -> datum.count end}
               datum_click={
@@ -322,9 +320,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
           <div class="mt-5 rounded-md bg-white shadow-sm dark:bg-zinc-800">
             <.vertical_bar_chart
               data={@records_by_genre}
-              width={600}
-              height={26 * length(@records_by_genre)}
-              color_class="fill-zinc-500"
+              color_class="bg-zinc-500"
               label_fn={fn {genre, _count} -> genre end}
               value_fn={fn {_genre, count} -> count end}
               datum_click={
@@ -344,9 +340,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
           <div class="mt-5 rounded-md bg-white shadow-sm dark:bg-zinc-800">
             <.vertical_bar_chart
               data={@records_by_release_year}
-              width={600}
-              height={26 * length(@records_by_release_year)}
-              color_class="fill-red-500"
+              color_class="bg-red-500"
               label_fn={fn {year, _count} -> year end}
               value_fn={fn {_year, count} -> count end}
               datum_click={

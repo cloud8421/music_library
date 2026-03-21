@@ -1,24 +1,29 @@
 defmodule MusicLibraryWeb.ChartComponents do
+  @moduledoc """
+  Chart components for the stats dashboard.
+  """
+
   use MusicLibraryWeb, :live_component
 
   @doc """
-  Renders a horizontal bar chart.
+  Renders a horizontal bar chart using CSS Grid.
+
+  The label column auto-sizes to the widest label (up to 130px max),
+  bars fill remaining space proportionally, and values are displayed
+  to the right of each bar.
 
   ## Examples
+
       <.vertical_bar_chart
         data={[{"Artist 1", 5}, {"Artist 2", 3}]}
         label_fn={&elem(&1, 0)}
         value_fn={&elem(&1, 1)}
-        width={400}
-        height={300}
-        color_class="fill-red-500"
+        color_class="bg-red-500"
       />
   """
   attr :data, :list, required: true
   attr :label_fn, :any, required: true
   attr :value_fn, :any, required: true
-  attr :width, :integer, default: 400
-  attr :height, :integer, default: 300
   attr :color_class, :string, required: true
   attr :class, :string, default: ""
   attr :datum_click, :any, default: nil, doc: "the function for handling phx-click on each datum"
@@ -26,71 +31,38 @@ defmodule MusicLibraryWeb.ChartComponents do
   def vertical_bar_chart(assigns) when assigns.data != [] do
     assigns =
       assigns
-      |> assign(:padding, 40)
       |> assign(:max_value, max_value(assigns.data, assigns.value_fn))
-      # Account for labels and padding
-      |> assign(:chart_width, assigns.width - 150 - 40)
-      # Account for bottom padding
-      |> assign(:chart_height, assigns.height - 40)
-      |> assign(:bar_height, calculate_bar_height(assigns.data, assigns.height - 40))
 
     ~H"""
-    <div class={["w-full", @class]}>
-      <svg
-        viewBox={"0 0 #{@width} #{@height}"}
-        preserveAspectRatio="xMidYMid meet"
-        class="size-full"
-      >
-        <%!-- Bars and labels --%>
-        <%= for {datum, index} <- Enum.with_index(@data) do %>
-          <% bar_width = @chart_width * @value_fn.(datum) / @max_value %>
-          <% y = @padding / 2 + index * (@bar_height + 4) %>
+    <div class={["w-full p-4", @class]}>
+      <div class="grid grid-cols-[auto_1fr_auto] items-center gap-x-2 gap-y-1.5">
+        <%= for datum <- @data do %>
+          <% percentage = bar_percentage(@value_fn.(datum), @max_value) %>
+          <% label = to_string(@label_fn.(datum)) %>
 
-          <%!-- Label --%>
-          <text
-            x="140"
-            y={y + @bar_height / 2 + 4}
-            text-anchor="end"
-            class={[
-              "fill-zinc-500 text-xs font-medium hover:fill-zinc-700 dark:fill-zinc-400 dark:hover:fill-zinc-200",
-              @datum_click && "cursor-pointer"
-            ]}
-            phx-click={@datum_click && @datum_click.(datum)}
-          >
-            {truncate_label(@label_fn.(datum), 20)}
-          </text>
-
-          <%!-- Bar --%>
-          <rect
-            x="150"
-            y={y}
-            width={bar_width}
-            height={@bar_height}
-            rx="4"
-            class={[
-              "opacity-80 transition-opacity hover:opacity-100",
-              @color_class,
-              @datum_click && "cursor-pointer"
-            ]}
-            phx-click={@datum_click && @datum_click.(datum)}
-          >
-            <title>{@label_fn.(datum)}: {@value_fn.(datum)}</title>
-          </rect>
-
-          <%!-- Value label --%>
-          <text
-            x={150 + bar_width + 5}
-            y={y + @bar_height / 2 + 4}
-            class={[
-              "fill-zinc-500 text-xs font-semibold dark:fill-zinc-400",
-              @datum_click && "cursor-pointer"
-            ]}
-            phx-click={@datum_click && @datum_click.(datum)}
-          >
-            {@value_fn.(datum)}
-          </text>
+          <%= if @datum_click do %>
+            <div
+              class="group col-span-3 grid grid-cols-subgrid cursor-pointer items-center"
+              phx-click={@datum_click.(datum)}
+            >
+              <.bar_row
+                label={label}
+                percentage={percentage}
+                value={@value_fn.(datum)}
+                color_class={@color_class}
+                grouped
+              />
+            </div>
+          <% else %>
+            <.bar_row
+              label={label}
+              percentage={percentage}
+              value={@value_fn.(datum)}
+              color_class={@color_class}
+            />
+          <% end %>
         <% end %>
-      </svg>
+      </div>
     </div>
     """
   end
@@ -103,20 +75,46 @@ defmodule MusicLibraryWeb.ChartComponents do
     """
   end
 
+  attr :label, :string, required: true
+  attr :percentage, :float, required: true
+  attr :value, :any, required: true
+  attr :color_class, :string, required: true
+  attr :grouped, :boolean, default: false
+
+  defp bar_row(assigns) do
+    ~H"""
+    <div
+      class={[
+        "max-w-[130px] truncate text-right text-xs font-medium",
+        "text-zinc-500 dark:text-zinc-400",
+        if(@grouped, do: "group-hover:text-zinc-700 dark:group-hover:text-zinc-200")
+      ]}
+      title={@label}
+    >
+      {@label}
+    </div>
+    <div class="h-5 rounded bg-zinc-200 dark:bg-zinc-700">
+      <div
+        class={[
+          "h-full rounded opacity-80 transition-opacity",
+          @color_class,
+          if(@grouped, do: "group-hover:opacity-100")
+        ]}
+        style={"width: #{@percentage}%"}
+      >
+      </div>
+    </div>
+    <div class="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+      {@value}
+    </div>
+    """
+  end
+
   defp max_value(data, value_fn) do
     max = Enum.max_by(data, value_fn)
     value_fn.(max)
   end
 
-  defp calculate_bar_height(data, available_height) do
-    bar_count = length(data)
-    max_height = min(15, (available_height - (bar_count - 1) * 4) / bar_count)
-    max(20, max_height) |> trunc()
-  end
-
-  defp truncate_label(label, max_length) when byte_size(label) > max_length do
-    String.slice(label, 0, max_length - 2) <> ".."
-  end
-
-  defp truncate_label(label, _), do: label
+  defp bar_percentage(_value, max_value) when max_value == 0, do: 0.0
+  defp bar_percentage(value, max_value), do: value / max_value * 100
 end

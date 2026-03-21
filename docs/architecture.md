@@ -285,7 +285,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `CoreComponents` | Forms, buttons, icons, tables, flash messages |
 | `Layouts` | Application layout templates, navigation components (`dropdown_nav/1`) |
 | `RecordComponents` | Record cards, cover images, artist images, labels, grids, shared show-page sections (title, external links, genres, releases, timestamps, debug) |
-| `ChartComponents` | SVG charts for stats |
+| `ChartComponents` | Charts for stats dashboard |
 | `StatsComponents` | Stats dashboard widgets |
 | `ScrobbleComponents` | Scrobble activity displays |
 | `SearchComponents` | Search result rendering |
