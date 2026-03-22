@@ -148,6 +148,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
      |> assign_scrobble_activity()}
   end
 
+  attr :records_by_release_year, :list, required: true
+
   defp top_release_years(assigns) do
     ~H"""
     <div>
@@ -171,6 +173,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     </div>
     """
   end
+
+  attr :records_by_genre, :list, required: true
 
   defp top_collection_genres(assigns) do
     ~H"""
@@ -196,6 +200,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     """
   end
 
+  attr :records_by_artist, :list, required: true
+
   defp top_collection_artists(assigns) do
     ~H"""
     <div>
@@ -219,6 +225,9 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     </div>
     """
   end
+
+  attr :scrobble_activity_mode, :string, required: true
+  attr :streams, :any, required: true
 
   defp scrobble_activity(assigns) do
     ~H"""
@@ -413,6 +422,9 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     """
   end
 
+  attr :current_date, Date, required: true
+  attr :records_on_this_day, :list, required: true
+
   defp on_this_day(assigns) do
     ~H"""
     <div class="order-first lg:order-last">
@@ -449,6 +461,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     """
   end
 
+  attr :collection_count_by_type, :list, required: true
+
   defp types_stats(assigns) do
     ~H"""
     <div>
@@ -464,6 +478,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     """
   end
 
+  attr :collection_count_by_format, :list, required: true
+
   defp formats_stats(assigns) do
     ~H"""
     <div>
@@ -478,6 +494,11 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     </div>
     """
   end
+
+  attr :latest_record, Records.Record, required: true
+  attr :collection_count, :integer, required: true
+  attr :wishlist_count, :integer, required: true
+  attr :scrobble_count, :integer, required: true
 
   defp record_stats(assigns) do
     ~H"""
