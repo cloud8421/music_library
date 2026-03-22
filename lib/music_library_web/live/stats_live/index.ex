@@ -68,7 +68,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       <div class="grid grid-cols-1 gap-5 lg:grid-cols-3 mt-5">
         <TopArtists.live id="top-artists" timezone={@timezone} last_updated_uts={@last_updated_uts} />
         <TopAlbums.live id="top-albums" timezone={@timezone} last_updated_uts={@last_updated_uts} />
-        <div>
+        <div class="order-first lg:order-last">
           <div class="flex items-center justify-between">
             <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
               {gettext("On This day")}
