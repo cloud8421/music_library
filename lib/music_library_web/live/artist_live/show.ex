@@ -6,8 +6,8 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
 
   alias MusicLibrary.{Artists, Chats, Records}
   alias MusicLibrary.Artists.ArtistInfo
+  alias MusicLibraryWeb.ArtistLive.Biography
   alias MusicLibraryWeb.ErrorMessages
-  alias MusicLibraryWeb.Markdown
 
   attr :country, :map, required: true
 
@@ -369,7 +369,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                   class="text-zinc-700 dark:text-zinc-300"
                 >
                   <div class="dark:prose-invert prose prose-sm">
-                    {remove_read_more_link(lastfm_artist_info.summary)}
+                    {Biography.remove_read_more_link(lastfm_artist_info.summary)}
                   </div>
                   <.link
                     class="mt-2 block text-sm font-medium text-zinc-900 dark:text-zinc-400"
@@ -391,7 +391,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                   placement="left"
                 >
                   <div class="dark:prose-invert prose prose-sm">
-                    {render_bio(lastfm_artist_info.bio)}
+                    {Biography.render_bio(lastfm_artist_info.bio)}
                   </div>
                 </.sheet>
               </.async_result>
@@ -547,7 +547,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
         {:noreply,
          socket
          |> assign(:artist_info, artist_info)
-         |> assign(:biography, build_biography(artist_info))
+         |> assign(:biography, Biography.build(artist_info))
          |> put_toast(:info, gettext("Artist info refreshed successfully"))}
 
       {:error, reason} ->
@@ -567,7 +567,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
         {:noreply,
          socket
          |> assign(:artist_info, artist_info)
-         |> assign(:biography, build_biography(artist_info))
+         |> assign(:biography, Biography.build(artist_info))
          |> put_toast(:info, gettext("Wikipedia data refreshed successfully"))}
 
       {:error, reason} ->
@@ -676,7 +676,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     |> assign(:artist, artist)
     |> assign(:artist_info, artist_info)
     |> assign(:chat_count, Chats.count_chats(:artist, musicbrainz_id))
-    |> assign(:biography, build_biography(artist_info))
+    |> assign(:biography, Biography.build(artist_info))
     |> assign(:external_links, ArtistInfo.external_links(artist_info))
     |> assign(:country, ArtistInfo.country(artist_info))
     |> assign_async(:lastfm_artist_info, fn ->
@@ -754,70 +754,5 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
       collection: Enum.sort_by(collection, fn r -> r.release_date end, :desc),
       wishlist: Enum.sort_by(wishlist, fn r -> r.release_date end, :desc)
     }
-  end
-
-  defp build_biography(artist_info) do
-    bio_html = ArtistInfo.wikipedia_bio(artist_info)
-
-    if bio_html do
-      %{
-        source: "Wikipedia",
-        summary_html: ArtistInfo.wikipedia_summary(artist_info),
-        bio_html: bio_html,
-        url: ArtistInfo.wikipedia_url(artist_info),
-        description: ArtistInfo.wikipedia_description(artist_info)
-      }
-    end
-  end
-
-  # Bios start with text, then a link to read more on Last.fm, followed by a license text.
-  # We split the bio at the read more link in order to render the license separately.
-  defp render_bio(bio) do
-    last_fm_link_regex = ~r/<a.*Read more on Last\.fm<\/a>\.*\s*/
-
-    case String.split(bio, last_fm_link_regex, include_captures: true) do
-      [text, link, ""] ->
-        reformatted_bio =
-          Enum.join(
-            [
-              text,
-              ~s(<p class="mt-4 font-semibold text-zinc-700 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200">#{link}</p>)
-            ],
-            ""
-          )
-
-        render_content(reformatted_bio)
-
-      [text, link, license] ->
-        reformatted_bio =
-          Enum.join(
-            [
-              text,
-              ~s(<p class="mt-4 font-semibold text-zinc-700 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200">#{link}</p>),
-              ~s(<p class="mt-4 italic block">#{license}</p>)
-            ],
-            ""
-          )
-
-        render_content(reformatted_bio)
-
-      other ->
-        render_content(other)
-    end
-  end
-
-  defp remove_read_more_link(summary) do
-    last_fm_link_regex = ~r/<a.*Read more on Last\.fm<\/a>\.*\s*/
-    reformatted_summary = String.replace(summary, last_fm_link_regex, "")
-
-    render_content(reformatted_summary)
-  end
-
-  # sobelow_skip ["XSS.Raw"]
-  # Markdown.to_html/1 sanitizes HTML via MDEx (ammonia)
-  defp render_content(content) do
-    content
-    |> Markdown.to_html()
-    |> raw()
   end
 end
