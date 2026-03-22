@@ -233,7 +233,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
             <.refresh_lastfm_feed_button />
           </:title>
           <:side_actions>
-            <.tabs_list active_tab={@scrobble_activity_mode} variant="segmented">
+            <.tabs_list active_tab={@scrobble_activity_mode} variant="segmented" size="xs">
               <:tab
                 name="albums"
                 phx-click={JS.push("set_scrobble_activity_mode", value: %{mode: "albums"})}
