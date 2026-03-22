@@ -19,8 +19,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
   alias MusicLibrary.Chats
   alias MusicLibrary.OnlineStoreTemplates
   alias MusicLibrary.{Records, RecordSets}
-  alias MusicLibrary.Records.Similarity
-  alias MusicLibraryWeb.ErrorMessages
+  alias MusicLibraryWeb.LiveHelpers.RecordActions
 
   @impl true
   def render(assigns) do
@@ -307,7 +306,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
      |> assign(:online_store_templates, online_store_templates)
      |> assign(:record_sets, record_sets)
      |> assign(:chat_count, Chats.count_chats(:record, record.musicbrainz_id))
-     |> assign_embedding_text()}
+     |> RecordActions.assign_embedding_text()}
   end
 
   @impl true
@@ -318,63 +317,15 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
   end
 
   def handle_event("refresh_musicbrainz_data", _params, socket) do
-    record = socket.assigns.record
-
-    case Records.refresh_musicbrainz_data(record) do
-      {:ok, updated_record} ->
-        {:noreply,
-         socket
-         |> put_toast(:info, gettext("MusicBrainz data refreshed successfully"))
-         |> assign(:record, updated_record)}
-
-      {:error, reason} ->
-        {:noreply,
-         socket
-         |> put_toast(
-           :error,
-           gettext("Error refreshing MusicBrainz data") <>
-             ": " <> ErrorMessages.friendly_message(reason)
-         )}
-    end
+    RecordActions.refresh_musicbrainz_data(socket)
   end
 
   def handle_event("refresh_cover", _params, socket) do
-    record = socket.assigns.record
-
-    case Records.refresh_cover(record) do
-      {:ok, updated_record} ->
-        {:noreply,
-         socket
-         |> put_toast(:info, gettext("Cover refreshed successfully"))
-         |> assign(:record, updated_record)}
-
-      {:error, reason} ->
-        {:noreply,
-         socket
-         |> put_toast(
-           :error,
-           gettext("Error refreshing cover") <> ": " <> ErrorMessages.friendly_message(reason)
-         )}
-    end
+    RecordActions.refresh_cover(socket)
   end
 
   def handle_event("populate_genres", _params, socket) do
-    record = socket.assigns.record
-
-    case Records.populate_genres_async(record) do
-      {:ok, _worker} ->
-        {:noreply,
-         socket
-         |> put_toast(:info, gettext("In progress - record will update automatically"))}
-
-      {:error, reason} ->
-        {:noreply,
-         socket
-         |> put_toast(
-           :error,
-           gettext("Error") <> ": " <> ErrorMessages.friendly_message(reason)
-         )}
-    end
+    RecordActions.populate_genres(socket)
   end
 
   def handle_event("add-to-collection", _params, socket) do
@@ -394,23 +345,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
   end
 
   def handle_event("extract_colors", _params, socket) do
-    record = socket.assigns.record
-
-    case Records.extract_colors(record) do
-      {:ok, updated_record} ->
-        {:noreply,
-         socket
-         |> assign(:record, updated_record)
-         |> put_toast(:info, gettext("Colors extracted"))}
-
-      {:error, reason} ->
-        {:noreply,
-         socket
-         |> put_toast(
-           :error,
-           gettext("Error extracting colors") <> ": " <> ErrorMessages.friendly_message(reason)
-         )}
-    end
+    RecordActions.extract_colors(socket)
   end
 
   @impl true
@@ -418,21 +353,16 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
     {:noreply,
      socket
      |> assign(:record, record)
-     |> assign_embedding_text()}
+     |> RecordActions.assign_embedding_text()}
   end
 
   def handle_info({MusicLibraryWeb.Components.Chat, :chats_changed}, socket) do
-    {:noreply,
-     assign(socket, :chat_count, Chats.count_chats(:record, socket.assigns.record.musicbrainz_id))}
+    RecordActions.handle_chats_changed(socket)
   end
 
   @impl true
   def handle_info({:update, record}, socket) do
-    {:noreply,
-     socket
-     |> put_toast(:info, gettext("Record updated in the background"))
-     |> assign(:record, record)
-     |> assign_embedding_text()}
+    {:noreply, RecordActions.handle_record_updated(socket, record)}
   end
 
   defp page_title(action, record) do
@@ -452,11 +382,4 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
   defp title_segment(:show), do: gettext("Details")
   defp title_segment(:edit), do: gettext("Edit")
-
-  defp assign_embedding_text(socket) do
-    case Similarity.get_embedding_text(socket.assigns.record.id) do
-      {:ok, text} -> assign(socket, :embedding_text, text)
-      {:error, _reason} -> assign(socket, :embedding_text, gettext("Not available"))
-    end
-  end
 end

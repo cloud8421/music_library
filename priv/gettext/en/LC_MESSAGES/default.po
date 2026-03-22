@@ -252,14 +252,12 @@ msgstr ""
 msgid "Includes"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/live_helpers/record_actions.ex
 #, elixir-autogen, elixir-format
 msgid "Error refreshing MusicBrainz data"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/live_helpers/record_actions.ex
 #, elixir-autogen, elixir-format
 msgid "MusicBrainz data refreshed successfully"
 msgstr ""
@@ -269,14 +267,12 @@ msgstr ""
 msgid "Refresh LastFm Feed"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/live_helpers/record_actions.ex
 #, elixir-autogen, elixir-format
 msgid "Cover refreshed successfully"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/live_helpers/record_actions.ex
 #, elixir-autogen, elixir-format
 msgid "Error refreshing cover"
 msgstr ""
@@ -611,8 +607,7 @@ msgstr ""
 msgid "Meta"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/live_helpers/record_actions.ex
 #, elixir-autogen, elixir-format
 msgid "Record updated in the background"
 msgstr ""
@@ -807,13 +802,13 @@ msgid "Last listened at"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/live_helpers/record_actions.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Error"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/live_helpers/record_actions.ex
 #, elixir-autogen, elixir-format
 msgid "In progress - record will update automatically"
 msgstr ""
@@ -1553,8 +1548,7 @@ msgstr ""
 msgid "Running optimize..."
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/live_helpers/record_actions.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Not available"
 msgstr ""
@@ -1998,14 +1992,12 @@ msgstr ""
 msgid "Failed to store cover image"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/live_helpers/record_actions.ex
 #, elixir-autogen, elixir-format
 msgid "Colors extracted"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/live_helpers/record_actions.ex
 #, elixir-autogen, elixir-format
 msgid "Error extracting colors"
 msgstr ""
