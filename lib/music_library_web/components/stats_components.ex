@@ -337,4 +337,23 @@ defmodule MusicLibraryWeb.StatsComponents do
       _other -> ""
     end
   end
+
+  attr :container_class, :string, default: nil
+  slot :title, required: true
+  slot :side_actions
+  slot :inner_block, required: true
+
+  def section(assigns) do
+    ~H"""
+    <div class={["mt-5", @container_class]}>
+      <div class="flex items-center justify-between">
+        <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
+          {render_slot(@title)}
+        </h1>
+        {render_slot(@side_actions)}
+      </div>
+      {render_slot(@inner_block)}
+    </div>
+    """
+  end
 end

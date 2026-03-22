@@ -227,191 +227,191 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     ~H"""
     <div class="flow-root">
       <.tabs id="scrobble-activity" class="mt-4">
-        <div class="mt-5 flex end items-center justify-between">
-          <div class="flex">
-            <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200 mr-2">
-              {gettext("Scrobble activity")}
-            </h1>
+        <.section>
+          <:title>
+            {gettext("Scrobble activity")}
             <.refresh_lastfm_feed_button />
-          </div>
-          <.tabs_list active_tab={@scrobble_activity_mode} variant="segmented">
-            <:tab
-              name="albums"
-              phx-click={JS.push("set_scrobble_activity_mode", value: %{mode: "albums"})}
+          </:title>
+          <:side_actions>
+            <.tabs_list active_tab={@scrobble_activity_mode} variant="segmented">
+              <:tab
+                name="albums"
+                phx-click={JS.push("set_scrobble_activity_mode", value: %{mode: "albums"})}
+              >
+                {gettext("Albums")}
+              </:tab>
+              <:tab
+                name="tracks"
+                phx-click={JS.push("set_scrobble_activity_mode", value: %{mode: "tracks"})}
+              >
+                {gettext("Tracks")}
+              </:tab>
+            </.tabs_list>
+          </:side_actions>
+          <.tabs_panel name="albums" active={@scrobble_activity_mode == "albums"}>
+            <ul
+              id="scrobble-activity-albums"
+              role="list"
+              class="mt-4 rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800"
+              phx-update="stream"
             >
-              {gettext("Albums")}
-            </:tab>
-            <:tab
-              name="tracks"
-              phx-click={JS.push("set_scrobble_activity_mode", value: %{mode: "tracks"})}
-            >
-              {gettext("Tracks")}
-            </:tab>
-          </.tabs_list>
-        </div>
-        <.tabs_panel name="albums" active={@scrobble_activity_mode == "albums"}>
-          <ul
-            id="scrobble-activity-albums"
-            role="list"
-            class="mt-4 rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800"
-            phx-update="stream"
-          >
-            <li
-              :for={
-                {id,
-                 %{
-                   album: album,
-                   artist_id: artist_id,
-                   collected_record_id: collected_record_id,
-                   wishlisted_record_id: wishlisted_record_id,
-                   cover_hash: cover_hash
-                 }} <- @streams.recent_albums
-              }
-              id={id}
-              class="group"
-            >
-              <div class="relative pb-4 group-last:pb-0">
-                <span
-                  class="absolute top-6 left-6 -ml-px h-full w-0.5 bg-zinc-200 group-last:hidden"
-                  aria-hidden="true"
-                >
-                </span>
-                <div class="relative flex items-center justify-between space-x-3">
-                  <div class="flex min-w-0 items-center justify-between space-x-4">
-                    <img
-                      class="size-12 rounded-md shadow-sm"
-                      src={track_or_album_cover_url(album, cover_hash)}
-                      alt={album.metadata.title}
-                    />
-                    <div>
-                      <p
-                        :if={!artist_id(album, artist_id)}
-                        class="block text-sm font-semibold text-zinc-500 dark:text-zinc-400"
-                      >
-                        {album.artist.name}
-                      </p>
-                      <.link
-                        :if={artist_id(album, artist_id)}
-                        class="block text-sm font-semibold text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
-                        navigate={~p"/artists/#{artist_id(album, artist_id)}"}
-                      >
-                        {album.artist.name}
-                      </.link>
-                      <p class="text-sm font-semibold text-zinc-700 md:text-base dark:text-zinc-300">
-                        {album.metadata.title}
-                      </p>
-                      <time
-                        datetime={format_scrobbled_at_uts(album.scrobbled_at_uts)}
-                        class="text-right text-xs whitespace-nowrap text-zinc-500 sm:text-sm dark:text-zinc-400"
-                      >
-                        {album.scrobbled_at_label}
-                      </time>
-                      <.album_metadata_tooltip album={album} />
+              <li
+                :for={
+                  {id,
+                   %{
+                     album: album,
+                     artist_id: artist_id,
+                     collected_record_id: collected_record_id,
+                     wishlisted_record_id: wishlisted_record_id,
+                     cover_hash: cover_hash
+                   }} <- @streams.recent_albums
+                }
+                id={id}
+                class="group"
+              >
+                <div class="relative pb-4 group-last:pb-0">
+                  <span
+                    class="absolute top-6 left-6 -ml-px h-full w-0.5 bg-zinc-200 group-last:hidden"
+                    aria-hidden="true"
+                  >
+                  </span>
+                  <div class="relative flex items-center justify-between space-x-3">
+                    <div class="flex min-w-0 items-center justify-between space-x-4">
+                      <img
+                        class="size-12 rounded-md shadow-sm"
+                        src={track_or_album_cover_url(album, cover_hash)}
+                        alt={album.metadata.title}
+                      />
+                      <div>
+                        <p
+                          :if={!artist_id(album, artist_id)}
+                          class="block text-sm font-semibold text-zinc-500 dark:text-zinc-400"
+                        >
+                          {album.artist.name}
+                        </p>
+                        <.link
+                          :if={artist_id(album, artist_id)}
+                          class="block text-sm font-semibold text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
+                          navigate={~p"/artists/#{artist_id(album, artist_id)}"}
+                        >
+                          {album.artist.name}
+                        </.link>
+                        <p class="text-sm font-semibold text-zinc-700 md:text-base dark:text-zinc-300">
+                          {album.metadata.title}
+                        </p>
+                        <time
+                          datetime={format_scrobbled_at_uts(album.scrobbled_at_uts)}
+                          class="text-right text-xs whitespace-nowrap text-zinc-500 sm:text-sm dark:text-zinc-400"
+                        >
+                          {album.scrobbled_at_label}
+                        </time>
+                        <.album_metadata_tooltip album={album} />
+                      </div>
                     </div>
-                  </div>
 
-                  <.record_status_badges
-                    musicbrainz_id={album.metadata.musicbrainz_id}
-                    collected_record_id={collected_record_id}
-                    wishlisted_record_id={wishlisted_record_id}
-                  />
-
-                  <.import_format_dropdown
-                    :if={
-                      album.metadata.musicbrainz_id !== "" and !collected_record_id and
-                        !wishlisted_record_id
-                    }
-                    id={"actions-#{album.scrobbled_at_uts}-albums"}
-                    musicbrainz_id={album.metadata.musicbrainz_id}
-                  />
-                </div>
-              </div>
-            </li>
-          </ul>
-        </.tabs_panel>
-        <.tabs_panel name="tracks" active={@scrobble_activity_mode == "tracks"}>
-          <ul
-            id="scrobble-activity-tracks"
-            role="list"
-            class="mt-5 rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800"
-            phx-update="stream"
-          >
-            <li
-              :for={
-                {id,
-                 %{
-                   track: track,
-                   artist_id: artist_id,
-                   collected_record_id: collected_record_id,
-                   wishlisted_record_id: wishlisted_record_id,
-                   cover_hash: cover_hash
-                 }} <- @streams.recent_tracks
-              }
-              id={id}
-              class="group"
-            >
-              <div class="relative pb-4 group-last:pb-0">
-                <span
-                  class="absolute top-6 left-6 -ml-px h-full w-0.5 bg-zinc-200 group-last:hidden"
-                  aria-hidden="true"
-                >
-                </span>
-                <div class="relative flex items-center justify-between space-x-3">
-                  <div class="flex min-w-0 items-center justify-between space-x-4">
-                    <img
-                      class="size-12 rounded-md shadow-sm"
-                      src={track_or_album_cover_url(track, cover_hash)}
-                      alt={track.title}
+                    <.record_status_badges
+                      musicbrainz_id={album.metadata.musicbrainz_id}
+                      collected_record_id={collected_record_id}
+                      wishlisted_record_id={wishlisted_record_id}
                     />
-                    <div>
-                      <p
-                        :if={!artist_id(track, artist_id)}
-                        class="block text-sm font-semibold text-zinc-500 dark:text-zinc-400"
-                      >
-                        {track.artist.name}
-                      </p>
-                      <.link
-                        :if={artist_id(track, artist_id)}
-                        class="block text-sm font-semibold text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
-                        navigate={~p"/artists/#{artist_id(track, artist_id)}"}
-                      >
-                        {track.artist.name}
-                      </.link>
-                      <p class="text-sm font-semibold text-zinc-700 md:text-base dark:text-zinc-300">
-                        {track.title}
-                      </p>
-                      <p class="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
-                        {track.album.title}
-                      </p>
-                      <time
-                        datetime={format_scrobbled_at_uts(track.scrobbled_at_uts)}
-                        class="text-right text-xs whitespace-nowrap text-zinc-500 sm:text-sm dark:text-zinc-400"
-                      >
-                        {track.scrobbled_at_label}
-                      </time>
-                      <.track_metadata_tooltip track={track} />
-                    </div>
+
+                    <.import_format_dropdown
+                      :if={
+                        album.metadata.musicbrainz_id !== "" and !collected_record_id and
+                          !wishlisted_record_id
+                      }
+                      id={"actions-#{album.scrobbled_at_uts}-albums"}
+                      musicbrainz_id={album.metadata.musicbrainz_id}
+                    />
                   </div>
-
-                  <.record_status_badges
-                    musicbrainz_id={track.album.musicbrainz_id}
-                    collected_record_id={collected_record_id}
-                    wishlisted_record_id={wishlisted_record_id}
-                  />
-
-                  <.import_format_dropdown
-                    :if={
-                      track.album.musicbrainz_id !== "" and !collected_record_id and
-                        !wishlisted_record_id
-                    }
-                    id={"actions-#{track.scrobbled_at_uts}-tracks"}
-                    musicbrainz_id={track.album.musicbrainz_id}
-                  />
                 </div>
-              </div>
-            </li>
-          </ul>
-        </.tabs_panel>
+              </li>
+            </ul>
+          </.tabs_panel>
+          <.tabs_panel name="tracks" active={@scrobble_activity_mode == "tracks"}>
+            <ul
+              id="scrobble-activity-tracks"
+              role="list"
+              class="mt-4 rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800"
+              phx-update="stream"
+            >
+              <li
+                :for={
+                  {id,
+                   %{
+                     track: track,
+                     artist_id: artist_id,
+                     collected_record_id: collected_record_id,
+                     wishlisted_record_id: wishlisted_record_id,
+                     cover_hash: cover_hash
+                   }} <- @streams.recent_tracks
+                }
+                id={id}
+                class="group"
+              >
+                <div class="relative pb-4 group-last:pb-0">
+                  <span
+                    class="absolute top-6 left-6 -ml-px h-full w-0.5 bg-zinc-200 group-last:hidden"
+                    aria-hidden="true"
+                  >
+                  </span>
+                  <div class="relative flex items-center justify-between space-x-3">
+                    <div class="flex min-w-0 items-center justify-between space-x-4">
+                      <img
+                        class="size-12 rounded-md shadow-sm"
+                        src={track_or_album_cover_url(track, cover_hash)}
+                        alt={track.title}
+                      />
+                      <div>
+                        <p
+                          :if={!artist_id(track, artist_id)}
+                          class="block text-sm font-semibold text-zinc-500 dark:text-zinc-400"
+                        >
+                          {track.artist.name}
+                        </p>
+                        <.link
+                          :if={artist_id(track, artist_id)}
+                          class="block text-sm font-semibold text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
+                          navigate={~p"/artists/#{artist_id(track, artist_id)}"}
+                        >
+                          {track.artist.name}
+                        </.link>
+                        <p class="text-sm font-semibold text-zinc-700 md:text-base dark:text-zinc-300">
+                          {track.title}
+                        </p>
+                        <p class="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
+                          {track.album.title}
+                        </p>
+                        <time
+                          datetime={format_scrobbled_at_uts(track.scrobbled_at_uts)}
+                          class="text-right text-xs whitespace-nowrap text-zinc-500 sm:text-sm dark:text-zinc-400"
+                        >
+                          {track.scrobbled_at_label}
+                        </time>
+                        <.track_metadata_tooltip track={track} />
+                      </div>
+                    </div>
+
+                    <.record_status_badges
+                      musicbrainz_id={track.album.musicbrainz_id}
+                      collected_record_id={collected_record_id}
+                      wishlisted_record_id={wishlisted_record_id}
+                    />
+
+                    <.import_format_dropdown
+                      :if={
+                        track.album.musicbrainz_id !== "" and !collected_record_id and
+                          !wishlisted_record_id
+                      }
+                      id={"actions-#{track.scrobbled_at_uts}-tracks"}
+                      musicbrainz_id={track.album.musicbrainz_id}
+                    />
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </.tabs_panel>
+        </.section>
       </.tabs>
     </div>
     """
@@ -513,25 +513,6 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         />
       </dl>
     </.section>
-    """
-  end
-
-  attr :container_class, :string, default: nil
-  slot :title, required: true
-  slot :side_actions
-  slot :inner_block, required: true
-
-  defp section(assigns) do
-    ~H"""
-    <div class={["mt-5", @container_class]}>
-      <div class="flex items-center justify-between">
-        <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
-          {render_slot(@title)}
-        </h1>
-        {render_slot(@side_actions)}
-      </div>
-      {render_slot(@inner_block)}
-    </div>
     """
   end
 
