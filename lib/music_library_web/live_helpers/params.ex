@@ -55,6 +55,17 @@ defmodule MusicLibraryWeb.LiveHelpers.Params do
     Map.put(params, :order, order)
   end
 
+  @spec parse_mode(String.t()) :: :grid | :list
+  def parse_mode("grid"), do: :grid
+  def parse_mode("list"), do: :list
+
+  @spec parse_order(String.t(), [atom(), ...]) :: atom()
+  def parse_order(order, [_ | _] = allowed) when is_binary(order) do
+    Enum.find(allowed, hd(allowed), fn a -> Atom.to_string(a) == order end)
+  end
+
+  def parse_order(_, []), do: raise(ArgumentError, "allowed orders must not be empty")
+
   @spec apply_fallback_index(Phoenix.LiveView.Socket.t(), map(), atom(), function()) ::
           Phoenix.LiveView.Socket.t()
   def apply_fallback_index(socket, params, stream_key, apply_action_fn) do

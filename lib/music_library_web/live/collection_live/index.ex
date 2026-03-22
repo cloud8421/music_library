@@ -226,7 +226,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
   defp apply_action(socket, :index, params) do
     query = params["query"] || ""
-    order = parse_order(params["order"] || "purchase")
+    order = parse_order(params["order"] || "purchase", [:purchase, :alphabetical, :release])
     total_records = Collection.search_records_count(query)
 
     record_list_params =
@@ -293,9 +293,6 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
      |> load_and_assign_records(socket.assigns.record_list_params)}
   end
 
-  defp parse_mode("grid"), do: :grid
-  defp parse_mode("list"), do: :list
-
   defp load_and_assign_records(socket, record_list_params) do
     offset = page_to_offset(record_list_params.page, record_list_params.page_size)
 
@@ -314,10 +311,6 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
     |> assign(:record_list_params, record_list_params)
     |> stream(:records, records, reset: true)
   end
-
-  defp parse_order("alphabetical"), do: :alphabetical
-  defp parse_order("purchase"), do: :purchase
-  defp parse_order("release"), do: :release
 
   defp order_path(record_list_params, order) do
     qs =
