@@ -299,7 +299,8 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `Markdown` | Markdown-to-HTML conversion (MDEx with ammonia sanitization) with `[[double bracket]]` link syntax and streaming document support for chat |
 | `Duration` | Milliseconds to human-readable duration formatting |
 | `Auth` | Authentication plugs: login password check, API token validation, session enforcement |
-| `LiveHelpers.Params` | Pagination param parsing from URL query params |
+| `ArtistLive.Biography` | Artist biography building/rendering from Wikipedia and Last.fm data |
+| `LiveHelpers.Params` | URL query param parsing: pagination, search query, sort order, display mode, fallback index |
 
 ### Controllers
 
