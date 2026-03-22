@@ -152,10 +152,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
   defp top_release_years(assigns) do
     ~H"""
-    <div>
-      <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
-        {gettext("Top 20 Release Years")}
-      </h1>
+    <.section>
+      <:title>{gettext("Top 20 Release Years")}</:title>
       <div class="mt-5 rounded-md bg-white shadow-sm dark:bg-zinc-800">
         <.vertical_bar_chart
           data={@records_by_release_year}
@@ -170,7 +168,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
           class="w-full"
         />
       </div>
-    </div>
+    </.section>
     """
   end
 
@@ -178,10 +176,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
   defp top_collection_genres(assigns) do
     ~H"""
-    <div>
-      <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
-        {gettext("Top %{n} Collection Genres", %{n: length(@records_by_genre)})}
-      </h1>
+    <.section>
+      <:title>{gettext("Top %{n} Collection Genres", %{n: length(@records_by_genre)})}</:title>
       <div class="mt-5 rounded-md bg-white shadow-sm dark:bg-zinc-800">
         <.vertical_bar_chart
           data={@records_by_genre}
@@ -196,7 +192,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
           class="w-full"
         />
       </div>
-    </div>
+    </.section>
     """
   end
 
@@ -204,10 +200,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
   defp top_collection_artists(assigns) do
     ~H"""
-    <div>
-      <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
-        {gettext("Top %{n} Collection Artists", %{n: length(@records_by_artist)})}
-      </h1>
+    <.section>
+      <:title>{gettext("Top %{n} Collection Artists", %{n: length(@records_by_artist)})}</:title>
       <div class="mt-5 rounded-md bg-white shadow-sm dark:bg-zinc-800">
         <.vertical_bar_chart
           data={@records_by_artist}
@@ -222,7 +216,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
           class="w-full"
         />
       </div>
-    </div>
+    </.section>
     """
   end
 
@@ -428,11 +422,9 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
   defp on_this_day(assigns) do
     ~H"""
-    <div class="order-first lg:order-last">
-      <div class="flex items-center justify-between">
-        <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
-          {gettext("On This day")}
-        </h1>
+    <.section container_class="order-first lg:order-last">
+      <:title>{gettext("On This day")}</:title>
+      <:side_actions>
         <.form
           :let={f}
           for={to_form(%{"current_date" => @current_date})}
@@ -450,7 +442,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
             </:outer_suffix>
           </.date_picker>
         </.form>
-      </div>
+      </:side_actions>
       <div class="rounded-md bg-white shadow-sm dark:bg-zinc-800">
         <.records_on_this_day
           current_date={@current_date}
@@ -458,7 +450,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
           record_show_path={fn record -> ~p"/collection/#{record}" end}
         />
       </div>
-    </div>
+    </.section>
     """
   end
 
@@ -466,16 +458,14 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
   defp types_stats(assigns) do
     ~H"""
-    <div>
-      <h1 class="mt-5 text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
-        {gettext("Types")}
-      </h1>
+    <.section>
+      <:title>{gettext("Types")}</:title>
       <.counters_by_category
         categories_with_counts={@collection_count_by_type}
         category_format_fn={&type_label/1}
         category_path_fn={fn type -> ~p"/collection?query=type:#{type}" end}
       />
-    </div>
+    </.section>
     """
   end
 
@@ -483,16 +473,14 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
   defp formats_stats(assigns) do
     ~H"""
-    <div>
-      <h1 class="mt-5 text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
-        {gettext("Formats")}
-      </h1>
+    <.section>
+      <:title>{gettext("Formats")}</:title>
       <.counters_by_category
         categories_with_counts={@collection_count_by_format}
         category_format_fn={&format_label/1}
         category_path_fn={fn format -> ~p"/collection?query=format:#{format}" end}
       />
-    </div>
+    </.section>
     """
   end
 
@@ -503,10 +491,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
   defp record_stats(assigns) do
     ~H"""
-    <div>
-      <h1 class="mt-5 text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
-        {gettext("Records")}
-      </h1>
+    <.section>
+      <:title>{gettext("Records")}</:title>
       <dl class="mt-5 grid grid-cols-3 gap-5 sm:grid-cols-5">
         <.album_preview
           record={@latest_record}
@@ -526,6 +512,25 @@ defmodule MusicLibraryWeb.StatsLive.Index do
           path={~p"/scrobbled-tracks"}
         />
       </dl>
+    </.section>
+    """
+  end
+
+  attr :container_class, :string, default: nil
+  slot :title, required: true
+  slot :side_actions
+  slot :inner_block, required: true
+
+  defp section(assigns) do
+    ~H"""
+    <div class={["mt-5", @container_class]}>
+      <div class="flex items-center justify-between">
+        <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
+          {render_slot(@title)}
+        </h1>
+        {render_slot(@side_actions)}
+      </div>
+      {render_slot(@inner_block)}
     </div>
     """
   end

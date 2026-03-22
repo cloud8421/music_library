@@ -19,7 +19,7 @@ defmodule MusicLibraryWeb.StatsLive.TopByPeriod do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="mt-5">
       <.tabs>
         <div class="flex justify-between">
           <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
