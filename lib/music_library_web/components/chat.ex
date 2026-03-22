@@ -473,7 +473,7 @@ defmodule MusicLibraryWeb.Components.Chat do
   defp check_chat_history(_assigns), do: false
 
   defp message_classes("user") do
-    "ml-auto bg-blue-500 dark:bg-blue-600 text-white"
+    "ml-auto bg-red-500 dark:bg-red-700 text-white"
   end
 
   defp message_classes("assistant") do
