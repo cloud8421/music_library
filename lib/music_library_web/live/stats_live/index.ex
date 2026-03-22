@@ -232,33 +232,34 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   defp scrobble_activity(assigns) do
     ~H"""
     <div class="flow-root">
-      <div class="mt-5 flex items-center justify-between">
-        <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
-          {gettext("Scrobble activity")}
-        </h1>
-        <.refresh_lastfm_feed_button />
-      </div>
       <.tabs id="scrobble-activity" class="mt-4">
-        <.tabs_list active_tab={@scrobble_activity_mode} variant="segmented" class="w-48">
-          <:tab
-            name="albums"
-            phx-click={JS.push("set_scrobble_activity_mode", value: %{mode: "albums"})}
-          >
-            {gettext("Albums")}
-          </:tab>
-          <:tab
-            name="tracks"
-            phx-click={JS.push("set_scrobble_activity_mode", value: %{mode: "tracks"})}
-          >
-            {gettext("Tracks")}
-          </:tab>
-        </.tabs_list>
-
+        <div class="mt-5 flex end items-center justify-between">
+          <div class="flex">
+            <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200 mr-2">
+              {gettext("Scrobble activity")}
+            </h1>
+            <.refresh_lastfm_feed_button />
+          </div>
+          <.tabs_list active_tab={@scrobble_activity_mode} variant="segmented">
+            <:tab
+              name="albums"
+              phx-click={JS.push("set_scrobble_activity_mode", value: %{mode: "albums"})}
+            >
+              {gettext("Albums")}
+            </:tab>
+            <:tab
+              name="tracks"
+              phx-click={JS.push("set_scrobble_activity_mode", value: %{mode: "tracks"})}
+            >
+              {gettext("Tracks")}
+            </:tab>
+          </.tabs_list>
+        </div>
         <.tabs_panel name="albums" active={@scrobble_activity_mode == "albums"}>
           <ul
             id="scrobble-activity-albums"
             role="list"
-            class="mt-5 rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800"
+            class="mt-4 rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800"
             phx-update="stream"
           >
             <li
