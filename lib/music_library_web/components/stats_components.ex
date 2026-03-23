@@ -175,13 +175,13 @@ defmodule MusicLibraryWeb.StatsComponents do
                       <.release_groups_badge record={rep} />
                     </div>
                     <div class="min-w-0 flex-auto">
-                      <h1 class="text-sm/6 text-zinc-700">
+                      <h1 class="truncate text-xs">
                         <.artist_links joinphrase_class="text-xs" artists={rep.artists} />
                       </h1>
-                      <h2 class="mt-1 flex text-sm/5 font-semibold text-wrap text-zinc-700 sm:text-base dark:text-zinc-300">
+                      <h2 class="flex text-sm font-medium text-wrap text-zinc-700 dark:text-zinc-300">
                         {rep.title}
                       </h2>
-                      <p class="mt-1 text-xs/5 text-zinc-500 dark:text-zinc-400">
+                      <p class="text-xs/5 text-zinc-500 dark:text-zinc-400">
                         <.released_how_long_ago record={rep} current_date={@current_date} />
                         · {ngettext("1 release", "%{count} releases", length(records))}
                       </p>
@@ -244,13 +244,13 @@ defmodule MusicLibraryWeb.StatsComponents do
           <.release_groups_badge record={@record} />
         </div>
         <div class="min-w-0 flex-auto">
-          <h1 class="text-sm/6 text-zinc-700">
+          <h1 class="truncate text-xs">
             <.artist_links joinphrase_class="text-xs" artists={@record.artists} />
           </h1>
-          <h2 class="mt-1 flex text-sm/5 font-semibold text-wrap text-zinc-700 sm:text-base dark:text-zinc-300">
+          <h2 class="flex text-sm font-medium text-wrap text-zinc-700 dark:text-zinc-300">
             {@record.title}
           </h2>
-          <p class="mt-1 text-xs/5 text-zinc-500 dark:text-zinc-400">
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">
             <.released_how_long_ago record={@record} current_date={@current_date} />
             · {format_label(@record.format)} · {type_label(@record.type)}
             <span :if={@record.purchased_at}>
