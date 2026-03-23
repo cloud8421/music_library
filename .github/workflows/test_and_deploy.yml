@@ -1,57 +1,29 @@
 name: Test & Deploy
-on: push
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    tags: ["*"]
+    branches: ["main"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint:
-    name: Lint
-    runs-on: ubuntu-24.04
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
-      - uses: erlef/setup-beam@v1
-        id: setup-beam
+      - uses: jdx/mise-action@v4
         with:
-          version-type: strict
-          version-file: .tool-versions
-      - name: Cache deps
-        id: cache-deps
-        uses: actions/cache@v5
-        env:
-          cache-name: cache-elixir-deps
-        with:
-          path: deps
-          key: ${{ runner.os }}-otp-${{ steps.setup-beam.outputs.otp-version }}-elixir-${{ steps.setup-beam.outputs.elixir-version }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-otp-${{ steps.setup-beam.outputs.otp-version }}-elixir-${{ steps.setup-beam.outputs.elixir-version }}-mix-${{ env.cache-name }}-
-
-      # Step: Define how to cache the `_build` directory. After the first run,
-      # this speeds up tests runs a lot. This includes not re-compiling our
-      # project's downloaded deps every run.
-      - name: Cache compiled build
-        id: cache-build
-        uses: actions/cache@v5
-        env:
-          cache-name: cache-compiled-build-lint
-        with:
-          path: _build
-          key: ${{ runner.os }}-otp-${{ steps.setup-beam.outputs.otp-version }}-elixir-${{ steps.setup-beam.outputs.elixir-version }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-otp-${{ steps.setup-beam.outputs.otp-version }}-elixir-${{ steps.setup-beam.outputs.elixir-version }}-mix-${{ env.cache-name }}-
-            ${{ runner.os }}-otp-${{ steps.setup-beam.outputs.otp-version }}-elixir-${{ steps.setup-beam.outputs.elixir-version }}-mix-
-
-      # Step: Conditionally bust the cache when job is re-run.
-      # Sometimes, we may have issues with incremental builds that are fixed by
-      # doing a full recompile. In order to not waste dev time on such trivial
-      # issues (while also reaping the time savings of incremental builds for
-      # *most* day-to-day development), force a full recompile only on builds
-      # that are retried.
-      - name: Clean to rule out incremental build as a source of flakiness
-        if: github.run_attempt != '1'
-        run: |
-          mix deps.clean --all
-          mix clean
-        shell: sh
+          experimental: true
+      - name: Install Hex
+        run: mix local.hex --force
+      - name: Install Rebar
+        run: mix local.rebar --force
       - name: Add Fluxon UI repo
         run: |
           mix hex.repo add fluxon https://repo.fluxonui.com \
@@ -60,12 +32,36 @@ jobs:
         env:
           FLUXON_LICENSE_KEY: ${{ secrets.FLUXON_LICENSE_KEY }}
           FLUXON_KEY_FINGERPRINT: ${{ secrets.FLUXON_KEY_FINGERPRINT }}
+      - name: Cache deps
+        uses: actions/cache@v5
+        env:
+          cache-name: cache-elixir-deps
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('.tool-versions') }}-
+      - name: Cache compiled build
+        uses: actions/cache@v5
+        env:
+          cache-name: cache-compiled-build-lint
+        with:
+          path: _build
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('.tool-versions') }}-
+            ${{ runner.os }}-mix-${{ env.cache-name }}-
+      - name: Clean to rule out incremental build as a source of flakiness
+        if: github.run_attempt != '1'
+        run: |
+          mix deps.clean --all
+          mix clean
       - name: Fetch dependencies
         run: mix deps.get
       - name: 📦 Check unused dependencies
         run: mix deps.unlock --check-unused
       - name: 🔮 Compile for DEV
-        run: mix compile
+        run: mix compile --warnings-as-errors
         env:
           MIX_ENV: dev
           # Half the number of available cores
@@ -81,55 +77,17 @@ jobs:
         run: mix sobelow
 
   test:
-    name: Test
-    runs-on: ubuntu-24.04
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
-      - uses: erlef/setup-beam@v1
-        id: setup-beam
+      - uses: jdx/mise-action@v4
         with:
-          version-type: strict
-          version-file: .tool-versions
-      - name: Cache deps
-        id: cache-deps
-        uses: actions/cache@v5
-        env:
-          cache-name: cache-elixir-deps
-        with:
-          path: deps
-          key: ${{ runner.os }}-otp-${{ steps.setup-beam.outputs.otp-version }}-elixir-${{ steps.setup-beam.outputs.elixir-version }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-otp-${{ steps.setup-beam.outputs.otp-version }}-elixir-${{ steps.setup-beam.outputs.elixir-version }}-mix-${{ env.cache-name }}-
-
-      # Step: Define how to cache the `_build` directory. After the first run,
-      # this speeds up tests runs a lot. This includes not re-compiling our
-      # project's downloaded deps every run.
-      - name: Cache compiled build
-        id: cache-build
-        uses: actions/cache@v5
-        env:
-          cache-name: cache-compiled-build-test
-        with:
-          path: _build
-          key: ${{ runner.os }}-otp-${{ steps.setup-beam.outputs.otp-version }}-elixir-${{ steps.setup-beam.outputs.elixir-version }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-otp-${{ steps.setup-beam.outputs.otp-version }}-elixir-${{ steps.setup-beam.outputs.elixir-version }}-mix-${{ env.cache-name }}-
-            ${{ runner.os }}-otp-${{ steps.setup-beam.outputs.otp-version }}-elixir-${{ steps.setup-beam.outputs.elixir-version }}-mix-
-
-      # Step: Conditionally bust the cache when job is re-run.
-      # Sometimes, we may have issues with incremental builds that are fixed by
-      # doing a full recompile. In order to not waste dev time on such trivial
-      # issues (while also reaping the time savings of incremental builds for
-      # *most* day-to-day development), force a full recompile only on builds
-      # that are retried.
-      - name: Clean to rule out incremental build as a source of flakiness
-        if: github.run_attempt != '1'
-        run: |
-          mix deps.clean --all
-          mix clean
-        shell: sh
+          experimental: true
+      - name: Install Hex
+        run: mix local.hex --force
+      - name: Install Rebar
+        run: mix local.rebar --force
       - name: Add Fluxon UI repo
         run: |
           mix hex.repo add fluxon https://repo.fluxonui.com \
@@ -138,19 +96,41 @@ jobs:
         env:
           FLUXON_LICENSE_KEY: ${{ secrets.FLUXON_LICENSE_KEY }}
           FLUXON_KEY_FINGERPRINT: ${{ secrets.FLUXON_KEY_FINGERPRINT }}
+      - name: Cache deps
+        uses: actions/cache@v5
+        env:
+          cache-name: cache-elixir-deps
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('.tool-versions') }}-
+      - name: Cache compiled build
+        uses: actions/cache@v5
+        env:
+          cache-name: cache-compiled-build-test
+        with:
+          path: _build
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('.tool-versions') }}-
+            ${{ runner.os }}-mix-${{ env.cache-name }}-
+      - name: Clean to rule out incremental build as a source of flakiness
+        if: github.run_attempt != '1'
+        run: |
+          mix deps.clean --all
+          mix clean
       - name: Fetch dependencies
         run: mix deps.get
+      - name: Override env defaults
+        run: |
+          mise set CLOAK_ENCRYPTION_KEY=f5ol1dJROsm9yi/tvtHiblN8aLH1FUN/obEvUcASx3U=
+          mise set MIX_ENV=test
+          mise set MIX_OS_DEPS_COMPILE_PARTITION_COUNT=2
       - name: 🔮 Compile for TEST
         run: mix compile
-        env:
-          MIX_ENV: test
-          # Half the number of available cores
-          # See https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories
-          MIX_OS_DEPS_COMPILE_PARTITION_COUNT: 2
       - name: 🧪 Run tests
         run: mix test --max-cases 8
-        env:
-          CLOAK_ENCRYPTION_KEY: f5ol1dJROsm9yi/tvtHiblN8aLH1FUN/obEvUcASx3U=
 
   deploy:
     name: Deploy
