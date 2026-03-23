@@ -25,8 +25,8 @@ defmodule MusicLibrary.RecordsOnThisDayEmail do
       email =
         new()
         |> to(to_email)
-        |> from({"MusicLibrary", from_email})
-        |> subject("[MusicLibrary] #{heading}")
+        |> from({"Music Library", from_email})
+        |> subject("[Music Library] #{heading}")
         |> html_body(build_html(grouped, date, conf))
 
       case mailer.deliver(email) do
