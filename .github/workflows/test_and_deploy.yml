@@ -130,7 +130,8 @@ jobs:
       - name: 🔮 Compile for TEST
         run: mix compile
       - name: 🧪 Run tests
-        run: mix test --max-cases 8
+        # Run tests via mise to take advantage of partitioned tests
+        run: mise run test
 
   deploy:
     name: Deploy
