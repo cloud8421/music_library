@@ -280,7 +280,7 @@ secrets stored in the `secrets` table. Key configured via `CLOAK_ENCRYPTION_KEY`
 
 ## Tool Versions
 
-Defined in `.tool-versions`:
+Defined in `mise.toml`:
 
 | Tool | Version |
 |------|---------|
