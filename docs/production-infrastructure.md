@@ -63,7 +63,7 @@ SQLite extensions loaded at runtime: `unicode`, `vec0` (vector search).
 
 ### Litestream (continuous)
 
-Configured in `config/litestream.yaml`. Runs as a separate Docker Compose service
+Configured inline in `compose.yaml`. Runs as a separate Docker Compose service
 (`litestream/litestream`) sharing the database volume.
 
 | Setting | Value |
