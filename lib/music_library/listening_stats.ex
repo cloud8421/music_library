@@ -29,9 +29,10 @@ defmodule MusicLibrary.ListeningStats do
   @spec artist_play_count(String.t()) :: non_neg_integer()
   def artist_play_count(artist_musicbrainz_id) do
     from(t in Track,
-      where: fragment("json_extract(?, '$.musicbrainz_id')", t.artist) == ^artist_musicbrainz_id
+      where: fragment("json_extract(?, '$.musicbrainz_id')", t.artist) == ^artist_musicbrainz_id,
+      select: count(t.scrobbled_at_uts, :distinct)
     )
-    |> Repo.aggregate(:count)
+    |> Repo.one!()
   end
 
   @spec recent_activity(String.t(), non_neg_integer()) :: map()
