@@ -11,7 +11,12 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_section={:scrobble} socket={@socket}>
+    <Layouts.app
+      flash={@flash}
+      current_section={:scrobble}
+      socket={@socket}
+      toasts_sync={assigns[:toasts_sync]}
+    >
       <div>
         <.alert
           :if={not @can_scrobble}

@@ -15,7 +15,12 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
+    <Layouts.app
+      flash={@flash}
+      current_section={@current_section}
+      socket={@socket}
+      toasts_sync={assigns[:toasts_sync]}
+    >
       <.record_stats
         latest_record={@latest_record}
         collection_count={@collection_count}

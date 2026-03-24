@@ -16,7 +16,12 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
+    <Layouts.app
+      flash={@flash}
+      current_section={@current_section}
+      socket={@socket}
+      toasts_sync={assigns[:toasts_sync]}
+    >
       <div>
         <h3 class="mt-2 text-base font-semibold text-zinc-900 dark:text-zinc-200">
           {gettext("Records")}

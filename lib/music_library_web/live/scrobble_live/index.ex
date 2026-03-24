@@ -10,7 +10,12 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
+    <Layouts.app
+      flash={@flash}
+      current_section={@current_section}
+      socket={@socket}
+      toasts_sync={assigns[:toasts_sync]}
+    >
       <div>
         <header class="mb-2 gap-6">
           <div class="my-2 flex items-center justify-between gap-6">

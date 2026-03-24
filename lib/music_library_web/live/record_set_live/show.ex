@@ -11,7 +11,12 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
+    <Layouts.app
+      flash={@flash}
+      current_section={@current_section}
+      socket={@socket}
+      toasts_sync={assigns[:toasts_sync]}
+    >
       <div class="mt-4">
         <header class="mt-4 flex items-baseline justify-between">
           <div>

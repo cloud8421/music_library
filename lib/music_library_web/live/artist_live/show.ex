@@ -87,7 +87,12 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_section={@current_section} socket={@socket}>
+    <Layouts.app
+      flash={@flash}
+      current_section={@current_section}
+      socket={@socket}
+      toasts_sync={assigns[:toasts_sync]}
+    >
       <div class="mt-4 px-4 sm:px-6 lg:px-8">
         <header class="mt-1 gap-1">
           <div class="flex items-center justify-between">
