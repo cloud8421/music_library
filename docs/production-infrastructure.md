@@ -90,11 +90,15 @@ as `data/music_library_prod_<timestamp>.db`. Old backups can be cleaned with
 
 Workflow: `.github/workflows/test_and_deploy.yml`
 
+Triggers: push to `main`/tags, pull requests, manual `workflow_dispatch`.
+Concurrency control cancels in-progress runs for the same ref.
+Uses `mise` (via `jdx/mise-action@v4`) for tool version management.
+
 ```
-Push to main
+Push to main (or PR / manual dispatch)
   ├── Lint (format, gettext, credo, sobelow)
   ├── Test (mix test with partitioning)
-  └── Deploy (requires GitHub environment approval)
+  └── Deploy (requires GitHub environment approval, main branch only)
         ├── Trigger deployment via Coolify API (hurl)
         ├── Wait for container health check
         └── Run post-deploy verification (test/prod.hurl)

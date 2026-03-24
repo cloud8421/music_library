@@ -103,7 +103,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `RecordSets` | RecordSet, RecordSetItem | User-curated record groupings with ordering |
 | `ScrobbleRules` | ScrobbleRule | Rules to remap Last.fm scrobble data to correct MusicBrainz IDs; searchable by match_value/target/description, orderable by alphabetical or inserted_at |
 | `ScrobbleActivity` | — | Scrobbling releases/media/tracks to Last.fm |
-| `ListeningStats` | (LastFm.Track, ArtistRecord, ArtistInfo) | Listening analytics, track CRUD, search, listing: scrobble counts, recent activity, top albums/artists by period |
+| `ListeningStats` | (LastFm.Track, ArtistRecord, ArtistInfo) | Listening analytics, track CRUD, search, listing: scrobble counts, artist play counts (from DB), recent activity, top albums/artists by period |
 | `OnlineStoreTemplates` | OnlineStoreTemplate | URL templates for buying records online; searchable by name/description |
 | `Search` | (cross-context) | Universal search dispatcher across collection, wishlist, artists, record sets (delegates to domain contexts) |
 | `Secrets` | Secret | Encrypted key-value storage |
@@ -286,7 +286,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `Layouts` | Application layout templates, navigation components (`dropdown_nav/1`) |
 | `RecordComponents` | Record cards, cover images, artist images, labels, grids, shared show-page sections (title, external links, genres, releases, timestamps, debug) |
 | `ChartComponents` | Charts for stats dashboard |
-| `StatsComponents` | Stats dashboard widgets |
+| `StatsComponents` | Stats dashboard widgets (`section/1` layout, counters, album preview, records on this day) |
 | `ScrobbleComponents` | Scrobble activity displays |
 | `SearchComponents` | Search result rendering |
 | `Pagination` | Pagination UI and logic |
