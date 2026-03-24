@@ -346,11 +346,6 @@ msgstr ""
 msgid "A->Z"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "On Tour"
-msgstr ""
-
 #: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "1 record"

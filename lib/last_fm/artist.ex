@@ -10,7 +10,6 @@ defmodule LastFm.Artist do
           bio: String.t(),
           image: String.t(),
           play_count: non_neg_integer(),
-          on_tour: boolean(),
           base_url: String.t(),
           image_data_hash: String.t() | nil
         }
@@ -23,7 +22,6 @@ defmodule LastFm.Artist do
     field :bio, :string
     field :image, :string
     field :play_count, :integer, default: 0
-    field :on_tour, :boolean, default: false
     field :base_url, :string
     field :image_data_hash, :string
   end
@@ -37,7 +35,6 @@ defmodule LastFm.Artist do
       bio: api_response["bio"]["content"] || "",
       image: get_image(api_response),
       play_count: get_play_count(api_response),
-      on_tour: api_response["ontour"] == "1",
       base_url: api_response["url"]
     }
   end
@@ -52,15 +49,9 @@ defmodule LastFm.Artist do
       :bio,
       :image,
       :play_count,
-      :on_tour,
       :base_url
     ])
     |> validate_required([:name])
-  end
-
-  @spec events_url(t()) :: String.t()
-  def events_url(artist) do
-    artist.base_url <> "/+events"
   end
 
   defp get_image(api_response) do

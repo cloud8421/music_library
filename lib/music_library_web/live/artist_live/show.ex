@@ -18,21 +18,6 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     """
   end
 
-  attr :lastfm_artist_info, :map, required: true
-
-  defp on_tour_link(assigns) do
-    ~H"""
-    <a
-      :if={@lastfm_artist_info.on_tour}
-      class="flex items-center"
-      href={LastFm.Artist.events_url(@lastfm_artist_info)}
-      target="_blank"
-    >
-      <.badge variant="soft" class="mr-2">{gettext("On Tour")}</.badge>
-    </a>
-    """
-  end
-
   attr :play_count, :integer, required: true
 
   defp play_count(assigns) do
@@ -241,7 +226,6 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                   {gettext("Error loading play count")}
                 </div>
               </:failed>
-              <.on_tour_link lastfm_artist_info={lastfm_artist_info} />
               <.play_count play_count={lastfm_artist_info.play_count} />
             </.async_result>
           </div>
