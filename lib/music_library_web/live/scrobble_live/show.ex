@@ -13,7 +13,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
     ~H"""
     <Layouts.app
       flash={@flash}
-      current_section={:scrobble}
+      current_section={@current_section}
       socket={@socket}
       toasts_sync={assigns[:toasts_sync]}
     >
