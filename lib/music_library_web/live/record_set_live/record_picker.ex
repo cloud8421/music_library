@@ -77,7 +77,7 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
     <li
       role="option"
       class={[
-        "flex cursor-pointer items-center gap-3 rounded-lg px-2 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800",
+        "flex cursor-pointer items-center gap-3 rounded-lg px-2 py-3 hover:bg-zinc-100 dark:hover:bg-zinc-800",
         "aria-selected:bg-zinc-100 dark:aria-selected:bg-zinc-700"
       ]}
       phx-click="add_record"

@@ -26,7 +26,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
           class={[
             "flex items-center space-x-3 p-2",
             (album.collected_record_id || album.wishlisted_record_id) &&
-              "cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-700"
+              "cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-700"
           ]}
         >
           <img

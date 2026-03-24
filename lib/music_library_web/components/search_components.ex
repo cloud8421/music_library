@@ -27,7 +27,7 @@ defmodule MusicLibraryWeb.SearchComponents do
     <div
       class={[
         "cursor-pointer rounded-lg p-3 transition-colors",
-        "hover:bg-zinc-50 dark:hover:bg-zinc-700",
+        "hover:bg-zinc-100 dark:hover:bg-zinc-700",
         "aria-selected:bg-zinc-200 dark:aria-selected:bg-zinc-700"
       ]}
       role="option"
@@ -90,7 +90,7 @@ defmodule MusicLibraryWeb.SearchComponents do
     <div
       class={[
         "cursor-pointer rounded-lg p-3 transition-colors",
-        "hover:bg-zinc-50 dark:hover:bg-zinc-700",
+        "hover:bg-zinc-100 dark:hover:bg-zinc-700",
         "aria-selected:bg-zinc-200 dark:aria-selected:bg-zinc-700"
       ]}
       role="option"
@@ -133,7 +133,7 @@ defmodule MusicLibraryWeb.SearchComponents do
     <div
       class={[
         "cursor-pointer rounded-lg p-3 transition-colors",
-        "hover:bg-zinc-50 dark:hover:bg-zinc-700",
+        "hover:bg-zinc-100 dark:hover:bg-zinc-700",
         "aria-selected:bg-zinc-200 dark:aria-selected:bg-zinc-700"
       ]}
       role="option"
@@ -175,7 +175,7 @@ defmodule MusicLibraryWeb.SearchComponents do
     <div
       class={[
         "cursor-pointer rounded-lg p-3 transition-colors",
-        "hover:bg-zinc-50 dark:hover:bg-zinc-700",
+        "hover:bg-zinc-100 dark:hover:bg-zinc-700",
         "aria-selected:bg-zinc-200 dark:aria-selected:bg-zinc-700"
       ]}
       role="option"

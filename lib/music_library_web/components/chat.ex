@@ -156,7 +156,7 @@ defmodule MusicLibraryWeb.Components.Chat do
           phx-click="select_chat"
           phx-value-id={chat.id}
           phx-target={@myself}
-          class="w-full rounded-lg p-3 text-left transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800"
+          class="w-full rounded-lg p-3 text-left transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
         >
           <p class="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
             {chat.topic || gettext("Untitled")}

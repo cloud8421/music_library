@@ -148,7 +148,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
                 "border-2 border-dashed border-zinc-300 dark:border-zinc-600",
                 "flex items-center justify-center rounded-lg",
                 "hover:border-zinc-400 dark:hover:border-zinc-500",
-                "hover:bg-zinc-50 dark:hover:bg-zinc-800",
+                "hover:bg-zinc-100 dark:hover:bg-zinc-800",
                 "cursor-pointer transition-colors"
               ]}
             >

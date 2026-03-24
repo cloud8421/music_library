@@ -33,7 +33,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
                 :for={release_group <- @search_results}
                 phx-click="select_release_group"
                 phx-value-release_group_id={release_group.id}
-                class="flex cursor-pointer justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700"
+                class="flex cursor-pointer justify-between gap-x-6 py-5 hover:bg-zinc-100 dark:hover:bg-zinc-700"
               >
                 <div class="flex w-full shrink-0 items-center justify-between px-4">
                   <img
@@ -81,7 +81,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
               <li :for={release <- @releases}>
                 <.link
                   navigate={~p"/scrobble/#{release.id}"}
-                  class="flex items-center gap-x-4 px-4 py-5 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-700"
+                  class="flex items-center gap-x-4 px-4 py-5 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-700"
                 >
                   <img
                     class="w-20 flex-none rounded-lg"

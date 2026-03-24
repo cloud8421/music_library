@@ -71,7 +71,7 @@ defmodule MusicLibraryWeb.Components.AddRecord do
 
   defp result(assigns) do
     ~H"""
-    <li id={@id} class="flex justify-between gap-x-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-700">
+    <li id={@id} class="flex justify-between gap-x-6 py-5 hover:bg-zinc-100 dark:hover:bg-zinc-700">
       <div class="flex w-full shrink-0 items-center justify-between px-4">
         <img
           class="mr-4 w-20 flex-none rounded-lg"

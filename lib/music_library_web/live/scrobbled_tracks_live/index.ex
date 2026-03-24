@@ -108,7 +108,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
                }} <- @streams.tracks
             }
             id={id}
-            class="-mx-2 flex cursor-pointer justify-between gap-x-6 px-2 py-5 hover:bg-zinc-50 md:-mx-4 md:px-4 dark:hover:bg-zinc-800"
+            class="-mx-2 flex cursor-pointer justify-between gap-x-6 px-2 py-5 hover:bg-zinc-100 md:-mx-4 md:px-4 dark:hover:bg-zinc-800"
           >
             <div class="flex min-w-0 flex-1 items-center space-x-4">
               <div class="shrink-0">
