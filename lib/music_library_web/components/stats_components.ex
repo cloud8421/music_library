@@ -166,9 +166,9 @@ defmodule MusicLibraryWeb.StatsComponents do
               record_show_path={@record_show_path}
             />
           <% {:group, %{representative: rep, records: records}} -> %>
-            <li id={"group-#{rep.musicbrainz_id}"} class="p-2 md:px-4">
+            <li id={"group-#{rep.musicbrainz_id}"} class="px-2">
               <details class="group/details">
-                <summary class="-mx-2 flex cursor-pointer list-none justify-between gap-x-6 rounded-md px-2 py-1 hover:bg-zinc-50 dark:hover:bg-zinc-700 [&::-webkit-details-marker]:hidden">
+                <summary class="-mx-2 flex cursor-pointer list-none justify-between gap-x-6 rounded-md px-2 py-1 hover:bg-zinc-100 dark:hover:bg-zinc-700 [&::-webkit-details-marker]:hidden">
                   <div class="flex min-w-0 items-center gap-x-4">
                     <div class="relative w-12 flex-none">
                       <.record_cover record={rep} width={96} />
@@ -198,7 +198,7 @@ defmodule MusicLibraryWeb.StatsComponents do
                   <li
                     :for={record <- records}
                     phx-click={JS.navigate(@record_show_path.(record))}
-                    class="flex cursor-pointer justify-between gap-x-6 rounded-md px-2 py-1.5 hover:bg-zinc-50 dark:hover:bg-zinc-700"
+                    class="flex cursor-pointer justify-between gap-x-6 rounded-md px-2 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700"
                     id={record.id}
                   >
                     <p class="text-xs/5 text-zinc-500 dark:text-zinc-400">
@@ -235,7 +235,7 @@ defmodule MusicLibraryWeb.StatsComponents do
     ~H"""
     <li
       phx-click={JS.navigate(@record_show_path.(@record))}
-      class="flex cursor-pointer justify-between gap-x-6 p-2 hover:bg-zinc-50 md:px-4 dark:hover:bg-zinc-700"
+      class="flex cursor-pointer justify-between gap-x-6 rounded-md px-2 py-1 hover:bg-zinc-100 dark:hover:bg-zinc-700"
       id={@record.id}
     >
       <div class="flex min-w-0 items-center gap-x-4">
