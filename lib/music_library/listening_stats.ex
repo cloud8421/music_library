@@ -26,6 +26,14 @@ defmodule MusicLibrary.ListeningStats do
     Repo.aggregate(Track, :count, :scrobbled_at_uts)
   end
 
+  @spec artist_play_count(String.t()) :: non_neg_integer()
+  def artist_play_count(artist_musicbrainz_id) do
+    from(t in Track,
+      where: fragment("json_extract(?, '$.musicbrainz_id')", t.artist) == ^artist_musicbrainz_id
+    )
+    |> Repo.aggregate(:count)
+  end
+
   @spec recent_activity(String.t(), non_neg_integer()) :: map()
   def recent_activity(timezone, limit \\ 100) do
     # When we get recent tracks, we need to:

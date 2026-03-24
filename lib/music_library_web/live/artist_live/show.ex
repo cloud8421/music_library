@@ -4,7 +4,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
   import MusicLibraryWeb.RecordComponents,
     only: [record_grid: 1, country_label: 1, artist_image: 1]
 
-  alias MusicLibrary.{Artists, Chats, Records}
+  alias MusicLibrary.{Artists, Chats, ListeningStats, Records}
   alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibraryWeb.ArtistLive.Biography
   alias MusicLibraryWeb.ErrorMessages
@@ -210,24 +210,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
           </div>
 
           <div class="mt-4 flex items-center justify-between">
-            <.async_result :let={lastfm_artist_info} assign={@lastfm_artist_info}>
-              <:loading>
-                <span class="sr-only">{gettext("Loading play count")}</span>
-                <.loading />
-              </:loading>
-              <:failed :let={_failure}>
-                <div class="mt-4 text-sm/5 text-zinc-500 dark:text-zinc-400">
-                  <.icon
-                    name="hero-exclamation-triangle"
-                    class="-mt-1 mr-1 ml-2 size-5"
-                    aria-hidden="true"
-                    data-slot="icon"
-                  />
-                  {gettext("Error loading play count")}
-                </div>
-              </:failed>
-              <.play_count play_count={lastfm_artist_info.play_count} />
-            </.async_result>
+            <.play_count play_count={@play_count} />
           </div>
         </header>
 
@@ -664,6 +647,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     |> assign(:current_section, :artists)
     |> assign(:artist, artist)
     |> assign(:artist_info, artist_info)
+    |> assign(:play_count, ListeningStats.artist_play_count(musicbrainz_id))
     |> assign(:chat_count, Chats.count_chats(:artist, musicbrainz_id))
     |> assign(:biography, Biography.build(artist_info))
     |> assign(:external_links, ArtistInfo.external_links(artist_info))

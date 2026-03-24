@@ -43,7 +43,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       conn
       |> visit(~p"/artists/#{artist_musicbrainz_id}")
       |> unwrap(&render_async/1)
-      |> assert_has("span", "123")
+      |> assert_has("span", "No scrobbles")
       |> assert_has("dt", "Biography")
     end
 
@@ -64,9 +64,8 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       conn
       |> visit(~p"/artists/#{artist_musicbrainz_id}")
       |> unwrap(&render_async/1)
-      |> refute_has("span", "123")
+      |> assert_has("span", "No scrobbles")
       |> refute_has("summary", "Biography")
-      |> assert_has("div", "Error loading play count")
       |> assert_has("div", "Error loading biography")
     end
 

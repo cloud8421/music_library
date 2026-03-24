@@ -299,11 +299,6 @@ msgstr ""
 msgid "Loading biography"
 msgstr ""
 
-#: lib/music_library_web/live/artist_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Loading play count"
-msgstr ""
-
 #: lib/music_library_web/live/collection_live/show.ex
 #: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
@@ -331,11 +326,6 @@ msgstr ""
 #: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Error loading biography"
-msgstr ""
-
-#: lib/music_library_web/live/artist_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Error loading play count"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/index.ex
