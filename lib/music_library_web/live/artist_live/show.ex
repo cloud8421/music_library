@@ -652,11 +652,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     |> assign(:biography, Biography.build(artist_info))
     |> assign(:external_links, ArtistInfo.external_links(artist_info))
     |> assign(:country, ArtistInfo.country(artist_info))
-    |> assign_async(:lastfm_artist_info, fn ->
-      with {:ok, lastfm_artist_info} <- LastFm.get_artist_info(artist.musicbrainz_id, artist.name) do
-        {:ok, %{lastfm_artist_info: lastfm_artist_info}}
-      end
-    end)
+    |> maybe_assign_lastfm_artist_info(artist)
     |> assign_async(:similar_artists, fn ->
       with {:ok, similar_artists} <- Artists.get_similar_artists(artist) do
         artist_image_hashes = Artists.get_image_hashes(similar_artists)
@@ -718,6 +714,19 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
       ],
       " "
     )
+  end
+
+  defp maybe_assign_lastfm_artist_info(socket, _artist) when socket.assigns.biography != nil do
+    socket
+  end
+
+  defp maybe_assign_lastfm_artist_info(socket, artist) do
+    assign_async(socket, :lastfm_artist_info, fn ->
+      with {:ok, lastfm_artist_info} <-
+             LastFm.get_artist_info(artist.musicbrainz_id, artist.name) do
+        {:ok, %{lastfm_artist_info: lastfm_artist_info}}
+      end
+    end)
   end
 
   defp group_and_sort(records) do
