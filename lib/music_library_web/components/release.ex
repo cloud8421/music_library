@@ -242,7 +242,7 @@ defmodule MusicLibraryWeb.Components.Release do
     <ul id={"disc-#{@medium_number}"} class="table w-full table-auto">
       <li
         :for={track <- @tracks}
-        class="list-none leading-5 text-zinc-700 dark:text-zinc-300 mt-4"
+        class="list-none leading-5 text-zinc-700 dark:text-zinc-300 md:mt-4"
       >
         <label class="contents cursor-pointer">
           <div class="table-row">
