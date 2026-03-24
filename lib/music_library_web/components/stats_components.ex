@@ -194,14 +194,17 @@ defmodule MusicLibraryWeb.StatsComponents do
                     />
                   </div>
                 </summary>
-                <ul class="mt-1 ml-16 border-l border-zinc-200 pl-4 dark:border-zinc-700">
+                <ul class="ml-1">
                   <li
                     :for={record <- records}
                     phx-click={JS.navigate(@record_show_path.(record))}
-                    class="flex cursor-pointer justify-between gap-x-6 rounded-md px-2 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                    class="flex items-center cursor-pointer rounded-md px-2 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700"
                     id={record.id}
                   >
-                    <p class="text-xs/5 text-zinc-500 dark:text-zinc-400">
+                    <div class="w-6 flex-none">
+                      <.record_cover record={record} width={48} class="rounded-sm" />
+                    </div>
+                    <p class="ml-2 text-xs/5 text-zinc-500 dark:text-zinc-400">
                       {format_label(record.format)} · {type_label(record.type)}
                       <span :if={record.purchased_at}>
                         ·
