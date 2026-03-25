@@ -5,15 +5,18 @@
 - [Music Library](#music-library)
   - [Features](#features)
   - [Screenshots](#screenshots)
-    - [Stats](#stats)
+    - [Stats dashboard](#stats-dashboard)
     - [Collection](#collection)
     - [Searching for a record to add](#searching-for-a-record-to-add)
-    - [Edit a record in the collection](#edit-a-record-in-the-collection)
-    - [View a record's details in the collection](#view-a-records-details-in-the-collection)
-    - [View a record's tracklist](#view-a-records-tracklist)
-    - [Adding a record in the wishlist](#adding-a-record-in-the-wishlist)
-    - [View an artist's details](#view-an-artists-details)
-    - [View the scrobble activity](#view-the-scrobble-activity)
+    - [Record details](#record-details)
+    - [Record releases](#record-releases)
+    - [Record chat](#record-chat)
+    - [Artist details](#artist-details)
+    - [Wishlist record details](#wishlist-record-details)
+    - [Record sets](#record-sets)
+    - [Scrobble rules](#scrobble-rules)
+    - [New scrobble rule](#new-scrobble-rule)
+    - [Universal search](#universal-search)
   - [Setup](#setup)
   - [Environment configuration](#environment-configuration)
   - [Running the application](#running-the-application)
@@ -40,41 +43,53 @@
 
 ## Screenshots
 
-### Stats
+### Stats dashboard
 
-![Stats](.github/screenshots/stats.png)
+![Stats dashboard](.github/screenshots/stats-dashboard.png)
 
 ### Collection
 
-![Collection](.github/screenshots/collection.png)
+![Collection](.github/screenshots/collection-grid.png)
 
 ### Searching for a record to add
 
-![Searching for a Record to add](.github/screenshots/record-search.png)
+![Searching for a record to add](.github/screenshots/add-record-search.png)
 
-### Edit a record in the collection
+### Record details
 
-![Edit a record in the collection](.github/screenshots/collection-edit-record.png)
+![Record details](.github/screenshots/record-details.png)
 
-### View a record's details in the collection
+### Record releases
 
-![View a record's details in the collection](.github/screenshots/collection-record-details.png)
+![Record releases](.github/screenshots/record-releases.png)
 
-### View a record's tracklist
+### Record chat
 
-![View a record's tracklist](.github/screenshots/record-tracklist.png)
+![Record chat](.github/screenshots/record-chat.png)
 
-### Adding a record in the wishlist
+### Artist details
 
-![Adding a record in the wishlist](.github/screenshots/wishlist-import-record.png)
+![Artist details](.github/screenshots/artist-page.png)
 
-### View an artist's details
+### Wishlist record details
 
-![View an artist's details](.github/screenshots/artist-details.png)
+![Wishlist record details](.github/screenshots/wishlist-record-details.png)
 
-### View the scrobble activity
+### Record sets
 
-![View the scrobble activity](.github/screenshots/scrobble-activity.png)
+![Record sets](.github/screenshots/record-sets.png)
+
+### Scrobble rules
+
+![Scrobble rules](.github/screenshots/scrobble-rules.png)
+
+### New scrobble rule
+
+![New scrobble rule](.github/screenshots/scrobble-rule-form.png)
+
+### Universal search
+
+![Universal search](.github/screenshots/universal-search.png)
 
 ## Setup
 
