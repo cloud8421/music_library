@@ -8,102 +8,86 @@ defmodule Wikipedia.API do
   @spec get_wikipedia_title(String.t(), Wikipedia.Config.t()) ::
           {:ok, String.t() | nil} | {:error, term()}
   def get_wikipedia_title(wikidata_id, config) do
-    request =
-      Req.new(
-        base_url: "https://www.wikidata.org",
-        max_retries: 1,
-        user_agent: config.user_agent
-      )
-      |> Req.Request.merge_options(config.req_options)
-      |> Req.RateLimiter.attach(name: :wikipedia, cooldown: config.api_cooldown)
-      |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
-      |> Req.Request.append_response_steps(log_error: &log_error/1)
-      |> Req.merge(
-        url: "/w/api.php",
-        params: [
-          action: "wbgetentities",
-          ids: wikidata_id,
-          props: "sitelinks",
-          sitefilter: "enwiki",
-          format: "json"
-        ]
-      )
-
-    case Req.get(request) do
-      {:ok, response} when response.status == 200 ->
-        title =
-          get_in(response.body, ["entities", wikidata_id, "sitelinks", "enwiki", "title"])
-
+    case config
+         |> new_request("https://www.wikidata.org")
+         |> Req.merge(
+           url: "/w/api.php",
+           params: [
+             action: "wbgetentities",
+             ids: wikidata_id,
+             props: "sitelinks",
+             sitefilter: "enwiki",
+             format: "json"
+           ]
+         )
+         |> get_request() do
+      {:ok, body} ->
+        title = get_in(body, ["entities", wikidata_id, "sitelinks", "enwiki", "title"])
         {:ok, title}
 
-      {:ok, response} ->
-        {:error, response.body}
-
-      error ->
-        error
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 
   @spec get_article_summary(String.t(), Wikipedia.Config.t()) :: {:ok, map()} | {:error, term()}
   def get_article_summary(title, config) do
-    request =
-      Req.new(
-        base_url: "https://en.wikipedia.org",
-        max_retries: 1,
-        user_agent: config.user_agent
-      )
-      |> Req.Request.merge_options(config.req_options)
-      |> Req.RateLimiter.attach(name: :wikipedia, cooldown: config.api_cooldown)
-      |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
-      |> Req.Request.append_response_steps(log_error: &log_error/1)
-      |> Req.merge(url: "/api/rest_v1/page/summary/#{URI.encode(title)}")
-
-    case Req.get(request) do
-      {:ok, response} when response.status == 200 ->
-        {:ok, response.body}
-
-      {:ok, response} ->
-        {:error, response.body}
-
-      error ->
-        error
+    case config
+         |> new_request("https://en.wikipedia.org")
+         |> Req.merge(url: "/api/rest_v1/page/summary/#{URI.encode(title)}")
+         |> get_request() do
+      {:ok, body} -> {:ok, body}
+      {:error, reason} -> {:error, reason}
     end
   end
 
   @spec get_article_extract(String.t(), Wikipedia.Config.t()) ::
           {:ok, String.t() | nil} | {:error, term()}
   def get_article_extract(title, config) do
-    request =
-      Req.new(
-        base_url: "https://en.wikipedia.org",
-        max_retries: 1,
-        user_agent: config.user_agent
-      )
-      |> Req.Request.merge_options(config.req_options)
-      |> Req.RateLimiter.attach(name: :wikipedia, cooldown: config.api_cooldown)
-      |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
-      |> Req.Request.append_response_steps(log_error: &log_error/1)
-      |> Req.merge(
-        url: "/w/api.php",
-        params: [
-          action: "query",
-          titles: title,
-          prop: "extracts",
-          exintro: "1",
-          format: "json"
-        ]
-      )
-
-    case Req.get(request) do
-      {:ok, response} when response.status == 200 ->
+    case config
+         |> new_request("https://en.wikipedia.org")
+         |> Req.merge(
+           url: "/w/api.php",
+           params: [
+             action: "query",
+             titles: title,
+             prop: "extracts",
+             exintro: "1",
+             format: "json"
+           ]
+         )
+         |> get_request() do
+      {:ok, body} ->
         extract =
-          response.body
+          body
           |> get_in(["query", "pages"])
           |> Map.values()
           |> List.first()
           |> Map.get("extract")
 
         {:ok, extract}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  defp new_request(config, base_url) do
+    Req.new(
+      base_url: base_url,
+      max_retries: 1,
+      user_agent: config.user_agent
+    )
+    |> Req.Request.merge_options(config.req_options)
+    |> Req.RateLimiter.attach(name: :wikipedia, cooldown: config.api_cooldown)
+    |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
+    |> Req.Request.append_response_steps(log_error: &log_error/1)
+  end
+
+  defp get_request(request) do
+    case Req.get(request) do
+      {:ok, response} when response.status == 200 ->
+        {:ok, response.body}
 
       {:ok, response} ->
         {:error, response.body}
