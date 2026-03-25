@@ -48,7 +48,7 @@ defmodule MusicLibraryWeb.SearchComponents do
           <p class="truncate text-sm font-medium text-zinc-500 dark:text-zinc-400">
             {Record.artist_names(@record)}
           </p>
-          <p class="pointer-events-none block text-sm text-zinc-500">
+          <p class="pointer-events-none block text-sm text-zinc-500 dark:text-zinc-400">
             {format_label(@record.format)} · {type_label(@record.type)} ·
             <.icon
               name="hero-calendar-days"
