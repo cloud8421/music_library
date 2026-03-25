@@ -79,14 +79,16 @@ config :music_library, Wikipedia,
   req_options: [
     plug: {Req.Test, Wikipedia.API},
     max_retries: 0
-  ]
+  ],
+  api_cooldown: 0
 
 config :music_library, BraveSearch,
   api_key: "test_key",
   req_options: [
     plug: {Req.Test, BraveSearch.API},
     max_retries: 0
-  ]
+  ],
+  api_cooldown: 0
 
 config :music_library, OpenAI,
   api_key: "test_key",

@@ -57,6 +57,7 @@ defmodule BraveSearch.API do
       headers: %{"x-subscription-token" => config.api_key}
     )
     |> Req.Request.merge_options(config.req_options)
+    |> Req.RateLimiter.attach(name: :brave_search, cooldown: config.api_cooldown)
     |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
     |> Req.Request.append_response_steps(log_error: &log_error/1)
   end

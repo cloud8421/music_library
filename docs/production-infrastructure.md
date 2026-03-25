@@ -229,8 +229,8 @@ All HTTP clients use `Req` with per-API rate limiting (`Req.RateLimiter`, ETS-ba
 | MusicBrainz | 500 ms cooldown | Release/artist metadata, search |
 | Last.fm | 500 ms cooldown | Scrobbling, listening history, artist tags |
 | Discogs | 1000 ms cooldown | Artist profiles, images |
-| Wikipedia | — | Artist biographies |
-| Brave Search | — | Cover art, artist image search |
+| Wikipedia | 1000 ms cooldown | Artist biographies |
+| Brave Search | 1000 ms cooldown | Cover art, artist image search |
 | OpenAI | — | Text embeddings (similarity), streaming chat |
 
 ---

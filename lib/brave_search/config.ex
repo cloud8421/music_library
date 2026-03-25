@@ -2,13 +2,15 @@ defmodule BraveSearch.Config do
   @type t :: %__MODULE__{
           api_key: String.t(),
           user_agent: String.t(),
-          req_options: Keyword.t()
+          req_options: Keyword.t(),
+          api_cooldown: non_neg_integer()
         }
 
   @enforce_keys [:api_key]
   defstruct api_key: "",
             user_agent: "change me",
-            req_options: []
+            req_options: [],
+            api_cooldown: 1000
 
   @schema NimbleOptions.new!(
             api_key: [
@@ -24,6 +26,11 @@ defmodule BraveSearch.Config do
               type: :keyword_list,
               required: false,
               default: []
+            ],
+            api_cooldown: [
+              type: :integer,
+              required: false,
+              default: 1000
             ]
           )
 

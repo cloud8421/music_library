@@ -15,6 +15,7 @@ defmodule Wikipedia.API do
         user_agent: config.user_agent
       )
       |> Req.Request.merge_options(config.req_options)
+      |> Req.RateLimiter.attach(name: :wikipedia, cooldown: config.api_cooldown)
       |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
       |> Req.Request.append_response_steps(log_error: &log_error/1)
       |> Req.merge(
@@ -52,6 +53,7 @@ defmodule Wikipedia.API do
         user_agent: config.user_agent
       )
       |> Req.Request.merge_options(config.req_options)
+      |> Req.RateLimiter.attach(name: :wikipedia, cooldown: config.api_cooldown)
       |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
       |> Req.Request.append_response_steps(log_error: &log_error/1)
       |> Req.merge(url: "/api/rest_v1/page/summary/#{URI.encode(title)}")
@@ -78,6 +80,7 @@ defmodule Wikipedia.API do
         user_agent: config.user_agent
       )
       |> Req.Request.merge_options(config.req_options)
+      |> Req.RateLimiter.attach(name: :wikipedia, cooldown: config.api_cooldown)
       |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
       |> Req.Request.append_response_steps(log_error: &log_error/1)
       |> Req.merge(
