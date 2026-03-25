@@ -8,6 +8,8 @@ defmodule MusicLibrary.OnlineStoreTemplates do
   alias MusicLibrary.OnlineStoreTemplates.OnlineStoreTemplate
   alias MusicLibrary.Repo
 
+  @pagination Application.compile_env!(:music_library, :pagination)
+
   @spec list_enabled_templates() :: [OnlineStoreTemplate.t()]
   def list_enabled_templates do
     OnlineStoreTemplate
@@ -32,19 +34,13 @@ defmodule MusicLibrary.OnlineStoreTemplates do
       |> order_by([t], fragment("? COLLATE NOCASE ASC", t.name))
       |> filter_templates(opts)
 
-    query =
-      case Keyword.get(opts, :offset) do
-        nil -> query
-        offset -> from(t in query, offset: ^offset)
-      end
+    offset = Keyword.get(opts, :offset, 0)
+    limit = Keyword.get(opts, :limit, @pagination[:default_page_size])
 
-    query =
-      case Keyword.get(opts, :limit) do
-        nil -> query
-        limit -> from(t in query, limit: ^limit)
-      end
-
-    Repo.all(query)
+    query
+    |> offset(^offset)
+    |> limit(^limit)
+    |> Repo.all()
   end
 
   @spec count_templates(list_opts()) :: non_neg_integer()

@@ -11,6 +11,8 @@ defmodule MusicLibrary.ScrobbleRules do
   alias MusicLibrary.Repo
   alias MusicLibrary.ScrobbleRules.ScrobbleRule
 
+  @pagination Application.compile_env!(:music_library, :pagination)
+
   @type list_opts :: [
           type: atom(),
           enabled: boolean(),
@@ -27,27 +29,13 @@ defmodule MusicLibrary.ScrobbleRules do
       |> order_scrobble_rules(Keyword.get(opts, :order, :inserted_at))
       |> filter_scrobble_rules(opts)
 
-    query =
-      case Keyword.get(opts, :offset) do
-        nil ->
-          query
+    offset = Keyword.get(opts, :offset, 0)
+    limit = Keyword.get(opts, :limit, @pagination[:default_page_size])
 
-        offset ->
-          from r in query,
-            offset: ^offset
-      end
-
-    query =
-      case Keyword.get(opts, :limit) do
-        nil ->
-          query
-
-        limit ->
-          from r in query,
-            limit: ^limit
-      end
-
-    Repo.all(query)
+    query
+    |> offset(^offset)
+    |> limit(^limit)
+    |> Repo.all()
   end
 
   @spec count_scrobble_rules(list_opts()) :: non_neg_integer()
