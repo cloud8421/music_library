@@ -31,6 +31,6 @@ defmodule MusicLibrary.Worker.PruneAssets do
 
     {count, nil} = Repo.delete_all(q)
 
-    Logger.info("Pruned #{count} unreferenced assets.")
+    Logger.info(fn -> "Pruned #{count} unreferenced assets." end)
   end
 end
