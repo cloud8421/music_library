@@ -20,6 +20,8 @@ Rules extracted from commit history that are specific to this project and not al
 - **External API integrations** follow a three-module pattern: Facade (public API), API (Req HTTP client), Config (NimbleOptions).
 - **Oban workers are thin wrappers** that delegate to context modules. `perform/1` should be minimal.
 - **Shared utilities** live at parent namespace level (`MusicLibrary.Batch`, not `MusicLibrary.Records.Batch`).
+- **Domain sub-modules group under their context.** Modules strongly related to a context live as sub-modules (e.g., `Chats.StreamProvider`, `Chats.RecordChat`), distinct from shared utilities which live at the parent namespace level.
+- **Shared LiveView logic goes in `LiveHelpers.*` modules.** Event handlers, param parsing, and rendering helpers used across 2+ LiveViews are extracted to `LiveHelpers.*` rather than duplicated.
 
 ## Extraction / Refactoring
 
@@ -34,6 +36,8 @@ Rules extracted from commit history that are specific to this project and not al
 - **Dark mode always paired:** `text-zinc-900 dark:text-zinc-100`, `bg-zinc-50 dark:bg-zinc-800`.
 - **Wishlisted items get dimmed styling:** `opacity-60 hover:opacity-100 transition-opacity`.
 - **Icons inside buttons use the `icon` class** instead of explicit size classes (`h-5 w-5`, `size-3.5`, etc.). The `icon` class is provided by Fluxon and auto-sizes icons based on the button's `size` prop.
+- **Artist name display uses the MusicBrainz `joinphrase` field** — never join artist names with a literal `", "`.
+- **Charts use CSS Grid and responsive HTML**, not SVG.
 
 ## Routes / Navigation
 
@@ -42,6 +46,7 @@ Rules extracted from commit history that are specific to this project and not al
 - **Search state in URL query params** via `push_patch`.
 - **Filter empty params from URLs:** `Enum.filter(fn {_, v} -> v not in ["", nil] end)`.
 - **Conditional links based on `purchased_at`:** determines `/collection/` vs `/wishlist/` paths.
+- **`/dev/` namespace is for developer tooling only** (LiveDashboard, Oban Web, ErrorTracker). User-facing admin routes belong in the main authenticated `live_session`.
 
 ## Database
 
