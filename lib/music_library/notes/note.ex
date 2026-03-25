@@ -4,6 +4,7 @@ defmodule MusicLibrary.Notes.Note do
   import Ecto.Changeset
 
   @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
   schema "notes" do
     field :entity, Ecto.Enum, values: [:record, :artist]
     field :content, :string, default: ""

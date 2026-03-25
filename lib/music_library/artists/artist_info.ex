@@ -7,6 +7,7 @@ defmodule MusicLibrary.Artists.ArtistInfo do
   alias MusicLibrary.Notes.Note
 
   @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
   schema "artist_infos" do
     field :musicbrainz_data, :map, default: %{}
     field :discogs_data, :map, default: %{}
