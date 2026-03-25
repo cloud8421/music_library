@@ -5,6 +5,7 @@ defmodule Wikipedia.Config do
           api_cooldown: non_neg_integer()
         }
 
+  @enforce_keys [:user_agent]
   defstruct user_agent: "change me",
             req_options: [],
             api_cooldown: 1000
