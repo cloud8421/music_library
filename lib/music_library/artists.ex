@@ -135,8 +135,8 @@ defmodule MusicLibrary.Artists do
     Repo.delete_all(from ai in ArtistInfo, where: ai.id == ^artist_id)
   end
 
-  @spec fetch_artist_info(String.t()) :: {:ok, ArtistInfo.t()} | {:error, term()}
-  def fetch_artist_info(artist_id) do
+  @spec refresh_artist_info(String.t()) :: {:ok, ArtistInfo.t()} | {:error, term()}
+  def refresh_artist_info(artist_id) do
     with {:ok, musicbrainz_artist} <- MusicBrainz.get_artist(artist_id) do
       if discogs_id = MusicBrainz.Artist.get_discogs_id(musicbrainz_artist) do
         with {:ok, discogs_artist} <- Discogs.get_artist(discogs_id) do
@@ -195,8 +195,8 @@ defmodule MusicLibrary.Artists do
     enqueue_worker(Worker.ArtistRefreshDiscogsData, %{"id" => artist_info.id})
   end
 
-  @spec fetch_wikipedia_data(String.t()) :: {:ok, ArtistInfo.t()} | {:error, term()}
-  def fetch_wikipedia_data(artist_id) do
+  @spec refresh_wikipedia_data(String.t()) :: {:ok, ArtistInfo.t()} | {:error, term()}
+  def refresh_wikipedia_data(artist_id) do
     artist_info = get_artist_info!(artist_id)
 
     if wikidata_id = ArtistInfo.wikidata_id(artist_info) do
@@ -212,11 +212,6 @@ defmodule MusicLibrary.Artists do
     else
       {:ok, artist_info}
     end
-  end
-
-  @spec refresh_wikipedia_data(String.t()) :: {:ok, ArtistInfo.t()} | {:error, term()}
-  def refresh_wikipedia_data(artist_id) do
-    fetch_wikipedia_data(artist_id)
   end
 
   @spec refresh_wikipedia_data_async(ArtistInfo.t()) ::
@@ -245,8 +240,8 @@ defmodule MusicLibrary.Artists do
     Repo.all(q)
   end
 
-  @spec fetch_image(String.t()) :: {:ok, ArtistInfo.t()} | {:error, term()}
-  def fetch_image(artist_id) do
+  @spec refresh_image(String.t()) :: {:ok, ArtistInfo.t()} | {:error, term()}
+  def refresh_image(artist_id) do
     artist_info = get_artist_info!(artist_id)
 
     with {:ok, image} <- ArtistInfo.extract_image(artist_info),
@@ -260,8 +255,8 @@ defmodule MusicLibrary.Artists do
     end
   end
 
-  @spec fetch_lastfm_data(String.t()) :: {:ok, ArtistInfo.t()} | {:error, term()}
-  def fetch_lastfm_data(artist_id) do
+  @spec refresh_lastfm_data(String.t()) :: {:ok, ArtistInfo.t()} | {:error, term()}
+  def refresh_lastfm_data(artist_id) do
     artist_info = get_artist_info!(artist_id)
     name = get_in(artist_info.musicbrainz_data, ["name"]) || ""
 
@@ -278,20 +273,20 @@ defmodule MusicLibrary.Artists do
     end
   end
 
-  @spec fetch_lastfm_data_async(String.t()) ::
+  @spec refresh_lastfm_data_async(String.t()) ::
           {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
-  def fetch_lastfm_data_async(artist_id) do
+  def refresh_lastfm_data_async(artist_id) do
     enqueue_worker(Worker.FetchArtistLastFmData, %{"id" => artist_id})
   end
 
-  @spec fetch_artist_info_async(String.t()) ::
+  @spec refresh_artist_info_async(String.t()) ::
           {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
-  def fetch_artist_info_async(artist_id) do
+  def refresh_artist_info_async(artist_id) do
     enqueue_worker(Worker.FetchArtistInfo, %{"id" => artist_id})
   end
 
-  @spec fetch_image_async(String.t()) :: {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
-  def fetch_image_async(artist_id) do
+  @spec refresh_image_async(String.t()) :: {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
+  def refresh_image_async(artist_id) do
     enqueue_worker(Worker.FetchArtistImage, %{"id" => artist_id})
   end
 

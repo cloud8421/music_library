@@ -94,7 +94,7 @@ defmodule MusicLibrary.ArtistsTest do
         Req.Test.json(conn, Discogs.Fixtures.Artist.get_artist())
       end)
 
-      assert {:ok, artist_info} = Artists.fetch_artist_info(steven_wilson_musicbrainz_id)
+      assert {:ok, artist_info} = Artists.refresh_artist_info(steven_wilson_musicbrainz_id)
 
       assert artist_info.id == steven_wilson_musicbrainz_id
       assert artist_info.musicbrainz_data == MusicBrainz.Fixtures.Artist.get_artist()

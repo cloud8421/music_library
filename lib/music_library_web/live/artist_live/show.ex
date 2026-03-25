@@ -514,7 +514,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
 
   @impl true
   def handle_event("refresh_artist_info", _params, socket) do
-    case Artists.fetch_artist_info(socket.assigns.artist.musicbrainz_id) do
+    case Artists.refresh_artist_info(socket.assigns.artist.musicbrainz_id) do
       {:ok, artist_info} ->
         {:noreply,
          socket
@@ -556,7 +556,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
   def handle_event("refresh_lastfm_data", _params, socket) do
     musicbrainz_id = socket.assigns.artist.musicbrainz_id
 
-    case Artists.fetch_lastfm_data(musicbrainz_id) do
+    case Artists.refresh_lastfm_data(musicbrainz_id) do
       {:ok, artist_info} ->
         musicbrainz_id
         |> Records.get_artist_records()
@@ -579,7 +579,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
   end
 
   def handle_event("refresh_artist_image", _params, socket) do
-    case Artists.fetch_image(socket.assigns.artist.musicbrainz_id) do
+    case Artists.refresh_image(socket.assigns.artist.musicbrainz_id) do
       {:ok, artist_info} ->
         {:noreply,
          socket

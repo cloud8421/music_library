@@ -393,7 +393,7 @@ defmodule MusicLibrary.Records do
       record
       |> Record.artist_ids()
       |> Enum.each(fn artist_id ->
-        Artists.fetch_artist_info_async(artist_id)
+        Artists.refresh_artist_info_async(artist_id)
       end)
 
       {:ok, record}

@@ -3,7 +3,7 @@ defmodule MusicLibrary.Worker.FetchArtistImage do
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"id" => artist_id}}) do
-    case MusicLibrary.Artists.fetch_image(artist_id) do
+    case MusicLibrary.Artists.refresh_image(artist_id) do
       {:ok, _artist_info} ->
         :ok
 
