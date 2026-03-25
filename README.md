@@ -32,14 +32,22 @@
 - Add records from MusicBrainz, with optional override of specific pieces of data
 - Manage a collection and a wishlist of records, with ways to quickly search
   and filter based on records' metadata
+- Browse record releases and select a collected release
+- AI-powered chat for records and artists, with web search
+- Artist details with biography, discography, and similar artists
+- Wishlist with links to online stores for purchasing
+- Curate record sets (e.g. "best live albums")
+- Universal search across collection, wishlist, artists, and record sets
 - Integration with Last.fm:
   - display latest scrobbles, and where possible
     connect them with records in the collection or wishlist
   - scrobble a record
   - store a local copy of the complete scrobble history, and setup rules to fix its data as needed
   - audit scrobble data quality and identify tracks with missing MusicBrainz IDs
-- Some basic stats
-- All data stored in a single SQLite database for portability and ease of backup/restore
+- Similarity search via OpenAI embeddings
+- Barcode scanning for quick imports
+- Stats dashboard with collection overview, top artists, top albums, and records on this day
+- All data stored in SQLite databases for portability and ease of backup/restore
 
 ## Screenshots
 
