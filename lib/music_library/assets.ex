@@ -56,6 +56,30 @@ defmodule MusicLibrary.Assets do
     )
   end
 
+  @doc """
+  Deletes all assets not referenced by any record cover or artist info image.
+  Returns the number of pruned assets.
+  """
+  @spec prune_unreferenced() :: non_neg_integer()
+  def prune_unreferenced do
+    # Note that SQLite doesn't support left joins on delete, so we do it in two steps.
+    asset_hashes =
+      from a in Asset,
+        left_join: r in MusicLibrary.Records.Record,
+        on: r.cover_hash == a.hash,
+        left_join: ai in MusicLibrary.Artists.ArtistInfo,
+        on: ai.image_data_hash == a.hash,
+        where: is_nil(r.id) and is_nil(ai.id),
+        select: a.hash
+
+    q =
+      from a in Asset,
+        where: a.hash in subquery(asset_hashes)
+
+    {count, nil} = Repo.delete_all(q)
+    count
+  end
+
   @spec track_total_cache_size() :: :ok
   def track_total_cache_size do
     :telemetry.execute(
