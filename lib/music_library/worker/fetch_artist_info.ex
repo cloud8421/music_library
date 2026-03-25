@@ -8,15 +8,7 @@ defmodule MusicLibrary.Worker.FetchArtistInfo do
          {:ok, _artist_info} <- MusicLibrary.Artists.fetch_image(artist_id) do
       # fetch_lastfm_data returns {:ok, _} even on API errors, so it won't block embeddings
       MusicLibrary.Artists.fetch_lastfm_data(artist_id)
-      regenerate_record_embeddings(artist_id)
+      MusicLibrary.Records.regenerate_artist_embeddings(artist_id)
     end
-  end
-
-  defp regenerate_record_embeddings(artist_id) do
-    artist_id
-    |> MusicLibrary.Records.get_artist_records()
-    |> Enum.each(fn record ->
-      MusicLibrary.Records.generate_embedding_async(record)
-    end)
   end
 end

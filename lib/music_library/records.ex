@@ -320,6 +320,13 @@ defmodule MusicLibrary.Records do
     )
   end
 
+  @spec regenerate_artist_embeddings(String.t()) :: :ok
+  def regenerate_artist_embeddings(artist_id) do
+    artist_id
+    |> get_artist_records()
+    |> Enum.each(&generate_embedding_async/1)
+  end
+
   @spec resize_cover(Record.t()) :: {:ok, Record.t()} | {:error, term()}
   def resize_cover(record) do
     with {:ok, thumb_data} <- Assets.Image.resize(record.cover_data),
