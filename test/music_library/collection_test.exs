@@ -290,7 +290,7 @@ defmodule MusicLibrary.CollectionTest do
     test "returns a random record", %{collection: collection} do
       # NOTE: we can't control randomness in the test, because the `RANDOM()` function
       # in SQLite doesn't support a seed.
-      random_record = Collection.get_latest_record!()
+      random_record = Collection.get_random_record!()
       collection_ids = Enum.map(collection, & &1.id)
 
       assert random_record.id in collection_ids

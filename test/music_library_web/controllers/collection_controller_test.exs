@@ -35,7 +35,7 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
     setup [:create_record]
 
     test "it requires authentication", %{conn: conn} do
-      conn = get(conn, ~p"/api/collection/latest")
+      conn = get(conn, ~p"/api/collection/random")
 
       assert conn.status == 401
     end
