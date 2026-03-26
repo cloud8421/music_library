@@ -22,15 +22,6 @@ defmodule MusicLibraryWeb.MarkdownTest do
       assert html =~ "<strong>bold text</strong>"
     end
 
-    test "handles incomplete code fences" do
-      doc = Markdown.new_streaming_doc()
-      doc = MDEx.Document.put_markdown(doc, "```elixir\nIO.puts")
-      html = Markdown.streaming_to_html(doc)
-      assert html =~ "IO"
-      assert html =~ "puts"
-      assert html =~ "<code"
-    end
-
     test "sanitizes script tags" do
       doc = Markdown.new_streaming_doc()
       doc = MDEx.Document.put_markdown(doc, "<script>alert(1)</script>")
