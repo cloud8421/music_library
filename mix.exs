@@ -112,6 +112,7 @@ defmodule MusicLibrary.MixProject do
 
       # Time-zone support - requires mint and castore
       {:time_zone_info, "~> 0.7.8"},
+      {:castore, "~> 1.0"},
 
       # Data validation
       {:nimble_options, "~> 1.1"},
