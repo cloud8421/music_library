@@ -6,7 +6,8 @@ defmodule BraveSearch.APITest do
   @config %BraveSearch.Config{
     api_key: "test_key",
     user_agent: "test_agent",
-    req_options: [plug: {Req.Test, __MODULE__}, max_retries: 0]
+    req_options: [plug: {Req.Test, __MODULE__}, max_retries: 0],
+    api_cooldown: 0
   }
 
   describe "search_images/3" do
