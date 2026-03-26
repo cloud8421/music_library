@@ -229,7 +229,7 @@ defmodule MusicLibrary.ListeningStatsTest do
       end
     end
 
-    test "returns error when track has already been deleted" do
+    test "raises when track has already been deleted" do
       track = track_fixture()
       {:ok, _} = ListeningStats.delete_track(track)
 

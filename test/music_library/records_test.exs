@@ -51,7 +51,7 @@ defmodule MusicLibrary.RecordsTest do
       assert Enum.all?(record.dominant_colors, &color_hex?/1)
     end
 
-    test "it queues a task to retrieve artist info data" do
+    test "queues a task to retrieve artist info data" do
       record =
         record(musicbrainz_data: release_group(:lockdown_trilogy))
 
@@ -63,7 +63,7 @@ defmodule MusicLibrary.RecordsTest do
   end
 
   describe "delete_record/1" do
-    test "it queues a task to delete artist info data" do
+    test "queues a task to delete artist info data" do
       record =
         record(musicbrainz_data: release_group(:lockdown_trilogy))
 
@@ -184,7 +184,7 @@ defmodule MusicLibrary.RecordsTest do
   end
 
   describe "get_record!/1" do
-    test "it fetches the record by id" do
+    test "fetches the record by id" do
       # while this test may seem redundant, it implicitely checks that ALL record fields are returned,
       # as opposed to other code paths where we only return essential ones.
       expected = record()
@@ -193,8 +193,8 @@ defmodule MusicLibrary.RecordsTest do
     end
   end
 
-  describe "get_artists_records/1" do
-    test "it returns records with essential data" do
+  describe "get_artist_records/1" do
+    test "returns records with essential data" do
       expected = record()
 
       artist_musicbrainz_id = expected.artists |> hd() |> Map.get(:musicbrainz_id)
@@ -206,7 +206,7 @@ defmodule MusicLibrary.RecordsTest do
   end
 
   describe "import_from_musicbrainz_release_group/2" do
-    test "it saves a record with its cover art" do
+    test "saves a record with its cover art" do
       current_time = DateTime.utc_now()
 
       release_group = release_group(:marbles)
@@ -259,7 +259,7 @@ defmodule MusicLibrary.RecordsTest do
   end
 
   describe "import_from_musicbrainz_release/2" do
-    test "it saves a record with its cover art" do
+    test "saves a record with its cover art" do
       current_time = DateTime.utc_now()
 
       release = release(:marbles)
@@ -317,8 +317,8 @@ defmodule MusicLibrary.RecordsTest do
     end
   end
 
-  describe "refresh cover/1" do
-    test "it fetches and stores the updated cover" do
+  describe "refresh_cover/1" do
+    test "fetches and stores the updated cover" do
       record = record(cover_data: marbles_cover_data())
 
       raven_cover_data = raven_cover_data()

@@ -23,7 +23,7 @@ defmodule MusicLibraryWeb.AssetControllerTest do
       assert text_response(conn, 404) == "Not found"
     end
 
-    test "serves the asset without etag", %{conn: conn, asset: asset} do
+    test "serves the asset when no etag is sent", %{conn: conn, asset: asset} do
       transform = %Transform{hash: asset.hash}
       payload = Transform.encode!(transform)
       conn = get(conn, ~p"/assets/#{payload}")
@@ -70,7 +70,7 @@ defmodule MusicLibraryWeb.AssetControllerTest do
       assert conn.resp_body == <<>>
     end
 
-    test "it handles transforms with width", %{conn: conn, asset: asset} do
+    test "handles transforms with width", %{conn: conn, asset: asset} do
       transform = %Transform{hash: asset.hash, width: 480}
       payload = Transform.encode!(transform)
 

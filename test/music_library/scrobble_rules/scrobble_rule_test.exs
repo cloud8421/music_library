@@ -111,7 +111,7 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRuleTest do
       assert "is invalid" in errors_on(changeset).target_musicbrainz_id
     end
 
-    test "valid changeset with uppercase UUID" do
+    test "valid changeset with numeric UUID" do
       attrs = %{
         type: :artist,
         match_value: "Pink Floyd",

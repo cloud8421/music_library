@@ -44,17 +44,17 @@ defmodule MusicLibrary.CollectionTest do
                Collection.search_records("brave")
     end
 
-    test "it respects limit" do
+    test "respects limit" do
       assert [%{title: "Brave"}] = Collection.search_records("brave", limit: 1)
     end
 
-    test "it respects offset" do
+    test "respects offset" do
       [first_match] = Collection.search_records("brave", limit: 1)
       [second_match] = Collection.search_records("brave", limit: 1, offset: 1)
       assert first_match !== second_match
     end
 
-    test "it respects order" do
+    test "respects order" do
       assert [%{title: "Brave (Remastered)"}, %{title: "Brave"}] =
                Collection.search_records("brave", order: :purchase)
 

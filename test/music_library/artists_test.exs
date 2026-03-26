@@ -82,7 +82,7 @@ defmodule MusicLibrary.ArtistsTest do
     end
   end
 
-  describe "fetch_artist_info/1" do
+  describe "refresh_artist_info/1" do
     test "it stores musicbrainz and discogs data" do
       steven_wilson_musicbrainz_id = "3a51b862-0144-40f6-aa17-6aaeefea29d9"
 
