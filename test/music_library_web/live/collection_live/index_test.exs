@@ -360,89 +360,89 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       |> refute_has("button#camera-button")
       |> assert_has("video#camera-preview")
     end
-  end
 
-  test "it adds a record after scanning", %{conn: conn} do
-    barcode = "5037300650128"
-    releases = releases(:marbles)
+    test "it adds a record after scanning", %{conn: conn} do
+      barcode = "5037300650128"
+      releases = releases(:marbles)
 
-    release = release(:marbles)
-    release_id = release_id(:marbles)
+      release = release(:marbles)
+      release_id = release_id(:marbles)
 
-    release_group = release_group(:marbles)
-    release_group_id = release_group["id"]
-    release_group_releases = release_group_releases(:marbles)
+      release_group = release_group(:marbles)
+      release_group_id = release_group["id"]
+      release_group_releases = release_group_releases(:marbles)
 
-    cover_data = marbles_cover_data()
+      cover_data = marbles_cover_data()
 
-    Req.Test.stub(MusicBrainz.API, fn conn ->
-      case conn.path_info do
-        [_ws, _version, "release-group", ^release_group_id] ->
-          Req.Test.json(conn, release_group)
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        case conn.path_info do
+          [_ws, _version, "release-group", ^release_group_id] ->
+            Req.Test.json(conn, release_group)
 
-        [_ws, _version, "release", ^release_id] ->
-          Req.Test.json(conn, release)
+          [_ws, _version, "release", ^release_id] ->
+            Req.Test.json(conn, release)
 
-        [_ws, _version, "release"] ->
-          if conn.params["query"] do
-            # barcode scan
-            Req.Test.json(conn, releases)
-          else
-            # Search by release group ID
-            Req.Test.json(conn, release_group_releases)
-          end
+          [_ws, _version, "release"] ->
+            if conn.params["query"] do
+              # barcode scan
+              Req.Test.json(conn, releases)
+            else
+              # Search by release group ID
+              Req.Test.json(conn, release_group_releases)
+            end
 
-        [_release_group, ^release_group_id, "front"] ->
-          Plug.Conn.send_resp(conn, 200, cover_data)
-      end
-    end)
+          [_release_group, ^release_group_id, "front"] ->
+            Plug.Conn.send_resp(conn, 200, cover_data)
+        end
+      end)
 
-    conn
-    |> visit(~p"/collection/scan")
-    |> trigger_hook("#barcode-scanner", "barcode_scanned", %{"number" => barcode})
-    |> assert_has("h2", "Marbles")
-    |> assert_has("span", "New")
-    |> click_button("Add releases")
+      conn
+      |> visit(~p"/collection/scan")
+      |> trigger_hook("#barcode-scanner", "barcode_scanned", %{"number" => barcode})
+      |> assert_has("h2", "Marbles")
+      |> assert_has("span", "New")
+      |> click_button("Add releases")
 
-    [record] = MusicLibrary.Repo.all(MusicLibrary.Records.Record)
+      [record] = MusicLibrary.Repo.all(MusicLibrary.Records.Record)
 
-    assert record.musicbrainz_id == release_group_id
-    assert record.title == "Marbles"
-    assert record.release_date == "2004-05-03"
-    assert record.format == :cd
-    assert record.musicbrainz_data == release_group
-    assert record.selected_release_id == "d3f9b9e2-73f5-4b47-a2a7-2c2199aad608"
+      assert record.musicbrainz_id == release_group_id
+      assert record.title == "Marbles"
+      assert record.release_date == "2004-05-03"
+      assert record.format == :cd
+      assert record.musicbrainz_data == release_group
+      assert record.selected_release_id == "d3f9b9e2-73f5-4b47-a2a7-2c2199aad608"
 
-    assert record.genres == [
-             "alternative rock",
-             "art rock",
-             "baroque pop",
-             "pop rock",
-             "progressive rock",
-             "psychedelic pop",
-             "rock"
-           ]
+      assert record.genres == [
+               "alternative rock",
+               "art rock",
+               "baroque pop",
+               "pop rock",
+               "progressive rock",
+               "psychedelic pop",
+               "rock"
+             ]
 
-    assert record.cover_hash ==
-             "E7238C742E5B8711FC5BFF01A4A1F727D9E404A4D1420429A6B37ABFFC0B5960"
+      assert record.cover_hash ==
+               "E7238C742E5B8711FC5BFF01A4A1F727D9E404A4D1420429A6B37ABFFC0B5960"
 
-    asset = Assets.get(record.cover_hash)
-    {:ok, resized_cover_data} = Image.resize(cover_data)
+      asset = Assets.get(record.cover_hash)
+      {:ok, resized_cover_data} = Image.resize(cover_data)
 
-    assert asset.content == resized_cover_data
+      assert asset.content == resized_cover_data
 
-    assert record.inserted_at !== nil
-    assert record.updated_at !== nil
-    assert record.purchased_at !== nil
+      assert record.inserted_at !== nil
+      assert record.updated_at !== nil
+      assert record.purchased_at !== nil
 
-    [marillion] = record.artists
+      [marillion] = record.artists
 
-    assert %MusicLibrary.Artists.Artist{
-             name: "Marillion",
-             sort_name: "Marillion",
-             disambiguation: "British progressive rock band",
-             musicbrainz_id: "1932f5b6-0b7b-4050-b1df-833ca89e5f44"
-           } = marillion
+      assert %MusicLibrary.Artists.Artist{
+               name: "Marillion",
+               sort_name: "Marillion",
+               disambiguation: "British progressive rock band",
+               musicbrainz_id: "1932f5b6-0b7b-4050-b1df-833ca89e5f44"
+             } = marillion
+    end
   end
 
   defp cover_url(record, width) do
