@@ -67,14 +67,7 @@ defmodule MusicLibrary.Worker.ApplyScrobbleRulesTest do
       assert updated_track2.album.musicbrainz_id in [nil, ""]
     end
 
-    test "handles errors gracefully" do
-      # Since we can't easily mock here, let's test with no rules
-      # which should still return :ok
-      assert :ok = ApplyScrobbleRules.perform(%Oban.Job{args: %{}})
-    end
-
     test "handles empty rules list" do
-      # No rules exist
       assert :ok = ApplyScrobbleRules.perform(%Oban.Job{args: %{}})
     end
   end
