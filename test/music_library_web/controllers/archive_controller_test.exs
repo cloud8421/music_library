@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.ArchiveControllerTest do
   use MusicLibraryWeb.ConnCase
 
   describe "GET /backup" do
+    @tag :skip_in_memory_db
     test "returns a sqlite database file", %{conn: conn} do
       conn = get(conn, "/backup")
 

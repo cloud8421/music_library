@@ -7,27 +7,20 @@ import Config
 # Run `mix help test` for more information.
 config :music_library, MusicLibrary.Repo,
   database:
-    Path.expand("../data/music_library_test#{System.get_env("MIX_TEST_PARTITION")}.db", __DIR__),
-  # Double the amount of concurrent tests
+    "file:music_library_test#{System.get_env("MIX_TEST_PARTITION")}?mode=memory&cache=shared",
   pool_size: 32,
   pool: Ecto.Adapters.SQL.Sandbox,
   busy_timeout: 20_000
 
 config :music_library, MusicLibrary.BackgroundRepo,
   database:
-    Path.expand(
-      "../data/music_library_background_test#{System.get_env("MIX_TEST_PARTITION")}.db",
-      __DIR__
-    ),
+    "file:music_library_background_test#{System.get_env("MIX_TEST_PARTITION")}?mode=memory&cache=shared",
   pool_size: 32,
   pool: Ecto.Adapters.SQL.Sandbox
 
 config :music_library, MusicLibrary.TelemetryRepo,
   database:
-    Path.expand(
-      "../data/music_library_telemetry_test#{System.get_env("MIX_TEST_PARTITION")}.db",
-      __DIR__
-    ),
+    "file:music_library_telemetry_test#{System.get_env("MIX_TEST_PARTITION")}?mode=memory&cache=shared",
   pool_size: 5,
   pool: Ecto.Adapters.SQL.Sandbox
 
