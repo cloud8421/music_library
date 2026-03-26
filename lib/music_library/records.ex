@@ -7,9 +7,14 @@ defmodule MusicLibrary.Records do
 
   alias MusicLibrary.Artists
   alias MusicLibrary.Assets
-  alias MusicLibrary.Colors.KMeansExtractor
   alias MusicLibrary.Records.{ArtistRecord, Record, SearchIndex, SearchParser}
   alias MusicLibrary.{Repo, Worker}
+
+  @color_extractor Application.compile_env(
+                     :music_library,
+                     :color_extractor,
+                     MusicLibrary.Colors.KMeansExtractor
+                   )
 
   @type import_opts :: [
           format: atom(),
@@ -305,7 +310,7 @@ defmodule MusicLibrary.Records do
   def extract_colors(record) do
     asset = Assets.get!(record.cover_hash)
 
-    with {:ok, colors} <- KMeansExtractor.extract_dominant_colors(asset.content) do
+    with {:ok, colors} <- @color_extractor.extract_dominant_colors(asset.content) do
       update_record(record, %{dominant_colors: colors})
     end
   end

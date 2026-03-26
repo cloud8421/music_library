@@ -101,6 +101,8 @@ config :music_library, OpenAI,
 
 config :phoenix_test, :endpoint, MusicLibraryWeb.Endpoint
 
+config :music_library, color_extractor: MusicLibrary.Colors.FakeColorExtractor
+
 config :music_library, Oban, testing: :manual
 
 config :music_library, MusicLibrary.Mailer, adapter: Swoosh.Adapters.Test

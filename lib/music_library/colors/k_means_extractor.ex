@@ -3,9 +3,11 @@ defmodule MusicLibrary.Colors.KMeansExtractor do
   Extracts dominant colors from images using K-Means clustering via the dominant_colors library.
   """
 
+  @behaviour MusicLibrary.Colors.Extractor
+
   alias Vix.Vips.Image
 
-  @spec extract_dominant_colors(binary(), pos_integer()) :: {:ok, [String.t()]} | {:error, term()}
+  @impl true
   def extract_dominant_colors(image_data, num_colors \\ 5) do
     :telemetry.span(
       [:music_library, :colors, :extract],
