@@ -60,13 +60,14 @@ jobs:
         run: mix deps.get
       - name: 📦 Check unused dependencies
         run: mix deps.unlock --check-unused
+      - name: Override env defaults
+        # Half the number of available cores
+        # See https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories
+        run: |
+          mise set MIX_ENV=dev
+          mise set MIX_OS_DEPS_COMPILE_PARTITION_COUNT=2
       - name: 🔮 Compile for DEV
         run: mix compile --warnings-as-errors
-        env:
-          MIX_ENV: dev
-          # Half the number of available cores
-          # See https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories
-          MIX_OS_DEPS_COMPILE_PARTITION_COUNT: 2
       - name: 🌍 Check translations
         run: mix gettext.extract --check-up-to-date
       - name: 💅 Check formatting
@@ -123,6 +124,8 @@ jobs:
       - name: Fetch dependencies
         run: mix deps.get
       - name: Override env defaults
+        # Half the number of available cores
+        # See https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories
         run: |
           mise set CLOAK_ENCRYPTION_KEY=f5ol1dJROsm9yi/tvtHiblN8aLH1FUN/obEvUcASx3U=
           mise set MIX_ENV=test
