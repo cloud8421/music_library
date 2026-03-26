@@ -93,11 +93,11 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 
 | Context | Schemas | Responsibility |
 |---------|---------|---------------|
-| `Records` | Record, RecordEmbedding, SearchIndex | CRUD, search, import from MusicBrainz, cover/genre/embedding management, PubSub notifications |
+| `Records` | Record, RecordEmbedding, SearchIndex | CRUD, search, import from MusicBrainz, cover/genre/color/embedding management, PubSub notifications |
 | `Collection` | Record (via SearchIndex) | Querying collected records (purchased_at != nil), stats, collected artist IDs |
 | `Wishlist` | Record (via SearchIndex) | Querying wishlisted records (purchased_at is nil) |
 | `Artists` | ArtistInfo, ArtistRecord | Artist metadata from MusicBrainz/Discogs/Wikipedia/Last.fm, images, search |
-| `Assets` | Asset | Binary asset storage (covers, artist images), cache tracking |
+| `Assets` | Asset | Binary asset storage (covers, artist images), cache tracking, pruning unreferenced assets |
 | `Notes` | Note | Free-text notes for records and artists |
 | `Chats` | Chat, Message, StreamProvider, RecordChat, ArtistChat | Persistent AI chat conversations for records and artists, streaming AI chat behaviour and entity-specific implementations |
 | `RecordSets` | RecordSet, RecordSetItem | User-curated record groupings with ordering |
@@ -127,7 +127,8 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Req.RateLimiter.SystemClock` | Real clock implementation using System.monotonic_time |
 | `Assets.Cache` | ETS-based asset cache with TTL |
 | `Assets.Image` / `Assets.Transform` | Image processing via Vix (libvips) |
-| `Colors.KMeansExtractor` | Color extraction via K-Means clustering (dominant_colors library) |
+| `Colors.Extractor` | Behaviour for dominant color extraction (configurable, allows test stubbing) |
+| `Colors.KMeansExtractor` | Color extraction via K-Means clustering (dominant_colors library), implements `Colors.Extractor` |
 | `Chats.StreamProvider` | Behaviour for streaming AI chat (`stream_response/3` callback) |
 | `Chats.RecordChat` | Chat implementation for records (OpenAI streaming, web search enabled) |
 | `Chats.ArtistChat` | Chat implementation for artists (OpenAI streaming, uses Wikipedia/artist context) |

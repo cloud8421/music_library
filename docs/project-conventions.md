@@ -18,6 +18,7 @@ Rules extracted from commit history that are specific to this project and not al
 - **LiveComponents communicate with parent** via `send(self(), {__MODULE__, msg})`.
 - **Function components go in domain-specific modules:** `CoreComponents` for generic UI, `RecordComponents` for records, `ScrobbleComponents` for scrobbles, `SearchComponents` for search.
 - **External API integrations** follow a three-module pattern: Facade (public API), API (Req HTTP client), Config (NimbleOptions).
+- **Behaviours are separate modules** containing only `@callback` definitions. Concrete implementations use `@behaviour` and `@impl true`.
 - **Oban workers are thin wrappers** that delegate to context modules. `perform/1` should be minimal.
 - **Shared utilities** live at parent namespace level (`MusicLibrary.Batch`, not `MusicLibrary.Records.Batch`).
 - **Domain sub-modules group under their context.** Modules strongly related to a context live as sub-modules (e.g., `Chats.StreamProvider`, `Chats.RecordChat`), distinct from shared utilities which live at the parent namespace level.
