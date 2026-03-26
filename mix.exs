@@ -117,7 +117,7 @@ defmodule MusicLibrary.MixProject do
       {:nimble_options, "~> 1.1"},
 
       # Background Jobs
-      {:oban, "~> 2.20"},
+      {:oban, "~> 2.21"},
       {:oban_web, "~> 2.11"},
 
       # Test tooling
