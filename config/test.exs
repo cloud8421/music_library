@@ -11,7 +11,9 @@ config :music_library, MusicLibrary.Repo,
   # Double the amount of concurrent tests
   pool_size: 32,
   pool: Ecto.Adapters.SQL.Sandbox,
-  busy_timeout: 20_000
+  busy_timeout: 20_000,
+  journal_mode: :off,
+  synchronous: :off
 
 config :music_library, MusicLibrary.BackgroundRepo,
   database:
