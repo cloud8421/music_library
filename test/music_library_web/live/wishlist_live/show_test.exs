@@ -9,7 +9,7 @@ defmodule MusicLibraryWeb.WishlistLive.ShowTest do
 
   describe "Edit record from show page" do
     test "can navigate to the record edit form", %{conn: conn} do
-      record = record()
+      record = record(purchased_at: nil)
 
       conn
       |> visit(~p"/wishlist/#{record.id}")
