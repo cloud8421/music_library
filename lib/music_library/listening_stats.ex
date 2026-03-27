@@ -10,7 +10,16 @@ defmodule MusicLibrary.ListeningStats do
   import Ecto.Query
 
   alias LastFm.Track
-  alias MusicLibrary.{Artists, Collection, Records.ArtistRecord, Records.Record, Repo, Wishlist}
+
+  alias MusicLibrary.{
+    Artists,
+    Collection,
+    ListeningStats.Refresh,
+    Records.ArtistRecord,
+    Records.Record,
+    Repo,
+    Wishlist
+  }
 
   @pagination Application.compile_env!(:music_library, :pagination)
 
@@ -63,6 +72,11 @@ defmodule MusicLibrary.ListeningStats do
   @spec subscribe() :: :ok
   def subscribe do
     Phoenix.PubSub.subscribe(MusicLibrary.PubSub, "listening_stats:update")
+  end
+
+  @spec refresh() :: :ok | {:error, term()}
+  def refresh do
+    Refresh.refresh()
   end
 
   @spec artist_play_count(String.t()) :: non_neg_integer()
