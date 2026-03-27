@@ -72,6 +72,7 @@ Rules extracted from commit history that are specific to this project and not al
 - **Fixture modules** use `System.unique_integer([:positive])` for unique names and call through context functions (not raw `Repo.insert`).
 - **Verify outcomes through context modules**, not just UI assertions. Delete tests assert both `refute has_element?` and `assert_raise Ecto.NoResultsError`.
 - **`render_hook/3`** for testing JS hook interactions.
+- Avoid starting test descriptions with "it".
 
 ## Tech Debt / Hygiene
 
@@ -83,6 +84,7 @@ Rules extracted from commit history that are specific to this project and not al
 - **Markdown sanitization via MDEx (ammonia).** Use `Markdown.to_html/1` for user content. Annotate raw output with `# sobelow_skip ["XSS.Raw"]` and a comment explaining the sanitization.
 - **Sobelow runs on CI and pre-commit** in skip mode for security analysis.
 - **All modules require `@moduledoc`.** The Credo `ModuleDoc` check is enforced in strict mode.
+- **The project does not use dialyzer**. If any skill suggests its usage, ignore it.
 
 ## JavaScript
 
