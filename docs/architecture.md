@@ -39,9 +39,7 @@ MusicLibrary.Application (one_for_one)
 ├── Ecto.Migrator                # Auto-migration on boot
 ├── Task.Supervisor (MusicLibrary.TaskSupervisor)
 ├── Phoenix.PubSub (:music_library)
-├── LastFm.Supervisor (one_for_one)
-│   ├── Phoenix.PubSub (:last_fm) # Last.fm-specific PubSub
-│   └── LastFm.Refresh            # GenServer, periodic scrobble fetch
+├── MusicLibrary.ListeningStats.Refresh  # GenServer, periodic scrobble fetch
 └── MusicLibraryWeb.Endpoint
 ```
 
@@ -84,7 +82,7 @@ write to it directly; insert/update the `records` table instead.
 | `Chats.Message` | `chat_messages` | `id` (binary_id) | role, content, position, belongs_to :chat |
 
 Last.fm schemas (separate, not Ecto-persisted to main DB):
-- `LastFm.Track` — scrobbled tracks stored in Last.fm's own tables via `LastFm.Feed`
+- `LastFm.Track` — scrobbled tracks from Last.fm API responses
 - `LastFm.Album`, `LastFm.Artist` — parsed API responses
 
 ---
@@ -103,7 +101,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `RecordSets` | RecordSet, RecordSetItem | User-curated record groupings with ordering |
 | `ScrobbleRules` | ScrobbleRule | Rules to remap Last.fm scrobble data to correct MusicBrainz IDs; searchable by match_value/target/description, orderable by alphabetical or inserted_at |
 | `ScrobbleActivity` | — | Scrobbling releases/media/tracks to Last.fm |
-| `ListeningStats` | (LastFm.Track, ArtistRecord, ArtistInfo) | Listening analytics, track CRUD, search, listing: scrobble counts, artist play counts (from DB), recent activity, top albums/artists by period |
+| `ListeningStats` | (LastFm.Track, ArtistRecord, ArtistInfo) | Scrobble persistence, refresh scheduling, listening analytics, track CRUD, search, listing: scrobble counts, artist play counts (from DB), recent activity, top albums/artists by period |
 | `OnlineStoreTemplates` | OnlineStoreTemplate | URL templates for buying records online; searchable by name/description |
 | `Search` | (cross-context) | Universal search dispatcher across collection, wishlist, artists, record sets (delegates to domain contexts) |
 | `Secrets` | Secret | Encrypted key-value storage |
@@ -226,7 +224,7 @@ stubbed via `Req.Test` (configured in `config/test.exs`).
 | PubSub | Topic Pattern | Message | Used By |
 |--------|---------------|---------|---------|
 | `:music_library` | `"records:#{id}"` | `{:update, record}` | CollectionLive.Show, WishlistLive.Show — real-time record updates |
-| `:last_fm` | `"feed:update"` | `%{track_count: n}` | StatsLive.Index, ScrobbledTracksLive.Index — new scrobbles arrived |
+| `:music_library` | `"listening_stats:update"` | `%{track_count: n}` | StatsLive.Index, ScrobbledTracksLive.Index — new scrobbles arrived |
 
 ---
 
