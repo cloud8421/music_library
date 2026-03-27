@@ -225,7 +225,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         last_fm_data: %{}
       }
 
-      LastFm.Feed.update([
+      MusicLibrary.ListeningStats.update([
         machinarium_soundtrack_track,
         the_last_flight_track,
         the_mystery_of_time_track,

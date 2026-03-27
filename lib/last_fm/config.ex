@@ -3,8 +3,6 @@ defmodule LastFm.Config do
           api_key: String.t(),
           shared_secret: String.t(),
           user: String.t(),
-          auto_refresh: boolean(),
-          refresh_interval: pos_integer(),
           user_agent: String.t(),
           req_options: Keyword.t(),
           api_cooldown: non_neg_integer()
@@ -14,8 +12,6 @@ defmodule LastFm.Config do
   defstruct api_key: "",
             shared_secret: "",
             user: "",
-            auto_refresh: true,
-            refresh_interval: 60_000,
             user_agent: "change me",
             req_options: [],
             api_cooldown: 500
@@ -32,16 +28,6 @@ defmodule LastFm.Config do
             user: [
               type: :string,
               required: true
-            ],
-            auto_refresh: [
-              type: :boolean,
-              required: false,
-              default: true
-            ],
-            refresh_interval: [
-              type: :pos_integer,
-              required: false,
-              default: 60_000
             ],
             user_agent: [
               type: :string,

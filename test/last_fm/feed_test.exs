@@ -1,7 +1,8 @@
 defmodule LastFm.FeedTest do
   use MusicLibrary.DataCase
 
-  alias LastFm.{Album, Artist, Feed, Track}
+  alias LastFm.{Album, Artist, Track}
+  alias MusicLibrary.ListeningStats
 
   @track_one %Track{
     musicbrainz_id: "5689211e-9afa-3c3e-8e34-63dc0de45ef1",
@@ -38,13 +39,13 @@ defmodule LastFm.FeedTest do
 
   describe "update and broadcast" do
     test "stores the track and broadcasts the updated track count" do
-      :ok = Feed.subscribe()
+      :ok = ListeningStats.subscribe()
 
-      assert {:ok, 2} == Feed.update([@track_two, @track_one])
+      assert {:ok, 2} == ListeningStats.update([@track_two, @track_one])
       assert_receive %{track_count: 2}
 
       # Tracks have already been inserted, count of new tracks is 0
-      assert {:ok, 0} == Feed.update([@track_two, @track_one])
+      assert {:ok, 0} == ListeningStats.update([@track_two, @track_one])
       assert_receive %{track_count: 0}
     end
   end

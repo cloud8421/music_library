@@ -6,8 +6,6 @@ defmodule LastFm.ConfigTest do
       assert %LastFm.Config{
                api_key: api_key,
                user: user,
-               auto_refresh: false,
-               refresh_interval: refresh_interval,
                user_agent: user_agent
              } =
                LastFm.Config.resolve(:music_library)
@@ -15,7 +13,6 @@ defmodule LastFm.ConfigTest do
       assert is_binary(api_key)
       assert is_binary(user)
       assert is_binary(user_agent)
-      assert is_integer(refresh_interval)
     end
   end
 end

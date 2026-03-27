@@ -3,14 +3,8 @@ defmodule LastFm do
   Last.fm API facade for scrobbling and listening history.
   """
 
-  alias LastFm.{API, Feed, Refresh, Scrobble, Track, Worker}
+  alias LastFm.{API, Scrobble, Track, Worker}
   alias MusicLibrary.{BackgroundRepo, Repo}
-
-  @spec subscribe_to_feed() :: :ok
-  def subscribe_to_feed, do: Feed.subscribe()
-
-  @spec refresh_scrobbled_tracks() :: :ok | {:error, term()}
-  def refresh_scrobbled_tracks, do: Refresh.refresh()
 
   @spec get_tracks(keyword()) :: {:ok, [Track.t()]} | {:error, term()}
   def get_tracks(opts) do

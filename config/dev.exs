@@ -81,7 +81,7 @@ config :music_library, monitoring_routes: true
 
 config :music_library, MusicLibrary.Mailer, adapter: Swoosh.Adapters.Local
 
-config :music_library, LastFm,
+config :music_library, MusicLibrary.ListeningStats.Refresh,
   refresh_interval: System.convert_time_unit(500, :second, :millisecond)
 
 # Do not include metadata nor timestamps in development logs

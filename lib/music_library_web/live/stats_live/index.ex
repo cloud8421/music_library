@@ -65,7 +65,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       |> Collection.group_records_by_release_group()
 
     if connected?(socket) do
-      LastFm.subscribe_to_feed()
+      ListeningStats.subscribe()
     end
 
     {:ok,
@@ -93,7 +93,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
   @impl true
   def handle_event("refresh_lastfm_feed", _, socket) do
-    LastFm.refresh_scrobbled_tracks()
+    ListeningStats.refresh()
     {:noreply, socket}
   end
 

@@ -222,7 +222,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
       )
 
     if connected?(socket) do
-      LastFm.subscribe_to_feed()
+      ListeningStats.subscribe()
     end
 
     {:ok, socket}
@@ -288,7 +288,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
   end
 
   def handle_event("refresh_lastfm_feed", _, socket) do
-    LastFm.refresh_scrobbled_tracks()
+    ListeningStats.refresh()
     {:noreply, socket}
   end
 
