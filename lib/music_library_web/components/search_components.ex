@@ -279,18 +279,18 @@ defmodule MusicLibraryWeb.SearchComponents do
     <div class="rounded-b-lg border-t border-zinc-200 bg-zinc-50 p-2 dark:border-zinc-700 dark:bg-zinc-900">
       <div class="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
         <div class="flex items-center space-x-4">
-          <div :if={@total_results > 0} class="flex items-center">
+          <div :if={@total_results > 0} class="flex items-center gap-1">
             <kbd class="rounded bg-zinc-200 px-2 py-1 dark:bg-zinc-700">↑</kbd>
-            <kbd class="ml-1 rounded bg-zinc-200 px-2 py-1 dark:bg-zinc-700">↓</kbd>
-            <span class="ml-1">{gettext("Navigate")}</span>
+            <kbd class="rounded bg-zinc-200 px-2 py-1 dark:bg-zinc-700">↓</kbd>
+            <span>{gettext("Navigate")}</span>
           </div>
-          <div :if={@total_results > 0} class="flex items-center">
+          <div :if={@total_results > 0} class="flex items-center gap-1">
             <kbd class="rounded bg-zinc-200 px-2 py-1 dark:bg-zinc-700">Enter</kbd>
-            <span class="ml-1">{gettext("Select")}</span>
+            <span>{gettext("Select")}</span>
           </div>
-          <div class="flex items-center">
+          <div class="flex items-center gap-1">
             <kbd class="rounded bg-zinc-200 px-2 py-1 dark:bg-zinc-700">Esc</kbd>
-            <span class="ml-1">{gettext("Close")}</span>
+            <span>{gettext("Close")}</span>
           </div>
         </div>
         <div :if={@total_results > 0} class="text-zinc-500 dark:text-zinc-400">

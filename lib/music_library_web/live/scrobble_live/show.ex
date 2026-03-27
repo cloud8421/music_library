@@ -29,7 +29,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
           )}
         </.alert>
 
-        <div class="mt-2 mb-4">
+        <div class="my-4">
           <.button variant="ghost" size="sm" navigate={~p"/scrobble"}>
             <.icon name="hero-arrow-left" class="icon" aria-hidden="true" data-slot="icon" />
             {gettext("Back to search")}

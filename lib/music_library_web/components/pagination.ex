@@ -34,7 +34,7 @@ defmodule MusicLibraryWeb.Components.Pagination do
           {gettext("Next")}
         </.button>
       </div>
-      <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-center sm:justify-items-center">
+      <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-center">
         <div>
           <.button_group>
             <.prev_link

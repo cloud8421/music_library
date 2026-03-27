@@ -27,11 +27,11 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         wishlist_count={@wishlist_count}
         scrobble_count={@scrobble_count}
       />
-      <div class="grid gap-x-5 lg:grid-cols-2">
+      <div class="grid gap-x-5 md:grid-cols-2">
         <.formats_stats collection_count_by_format={@collection_count_by_format} />
         <.types_stats collection_count_by_type={@collection_count_by_type} />
       </div>
-      <div class="grid grid-cols-1 gap-x-5 lg:grid-cols-3">
+      <div class="grid grid-cols-1 gap-x-5 md:grid-cols-2 lg:grid-cols-3">
         <TopArtists.live id="top-artists" timezone={@timezone} last_updated_uts={@last_updated_uts} />
         <TopAlbums.live id="top-albums" timezone={@timezone} last_updated_uts={@last_updated_uts} />
         <.on_this_day current_date={@current_date} records_on_this_day={@records_on_this_day} />
@@ -42,7 +42,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         streams={@streams}
       />
 
-      <div class="grid grid-cols-1 gap-x-5 lg:grid-cols-3">
+      <div class="grid grid-cols-1 gap-x-5 md:grid-cols-2 lg:grid-cols-3">
         <.top_collection_artists records_by_artist={@records_by_artist} />
         <.top_collection_genres records_by_genre={@records_by_genre} />
         <.top_release_years records_by_release_year={@records_by_release_year} />

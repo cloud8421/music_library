@@ -280,7 +280,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
     >
       <div class="mb-3 flex items-baseline justify-between">
         <div class="grow">
-          <header class="items-baseline justify-start sm:flex">
+          <header class="sm:flex sm:items-baseline sm:justify-start">
             <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
               <.link navigate={~p"/record-sets/#{@record_set}"} class="hover:underline">
                 {@record_set.name}
