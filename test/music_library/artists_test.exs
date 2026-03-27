@@ -6,7 +6,7 @@ defmodule MusicLibrary.ArtistsTest do
   alias MusicLibrary.Artists
 
   describe "get_artist/1" do
-    test "it returns records with essential data" do
+    test "returns records with essential data" do
       record = record()
       [expected] = record.artists
 
@@ -17,7 +17,7 @@ defmodule MusicLibrary.ArtistsTest do
   end
 
   describe "get_all_artist_ids/0" do
-    test "it returns unique artist IDs" do
+    test "returns unique artist IDs" do
       marillion_record = record_with_artist("Marillion")
       _another_marillion_record = record_with_artist("Marillion")
       steven_wilson_record = record_with_artist("Steven Wilson")
@@ -83,7 +83,7 @@ defmodule MusicLibrary.ArtistsTest do
   end
 
   describe "refresh_artist_info/1" do
-    test "it stores musicbrainz and discogs data" do
+    test "stores musicbrainz and discogs data" do
       steven_wilson_musicbrainz_id = "3a51b862-0144-40f6-aa17-6aaeefea29d9"
 
       Req.Test.stub(MusicBrainz.API, fn conn ->

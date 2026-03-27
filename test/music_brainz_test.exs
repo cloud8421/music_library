@@ -7,7 +7,7 @@ defmodule MusicBrainzTest do
   alias MusicBrainz.ReleaseGroupSearchResult
 
   describe "search_release_group/2" do
-    test "it returns results with correct limit and offset" do
+    test "returns results with correct limit and offset" do
       results = release_group_search_results()
 
       expected_results =
@@ -26,7 +26,7 @@ defmodule MusicBrainzTest do
   end
 
   describe "search_release_by_barcode/1" do
-    test "it returns releases belonging to the same release group" do
+    test "returns releases belonging to the same release group" do
       barcode = "5052205070023"
 
       releases =

@@ -26,7 +26,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
   describe "Show artist" do
     setup :fill_collection
 
-    test "it shows the artist bio and play count", %{
+    test "shows the artist bio and play count", %{
       conn: conn,
       artist_musicbrainz_id: artist_musicbrainz_id
     } do
@@ -47,7 +47,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       |> assert_has("dt", "Biography")
     end
 
-    test "it gracefully handles errors in fetching bio and play count", %{
+    test "gracefully handles errors in fetching bio and play count", %{
       conn: conn,
       artist_musicbrainz_id: artist_musicbrainz_id
     } do
@@ -69,7 +69,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       |> assert_has("div", "Error loading biography")
     end
 
-    test "it shows the artist country and MB id", %{
+    test "shows the artist country and MB id", %{
       conn: conn,
       artist_musicbrainz_id: artist_musicbrainz_id
     } do
@@ -91,7 +91,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       |> assert_has("code", artist_musicbrainz_id)
     end
 
-    test "it shows records from the collection and the wishlist", %{
+    test "shows records from the collection and the wishlist", %{
       conn: conn,
       collection_record: collection_record,
       artist_musicbrainz_id: artist_musicbrainz_id

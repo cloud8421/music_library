@@ -3,7 +3,7 @@ defmodule MusicLibraryWeb.SessionControllerTest do
 
   describe "GET /login" do
     @tag :logged_out
-    test "it shows the login form", %{conn: conn} do
+    test "shows the login form", %{conn: conn} do
       conn = get(conn, "/login")
 
       response = html_response(conn, 200)
@@ -12,7 +12,7 @@ defmodule MusicLibraryWeb.SessionControllerTest do
       assert response =~ "Login"
     end
 
-    test "it resets the session", %{conn: conn} do
+    test "resets the session", %{conn: conn} do
       conn = get(conn, "/login")
 
       session = get_session(conn)
@@ -23,7 +23,7 @@ defmodule MusicLibraryWeb.SessionControllerTest do
 
   describe "POST /sessions/create" do
     @tag :logged_out
-    test "it refuses an invalid password", %{conn: conn} do
+    test "refuses an invalid password", %{conn: conn} do
       conn = post(conn, ~p"/sessions/create", %{"password" => "wrong password"})
 
       {"location", location} =
@@ -39,7 +39,7 @@ defmodule MusicLibraryWeb.SessionControllerTest do
     end
 
     @tag :logged_out
-    test "it accepts a valid password", %{conn: conn} do
+    test "accepts a valid password", %{conn: conn} do
       valid_password =
         Application.get_env(:music_library, MusicLibraryWeb)
         |> Keyword.fetch!(:login_password)

@@ -28,7 +28,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
   describe "Stats home page" do
     setup [:fill_collection, :fill_wishlist]
 
-    test "it shows the collection counts (total, format, and type)", %{
+    test "shows the collection counts (total, format, and type)", %{
       conn: conn,
       collection: collection
     } do
@@ -52,7 +52,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
       end)
     end
 
-    test "it shows the latest purchase", %{conn: conn, collection: collection} do
+    test "shows the latest purchase", %{conn: conn, collection: collection} do
       latest_record = List.last(collection)
 
       session =
@@ -65,13 +65,13 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
       end
     end
 
-    test "it shows the wishlist total count", %{conn: conn, wishlist: wishlist} do
+    test "shows the wishlist total count", %{conn: conn, wishlist: wishlist} do
       conn
       |> visit("/")
       |> assert_has("dd", wishlist |> length() |> Integer.to_string())
     end
 
-    test "it displays records for the current date in the 'On This Day' section", %{
+    test "displays records for the current date in the 'On This Day' section", %{
       conn: conn,
       collection: collection
     } do
@@ -103,7 +103,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
       refute_has(session, "##{record_yesterday.id} h2", escape(record_yesterday.title))
     end
 
-    test "it updates the 'On This Day' records when the date is changed", %{
+    test "updates the 'On This Day' records when the date is changed", %{
       conn: conn,
       collection: collection
     } do
@@ -146,7 +146,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
   end
 
   describe "Scrobble activity" do
-    test "it shows the scrobble activity", %{conn: conn} do
+    test "shows the scrobble activity", %{conn: conn} do
       # In test we don't run the LastFm.Refresh worker,
       # so we need to interact directly with the LastFm.Feed to have some data
       #

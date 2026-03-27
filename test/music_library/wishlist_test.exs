@@ -23,11 +23,11 @@ defmodule MusicLibrary.WishlistTest do
       assert [%{title: "Brave"}, %{title: "Brave"}] = Wishlist.search_records("brave")
     end
 
-    test "it respects limit" do
+    test "respects limit" do
       assert [%{title: "Brave"}] = Wishlist.search_records("brave", limit: 1)
     end
 
-    test "it respects offset" do
+    test "respects offset" do
       [first_match] = Wishlist.search_records("brave", limit: 1)
       [second_match] = Wishlist.search_records("brave", limit: 1, offset: 1)
       assert first_match !== second_match

@@ -15,13 +15,13 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
   describe "GET /api/collection/latest" do
     setup [:create_record]
 
-    test "it requires authentication", %{conn: conn} do
+    test "requires authentication", %{conn: conn} do
       conn = get(conn, ~p"/api/collection/latest")
 
       assert conn.status == 401
     end
 
-    test "it returns the latest record", %{conn: conn, record: record} do
+    test "returns the latest record", %{conn: conn, record: record} do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{api_token()}")
@@ -34,14 +34,14 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
   describe "GET /api/collection/random" do
     setup [:create_record]
 
-    test "it requires authentication", %{conn: conn} do
+    test "requires authentication", %{conn: conn} do
       conn = get(conn, ~p"/api/collection/random")
 
       assert conn.status == 401
     end
 
     # We're not testing random here - the query is solid enough
-    test "it returns a random record", %{conn: conn, record: record} do
+    test "returns a random record", %{conn: conn, record: record} do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{api_token()}")
@@ -54,13 +54,13 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
   describe "GET /api/collection" do
     setup [:create_record]
 
-    test "it requires authentication", %{conn: conn} do
+    test "requires authentication", %{conn: conn} do
       conn = get(conn, ~p"/api/collection")
 
       assert conn.status == 401
     end
 
-    test "it returns a paginated list of records", %{conn: conn, record: record} do
+    test "returns a paginated list of records", %{conn: conn, record: record} do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{api_token()}")
@@ -78,13 +78,13 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
   describe "GET /api/collection/on_this_day" do
     setup [:create_record]
 
-    test "it requires authentication", %{conn: conn} do
+    test "requires authentication", %{conn: conn} do
       conn = get(conn, ~p"/api/collection/on_this_day")
 
       assert conn.status == 401
     end
 
-    test "it returns a list of records", %{conn: conn, record: record} do
+    test "returns a list of records", %{conn: conn, record: record} do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{api_token()}")

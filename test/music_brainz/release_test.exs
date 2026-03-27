@@ -4,7 +4,7 @@ defmodule MusicBrainz.ReleaseTest do
   alias MusicBrainz.{Fixtures, Release}
 
   describe "release_duration/1" do
-    test "it returns the total milliseconds" do
+    test "returns the total milliseconds" do
       release =
         Fixtures.Release.release_with_media(:marbles)
         |> Release.from_api_response()
@@ -12,7 +12,7 @@ defmodule MusicBrainz.ReleaseTest do
       assert Release.release_duration(release) == 5_933_595
     end
 
-    test "it handles empty durations" do
+    test "handles empty durations" do
       release =
         Fixtures.Release.release_with_media(:marbles)
         |> put_in(["media", Access.all(), "tracks", Access.all(), "length"], nil)

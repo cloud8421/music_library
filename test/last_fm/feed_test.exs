@@ -37,7 +37,7 @@ defmodule LastFm.FeedTest do
   }
 
   describe "update and broadcast" do
-    test "it stores the track and broadcasts the updated track count" do
+    test "stores the track and broadcasts the updated track count" do
       :ok = Feed.subscribe()
 
       assert {:ok, 2} == Feed.update([@track_two, @track_one])

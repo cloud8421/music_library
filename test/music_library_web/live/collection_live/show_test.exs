@@ -28,7 +28,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
   end
 
   describe "Show record" do
-    test "it includes all needed information", %{conn: conn} do
+    test "includes all needed information", %{conn: conn} do
       record = record()
       transform = %Transform{hash: record.cover_hash, width: nil}
       payload = Transform.encode!(transform)

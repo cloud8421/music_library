@@ -97,7 +97,7 @@ defmodule MusicLibrary.Records.RecordTest do
   end
 
   describe "add_musicbrainz_data/2" do
-    test "it updates release_ids and included_release_group_ids" do
+    test "updates release_ids and included_release_group_ids" do
       record = %Record{}
       assert record.release_ids == []
       assert record.included_release_group_ids == []

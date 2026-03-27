@@ -4,7 +4,7 @@ defmodule LastFmTest do
   alias LastFm.{Artist, Fixtures, Scrobble}
 
   describe "get_artist_info/1" do
-    test "it returns the artist info" do
+    test "returns the artist info" do
       name = "Steven Wilson"
       musicbrainz_id = Ecto.UUID.generate()
 
@@ -22,7 +22,7 @@ defmodule LastFmTest do
   end
 
   describe "scrobble/2" do
-    test "it returns the scrobbled track" do
+    test "returns the scrobbled track" do
       scrobbles = [
         %Scrobble{
           track: "Wonderland",

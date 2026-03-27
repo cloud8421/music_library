@@ -4,7 +4,7 @@ defmodule DiscogsTest do
   alias Discogs.Fixtures
 
   describe "get_artist/1" do
-    test "it returns the artist" do
+    test "returns the artist" do
       discogs_id = "discogs_id"
 
       expected_info =

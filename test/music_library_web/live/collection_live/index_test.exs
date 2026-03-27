@@ -244,7 +244,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   end
 
   describe "Adding a new record" do
-    test "it shows the import modal", %{conn: conn} do
+    test "shows the import modal", %{conn: conn} do
       conn
       |> visit(~p"/collection")
       |> click_link("Add")
@@ -253,7 +253,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       |> assert_path(~p"/collection/import")
     end
 
-    test "it imports a record when selected", %{conn: conn} do
+    test "imports a record when selected", %{conn: conn} do
       release_group_search_results = Map.get(release_group_search_results(), "release-groups")
 
       first_release_group_search_result = hd(release_group_search_results)
@@ -343,7 +343,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   end
 
   describe "Add via barcode scan" do
-    test "it tracks the camera status", %{conn: conn} do
+    test "tracks the camera status", %{conn: conn} do
       session =
         conn
         |> visit(~p"/collection/scan")
@@ -361,7 +361,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       |> assert_has("video#camera-preview")
     end
 
-    test "it adds a record after scanning", %{conn: conn} do
+    test "adds a record after scanning", %{conn: conn} do
       barcode = "5037300650128"
       releases = releases(:marbles)
 
