@@ -18,8 +18,10 @@ defmodule MusicLibrary.Worker.RefreshCoverTest do
       assert :ok = perform_job(RefreshCover, %{"id" => record.id})
 
       updated = Records.get_record!(record.id)
-      assert updated.cover_hash != nil
-      assert Assets.get(updated.cover_hash) != nil
+      assert is_binary(updated.cover_hash) and byte_size(updated.cover_hash) > 0
+
+      asset = Assets.get(updated.cover_hash)
+      assert asset.format == "image/jpeg"
     end
 
     test "raises when record does not exist" do

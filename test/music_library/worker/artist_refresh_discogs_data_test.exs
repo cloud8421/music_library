@@ -24,7 +24,7 @@ defmodule MusicLibrary.Worker.ArtistRefreshDiscogsDataTest do
       assert {:ok, _} = perform_job(ArtistRefreshDiscogsData, %{"id" => artist_info.id})
 
       updated = Artists.get_artist_info!(artist_info.id)
-      assert updated.discogs_data != nil
+      assert updated.discogs_data == ArtistFixture.get_artist()
     end
 
     test "returns ok when no discogs data is available" do

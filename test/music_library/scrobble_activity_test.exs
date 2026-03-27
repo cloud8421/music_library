@@ -57,14 +57,34 @@ defmodule MusicLibrary.ScrobbleActivityTest do
     end
   end
 
-  describe "scrobble_release/3 without session key" do
+  describe "all scrobble operations without session key" do
     setup [:stub_lastfm_success]
 
-    test "returns error" do
-      started_at = DateTime.utc_now()
+    test "scrobble_release/3 returns :no_session_key" do
+      assert {:error, :no_session_key} =
+               ScrobbleActivity.scrobble_release(@release, :started_at, DateTime.utc_now())
+    end
+
+    test "scrobble_medium/4 returns :no_session_key" do
+      assert {:error, :no_session_key} =
+               ScrobbleActivity.scrobble_medium(1, @release, :started_at, DateTime.utc_now())
+    end
+
+    test "scrobble_tracks/4 returns :no_session_key" do
+      track_ids =
+        @release
+        |> Release.tracks()
+        |> Enum.take(1)
+        |> Enum.map(& &1.id)
+        |> MapSet.new()
 
       assert {:error, :no_session_key} =
-               ScrobbleActivity.scrobble_release(@release, :started_at, started_at)
+               ScrobbleActivity.scrobble_tracks(
+                 track_ids,
+                 @release,
+                 :started_at,
+                 DateTime.utc_now()
+               )
     end
   end
 
@@ -111,17 +131,6 @@ defmodule MusicLibrary.ScrobbleActivityTest do
 
       assert {:error, :no_duration} =
                ScrobbleActivity.scrobble_medium(1, release, :started_at, started_at)
-    end
-  end
-
-  describe "scrobble_medium/4 without session key" do
-    setup [:stub_lastfm_success]
-
-    test "returns error" do
-      started_at = DateTime.utc_now()
-
-      assert {:error, :no_session_key} =
-               ScrobbleActivity.scrobble_medium(1, @release, :started_at, started_at)
     end
   end
 
@@ -186,24 +195,6 @@ defmodule MusicLibrary.ScrobbleActivityTest do
                  :started_at,
                  started_at
                )
-    end
-  end
-
-  describe "scrobble_tracks/4 without session key" do
-    setup [:stub_lastfm_success]
-
-    test "returns error" do
-      track_ids =
-        @release
-        |> Release.tracks()
-        |> Enum.take(1)
-        |> Enum.map(& &1.id)
-        |> MapSet.new()
-
-      started_at = DateTime.utc_now()
-
-      assert {:error, :no_session_key} =
-               ScrobbleActivity.scrobble_tracks(track_ids, @release, :started_at, started_at)
     end
   end
 

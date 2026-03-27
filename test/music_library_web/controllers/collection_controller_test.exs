@@ -12,14 +12,22 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
     |> Keyword.fetch!(:api_token)
   end
 
+  describe "authentication" do
+    test "all API endpoints require a bearer token", %{conn: conn} do
+      for path <- [
+            ~p"/api/collection/latest",
+            ~p"/api/collection/random",
+            ~p"/api/collection",
+            ~p"/api/collection/on_this_day"
+          ] do
+        assert get(conn, path).status == 401,
+               "expected 401 for unauthenticated GET #{path}"
+      end
+    end
+  end
+
   describe "GET /api/collection/latest" do
     setup [:create_record]
-
-    test "requires authentication", %{conn: conn} do
-      conn = get(conn, ~p"/api/collection/latest")
-
-      assert conn.status == 401
-    end
 
     test "returns the latest record", %{conn: conn, record: record} do
       conn =
@@ -34,12 +42,6 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
   describe "GET /api/collection/random" do
     setup [:create_record]
 
-    test "requires authentication", %{conn: conn} do
-      conn = get(conn, ~p"/api/collection/random")
-
-      assert conn.status == 401
-    end
-
     # We're not testing random here - the query is solid enough
     test "returns a random record", %{conn: conn, record: record} do
       conn =
@@ -53,12 +55,6 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
 
   describe "GET /api/collection" do
     setup [:create_record]
-
-    test "requires authentication", %{conn: conn} do
-      conn = get(conn, ~p"/api/collection")
-
-      assert conn.status == 401
-    end
 
     test "returns a paginated list of records", %{conn: conn, record: record} do
       conn =
@@ -77,12 +73,6 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
 
   describe "GET /api/collection/on_this_day" do
     setup [:create_record]
-
-    test "requires authentication", %{conn: conn} do
-      conn = get(conn, ~p"/api/collection/on_this_day")
-
-      assert conn.status == 401
-    end
 
     test "returns a list of records", %{conn: conn, record: record} do
       conn =

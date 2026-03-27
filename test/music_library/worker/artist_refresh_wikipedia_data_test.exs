@@ -34,8 +34,8 @@ defmodule MusicLibrary.Worker.ArtistRefreshWikipediaDataTest do
       assert {:ok, _} = perform_job(ArtistRefreshWikipediaData, %{"id" => artist_info.id})
 
       updated = Artists.get_artist_info!(artist_info.id)
-      assert updated.wikipedia_data != nil
-      assert updated.wikipedia_data != %{}
+      assert is_map(updated.wikipedia_data)
+      assert Map.has_key?(updated.wikipedia_data, "intro_html")
     end
 
     test "discards job when no wikidata_id exists in musicbrainz_data" do

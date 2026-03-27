@@ -115,7 +115,7 @@ defmodule MusicLibrary.BarcodeScanTest do
         Req.Test.transport_error(conn, :timeout)
       end)
 
-      assert {:error, _reason} = BarcodeScan.scan("5052205070023")
+      assert {:error, %Req.TransportError{reason: :timeout}} = BarcodeScan.scan("5052205070023")
     end
   end
 

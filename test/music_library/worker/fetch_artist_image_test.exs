@@ -24,7 +24,8 @@ defmodule MusicLibrary.Worker.FetchArtistImageTest do
       assert :ok = perform_job(FetchArtistImage, %{"id" => artist_info.id})
 
       updated = Artists.get_artist_info!(artist_info.id)
-      assert updated.image_data_hash != nil
+      assert is_binary(updated.image_data_hash) and byte_size(updated.image_data_hash) > 0
+      assert MusicLibrary.Assets.get(updated.image_data_hash) != nil
     end
 
     test "cancels when no discogs data exists" do

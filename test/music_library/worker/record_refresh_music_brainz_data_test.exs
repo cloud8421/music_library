@@ -24,7 +24,7 @@ defmodule MusicLibrary.Worker.RecordRefreshMusicBrainzDataTest do
       assert :ok = perform_job(RecordRefreshMusicBrainzData, %{"id" => record.id})
 
       updated = Records.get_record!(record.id)
-      assert updated.musicbrainz_data != nil
+      assert updated.musicbrainz_data["title"] == "Marbles"
     end
 
     test "raises when record does not exist" do

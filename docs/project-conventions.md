@@ -73,6 +73,13 @@ Rules extracted from commit history that are specific to this project and not al
 - **Verify outcomes through context modules**, not just UI assertions. Delete tests assert both `refute has_element?` and `assert_raise Ecto.NoResultsError`.
 - **`render_hook/3`** for testing JS hook interactions.
 - Avoid starting test descriptions with "it".
+- **No boilerplate-only tests.** Do not add test files that just verify Phoenix generator output (e.g., error view literal strings). Tests must exercise application behaviour.
+- **Assert specific values, not just shape.** Prefer `assert data == expected` or `assert data["name"] == "Steven Wilson"` over `assert data != nil` or `assert {:ok, _} = result`. Wildcard matches (`_`) in assertions are a signal the test is too vague.
+- **Worker tests that enqueue jobs must `assert_enqueued`.** `perform_job` returning `{:ok, []}` is not sufficient — verify the expected downstream workers were enqueued with correct args.
+- **Do not test the same guard at every call site.** If a shared check (e.g., session key presence) is enforced in one place, test it once. Do not duplicate the same assertion across every function that calls the shared check.
+- **Consolidate identical assertions across endpoints.** When multiple routes share the same plug/middleware behaviour (e.g., auth), test it once with a loop or parameterised approach, not N separate identical tests.
+- **Error assertions must match the error type.** `assert {:error, _reason}` is too broad — match the specific error struct or atom (e.g., `%Req.TransportError{reason: :timeout}`, `:no_session_key`).
+- **Do not test untestable operations.** If a database operation (e.g., VACUUM) cannot run in the test sandbox, do not write a test that asserts the sandbox error message. Delete or skip it.
 
 ## Tech Debt / Hygiene
 
