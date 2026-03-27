@@ -14,6 +14,17 @@ defmodule MusicLibrary.ListeningStats do
 
   @pagination Application.compile_env!(:music_library, :pagination)
 
+  @insertable_fields [
+    :musicbrainz_id,
+    :title,
+    :artist,
+    :album,
+    :cover_url,
+    :scrobbled_at_uts,
+    :scrobbled_at_label,
+    :last_fm_data
+  ]
+
   @type period_opts :: [
           period: atom(),
           limit: non_neg_integer(),
@@ -24,6 +35,34 @@ defmodule MusicLibrary.ListeningStats do
   @spec scrobble_count() :: non_neg_integer()
   def scrobble_count do
     Repo.aggregate(Track, :count, :scrobbled_at_uts)
+  end
+
+  @spec update([LastFm.Track.t()]) :: {:ok, non_neg_integer()} | no_return
+  def update(tracks) do
+    track_params =
+      tracks
+      |> Enum.map(fn t -> Map.take(t, @insertable_fields) end)
+      |> Enum.map(&Map.to_list/1)
+
+    {count, tracks} =
+      Repo.insert_all(Track, track_params,
+        on_conflict: :nothing,
+        conflict_target: [:scrobbled_at_uts, :title],
+        returning: true
+      )
+
+    tracks
+    |> MusicLibrary.ScrobbleRules.apply_all_rules()
+    |> MusicLibrary.ScrobbleRules.log_apply_results()
+
+    Phoenix.PubSub.broadcast(MusicLibrary.PubSub, "listening_stats:update", %{track_count: count})
+
+    {:ok, count}
+  end
+
+  @spec subscribe() :: :ok
+  def subscribe do
+    Phoenix.PubSub.subscribe(MusicLibrary.PubSub, "listening_stats:update")
   end
 
   @spec artist_play_count(String.t()) :: non_neg_integer()
