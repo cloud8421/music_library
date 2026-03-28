@@ -198,7 +198,7 @@ stubbed via `Req.Test` (configured in `config/test.exs`).
 | `ArtistRefreshAllMusicBrainzData` | music_brainz | Manual / cron (bulk refresh via Artists.Batch) |
 | `ArtistRefreshAllDiscogsData` | discogs | Manual / cron (bulk refresh via Artists.Batch) |
 | `ArtistRefreshAllWikipediaData` | wikipedia | Manual / cron (bulk refresh via Artists.Batch) |
-| `LastFm.Worker.BackfillScrobbledTracks` | heavy_writes | Manual (self-chaining batch import) |
+| `BackfillScrobbledTracks` | heavy_writes | Manual (self-chaining batch import) |
 | `SendRecordsOnThisDayEmail` | default | Cron (daily "records on this day" email) |
 
 ### Cron Workers

@@ -13,12 +13,14 @@ defmodule MusicLibrary.ListeningStats do
 
   alias MusicLibrary.{
     Artists,
+    BackgroundRepo,
     Collection,
     ListeningStats.Refresh,
     Records.ArtistRecord,
     Records.Record,
     Repo,
-    Wishlist
+    Wishlist,
+    Worker
   }
 
   @pagination Application.compile_env!(:music_library, :pagination)
@@ -77,6 +79,20 @@ defmodule MusicLibrary.ListeningStats do
   @spec refresh() :: :ok | {:error, term()}
   def refresh do
     Refresh.refresh()
+  end
+
+  @spec lowest_scrobbled_at_uts() :: integer() | nil
+  def lowest_scrobbled_at_uts do
+    Repo.aggregate(Track, :min, :scrobbled_at_uts)
+  end
+
+  @spec backfill_scrobbled_tracks() :: {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
+  def backfill_scrobbled_tracks do
+    to_uts = lowest_scrobbled_at_uts()
+
+    %{"to_uts" => to_uts}
+    |> Worker.BackfillScrobbledTracks.new()
+    |> BackgroundRepo.insert()
   end
 
   @spec artist_play_count(String.t()) :: non_neg_integer()

@@ -3,27 +3,12 @@ defmodule LastFm do
   Last.fm API facade for scrobbling and listening history.
   """
 
-  alias LastFm.{API, Scrobble, Track, Worker}
-  alias MusicLibrary.{BackgroundRepo, Repo}
+  alias LastFm.{API, Scrobble, Track}
 
   @spec get_tracks(keyword()) :: {:ok, [Track.t()]} | {:error, term()}
   def get_tracks(opts) do
     last_fm_config = last_fm_config()
     API.get_recent_tracks(opts, last_fm_config)
-  end
-
-  @spec lowest_scrobbled_at_uts() :: integer() | nil
-  def lowest_scrobbled_at_uts do
-    Repo.aggregate(Track, :min, :scrobbled_at_uts)
-  end
-
-  @spec backfill_scrobbled_tracks() :: {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
-  def backfill_scrobbled_tracks do
-    to_uts = lowest_scrobbled_at_uts()
-
-    %{"to_uts" => to_uts}
-    |> Worker.BackfillScrobbledTracks.new()
-    |> BackgroundRepo.insert()
   end
 
   @spec get_artist_info(String.t(), String.t()) :: {:ok, LastFm.Artist.t()} | {:error, term()}
