@@ -71,8 +71,17 @@ defmodule MusicLibraryWeb.StatsLive.TopByPeriod do
           </:side_actions>
           <.async_result :let={items} assign={assigns[@key]}>
             <:loading>
-              <div class="flex h-182 items-center justify-center">
-                <.loading />
+              <div class="mt-4 rounded-md bg-white p-4 shadow-sm dark:bg-zinc-800">
+                <div class="space-y-2">
+                  <div :for={_ <- 1..10} class="flex items-center space-x-3 p-2">
+                    <div class="size-12 animate-pulse rounded-md bg-zinc-200 dark:bg-zinc-700" />
+                    <div class="min-w-0 flex-1 space-y-1.5">
+                      <div class="h-3 w-24 animate-pulse rounded bg-zinc-200 dark:bg-zinc-700" />
+                      <div class="h-4 w-40 animate-pulse rounded bg-zinc-200 dark:bg-zinc-700" />
+                    </div>
+                    <div class="h-5 w-8 animate-pulse rounded-full bg-zinc-200 dark:bg-zinc-700" />
+                  </div>
+                </div>
               </div>
             </:loading>
             <div class="mt-4 rounded-md bg-white p-4 shadow-sm dark:bg-zinc-800">
