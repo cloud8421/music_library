@@ -24,9 +24,6 @@ defmodule MusicLibrary.Application do
        repos: Application.fetch_env!(:music_library, :ecto_repos), skip: skip_migrations?()},
       {Task.Supervisor, name: MusicLibrary.TaskSupervisor},
       {Phoenix.PubSub, name: MusicLibrary.PubSub},
-      {MusicLibrary.ListeningStats.Refresh,
-       {LastFm.Config.resolve(:music_library),
-        Application.fetch_env!(:music_library, MusicLibrary.ListeningStats.Refresh)}},
       # Start a worker by calling: MusicLibrary.Worker.start_link(arg)
       # {MusicLibrary.Worker, arg},
       # Start to serve requests, typically the last entry

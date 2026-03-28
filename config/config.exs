@@ -58,11 +58,6 @@ config :music_library, LastFm,
   user_agent: user_agent,
   api_cooldown: 500
 
-config :music_library, MusicLibrary.ListeningStats.Refresh,
-  auto_refresh: true,
-  # refresh every 5 minutes
-  refresh_interval: System.convert_time_unit(300, :second, :millisecond)
-
 config :music_library, MusicBrainz, user_agent: user_agent, api_cooldown: 500
 
 config :music_library, Discogs,

@@ -81,8 +81,15 @@ config :music_library, monitoring_routes: true
 
 config :music_library, MusicLibrary.Mailer, adapter: Swoosh.Adapters.Local
 
-config :music_library, MusicLibrary.ListeningStats.Refresh,
-  refresh_interval: System.convert_time_unit(500, :second, :millisecond)
+config :music_library, Oban,
+  plugins: [
+    {Oban.Plugins.Cron,
+     timezone: "Europe/London",
+     crontab: [
+       # every 8 minutes (closest cron equivalent to previous 500s dev interval)
+       {"*/8 * * * *", MusicLibrary.Worker.RefreshScrobbles}
+     ]}
+  ]
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :default_formatter, format: "[$level] $message\n"

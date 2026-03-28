@@ -62,8 +62,6 @@ config :music_library, LastFm,
   ],
   api_cooldown: 0
 
-config :music_library, MusicLibrary.ListeningStats.Refresh, auto_refresh: false
-
 config :music_library, MusicBrainz,
   req_options: [
     plug: {Req.Test, MusicBrainz.API},

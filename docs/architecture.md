@@ -39,7 +39,6 @@ MusicLibrary.Application (one_for_one)
 ├── Ecto.Migrator                # Auto-migration on boot
 ├── Task.Supervisor (MusicLibrary.TaskSupervisor)
 ├── Phoenix.PubSub (:music_library)
-├── MusicLibrary.ListeningStats.Refresh  # GenServer, periodic scrobble fetch
 └── MusicLibraryWeb.Endpoint
 ```
 
@@ -198,6 +197,7 @@ stubbed via `Req.Test` (configured in `config/test.exs`).
 | `ArtistRefreshAllMusicBrainzData` | music_brainz | Manual / cron (bulk refresh via Artists.Batch) |
 | `ArtistRefreshAllDiscogsData` | discogs | Manual / cron (bulk refresh via Artists.Batch) |
 | `ArtistRefreshAllWikipediaData` | wikipedia | Manual / cron (bulk refresh via Artists.Batch) |
+| `RefreshScrobbles` | last_fm | Cron / manual (fetch recent Last.fm scrobbles) |
 | `BackfillScrobbledTracks` | heavy_writes | Manual (self-chaining batch import) |
 | `SendRecordsOnThisDayEmail` | default | Cron (daily "records on this day" email) |
 
@@ -216,6 +216,7 @@ stubbed via `Req.Test` (configured in `config/test.exs`).
 | Monthly 1st, 9 AM | `ArtistRefreshAllDiscogsData` | discogs |
 | Monthly 1st, 10 AM | `ArtistRefreshAllWikipediaData` | wikipedia |
 | Daily 7 AM | `SendRecordsOnThisDayEmail` | default |
+| Every 5 min | `RefreshScrobbles` | last_fm |
 
 ---
 

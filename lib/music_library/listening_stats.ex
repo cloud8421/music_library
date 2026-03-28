@@ -15,7 +15,6 @@ defmodule MusicLibrary.ListeningStats do
     Artists,
     BackgroundRepo,
     Collection,
-    ListeningStats.Refresh,
     Records.ArtistRecord,
     Records.Record,
     Repo,
@@ -76,9 +75,10 @@ defmodule MusicLibrary.ListeningStats do
     Phoenix.PubSub.subscribe(MusicLibrary.PubSub, "listening_stats:update")
   end
 
-  @spec refresh() :: :ok | {:error, term()}
+  @spec refresh() :: {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
   def refresh do
-    Refresh.refresh()
+    Worker.RefreshScrobbles.new(%{})
+    |> Oban.insert()
   end
 
   @spec lowest_scrobbled_at_uts() :: integer() | nil
