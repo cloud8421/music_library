@@ -76,7 +76,11 @@ defmodule MusicLibrary.ScrobbleRules do
 
   @spec list_enabled_rules() :: [ScrobbleRule.t()]
   def list_enabled_rules do
-    list_scrobble_rules(enabled: true)
+    query =
+      from(r in ScrobbleRule)
+      |> filter_scrobble_rules(enabled: true)
+
+    Repo.all(query)
   end
 
   @spec apply_album_rule(ScrobbleRule.t()) :: {:ok, non_neg_integer()} | {:error, term()}
