@@ -133,7 +133,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `ErrorTracker.ErrorNotifier` | GenServer: attaches to ErrorTracker telemetry, skips muted errors, throttles repeated errors, dispatches email notifications |
 | `ErrorTracker.ErrorNotifier.Email` | Builds and sends Swoosh error notification emails with stack trace formatting |
 | `ErrorIgnorer` | ErrorTracker.Ignorer implementation: filters non-actionable errors (e.g., NoRouteError from bot scanners) |
-| `RecordsOnThisDayEmail` | Builds and sends daily "records on this day" email with cover images, anniversary styling |
+| `MusicLibraryWeb.RecordsOnThisDayEmail` | Builds and sends daily "records on this day" email with cover images, anniversary styling |
 | `MusicLibrary.Mailer` | Swoosh mailer (Mailgun in prod, local adapter in dev) |
 | `FormatNumber` | Number formatting utility |
 
