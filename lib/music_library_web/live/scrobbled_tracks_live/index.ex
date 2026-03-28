@@ -80,7 +80,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
               <span class="sr-only sm:not-sr-only">{gettext("Album")}</span>
             </.button>
           </.button_group>
-          <.refresh_lastfm_feed_button />
+          <.refresh_scrobbles_button />
         </div>
       </div>
 
@@ -287,7 +287,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
     {:noreply, push_patch(socket, to: ~p"/scrobbled-tracks?#{qs}")}
   end
 
-  def handle_event("refresh_lastfm_feed", _, socket) do
+  def handle_event("refresh_scrobbles", _, socket) do
     ListeningStats.refresh()
     {:noreply, socket}
   end

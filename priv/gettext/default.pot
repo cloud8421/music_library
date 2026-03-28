@@ -262,11 +262,6 @@ msgstr ""
 msgid "MusicBrainz data refreshed successfully"
 msgstr ""
 
-#: lib/music_library_web/components/scrobble_components.ex
-#, elixir-autogen, elixir-format
-msgid "Refresh LastFm Feed"
-msgstr ""
-
 #: lib/music_library_web/live_helpers/record_actions.ex
 #, elixir-autogen, elixir-format
 msgid "Cover refreshed successfully"
@@ -2313,4 +2308,9 @@ msgstr ""
 #: lib/music_library_web/live/stats_live/top_by_period.ex
 #, elixir-autogen, elixir-format
 msgid "∞"
+msgstr ""
+
+#: lib/music_library_web/components/scrobble_components.ex
+#, elixir-autogen, elixir-format
+msgid "Refresh scrobbles"
 msgstr ""

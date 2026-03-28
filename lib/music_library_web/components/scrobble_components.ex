@@ -10,14 +10,14 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
 
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1]
 
-  def refresh_lastfm_feed_button(assigns) do
+  def refresh_scrobbles_button(assigns) do
     ~H"""
     <button
       type="button"
       class="text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-300"
-      phx-click="refresh_lastfm_feed"
+      phx-click="refresh_scrobbles"
     >
-      <span class="sr-only">{gettext("Refresh LastFm Feed")}</span>
+      <span class="sr-only">{gettext("Refresh scrobbles")}</span>
       <.icon
         name="hero-arrow-path"
         class="phx-click-loading:animate-spin size-5"

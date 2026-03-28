@@ -92,7 +92,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   end
 
   @impl true
-  def handle_event("refresh_lastfm_feed", _, socket) do
+  def handle_event("refresh_scrobbles", _, socket) do
     ListeningStats.refresh()
     {:noreply, socket}
   end
@@ -235,7 +235,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         <.section>
           <:title>
             {gettext("Scrobble activity")}
-            <.refresh_lastfm_feed_button />
+            <.refresh_scrobbles_button />
           </:title>
           <:side_actions>
             <.tabs_list active_tab={@scrobble_activity_mode} variant="segmented" size="xs">
