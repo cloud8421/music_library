@@ -1,11 +1,11 @@
-defmodule MusicLibrary.RecordsOnThisDayEmailTest do
+defmodule MusicLibraryWeb.RecordsOnThisDayEmailTest do
   use MusicLibrary.DataCase
 
   import Swoosh.TestAssertions
 
   alias MusicLibrary.Fixtures
   alias MusicLibrary.Records.Record
-  alias MusicLibrary.RecordsOnThisDayEmail
+  alias MusicLibraryWeb.RecordsOnThisDayEmail
 
   setup do
     Application.put_env(:music_library, RecordsOnThisDayEmail,

@@ -7,9 +7,9 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
   alias MusicLibrary.Assets.Cache
   alias MusicLibrary.Maintenance
   alias MusicLibrary.Records
-  alias MusicLibrary.RecordsOnThisDayEmail
   alias MusicLibrary.Worker.PruneAssets
   alias MusicLibraryWeb.ErrorMessages
+  alias MusicLibraryWeb.RecordsOnThisDayEmail
 
   @poll_interval 2_000
 

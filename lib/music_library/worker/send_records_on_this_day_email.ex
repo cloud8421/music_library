@@ -1,7 +1,7 @@
 defmodule MusicLibrary.Worker.SendRecordsOnThisDayEmail do
   use Oban.Worker, queue: :default, max_attempts: 3
 
-  alias MusicLibrary.RecordsOnThisDayEmail
+  alias MusicLibraryWeb.RecordsOnThisDayEmail
 
   @impl Oban.Worker
   def perform(_) do

@@ -129,7 +129,7 @@ config :music_library, MusicLibrary.Mailer,
   api_key: "change me",
   domain: "change me"
 
-config :music_library, MusicLibrary.RecordsOnThisDayEmail,
+config :music_library, MusicLibraryWeb.RecordsOnThisDayEmail,
   from_email: "postmaster@mailgun.fullyforged.com",
   to_email: "claudio@fullyforged.com",
   mailer: MusicLibrary.Mailer,

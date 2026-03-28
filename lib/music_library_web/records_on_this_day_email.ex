@@ -1,4 +1,4 @@
-defmodule MusicLibrary.RecordsOnThisDayEmail do
+defmodule MusicLibraryWeb.RecordsOnThisDayEmail do
   @moduledoc false
 
   import Swoosh.Email
