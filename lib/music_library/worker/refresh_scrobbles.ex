@@ -28,8 +28,11 @@ defmodule MusicLibrary.Worker.RefreshScrobbles do
           seconds = error |> API.ErrorResponse.retry_delay() |> div(1000)
           {:snooze, seconds}
         else
-          {:cancel, inspect(resp)}
+          {:cancel, resp}
         end
+
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 end
