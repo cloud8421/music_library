@@ -197,6 +197,7 @@ polling interval. Tracks:
 - Rate limiter throttle durations
 - Asset cache hit/miss
 - Oban job metrics (enqueue, execute, attempt, discard)
+- Scrobble rules processing (duration, exceptions)
 - Error tracker counters
 
 ### Dashboards (behind auth)
@@ -270,6 +271,7 @@ Oban with `Oban.Engines.Lite` (SQLite-backed, process-based).
 | Monthly 1st, 7 AM | `RecordGenerateAllEmbeddings` |
 | Monthly 1st, 8 AM | `ArtistRefreshAllMusicBrainzData` |
 | Monthly 1st, 9 AM | `ArtistRefreshAllDiscogsData` |
+| Every 5 min | `RefreshScrobbles` |
 | Monthly 1st, 10 AM | `ArtistRefreshAllWikipediaData` |
 
 ---
