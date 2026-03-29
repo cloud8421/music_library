@@ -18,17 +18,20 @@ ARG DEBIAN_VERSION=trixie-20260316-slim
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
 ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 
+FROM node:24-slim AS node
+
 FROM ${BUILDER_IMAGE} AS builder
 
 # install build dependencies
-RUN apt-get update -y && apt-get install -y build-essential git curl
-
-# Add Node.js 24 repo
-RUN curl -sL https://deb.nodesource.com/setup_24.x | bash
-
-# install Node.js and cleanup
-RUN apt-get install -y nodejs \
+RUN apt-get update -y && apt-get install -y --no-install-recommends build-essential git \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
+
+# copy Node.js from the official image
+COPY --from=node /usr/local/bin/node /usr/local/bin/node
+COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
+
+SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 
 # prepare build dir
 WORKDIR /app
@@ -63,12 +66,15 @@ COPY priv priv
 
 COPY lib lib
 
-COPY assets assets
-
+# install npm deps first (cached unless lock changes)
+COPY assets/package.json assets/package-lock.json ./assets/
 RUN npm ci --prefix assets
 
-# Compile the release and assets
-RUN mix do compile + assets.deploy
+COPY assets assets
+
+# compile the release, then build assets
+RUN mix compile
+RUN mix assets.deploy
 
 # Changes to config/runtime.exs don't require recompiling the code
 COPY config/runtime.exs config/
@@ -81,11 +87,14 @@ RUN mix release
 FROM ${RUNNER_IMAGE}
 
 RUN apt-get update -y && \
-  apt-get install -y libstdc++6 openssl libncurses6 locales ca-certificates \
+  apt-get install -y --no-install-recommends libstdc++6 openssl libncurses6 locales ca-certificates \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
-# Set the locale
-RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
+# Set the locale and strip unused locale data
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen \
+  && rm -rf /usr/share/locale /usr/share/i18n
+
+SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
