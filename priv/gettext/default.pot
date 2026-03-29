@@ -1460,11 +1460,6 @@ msgstr ""
 msgid "No data available"
 msgstr ""
 
-#: lib/music_library_web/components/stats_components.ex
-#, elixir-autogen, elixir-format
-msgid "No record found"
-msgstr ""
-
 #: lib/music_library_web/live/collection_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "(1 scrobble)"
@@ -2313,4 +2308,9 @@ msgstr ""
 #: lib/music_library_web/components/scrobble_components.ex
 #, elixir-autogen, elixir-format
 msgid "Refresh scrobbles"
+msgstr ""
+
+#: lib/music_library_web/components/stats_components.ex
+#, elixir-autogen, elixir-format
+msgid "Add a new record"
 msgstr ""

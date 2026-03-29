@@ -45,17 +45,24 @@ defmodule MusicLibraryWeb.StatsComponents do
         </p>
       </div>
     </div>
-    <div
+    <.link
       :if={!@record}
+      navigate={~p"/collection/import"}
       class={[
-        "flex cursor-pointer items-center rounded-md bg-white px-4 py-5 shadow-sm sm:px-6 sm:pt-6 dark:bg-zinc-800",
+        "flex items-center rounded-md bg-white px-4 py-5 shadow-sm sm:px-6 sm:pt-6 dark:bg-zinc-800",
+        "border border-dashed border-zinc-300 dark:border-zinc-600",
+        "group hover:border-zinc-400 dark:hover:border-zinc-500 transition-colors",
         @class
       ]}
     >
-      <p class="truncate text-xs font-medium text-zinc-500 sm:text-sm dark:text-zinc-400">
-        {gettext("No record found")}
+      <.icon
+        name="hero-plus-circle"
+        class="size-8 text-zinc-400 group-hover:text-zinc-500 dark:text-zinc-500 dark:group-hover:text-zinc-400"
+      />
+      <p class="ml-3 truncate text-xs font-medium text-zinc-500 group-hover:text-zinc-600 sm:text-sm dark:text-zinc-400 dark:group-hover:text-zinc-300">
+        {gettext("Add a new record")}
       </p>
-    </div>
+    </.link>
     """
   end
 
