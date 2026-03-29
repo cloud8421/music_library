@@ -1938,6 +1938,7 @@ msgid "Error refreshing Last.fm data"
 msgstr ""
 
 #: lib/music_library_web/live/artist_live/show.ex
+#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Last.fm"
 msgstr ""
@@ -2318,4 +2319,29 @@ msgstr ""
 #: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "No records yet"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Are you sure you want to re-connect to Last.fm? This will disconnect the current account."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Connected"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Manage your Last.fm connection."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Not connected"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Re-connect to Last.fm"
 msgstr ""

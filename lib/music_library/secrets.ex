@@ -22,4 +22,11 @@ defmodule MusicLibrary.Secrets do
   def get(name) do
     Repo.get(Secret, name)
   end
+
+  @spec delete(String.t()) :: :ok
+  def delete(name) do
+    import Ecto.Query
+    Repo.delete_all(from s in Secret, where: s.name == ^name)
+    :ok
+  end
 end

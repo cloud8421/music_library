@@ -7,6 +7,7 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
   alias MusicLibrary.Assets.Cache
   alias MusicLibrary.Maintenance
   alias MusicLibrary.Records
+  alias MusicLibrary.Secrets
   alias MusicLibrary.Worker.PruneAssets
   alias MusicLibraryWeb.ErrorMessages
   alias MusicLibraryWeb.RecordsOnThisDayEmail
@@ -208,6 +209,41 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
             </.button_group>
           </li>
         </ul>
+        <h3 class="mt-4 text-base font-semibold text-zinc-900 dark:text-zinc-200">
+          {gettext("Last.fm")}
+        </h3>
+        <p class="mt-2 max-w-4xl text-sm text-zinc-500 dark:text-zinc-400">
+          {gettext("Manage your Last.fm connection.")}
+          <span
+            :if={@lastfm_connected}
+            class="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-200"
+          >
+            {gettext("Connected")}
+          </span>
+          <span
+            :if={!@lastfm_connected}
+            class="ml-2 inline-flex items-center rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300"
+          >
+            {gettext("Not connected")}
+          </span>
+        </p>
+        <ul class="mt-4">
+          <li class="space-y-4">
+            <.button_group>
+              <.button
+                type="button"
+                phx-click="reconnect_lastfm"
+                data-confirm={
+                  gettext(
+                    "Are you sure you want to re-connect to Last.fm? This will disconnect the current account."
+                  )
+                }
+              >
+                {gettext("Re-connect to Last.fm")}
+              </.button>
+            </.button_group>
+          </li>
+        </ul>
       </div>
     </Layouts.app>
     """
@@ -225,7 +261,8 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
        page_title: gettext("Maintenance"),
        current_section: :maintenance
      )
-     |> assign_job_counts()}
+     |> assign_job_counts()
+     |> assign_lastfm_status()}
   end
 
   @impl true
@@ -233,6 +270,10 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
     Process.send_after(self(), :update_job_counts, @poll_interval)
 
     {:noreply, assign_job_counts(socket)}
+  end
+
+  defp assign_lastfm_status(socket) do
+    assign(socket, :lastfm_connected, Secrets.get("last_fm_session_key") != nil)
   end
 
   defp assign_job_counts(socket) do
@@ -385,5 +426,11 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
            gettext("Database optimize failed") <> ": " <> ErrorMessages.friendly_message(reason)
          )}
     end
+  end
+
+  def handle_event("reconnect_lastfm", _params, socket) do
+    Secrets.delete("last_fm_session_key")
+
+    {:noreply, redirect(socket, external: LastFm.auth_url())}
   end
 end
