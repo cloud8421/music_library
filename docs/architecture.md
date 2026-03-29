@@ -103,7 +103,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `ListeningStats` | (LastFm.Track, ArtistRecord, ArtistInfo) | Scrobble persistence, refresh scheduling, listening analytics, track CRUD, search, listing: scrobble counts, artist play counts (from DB), recent activity, top albums/artists by period |
 | `OnlineStoreTemplates` | OnlineStoreTemplate | URL templates for buying records online; searchable by name/description |
 | `Search` | (cross-context) | Universal search dispatcher across collection, wishlist, artists, record sets (delegates to domain contexts) |
-| `Secrets` | Secret | Encrypted key-value storage |
+| `Secrets` | Secret | Encrypted key-value storage (CRUD + delete) |
 | `BarcodeScan` | (Result struct) | Barcode → MusicBrainz lookup workflow |
 | `Maintenance` | (Oban.Job, LastFm.Track) | Background job monitoring, database vacuum/optimize, scrobble data quality diagnostics |
 
@@ -255,7 +255,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `ScrobbledTracksLive.Index` | `/scrobbled-tracks` | Browse/search Last.fm history |
 | `ScrobbleRulesLive.Index` | `/scrobble-rules` | Browse/search/sort scrobble remapping rules (paginated, 50 per page) |
 | `OnlineStoreTemplateLive.Index` | `/online-store-templates` | Manage store URL templates |
-| `MaintenanceLive.Index` | `/maintenance` | Admin: batch jobs, DB maintenance |
+| `MaintenanceLive.Index` | `/maintenance` | Admin: batch jobs, DB maintenance, Last.fm connection |
 
 ### LiveComponents
 
@@ -271,7 +271,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `StatsLive.TopByPeriod` | StatsLive.TopAlbums, StatsLive.TopArtists | Generic period-tabbed stats display (7d, 30d, 90d, 1y, all-time) |
 | `StatsLive.TopAlbums` | StatsLive.Index | Top albums by period (uses TopByPeriod) |
 | `StatsLive.TopArtists` | StatsLive.Index | Top artists by period (uses TopByPeriod) |
-| `UniversalSearchLive.Index` | Layout (global) | Cmd+K search modal |
+| `UniversalSearchLive.Index` | Layout (global) | Cmd+K search modal with quick actions (add to wishlist/collection, scrobble) |
 | `Chat` | CollectionLive.Show, WishlistLive.Show, ArtistLive.Show | AI chat sheet (OpenAI streaming, configurable per entity) |
 | `Notes` | CollectionLive.Show, WishlistLive.Show, ArtistLive.Show | Markdown note rendering and editing |
 | `AddRecord` | CollectionLive.Index, WishlistLive.Index | MusicBrainz import interface |
