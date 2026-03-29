@@ -253,6 +253,16 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       |> assert_path(~p"/collection/import")
     end
 
+    test "pre-fills the search query from import_query param", %{conn: conn} do
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        Req.Test.json(conn, %{"release-groups" => [], "count" => 0})
+      end)
+
+      conn
+      |> visit(~p"/collection/import?#{[import_query: "test query"]}")
+      |> assert_has("input[value='test query']")
+    end
+
     test "imports a record when selected", %{conn: conn} do
       release_group_search_results = Map.get(release_group_search_results(), "release-groups")
 

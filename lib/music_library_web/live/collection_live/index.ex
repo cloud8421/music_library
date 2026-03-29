@@ -169,7 +169,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
           action={@live_action}
           record={@record}
           patch={back_path(@record_list_params)}
-          initial_query=""
+          initial_query={@import_query}
           icon_name="hero-plus"
         />
       </.structured_modal>
@@ -198,6 +198,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
     {:ok,
      socket
      |> assign(:current_section, :collection)
+     |> assign(:import_query, "")
      |> assign(:display, :grid)}
   end
 
@@ -207,9 +208,12 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
   end
 
   defp apply_action(socket, :import, params) do
+    import_query = params["import_query"] || ""
+
     socket
     |> apply_fallback_index(params, :records, &apply_action/3)
     |> assign(:page_title, gettext("Add new Record · Collection"))
+    |> assign(:import_query, import_query)
     |> assign(:record, nil)
   end
 

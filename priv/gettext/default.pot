@@ -1327,11 +1327,6 @@ msgstr ""
 msgid "Scrobble Anything"
 msgstr ""
 
-#: lib/music_library_web/components/search_components.ex
-#, elixir-autogen, elixir-format
-msgid "Add a record instead"
-msgstr ""
-
 #: lib/music_library_web/components/stats_components.ex
 #, elixir-autogen, elixir-format
 msgid "Today"
@@ -2344,4 +2339,24 @@ msgstr ""
 #: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Re-connect to Last.fm"
+msgstr ""
+
+#: lib/music_library_web/components/search_components.ex
+#, elixir-autogen, elixir-format
+msgid "Add to collection"
+msgstr ""
+
+#: lib/music_library_web/components/search_components.ex
+#, elixir-autogen, elixir-format
+msgid "Add to wishlist"
+msgstr ""
+
+#: lib/music_library_web/components/search_components.ex
+#, elixir-autogen, elixir-format
+msgid "Quick actions"
+msgstr ""
+
+#: lib/music_library_web/components/search_components.ex
+#, elixir-autogen, elixir-format
+msgid "Search to scrobble"
 msgstr ""

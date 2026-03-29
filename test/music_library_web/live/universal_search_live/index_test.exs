@@ -43,13 +43,20 @@ defmodule MusicLibraryWeb.UniversalSearchLive.IndexTest do
   end
 
   describe "Search functionality" do
-    test "shows no results message when query has no matches", %{conn: conn} do
+    test "shows no results message with quick action links when query has no matches", %{
+      conn: conn
+    } do
       conn
       |> visit(~p"/collection")
       |> click_button("Search (Cmd/Ctrl+K)")
       |> fill_in("Universal Search", with: "nonexistent query xyz")
       |> assert_has("p", "No results found for 'nonexistent query xyz'")
-      |> assert_has("a", "Add a record instead")
+      |> assert_has("[role='option']", "Add to wishlist")
+      |> assert_has("[role='option']", "Add to collection")
+      |> assert_has("[role='option']", "Search to scrobble")
+      |> assert_has("kbd", "↑")
+      |> assert_has("kbd", "↓")
+      |> assert_has("span", "Navigate")
     end
 
     test "resets results when query is cleared", %{conn: conn} do

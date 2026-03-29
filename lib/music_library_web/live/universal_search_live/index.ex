@@ -36,7 +36,11 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
 
         <.empty_state :if={@search_query == ""} />
 
-        <.no_results :if={@search_query != "" and @total_results == 0} query={@search_query} />
+        <.no_results
+          :if={@search_query != "" and @total_results == 0}
+          query={@search_query}
+          target={@myself}
+        />
 
         <div :if={@total_results > 0} class="mt-4 max-h-148 overflow-y-auto md:max-h-164">
           <.search_result_group
@@ -145,7 +149,10 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
             />
           </:actions>
         </.search_result_group>
-        <.results_footer total_results={@total_results} />
+        <.results_footer
+          total_results={@total_results}
+          has_navigable_items={@search_query != ""}
+        />
       </.structured_modal>
     </div>
     """

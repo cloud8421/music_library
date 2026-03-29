@@ -168,7 +168,7 @@ defmodule MusicLibraryWeb.SearchComponents do
   """
   attr :label, :string, required: true
   attr :icon, :string, required: true
-  attr :rest, :global, include: ~w(phx-click phx-value-path)
+  attr :rest, :global, include: ~w(phx-click phx-value-path phx-target)
 
   def search_result_navigation(assigns) do
     ~H"""
@@ -273,18 +273,22 @@ defmodule MusicLibraryWeb.SearchComponents do
       <.results_footer />
   """
   attr :total_results, :integer, default: 0
+  attr :has_navigable_items, :boolean, default: false
 
   def results_footer(assigns) do
+    assigns =
+      assign(assigns, :show_nav_hints, assigns.total_results > 0 or assigns.has_navigable_items)
+
     ~H"""
     <div class="rounded-b-lg border-t border-zinc-200 bg-zinc-50 p-2 dark:border-zinc-700 dark:bg-zinc-900">
       <div class="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
         <div class="flex items-center space-x-4">
-          <div :if={@total_results > 0} class="flex items-center gap-1">
+          <div :if={@show_nav_hints} class="flex items-center gap-1">
             <kbd class="rounded bg-zinc-200 px-2 py-1 dark:bg-zinc-700">↑</kbd>
             <kbd class="rounded bg-zinc-200 px-2 py-1 dark:bg-zinc-700">↓</kbd>
             <span>{gettext("Navigate")}</span>
           </div>
-          <div :if={@total_results > 0} class="flex items-center gap-1">
+          <div :if={@show_nav_hints} class="flex items-center gap-1">
             <kbd class="rounded bg-zinc-200 px-2 py-1 dark:bg-zinc-700">Enter</kbd>
             <span>{gettext("Select")}</span>
           </div>
@@ -328,21 +332,39 @@ defmodule MusicLibraryWeb.SearchComponents do
       <.no_results query="radiohead" />
   """
   attr :query, :string, required: true
+  attr :target, :any, required: true
 
   def no_results(assigns) do
     ~H"""
-    <div class="p-8 text-center">
+    <div class="p-4 text-center">
       <.icon name="hero-face-frown" class="mx-auto mb-4 size-12 text-zinc-400" />
       <p class="text-zinc-600 dark:text-zinc-400">
         {gettext("No results found for '%{query}'", query: @query)}
       </p>
-      <.link
-        class="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100"
-        navigate={~p"/wishlist/import?#{[import_query: @query]}"}
-      >
-        {gettext("Add a record instead", query: @query)}
-      </.link>
     </div>
+    <.search_result_group title={gettext("Quick actions")} count={3}>
+      <.search_result_navigation
+        label={gettext("Add to wishlist")}
+        icon="hero-star"
+        phx-click="navigate_to_link"
+        phx-value-path={~p"/wishlist/import?#{[import_query: @query]}"}
+        phx-target={@target}
+      />
+      <.search_result_navigation
+        label={gettext("Add to collection")}
+        icon="hero-plus-circle"
+        phx-click="navigate_to_link"
+        phx-value-path={~p"/collection/import?#{[import_query: @query]}"}
+        phx-target={@target}
+      />
+      <.search_result_navigation
+        label={gettext("Search to scrobble")}
+        icon="hero-play"
+        phx-click="navigate_to_link"
+        phx-value-path={~p"/scrobble?#{[query: @query]}"}
+        phx-target={@target}
+      />
+    </.search_result_group>
     """
   end
 

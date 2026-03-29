@@ -51,6 +51,19 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
       |> assert_has("a", "Connect your Last.fm account")
     end
 
+    test "pre-fills search and loads results from query param", %{conn: conn} do
+      session = visit(conn, ~p"/scrobble?#{[query: "marbles"]}")
+
+      session
+      |> unwrap(fn view ->
+        # Process the {:perform_search, query} message
+        render(view)
+      end)
+      |> assert_has("input[value='marbles']")
+      |> assert_has("h3", "Release Groups")
+      |> assert_has("p", "Marbles")
+    end
+
     test "search with results shows release groups", %{conn: conn} do
       session = visit(conn, ~p"/scrobble")
 

@@ -168,9 +168,20 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :index, _params) do
-    socket
-    |> assign(:page_title, gettext("Scrobble"))
+  defp apply_action(socket, :index, params) do
+    query = params["query"] || ""
+
+    socket =
+      socket
+      |> assign(:page_title, gettext("Scrobble"))
+      |> assign(:search_query, query)
+
+    if String.trim(query) != "" do
+      send(self(), {:perform_search, query})
+      assign(socket, :loading, true)
+    else
+      socket
+    end
   end
 
   @impl true
