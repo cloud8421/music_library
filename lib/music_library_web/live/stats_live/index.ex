@@ -489,7 +489,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     """
   end
 
-  attr :latest_record, Records.Record, required: true
+  attr :latest_record, Records.Record, required: false
   attr :collection_count, :integer, required: true
   attr :wishlist_count, :integer, required: true
   attr :scrobble_count, :integer, required: true
@@ -498,7 +498,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     ~H"""
     <.section>
       <:title>{gettext("Records")}</:title>
-      <dl class="mt-5 grid grid-cols-3 gap-5 sm:grid-cols-5">
+      <dl class="mt-5 grid grid-cols-3 gap-5 sm:grid-cols-5 min-h-35">
         <.album_preview
           record={@latest_record}
           title={gettext("Latest purchase")}
