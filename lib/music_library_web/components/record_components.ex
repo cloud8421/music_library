@@ -83,6 +83,16 @@ defmodule MusicLibraryWeb.RecordComponents do
       phx-update="stream"
     >
       <li
+        id="no-records-list"
+        class="hidden rounded-lg bg-zinc-50 p-8 text-center only:block dark:bg-zinc-800"
+      >
+        <.icon name="hero-musical-note" class="mx-auto mb-4 size-12 text-zinc-400" />
+        <p class="text-zinc-600 dark:text-zinc-400">
+          {gettext("No records yet")}
+        </p>
+      </li>
+
+      <li
         :for={{id, record} <- @records}
         phx-click={JS.navigate(@record_show_path.(record))}
         class="-mx-2 flex cursor-pointer justify-between gap-x-6 px-2 py-5 hover:bg-zinc-100 md:-mx-4 md:px-4 dark:hover:bg-zinc-800"
@@ -255,6 +265,16 @@ defmodule MusicLibraryWeb.RecordComponents do
             "mt-4 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-4 md:grid-cols-6 xl:grid-cols-8"
         ]}
       >
+        <li
+          id={"no-records-#{@id}"}
+          class="col-span-full hidden rounded-lg bg-zinc-50 p-8 text-center only:block dark:bg-zinc-800"
+        >
+          <.icon name="hero-musical-note" class="mx-auto mb-4 size-12 text-zinc-400" />
+          <p class="text-zinc-600 dark:text-zinc-400">
+            {gettext("No records yet")}
+          </p>
+        </li>
+
         <li :for={{id, record} <- @records} id={id} class="relative">
           <div
             class="group relative cursor-pointer"

@@ -2314,3 +2314,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Add a new record"
 msgstr ""
+
+#: lib/music_library_web/components/record_components.ex
+#, elixir-autogen, elixir-format
+msgid "No records yet"
+msgstr ""
