@@ -27,7 +27,7 @@ defmodule MusicLibraryWeb.LastFmControllerTest do
 
     @tag :logged_out
     @tag :capture_log
-    test "on error, redirects with error flash", %{conn: conn} do
+    test "on error, redirects with friendly error flash", %{conn: conn} do
       error_json = %{
         "error" => 4,
         "message" => "Invalid authentication token"
@@ -40,7 +40,9 @@ defmodule MusicLibraryWeb.LastFmControllerTest do
       conn = get(conn, ~p"/auth/last_fm/callback", %{"token" => "bad-token"})
 
       assert redirected_to(conn) == "/"
-      assert conn.assigns.flash["error"] =~ "Failed to connect"
+
+      assert conn.assigns.flash["error"] ==
+               "Failed to connect your Last.fm account: Last.fm authentication failed"
     end
   end
 end

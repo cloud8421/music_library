@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.LastFmController do
   use MusicLibraryWeb, :controller
 
   alias MusicLibrary.Secrets
+  alias MusicLibraryWeb.ErrorMessages
 
   def callback(conn, %{"token" => token}) do
     with {:ok, session} <- LastFm.get_session(token),
@@ -12,7 +13,11 @@ defmodule MusicLibraryWeb.LastFmController do
     else
       {:error, reason} ->
         conn
-        |> put_toast(:error, "Failed to connect your Last.fm account: #{reason}")
+        |> put_toast(
+          :error,
+          gettext("Failed to connect your Last.fm account") <>
+            ": " <> ErrorMessages.friendly_message(reason)
+        )
         |> redirect(to: ~p"/")
     end
   end
