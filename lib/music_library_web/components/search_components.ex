@@ -9,6 +9,7 @@ defmodule MusicLibraryWeb.SearchComponents do
     only: [format_label: 1, type_label: 1, record_cover: 1, artist_image: 1]
 
   alias MusicLibrary.Records.Record
+  alias MusicLibraryWeb.Components.BarcodeScanner
   alias MusicLibraryWeb.Markdown
 
   @doc """
@@ -167,8 +168,10 @@ defmodule MusicLibraryWeb.SearchComponents do
       <.search_result_navigation label="Collection" icon="hero-circle-stack" />
   """
   attr :label, :string, required: true
-  attr :icon, :string, required: true
+  attr :icon, :string, default: nil
   attr :rest, :global, include: ~w(phx-click phx-value-path phx-target)
+
+  slot :custom_icon
 
   def search_result_navigation(assigns) do
     ~H"""
@@ -183,7 +186,11 @@ defmodule MusicLibraryWeb.SearchComponents do
     >
       <div class="flex items-center space-x-3">
         <div class="flex size-8 shrink-0 items-center justify-center rounded-md bg-zinc-100 dark:bg-zinc-700">
-          <.icon name={@icon} class="size-4 text-zinc-500 dark:text-zinc-400" />
+          <%= if @icon do %>
+            <.icon name={@icon} class="size-4 text-zinc-500 dark:text-zinc-400" />
+          <% else %>
+            {render_slot(@custom_icon)}
+          <% end %>
         </div>
         <div class="min-w-0 flex-1">
           <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100">
@@ -342,7 +349,7 @@ defmodule MusicLibraryWeb.SearchComponents do
         {gettext("No results found for '%{query}'", query: @query)}
       </p>
     </div>
-    <.search_result_group title={gettext("Quick actions")} count={3}>
+    <.search_result_group title={gettext("Quick actions")} count={4}>
       <.search_result_navigation
         label={gettext("Add to wishlist")}
         icon="hero-star"
@@ -364,6 +371,16 @@ defmodule MusicLibraryWeb.SearchComponents do
         phx-value-path={~p"/scrobble?#{[query: @query]}"}
         phx-target={@target}
       />
+      <.search_result_navigation
+        label={gettext("Scan a record")}
+        phx-click="navigate_to_link"
+        phx-value-path={~p"/collection/scan"}
+        phx-target={@target}
+      >
+        <:custom_icon>
+          <BarcodeScanner.barcode_icon class="size-4 fill-zinc-500 dark:fill-zinc-400" />
+        </:custom_icon>
+      </.search_result_navigation>
     </.search_result_group>
     """
   end

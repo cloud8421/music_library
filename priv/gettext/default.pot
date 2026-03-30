@@ -2370,3 +2370,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Outdated token"
 msgstr ""
+
+#: lib/music_library_web/components/search_components.ex
+#, elixir-autogen, elixir-format
+msgid "Scan a record"
+msgstr ""
