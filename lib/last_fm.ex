@@ -83,6 +83,12 @@ defmodule LastFm do
     |> API.scrobble(session_key, last_fm_config)
   end
 
+  @spec get_profile(String.t()) :: {:ok, String.t()} | {:error, term()}
+  def get_profile(session_key) do
+    last_fm_config = last_fm_config()
+    API.get_user_info(session_key, last_fm_config)
+  end
+
   @spec auth_url() :: String.t()
   def auth_url do
     last_fm_config = last_fm_config()

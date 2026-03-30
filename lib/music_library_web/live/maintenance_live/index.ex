@@ -214,18 +214,36 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
         </h3>
         <p class="mt-2 max-w-4xl text-sm text-zinc-500 dark:text-zinc-400">
           {gettext("Manage your Last.fm connection.")}
-          <span
-            :if={@lastfm_connected}
-            class="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-200"
-          >
-            {gettext("Connected")}
-          </span>
-          <span
-            :if={!@lastfm_connected}
-            class="ml-2 inline-flex items-center rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300"
-          >
-            {gettext("Not connected")}
-          </span>
+          <.async_result :let={status} assign={@lastfm_status}>
+            <:loading>
+              <span class="ml-2 inline-flex items-center rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300">
+                {gettext("Checking...")}
+              </span>
+            </:loading>
+            <:failed :let={_failure}>
+              <span class="ml-2 inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-200">
+                {gettext("Not connected")}
+              </span>
+            </:failed>
+            <span
+              :if={status == :not_connected}
+              class="ml-2 inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-200"
+            >
+              {gettext("Not connected")}
+            </span>
+            <span
+              :if={status == :outdated_token}
+              class="ml-2 inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+            >
+              {gettext("Outdated token")}
+            </span>
+            <span
+              :if={is_tuple(status) and elem(status, 0) == :connected}
+              class="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-200"
+            >
+              {gettext("Connected as %{username}", username: elem(status, 1))}
+            </span>
+          </.async_result>
         </p>
         <ul class="mt-4">
           <li class="space-y-4">
@@ -262,7 +280,21 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
        current_section: :maintenance
      )
      |> assign_job_counts()
-     |> assign_lastfm_status()}
+     |> assign_async(:lastfm_status, fn ->
+       status =
+         case Secrets.get("last_fm_session_key") do
+           nil ->
+             :not_connected
+
+           %{value: value} ->
+             case LastFm.get_profile(value) do
+               {:ok, username} -> {:connected, username}
+               {:error, _} -> :outdated_token
+             end
+         end
+
+       {:ok, %{lastfm_status: status}}
+     end)}
   end
 
   @impl true
@@ -270,10 +302,6 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
     Process.send_after(self(), :update_job_counts, @poll_interval)
 
     {:noreply, assign_job_counts(socket)}
-  end
-
-  defp assign_lastfm_status(socket) do
-    assign(socket, :lastfm_connected, Secrets.get("last_fm_session_key") != nil)
   end
 
   defp assign_job_counts(socket) do

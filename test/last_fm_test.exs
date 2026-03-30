@@ -21,6 +21,32 @@ defmodule LastFmTest do
     end
   end
 
+  describe "get_profile/1" do
+    test "returns the username for a valid session key" do
+      Req.Test.stub(LastFm.API, fn conn ->
+        Req.Test.json(conn, %{
+          "user" => %{
+            "name" => "testuser",
+            "realname" => "Test User",
+            "playcount" => "12345",
+            "url" => "https://www.last.fm/user/testuser"
+          }
+        })
+      end)
+
+      assert {:ok, "testuser"} == LastFm.get_profile("valid_session_key")
+    end
+
+    @tag :capture_log
+    test "returns an error for an invalid session key" do
+      Req.Test.stub(LastFm.API, fn conn ->
+        Req.Test.json(conn, %{"error" => 9, "message" => "Invalid session key"})
+      end)
+
+      assert {:error, :invalid_session_key} == LastFm.get_profile("invalid_session_key")
+    end
+  end
+
   describe "scrobble/2" do
     test "returns the scrobbled track" do
       scrobbles = [

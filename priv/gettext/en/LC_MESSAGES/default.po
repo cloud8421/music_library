@@ -2322,11 +2322,6 @@ msgid "Are you sure you want to re-connect to Last.fm? This will disconnect the 
 msgstr ""
 
 #: lib/music_library_web/live/maintenance_live/index.ex
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Connected"
-msgstr ""
-
-#: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Manage your Last.fm connection."
 msgstr ""
@@ -2359,4 +2354,19 @@ msgstr ""
 #: lib/music_library_web/components/search_components.ex
 #, elixir-autogen, elixir-format
 msgid "Search to scrobble"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Checking..."
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Connected as %{username}"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Outdated token"
 msgstr ""

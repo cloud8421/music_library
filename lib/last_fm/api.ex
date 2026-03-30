@@ -121,6 +121,27 @@ defmodule LastFm.API do
     |> get_request()
   end
 
+  @spec get_user_info(String.t(), LastFm.Config.t()) :: {:ok, String.t()} | {:error, term()}
+  def get_user_info(session_key, config) do
+    params =
+      %{
+        api_key: config.api_key,
+        method: "user.getInfo",
+        sk: session_key,
+        format: "json"
+      }
+
+    signature = Signature.generate(params, config.shared_secret)
+
+    params = Map.put(params, "api_sig", signature)
+
+    config
+    |> new_request()
+    |> Req.merge(url: "/", params: params)
+    |> Req.Request.append_response_steps(parse_user_info: &parse_user_info/1)
+    |> get_request()
+  end
+
   defp put_musicbrainz_id_or_name(params, {:musicbrainz_id, musicbrainz_id}) do
     Keyword.put(params, :mbid, musicbrainz_id)
   end
@@ -272,6 +293,11 @@ defmodule LastFm.API do
   end
 
   defp parse_tag_count(_), do: 0
+
+  defp parse_user_info({request, response}) do
+    username = get_in(response.body, ["user", "name"])
+    {request, Map.put(response, :body, username)}
+  end
 
   defp sanitize_url(url, api_key) do
     String.replace(url, api_key, "<redacted_api_key>")
