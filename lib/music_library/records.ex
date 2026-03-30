@@ -3,6 +3,8 @@ defmodule MusicLibrary.Records do
   Provides function to work with records _irrespectively_ of their status as port of the collection or of the wishlist.
   """
 
+  require Logger
+
   import Ecto.Query, warn: false
 
   alias MusicLibrary.Artists
@@ -303,15 +305,28 @@ defmodule MusicLibrary.Records do
     enqueue_worker(Worker.RefreshCover, %{"id" => record.id}, record_meta(record))
   end
 
+  defp best_effort_extract_colors(record) do
+    case maybe_extract_colors(record) do
+      {:ok, record} ->
+        record
+
+      {:error, reason} ->
+        Logger.warning("Color extraction failed for record #{record.id}: #{inspect(reason)}")
+        record
+    end
+  end
+
   defp maybe_extract_colors(%{dominant_colors: [_ | _]} = record), do: {:ok, record}
   defp maybe_extract_colors(record), do: extract_colors(record)
 
   @spec extract_colors(Record.t()) :: {:ok, Record.t()} | {:error, term()}
   def extract_colors(record) do
-    asset = Assets.get!(record.cover_hash)
-
-    with {:ok, colors} <- @color_extractor.extract_dominant_colors(asset.content) do
+    with asset when not is_nil(asset) <- Assets.get(record.cover_hash),
+         {:ok, colors} <- @color_extractor.extract_dominant_colors(asset.content) do
       update_record(record, %{dominant_colors: colors})
+    else
+      nil -> {:error, :asset_not_found}
+      error -> error
     end
   end
 
@@ -392,10 +407,8 @@ defmodule MusicLibrary.Records do
   @spec create_record(map()) :: {:ok, Record.t()} | {:error, Ecto.Changeset.t()}
   def create_record(attrs \\ %{}) do
     with {:ok, record} <- do_create_record(attrs) do
-      {:ok, record} = maybe_extract_colors(record)
-      generate_embedding_async(record)
-
       record
+      |> best_effort_extract_colors()
       |> Record.artist_ids()
       |> Enum.each(fn artist_id ->
         Artists.refresh_artist_info_async(artist_id)

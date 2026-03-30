@@ -51,6 +51,13 @@ defmodule MusicLibrary.RecordsTest do
       assert Enum.all?(record.dominant_colors, &color_hex?/1)
     end
 
+    @tag :capture_log
+    test "succeeds when color extraction fails" do
+      record = record(dominant_colors: [], cover_hash: "nonexistent_hash")
+
+      assert record.dominant_colors == []
+    end
+
     test "queues a task to retrieve artist info data" do
       record =
         record(musicbrainz_data: release_group(:lockdown_trilogy))

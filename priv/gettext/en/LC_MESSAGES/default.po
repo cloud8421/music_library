@@ -2375,3 +2375,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Scan a record"
 msgstr ""
+
+#: lib/music_library_web/error_messages.ex
+#, elixir-autogen, elixir-format
+msgid "the cover image asset was not found"
+msgstr ""

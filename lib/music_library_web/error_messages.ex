@@ -21,6 +21,7 @@ defmodule MusicLibraryWeb.ErrorMessages do
     do: gettext("this record is already in your collection")
 
   def friendly_message(:not_found), do: gettext("the resource was not found")
+  def friendly_message(:asset_not_found), do: gettext("the cover image asset was not found")
   def friendly_message(:no_discogs_data), do: gettext("no Discogs profile available")
   def friendly_message(:image_not_found), do: gettext("no image could be found")
   def friendly_message(:invalid_parameters), do: gettext("invalid parameters were provided")
