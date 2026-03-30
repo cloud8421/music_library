@@ -22,14 +22,17 @@ defmodule MusicLibrary.Assets.Image do
       [:music_library, :assets, :image, :resize],
       %{},
       fn ->
-        {:ok, thumb} = Operation.thumbnail_buffer(cover_data, size)
-        result = Image.write_to_buffer(thumb, extension(format))
-        {result, %{}}
+        with {:ok, thumb} <- Operation.thumbnail_buffer(cover_data, size),
+             {:ok, _binary} = result <- Image.write_to_buffer(thumb, extension(format)) do
+          {result, %{}}
+        else
+          {:error, _reason} = error -> {error, %{}}
+        end
       end
     )
   end
 
-  @spec convert(binary(), String.t(), String.t()) :: {:ok, binary()}
+  @spec convert(binary(), String.t(), String.t()) :: {:ok, binary()} | {:error, term()}
   def convert(cover_data, data_format, target_format) do
     if data_format == target_format do
       {:ok, cover_data}
@@ -38,9 +41,12 @@ defmodule MusicLibrary.Assets.Image do
         [:music_library, :assets, :image, :convert],
         %{},
         fn ->
-          {:ok, image} = Image.new_from_buffer(cover_data)
-          result = Image.write_to_buffer(image, extension(target_format))
-          {result, %{}}
+          with {:ok, image} <- Image.new_from_buffer(cover_data),
+               {:ok, _binary} = result <- Image.write_to_buffer(image, extension(target_format)) do
+            {result, %{}}
+          else
+            {:error, _reason} = error -> {error, %{}}
+          end
         end
       )
     end

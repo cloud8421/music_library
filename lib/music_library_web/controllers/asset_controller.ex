@@ -1,6 +1,8 @@
 defmodule MusicLibraryWeb.AssetController do
   use MusicLibraryWeb, :controller
 
+  require Logger
+
   alias MusicLibrary.Assets
   alias MusicLibrary.Assets.{Cache, Image, Transform}
 
@@ -9,16 +11,21 @@ defmodule MusicLibraryWeb.AssetController do
 
   def show(conn, %{"transform_payload" => payload}) do
     format = pick_format(conn)
-    transform = Transform.decode!(payload)
 
-    case cached_get(payload, transform, format) do
-      nil ->
-        not_found(conn)
+    case Transform.decode(payload) do
+      {:error, :invalid_payload} ->
+        bad_request(conn)
 
-      content when is_binary(content) ->
-        case get_req_header(conn, "if-none-match") do
-          [^payload] -> extend_cache(conn)
-          _ -> respond_with_cache(conn, content, format, payload)
+      {:ok, transform} ->
+        case cached_get(payload, transform, format) do
+          nil ->
+            not_found(conn)
+
+          content when is_binary(content) ->
+            case get_req_header(conn, "if-none-match") do
+              [^payload] -> extend_cache(conn)
+              _ -> respond_with_cache(conn, content, format, payload)
+            end
         end
     end
   end
@@ -31,15 +38,22 @@ defmodule MusicLibraryWeb.AssetController do
     case Cache.get(payload, format) do
       :not_found ->
         if asset = Assets.get(transform.hash) do
-          {:ok, image_data} =
+          result =
             if transform.width do
               Image.resize(asset.content, transform.width, format)
             else
               Image.convert(asset.content, asset.format, format)
             end
 
-          Cache.set(payload, format, image_data)
-          image_data
+          case result do
+            {:ok, image_data} ->
+              Cache.set(payload, format, image_data)
+              image_data
+
+            {:error, reason} ->
+              Logger.error("Asset transform failed for #{transform.hash}: #{inspect(reason)}")
+              nil
+          end
         end
 
       {:found, content} ->
@@ -59,6 +73,12 @@ defmodule MusicLibraryWeb.AssetController do
     else
       "image/jpeg"
     end
+  end
+
+  defp bad_request(conn) do
+    conn
+    |> put_status(:bad_request)
+    |> text("Bad request")
   end
 
   defp not_found(conn) do
