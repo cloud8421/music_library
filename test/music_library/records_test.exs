@@ -344,4 +344,33 @@ defmodule MusicLibrary.RecordsTest do
       assert Assets.get(updated_record.cover_hash).content == expected_content
     end
   end
+
+  describe "populate_genres/1" do
+    test "updates record genres from OpenAI response" do
+      record = record(%{genres: []})
+      genres = ["progressive rock", "art rock", "symphonic rock"]
+
+      Req.Test.stub(OpenAI.API, fn conn ->
+        Req.Test.json(conn, %{
+          "choices" => [
+            %{"message" => %{"content" => JSON.encode!(%{"genres" => genres})}}
+          ]
+        })
+      end)
+
+      assert {:ok, updated} = Records.populate_genres(record)
+      assert updated.genres == genres
+    end
+
+    @tag :capture_log
+    test "returns error tuple when OpenAI API fails" do
+      record = record(%{genres: []})
+
+      Req.Test.stub(OpenAI.API, fn conn ->
+        Plug.Conn.send_resp(conn, 500, JSON.encode!(%{"error" => "internal server error"}))
+      end)
+
+      assert {:error, _reason} = Records.populate_genres(record)
+    end
+  end
 end

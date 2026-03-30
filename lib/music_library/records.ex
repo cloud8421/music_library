@@ -256,7 +256,7 @@ defmodule MusicLibrary.Records do
     end
   end
 
-  @spec populate_genres(Record.t()) :: {:ok, Record.t()} | {:error, Ecto.Changeset.t()}
+  @spec populate_genres(Record.t()) :: {:ok, Record.t()} | {:error, Ecto.Changeset.t() | term()}
   def populate_genres(record) do
     artists = Enum.map_join(record.artists, ",", fn a -> a.name end)
 
@@ -270,11 +270,11 @@ defmodule MusicLibrary.Records do
       """
     }
 
-    {:ok, response} = OpenAI.gpt(completion)
-
-    record
-    |> Record.add_genres(response["genres"])
-    |> Repo.update()
+    with {:ok, response} <- OpenAI.gpt(completion) do
+      record
+      |> Record.add_genres(response["genres"])
+      |> Repo.update()
+    end
   end
 
   @spec populate_genres_async(Record.t()) :: {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
