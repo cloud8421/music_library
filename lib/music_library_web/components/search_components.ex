@@ -336,7 +336,7 @@ defmodule MusicLibraryWeb.SearchComponents do
 
   def no_results(assigns) do
     ~H"""
-    <div class="p-4 text-center">
+    <div class="m-4 p-4 text-center">
       <.icon name="hero-face-frown" class="mx-auto mb-4 size-12 text-zinc-400" />
       <p class="text-zinc-600 dark:text-zinc-400">
         {gettext("No results found for '%{query}'", query: @query)}
