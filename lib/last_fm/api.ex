@@ -131,10 +131,6 @@ defmodule LastFm.API do
         format: "json"
       }
 
-    signature = Signature.generate(params, config.shared_secret)
-
-    params = Map.put(params, "api_sig", signature)
-
     config
     |> new_request()
     |> Req.merge(url: "/", params: params)
