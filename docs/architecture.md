@@ -144,7 +144,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | Module | API | Purpose |
 |--------|-----|---------|
 | `MusicBrainz` / `MusicBrainz.API` | musicbrainz.org | Release/artist metadata, search |
-| `LastFm` / `LastFm.API` | last.fm | Scrobbling, listening history, artist info (tags, similar artists) |
+| `LastFm` / `LastFm.API` | last.fm | Scrobbling, listening history, artist info (tags, similar artists), user profile/session validation |
 | `Discogs` / `Discogs.API` | discogs.com | Artist profiles, images |
 | `Wikipedia` / `Wikipedia.API` | wikipedia.org | Artist biographies |
 | `BraveSearch` / `BraveSearch.API` | search.brave.com | Cover art and artist image search |
