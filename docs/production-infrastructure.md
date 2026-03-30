@@ -164,7 +164,12 @@ A manual verification workflow (`.github/workflows/verify.yml`) can be triggered
 
 Standard Mix release. Entry point: `rel/overlays/bin/server` (sets `PHX_SERVER=true`).
 
-Migrations run automatically on boot via `Ecto.Migrator` in the supervision tree.
+Migrations are skipped during release boot (`skip_migrations?/0` returns `true` when
+`RELEASE_NAME` is set). Instead, Coolify is configured to run migrations after the
+Docker image is built and the container is started — this happens via the
+`rel/overlays/bin/migrate` script, executed as a post-deployment command in Coolify
+before the application begins serving traffic.
+
 A standalone `rel/overlays/bin/migrate` script is also available for manual use.
 
 ERL_FLAGS: `+JPperf true` (JIT performance monitoring).
