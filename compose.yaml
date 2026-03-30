@@ -44,7 +44,10 @@ services:
     entrypoint: /usr/local/bin/litestream
     command: replicate -config /opt/litestream/litestream.yaml
     healthcheck:
-      disable: true
+      test: ["CMD", "litestream", "databases", "-config", "/opt/litestream/litestream.yaml"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     environment:
       - LITESTREAM_ACCESS_KEY_ID
       - LITESTREAM_SECRET_ACCESS_KEY
