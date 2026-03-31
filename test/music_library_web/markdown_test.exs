@@ -58,5 +58,43 @@ defmodule MusicLibraryWeb.MarkdownTest do
       assert result =~ "http://example.com"
       assert result =~ "link</a>"
     end
+
+    test "does not add target attribute by default" do
+      result = Markdown.to_html("[link](http://example.com)")
+
+      refute result =~ "target="
+    end
+  end
+
+  describe "to_html/2 with link_target" do
+    test "adds target and rel attributes to links" do
+      result = Markdown.to_html("[link](http://example.com)", link_target: "_blank")
+
+      assert result =~ ~s(target="_blank")
+      assert result =~ ~s(rel="noopener noreferrer")
+      assert result =~ ~s(href="http://example.com")
+      assert result =~ ">link</a>"
+    end
+
+    test "adds target to autolinked URLs" do
+      result = Markdown.to_html("Visit http://example.com for more", link_target: "_blank")
+
+      assert result =~ ~s(target="_blank")
+      assert result =~ ~s(href="http://example.com")
+    end
+
+    test "adds target to double bracket links" do
+      result = Markdown.to_html("Check [[Porcupine Tree]]", link_target: "_blank")
+
+      assert result =~ ~s(target="_blank")
+      assert result =~ "Porcupine Tree</a>"
+    end
+
+    test "preserves link title" do
+      result = Markdown.to_html(~s|[link](http://example.com "My Title")|, link_target: "_blank")
+
+      assert result =~ ~s(title="My Title")
+      assert result =~ ~s(target="_blank")
+    end
   end
 end

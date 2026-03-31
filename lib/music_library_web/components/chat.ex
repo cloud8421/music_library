@@ -25,7 +25,7 @@ defmodule MusicLibraryWeb.Components.Chat do
 
   @impl true
   def update(%{chunk: chunk}, socket) do
-    doc = socket.assigns.streaming_doc || Markdown.new_streaming_doc()
+    doc = socket.assigns.streaming_doc || Markdown.new_streaming_doc(link_target: "_blank")
 
     {:ok,
      socket
@@ -246,7 +246,7 @@ defmodule MusicLibraryWeb.Components.Chat do
       >
         <p :if={message.role == "user"} class="whitespace-pre-wrap">{message.content}</p>
         <div :if={message.role == "assistant"} class="dark:prose-invert prose prose-sm">
-          {raw(Markdown.to_html(message.content))}
+          {raw(Markdown.to_html(message.content, link_target: "_blank"))}
         </div>
       </div>
 
@@ -255,7 +255,7 @@ defmodule MusicLibraryWeb.Components.Chat do
         class="max-w-[85%] rounded-lg bg-zinc-100 px-4 py-2 text-sm text-zinc-900 dark:bg-zinc-700 dark:text-zinc-100"
       >
         <div class="dark:prose-invert prose prose-sm">
-          {raw(Markdown.streaming_to_html(@streaming_doc))}
+          {raw(Markdown.streaming_to_html(@streaming_doc, link_target: "_blank"))}
         </div>
       </div>
 

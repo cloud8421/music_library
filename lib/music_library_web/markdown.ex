@@ -14,46 +14,67 @@ defmodule MusicLibraryWeb.Markdown do
     sanitize: MDEx.Document.default_sanitize_options()
   ]
 
+  @link_target_sanitize_options Keyword.put(
+                                  MDEx.Document.default_sanitize_options(),
+                                  :add_tag_attributes,
+                                  %{"a" => ["target"]}
+                                )
+
+  @link_target_mdex_options Keyword.put(@mdex_options, :sanitize, @link_target_sanitize_options)
+
   @doc """
   Converts markdown with custom `[[link]]` syntax to HTML.
 
   Double square brackets are converted to search links before the markdown is processed.
   """
-  @spec to_html(String.t() | nil) :: String.t()
-  def to_html(markdown_text) when is_binary(markdown_text) do
+  @spec to_html(String.t() | nil, keyword()) :: String.t()
+  def to_html(markdown_text, opts \\ [])
+
+  def to_html(markdown_text, opts) when is_binary(markdown_text) do
     :telemetry.span(
       [:markdown, :to_html],
       %{},
       fn ->
+        processed = process_double_bracket_links(markdown_text)
+
         result =
-          markdown_text
-          |> process_double_bracket_links()
-          |> MDEx.to_html!(@mdex_options)
+          if opts[:link_target] do
+            processed
+            |> MDEx.parse_document!(@link_target_mdex_options)
+            |> open_links_in_new_tab(opts[:link_target])
+            |> MDEx.to_html!()
+          else
+            MDEx.to_html!(processed, @mdex_options)
+          end
 
         {result, %{}}
       end
     )
   end
 
-  def to_html(nil), do: ""
+  def to_html(nil, _opts), do: ""
 
   @doc """
   Creates a new streaming MDEx document for incremental markdown rendering.
   """
-  @spec new_streaming_doc() :: MDEx.Document.t()
-  def new_streaming_doc do
-    MDEx.new([streaming: true] ++ @mdex_options)
+  @spec new_streaming_doc(keyword()) :: MDEx.Document.t()
+  def new_streaming_doc(opts \\ []) do
+    mdex_options = if opts[:link_target], do: @link_target_mdex_options, else: @mdex_options
+    MDEx.new([streaming: true] ++ mdex_options)
   end
 
   @doc """
   Renders a streaming MDEx document to HTML.
   """
-  @spec streaming_to_html(MDEx.Document.t()) :: String.t()
-  def streaming_to_html(%MDEx.Document{} = doc) do
+  @spec streaming_to_html(MDEx.Document.t(), keyword()) :: String.t()
+  def streaming_to_html(doc, opts \\ [])
+
+  def streaming_to_html(%MDEx.Document{} = doc, opts) do
     :telemetry.span(
       [:markdown, :streaming_to_html],
       %{},
       fn ->
+        doc = if opts[:link_target], do: open_links_in_new_tab(doc, opts[:link_target]), else: doc
         result = MDEx.to_html!(doc)
         {result, %{}}
       end
@@ -96,5 +117,32 @@ defmodule MusicLibraryWeb.Markdown do
       {:ok, parsed} when map_size(parsed) == 1 -> parsed |> Map.values() |> hd() |> to_string()
       _ -> content
     end
+  end
+
+  defp open_links_in_new_tab(doc, target) do
+    MDEx.Document.update_nodes(doc, MDEx.Link, fn %MDEx.Link{url: url, title: title, nodes: nodes} ->
+      text = extract_text(nodes)
+
+      title_attr =
+        if title != "" and title != nil, do: ~s( title="#{html_escape(title)}"), else: ""
+
+      %MDEx.HtmlInline{
+        literal:
+          ~s(<a href="#{html_escape(url)}" target="#{target}"#{title_attr}>#{html_escape(text)}</a>)
+      }
+    end)
+  end
+
+  defp extract_text(nodes) when is_list(nodes), do: Enum.map_join(nodes, "", &extract_text/1)
+  defp extract_text(%{literal: literal}), do: literal
+  defp extract_text(%{nodes: nodes}), do: extract_text(nodes)
+  defp extract_text(_), do: ""
+
+  defp html_escape(text) do
+    text
+    |> String.replace("&", "&amp;")
+    |> String.replace("<", "&lt;")
+    |> String.replace(">", "&gt;")
+    |> String.replace("\"", "&quot;")
   end
 end
