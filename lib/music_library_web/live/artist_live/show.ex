@@ -215,7 +215,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
         </header>
 
         <div class="mt-4 grid md:grid-cols-10 md:gap-4">
-          <div class="order-2 mt-4 md:order-1 md:col-span-3">
+          <div class="mt-4 md:col-span-3">
             <h2 class="text-base/5 font-semibold text-zinc-700 sm:text-lg dark:text-zinc-300">
               {gettext("Meta")}
             </h2>
@@ -370,7 +370,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
             <% end %>
             <.external_links external_links={@external_links} />
           </div>
-          <div class="md:order-1 md:col-span-7">
+          <div class="md:col-span-7">
             <.record_grid
               :if={@collection_records_count > 0}
               title={gettext("Collection")}
