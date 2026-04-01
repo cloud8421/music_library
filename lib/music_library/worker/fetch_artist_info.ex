@@ -9,6 +9,9 @@ defmodule MusicLibrary.Worker.FetchArtistInfo do
       # refresh_lastfm_data returns {:ok, _} even on API errors, so it won't block embeddings
       MusicLibrary.Artists.refresh_lastfm_data(artist_id)
       MusicLibrary.Records.regenerate_artist_embeddings(artist_id)
+    else
+      {:error, :no_english_wikipedia} -> {:discard, :no_english_wikipedia}
+      error -> error
     end
   end
 end
