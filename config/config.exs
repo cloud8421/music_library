@@ -58,7 +58,7 @@ config :music_library, LastFm,
   user_agent: user_agent,
   api_cooldown: 500
 
-config :music_library, MusicBrainz, user_agent: user_agent, api_cooldown: 500
+config :music_library, MusicBrainz, user_agent: user_agent, api_cooldown: 1000
 
 config :music_library, Discogs,
   personal_access_token: "change me",
