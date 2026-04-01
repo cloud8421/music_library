@@ -73,6 +73,7 @@ Configured inline in `compose.yaml`. Runs as a separate Docker Compose service
 | Sync interval | 24 hours |
 | Snapshot interval | 24 hours |
 | Retention | 168 hours (1 week) |
+| Healthcheck | `litestream databases` every 30s (timeout 10s, 3 retries) |
 
 Credentials via environment: `LITESTREAM_ACCESS_KEY_ID`, `LITESTREAM_SECRET_ACCESS_KEY`.
 
@@ -232,9 +233,9 @@ All HTTP clients use `Req` with per-API rate limiting (`Req.RateLimiter`, ETS-ba
 
 | API | Rate limit | Purpose |
 |-----|-----------|---------|
-| MusicBrainz | 500 ms cooldown | Release/artist metadata, search |
+| MusicBrainz | 1000 ms cooldown | Release/artist metadata, search |
 | Last.fm | 500 ms cooldown | Scrobbling, listening history, artist tags |
-| Discogs | 1000 ms cooldown | Artist profiles, images |
+| Discogs | 2000 ms cooldown | Artist profiles, images |
 | Wikipedia | 1000 ms cooldown | Artist biographies |
 | Brave Search | 1000 ms cooldown | Cover art, artist image search |
 | OpenAI | — | Text embeddings (similarity), streaming chat |
