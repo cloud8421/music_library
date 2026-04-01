@@ -41,7 +41,7 @@ defmodule MusicLibrary.Worker.FetchArtistInfoTest do
         Req.Test.json(conn, Wikipedia.Fixtures.wikidata_response_no_enwiki())
       end)
 
-      assert {:discard, :no_english_wikipedia} =
+      assert {:cancel, :no_english_wikipedia} =
                perform_job(FetchArtistInfo, %{"id" => @steven_wilson_mbid})
     end
 

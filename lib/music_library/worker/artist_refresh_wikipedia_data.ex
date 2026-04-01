@@ -5,7 +5,7 @@ defmodule MusicLibrary.Worker.ArtistRefreshWikipediaData do
   def perform(%Oban.Job{args: %{"id" => artist_info_id}}) do
     with {:error, :no_english_wikipedia} <-
            MusicLibrary.Artists.refresh_wikipedia_data(artist_info_id) do
-      {:discard, :no_english_wikipedia}
+      {:cancel, :no_english_wikipedia}
     end
   end
 end

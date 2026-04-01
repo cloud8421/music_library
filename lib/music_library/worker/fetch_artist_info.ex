@@ -10,7 +10,7 @@ defmodule MusicLibrary.Worker.FetchArtistInfo do
       MusicLibrary.Artists.refresh_lastfm_data(artist_id)
       MusicLibrary.Records.regenerate_artist_embeddings(artist_id)
     else
-      {:error, :no_english_wikipedia} -> {:discard, :no_english_wikipedia}
+      {:error, :no_english_wikipedia} -> {:cancel, :no_english_wikipedia}
       error -> error
     end
   end
