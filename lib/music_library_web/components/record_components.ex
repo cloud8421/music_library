@@ -503,7 +503,7 @@ defmodule MusicLibraryWeb.RecordComponents do
           release={release}
           class={
             @record.selected_release_id == release.id &&
-              "rounded-lg bg-zinc-100 outline-4 outline-zinc-100 dark:bg-zinc-700 dark:outline-zinc-700"
+              "bg-zinc-100 outline-4 outline-zinc-100 dark:bg-zinc-700 dark:outline-zinc-700"
           }
         />
       </div>
