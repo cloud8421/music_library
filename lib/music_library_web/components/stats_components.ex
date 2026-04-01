@@ -130,7 +130,7 @@ defmodule MusicLibraryWeb.StatsComponents do
       "mt-5 grid divide-x divide-zinc-200 overflow-hidden rounded-md bg-white shadow-sm dark:divide-zinc-900 dark:bg-zinc-800",
       stats_class(@categories_with_counts)
     ]}>
-      <div :for={{category, count} <- @categories_with_counts} class="px-2 py-5 sm:px-4">
+      <div :for={{category, count} <- @categories_with_counts} class="py-5">
         <dt class="text-center text-sm font-medium break-keep text-zinc-500 max-sm:text-xs dark:text-zinc-400">
           {@category_format_fn.(category)}
         </dt>
