@@ -406,16 +406,20 @@ defmodule MusicLibrary.Records do
 
   @spec create_record(map()) :: {:ok, Record.t()} | {:error, Ecto.Changeset.t()}
   def create_record(attrs \\ %{}) do
-    with {:ok, record} <- do_create_record(attrs) do
-      record
-      |> best_effort_extract_colors()
-      |> Record.artist_ids()
-      |> Enum.each(fn artist_id ->
-        Artists.refresh_artist_info_async(artist_id)
-      end)
-
+    with {:ok, record} <- do_create_record(attrs),
+         record = best_effort_extract_colors(record),
+         :ok <- refresh_artist_info_async(record) do
       {:ok, record}
     end
+  end
+
+  @spec refresh_artist_info_async(Record.t()) :: :ok
+  def refresh_artist_info_async(record) do
+    record
+    |> Record.artist_ids()
+    |> Enum.each(fn artist_id ->
+      Artists.refresh_artist_info_async(artist_id)
+    end)
   end
 
   defp do_create_record(attrs) do
