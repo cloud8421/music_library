@@ -430,6 +430,13 @@ defmodule MusicLibrary.Records do
 
   @spec update_record(Record.t(), map()) :: {:ok, Record.t()} | {:error, Ecto.Changeset.t()}
   def update_record(%Record{} = record, attrs) do
+    with {:ok, updated_record} <- do_update_record(record, attrs),
+         :ok <- refresh_artist_info_async(updated_record) do
+      {:ok, updated_record}
+    end
+  end
+
+  defp do_update_record(record, attrs) do
     record
     |> Record.changeset(attrs)
     |> Repo.update()

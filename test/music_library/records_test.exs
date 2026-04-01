@@ -69,6 +69,22 @@ defmodule MusicLibrary.RecordsTest do
     end
   end
 
+  describe "update_record/2" do
+    test "queues a task to retrieve artist info data" do
+      record =
+        record(musicbrainz_data: release_group(:lockdown_trilogy))
+
+      [artist] = record.artists
+
+      Oban.drain_queue(queue: :default)
+
+      Records.update_record(record, %{title: "Updated Title"})
+
+      assert_enqueued worker: MusicLibrary.Worker.FetchArtistInfo,
+                      args: %{id: artist.musicbrainz_id}
+    end
+  end
+
   describe "delete_record/1" do
     test "queues a task to delete artist info data" do
       record =
