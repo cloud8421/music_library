@@ -357,7 +357,7 @@ defmodule MusicLibraryWeb.StatsComponents do
     ~H"""
     <div class={["mt-5", @container_class]}>
       <div class="flex items-center justify-between">
-        <h1 class="text-base font-semibold text-zinc-900 lg:text-2xl dark:text-zinc-200">
+        <h1 class="text-base font-semibold text-zinc-900 lg:text-xl xl:text-2xl dark:text-zinc-200">
           {render_slot(@title)}
         </h1>
         {render_slot(@side_actions)}
