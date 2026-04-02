@@ -34,26 +34,18 @@ defmodule MusicLibraryWeb.RecordComponents do
 
   def release_status_tooltip(assigns) do
     ~H"""
-    <Fluxon.Components.Tooltip.tooltip
+    <.icon
       :if={@record.selected_release_id}
-      value={gettext("Record has a selected release")}
-    >
-      <.icon
-        name="hero-check-circle-solid"
-        class="inline-block size-4 text-green-500"
-        aria-hidden="true"
-      />
-    </Fluxon.Components.Tooltip.tooltip>
-    <Fluxon.Components.Tooltip.tooltip
+      name="hero-check-circle-solid"
+      class="inline-block size-4 text-green-500"
+      title={gettext("Record has a selected release")}
+    />
+    <.icon
       :if={!@record.selected_release_id}
-      value={gettext("Record doesn't have a selected release")}
-    >
-      <.icon
-        name="hero-question-mark-circle-solid"
-        class="inline-block size-4 text-yellow-500"
-        aria-hidden="true"
-      />
-    </Fluxon.Components.Tooltip.tooltip>
+      name="hero-question-mark-circle-solid"
+      class="inline-block size-4 text-yellow-500"
+      title={gettext("Record doesn't have a selected release")}
+    />
     """
   end
 
