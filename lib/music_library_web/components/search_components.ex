@@ -296,7 +296,7 @@ defmodule MusicLibraryWeb.SearchComponents do
     ~H"""
     <div class="rounded-b-lg border-t border-zinc-200 bg-zinc-50 p-2 dark:border-zinc-700 dark:bg-zinc-900">
       <div class="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
-        <div class="flex items-center space-x-4">
+        <div class="hidden sm:flex items-center space-x-4">
           <div :if={@show_nav_hints} class="flex items-center gap-1">
             <kbd class="rounded bg-zinc-200 px-2 py-1 dark:bg-zinc-700">↑</kbd>
             <kbd class="rounded bg-zinc-200 px-2 py-1 dark:bg-zinc-700">↓</kbd>
