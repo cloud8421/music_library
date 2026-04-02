@@ -32,20 +32,28 @@ defmodule MusicLibraryWeb.RecordComponents do
 
   attr :record, :map, required: true
 
-  def release_status_icon(assigns) do
+  def release_status_tooltip(assigns) do
     ~H"""
-    <.icon
+    <Fluxon.Components.Tooltip.tooltip
       :if={@record.selected_release_id}
-      name="hero-check-circle-solid"
-      class="inline-block size-4 text-green-500"
-      aria-hidden="true"
-    />
-    <.icon
+      value={gettext("Record has a selected release")}
+    >
+      <.icon
+        name="hero-check-circle-solid"
+        class="inline-block size-4 text-green-500"
+        aria-hidden="true"
+      />
+    </Fluxon.Components.Tooltip.tooltip>
+    <Fluxon.Components.Tooltip.tooltip
       :if={!@record.selected_release_id}
-      name="hero-question-mark-circle-solid"
-      class="inline-block size-4 text-yellow-500"
-      aria-hidden="true"
-    />
+      value={gettext("Record doesn't have a selected release")}
+    >
+      <.icon
+        name="hero-question-mark-circle-solid"
+        class="inline-block size-4 text-yellow-500"
+        aria-hidden="true"
+      />
+    </Fluxon.Components.Tooltip.tooltip>
     """
   end
 
@@ -128,7 +136,7 @@ defmodule MusicLibraryWeb.RecordComponents do
             </h1>
             <h2 class="mt-1 flex items-center gap-1 text-sm/5 font-semibold text-wrap text-zinc-700 sm:text-base dark:text-zinc-300">
               {record.title}
-              <.release_status_icon record={record} />
+              <.release_status_tooltip record={record} />
             </h2>
             <p class="mt-1 text-xs/5 text-zinc-500 dark:text-zinc-400">
               {Records.Record.format_release_date(record.release_date)}
@@ -376,7 +384,7 @@ defmodule MusicLibraryWeb.RecordComponents do
               <.artist_links joinphrase_class="text-xs" artists={record.artists} />
             </h1>
             <p class="pointer-events-none text-sm font-medium text-zinc-900 dark:text-zinc-300">
-              {record.title} <.release_status_icon record={record} />
+              {record.title} <.release_status_tooltip record={record} />
             </p>
           </div>
           <p class="pointer-events-none block text-sm font-medium text-zinc-500">

@@ -6,7 +6,7 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
   alias MusicLibrary.Wishlist
 
   import MusicLibraryWeb.RecordComponents,
-    only: [format_label: 1, type_label: 1, release_status_icon: 1]
+    only: [format_label: 1, type_label: 1, release_status_tooltip: 1]
 
   @impl true
   def render(assigns) do
@@ -94,7 +94,7 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
       </div>
       <div class="min-w-0 flex-auto">
         <p class="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
-          {@record.title} <.release_status_icon record={@record} />
+          {@record.title} <.release_status_tooltip record={@record} />
         </p>
         <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">
           {Record.artist_names(@record)}

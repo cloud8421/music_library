@@ -2,7 +2,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
   use MusicLibraryWeb, :live_view
 
   import MusicLibraryWeb.RecordComponents,
-    only: [artist_links: 1, type_label: 1, format_label: 1, release_status_icon: 1]
+    only: [artist_links: 1, type_label: 1, format_label: 1, release_status_tooltip: 1]
 
   alias MusicLibrary.{Records, RecordSets}
   alias MusicLibrary.RecordSets.RecordSet
@@ -133,7 +133,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
               </h2>
               <h3 class="flex items-center gap-1 text-sm/5 font-semibold text-wrap text-zinc-700 dark:text-zinc-300">
                 {item.record.title}
-                <.release_status_icon record={item.record} />
+                <.release_status_tooltip record={item.record} />
               </h3>
               <p class="pointer-events-none block text-sm font-medium text-zinc-500">
                 {format_label(item.record.format)} · {type_label(item.record.type)}

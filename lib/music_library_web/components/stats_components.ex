@@ -8,7 +8,7 @@ defmodule MusicLibraryWeb.StatsComponents do
       artist_links: 1,
       record_cover: 1,
       release_groups_badge: 1,
-      release_status_icon: 1
+      release_status_tooltip: 1
     ]
 
   alias MusicLibrary.Records
@@ -188,7 +188,7 @@ defmodule MusicLibraryWeb.StatsComponents do
                       </h1>
                       <h2 class="flex items-center gap-1 text-sm font-medium text-wrap text-zinc-700 dark:text-zinc-300">
                         {rep.title}
-                        <.release_status_icon record={rep} />
+                        <.release_status_tooltip record={rep} />
                       </h2>
                       <p class="text-xs/5 text-zinc-500 dark:text-zinc-400">
                         <.released_how_long_ago record={rep} current_date={@current_date} />
@@ -261,7 +261,7 @@ defmodule MusicLibraryWeb.StatsComponents do
           </h1>
           <h2 class="flex items-center gap-1 text-sm font-medium text-wrap text-zinc-700 dark:text-zinc-300">
             {@record.title}
-            <.release_status_icon record={@record} />
+            <.release_status_tooltip record={@record} />
           </h2>
           <p class="text-xs text-zinc-500 dark:text-zinc-400">
             <.released_how_long_ago record={@record} current_date={@current_date} />

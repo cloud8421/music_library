@@ -2385,3 +2385,13 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Failed to connect your Last.fm account"
 msgstr ""
+
+#: lib/music_library_web/components/record_components.ex
+#, elixir-autogen, elixir-format
+msgid "Record doesn't have a selected release"
+msgstr ""
+
+#: lib/music_library_web/components/record_components.ex
+#, elixir-autogen, elixir-format
+msgid "Record has a selected release"
+msgstr ""

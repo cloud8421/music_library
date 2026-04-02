@@ -11,7 +11,7 @@ defmodule MusicLibraryWeb.SearchComponents do
       type_label: 1,
       record_cover: 1,
       artist_image: 1,
-      release_status_icon: 1
+      release_status_tooltip: 1
     ]
 
   alias MusicLibrary.Records.Record
@@ -50,7 +50,7 @@ defmodule MusicLibraryWeb.SearchComponents do
         </div>
         <div class="min-w-0 flex-1">
           <p class="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
-            {@record.title} <.release_status_icon record={@record} />
+            {@record.title} <.release_status_tooltip record={@record} />
           </p>
           <p class="truncate text-sm font-medium text-zinc-500 dark:text-zinc-400">
             {Record.artist_names(@record)}
