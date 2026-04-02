@@ -26,6 +26,7 @@ defmodule MusicLibrary.Records.SearchIndex do
     field :cover_hash, :string
     field :release_ids, {:array, :string}, default: []
     field :included_release_group_ids, {:array, :string}, default: []
+    field :selected_release_id, :string
 
     embeds_many :artists, Artist
 

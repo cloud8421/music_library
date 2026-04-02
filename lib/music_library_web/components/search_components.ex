@@ -6,7 +6,13 @@ defmodule MusicLibraryWeb.SearchComponents do
   use MusicLibraryWeb, :html
 
   import MusicLibraryWeb.RecordComponents,
-    only: [format_label: 1, type_label: 1, record_cover: 1, artist_image: 1]
+    only: [
+      format_label: 1,
+      type_label: 1,
+      record_cover: 1,
+      artist_image: 1,
+      release_status_icon: 1
+    ]
 
   alias MusicLibrary.Records.Record
   alias MusicLibraryWeb.Components.BarcodeScanner
@@ -44,7 +50,7 @@ defmodule MusicLibraryWeb.SearchComponents do
         </div>
         <div class="min-w-0 flex-1">
           <p class="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
-            {@record.title}
+            {@record.title} <.release_status_icon record={@record} />
           </p>
           <p class="truncate text-sm font-medium text-zinc-500 dark:text-zinc-400">
             {Record.artist_names(@record)}

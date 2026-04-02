@@ -284,7 +284,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 |--------|---------|
 | `CoreComponents` | Forms, buttons, icons, tables, flash messages |
 | `Layouts` | Application layout templates, navigation components (`dropdown_nav/1`) |
-| `RecordComponents` | Record cards, cover images, artist images, labels, grids, shared show-page sections (title, external links, genres, releases, timestamps, debug) |
+| `RecordComponents` | Record cards, cover images, artist images, labels, grids, release status icon badge, shared show-page sections (title, external links, genres, releases, timestamps, debug) |
 | `ChartComponents` | Charts for stats dashboard |
 | `StatsComponents` | Stats dashboard widgets (`section/1` layout, counters, album preview, records on this day) |
 | `ScrobbleComponents` | Scrobble activity displays |
