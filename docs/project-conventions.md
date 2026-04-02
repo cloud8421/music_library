@@ -65,6 +65,8 @@ Rules extracted from commit history that are specific to this project and not al
 - **Data cascade on upstream changes:** When artist metadata changes, regenerate dependent record embeddings.
 - **Non-actionable errors use `ErrorTracker.Ignorer`** behaviour to filter (e.g., NoRouteError from bot scanners) rather than blocking paths in the endpoint.
 - **Muted errors skip notifications.** `ErrorTracker.ErrorNotifier` checks the `muted` flag before sending email notifications.
+- **Oban worker return values follow three states:** `:ok` for success; `{:error, reason}` for transient/retryable failures (Oban will retry); `{:cancel, reason}` (not the deprecated `{:discard, reason}`) for permanent termination when the job outcome is non-retryable (e.g., no Wikipedia entry exists).
+- **Non-fatal enrichment failures are best-effort.** Context functions that enrich records (colors, embeddings) use a private `best_effort_*` helper that logs a warning and returns the unchanged struct rather than surfacing `{:error, reason}` to callers. Business-logic failures (e.g., API calls in `populate_genres/1`) still return `{:error, reason}`.
 
 ## Testing
 
@@ -80,6 +82,7 @@ Rules extracted from commit history that are specific to this project and not al
 - **Consolidate identical assertions across endpoints.** When multiple routes share the same plug/middleware behaviour (e.g., auth), test it once with a loop or parameterised approach, not N separate identical tests.
 - **Error assertions must match the error type.** `assert {:error, _reason}` is too broad — match the specific error struct or atom (e.g., `%Req.TransportError{reason: :timeout}`, `:no_session_key`).
 - **Do not test untestable operations.** If a database operation (e.g., VACUUM) cannot run in the test sandbox, do not write a test that asserts the sandbox error message. Delete or skip it.
+- **Email tests use `Swoosh.Adapters.Sandbox`**, not `Swoosh.Adapters.Test`. Each test setup calls `SwooshSandbox.checkout()` and `SwooshSandbox.checkin()` on exit. When the mailer is invoked from a separate process (e.g., a GenServer started in the test), call `SwooshSandbox.allow(self(), pid)` to share the sandbox with that process.
 
 ## Tech Debt / Hygiene
 
