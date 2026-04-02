@@ -126,11 +126,11 @@ defmodule MusicLibraryWeb.RecordComponents do
             <h1 class="text-sm/6 text-zinc-700">
               <.artist_links joinphrase_class="text-xs" artists={record.artists} />
             </h1>
-            <h2 class="mt-1 flex items-center gap-1 text-sm/5 font-semibold text-wrap text-zinc-700 sm:text-base dark:text-zinc-300">
+            <h2 class="mt-1 text-sm/5 font-semibold text-wrap text-zinc-700 sm:text-base dark:text-zinc-300">
               {record.title}
-              <.release_status_tooltip record={record} />
             </h2>
-            <p class="mt-1 text-xs/5 text-zinc-500 dark:text-zinc-400">
+            <p class="flex items-center gap-1 mt-1 text-xs/5 text-zinc-500 dark:text-zinc-400">
+              <.release_status_tooltip record={record} />
               {Records.Record.format_release_date(record.release_date)}
               <span :if={@current_date && !Records.Record.released?(record, @current_date)}>
                 ({gettext("Unreleased")})
@@ -376,10 +376,11 @@ defmodule MusicLibraryWeb.RecordComponents do
               <.artist_links joinphrase_class="text-xs" artists={record.artists} />
             </h1>
             <p class="pointer-events-none text-sm font-medium text-zinc-900 dark:text-zinc-300">
-              {record.title} <.release_status_tooltip record={record} />
+              {record.title}
             </p>
           </div>
-          <p class="pointer-events-none block text-sm font-medium text-zinc-500">
+          <p class="flex items-center gap-1 pointer-events-none text-sm font-medium text-zinc-500">
+            <.release_status_tooltip record={record} />
             {format_label(record.format)} · {type_label(record.type)}
           </p>
           <p class="pointer-events-none block text-sm font-medium text-zinc-500">

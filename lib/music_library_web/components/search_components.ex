@@ -50,12 +50,13 @@ defmodule MusicLibraryWeb.SearchComponents do
         </div>
         <div class="min-w-0 flex-1">
           <p class="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
-            {@record.title} <.release_status_tooltip record={@record} />
+            {@record.title}
           </p>
           <p class="truncate text-sm font-medium text-zinc-500 dark:text-zinc-400">
             {Record.artist_names(@record)}
           </p>
-          <p class="pointer-events-none block text-sm text-zinc-500 dark:text-zinc-400">
+          <p class="flex items-center gap-1 pointer-events-none text-sm text-zinc-500 dark:text-zinc-400">
+            <.release_status_tooltip record={@record} />
             {format_label(@record.format)} · {type_label(@record.type)} ·
             <.icon
               name="hero-calendar-days"

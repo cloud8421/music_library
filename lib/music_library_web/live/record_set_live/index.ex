@@ -397,11 +397,11 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
           <h2 class="mt-1 text-sm/6 text-zinc-700">
             <.artist_links joinphrase_class="text-sm" artists={item.record.artists} />
           </h2>
-          <h3 class="flex items-center gap-1 text-sm/5 font-semibold text-wrap text-zinc-700 dark:text-zinc-300">
+          <h3 class="text-sm/5 font-semibold text-wrap text-zinc-700 dark:text-zinc-300">
             {item.record.title}
-            <.release_status_tooltip record={item.record} />
           </h3>
-          <p class="pointer-events-none block text-sm font-medium text-zinc-500">
+          <p class="flex gap-1 items-center pointer-events-none text-sm font-medium text-zinc-500">
+            <.release_status_tooltip record={item.record} />
             {format_label(item.record.format)} · {type_label(item.record.type)}
           </p>
           <p class="pointer-events-none block text-sm font-medium text-zinc-500">

@@ -94,12 +94,13 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
       </div>
       <div class="min-w-0 flex-auto">
         <p class="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
-          {@record.title} <.release_status_tooltip record={@record} />
+          {@record.title}
         </p>
         <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">
           {Record.artist_names(@record)}
         </p>
-        <p class="mt-1 text-xs/5 text-zinc-500 dark:text-zinc-400">
+        <p class="flex items-center gap-1 mt-1 text-xs/5 text-zinc-500 dark:text-zinc-400">
+          <.release_status_tooltip record={@record} />
           {Record.format_release_date(@record.release_date)} · {format_label(@record.format)} · {type_label(
             @record.type
           )}
