@@ -55,7 +55,7 @@ defmodule MusicLibraryWeb.SearchComponents do
           <p class="truncate text-sm font-medium text-zinc-500 dark:text-zinc-400">
             {Record.artist_names(@record)}
           </p>
-          <p class="flex items-center gap-1 pointer-events-none text-sm text-zinc-500 dark:text-zinc-400">
+          <p class="pointer-events-none text-sm text-zinc-500 dark:text-zinc-400">
             <.release_status_tooltip record={@record} />
             {format_label(@record.format)} · {type_label(@record.type)} ·
             <.icon
