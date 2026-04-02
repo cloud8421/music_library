@@ -6,6 +6,7 @@ services:
         - FLUXON_KEY_FINGERPRINT
         - FLUXON_LICENSE_KEY
     image: fullyforged/music_library:latest
+    container_name: web
     init: true
     ports:
       - 8080
@@ -35,6 +36,7 @@ services:
       retries: 10
   backup:
     image: litestream/litestream
+    container_name: backup
     user: "0"
     configs:
       - source: litestream
