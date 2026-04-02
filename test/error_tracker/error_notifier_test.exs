@@ -4,6 +4,7 @@ defmodule ErrorTracker.ErrorNotifierTest do
   import Swoosh.TestAssertions
 
   alias ErrorTracker.{Error, ErrorNotifier, Occurrence}
+  alias Swoosh.Adapters.Sandbox, as: SwooshSandbox
 
   @config [
     from_email: "test@example.com",
@@ -39,9 +40,9 @@ defmodule ErrorTracker.ErrorNotifierTest do
     )
   end
 
-  setup :set_swoosh_global
-
   setup do
+    :ok = SwooshSandbox.checkout()
+
     previous = Application.get_env(:music_library, ErrorNotifier)
 
     case Process.whereis(ErrorNotifier) do
@@ -50,6 +51,8 @@ defmodule ErrorTracker.ErrorNotifierTest do
     end
 
     on_exit(fn ->
+      SwooshSandbox.checkin()
+
       case Process.whereis(ErrorNotifier) do
         nil -> :ok
         pid -> GenServer.stop(pid)
@@ -113,6 +116,7 @@ defmodule ErrorTracker.ErrorNotifierTest do
       )
 
       {:ok, pid} = ErrorNotifier.start_link([])
+      SwooshSandbox.allow(self(), pid)
 
       :telemetry.execute([:error_tracker, :error, :new], %{}, %{
         error: %ErrorTracker.Error{id: 1},
@@ -141,6 +145,7 @@ defmodule ErrorTracker.ErrorNotifierTest do
       Application.put_env(:music_library, ErrorNotifier, @config)
 
       {:ok, pid} = ErrorNotifier.start_link([])
+      SwooshSandbox.allow(self(), pid)
 
       :telemetry.execute([:error_tracker, :error, :new], %{}, %{
         error: %Error{id: 1},
@@ -168,6 +173,7 @@ defmodule ErrorTracker.ErrorNotifierTest do
       Application.put_env(:music_library, ErrorNotifier, @config)
 
       {:ok, pid} = ErrorNotifier.start_link([])
+      SwooshSandbox.allow(self(), pid)
 
       :telemetry.execute([:error_tracker, :error, :new], %{}, %{
         error: %Error{id: 99},

@@ -6,8 +6,11 @@ defmodule MusicLibraryWeb.RecordsOnThisDayEmailTest do
   alias MusicLibrary.Fixtures
   alias MusicLibrary.Records.Record
   alias MusicLibraryWeb.RecordsOnThisDayEmail
+  alias Swoosh.Adapters.Sandbox, as: SwooshSandbox
 
   setup do
+    :ok = SwooshSandbox.checkout()
+
     Application.put_env(:music_library, RecordsOnThisDayEmail,
       from_email: "test@example.com",
       to_email: "recipient@example.com",
@@ -16,6 +19,7 @@ defmodule MusicLibraryWeb.RecordsOnThisDayEmailTest do
     )
 
     on_exit(fn ->
+      SwooshSandbox.checkin()
       Application.delete_env(:music_library, RecordsOnThisDayEmail)
     end)
   end
