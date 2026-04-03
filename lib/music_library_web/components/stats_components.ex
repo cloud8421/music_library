@@ -190,7 +190,6 @@ defmodule MusicLibraryWeb.StatsComponents do
                         {rep.title}
                       </h2>
                       <p class="text-xs/5 text-zinc-500 dark:text-zinc-400">
-                        <.release_status_tooltip record={rep} />
                         <.released_how_long_ago record={rep} current_date={@current_date} />
                         · {ngettext("1 release", "%{count} releases", length(records))}
                       </p>
@@ -214,6 +213,7 @@ defmodule MusicLibraryWeb.StatsComponents do
                       <.record_cover record={record} width={48} class="rounded-sm" />
                     </div>
                     <p class="ml-2 text-xs/5 text-zinc-500 dark:text-zinc-400">
+                      <.release_status_tooltip record={rep} />
                       {format_label(record.format)} · {type_label(record.type)}
                       <span :if={record.purchased_at}>
                         ·
