@@ -5,8 +5,15 @@ defmodule MusicLibrary.Worker.RefreshCover do
   def perform(%Oban.Job{args: %{"id" => record_id}}) do
     record = MusicLibrary.Records.get_record!(record_id)
 
-    with {:ok, updated_record} <- MusicLibrary.Records.refresh_cover(record) do
-      MusicLibrary.Records.notify_update(updated_record)
+    case MusicLibrary.Records.refresh_cover(record) do
+      {:ok, updated_record} ->
+        MusicLibrary.Records.notify_update(updated_record)
+
+      {:error, :cover_not_available} ->
+        {:cancel, :cover_not_available}
+
+      error ->
+        error
     end
   end
 end

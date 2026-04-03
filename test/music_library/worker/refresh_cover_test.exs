@@ -24,6 +24,18 @@ defmodule MusicLibrary.Worker.RefreshCoverTest do
       assert asset.format == "image/jpeg"
     end
 
+    @tag :capture_log
+    test "cancels the job when cover is not available" do
+      record = record()
+
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        Plug.Conn.send_resp(conn, 404, "Not Found")
+      end)
+
+      assert {:cancel, :cover_not_available} =
+               perform_job(RefreshCover, %{"id" => record.id})
+    end
+
     test "raises when record does not exist" do
       assert_raise Ecto.NoResultsError, fn ->
         perform_job(RefreshCover, %{"id" => Ecto.UUID.generate()})
