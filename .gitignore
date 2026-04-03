@@ -43,3 +43,6 @@ npm-debug.log
 /.lexical
 
 /.expert
+
+# Claude Code MCP config (port varies per worktree)
+/.mcp.json

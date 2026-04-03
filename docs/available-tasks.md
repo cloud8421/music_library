@@ -64,6 +64,12 @@ Setup the local development environment
 
 Update dependencies
 
+## `dev:worktree-setup`
+
+- **Usage**: `dev:worktree-setup`
+
+Bootstrap a git worktree with local config, databases, and a unique port
+
 ## `prod:backup`
 
 - **Usage**: `prod:backup`

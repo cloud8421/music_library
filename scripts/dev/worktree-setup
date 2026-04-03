@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+
+#MISE description="Bootstrap a git worktree with local config, databases, and a unique port"
+
+set -e
+
+source "$(git rev-parse --show-toplevel)/scripts/_helpers.sh"
+
+ensure_working_directory!
+
+current_dir="$PWD"
+
+# Detect the main worktree (always the first entry in porcelain output)
+main_worktree="$(git worktree list --porcelain | head -1 | sed 's/^worktree //')"
+
+if [[ "$current_dir" == "$main_worktree" ]]; then
+  echo "Error: This script should be run from a worktree, not the main working tree."
+  echo "Create a worktree first: git worktree add ../music_library-<name> -b <branch>"
+  exit 1
+fi
+
+if [[ ! -f "$main_worktree/mise.local.toml" ]]; then
+  echo "Error: $main_worktree/mise.local.toml not found."
+  echo "Set up the main worktree first with 'mise run dev:setup'."
+  exit 1
+fi
+
+# Determine worktree position for port offset
+worktree_index=0
+while IFS= read -r line; do
+  worktree_index=$((worktree_index + 1))
+  worktree_path="${line#worktree }"
+  if [[ "$worktree_path" == "$current_dir" ]]; then
+    break
+  fi
+done < <(git worktree list --porcelain | grep '^worktree ')
+
+# Read main PORT and calculate new one
+main_port="$(grep '^PORT' "$main_worktree/mise.local.toml" | sed 's/PORT *= *//' | tr -d "' \"")"
+new_port=$((main_port + worktree_index * 100))
+
+debug_msg "Main worktree: $main_worktree"
+debug_msg "Worktree index: $worktree_index"
+debug_msg "Port: $main_port -> $new_port"
+
+# Copy mise.local.toml and update PORT
+debug_msg "Copying mise.local.toml"
+cp "$main_worktree/mise.local.toml" "$current_dir/mise.local.toml"
+sed -i '' "s/^PORT *= *.*$/PORT = $new_port/" "$current_dir/mise.local.toml"
+
+# Copy dev databases
+debug_msg "Copying dev databases"
+mkdir -p "$current_dir/data"
+
+for db in music_library_dev.db music_library_background_dev.db music_library_telemetry_dev.db; do
+  if [[ -f "$main_worktree/data/$db" ]]; then
+    cp "$main_worktree/data/$db" "$current_dir/data/$db"
+    debug_msg "  Copied $db"
+  else
+    debug_msg "  Skipped $db (not found in main worktree)"
+  fi
+done
+
+# Generate .mcp.json for Claude Code / Tidewave
+debug_msg "Generating .mcp.json (Tidewave on port $new_port)"
+cat > "$current_dir/.mcp.json" <<EOF
+{
+  "mcpServers": {
+    "tidewave": {
+      "type": "http",
+      "url": "http://127.0.0.1:${new_port}/tidewave/mcp"
+    }
+  }
+}
+EOF
+
+# Run standard dev setup
+debug_msg "Running dev:setup"
+mise run dev:setup
+
+echo ""
+echo "Worktree setup complete!"
+echo "  Port: $new_port"
+echo "  Start the server with: mise run dev:console"
