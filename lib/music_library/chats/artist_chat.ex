@@ -6,6 +6,7 @@ defmodule MusicLibrary.Chats.ArtistChat do
   @behaviour MusicLibrary.Chats.StreamProvider
 
   alias MusicLibrary.Artists.ArtistInfo
+  alias MusicLibrary.Chats.DefaultPrompt
 
   @impl true
   @spec stream_response([map()], {map(), ArtistInfo.t()}, (String.t() -> any())) ::
@@ -20,17 +21,13 @@ defmodule MusicLibrary.Chats.ArtistChat do
     context = build_context(artist, artist_info)
 
     """
-    You are a knowledgeable music assistant. Answer questions about the artist \
-    the user is currently viewing. Use the provided artist information as your \
-    primary reference, and use web search to find additional up-to-date \
-    information when helpful. Be concise and accurate. When unsure, say so. \
-    Include links when they add genuine value, but not on every response.
+    #{DefaultPrompt.identity()}
+    Answer questions about the artist the user is currently viewing. \
+    Use the provided artist information as your primary reference, \
 
-    Vary your response style and structure. Don't repeat information already \
-    discussed in the conversation. Refer back to earlier points naturally \
-    instead of restating them.
+    #{DefaultPrompt.approach()}
 
-    Artist information:
+    Album information:
     #{context}
     """
   end

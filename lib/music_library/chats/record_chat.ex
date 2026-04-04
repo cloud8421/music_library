@@ -5,6 +5,7 @@ defmodule MusicLibrary.Chats.RecordChat do
 
   @behaviour MusicLibrary.Chats.StreamProvider
 
+  alias MusicLibrary.Chats.DefaultPrompt
   alias MusicLibrary.Records.Record
 
   @impl true
@@ -25,15 +26,11 @@ defmodule MusicLibrary.Chats.RecordChat do
       end
 
     """
-    You are a knowledgeable music assistant. Answer questions about the album \
-    the user is currently viewing. Use the provided album information as your \
-    primary reference, and use web search to find additional up-to-date \
-    information when helpful. Be concise and accurate. When unsure, say so. \
-    Include links when they add genuine value, but not on every response.
+    #{DefaultPrompt.identity()}
+    Answer questions about the album the user is currently viewing. \
+    Use the provided album information as your primary reference, \
 
-    Vary your response style and structure. Don't repeat information already \
-    discussed in the conversation. Refer back to earlier points naturally \
-    instead of restating them.
+    #{DefaultPrompt.approach()}
 
     Album information:
     #{context}
