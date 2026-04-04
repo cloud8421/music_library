@@ -8,25 +8,10 @@ defmodule MusicLibrary.Worker.GenerateRecordEmbedding do
   def perform(%Oban.Job{args: %{"record_id" => record_id}}) do
     record = Records.get_record!(record_id)
 
-    with {:ok, embedding} <- generate_embedding(record),
-         {:ok, _} <- store_embedding(record, embedding) do
-      Records.notify_update(record)
+    case Similarity.generate_embedding(record) do
+      :noop -> :ok
+      {:ok, _} -> Records.notify_update(record)
+      {:error, _} = error -> error
     end
-  end
-
-  defp generate_embedding(record) do
-    text = Similarity.text_representation(record)
-
-    case OpenAI.embeddings(text) do
-      {:ok, embedding} ->
-        {:ok, {embedding, text}}
-
-      error ->
-        error
-    end
-  end
-
-  defp store_embedding(record, {embedding, text_representation}) do
-    Similarity.store_embedding(record.id, embedding, text_representation)
   end
 end

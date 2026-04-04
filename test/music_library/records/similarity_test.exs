@@ -238,6 +238,65 @@ defmodule MusicLibrary.Records.SimilarityTest do
     end
   end
 
+  describe "generate_embedding/1" do
+    test "generates and stores embedding for a record without existing embedding" do
+      record = record(%{genres: ["rock", "alternative"]})
+      embedding = Enum.map(1..1536, fn _ -> 0.5 end)
+
+      Req.Test.stub(OpenAI.API, fn conn ->
+        assert conn.request_path == "/v1/embeddings"
+
+        Req.Test.json(conn, %{
+          "data" => [%{"embedding" => embedding}]
+        })
+      end)
+
+      assert {:ok, _record_embedding} = Similarity.generate_embedding(record)
+      assert {:ok, _stored} = Similarity.get_embedding(record.id)
+    end
+
+    test "returns :noop when text representation is unchanged" do
+      record = record(%{genres: ["rock", "alternative"]})
+      text = Similarity.text_representation(record)
+      embedding = Enum.map(1..1536, fn _ -> 0.5 end)
+
+      {:ok, _} = Similarity.store_embedding(record.id, embedding, text)
+
+      assert :noop = Similarity.generate_embedding(record)
+    end
+
+    test "regenerates embedding when text representation changes" do
+      record = record(%{genres: ["rock"]})
+      old_text = "Old text representation"
+      old_embedding = Enum.map(1..1536, fn _ -> 0.5 end)
+      new_embedding = Enum.map(1..1536, fn _ -> 0.9 end)
+
+      {:ok, _} = Similarity.store_embedding(record.id, old_embedding, old_text)
+
+      Req.Test.stub(OpenAI.API, fn conn ->
+        Req.Test.json(conn, %{
+          "data" => [%{"embedding" => new_embedding}]
+        })
+      end)
+
+      assert {:ok, _record_embedding} = Similarity.generate_embedding(record)
+
+      assert {:ok, stored_text} = Similarity.get_embedding_text(record.id)
+      refute stored_text == old_text
+    end
+
+    @tag :capture_log
+    test "returns error when OpenAI API fails" do
+      record = record(%{genres: ["rock"]})
+
+      Req.Test.stub(OpenAI.API, fn conn ->
+        Plug.Conn.send_resp(conn, 500, JSON.encode!(%{"error" => "internal server error"}))
+      end)
+
+      assert {:error, _reason} = Similarity.generate_embedding(record)
+    end
+  end
+
   describe "find_similar/2" do
     setup do
       # Create test records with embeddings

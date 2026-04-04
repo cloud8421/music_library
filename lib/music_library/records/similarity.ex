@@ -316,6 +316,21 @@ defmodule MusicLibrary.Records.Similarity do
     )
   end
 
+  @spec generate_embedding(Record.t()) :: :noop | {:ok, RecordEmbedding.t()} | {:error, term()}
+  def generate_embedding(%Record{} = record) do
+    new_text = text_representation(record)
+
+    case get_embedding_text(record.id) do
+      {:ok, ^new_text} ->
+        :noop
+
+      _ ->
+        with {:ok, embedding} <- OpenAI.embeddings(new_text) do
+          store_embedding(record.id, embedding, new_text)
+        end
+    end
+  end
+
   @spec generate_embedding_async(Record.t()) :: {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
   def generate_embedding_async(record) do
     meta = %{title: record.title, artists: Enum.map(record.artists, & &1.name)}
