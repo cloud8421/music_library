@@ -114,7 +114,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | Module | Purpose |
 |--------|---------|
 | `Records.SearchParser` | Parses search syntax: `artist:X`, `album:X`, `genre:"Y"`, `format:cd`, `type:album`, `purchase_year:2024`, `release_year:2024`, free text |
-| `Records.Similarity` | Embedding generation (OpenAI, enriched with Last.fm tags), cosine-distance search (sqlite-vec) |
+| `Records.Similarity` | Embedding generation (OpenAI, enriched with Last.fm tags, skips API call when text representation unchanged), cosine-distance search (sqlite-vec) |
 | `Records.TracklistPdf` | Generates 120mm×120mm PDF tracklist from record + release data (Typst) |
 | `Batch` | Generic batch runner: stream + transaction + error accumulation |
 | `Records.Batch` | Batch operations: refresh all MusicBrainz data, generate all embeddings (uses `Batch`) |
@@ -186,7 +186,7 @@ stubbed via `Req.Test` (configured in `config/test.exs`).
 | `FetchArtistImage` | heavy_writes | Artist info fetched |
 | `RefreshCover` | heavy_writes | Manual action / import |
 | `PopulateGenres` | heavy_writes | Manual action (chains → GenerateRecordEmbedding) |
-| `GenerateRecordEmbedding` | heavy_writes | Manual / after genre population |
+| `GenerateRecordEmbedding` | heavy_writes | Manual / after genre population (delegates to Similarity, skips unchanged) |
 | `RecordRefreshMusicBrainzData` | music_brainz | Manual / batch |
 | `ArtistRefreshMusicBrainzData` | music_brainz | Manual / batch |
 | `ArtistRefreshDiscogsData` | discogs | Manual / batch |
