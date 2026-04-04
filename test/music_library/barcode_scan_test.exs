@@ -254,4 +254,218 @@ defmodule MusicLibrary.BarcodeScanTest do
       assert {"2222222222", :not_found} in errors
     end
   end
+
+  describe "should_import_async?/1" do
+    test "returns false with zero new results" do
+      refute BarcodeScan.should_import_async?([])
+    end
+
+    test "returns false with one new result" do
+      results = [Result.new("111", %{})]
+      refute BarcodeScan.should_import_async?(results)
+    end
+
+    test "returns true with two new results" do
+      results = [Result.new("111", %{}), Result.new("222", %{})]
+      assert BarcodeScan.should_import_async?(results)
+    end
+
+    test "only counts :new results" do
+      results = [
+        Result.new("111", %{}),
+        Result.wishlisted("222", "some-id", %{}),
+        Result.collected("333", "some-id", %{}),
+        Result.not_found("444")
+      ]
+
+      refute BarcodeScan.should_import_async?(results)
+    end
+
+    test "returns true with mixed statuses including two new" do
+      results = [
+        Result.new("111", %{}),
+        Result.wishlisted("222", "some-id", %{}),
+        Result.new("333", %{})
+      ]
+
+      assert BarcodeScan.should_import_async?(results)
+    end
+  end
+
+  describe "import_results_async/2" do
+    test "enqueues new results as Oban jobs" do
+      current_time = DateTime.utc_now()
+
+      new_result_1 = %Result{
+        status: :new,
+        number: "111",
+        release: %MusicBrainz.ReleaseSearchResult{
+          id: "release-1",
+          title: "Album 1",
+          release_group: %{id: "rg-1", type: :album, title: "Album 1"},
+          artists: "Artist 1",
+          date: "2024",
+          barcode: "111",
+          media: [%{format: "CD", disc_count: 1, track_count: 10}]
+        }
+      }
+
+      new_result_2 = %Result{
+        status: :new,
+        number: "222",
+        release: %MusicBrainz.ReleaseSearchResult{
+          id: "release-2",
+          title: "Album 2",
+          release_group: %{id: "rg-2", type: :album, title: "Album 2"},
+          artists: "Artist 2",
+          date: "2024",
+          barcode: "222",
+          media: [%{format: "12\" Vinyl", disc_count: 1, track_count: 8}]
+        }
+      }
+
+      assert {:ok, [], 2} =
+               BarcodeScan.import_results_async([new_result_1, new_result_2], current_time)
+
+      assert_enqueued(
+        worker: MusicLibrary.Worker.ImportFromMusicbrainzRelease,
+        args: %{
+          "release_id" => "release-1",
+          "format" => "cd",
+          "purchased_at" => DateTime.to_iso8601(current_time),
+          "selected_release_id" => "release-1"
+        }
+      )
+
+      assert_enqueued(
+        worker: MusicLibrary.Worker.ImportFromMusicbrainzRelease,
+        args: %{
+          "release_id" => "release-2",
+          "format" => "vinyl",
+          "purchased_at" => DateTime.to_iso8601(current_time),
+          "selected_release_id" => "release-2"
+        }
+      )
+    end
+
+    test "processes wishlisted results synchronously" do
+      current_time = DateTime.utc_now()
+      wishlisted_record = record(%{purchased_at: nil})
+
+      wishlisted_result = %Result{
+        status: :wishlisted,
+        number: "333",
+        record_id: wishlisted_record.id,
+        release: %MusicBrainz.ReleaseSearchResult{
+          id: "some-release-id",
+          title: "Test",
+          release_group: nil,
+          artists: "Test Artist",
+          date: "2021",
+          barcode: "333",
+          media: [%{format: "CD", disc_count: 1, track_count: 10}]
+        }
+      }
+
+      new_result_1 = %Result{
+        status: :new,
+        number: "111",
+        release: %MusicBrainz.ReleaseSearchResult{
+          id: "release-1",
+          title: "Album 1",
+          release_group: %{id: "rg-1", type: :album, title: "Album 1"},
+          artists: "Artist 1",
+          date: "2024",
+          barcode: "111",
+          media: [%{format: "CD", disc_count: 1, track_count: 10}]
+        }
+      }
+
+      new_result_2 = %Result{
+        status: :new,
+        number: "222",
+        release: %MusicBrainz.ReleaseSearchResult{
+          id: "release-2",
+          title: "Album 2",
+          release_group: %{id: "rg-2", type: :album, title: "Album 2"},
+          artists: "Artist 2",
+          date: "2024",
+          barcode: "222",
+          media: [%{format: "CD", disc_count: 1, track_count: 10}]
+        }
+      }
+
+      assert {:ok, [], 2} =
+               BarcodeScan.import_results_async(
+                 [wishlisted_result, new_result_1, new_result_2],
+                 current_time
+               )
+
+      updated_record = Records.get_record!(wishlisted_record.id)
+      assert updated_record.purchased_at == DateTime.truncate(current_time, :second)
+
+      assert_enqueued(
+        worker: MusicLibrary.Worker.ImportFromMusicbrainzRelease,
+        args: %{"release_id" => "release-1"}
+      )
+
+      assert_enqueued(
+        worker: MusicLibrary.Worker.ImportFromMusicbrainzRelease,
+        args: %{"release_id" => "release-2"}
+      )
+    end
+
+    test "returns sync errors from non-new results" do
+      current_time = DateTime.utc_now()
+
+      collected_result = %Result{
+        status: :collected,
+        number: "333",
+        record_id: "some-id",
+        release: %MusicBrainz.ReleaseSearchResult{
+          id: "r1",
+          title: "T",
+          release_group: nil,
+          artists: "A",
+          date: "2021",
+          barcode: "333",
+          media: [%{format: "CD", disc_count: 1, track_count: 1}]
+        }
+      }
+
+      new_result_1 = %Result{
+        status: :new,
+        number: "111",
+        release: %MusicBrainz.ReleaseSearchResult{
+          id: "release-1",
+          title: "Album 1",
+          release_group: %{id: "rg-1", type: :album, title: "Album 1"},
+          artists: "Artist 1",
+          date: "2024",
+          barcode: "111",
+          media: [%{format: "CD", disc_count: 1, track_count: 10}]
+        }
+      }
+
+      new_result_2 = %Result{
+        status: :new,
+        number: "222",
+        release: %MusicBrainz.ReleaseSearchResult{
+          id: "release-2",
+          title: "Album 2",
+          release_group: %{id: "rg-2", type: :album, title: "Album 2"},
+          artists: "Artist 2",
+          date: "2024",
+          barcode: "222",
+          media: [%{format: "CD", disc_count: 1, track_count: 10}]
+        }
+      }
+
+      assert {:ok, [{"333", :already_collected}], 2} =
+               BarcodeScan.import_results_async(
+                 [collected_result, new_result_1, new_result_2],
+                 current_time
+               )
+    end
+  end
 end

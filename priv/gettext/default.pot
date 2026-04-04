@@ -2395,3 +2395,10 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Record has a selected release"
 msgstr ""
+
+#: lib/music_library_web/components/barcode_scanner.ex
+#, elixir-autogen, elixir-format
+msgid "Importing %{count} record in the background..."
+msgid_plural "Importing %{count} records in the background..."
+msgstr[0] ""
+msgstr[1] ""

@@ -402,23 +402,32 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
 
   def handle_event("import_releases", _params, socket) do
     current_time = DateTime.utc_now()
+    scan_results = socket.assigns.scan_results
 
     socket =
-      case BarcodeScan.import_results(socket.assigns.scan_results, current_time) do
-        [] ->
-          put_toast(socket, :info, gettext("Records imported successfully"))
+      if BarcodeScan.should_import_async?(scan_results) do
+        {:ok, sync_errors, async_count} =
+          BarcodeScan.import_results_async(scan_results, current_time)
 
-        errors ->
-          errors_summary =
-            Enum.map_join(errors, "\n", fn {number, reason} ->
-              "#{number}: #{ErrorMessages.friendly_message(reason)}"
-            end)
-
-          put_toast(
-            socket,
-            :error,
-            gettext("Some records could not be imported: %{summary}", summary: errors_summary)
+        socket
+        |> maybe_toast_errors(sync_errors)
+        |> put_toast(
+          :info,
+          ngettext(
+            "Importing %{count} record in the background...",
+            "Importing %{count} records in the background...",
+            async_count,
+            count: async_count
           )
+        )
+      else
+        case BarcodeScan.import_results(scan_results, current_time) do
+          [] ->
+            put_toast(socket, :info, gettext("Records imported successfully"))
+
+          errors ->
+            maybe_toast_errors(socket, errors)
+        end
       end
 
     qs = %{order: :purchase}
@@ -427,6 +436,21 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
      socket
      |> assign(:scan_results, [])
      |> push_patch(to: ~p"/collection?#{qs}")}
+  end
+
+  defp maybe_toast_errors(socket, []), do: socket
+
+  defp maybe_toast_errors(socket, errors) do
+    errors_summary =
+      Enum.map_join(errors, "\n", fn {number, reason} ->
+        "#{number}: #{ErrorMessages.friendly_message(reason)}"
+      end)
+
+    put_toast(
+      socket,
+      :error,
+      gettext("Some records could not be imported: %{summary}", summary: errors_summary)
+    )
   end
 
   defp release_format_label(release) do

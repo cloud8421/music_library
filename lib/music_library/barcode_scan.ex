@@ -5,6 +5,7 @@ defmodule MusicLibrary.BarcodeScan do
 
   alias MusicLibrary.BarcodeScan.Result
   alias MusicLibrary.Records
+  alias MusicLibrary.Worker.ImportFromMusicbrainzRelease
 
   @spec scan(String.t()) :: {:ok, Result.t()} | {:error, term()}
   def scan(number) do
@@ -29,6 +30,32 @@ defmodule MusicLibrary.BarcodeScan do
       error ->
         error
     end
+  end
+
+  @spec should_import_async?([Result.t()]) :: boolean()
+  def should_import_async?(scan_results) do
+    Enum.count(scan_results, &(&1.status == :new)) >= 2
+  end
+
+  @spec import_results_async([Result.t()], DateTime.t()) ::
+          {:ok, sync_errors :: [{String.t(), term()}], async_count :: non_neg_integer()}
+  def import_results_async(scan_results, current_time) do
+    {new_results, other_results} = Enum.split_with(scan_results, &(&1.status == :new))
+
+    sync_errors = import_results(other_results, current_time)
+
+    Enum.each(new_results, fn scan_result ->
+      %{
+        "release_id" => scan_result.release.id,
+        "format" => MusicBrainz.ReleaseSearchResult.format(scan_result.release),
+        "purchased_at" => DateTime.to_iso8601(current_time),
+        "selected_release_id" => scan_result.release.id
+      }
+      |> ImportFromMusicbrainzRelease.new()
+      |> Oban.insert!()
+    end)
+
+    {:ok, sync_errors, length(new_results)}
   end
 
   @spec import_results([Result.t()], DateTime.t()) :: [{String.t(), term()}]
