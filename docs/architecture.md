@@ -104,7 +104,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `OnlineStoreTemplates` | OnlineStoreTemplate | URL templates for buying records online; searchable by name/description |
 | `Search` | (cross-context) | Universal search dispatcher across collection, wishlist, artists, record sets (delegates to domain contexts) |
 | `Secrets` | Secret | Encrypted key-value storage (CRUD + delete) |
-| `BarcodeScan` | (Result struct) | Barcode → MusicBrainz lookup workflow |
+| `BarcodeScan` | (Result struct) | Barcode → MusicBrainz lookup workflow, async batch import for multiple new records |
 | `Maintenance` | (Oban.Job, LastFm.Track) | Background job monitoring, database vacuum/optimize, scrobble data quality diagnostics |
 
 ---
@@ -185,6 +185,7 @@ stubbed via `Req.Test` (configured in `config/test.exs`).
 | `FetchArtistLastFmData` | last_fm | Manual / batch |
 | `FetchArtistImage` | heavy_writes | Artist info fetched |
 | `RefreshCover` | heavy_writes | Manual action / import |
+| `ImportFromMusicbrainzRelease` | music_brainz | Barcode scan batch import (2+ new records) |
 | `PopulateGenres` | heavy_writes | Manual action (chains → GenerateRecordEmbedding) |
 | `GenerateRecordEmbedding` | heavy_writes | Manual / after genre population (delegates to Similarity, skips unchanged) |
 | `RecordRefreshMusicBrainzData` | music_brainz | Manual / batch |
