@@ -6,7 +6,7 @@ defmodule MusicLibrary.Chats.ArtistChat do
   @behaviour MusicLibrary.Chats.StreamProvider
 
   alias MusicLibrary.Artists.ArtistInfo
-  alias MusicLibrary.Chats.DefaultPrompt
+  alias MusicLibrary.Chats.Prompt
 
   @impl true
   @spec stream_response([map()], {map(), ArtistInfo.t()}, (String.t() -> any())) ::
@@ -20,16 +20,13 @@ defmodule MusicLibrary.Chats.ArtistChat do
   defp build_instructions(artist, artist_info) do
     context = build_context(artist, artist_info)
 
-    """
-    #{DefaultPrompt.identity()}
+    Prompt.build("""
     Answer questions about the artist the user is currently viewing. \
-    Use the provided artist information as your primary reference, \
+    Use the provided artist information as your primary reference.
 
-    #{DefaultPrompt.approach()}
-
-    Album information:
-    #{context}
-    """
+    Artist information:
+    #{context}\
+    """)
   end
 
   defp build_context(artist, artist_info) do

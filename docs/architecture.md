@@ -129,7 +129,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Chats.StreamProvider` | Behaviour for streaming AI chat (`stream_response/3` callback) |
 | `Chats.RecordChat` | Chat implementation for records (OpenAI streaming, web search enabled) |
 | `Chats.ArtistChat` | Chat implementation for artists (OpenAI streaming, uses Wikipedia/artist context) |
-| `Chats.DefaultPrompt` | Shared default prompt fragments (identity, approach) for chat implementations |
+| `Chats.Prompt` | Builds complete chat prompts by interpolating identity, content, and approach guidelines |
 | `Country` | Country code (alpha-2, alpha-3, subdivision, IETF) to flag emoji conversion |
 | `ErrorTracker.ErrorNotifier` | GenServer: attaches to ErrorTracker telemetry, skips muted errors, throttles repeated errors, dispatches email notifications |
 | `ErrorTracker.ErrorNotifier.Email` | Builds and sends Swoosh error notification emails with stack trace formatting |

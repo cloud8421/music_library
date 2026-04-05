@@ -5,7 +5,7 @@ defmodule MusicLibrary.Chats.RecordChat do
 
   @behaviour MusicLibrary.Chats.StreamProvider
 
-  alias MusicLibrary.Chats.DefaultPrompt
+  alias MusicLibrary.Chats.Prompt
   alias MusicLibrary.Records.Record
 
   @impl true
@@ -25,16 +25,13 @@ defmodule MusicLibrary.Chats.RecordChat do
         text -> text
       end
 
-    """
-    #{DefaultPrompt.identity()}
+    Prompt.build("""
     Answer questions about the album the user is currently viewing. \
-    Use the provided album information as your primary reference, \
-
-    #{DefaultPrompt.approach()}
+    Use the provided album information as your primary reference.
 
     Album information:
-    #{context}
-    """
+    #{context}\
+    """)
   end
 
   defp basic_context(%Record{} = record) do
