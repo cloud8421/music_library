@@ -260,16 +260,12 @@ defmodule MusicLibrary.Artists do
     artist_info = get_artist_info!(artist_id)
     name = get_in(artist_info.musicbrainz_data, ["name"]) || ""
 
-    case LastFm.get_artist_tags(artist_id, name) do
-      {:ok, tags} ->
-        tag_names = Enum.map(tags, fn {tag_name, _count} -> tag_name end)
+    with {:ok, tags} <- LastFm.get_artist_tags(artist_id, name) do
+      tag_names = Enum.map(tags, fn {tag_name, _count} -> tag_name end)
 
-        artist_info
-        |> ArtistInfo.changeset(%{lastfm_data: %{"tags" => tag_names}})
-        |> Repo.update()
-
-      {:error, _reason} ->
-        {:ok, artist_info}
+      artist_info
+      |> ArtistInfo.changeset(%{lastfm_data: %{"tags" => tag_names}})
+      |> Repo.update()
     end
   end
 

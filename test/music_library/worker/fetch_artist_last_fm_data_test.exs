@@ -39,15 +39,13 @@ defmodule MusicLibrary.Worker.FetchArtistLastFmDataTest do
     end
 
     @tag :capture_log
-    test "returns ok when Last.fm returns an error", %{artist_id: artist_id} do
+    test "returns error when Last.fm returns an error", %{artist_id: artist_id} do
       Req.Test.stub(LastFm.API, fn conn ->
         Req.Test.json(conn, %{"error" => 6, "message" => "Artist not found"})
       end)
 
-      assert :ok = perform_job(FetchArtistLastFmData, %{"id" => artist_id})
-
-      artist_info = Artists.get_artist_info!(artist_id)
-      assert ArtistInfo.lastfm_tags(artist_info) == []
+      assert {:error, :invalid_parameters} ==
+               perform_job(FetchArtistLastFmData, %{"id" => artist_id})
     end
 
     test "filters out tags with count below 2", %{artist_id: artist_id} do
