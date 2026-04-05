@@ -1,12 +1,14 @@
 defmodule OpenAI.Config do
   @type t :: %__MODULE__{
           api_key: String.t(),
-          req_options: Keyword.t()
+          req_options: Keyword.t(),
+          api_cooldown: non_neg_integer()
         }
 
   @enforce_keys [:api_key]
   defstruct api_key: "",
-            req_options: []
+            req_options: [],
+            api_cooldown: 500
 
   @schema NimbleOptions.new!(
             api_key: [
@@ -17,6 +19,11 @@ defmodule OpenAI.Config do
               type: :keyword_list,
               required: false,
               default: []
+            ],
+            api_cooldown: [
+              type: :integer,
+              required: false,
+              default: 500
             ]
           )
 

@@ -96,7 +96,8 @@ config :music_library, OpenAI,
   req_options: [
     plug: {Req.Test, OpenAI.API},
     max_retries: 0
-  ]
+  ],
+  api_cooldown: 0
 
 config :phoenix_test, :endpoint, MusicLibraryWeb.Endpoint
 

@@ -3,27 +3,29 @@ defmodule OpenAI.API do
 
   @spec gpt(OpenAI.Completion.t(), OpenAI.Config.t()) :: {:ok, map()} | {:error, term()}
   def gpt(completion, config) do
-    resp =
-      config
-      |> new_request()
-      |> Req.merge(
-        url: "/v1/chat/completions",
-        receive_timeout: 10_000,
-        connect_options: [timeout: 2_500],
-        json: %{
-          model: completion.model,
-          messages: [Map.take(completion, [:content, :role])],
-          response_format: %{type: "json_object"},
-          temperature: completion.temperature
-        }
-      )
-      |> Req.post!()
+    case config
+         |> new_request()
+         |> Req.merge(
+           url: "/v1/chat/completions",
+           receive_timeout: 10_000,
+           connect_options: [timeout: 2_500],
+           json: %{
+             model: completion.model,
+             messages: [Map.take(completion, [:content, :role])],
+             response_format: %{type: "json_object"},
+             temperature: completion.temperature
+           }
+         )
+         |> Req.post() do
+      {:ok, %{status: status, body: body}} when status in 200..299 ->
+        content = get_in(body, ["choices", Access.at(0), "message", "content"])
+        JSON.decode(content)
 
-    if resp.status in 200..299 do
-      content = get_in(resp.body, ["choices", Access.at(0), "message", "content"])
-      {:ok, JSON.decode!(content)}
-    else
-      {:error, resp.body}
+      {:ok, %{body: body}} ->
+        {:error, "OpenAI API error: #{inspect(body)}"}
+
+      {:error, exception} ->
+        {:error, "Connection error: #{Exception.message(exception)}"}
     end
   end
 
@@ -92,6 +94,7 @@ defmodule OpenAI.API do
       auth: {:bearer, config.api_key}
     )
     |> Req.Request.merge_options(config.req_options)
+    |> Req.RateLimiter.attach(name: :open_ai, cooldown: config.api_cooldown)
     |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
     |> Req.Request.append_response_steps(log_error: &log_error/1)
   end

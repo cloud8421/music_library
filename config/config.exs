@@ -72,7 +72,9 @@ config :music_library, BraveSearch,
   user_agent: user_agent,
   api_cooldown: 1000
 
-config :music_library, OpenAI, api_key: "change me"
+config :music_library, OpenAI,
+  api_key: "change me",
+  api_cooldown: 250
 
 # Configure esbuild (the version is required)
 config :esbuild,
