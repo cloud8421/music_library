@@ -286,6 +286,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
                         class="size-12 object-cover rounded-md shadow-sm"
                         src={track_or_album_cover_url(album, cover_hash)}
                         alt={album.metadata.title}
+                        onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
                       />
                       <div>
                         <p
@@ -366,6 +367,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
                         class="size-12 object-cover rounded-md shadow-sm"
                         src={track_or_album_cover_url(track, cover_hash)}
                         alt={track.title}
+                        onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
                       />
                       <div>
                         <p
