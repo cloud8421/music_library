@@ -2402,3 +2402,8 @@ msgid "Importing %{count} record in the background..."
 msgid_plural "Importing %{count} records in the background..."
 msgstr[0] ""
 msgstr[1] ""
+
+#: lib/music_library_web/components/chat.ex
+#, elixir-autogen, elixir-format
+msgid "Copy message"
+msgstr ""

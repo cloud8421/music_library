@@ -245,8 +245,18 @@ defmodule MusicLibraryWeb.Components.Chat do
         ]}
       >
         <p :if={message.role == "user"} class="whitespace-pre-wrap">{message.content}</p>
-        <div :if={message.role == "assistant"} class="dark:prose-invert prose prose-sm">
+        <div
+          :if={message.role == "assistant"}
+          id={"chat-msg-#{message.id}"}
+          class="dark:prose-invert prose prose-sm"
+        >
           {raw(Markdown.to_html(message.content, link_target: "_blank"))}
+        </div>
+        <div :if={message.role == "assistant"} class="flex justify-end -mb-1 -mr-2">
+          <.copy_to_clipboard
+            target_id={"chat-msg-#{message.id}"}
+            label={gettext("Copy message")}
+          />
         </div>
       </div>
 
@@ -342,12 +352,11 @@ defmodule MusicLibraryWeb.Components.Chat do
 
   def handle_event("select_chat", %{"id" => id}, socket) do
     chat = Chats.get_chat!(id)
-    messages = Enum.map(chat.messages, &%{role: &1.role, content: &1.content})
 
     {:noreply,
      socket
      |> assign(:chat, chat)
-     |> assign(:messages, messages)
+     |> assign(:messages, chat.messages)
      |> assign(:current_response, "")
      |> assign(:streaming_doc, nil)
      |> assign(:error, nil)
