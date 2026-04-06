@@ -130,9 +130,7 @@ defmodule MusicLibrary.RecordSets do
 
     Repo.delete(item)
 
-    recompact_positions(record_set.id)
-
-    {:ok, get_record_set!(record_set.id)}
+    recompact_positions(record_set)
   end
 
   # sobelow_skip ["SQL.Query"]
@@ -236,20 +234,17 @@ defmodule MusicLibrary.RecordSets do
     )
   end
 
-  defp recompact_positions(record_set_id) do
-    items =
+  defp recompact_positions(record_set) do
+    record_set_id = record_set.id
+
+    record_ids =
       from(i in RecordSetItem,
         where: i.record_set_id == ^record_set_id,
-        order_by: [asc: i.position]
+        order_by: [asc: i.position],
+        select: i.record_id
       )
       |> Repo.all()
 
-    Enum.with_index(items, fn item, index ->
-      if item.position != index do
-        item
-        |> Ecto.Changeset.change(position: index)
-        |> Repo.update!()
-      end
-    end)
+    reorder_records_in_set(record_set, record_ids)
   end
 end
