@@ -140,10 +140,11 @@ defmodule MusicLibraryWeb.CoreComponents do
     data
     |> Jason.encode!(pretty: true)
     |> Lumis.highlight!(
-      language: "json",
       formatter:
         {:html_multi_themes,
-         themes: [light: "github_light", dark: "github_dark"], default_theme: "light-dark()"}
+         language: "json",
+         themes: [light: "github_light", dark: "github_dark"],
+         default_theme: "light-dark()"}
     )
     |> Phoenix.HTML.raw()
   end
