@@ -5,7 +5,8 @@ defmodule OpenAI.APITest do
 
   @config %OpenAI.Config{
     api_key: "test_key",
-    req_options: [plug: {Req.Test, __MODULE__}, max_retries: 0]
+    req_options: [plug: {Req.Test, __MODULE__}, max_retries: 0],
+    api_cooldown: 0
   }
 
   describe "gpt/2" do
