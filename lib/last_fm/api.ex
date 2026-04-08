@@ -157,9 +157,6 @@ defmodule LastFm.API do
   defp new_request(config) do
     Req.new(
       base_url: "https://ws.audioscrobbler.com/2.0/",
-      # Experimental: metrics show some long running requests
-      # that end up hitting timeouts (at default values),
-      # so we make them shorter to leverage retries
       max_retries: 1,
       pool_timeout: 10_000,
       # the maximum number of milliseconds that a pool can be idle before
