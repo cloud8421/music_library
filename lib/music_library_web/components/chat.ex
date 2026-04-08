@@ -238,7 +238,7 @@ defmodule MusicLibraryWeb.Components.Chat do
       </div>
 
       <div
-        :for={message <- @messages}
+        :for={{message, index} <- Enum.with_index(@messages)}
         class={[
           "max-w-[85%] rounded-lg px-4 py-2 text-sm",
           message_classes(message.role)
@@ -247,14 +247,14 @@ defmodule MusicLibraryWeb.Components.Chat do
         <p :if={message.role == "user"} class="whitespace-pre-wrap">{message.content}</p>
         <div
           :if={message.role == "assistant"}
-          id={"chat-msg-#{message.id}"}
+          id={"#{@id}-msg-#{index}"}
           class="dark:prose-invert prose prose-sm"
         >
           {raw(Markdown.to_html(message.content, link_target: "_blank"))}
         </div>
         <div :if={message.role == "assistant"} class="flex justify-end -mb-1 -mr-2">
           <.copy_to_clipboard
-            target_id={"chat-msg-#{message.id}"}
+            target_id={"#{@id}-msg-#{index}"}
             label={gettext("Copy message")}
           />
         </div>
