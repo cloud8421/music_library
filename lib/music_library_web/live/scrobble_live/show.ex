@@ -4,7 +4,6 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
   import(MusicLibraryWeb.Components.Release, only: [medium: 1, scrobble_button_label: 1])
   import MusicLibraryWeb.RecordComponents, only: [country_label: 1]
 
-  alias MusicBrainz.Release
   alias MusicLibrary.ScrobbleActivity
   alias MusicLibraryWeb.ErrorMessages
 
@@ -77,7 +76,17 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
               </dl>
             </div>
 
-            <div :if={@release.media != []} class="mt-6 space-y-4">
+            <.form
+              :if={@release.media != []}
+              for={@form}
+              id="scrobble-release-form"
+              class="mt-6 space-y-4"
+              phx-change="validate"
+              phx-auto-recover="recover_form"
+            >
+              <input type="hidden" name="release[selected_tracks][]" value="" />
+              <input type="hidden" name="release[toggle_medium][]" value="" />
+
               <div class="flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-200">
                   {gettext("Tracks")}
@@ -85,6 +94,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
 
                 <.button
                   :if={@can_scrobble}
+                  type="button"
                   variant="soft"
                   size="sm"
                   phx-click={
@@ -108,7 +118,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
                 media_count={MusicBrainz.Release.media_count(@release)}
                 myself={nil}
               />
-            </div>
+            </.form>
           </div>
         </div>
       </div>
@@ -124,7 +134,8 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
        release: nil,
        can_scrobble: ScrobbleActivity.can_scrobble?(),
        page_title: "Scrobble Release",
-       selected_tracks: MapSet.new()
+       selected_tracks: MapSet.new(),
+       form: to_form(%{}, as: :release)
      )}
   end
 
@@ -229,37 +240,22 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
     end
   end
 
-  def handle_event("toggle_medium", %{"medium-number" => number}, socket) do
-    {number, ""} = Integer.parse(number)
-    selected_tracks = socket.assigns.selected_tracks
-    release = socket.assigns.release
+  def handle_event("validate", %{"release" => params}, socket) do
+    if socket.assigns.release do
+      new_selected =
+        MusicLibraryWeb.Components.Release.apply_form_params(
+          socket.assigns.release,
+          params,
+          socket.assigns.selected_tracks
+        )
 
-    medium_tracks =
-      release
-      |> Release.medium_tracks(number)
-      |> Enum.map(& &1.id)
-      |> MapSet.new()
-
-    updated_tracks =
-      if MapSet.subset?(medium_tracks, selected_tracks) do
-        MapSet.difference(selected_tracks, medium_tracks)
-      else
-        MapSet.union(selected_tracks, medium_tracks)
-      end
-
-    {:noreply, assign(socket, :selected_tracks, updated_tracks)}
+      {:noreply, assign(socket, :selected_tracks, new_selected)}
+    else
+      {:noreply, socket}
+    end
   end
 
-  def handle_event("toggle_track", %{"track-id" => track_id}, socket) do
-    selected_tracks = socket.assigns.selected_tracks
-
-    updated_tracks =
-      if MapSet.member?(selected_tracks, track_id) do
-        MapSet.delete(selected_tracks, track_id)
-      else
-        MapSet.put(selected_tracks, track_id)
-      end
-
-    {:noreply, assign(socket, :selected_tracks, updated_tracks)}
+  def handle_event("recover_form", params, socket) do
+    handle_event("validate", params, socket)
   end
 end

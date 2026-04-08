@@ -1,7 +1,7 @@
 defmodule MusicLibraryWeb.ScrobbleLive.ShowTest do
   use MusicLibraryWeb.ConnCase
 
-  import Phoenix.LiveViewTest, only: [render_click: 3]
+  import Phoenix.LiveViewTest, only: [element: 2, render_change: 2, render_click: 3]
 
   alias MusicBrainz.Fixtures.Release, as: ReleaseFixtures
   alias MusicLibrary.Secrets
@@ -120,14 +120,18 @@ defmodule MusicLibraryWeb.ScrobbleLive.ShowTest do
       # Toggle track on — button label changes
       session
       |> unwrap(fn view ->
-        render_click(view, "toggle_track", %{"track-id" => track_id})
+        view
+        |> element("#scrobble-release-form")
+        |> render_change(%{"release" => %{"selected_tracks" => [track_id]}})
       end)
       |> assert_has("button", "Scrobble selected tracks")
 
       # Toggle track off — button label reverts
       session
       |> unwrap(fn view ->
-        render_click(view, "toggle_track", %{"track-id" => track_id})
+        view
+        |> element("#scrobble-release-form")
+        |> render_change(%{"release" => %{"selected_tracks" => []}})
       end)
       |> assert_has("button", "Scrobble release")
     end
@@ -138,14 +142,18 @@ defmodule MusicLibraryWeb.ScrobbleLive.ShowTest do
       # Toggle medium 1 on — button label changes
       session
       |> unwrap(fn view ->
-        render_click(view, "toggle_medium", %{"medium-number" => "1"})
+        view
+        |> element("#scrobble-release-form")
+        |> render_change(%{"release" => %{"toggle_medium" => ["1"]}})
       end)
       |> assert_has("button", "Scrobble selected tracks")
 
       # Toggle medium 1 off — button label reverts
       session
       |> unwrap(fn view ->
-        render_click(view, "toggle_medium", %{"medium-number" => "1"})
+        view
+        |> element("#scrobble-release-form")
+        |> render_change(%{"release" => %{"toggle_medium" => []}})
       end)
       |> assert_has("button", "Scrobble release")
     end
@@ -157,7 +165,10 @@ defmodule MusicLibraryWeb.ScrobbleLive.ShowTest do
 
       session
       |> unwrap(fn view ->
-        render_click(view, "toggle_track", %{"track-id" => track_id})
+        view
+        |> element("#scrobble-release-form")
+        |> render_change(%{"release" => %{"selected_tracks" => [track_id]}})
+
         render_click(view, "scrobble_selected_tracks", %{})
       end)
       |> assert_has("#toast-group", "Selected tracks scrobbled successfully")
@@ -207,7 +218,10 @@ defmodule MusicLibraryWeb.ScrobbleLive.ShowTest do
 
       session
       |> unwrap(fn view ->
-        render_click(view, "toggle_track", %{"track-id" => track_id})
+        view
+        |> element("#scrobble-release-form")
+        |> render_change(%{"release" => %{"selected_tracks" => [track_id]}})
+
         render_click(view, "scrobble_selected_tracks", %{})
       end)
       |> assert_has("#toast-group", "Error scrobbling selected tracks")

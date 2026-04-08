@@ -19,7 +19,9 @@ defmodule MusicLibraryWeb.Components.Release do
      |> assign(:can_scrobble?, ScrobbleActivity.can_scrobble?())
      |> assign(:release_with_tracks, AsyncResult.loading())
      |> assign(:already_scrobbled, false)
-     |> assign(:selected_tracks, MapSet.new())}
+     |> assign(:selected_tracks, MapSet.new())
+     |> assign(:form, to_form(%{}, as: :release))
+     |> assign(:pending_form_params, nil)}
   end
 
   @impl true
@@ -27,15 +29,60 @@ defmodule MusicLibraryWeb.Components.Release do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_async(:release_with_tracks, fn ->
-       with {:ok, release} <- load_release_with_tracks(record.selected_release_id) do
-         {:ok, %{release_with_tracks: release}}
-       end
+     |> assign(:release_with_tracks, AsyncResult.loading())
+     |> start_async(:release_with_tracks, fn ->
+       load_release_with_tracks(record.selected_release_id)
      end)}
   end
 
   def update(%{already_scrobbled: _already_scrobbled} = assigns, socket) do
     {:ok, assign(socket, assigns)}
+  end
+
+  @impl true
+  def handle_async(:release_with_tracks, {:ok, {:ok, release}}, socket) do
+    socket =
+      socket
+      |> assign(
+        :release_with_tracks,
+        AsyncResult.ok(socket.assigns.release_with_tracks, release)
+      )
+      |> apply_pending_form_params()
+
+    {:noreply, socket}
+  end
+
+  def handle_async(:release_with_tracks, {:ok, {:error, reason}}, socket) do
+    {:noreply,
+     assign(
+       socket,
+       :release_with_tracks,
+       AsyncResult.failed(socket.assigns.release_with_tracks, {:error, reason})
+     )}
+  end
+
+  def handle_async(:release_with_tracks, {:exit, reason}, socket) do
+    {:noreply,
+     assign(
+       socket,
+       :release_with_tracks,
+       AsyncResult.failed(socket.assigns.release_with_tracks, {:exit, reason})
+     )}
+  end
+
+  defp apply_pending_form_params(socket) do
+    case socket.assigns.pending_form_params do
+      nil ->
+        socket
+
+      params ->
+        release = socket.assigns.release_with_tracks.result
+        new_selected = apply_form_params(release, params, socket.assigns.selected_tracks)
+
+        socket
+        |> assign(:selected_tracks, new_selected)
+        |> assign(:pending_form_params, nil)
+    end
   end
 
   @impl true
@@ -48,102 +95,115 @@ defmodule MusicLibraryWeb.Components.Release do
         placement="right"
         class="min-w-xs sm:min-w-sm"
       >
-        <div class="mt-6 flex items-center justify-between gap-4">
-          <label class="cursor-pointer text-lg font-semibold text-zinc-700 dark:text-zinc-300">
-            <input
-              :if={
-                @can_scrobble? && @release_with_tracks.ok? &&
-                  Release.media_count(@release_with_tracks.result) == 1
-              }
-              type="checkbox"
-              id="medium-checkbox-1"
-              checked={
-                medium_selected?(
-                  Release.get_medium(@release_with_tracks.result, 1),
-                  @selected_tracks
-                )
-              }
-              phx-click="toggle_medium"
-              phx-value-medium-number={1}
-              phx-target={@myself}
-              class="mr-2 size-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-            />
-            {gettext("Tracks")}
-          </label>
-          <.button_group>
-            <.button
-              :if={@release_with_tracks.ok?}
-              variant="soft"
-              size="sm"
-              phx-click="print_tracklist"
-              phx-target={@myself}
-            >
-              <span class="sr-only">{gettext("Print tracklist")}</span>
-              <.icon name="hero-printer" class="icon" aria-hidden="true" data-slot="icon" />
-            </.button>
-            <.button
-              :if={@can_scrobble? && @release_with_tracks.ok?}
-              variant="soft"
-              size="sm"
-              disabled={@already_scrobbled}
-              phx-click={
-                if MapSet.size(@selected_tracks) > 0,
-                  do: "scrobble_selected_tracks",
-                  else: "scrobble_release"
-              }
-              phx-target={@myself}
-              phx-disable-with={gettext("Scrobbling...")}
-            >
-              <span class="sr-only">{scrobble_button_label(@selected_tracks)}</span>
-              <.icon name="hero-play" class="icon" aria-hidden="true" data-slot="icon" />
-            </.button>
-            <.button :if={!@can_scrobble?} variant="soft" size="sm" href={LastFm.auth_url()}>
-              <span class="sr-only">{gettext("Connect your Last.fm account")}</span>
-              <.icon name="hero-link" class="icon" aria-hidden="true" data-slot="icon" />
-            </.button>
-          </.button_group>
-        </div>
+        <.form
+          for={@form}
+          id={"#{@sheet_id}-form"}
+          phx-target={@myself}
+          phx-change="validate"
+          phx-auto-recover="recover_form"
+        >
+          <input type="hidden" name="release[selected_tracks][]" value="" />
+          <input type="hidden" name="release[toggle_medium][]" value="" />
 
-        <div :if={@release_with_tracks} class="mt-4 space-y-4">
-          <.async_result :let={release_with_tracks} assign={@release_with_tracks}>
-            <:loading>
-              <div class="mt-48 flex items-center justify-center">
-                <span class="sr-only">{gettext("Loading release with tracks")}</span>
-                <.loading />
-              </div>
-            </:loading>
-            <:failed :let={_failure}>
-              <div class="mt-4 text-sm/5 text-zinc-500 dark:text-zinc-400">
-                <.icon
-                  name="hero-exclamation-triangle"
-                  class="size-5"
-                  aria-hidden="true"
-                  data-slot="icon"
-                />
-                {gettext("Error loading tracks")}
-                <.button
-                  variant="ghost"
-                  size="xs"
-                  phx-click={JS.push("load_release_tracks", target: @myself)}
-                  class="ml-2 cursor-pointer"
-                >
-                  {gettext("Retry")}
-                </.button>
-              </div>
-            </:failed>
-            <.medium
-              :for={medium <- release_with_tracks.media}
-              can_scrobble?={@can_scrobble?}
-              already_scrobbled={@already_scrobbled}
-              medium={medium}
-              release_artists={release_with_tracks.artists}
-              media_count={MusicBrainz.Release.media_count(release_with_tracks)}
-              selected_tracks={@selected_tracks}
-              myself={@myself}
-              record={@record}
-            />
-          </.async_result>
-        </div>
+          <div class="mt-6 flex items-center justify-between gap-4">
+            <label class="cursor-pointer text-lg font-semibold text-zinc-700 dark:text-zinc-300">
+              <input
+                :if={
+                  @can_scrobble? && @release_with_tracks.ok? &&
+                    Release.media_count(@release_with_tracks.result) == 1
+                }
+                type="checkbox"
+                id="medium-checkbox-1"
+                name="release[toggle_medium][]"
+                value="1"
+                checked={
+                  medium_selected?(
+                    Release.get_medium(@release_with_tracks.result, 1),
+                    @selected_tracks
+                  )
+                }
+                class="mr-2 size-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+              />
+              {gettext("Tracks")}
+            </label>
+            <.button_group>
+              <.button
+                :if={@release_with_tracks.ok?}
+                type="button"
+                variant="soft"
+                size="sm"
+                phx-click="print_tracklist"
+                phx-target={@myself}
+              >
+                <span class="sr-only">{gettext("Print tracklist")}</span>
+                <.icon name="hero-printer" class="icon" aria-hidden="true" data-slot="icon" />
+              </.button>
+              <.button
+                :if={@can_scrobble? && @release_with_tracks.ok?}
+                type="button"
+                variant="soft"
+                size="sm"
+                disabled={@already_scrobbled}
+                phx-click={
+                  if MapSet.size(@selected_tracks) > 0,
+                    do: "scrobble_selected_tracks",
+                    else: "scrobble_release"
+                }
+                phx-target={@myself}
+                phx-disable-with={gettext("Scrobbling...")}
+              >
+                <span class="sr-only">{scrobble_button_label(@selected_tracks)}</span>
+                <.icon name="hero-play" class="icon" aria-hidden="true" data-slot="icon" />
+              </.button>
+              <.button :if={!@can_scrobble?} variant="soft" size="sm" href={LastFm.auth_url()}>
+                <span class="sr-only">{gettext("Connect your Last.fm account")}</span>
+                <.icon name="hero-link" class="icon" aria-hidden="true" data-slot="icon" />
+              </.button>
+            </.button_group>
+          </div>
+
+          <div :if={@release_with_tracks} class="mt-4 space-y-4">
+            <.async_result :let={release_with_tracks} assign={@release_with_tracks}>
+              <:loading>
+                <div class="mt-48 flex items-center justify-center">
+                  <span class="sr-only">{gettext("Loading release with tracks")}</span>
+                  <.loading />
+                </div>
+              </:loading>
+              <:failed :let={_failure}>
+                <div class="mt-4 text-sm/5 text-zinc-500 dark:text-zinc-400">
+                  <.icon
+                    name="hero-exclamation-triangle"
+                    class="size-5"
+                    aria-hidden="true"
+                    data-slot="icon"
+                  />
+                  {gettext("Error loading tracks")}
+                  <.button
+                    type="button"
+                    variant="ghost"
+                    size="xs"
+                    phx-click={JS.push("load_release_tracks", target: @myself)}
+                    class="ml-2 cursor-pointer"
+                  >
+                    {gettext("Retry")}
+                  </.button>
+                </div>
+              </:failed>
+              <.medium
+                :for={medium <- release_with_tracks.media}
+                can_scrobble?={@can_scrobble?}
+                already_scrobbled={@already_scrobbled}
+                medium={medium}
+                release_artists={release_with_tracks.artists}
+                media_count={MusicBrainz.Release.media_count(release_with_tracks)}
+                selected_tracks={@selected_tracks}
+                myself={@myself}
+                record={@record}
+              />
+            </.async_result>
+          </div>
+        </.form>
       </.sheet>
     </div>
     """
@@ -169,10 +229,9 @@ defmodule MusicLibraryWeb.Components.Release do
           :if={@can_scrobble?}
           type="checkbox"
           id={"medium-checkbox-#{@medium.number}"}
+          name="release[toggle_medium][]"
+          value={@medium.number}
           checked={medium_selected?(@medium, @selected_tracks)}
-          phx-click="toggle_medium"
-          phx-value-medium-number={@medium.number}
-          phx-target={@myself}
           class="mr-2 size-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
         />
         {medium_title(@medium)}
@@ -183,6 +242,7 @@ defmodule MusicLibraryWeb.Components.Release do
       <.button_group>
         <.button
           :if={@record}
+          type="button"
           variant="soft"
           size="sm"
           phx-click="print_medium_tracklist"
@@ -194,6 +254,7 @@ defmodule MusicLibraryWeb.Components.Release do
         </.button>
         <.button
           :if={@can_scrobble?}
+          type="button"
           variant="soft"
           size="sm"
           disabled={@already_scrobbled || MapSet.size(@selected_tracks) > 0}
@@ -213,7 +274,6 @@ defmodule MusicLibraryWeb.Components.Release do
       release_artists={@release_artists}
       selected_tracks={@selected_tracks}
       can_scrobble?={@can_scrobble?}
-      myself={@myself}
     />
     <.separator />
     <p class="text-right text-xs text-zinc-700 md:text-sm dark:text-zinc-300">
@@ -235,7 +295,6 @@ defmodule MusicLibraryWeb.Components.Release do
   attr :release_artists, :list, required: true
   attr :selected_tracks, :any, required: true
   attr :can_scrobble?, :boolean, required: true
-  attr :myself, :any, required: true
 
   def track_list(assigns) do
     ~H"""
@@ -250,10 +309,9 @@ defmodule MusicLibraryWeb.Components.Release do
               <input
                 type="checkbox"
                 id={"track-checkbox-#{track.id}"}
+                name="release[selected_tracks][]"
+                value={track.id}
                 checked={MapSet.member?(@selected_tracks, track.id)}
-                phx-click="toggle_track"
-                phx-value-track-id={track.id}
-                phx-target={@myself}
                 class="size-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
               />
             </span>
@@ -347,38 +405,25 @@ defmodule MusicLibraryWeb.Components.Release do
     {:noreply, socket}
   end
 
-  def handle_event("toggle_track", %{"track-id" => track_id}, socket) do
-    selected_tracks = socket.assigns.selected_tracks
-
-    updated_tracks =
-      if MapSet.member?(selected_tracks, track_id) do
-        MapSet.delete(selected_tracks, track_id)
-      else
-        MapSet.put(selected_tracks, track_id)
-      end
-
-    {:noreply, assign(socket, :selected_tracks, updated_tracks)}
+  def handle_event("validate", %{"release" => params}, socket)
+      when release_loaded?(socket.assigns) do
+    release = socket.assigns.release_with_tracks.result
+    new_selected = apply_form_params(release, params, socket.assigns.selected_tracks)
+    {:noreply, assign(socket, :selected_tracks, new_selected)}
   end
 
-  def handle_event("toggle_medium", %{"medium-number" => number}, socket) do
-    {number, ""} = Integer.parse(number)
-    selected_tracks = socket.assigns.selected_tracks
-    release_with_tracks = socket.assigns.release_with_tracks.result
+  def handle_event("validate", %{"release" => params}, socket) do
+    # Release not yet loaded (e.g., phx-auto-recover fires before async completes).
+    # Stash the params; handle_async/3 will apply them once the release is available.
+    {:noreply, assign(socket, :pending_form_params, params)}
+  end
 
-    medium_tracks =
-      release_with_tracks
-      |> Release.medium_tracks(number)
-      |> Enum.map(& &1.id)
-      |> MapSet.new()
+  def handle_event("validate", _params, socket) do
+    {:noreply, socket}
+  end
 
-    updated_tracks =
-      if MapSet.subset?(medium_tracks, selected_tracks) do
-        MapSet.difference(selected_tracks, medium_tracks)
-      else
-        MapSet.union(selected_tracks, medium_tracks)
-      end
-
-    {:noreply, assign(socket, :selected_tracks, updated_tracks)}
+  def handle_event("recover_form", params, socket) do
+    handle_event("validate", params, socket)
   end
 
   def handle_event("scrobble_selected_tracks", _params, socket)
@@ -495,10 +540,9 @@ defmodule MusicLibraryWeb.Components.Release do
 
     {:noreply,
      socket
-     |> assign_async(:release_with_tracks, fn ->
-       with {:ok, release} <- load_release_with_tracks(selected_release_id) do
-         {:ok, %{release_with_tracks: release}}
-       end
+     |> assign(:release_with_tracks, AsyncResult.loading())
+     |> start_async(:release_with_tracks, fn ->
+       load_release_with_tracks(selected_release_id)
      end)}
   end
 
@@ -511,6 +555,54 @@ defmodule MusicLibraryWeb.Components.Release do
   defp medium_selected?(medium, selected_tracks) do
     medium_track_ids = medium.tracks |> Enum.map(& &1.id) |> MapSet.new()
     MapSet.subset?(medium_track_ids, selected_tracks)
+  end
+
+  @doc """
+  Applies form params from a track-selection form to produce a new `selected_tracks` MapSet.
+
+  Detects master-toggle transitions (the `release[toggle_medium][]` field) by diffing the
+  incoming params against the current server-side `current_selected` MapSet. When a medium's
+  master toggle transitions from unchecked to checked, all of its tracks are added; when it
+  transitions the other way, all of its tracks are removed.
+
+  Used by both `Release` (as a LiveComponent) and `MusicLibraryWeb.ScrobbleLive.Show` to
+  share identical form-driven selection logic.
+  """
+  @spec apply_form_params(MusicBrainz.Release.t(), map(), MapSet.t()) :: MapSet.t()
+  def apply_form_params(release, params, current_selected) do
+    form_selected =
+      (params["selected_tracks"] || [])
+      |> Enum.reject(&(&1 == ""))
+      |> MapSet.new()
+
+    toggled_medium_numbers =
+      (params["toggle_medium"] || [])
+      |> Enum.reject(&(&1 == ""))
+      |> Enum.map(&String.to_integer/1)
+      |> MapSet.new()
+
+    current_fully_selected =
+      for medium <- release.media,
+          medium_selected?(medium, current_selected),
+          into: MapSet.new(),
+          do: medium.number
+
+    Enum.reduce(release.media, form_selected, fn medium, acc ->
+      was_fully_selected? = MapSet.member?(current_fully_selected, medium.number)
+      is_toggled_now? = MapSet.member?(toggled_medium_numbers, medium.number)
+      medium_track_ids = medium.tracks |> Enum.map(& &1.id) |> MapSet.new()
+
+      cond do
+        not was_fully_selected? and is_toggled_now? ->
+          MapSet.union(acc, medium_track_ids)
+
+        was_fully_selected? and not is_toggled_now? ->
+          MapSet.difference(acc, medium_track_ids)
+
+        true ->
+          acc
+      end
+    end)
   end
 
   def scrobble_button_label(selected_tracks) do
