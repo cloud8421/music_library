@@ -408,8 +408,10 @@ defmodule MusicLibraryWeb.Components.Chat do
 
     chat = persist_user_message(socket, user_message)
 
+    stream_messages = Enum.map(messages, &%{role: &1.role, content: &1.content})
+
     Task.Supervisor.start_child(MusicLibrary.TaskSupervisor, fn ->
-      case chat_module.stream_response(messages, chat_context, fn chunk ->
+      case chat_module.stream_response(stream_messages, chat_context, fn chunk ->
              Phoenix.LiveView.send_update(parent_pid, __MODULE__,
                id: component_id,
                chunk: chunk
