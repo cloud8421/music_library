@@ -170,20 +170,9 @@ defmodule MusicLibrary.ListeningStats do
     page_size = Map.get(params, :page_size, @pagination[:tracks_page_size])
     order = Map.get(params, :order, :scrobbled_at)
 
-    base_query = tracks_with_record_info_query()
-
     search_query =
-      if query == "" do
-        base_query
-      else
-        query_term = "%#{String.downcase(query)}%"
-
-        from [t, cr, wr, ar] in base_query,
-          where:
-            like(fragment("lower(?)", t.title), ^query_term) or
-              like(fragment("lower(json_extract(?, '$.name'))", t.artist), ^query_term) or
-              like(fragment("lower(json_extract(?, '$.title'))", t.album), ^query_term)
-      end
+      tracks_with_record_info_query()
+      |> search_query(query)
 
     ordered_query =
       case order do
@@ -234,22 +223,9 @@ defmodule MusicLibrary.ListeningStats do
 
   @spec search_tracks_count(String.t()) :: non_neg_integer()
   def search_tracks_count(query \\ "") do
-    base_query = from(t in Track)
-
-    search_query =
-      if query == "" do
-        base_query
-      else
-        query_term = "%#{String.downcase(query)}%"
-
-        from t in base_query,
-          where:
-            like(fragment("lower(?)", t.title), ^query_term) or
-              like(fragment("lower(json_extract(artist, '$.name'))"), ^query_term) or
-              like(fragment("lower(json_extract(album, '$.title'))"), ^query_term)
-      end
-
-    Repo.aggregate(search_query, :count, :scrobbled_at_uts)
+    from(t in Track)
+    |> search_query(query)
+    |> Repo.aggregate(:count, :scrobbled_at_uts)
   end
 
   # Top albums/artists by period
@@ -476,6 +452,18 @@ defmodule MusicLibrary.ListeningStats do
       or_where:
         fragment("? ->> '$.title'", t.album) == ^record_title and
           fragment("? ->> '$.name'", t.artist) == ^main_artist_name
+  end
+
+  defp search_query(base_query, ""), do: base_query
+
+  defp search_query(base_query, query) do
+    query_term = "%#{String.downcase(query)}%"
+
+    from t in base_query,
+      where:
+        like(fragment("lower(?)", t.title), ^query_term) or
+          like(fragment("lower(json_extract(?, '$.name'))", t.artist), ^query_term) or
+          like(fragment("lower(json_extract(?, '$.title'))", t.album), ^query_term)
   end
 
   defp polyfill_artist(artist, musicbrainz_id) do
