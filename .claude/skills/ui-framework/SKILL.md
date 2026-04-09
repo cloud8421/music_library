@@ -1,8 +1,73 @@
 ---
 name: ui-framework
-description: "Use this skill when working with LiveViews, UI components using the Phoenix framework, and in general ANY FILE THAT CONTAINS HTML"
+description: "Use this skill when working with LiveViews, UI components using the Phoenix framework, and in general ANY FILE THAT CONTAINS HTML. Use proactively when editing .heex files, LiveView modules, LiveComponents, or any component module under lib/music_library_web/components/."
 metadata:
   managed-by: usage-rules
+---
+
+# Project UI Conventions
+
+Before writing or modifying UI code, follow these project-specific rules. They take
+precedence over the generic reference material below.
+
+## Checklist
+
+1. **Gettext all user-facing strings.** Every string visible to users must be wrapped
+   in `gettext/1` or `pgettext/2`. After adding new strings, run
+   `mix gettext.extract --merge` to update `.pot`/`.po` files.
+
+2. **Dark mode always paired.** Every color class needs its dark variant:
+   `text-zinc-900 dark:text-zinc-100`, `bg-zinc-50 dark:bg-zinc-800`, etc.
+
+3. **Wishlisted items get dimmed styling:** `opacity-60 hover:opacity-100 transition-opacity`.
+
+4. **Icons inside buttons use the `icon` class** — not explicit size classes like
+   `h-5 w-5` or `size-3.5`. Fluxon auto-sizes icons based on the button's `size` prop.
+
+5. **Artist names use `joinphrase`** from MusicBrainz — never join artist names with
+   a literal `", "`.
+
+6. **Streams for all collections.** Use LiveView streams, not list assigns. See the
+   LiveView reference below for stream patterns.
+
+## Component organization
+
+- Generic UI → `CoreComponents`
+- Record-specific → `RecordComponents`
+- Scrobble-specific → `ScrobbleComponents`
+- Search-specific → `SearchComponents`
+- Stats-specific → `StatsComponents`, `ChartComponents`
+- Extract a function component when identical markup appears in 3+ places.
+
+## LiveView structure
+
+- `mount/3` sets `@current_section`
+- `handle_params/3` loads data and sets `@page_title` (via pattern-matched private `page_title/2`)
+- `handle_info/2` receives LiveComponent messages
+- LiveComponents communicate with parent via `send(self(), {__MODULE__, msg})`
+
+## Toast notifications
+
+- In LiveViews: `put_toast(socket, :info, "message")` (arity 3)
+- In LiveComponents: `put_toast!(:info, "message")` (arity 2)
+- User-facing error reasons go through `ErrorMessages.friendly_message/1` — never `inspect(reason)`
+
+## Routes
+
+- Three routes per resource with show modals: `:show`, `:edit` (at `/show/edit`), `:add_*`
+- Modals close via `JS.patch` back to the base route
+- Search state in URL query params via `push_patch`
+- Conditional links: `purchased_at` determines `/collection/` vs `/wishlist/` paths
+
+## Fluxon components
+
+Read `references/fluxon.md` when you need to use a specific Fluxon component —
+it contains the full attribute/slot API for each component. You can also search with:
+
+```sh
+mix usage_rules.search_docs "component_name" -p fluxon
+```
+
 ---
 
 <!-- usage-rules-skill-start -->

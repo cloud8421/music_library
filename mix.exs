@@ -197,7 +197,7 @@ defmodule MusicLibrary.MixProject do
         build: [
           "ui-framework": [
             description:
-              "Use this skill when working with LiveViews, UI components using the Phoenix framework, and in general ANY FILE THAT CONTAINS HTML",
+              "Use this skill when working with LiveViews, UI components using the Phoenix framework, and in general ANY FILE THAT CONTAINS HTML. Use proactively when editing .heex files, LiveView modules, LiveComponents, or any component module under lib/music_library_web/components/.",
             usage_rules: [
               :phoenix,
               ~r/^phoenix_/,
