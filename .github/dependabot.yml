@@ -4,6 +4,13 @@
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
+registries:
+  fluxon-private-repo:
+    type: hex-repository
+    repo: fluxon
+    url: https://repo.fluxonui.com
+    auth-key: ${{ secrets.FLUXON_LICENSE_KEY }}
+    public-key-fingerprint: ${{ secrets.FLUXON_KEY_FINGERPRINT }}
 updates:
 - package-ecosystem: github-actions
   directory: "/"
@@ -20,6 +27,8 @@ updates:
   assignees:
   - cloud8421
 - package-ecosystem: mix
+  registries: "*"
+  insecure-external-code-execution: allow
   directory: "/"
   schedule:
     interval: daily
