@@ -64,7 +64,7 @@ SQLite extensions loaded at runtime: `unicode`, `vec0` (vector search).
 ### Litestream (continuous)
 
 Configured inline in `compose.yaml`. Runs as a separate Docker Compose service
-(`litestream/litestream`) sharing the database volume.
+(`litestream/litestream:0.5.11-scratch`) sharing the database volume.
 
 | Setting | Value |
 |---------|-------|
@@ -107,6 +107,17 @@ Push to main (or PR / manual dispatch)
 
 A manual verification workflow (`.github/workflows/verify.yml`) can be triggered via
 `workflow_dispatch` to re-run production checks without deploying.
+
+### Dependency management (Dependabot)
+
+Automated dependency updates via GitHub Dependabot (`.github/dependabot.yml`):
+
+- **Docker**: daily checks for base image updates
+- **Elixir (mix)**: daily checks, max 10 open PRs
+- **NPM**: daily checks, max 10 open PRs, ignores path-based local deps
+- **GitHub Actions**: daily checks for action version updates
+
+Fluxon (private dependency) is configured with a dedicated registry entry.
 
 ### Post-deploy verification
 
@@ -238,7 +249,7 @@ All HTTP clients use `Req` with per-API rate limiting (`Req.RateLimiter`, ETS-ba
 | Discogs | 2000 ms cooldown | Artist profiles, images |
 | Wikipedia | 1000 ms cooldown | Artist biographies |
 | Brave Search | 1000 ms cooldown | Cover art, artist image search |
-| OpenAI | — | Text embeddings (similarity), streaming chat |
+| OpenAI | 250 ms cooldown | Text embeddings (similarity), streaming chat |
 
 ---
 

@@ -149,7 +149,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Discogs` / `Discogs.API` | discogs.com | Artist profiles, images |
 | `Wikipedia` / `Wikipedia.API` | wikipedia.org | Artist biographies |
 | `BraveSearch` / `BraveSearch.API` | search.brave.com | Cover art and artist image search |
-| `OpenAI` / `OpenAI.API` | api.openai.com | Text embeddings for similarity, streaming chat via Responses API (gpt-4.1 + web search) |
+| `OpenAI` / `OpenAI.API` | api.openai.com | Text embeddings for similarity, streaming chat via Responses API (gpt-4.1 + web search), rate-limited |
 | `MusicLibrary.Mailer` | Mailgun (via Swoosh) | Transactional email delivery (error notifications, daily digest) |
 
 Each has a `Config` module reading from application env. In tests, all HTTP calls are
@@ -278,7 +278,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `Notes` | CollectionLive.Show, WishlistLive.Show, ArtistLive.Show | Markdown note rendering and editing |
 | `AddRecord` | CollectionLive.Index, WishlistLive.Index | MusicBrainz import interface |
 | `BarcodeScanner` | CollectionLive.Index | Barcode scanning UI (uses barcode-detector JS) |
-| `Release` | CollectionLive.Show, ScrobbleLive.Show | MusicBrainz release display with scrobble |
+| `Release` | CollectionLive.Show, ScrobbleLive.Show | MusicBrainz release display with scrobble (form-based with auto-recovery) |
 
 ### Shared Component Modules (lib/music_library_web/components/)
 
