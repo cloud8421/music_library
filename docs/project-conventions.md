@@ -96,6 +96,15 @@ Rules extracted from commit history that are specific to this project and not al
 - **All modules require `@moduledoc`.** The Credo `ModuleDoc` check is enforced in strict mode.
 - **The project does not use dialyzer**. If any skill suggests its usage, ignore it.
 
+## Reviews & Audits
+
+- **Trace call sites and adjacent layers before flagging.** Surface pattern matching produces false positives. Before claiming a pattern is a problem, follow the actual code paths through every layer that could mitigate it. If you can't show the problem manifests, drop the finding.
+- **Project conventions override generic best practices.** "Explicit timeouts", "deterministic test fixtures", "smaller modules", "async queries on mount" are not universal. Where this project diverges, the divergence is deliberate -- read this file first and treat existing patterns as load-bearing.
+- **Search closed issues before producing an audit.** Re-raising a finding previously closed as not-planned wastes time. If there is new evidence, link to the prior issue and explain what changed.
+- **No tracking-only issues.** Every issue must propose a concrete action. "X is still the same as last audit" or "monitor this module" is not an issue.
+- **Use technical terms precisely.** "Circular dependency", "race condition", "N+1 query" have specific definitions. A→C and B→C is not a circular dependency. If the code does not match the definition, find a different framing or drop the finding.
+- **Prefer eliminating invalid states at the type level over runtime validation.** When code validates that two options aren't passed together, the better fix is usually to reshape the API so the invalid combination is unrepresentable.
+
 ## JavaScript
 
 - **Factory function pattern** for JS hooks when two hooks share logic.
