@@ -35,7 +35,7 @@ services:
       timeout: 20s
       retries: 10
   backup:
-    image: litestream/litestream
+    image: litestream/litestream:0.5.11-scratch
     container_name: backup
     user: "0"
     configs:
