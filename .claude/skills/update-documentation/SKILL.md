@@ -1,6 +1,6 @@
 ---
 name: update-documentation
-description: Use when the user asks to update project documentation, or after significant code changes that may have made docs/architecture.md, docs/project-conventions.md, or docs/production-infrastructure.md stale
+description: Use when the user asks to update project documentation, or after significant code changes that may have made docs/architecture.md, docs/project-conventions.md, or docs/production-infrastructure.md stale. Also trigger when new modules, schemas, workers, LiveViews, routes, or external integrations have been added or removed.
 ---
 
 # Update Documentation
@@ -9,7 +9,9 @@ Updates `docs/architecture.md`, `docs/project-conventions.md`, and `docs/product
 
 ## Workflow
 
-For each documentation file (`docs/architecture.md`, `docs/project-conventions.md`, `docs/production-infrastructure.md`):
+Steps 1–3 are independent per file — run them in parallel using subagents (one per
+doc file) to speed up analysis. Merge the results before presenting to the user in
+step 4.
 
 ### 1. Find the last documentation update
 
@@ -35,11 +37,22 @@ For each commit, check if it introduced changes relevant to the documentation fi
 - **project-conventions.md**: new patterns established across 3+ commits, new conventions visible in code review, changed testing patterns, new error handling approaches, new UI/template conventions
 - **production-infrastructure.md**: hosting/deployment changes, database configuration, backup strategy, environment variables, monitoring/observability, CI/CD pipeline, external service integrations, Docker/release configuration
 
-Use `git show --stat <hash>` and `git show <hash>` to understand each commit. Focus on structural changes, not bug fixes or minor tweaks.
+Use `git show --stat <hash>` and `git show <hash>` to understand each commit.
+
+**Skip these — they do not need documentation updates:**
+- Bug fixes and minor tweaks that don't change structure
+- Dependency version bumps (unless they change a major integration)
+- Refactors that rename internals without changing the public API or module structure
+- Test-only changes
+- Skill or CLAUDE.md changes
 
 ### 4. Prepare the update
 
 - Read the current documentation file
+- **Follow the existing format and section structure.** Each doc file has an established
+  layout with specific tables, headings, and conventions. Add new entries to existing
+  sections rather than inventing new structures. Match the style of surrounding content
+  (e.g., if a table uses `| Module | Purpose |` columns, add rows in the same format).
 - Draft the specific edits needed (additions, modifications, removals)
 - Present the proposed changes to the user for review before applying them
 
