@@ -12,3 +12,10 @@ updates:
   open-pull-requests-limit: 10
   assignees:
   - cloud8421
+- package-ecosystem: docker-compose
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  assignees:
+  - cloud8421
