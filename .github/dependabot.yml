@@ -33,3 +33,5 @@ updates:
   open-pull-requests-limit: 10
   assignees:
   - cloud8421
+  ignore:
+  - dependency-name: "live_toast"
