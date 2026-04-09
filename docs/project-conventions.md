@@ -29,6 +29,7 @@ Rules extracted from commit history that are specific to this project and not al
 - Extract when duplicated 3+ times. Identical template markup in 3+ places becomes a function component.
 - Delete thin wrapper modules with a single caller -- inline them instead.
 - Parameterize the differences when extracting shared logic.
+- **When modifying an existing shared component**, refactor all callers to the unified new behavior rather than adding a mode/variant attr. Keep shared components to a single render path.
 - Private helpers go at module bottom, public functions first.
 
 ## Template / UI
@@ -70,6 +71,7 @@ Rules extracted from commit history that are specific to this project and not al
 
 ## Testing
 
+- **Feature-specific test setup stays in the test modules that need it**, not in shared case templates (DataCase, ConnCase). Only add to shared templates when every test using that template genuinely needs it.
 - **`@tag :logged_out`** for public endpoint tests. **`@tag :capture_log`** on tests with expected error log output.
 - **Fixture modules** use `System.unique_integer([:positive])` for unique names and call through context functions (not raw `Repo.insert`).
 - **Verify outcomes through context modules**, not just UI assertions. Delete tests assert both `refute has_element?` and `assert_raise Ecto.NoResultsError`.

@@ -142,17 +142,18 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 
 ## External API Integrations
 
-| Module | API | Purpose |
-|--------|-----|---------|
-| `MusicBrainz` / `MusicBrainz.API` | musicbrainz.org | Release/artist metadata, search |
-| `LastFm` / `LastFm.API` | last.fm | Scrobbling, listening history, artist info (tags, similar artists), user profile/session validation |
-| `Discogs` / `Discogs.API` | discogs.com | Artist profiles, images |
-| `Wikipedia` / `Wikipedia.API` | wikipedia.org | Artist biographies |
-| `BraveSearch` / `BraveSearch.API` | search.brave.com | Cover art and artist image search |
-| `OpenAI` / `OpenAI.API` | api.openai.com | Text embeddings for similarity, streaming chat via Responses API (gpt-4.1 + web search), rate-limited |
-| `MusicLibrary.Mailer` | Mailgun (via Swoosh) | Transactional email delivery (error notifications, daily digest) |
+| Module | API | Rate limit | Purpose |
+|--------|-----|-----------|---------|
+| `MusicBrainz` / `MusicBrainz.API` | musicbrainz.org | 1000 ms | Release/artist metadata, search |
+| `LastFm` / `LastFm.API` | last.fm | 500 ms | Scrobbling, listening history, artist info (tags, similar artists), user profile/session validation |
+| `Discogs` / `Discogs.API` | discogs.com | 2000 ms | Artist profiles, images |
+| `Wikipedia` / `Wikipedia.API` | wikipedia.org | 1000 ms | Artist biographies |
+| `BraveSearch` / `BraveSearch.API` | search.brave.com | 1000 ms | Cover art and artist image search |
+| `OpenAI` / `OpenAI.API` | api.openai.com | 250 ms | Text embeddings for similarity, streaming chat via Responses API (gpt-4.1 + web search) |
+| `MusicLibrary.Mailer` | Mailgun (via Swoosh) | — | Transactional email delivery (error notifications, daily digest) |
 
-Each has a `Config` module reading from application env. In tests, all HTTP calls are
+Each has a `Config` module reading from application env. All HTTP clients use `Req` with
+per-API rate limiting (`Req.RateLimiter`, ETS-backed). In tests, all HTTP calls are
 stubbed via `Req.Test` (configured in `config/test.exs`).
 
 ---

@@ -48,15 +48,6 @@ Three separate SQLite databases, each managed by its own Ecto repo:
 All databases use incremental auto-vacuum. Paths are configured via environment variables
 (`DATABASE_PATH`, `BACKGROUND_DATABASE_PATH`, `TELEMETRY_DATABASE_PATH`).
 
-SQLite extensions loaded at runtime: `unicode`, `vec0` (vector search).
-
-### Scheduled maintenance
-
-| Schedule | Worker | Purpose |
-|----------|--------|---------|
-| Daily 3 AM | `RepoVacuum` | Reclaim unused space |
-| Daily 4 AM | `RepoOptimize` | Run `PRAGMA optimize` |
-
 ---
 
 ## Backups
@@ -238,61 +229,6 @@ Used for error notifications and the daily "records on this day" digest email.
 
 ---
 
-## External API Integrations
-
-All HTTP clients use `Req` with per-API rate limiting (`Req.RateLimiter`, ETS-backed).
-
-| API | Rate limit | Purpose |
-|-----|-----------|---------|
-| MusicBrainz | 1000 ms cooldown | Release/artist metadata, search |
-| Last.fm | 500 ms cooldown | Scrobbling, listening history, artist tags |
-| Discogs | 2000 ms cooldown | Artist profiles, images |
-| Wikipedia | 1000 ms cooldown | Artist biographies |
-| Brave Search | 1000 ms cooldown | Cover art, artist image search |
-| OpenAI | 250 ms cooldown | Text embeddings (similarity), streaming chat |
-
----
-
-## Background Jobs
-
-Oban with `Oban.Engines.Lite` (SQLite-backed, process-based).
-
-### Queues
-
-| Queue | Concurrency | Purpose |
-|-------|-------------|---------|
-| `default` | 10 | General async tasks |
-| `heavy_writes` | 1 | Serialized DB-intensive operations |
-| `music_brainz` | 1 | MusicBrainz API calls |
-| `discogs` | 1 | Discogs API calls |
-| `wikipedia` | 1 | Wikipedia API calls |
-| `last_fm` | 1 | Last.fm API calls |
-
-### Plugins
-
-- **Pruner**: Removes completed/cancelled/discarded jobs older than 12 hours
-- **Reindexer**: Weekly Oban table reindex
-- **Cron**: Scheduled jobs (timezone: `Europe/London`)
-
-### Cron schedule
-
-| Schedule | Worker |
-|----------|--------|
-| Every 12h | `ApplyScrobbleRules` |
-| Every 12h | `PruneAssetCache` |
-| Daily 2 AM | `PruneAssets` |
-| Daily 3 AM | `RepoVacuum` |
-| Daily 4 AM | `RepoOptimize` |
-| Daily 7 AM | `SendRecordsOnThisDayEmail` |
-| Monthly 1st, 6 AM | `RecordRefreshAllMusicBrainzData` |
-| Monthly 1st, 7 AM | `RecordGenerateAllEmbeddings` |
-| Monthly 1st, 8 AM | `ArtistRefreshAllMusicBrainzData` |
-| Monthly 1st, 9 AM | `ArtistRefreshAllDiscogsData` |
-| Every 5 min | `RefreshScrobbles` |
-| Monthly 1st, 10 AM | `ArtistRefreshAllWikipediaData` |
-
----
-
 ## Encryption
 
 Cloak vault (`MusicLibrary.Vault`) with AES.GCM cipher for at-rest encryption of
@@ -303,10 +239,4 @@ secrets stored in the `secrets` table. Key configured via `CLOAK_ENCRYPTION_KEY`
 
 ## Tool Versions
 
-Defined in `mise.toml`:
-
-| Tool | Version |
-|------|---------|
-| Elixir | 1.20.0-rc.3-otp-28 |
-| Erlang | 28.4.1 |
-| Node.js | 24.13.0 |
+Defined in `mise.toml`.
