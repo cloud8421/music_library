@@ -50,10 +50,12 @@ Each query in the log file looks like:
 
 ```sql
 -- MusicLibrary.Collection.list_records/2, at: lib/music_library/collection.ex:42
+-- total=2.6ms db=2.6ms queue=0.0ms decode=0.0ms
 SELECT r0."id", r0."title" FROM "records" AS r0 WHERE (r0."purchased_at" IS NOT NULL) LIMIT 20;
 ```
 
-- The SQL comment shows the Elixir function and file:line that originated the query
+- The first comment shows the Elixir function and file:line that originated the query
+- The second comment shows timing: total, db (query execution), queue (connection wait), decode
 - Parameters are fully interpolated (no `?` placeholders)
 - Each query ends with `;` and is separated by a blank line
 - Queries are executable — you can paste them into `sqlite3` or `mcp__tidewave__execute_sql_query`

@@ -57,8 +57,8 @@ defmodule MusicLibrary.QueryReporter do
 
   # sobelow_skip ["Traversal.FileModule"]
   @doc false
-  def handle_event(@event, _measurements, metadata, file_path) do
-    entry = format_entry(metadata)
+  def handle_event(@event, measurements, metadata, file_path) do
+    entry = format_entry(metadata, measurements)
     # Path is provided by the developer at runtime via IEx/Tidewave
     File.write!(file_path, entry, [:append])
   rescue
@@ -66,16 +66,45 @@ defmodule MusicLibrary.QueryReporter do
       Logger.warning("QueryReporter failed to write: #{inspect(error)}")
   end
 
-  defp format_entry(metadata) do
+  defp format_entry(metadata, measurements) do
     params = metadata.cast_params || metadata.params || []
     query = interpolate_query(metadata.query, params)
     location = extract_source_location(metadata.stacktrace)
+    timing = format_timing(measurements)
 
     IO.iodata_to_binary([
       if(location, do: [location, "\n"], else: []),
+      timing,
+      "\n",
       String.trim_trailing(query),
       ";\n\n"
     ])
+  end
+
+  defp format_timing(measurements) do
+    parts =
+      [:total_time, :query_time, :queue_time, :decode_time]
+      |> Enum.flat_map(fn key ->
+        case Map.get(measurements, key) do
+          nil -> []
+          value -> [{key, to_ms(value)}]
+        end
+      end)
+
+    label = fn
+      :total_time -> "total"
+      :query_time -> "db"
+      :queue_time -> "queue"
+      :decode_time -> "decode"
+    end
+
+    formatted = Enum.map_join(parts, " ", fn {key, ms} -> "#{label.(key)}=#{ms}ms" end)
+    "-- #{formatted}"
+  end
+
+  defp to_ms(native) do
+    us = System.convert_time_unit(native, :native, :microsecond)
+    Float.round(us / 1000, 1)
   end
 
   defp interpolate_query(query, []), do: query
