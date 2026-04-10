@@ -128,9 +128,6 @@ For production, please see `compose.yaml` for a list of required variables.
 
 Start the Phoenix endpoint with `mise run console` (along with an attached IEx session).
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-The default password for development is `change me`.
-
 ## Auditing Scrobble Data Quality
 
 The application includes a Mix task to audit scrobbled tracks and identify data quality issues such as missing MusicBrainz IDs for artists and albums.
