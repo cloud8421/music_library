@@ -68,6 +68,56 @@ it contains the full attribute/slot API for each component. You can also search 
 mix usage_rules.search_docs "component_name" -p fluxon
 ```
 
+## Visual verification with Chrome DevTools
+
+Use the Chrome DevTools MCP tools to verify UI changes in the running dev server.
+
+### When to screenshot
+
+Take screenshots after **visual** changes — styling, layout, component additions or
+removals, responsive adjustments. Skip for logic-only changes (event handlers, assigns
+that don't affect rendering).
+
+### Authentication
+
+The dev server requires login. If you get redirected to `/login`, fill the password
+field and submit before navigating to your target page:
+
+1. `take_snapshot` to get element UIDs
+2. `fill` the password field with the dev password from `config/config.exs`
+   (`login_password` under `:music_library, MusicLibraryWeb`)
+3. `click` the Login button
+4. `navigate_page` to your target route
+
+### Dark mode verification
+
+When your change adds or modifies **color classes, backgrounds, borders, or custom
+styling**, take two screenshots:
+
+1. Default (light mode) — screenshot as-is
+2. Dark mode — run `evaluate_script` with
+   `document.documentElement.classList.add('dark')`, then screenshot
+
+This connects directly to the "Dark mode always paired" checklist rule. Both screenshots
+must look correct.
+
+When the change is limited to Fluxon component attributes (e.g., `variant`, `size`) with
+no custom color classes, dark mode is handled by the component library — a single
+screenshot suffices.
+
+### Before/after comparison
+
+For styling changes, take a screenshot **before** editing so you can describe what
+changed. This helps confirm the change had the intended effect and didn't break
+surrounding elements.
+
+### Worktree limitation
+
+The dev server at the configured port serves the **main repo**, not a git worktree. If
+you are working in a worktree, visual verification reflects the main branch state. To
+verify worktree changes visually, start a separate server in the worktree with
+`mise run dev:worktree-setup` or apply the change to the main repo first.
+
 ---
 
 <!-- usage-rules-skill-start -->

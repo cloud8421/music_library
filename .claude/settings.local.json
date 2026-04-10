@@ -56,7 +56,8 @@
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_screenshot",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_snapshot",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__fill",
-      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__click"
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__click",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__evaluate_script"
     ]
   },
   "enableAllProjectMcpServers": false
