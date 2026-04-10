@@ -137,6 +137,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `MusicLibraryWeb.RecordsOnThisDayEmail` | Builds and sends daily "records on this day" email with cover images, anniversary styling |
 | `MusicLibrary.Mailer` | Swoosh mailer (Mailgun in prod, local adapter in dev) |
 | `FormatNumber` | Number formatting utility |
+| `QueryReporter` | Dev-only Ecto telemetry reporter: captures executed SQL to a log file with interpolated params, source locations, and timing. Activated at runtime via `start/1` / `stop/0` |
 
 ---
 
