@@ -558,9 +558,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
 
     case Artists.refresh_lastfm_data(musicbrainz_id) do
       {:ok, artist_info} ->
-        musicbrainz_id
-        |> Records.get_artist_records()
-        |> Enum.each(&Records.generate_embedding_async/1)
+        Records.Similarity.regenerate_artist_embeddings(musicbrainz_id)
 
         {:noreply,
          socket

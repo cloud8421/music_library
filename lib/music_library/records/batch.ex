@@ -19,7 +19,7 @@ defmodule MusicLibrary.Records.Batch do
   @spec generate_embeddings() :: {:ok, [String.t()]}
   def generate_embeddings do
     Batch.run_on_all(from(r in Record), "record", fn record ->
-      Records.generate_embedding_async(record)
+      Records.Similarity.generate_embedding_async(record)
     end)
   end
 end
