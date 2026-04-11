@@ -90,7 +90,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 
 | Context | Schemas | Responsibility |
 |---------|---------|---------------|
-| `Records` | Record, RecordEmbedding, SearchIndex | CRUD, search, import from MusicBrainz, cover/genre/color/embedding management, PubSub notifications |
+| `Records` | Record, RecordEmbedding, SearchIndex | CRUD, search, import from MusicBrainz, cover/genre/color management, PubSub notifications |
 | `Collection` | Record (via SearchIndex) | Querying collected records (purchased_at != nil), stats, collected artist IDs |
 | `Wishlist` | Record (via SearchIndex) | Querying wishlisted records (purchased_at is nil) |
 | `Artists` | ArtistInfo, ArtistRecord | Artist metadata from MusicBrainz/Discogs/Wikipedia/Last.fm, images, search |
@@ -114,7 +114,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | Module | Purpose |
 |--------|---------|
 | `Records.SearchParser` | Parses search syntax: `artist:X`, `album:X`, `genre:"Y"`, `format:cd`, `type:album`, `purchase_year:2024`, `release_year:2024`, free text |
-| `Records.Similarity` | Embedding generation (OpenAI, enriched with Last.fm tags, skips API call when text representation unchanged), cosine-distance search (sqlite-vec) |
+| `Records.Similarity` | Embedding generation and async enqueue (OpenAI, enriched with Last.fm tags, skips API call when text representation unchanged), artist-cascade regeneration when upstream metadata changes, cosine-distance search (sqlite-vec) |
 | `Records.TracklistPdf` | Generates 120mm×120mm PDF tracklist from record + release data (Typst) |
 | `Batch` | Generic batch runner: stream + transaction + error accumulation |
 | `Records.Batch` | Batch operations: refresh all MusicBrainz data, generate all embeddings (uses `Batch`) |
