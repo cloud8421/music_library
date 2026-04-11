@@ -242,7 +242,8 @@ defmodule MusicLibrary.Records do
     selected_release_id = Keyword.get(opts, :selected_release_id, nil)
 
     with {:ok, release_group} <- MusicBrainz.get_release_group(musicbrainz_id),
-         {:ok, release_group_with_releases} <- merge_releases(musicbrainz_id, release_group),
+         {:ok, releases} <- MusicBrainz.get_all_releases(musicbrainz_id),
+         release_group_with_releases = Map.put(release_group, "releases", releases),
          {:ok, cover_data} <- get_cover_art_or_default(musicbrainz_id),
          {:ok, asset} <- Assets.store_image(%{content: cover_data, format: "image/jpeg"}) do
       release_group_with_releases
@@ -360,7 +361,9 @@ defmodule MusicLibrary.Records do
   @spec refresh_musicbrainz_data(Record.t()) :: {:ok, Record.t()} | {:error, term()}
   def refresh_musicbrainz_data(record) do
     with {:ok, data} <- MusicBrainz.get_release_group(record.musicbrainz_id),
-         {:ok, data_with_releases} <- merge_releases(record.musicbrainz_id, data) do
+         {:ok, releases} <- MusicBrainz.get_all_releases(record.musicbrainz_id) do
+      data_with_releases = Map.put(data, "releases", releases)
+
       record
       |> Record.add_musicbrainz_data(data_with_releases)
       |> Repo.update()
@@ -371,31 +374,6 @@ defmodule MusicLibrary.Records do
           {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
   def refresh_musicbrainz_data_async(record) do
     enqueue_worker(Worker.RecordRefreshMusicBrainzData, %{"id" => record.id}, record_meta(record))
-  end
-
-  defp merge_releases(musicbrainz_id, musicbrainz_data) do
-    with {:ok, releases} <- stream_releases(musicbrainz_id) do
-      {:ok, Map.put(musicbrainz_data, "releases", releases)}
-    end
-  end
-
-  defp stream_releases(musicbrainz_id) do
-    do_stream_releases(musicbrainz_id, [], 0)
-  end
-
-  defp do_stream_releases(musicbrainz_id, releases, offset) do
-    limit = 100
-    opts = [limit: limit, offset: offset]
-
-    with {:ok, data} <- MusicBrainz.get_releases(musicbrainz_id, opts) do
-      %{"releases" => new_releases} = data
-
-      if Enum.count(new_releases) < limit do
-        {:ok, releases ++ new_releases}
-      else
-        do_stream_releases(musicbrainz_id, releases ++ new_releases, offset + 100)
-      end
-    end
   end
 
   defp build_record_attrs(release_group, attrs) do
