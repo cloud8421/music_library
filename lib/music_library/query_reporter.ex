@@ -135,6 +135,10 @@ defmodule MusicLibrary.QueryReporter do
     end
   end
 
+  defp format_param(value) when is_list(value) or (is_map(value) and not is_struct(value)) do
+    "'" <> String.replace(JSON.encode!(value), "'", "''") <> "'"
+  end
+
   defp format_param(value), do: "'" <> String.replace(to_string(value), "'", "''") <> "'"
 
   defp extract_source_location(nil), do: nil

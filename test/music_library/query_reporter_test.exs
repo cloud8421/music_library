@@ -198,6 +198,44 @@ defmodule MusicLibrary.QueryReporterTest do
       assert File.read!(path) =~ "SELECT count(*) FROM records;"
     end
 
+    test "interpolates map params as JSON", %{path: path} do
+      QueryReporter.start(path)
+
+      emit_query(
+        path,
+        "UPDATE artist_infos SET musicbrainz_data = ? WHERE id = ?",
+        [%{"name" => "Test Artist"}, "abc"]
+      )
+
+      assert File.read!(path) =~ ~s|SET musicbrainz_data = '{"name":"Test Artist"}'|
+    end
+
+    test "interpolates list params as JSON", %{path: path} do
+      QueryReporter.start(path)
+      emit_query(path, "UPDATE records SET genres = ?", [["rock", "pop"]])
+
+      assert File.read!(path) =~ ~s|SET genres = '["rock","pop"]'|
+    end
+
+    test "interpolates list of embedded maps as JSON", %{path: path} do
+      QueryReporter.start(path)
+
+      emit_query(
+        path,
+        "UPDATE records SET artists = ?",
+        [[%{"name" => "A"}, %{"name" => "B"}]]
+      )
+
+      assert File.read!(path) =~ ~s|SET artists = '[{"name":"A"},{"name":"B"}]'|
+    end
+
+    test "escapes single quotes in map JSON params", %{path: path} do
+      QueryReporter.start(path)
+      emit_query(path, "UPDATE records SET data = ?", [%{"title" => "Rock'n'Roll"}])
+
+      assert File.read!(path) =~ ~s|SET data = '{"title":"Rock''n''Roll"}'|
+    end
+
     test "uses cast_params over params when both present", %{path: path} do
       QueryReporter.start(path)
 
