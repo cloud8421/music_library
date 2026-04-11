@@ -5,6 +5,8 @@ defmodule MusicBrainz do
 
   alias MusicBrainz.API
 
+  @page_size 100
+
   @type search_opts :: [limit: non_neg_integer(), offset: non_neg_integer()]
 
   @spec search_release_group(String.t(), search_opts()) ::
@@ -33,6 +35,33 @@ defmodule MusicBrainz do
   @spec get_releases(String.t(), keyword()) :: {:ok, map()} | {:error, term()}
   def get_releases(musicbrainz_id, opts) do
     API.get_releases(musicbrainz_id, opts, music_brainz_config())
+  end
+
+  @doc """
+  Fetches all releases belonging to the given release group by paging through
+  `get_releases/2` until an incomplete page is returned.
+
+  Returns the accumulated list of release maps as returned by
+  `MusicBrainz.API.get_releases/3`. On a failure partway through the loop
+  the error is returned and accumulated results are discarded.
+  """
+  @spec get_all_releases(String.t()) :: {:ok, [map()]} | {:error, term()}
+  def get_all_releases(release_group_id) do
+    fetch_all_releases(release_group_id, [], 0)
+  end
+
+  defp fetch_all_releases(release_group_id, acc, offset) do
+    opts = [limit: @page_size, offset: offset]
+
+    with {:ok, %{"releases" => page}} <- get_releases(release_group_id, opts) do
+      acc = acc ++ page
+
+      if length(page) < @page_size do
+        {:ok, acc}
+      else
+        fetch_all_releases(release_group_id, acc, offset + @page_size)
+      end
+    end
   end
 
   @spec get_release(String.t()) :: {:ok, map()} | {:error, term()}
