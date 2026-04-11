@@ -19,9 +19,14 @@ defmodule MusicLibrary.Records.BatchTest do
 
   describe "generate_embeddings/0" do
     test "enqueues embedding jobs for all records" do
-      _record = record()
+      record = record()
 
       assert {:ok, []} = Batch.generate_embeddings()
+
+      assert_enqueued(
+        worker: MusicLibrary.Worker.GenerateRecordEmbedding,
+        args: %{record_id: record.id}
+      )
     end
 
     test "succeeds with no records" do
