@@ -45,4 +45,101 @@ defmodule MusicBrainzTest do
              end)
     end
   end
+
+  describe "get_all_releases/1" do
+    @release_group_id "ae504fd6-8498-463e-8d96-14f9e11d1863"
+
+    defp release_page(count) do
+      releases =
+        for i <- 1..count do
+          %{"id" => "rel-#{:erlang.unique_integer([:positive])}", "title" => "Release #{i}"}
+        end
+
+      %{"releases" => releases, "release-offset" => 0, "release-count" => count}
+    end
+
+    test "single-page response returns the whole list" do
+      page = release_page(25)
+
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        conn = Plug.Conn.fetch_query_params(conn)
+        assert conn.query_params["offset"] == "0"
+        assert conn.query_params["limit"] == "100"
+        Req.Test.json(conn, page)
+      end)
+
+      assert {:ok, releases} = MusicBrainz.get_all_releases(@release_group_id)
+      assert releases == page["releases"]
+    end
+
+    test "multi-page response accumulates pages in order until a short page is returned" do
+      full_page = release_page(100)
+      tail_page = release_page(42)
+
+      {:ok, agent} = Agent.start_link(fn -> [] end)
+
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        conn = Plug.Conn.fetch_query_params(conn)
+        Agent.update(agent, fn calls -> calls ++ [conn.query_params["offset"]] end)
+
+        case conn.query_params["offset"] do
+          "0" -> Req.Test.json(conn, full_page)
+          "100" -> Req.Test.json(conn, tail_page)
+        end
+      end)
+
+      assert {:ok, releases} = MusicBrainz.get_all_releases(@release_group_id)
+      assert length(releases) == 142
+      assert releases == full_page["releases"] ++ tail_page["releases"]
+      assert Agent.get(agent, & &1) == ["0", "100"]
+    end
+
+    test "exact-boundary page (equal to limit) triggers an extra fetch that returns empty" do
+      full_page = release_page(100)
+      empty_page = %{"releases" => []}
+
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        conn = Plug.Conn.fetch_query_params(conn)
+
+        case conn.query_params["offset"] do
+          "0" -> Req.Test.json(conn, full_page)
+          "100" -> Req.Test.json(conn, empty_page)
+        end
+      end)
+
+      assert {:ok, releases} = MusicBrainz.get_all_releases(@release_group_id)
+      assert length(releases) == 100
+      assert releases == full_page["releases"]
+    end
+
+    test "empty response returns an empty list" do
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        Req.Test.json(conn, %{"releases" => []})
+      end)
+
+      assert {:ok, releases} = MusicBrainz.get_all_releases(@release_group_id)
+      assert releases == []
+    end
+
+    test "error on a later page is returned immediately" do
+      full_page = release_page(100)
+
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        conn = Plug.Conn.fetch_query_params(conn)
+
+        case conn.query_params["offset"] do
+          "0" ->
+            Req.Test.json(conn, full_page)
+
+          "100" ->
+            conn
+            |> Plug.Conn.put_resp_content_type("application/json")
+            |> Plug.Conn.send_resp(503, ~s({"error":"service unavailable"}))
+        end
+      end)
+
+      assert {:error, %{"error" => "service unavailable"}} =
+               MusicBrainz.get_all_releases(@release_group_id)
+    end
+  end
 end
