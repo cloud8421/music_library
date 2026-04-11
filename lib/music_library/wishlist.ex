@@ -6,7 +6,7 @@ defmodule MusicLibrary.Wishlist do
   import Ecto.Query, warn: false
 
   alias MusicLibrary.Records
-  alias MusicLibrary.Records.{RecordRelease, SearchIndex}
+  alias MusicLibrary.Records.SearchIndex
   alias MusicLibrary.Repo
 
   @pagination Application.compile_env!(:music_library, :pagination)
@@ -28,13 +28,6 @@ defmodule MusicLibrary.Wishlist do
   @spec count() :: non_neg_integer()
   def count do
     Repo.aggregate(base_search(), :count)
-  end
-
-  @spec wishlisted_releases_query() :: Ecto.Query.t()
-  def wishlisted_releases_query do
-    from rr in RecordRelease,
-      where: is_nil(rr.purchased_at),
-      select: %{record_id: rr.record_id, cover_hash: rr.cover_hash, release_id: rr.release_id}
   end
 
   defp base_search do

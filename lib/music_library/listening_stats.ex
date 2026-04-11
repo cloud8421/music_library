@@ -3,8 +3,9 @@ defmodule MusicLibrary.ListeningStats do
   Listening analytics and track management derived from Last.fm scrobble data.
 
   Provides scrobble counts, recent activity feeds, top albums/artists
-  by time period, and track CRUD/search/listing. All queries join across
-  LastFm.Track, Collection, Wishlist, and ArtistInfo.
+  by time period, and track CRUD/search/listing. Cross-references tracks
+  with records (via `record_releases`), artists (via `artist_records`),
+  and `Artists.ArtistInfo`.
   """
 
   import Ecto.Query
@@ -14,11 +15,8 @@ defmodule MusicLibrary.ListeningStats do
   alias MusicLibrary.{
     Artists,
     BackgroundRepo,
-    Collection,
-    Records.ArtistRecord,
     Records.Record,
     Repo,
-    Wishlist,
     Worker
   }
 
@@ -115,7 +113,7 @@ defmodule MusicLibrary.ListeningStats do
     #   track -> album -> record -> artist
 
     tracks_query =
-      from [t, cr, wr, ar] in tracks_with_record_info_query(),
+      from t in tracks_with_record_info_query(),
         order_by: [desc: t.scrobbled_at_uts],
         limit: ^limit
 
@@ -267,8 +265,9 @@ defmodule MusicLibrary.ListeningStats do
   def get_top_albums(opts) do
     limit = Keyword.get(opts, :limit, @pagination[:top_items_limit])
 
-    top_albums_base_query()
-    |> limit(^limit)
+    Track
+    |> top_albums_aggregate_query(limit)
+    |> top_albums_attach_metadata()
     |> Repo.all()
   end
 
@@ -281,9 +280,11 @@ defmodule MusicLibrary.ListeningStats do
     limit = Keyword.get(opts, :limit, @pagination[:top_items_limit])
     cutoff_timestamp = cutoff_timestamp(days, opts)
 
-    top_albums_base_query()
-    |> where([t], t.scrobbled_at_uts >= ^cutoff_timestamp)
-    |> limit(^limit)
+    cutoff_timestamp
+    |> tracks_since_query()
+    |> subquery()
+    |> top_albums_aggregate_query(limit)
+    |> top_albums_attach_metadata()
     |> Repo.all()
   end
 
@@ -295,8 +296,9 @@ defmodule MusicLibrary.ListeningStats do
   def get_top_artists(opts) do
     limit = Keyword.get(opts, :limit, @pagination[:top_items_limit])
 
-    top_artists_base_query()
-    |> limit(^limit)
+    Track
+    |> top_artists_aggregate_query(limit)
+    |> top_artists_attach_metadata()
     |> Repo.all()
   end
 
@@ -309,94 +311,147 @@ defmodule MusicLibrary.ListeningStats do
     limit = Keyword.get(opts, :limit, @pagination[:top_items_limit])
     cutoff_timestamp = cutoff_timestamp(days, opts)
 
-    top_artists_base_query()
-    |> where([t], t.scrobbled_at_uts >= ^cutoff_timestamp)
-    |> limit(^limit)
+    cutoff_timestamp
+    |> tracks_since_query()
+    |> subquery()
+    |> top_artists_aggregate_query(limit)
+    |> top_artists_attach_metadata()
     |> Repo.all()
   end
 
   # Shared base queries
 
+  # Correlated scalar subqueries against `record_releases` and `artist_records`
+  # avoid materializing helper subqueries for the entire `record_releases` table
+  # on every call. They evaluate per result row, so the cost scales with the
+  # outer LIMIT, not with the number of releases in the database.
+  # See issue #148.
   defp tracks_with_record_info_query do
-    all_artists_query =
-      from ar in ArtistRecord,
-        distinct: true
-
     from t in Track,
-      left_join: cr in subquery(unique_collected_releases_query()),
-      on: cr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
-      left_join: wr in subquery(unique_wishlisted_releases_query()),
-      on: wr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
-      left_join: ar in subquery(all_artists_query),
-      on: wr.record_id == ar.record_id or cr.record_id == ar.record_id,
       select: %{
         track: t,
-        collected_record_id: cr.record_id,
-        wishlisted_record_id: wr.record_id,
-        artist_id: ar.musicbrainz_id,
-        cover_hash: coalesce(cr.cover_hash, wr.cover_hash)
+        collected_record_id:
+          fragment(
+            "(SELECT min(record_id) FROM record_releases WHERE release_id = (? ->> '$.musicbrainz_id') AND purchased_at IS NOT NULL)",
+            t.album
+          ),
+        wishlisted_record_id:
+          fragment(
+            "(SELECT min(record_id) FROM record_releases WHERE release_id = (? ->> '$.musicbrainz_id') AND purchased_at IS NULL)",
+            t.album
+          ),
+        artist_id:
+          fragment(
+            "(SELECT min(musicbrainz_id) FROM artist_records WHERE record_id = coalesce((SELECT min(record_id) FROM record_releases WHERE release_id = (? ->> '$.musicbrainz_id') AND purchased_at IS NOT NULL), (SELECT min(record_id) FROM record_releases WHERE release_id = (? ->> '$.musicbrainz_id') AND purchased_at IS NULL)))",
+            t.album,
+            t.album
+          ),
+        cover_hash:
+          fragment(
+            "coalesce((SELECT min(cover_hash) FROM record_releases WHERE release_id = (? ->> '$.musicbrainz_id') AND purchased_at IS NOT NULL), (SELECT min(cover_hash) FROM record_releases WHERE release_id = (? ->> '$.musicbrainz_id') AND purchased_at IS NULL))",
+            t.album,
+            t.album
+          )
       }
   end
 
-  defp top_albums_base_query do
+  # Wraps a date-filtered scan with `limit: -1` so SQLite cannot flatten the
+  # subquery into the outer GROUP BY. The forced materialization lets the
+  # optimizer use `scrobbled_tracks_scrobbled_at_uts_title_index` for the
+  # range scan instead of falling through to the album/artist composite index.
+  # See issue #148.
+  defp tracks_since_query(cutoff_timestamp) do
     from t in Track,
-      left_join: cr in subquery(unique_collected_releases_query()),
-      on: cr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
-      left_join: wr in subquery(unique_wishlisted_releases_query()),
-      on: wr.release_id == fragment("? ->> '$.musicbrainz_id'", t.album),
-      where: fragment("json_extract(album, '$.title') != ''"),
+      where: t.scrobbled_at_uts >= ^cutoff_timestamp,
+      limit: -1,
+      select: %{
+        scrobbled_at_uts: t.scrobbled_at_uts,
+        album: t.album,
+        artist: t.artist,
+        cover_url: t.cover_url
+      }
+  end
+
+  # Uses `json_extract(?, '$.path')` rather than the equivalent `? ->> '$.path'`
+  # because the existing composite index `scrobbled_tracks_album_title_artist_name_index`
+  # is built on `json_extract(...)`. SQLite requires the GROUP BY expression
+  # to match the index expression exactly to use the index for natural ordering.
+  defp top_albums_aggregate_query(track_source, limit) do
+    from t in track_source,
+      where: fragment("json_extract(?, '$.title')", t.album) != "",
       group_by: [
-        fragment("json_extract(album, '$.title')"),
-        fragment("json_extract(artist, '$.name')")
+        fragment("json_extract(?, '$.title')", t.album),
+        fragment("json_extract(?, '$.name')", t.artist)
       ],
       select: %{
-        album_title: fragment("json_extract(album, '$.title')"),
-        artist_name: fragment("json_extract(artist, '$.name')"),
-        artist_musicbrainz_id: fragment("json_extract(artist, '$.musicbrainz_id')"),
+        album_title: fragment("json_extract(?, '$.title')", t.album),
+        artist_name: fragment("json_extract(?, '$.name')", t.artist),
+        artist_musicbrainz_id: fragment("json_extract(?, '$.musicbrainz_id')", t.artist),
         play_count: count(t.scrobbled_at_uts, :distinct),
         cover_url: fragment("max(?)", t.cover_url),
-        album_musicbrainz_id: fragment("json_extract(album, '$.musicbrainz_id')"),
-        collected_record_id: cr.record_id,
-        wishlisted_record_id: wr.record_id,
-        cover_hash: coalesce(cr.cover_hash, wr.cover_hash)
+        album_musicbrainz_id: fragment("json_extract(?, '$.musicbrainz_id')", t.album)
       },
-      order_by: [desc: count(t.scrobbled_at_uts, :distinct)]
+      order_by: [desc: count(t.scrobbled_at_uts, :distinct)],
+      limit: ^limit
   end
 
-  defp top_artists_base_query do
-    from t in Track,
-      left_join: ai in Artists.ArtistInfo,
-      on: ai.id == fragment("json_extract(?, '$.musicbrainz_id')", t.artist),
-      group_by: [
-        fragment("json_extract(artist, '$.name')")
-      ],
+  # Attaches `record_releases` and `cover_hash` lookups to the LIMIT'd
+  # aggregate result via correlated scalar subqueries. The cost of these
+  # lookups scales with the number of result rows (≤ limit), not with the
+  # size of `record_releases`.
+  defp top_albums_attach_metadata(aggregate_query) do
+    from g in subquery(aggregate_query),
       select: %{
-        name: fragment("json_extract(artist, '$.name')"),
-        musicbrainz_id: max(fragment("json_extract(artist, '$.musicbrainz_id')")),
-        image_hash: max(ai.image_data_hash),
+        album_title: g.album_title,
+        artist_name: g.artist_name,
+        artist_musicbrainz_id: g.artist_musicbrainz_id,
+        play_count: g.play_count,
+        cover_url: g.cover_url,
+        album_musicbrainz_id: g.album_musicbrainz_id,
+        collected_record_id:
+          fragment(
+            "(SELECT min(record_id) FROM record_releases WHERE release_id = ? AND purchased_at IS NOT NULL)",
+            g.album_musicbrainz_id
+          ),
+        wishlisted_record_id:
+          fragment(
+            "(SELECT min(record_id) FROM record_releases WHERE release_id = ? AND purchased_at IS NULL)",
+            g.album_musicbrainz_id
+          ),
+        cover_hash:
+          fragment(
+            "coalesce((SELECT min(cover_hash) FROM record_releases WHERE release_id = ? AND purchased_at IS NOT NULL), (SELECT min(cover_hash) FROM record_releases WHERE release_id = ? AND purchased_at IS NULL))",
+            g.album_musicbrainz_id,
+            g.album_musicbrainz_id
+          )
+      }
+  end
+
+  # See note on `top_albums_aggregate_query/2` about `json_extract` vs `->>`.
+  # The same applies for `scrobbled_tracks_artist_name_index`.
+  defp top_artists_aggregate_query(track_source, limit) do
+    from t in track_source,
+      group_by: fragment("json_extract(?, '$.name')", t.artist),
+      select: %{
+        name: fragment("json_extract(?, '$.name')", t.artist),
+        musicbrainz_id: max(fragment("json_extract(?, '$.musicbrainz_id')", t.artist)),
         play_count: count(t.scrobbled_at_uts, :distinct)
       },
-      order_by: [desc: count(t.scrobbled_at_uts, :distinct)]
+      order_by: [desc: count(t.scrobbled_at_uts, :distinct)],
+      limit: ^limit
   end
 
-  defp unique_collected_releases_query do
-    from rr in subquery(Collection.collected_releases_query()),
-      group_by: rr.release_id,
+  defp top_artists_attach_metadata(aggregate_query) do
+    from g in subquery(aggregate_query),
+      left_join: ai in Artists.ArtistInfo,
+      on: ai.id == g.musicbrainz_id,
       select: %{
-        record_id: min(rr.record_id),
-        cover_hash: min(rr.cover_hash),
-        release_id: rr.release_id
-      }
-  end
-
-  defp unique_wishlisted_releases_query do
-    from rr in subquery(Wishlist.wishlisted_releases_query()),
-      group_by: rr.release_id,
-      select: %{
-        record_id: min(rr.record_id),
-        cover_hash: min(rr.cover_hash),
-        release_id: rr.release_id
-      }
+        name: g.name,
+        musicbrainz_id: g.musicbrainz_id,
+        image_hash: ai.image_data_hash,
+        play_count: g.play_count
+      },
+      order_by: [desc: g.play_count]
   end
 
   defp cutoff_timestamp(days, opts) do

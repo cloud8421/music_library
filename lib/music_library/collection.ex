@@ -7,7 +7,7 @@ defmodule MusicLibrary.Collection do
   import MusicLibrary.Records, only: [order_alphabetically: 0]
 
   alias MusicLibrary.Records
-  alias MusicLibrary.Records.{ArtistRecord, Record, RecordRelease, SearchIndex}
+  alias MusicLibrary.Records.{ArtistRecord, Record, SearchIndex}
   alias MusicLibrary.Repo
 
   @excluded_genres Application.compile_env!(:music_library, :excluded_genres)
@@ -176,13 +176,6 @@ defmodule MusicLibrary.Collection do
         limit: ^limit
 
     Repo.all(q)
-  end
-
-  @spec collected_releases_query() :: Ecto.Query.t()
-  def collected_releases_query do
-    from rr in RecordRelease,
-      where: not is_nil(rr.purchased_at),
-      select: %{record_id: rr.record_id, cover_hash: rr.cover_hash, release_id: rr.release_id}
   end
 
   @spec collected_artist_ids() :: MapSet.t(String.t())

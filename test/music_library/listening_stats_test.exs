@@ -411,6 +411,73 @@ defmodule MusicLibrary.ListeningStatsTest do
     end
   end
 
+  describe "play_count uses count(DISTINCT scrobbled_at_uts)" do
+    test "two tracks at the same scrobbled_at_uts count as one play in get_top_albums" do
+      shared_uts = System.system_time(:second) - 100
+
+      # Two distinct rows (different titles, so the (uts, title) UNIQUE
+      # constraint is satisfied) sharing the same scrobble timestamp.
+      # Last.fm sometimes scrobbles multiple tracks at the same UTS — the
+      # play_count must reflect unique listening events, not row count.
+      track_fixture(%{
+        title: "Same UTS Track A",
+        album_title: "Same UTS Album",
+        artist_name: "Same UTS Artist",
+        scrobbled_at_uts: shared_uts
+      })
+
+      track_fixture(%{
+        title: "Same UTS Track B",
+        album_title: "Same UTS Album",
+        artist_name: "Same UTS Artist",
+        scrobbled_at_uts: shared_uts
+      })
+
+      results = ListeningStats.get_top_albums(limit: 10)
+      [entry] = Enum.filter(results, fn r -> r.album_title == "Same UTS Album" end)
+
+      assert entry.play_count == 1,
+             "expected count(DISTINCT scrobbled_at_uts) semantics — got #{entry.play_count}"
+    end
+
+    test "two tracks at the same scrobbled_at_uts count as one play in get_top_artists" do
+      shared_uts = System.system_time(:second) - 100
+
+      track_fixture(%{
+        title: "Same UTS Track 1",
+        artist_name: "Same UTS Solo Artist",
+        scrobbled_at_uts: shared_uts
+      })
+
+      track_fixture(%{
+        title: "Same UTS Track 2",
+        artist_name: "Same UTS Solo Artist",
+        scrobbled_at_uts: shared_uts
+      })
+
+      results = ListeningStats.get_top_artists(limit: 10)
+      [entry] = Enum.filter(results, fn r -> r.name == "Same UTS Solo Artist" end)
+
+      assert entry.play_count == 1,
+             "expected count(DISTINCT scrobbled_at_uts) semantics — got #{entry.play_count}"
+    end
+  end
+
+  describe "list_tracks result-map shape" do
+    test "always includes :artist_id" do
+      # `lib/music_library_web/live/scrobbled_tracks_live/index.ex` (around lines
+      # 104–113) destructures `artist_id` from each stream item even though the
+      # template body never references it. Removing the key would crash the
+      # LiveView with `MatchError`. Lock the public contract here.
+      track_fixture(%{title: "Shape Test"})
+
+      [result | _] = ListeningStats.list_tracks(%{page: 1, page_size: 5})
+
+      assert Map.has_key?(result, :artist_id),
+             "list_tracks result map must include :artist_id (consumer: ScrobbledTracksLive.Index)"
+    end
+  end
+
   describe "get_top_artists/1" do
     test "counts tracks with missing artist_infos records" do
       artist_info =
