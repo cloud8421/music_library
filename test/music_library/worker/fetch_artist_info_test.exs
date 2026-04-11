@@ -47,7 +47,7 @@ defmodule MusicLibrary.Worker.FetchArtistInfoTest do
 
     test "fetches and stores artist info from all sources" do
       # Create a record with the artist musicbrainz_id matching the fixture
-      _record =
+      record =
         record(%{
           artists: [
             %{
@@ -103,6 +103,11 @@ defmodule MusicLibrary.Worker.FetchArtistInfoTest do
       artist_info = Artists.get_artist_info!(@steven_wilson_mbid)
       assert artist_info.musicbrainz_data != nil
       assert artist_info.wikipedia_data != nil
+
+      assert_enqueued(
+        worker: MusicLibrary.Worker.GenerateRecordEmbedding,
+        args: %{record_id: record.id}
+      )
     end
   end
 end
