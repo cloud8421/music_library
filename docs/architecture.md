@@ -100,7 +100,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `RecordSets` | RecordSet, RecordSetItem | User-curated record groupings with ordering |
 | `ScrobbleRules` | ScrobbleRule | Rules to remap Last.fm scrobble data to correct MusicBrainz IDs; searchable by match_value/target/description, orderable by alphabetical or inserted_at |
 | `ScrobbleActivity` | — | Scrobbling releases/media/tracks to Last.fm |
-| `ListeningStats` | (LastFm.Track, ArtistRecord, ArtistInfo) | Scrobble persistence, refresh scheduling, listening analytics, track CRUD, search, listing: scrobble counts, artist play counts (from DB), recent activity, top albums/artists by period |
+| `ListeningStats` | (LastFm.Track, RecordRelease, ArtistRecord, ArtistInfo) | Scrobble persistence, refresh scheduling, listening analytics, track CRUD, search, listing: scrobble counts, artist play counts (from DB), recent activity, top albums/artists by period |
 | `OnlineStoreTemplates` | OnlineStoreTemplate | URL templates for buying records online; searchable by name/description |
 | `Search` | (cross-context) | Universal search dispatcher across collection, wishlist, artists, record sets (delegates to domain contexts) |
 | `Secrets` | Secret | Encrypted key-value storage (CRUD + delete) |

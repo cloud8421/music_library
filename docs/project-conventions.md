@@ -53,6 +53,9 @@ Rules extracted from commit history that are specific to this project and not al
 ## Database
 
 - **SQLite JSON patterns:** `json_each()` and `json_extract()` via `fragment` for JSON column queries. Expression-based indexes on `json_extract` for performance.
+- **Match `GROUP BY` expressions to existing expression indexes.** SQLite treats `json_extract(?, '$.path')` and `? ->> '$.path'` as semantically equal but textually distinct. Use `json_extract` in `fragment` when an expression index on `json_extract(...)` already exists, so the GROUP BY can use the index for natural ordering.
+- **Force subquery materialization with `limit: -1` to prevent flattening.** When a date-filtered scan feeds an outer `GROUP BY` and SQLite prefers the wrong composite index, wrap the filter in `subquery()` with `limit: -1`. The forced materialization preserves the range-scan index.
+- **Correlated scalar subqueries beat `LEFT JOIN` for small-LIMIT enrichment.** When attaching lookups from a large table to a LIMIT'd result set, inline `(SELECT ... WHERE ...)` in the outer SELECT. Cost then scales with the outer LIMIT, not the lookup table size.
 - **Materialized views via triggers** (SQLite lacks native materialized views). Use explicit `up`/`down` in migrations for non-reversible DDL.
 - **Read-only schemas** for materialized/view tables: `@primary_key false`, no changeset functions, no timestamps.
 - **Every `execute` provides both up and down SQL.** Every index has a comment explaining which query it helps.
