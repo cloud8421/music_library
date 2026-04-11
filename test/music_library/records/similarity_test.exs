@@ -297,6 +297,78 @@ defmodule MusicLibrary.Records.SimilarityTest do
     end
   end
 
+  describe "generate_embedding_async/1" do
+    test "enqueues a GenerateRecordEmbedding job for the record" do
+      record = record()
+
+      assert {:ok, %Oban.Job{}} = Similarity.generate_embedding_async(record)
+
+      assert_enqueued(
+        worker: MusicLibrary.Worker.GenerateRecordEmbedding,
+        args: %{record_id: record.id}
+      )
+    end
+  end
+
+  describe "regenerate_artist_embeddings/1" do
+    test "enqueues a GenerateRecordEmbedding job for each record by the artist" do
+      artist_mbid = Ecto.UUID.generate()
+      other_artist_mbid = Ecto.UUID.generate()
+
+      record_a =
+        record(%{
+          artists: [
+            %{
+              name: "Target Artist",
+              musicbrainz_id: artist_mbid,
+              sort_name: "Artist, Target",
+              joinphrase: ""
+            }
+          ]
+        })
+
+      record_b =
+        record(%{
+          artists: [
+            %{
+              name: "Target Artist",
+              musicbrainz_id: artist_mbid,
+              sort_name: "Artist, Target",
+              joinphrase: ""
+            }
+          ]
+        })
+
+      _unrelated =
+        record(%{
+          artists: [
+            %{
+              name: "Unrelated",
+              musicbrainz_id: other_artist_mbid,
+              sort_name: "Unrelated",
+              joinphrase: ""
+            }
+          ]
+        })
+
+      assert :ok = Similarity.regenerate_artist_embeddings(artist_mbid)
+
+      assert_enqueued(
+        worker: MusicLibrary.Worker.GenerateRecordEmbedding,
+        args: %{record_id: record_a.id}
+      )
+
+      assert_enqueued(
+        worker: MusicLibrary.Worker.GenerateRecordEmbedding,
+        args: %{record_id: record_b.id}
+      )
+    end
+
+    test "returns :ok when the artist has no records" do
+      assert :ok = Similarity.regenerate_artist_embeddings(Ecto.UUID.generate())
+    end
+  end
+
   describe "find_similar/2" do
     setup do
       # Create test records with embeddings

@@ -341,6 +341,20 @@ defmodule MusicLibrary.Records.Similarity do
     |> Oban.insert()
   end
 
+  @doc """
+  Enqueues embedding regeneration for every record by the given artist.
+
+  Used when upstream artist metadata (MusicBrainz/Wikipedia/Discogs/Last.fm)
+  changes, so that each record's text representation — which embeds per-artist
+  context — is re-computed.
+  """
+  @spec regenerate_artist_embeddings(String.t()) :: :ok
+  def regenerate_artist_embeddings(musicbrainz_id) do
+    musicbrainz_id
+    |> Records.get_artist_records()
+    |> Enum.each(&generate_embedding_async/1)
+  end
+
   @spec generate_all_embeddings_async() :: non_neg_integer()
   def generate_all_embeddings_async do
     Record
