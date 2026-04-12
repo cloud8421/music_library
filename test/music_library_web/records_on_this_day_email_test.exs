@@ -47,7 +47,6 @@ defmodule MusicLibraryWeb.RecordsOnThisDayEmailTest do
     end
 
     test "skips sending when no records match" do
-      # Create a record with a release date that won't match
       Fixtures.Records.record(%{release_date: "2020-01-01"})
 
       date = ~D[2025-06-15]

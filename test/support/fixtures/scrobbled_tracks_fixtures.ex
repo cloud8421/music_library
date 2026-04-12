@@ -1,8 +1,5 @@
 defmodule MusicLibrary.ScrobbledTracksFixtures do
-  @moduledoc """
-  This module defines test helpers for creating
-  scrobbled track entities via the database.
-  """
+  @moduledoc false
 
   alias LastFm.Track
   alias MusicLibrary.Repo

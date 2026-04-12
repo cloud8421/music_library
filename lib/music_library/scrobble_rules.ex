@@ -281,11 +281,9 @@ defmodule MusicLibrary.ScrobbleRules do
       {album_rules, artist_rules} =
         Enum.split_with(enabled_rules, fn rule -> rule.type == :album end)
 
-      # Apply all album rules in one query
       album_result =
         case apply_all_album_rules(album_rules) do
           {:ok, count} ->
-            # Return the count for each album rule (total updated)
             # Note: this returns the same count for each rule since they're applied together
             Enum.map(album_rules, fn rule ->
               {:ok, {rule.type, rule.match_value, count}}
@@ -297,11 +295,9 @@ defmodule MusicLibrary.ScrobbleRules do
             end)
         end
 
-      # Apply all artist rules in one query
       artist_result =
         case apply_all_artist_rules(artist_rules) do
           {:ok, count} ->
-            # Return the count for each artist rule (total updated)
             # Note: this returns the same count for each rule since they're applied together
             Enum.map(artist_rules, fn rule ->
               {:ok, {rule.type, rule.match_value, count}}

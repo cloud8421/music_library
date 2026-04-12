@@ -1,8 +1,5 @@
 defmodule MusicLibrary.Fixtures.OnlineStoreTemplates do
-  @moduledoc """
-  This module defines test helpers for creating
-  entities via the `MusicLibrary.OnlineStoreTemplates` context.
-  """
+  @moduledoc false
 
   alias MusicLibrary.OnlineStoreTemplates
 

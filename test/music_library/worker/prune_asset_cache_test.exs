@@ -8,11 +8,9 @@ defmodule MusicLibrary.Worker.PruneAssetCacheTest do
     @describetag :capture_log
 
     test "prunes old cache entries" do
-      # Insert a cache entry with an old timestamp
       old_timestamp = DateTime.utc_now() |> DateTime.add(-8, :day) |> DateTime.to_unix()
       :ets.insert(Cache, {{"old_payload", "image/jpeg"}, old_timestamp, "old_content"})
 
-      # Insert a recent cache entry
       Cache.set("recent_payload", "image/jpeg", "recent_content")
 
       assert :ok = perform_job(PruneAssetCache, %{})

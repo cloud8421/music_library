@@ -1,8 +1,5 @@
 defmodule MusicLibrary.Fixtures.RecordSets do
-  @moduledoc """
-  This module defines test helpers for creating
-  entities via the `MusicLibrary.RecordSets` context.
-  """
+  @moduledoc false
 
   alias MusicLibrary.RecordSets
 

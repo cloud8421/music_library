@@ -1,8 +1,5 @@
 defmodule MusicLibrary.ScrobbleRulesFixtures do
-  @moduledoc """
-  This module defines test helpers for creating
-  entities via the `MusicLibrary.ScrobbleRules` context.
-  """
+  @moduledoc false
 
   alias MusicLibrary.ScrobbleRules
 

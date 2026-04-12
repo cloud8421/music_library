@@ -209,7 +209,6 @@ defmodule MusicLibrary.ScrobbleRulesTest do
 
       assert {:ok, 1} = ScrobbleRules.apply_album_rule(rule)
 
-      # Verify the matching track was updated
       updated_track = Repo.get_by(Track, scrobbled_at_uts: track1.scrobbled_at_uts)
       assert updated_track.album.musicbrainz_id == rule.target_musicbrainz_id
     end
@@ -232,7 +231,6 @@ defmodule MusicLibrary.ScrobbleRulesTest do
 
       assert {:ok, 1} = ScrobbleRules.apply_artist_rule(rule)
 
-      # Verify the matching track was updated
       updated_track = Repo.get_by(Track, scrobbled_at_uts: track1.scrobbled_at_uts)
       assert updated_track.artist.musicbrainz_id == rule.target_musicbrainz_id
     end
@@ -359,17 +357,14 @@ defmodule MusicLibrary.ScrobbleRulesTest do
           album: %{musicbrainz_id: "", title: "Wish You Were Here"}
         })
 
-      # Create a non-matching track
       _track3 =
         scrobbled_track_fixture(%{
           scrobbled_at_uts: System.system_time(:second) + 2,
           album: %{musicbrainz_id: "", title: "The Wall"}
         })
 
-      # Apply both rules at once
       assert {:ok, 2} = ScrobbleRules.apply_all_album_rules([rule1, rule2])
 
-      # Verify both tracks were updated by fetching them again
       updated_track1 = Repo.get(Track, track1.scrobbled_at_uts)
       assert updated_track1.album.musicbrainz_id == rule1.target_musicbrainz_id
 
@@ -400,7 +395,6 @@ defmodule MusicLibrary.ScrobbleRulesTest do
           artist: %{musicbrainz_id: "", name: "Led Zeppelin"}
         })
 
-      # Create a non-matching track
       _track3 =
         scrobbled_track_fixture(%{
           scrobbled_at_uts: System.system_time(:second) + 2,

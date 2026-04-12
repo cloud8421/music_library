@@ -1,8 +1,5 @@
 defmodule MusicLibrary.ArtistInfoFixtures do
-  @moduledoc """
-  This module defines test helpers for creating
-  entities via the `MusicLibrary.Artists.ArtistInfo` schema.
-  """
+  @moduledoc false
 
   alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibrary.Repo

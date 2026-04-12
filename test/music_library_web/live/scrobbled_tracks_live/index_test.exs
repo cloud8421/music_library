@@ -37,7 +37,6 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
     end
 
     test "shows empty state when no tracks", %{conn: conn} do
-      # Delete the created track
       ListeningStats.delete_track(track_fixture())
 
       conn

@@ -56,7 +56,6 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
 
       session
       |> unwrap(fn view ->
-        # Process the {:perform_search, query} message
         render(view)
       end)
       |> assert_has("input[value='marbles']")
@@ -73,7 +72,6 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
         |> form("form[phx-submit='search']", %{query: "marbles"})
         |> render_submit()
 
-        # Process the {:perform_search, query} message
         render(view)
       end)
       |> assert_has("h3", "Release Groups")
@@ -103,16 +101,13 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
         |> form("form[phx-submit='search']", %{query: "marbles"})
         |> render_submit()
 
-        # Process search results
         render(view)
 
-        # Click on a release group
         view
         |> render_click("select_release_group", %{
           "release_group_id" => release_group_id
         })
 
-        # Process the {:fetch_releases, release_group} message
         render(view)
       end)
       |> assert_has("h3", "Releases for")
