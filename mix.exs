@@ -161,7 +161,10 @@ defmodule MusicLibrary.MixProject do
       ],
       "ecto.setup": ["ecto.create", "ecto.migrate"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      shellcheck: "cmd fd . 'scripts/' --exclude '*.hurl' -t file --exec shellcheck --color",
+      shellcheck: [
+        "cmd fd . 'scripts/' --exclude '*.hurl' -t file --exec shellcheck --color",
+        "cmd fd . '.claude/hooks' -t file --exec shellcheck --color"
+      ],
       lint: [
         "format",
         "credo",

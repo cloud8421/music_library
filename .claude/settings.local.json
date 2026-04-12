@@ -3,6 +3,8 @@
     "allow": [
       "mcp__tidewave__get_ecto_schemas",
       "Bash(mix test:*)",
+      "Bash(mix test)",
+      "Bash(mix test *)",
       "mcp__tidewave__get_source_location",
       "WebFetch(domain:hexdocs.pm)",
       "mcp__tidewave__execute_sql_query",
@@ -51,6 +53,7 @@
       "Bash(gh issue:*)",
       "Bash(mise run:*)",
       "Bash(gh label:*)",
+      "Bash(mix sobelow:*)",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_pages",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_screenshot",
@@ -58,7 +61,35 @@
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__fill",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__click",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__evaluate_script",
-      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__new_page"
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__new_page",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__select_page",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_network_requests",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__get_network_request",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_console_messages",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__get_console_message",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__hover",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__press_key",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__wait_for"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/format-elixir.sh",
+            "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/gettext-extract.sh",
+            "timeout": 30,
+            "async": true
+          }
+        ]
+      }
     ]
   },
   "enableAllProjectMcpServers": false
