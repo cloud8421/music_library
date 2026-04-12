@@ -34,7 +34,6 @@
       "Bash(mix run:*)",
       "Bash(sqlite3:*)",
       "WebSearch",
-      "Bash(mix shellcheck:*)",
       "Bash(mix compile:*)",
       "mcp__tidewave__get_docs",
       "mcp__tidewave__search_package_docs",
@@ -69,9 +68,12 @@
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__get_console_message",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__hover",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__press_key",
-      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__wait_for"
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__wait_for",
+      "Bash(mise generate:*)",
+      "Bash(shellcheck:*)"
     ]
   },
+  "enableAllProjectMcpServers": false,
   "hooks": {
     "PostToolUse": [
       {
@@ -91,6 +93,5 @@
         ]
       }
     ]
-  },
-  "enableAllProjectMcpServers": false
+  }
 }

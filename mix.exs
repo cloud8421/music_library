@@ -27,12 +27,6 @@ defmodule MusicLibrary.MixProject do
     ]
   end
 
-  def cli do
-    [
-      preferred_envs: [precommit: :test]
-    ]
-  end
-
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
@@ -142,15 +136,6 @@ defmodule MusicLibrary.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      precommit: [
-        "shellcheck",
-        "credo --strict",
-        "sobelow --compact --exit",
-        "gettext.extract --check-up-to-date",
-        "format --check-formatted",
-        "deps.unlock --unused",
-        "test"
-      ],
       setup: [
         "deps.get",
         "ecto.setup",
@@ -161,16 +146,6 @@ defmodule MusicLibrary.MixProject do
       ],
       "ecto.setup": ["ecto.create", "ecto.migrate"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      shellcheck: [
-        "cmd fd . 'scripts/' --exclude '*.hurl' -t file --exec shellcheck --color",
-        "cmd fd . '.claude/hooks' -t file --exec shellcheck --color"
-      ],
-      lint: [
-        "format",
-        "credo",
-        "gettext.extract --merge",
-        "shellcheck"
-      ],
       # When running the migrate task WITHOUT setting the log_level option,
       # Ecto defaults to debug IRRESPECTIVELY of the log level set in
       # config/test.exs. The debug log level persists while the first 2-3

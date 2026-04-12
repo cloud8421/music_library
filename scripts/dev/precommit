@@ -8,4 +8,24 @@ source "$(git rev-parse --show-toplevel)/scripts/_helpers.sh"
 
 ensure_working_directory!
 
-mix precommit
+debug_msg "Running shellcheck..."
+fd . 'scripts/' --exclude '*.hurl' -t file --exec shellcheck --color
+fd . '.claude/hooks' -t file --exec shellcheck --color
+
+debug_msg "Running credo..."
+mix credo --strict
+
+debug_msg "Running sobelow..."
+mix sobelow --compact --exit
+
+debug_msg "Checking translations..."
+mix gettext.extract --check-up-to-date
+
+debug_msg "Checking formatting..."
+mix format --check-formatted
+
+debug_msg "Checking unused deps..."
+mix deps.unlock --unused
+
+debug_msg "Running tests..."
+mix test

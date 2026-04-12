@@ -8,4 +8,15 @@ source "$(git rev-parse --show-toplevel)/scripts/_helpers.sh"
 
 ensure_working_directory!
 
-mix lint
+debug_msg "Formatting..."
+mix format
+
+debug_msg "Running credo..."
+mix credo
+
+debug_msg "Extracting translations..."
+mix gettext.extract --merge
+
+debug_msg "Running shellcheck..."
+fd . 'scripts/' --exclude '*.hurl' -t file --exec shellcheck --color
+fd . '.claude/hooks' -t file --exec shellcheck --color
