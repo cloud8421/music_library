@@ -76,6 +76,10 @@ jobs:
         run: mix credo --strict
       - name: 👮 Run Sobelow
         run: mix sobelow
+      - name: 🐚 Run Shellcheck
+        run: |
+          fd . 'scripts/' --exclude '*.hurl' -t file --exec shellcheck --color
+          fd . '.claude/hooks' -t file --exec shellcheck --color
 
   test:
     runs-on: ubuntu-latest
