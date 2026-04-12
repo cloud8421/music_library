@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+#MISE description="Validate that the Dockerfile builder image exists and supports required architectures"
+
+set -e
+
+source "$(git rev-parse --show-toplevel)/scripts/_helpers.sh"
+
+ensure_working_directory!
+
+required_archs=("amd64" "arm64")
+
+# Parse Dockerfile ARGs
+elixir_version=$(grep -E '^ARG ELIXIR_VERSION=' Dockerfile | sed 's/ARG ELIXIR_VERSION=//')
+otp_version=$(grep -E '^ARG OTP_VERSION=' Dockerfile | sed 's/ARG OTP_VERSION=//')
+debian_version=$(grep -E '^ARG DEBIAN_VERSION=' Dockerfile | sed 's/ARG DEBIAN_VERSION=//')
+
+if [[ -z "$elixir_version" || -z "$otp_version" || -z "$debian_version" ]]; then
+  echo "Error: could not parse all version ARGs from Dockerfile"
+  exit 1
+fi
+
+tag="${elixir_version}-erlang-${otp_version}-debian-${debian_version}"
+image="hexpm/elixir:${tag}"
+
+debug_msg "Checking ${image}"
+
+# Obtain anonymous auth token
+token=$(curl -sf "https://auth.docker.io/token?service=registry.docker.io&scope=repository:hexpm/elixir:pull" | jq -r '.token')
+
+if [[ -z "$token" || "$token" == "null" ]]; then
+  echo "Error: failed to obtain Docker Hub auth token"
+  exit 1
+fi
+
+# Fetch manifest list
+http_code=$(curl -s -o /tmp/manifest.json -w '%{http_code}' \
+  -H "Authorization: Bearer ${token}" \
+  -H "Accept: application/vnd.docker.distribution.manifest.list.v2+json" \
+  "https://registry.hub.docker.com/v2/hexpm/elixir/manifests/${tag}")
+
+if [[ "$http_code" != "200" ]]; then
+  debug_msg "Error: image tag not found on Docker Hub (HTTP ${http_code})"
+  rm -f /tmp/manifest.json
+  exit 1
+fi
+
+# Extract supported architectures for linux OS
+supported_archs=$(jq -r '.manifests[]? | select(.platform.os == "linux") | .platform.architecture' /tmp/manifest.json)
+rm -f /tmp/manifest.json
+
+if [[ -z "$supported_archs" ]]; then
+  debug_msg "Error: no linux platform entries found in manifest"
+  exit 1
+fi
+
+all_valid=true
+
+for arch in "${required_archs[@]}"; do
+  if echo "$supported_archs" | grep -qx "$arch"; then
+    debug_msg "linux/${arch} supported"
+  else
+    debug_msg "linux/${arch} NOT supported"
+    all_valid=false
+  fi
+done
+
+if [[ "$all_valid" == true ]]; then
+  debug_msg "Image is valid for all required architectures"
+else
+  debug_msg "Error: image does not support all required architectures"
+  exit 1
+fi

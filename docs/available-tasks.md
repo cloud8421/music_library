@@ -70,6 +70,12 @@ Open an SQLite console to the development database with extensions loaded
 
 Update dependencies
 
+## `dev:validate-docker-image`
+
+- **Usage**: `dev:validate-docker-image`
+
+Validate that the Dockerfile builder image exists and supports required architectures
+
 ## `dev:worktree-setup`
 
 - **Usage**: `dev:worktree-setup`

@@ -100,6 +100,7 @@ Rules extracted from commit history that are specific to this project and not al
 - **Sobelow runs on CI and pre-commit** in skip mode for security analysis.
 - **All modules require `@moduledoc`.** The Credo `ModuleDoc` check is enforced in strict mode.
 - **The project does not use dialyzer**. If any skill suggests its usage, ignore it.
+- **Validate Docker builder image before updating versions.** When changing `ELIXIR_VERSION`, `OTP_VERSION`, or `DEBIAN_VERSION` in the Dockerfile, run `mise run dev:validate-docker-image` to confirm the generated `hexpm/elixir` tag exists on Docker Hub and supports both `linux/amd64` and `linux/arm64`.
 
 ## Reviews & Audits
 
