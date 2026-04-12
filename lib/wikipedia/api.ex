@@ -32,13 +32,10 @@ defmodule Wikipedia.API do
 
   @spec get_article_summary(String.t(), Wikipedia.Config.t()) :: {:ok, map()} | {:error, term()}
   def get_article_summary(title, config) do
-    case config
-         |> new_request("https://en.wikipedia.org")
-         |> Req.merge(url: "/api/rest_v1/page/summary/#{URI.encode(title)}")
-         |> get_request() do
-      {:ok, body} -> {:ok, body}
-      {:error, reason} -> {:error, reason}
-    end
+    config
+    |> new_request("https://en.wikipedia.org")
+    |> Req.merge(url: "/api/rest_v1/page/summary/#{URI.encode(title)}")
+    |> get_request()
   end
 
   @spec get_article_extract(String.t(), Wikipedia.Config.t()) ::
