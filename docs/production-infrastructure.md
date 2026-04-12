@@ -88,7 +88,7 @@ Uses `mise` (via `jdx/mise-action@v4`) for tool version management.
 
 ```
 Push to main (or PR / manual dispatch)
-  ├── Lint (format, gettext, credo, sobelow)
+  ├── Lint (format, gettext, credo, sobelow, shellcheck, docker image)
   ├── Test (mix test with partitioning)
   └── Deploy (requires GitHub environment approval, main branch only)
         ├── Trigger deployment via Coolify API (hurl)
