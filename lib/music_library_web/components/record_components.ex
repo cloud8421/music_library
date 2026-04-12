@@ -199,49 +199,11 @@ defmodule MusicLibraryWeb.RecordComponents do
               </.button>
             </:toggle>
             <.focus_wrap id={"actions-#{record.id}-focus-wrap"} class="pointer-events-auto">
-              <.dropdown_link id={"actions-#{record.id}-edit"} patch={@record_edit_path.(record)}>
-                <.icon
-                  name="hero-pencil-square"
-                  class="phx-click-loading:animate-bounce mr-1 size-4"
-                  aria-hidden="true"
-                  data-slot="icon"
-                />
-                {gettext("Edit")}
-              </.dropdown_link>
-
-              <.dropdown_link
-                :if={!record.purchased_at}
-                id={"actions-#{record.id}-purchase"}
-                phx-click={
-                  JS.dispatch("music_library:confetti")
-                  |> JS.push("add-to-collection", value: %{id: record.id})
-                }
-              >
-                <.icon
-                  name="hero-banknotes"
-                  class="phx-click-loading:animate-shake mr-1 size-4"
-                  aria-hidden="true"
-                  data-slot="icon"
-                />
-                {gettext("Purchased")}
-              </.dropdown_link>
-              <.dropdown_separator />
-              <.dropdown_link
-                id={"actions-#{record.id}-delete"}
-                phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
-                data-confirm={gettext("Are you sure?")}
-                class={[
-                  "text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
-                ]}
-              >
-                <.icon
-                  name="hero-trash"
-                  class="phx-click-loading:animate-spin mr-1 size-4"
-                  aria-hidden="true"
-                  data-slot="icon"
-                />
-                {gettext("Delete")}
-              </.dropdown_link>
+              <.record_action_links
+                record={record}
+                edit_path={@record_edit_path.(record)}
+                hide_target={"##{id}"}
+              />
             </.focus_wrap>
           </.dropdown>
         </div>
@@ -320,50 +282,11 @@ defmodule MusicLibraryWeb.RecordComponents do
                   />
                 </:toggle>
                 <.focus_wrap id={"actions-#{record.id}-focus-wrap"}>
-                  <.dropdown_link
-                    id={"actions-#{record.id}-edit"}
-                    patch={@record_edit_path.(record)}
-                  >
-                    <.icon
-                      name="hero-pencil-square"
-                      class="phx-click-loading:animate-bounce mr-1 size-4"
-                      aria-hidden="true"
-                      data-slot="icon"
-                    />
-                    {gettext("Edit")}
-                  </.dropdown_link>
-
-                  <.dropdown_link
-                    :if={!record.purchased_at}
-                    id={"actions-#{record.id}-purchase"}
-                    phx-click={
-                      JS.dispatch("music_library:confetti")
-                      |> JS.push("add-to-collection", value: %{id: record.id})
-                    }
-                  >
-                    <.icon
-                      name="hero-banknotes"
-                      class="phx-click-loading:animate-shake mr-1 size-4"
-                      aria-hidden="true"
-                      data-slot="icon"
-                    />
-                    {gettext("Purchased")}
-                  </.dropdown_link>
-                  <.dropdown_separator />
-                  <.dropdown_link
-                    id={"actions-#{record.id}-delete"}
-                    phx-click={JS.push("delete", value: %{id: record.id}) |> hide("##{id}")}
-                    data-confirm={gettext("Are you sure?")}
-                    class="text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
-                  >
-                    <.icon
-                      name="hero-trash"
-                      class="phx-click-loading:animate-spin mr-1 size-4"
-                      aria-hidden="true"
-                      data-slot="icon"
-                    />
-                    {gettext("Delete")}
-                  </.dropdown_link>
+                  <.record_action_links
+                    record={record}
+                    edit_path={@record_edit_path.(record)}
+                    hide_target={"##{id}"}
+                  />
                 </.focus_wrap>
               </.dropdown>
             </div>
@@ -744,6 +667,56 @@ defmodule MusicLibraryWeb.RecordComponents do
         %{name: "embedding", title: gettext("Embedding"), data: @embedding_text, type: :text}
       ]}
     />
+    """
+  end
+
+  attr :record, :map, required: true
+  attr :edit_path, :string, required: true
+  attr :hide_target, :string, required: true
+
+  defp record_action_links(assigns) do
+    ~H"""
+    <.dropdown_link id={"actions-#{@record.id}-edit"} patch={@edit_path}>
+      <.icon
+        name="hero-pencil-square"
+        class="phx-click-loading:animate-bounce mr-1 size-4"
+        aria-hidden="true"
+        data-slot="icon"
+      />
+      {gettext("Edit")}
+    </.dropdown_link>
+
+    <.dropdown_link
+      :if={!@record.purchased_at}
+      id={"actions-#{@record.id}-purchase"}
+      phx-click={
+        JS.dispatch("music_library:confetti")
+        |> JS.push("add-to-collection", value: %{id: @record.id})
+      }
+    >
+      <.icon
+        name="hero-banknotes"
+        class="phx-click-loading:animate-shake mr-1 size-4"
+        aria-hidden="true"
+        data-slot="icon"
+      />
+      {gettext("Purchased")}
+    </.dropdown_link>
+    <.dropdown_separator />
+    <.dropdown_link
+      id={"actions-#{@record.id}-delete"}
+      phx-click={JS.push("delete", value: %{id: @record.id}) |> hide(@hide_target)}
+      data-confirm={gettext("Are you sure?")}
+      class="text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
+    >
+      <.icon
+        name="hero-trash"
+        class="phx-click-loading:animate-spin mr-1 size-4"
+        aria-hidden="true"
+        data-slot="icon"
+      />
+      {gettext("Delete")}
+    </.dropdown_link>
     """
   end
 
