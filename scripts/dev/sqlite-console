@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+#MISE description="Open an SQLite console to the development database with extensions loaded"
+
+set -e
+
+source "$(git rev-parse --show-toplevel)/scripts/_helpers.sh"
+
+ensure_working_directory!
+
+# Detect platform
+arch=$(uname -m)
+os=$(uname -s)
+
+case "$os" in
+  Darwin)
+    case "$arch" in
+      x86_64) platform="darwin-amd64" ;;
+      arm64)  platform="darwin-arm64" ;;
+    esac
+    ;;
+  Linux)
+    case "$arch" in
+      x86_64)  platform="linux-amd64" ;;
+      aarch64) platform="linux-arm64" ;;
+    esac
+    ;;
+  *)
+    echo "Unsupported OS: $os"
+    exit 1
+    ;;
+esac
+
+ext_dir="priv/sqlite_extensions/$platform"
+
+sqlite_cmd="sqlite3"
+
+if command -v rlwrap &> /dev/null; then
+  sqlite_cmd="rlwrap sqlite3"
+else
+  echo "Tip: install rlwrap for arrow key and history support"
+  echo ""
+fi
+
+$sqlite_cmd \
+  -cmd ".load $ext_dir/unicode" \
+  -cmd ".load $ext_dir/vec0" \
+  data/music_library_dev.db

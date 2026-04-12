@@ -58,6 +58,12 @@ Render README.md with GitHub Flavored Markdown preview
 
 Setup the local development environment
 
+## `dev:sqlite-console`
+
+- **Usage**: `dev:sqlite-console`
+
+Open an SQLite console to the development database with extensions loaded
+
 ## `dev:update`
 
 - **Usage**: `dev:update`
