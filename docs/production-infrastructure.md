@@ -25,7 +25,7 @@ push via GitHub Actions.
 
 The Docker image is a multi-stage build:
 
-1. **Builder** — `hexpm/elixir:1.20.0-rc.4-erlang-28.4.1-debian-trixie-20260406-slim` with
+1. **Builder** — `hexpm/elixir:1.20.0-rc.4-erlang-28.4.2-debian-trixie-20260406-slim` with
    Node.js 24, compiles deps, builds assets (`mix assets.deploy`), generates an OTP release.
 2. **Runner** — `debian:trixie-20260406-slim` with minimal runtime deps (`libstdc++6`,
    `openssl`, `libncurses6`, `ca-certificates`). Runs as unprivileged `nobody` user.
