@@ -366,7 +366,7 @@ defmodule MusicLibrary.CollectionTest do
       {summary, record_count} = Collection.collection_summary()
       lines = String.split(summary, "\n")
 
-      assert record_count == 2
+      assert record_count == 1
       assert length(lines) == 1
       assert hd(lines) =~ "cd/vinyl"
     end

@@ -203,16 +203,15 @@ defmodule MusicLibrary.Collection do
       )
       |> Repo.all()
 
-    record_count = length(records)
-
-    summary =
+    groups =
       records
       |> Enum.group_by(& &1.musicbrainz_id)
       |> Enum.map(fn {_id, group} -> format_group(group) end)
       |> Enum.sort()
-      |> Enum.join("\n")
 
-    {summary, record_count}
+    summary = Enum.join(groups, "\n")
+
+    {summary, length(groups)}
   end
 
   defp format_group(records) do
