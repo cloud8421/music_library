@@ -98,6 +98,7 @@ Rules extracted from commit history that are specific to this project and not al
 - **Unused aliases are removed** when their module is no longer referenced. Aliases stay alphabetically sorted.
 - **Markdown sanitization via MDEx (ammonia).** Use `Markdown.to_html/1` for user content. Annotate raw output with `# sobelow_skip ["XSS.Raw"]` and a comment explaining the sanitization.
 - **Sobelow runs on CI and pre-commit** in skip mode for security analysis.
+- **ExSlop checks run via Credo** for code quality: no narrator/boilerplate docs (use `@moduledoc false` instead), no obvious/step/narrator comments, no identity `case`/`with` patterns, no `Repo.all` then filter, no `Enum.map` with inline queries. Violations are caught by CI.
 - **All modules require `@moduledoc`.** The Credo `ModuleDoc` check is enforced in strict mode.
 - **The project does not use dialyzer**. If any skill suggests its usage, ignore it.
 - **Validate Docker builder image before updating versions.** When changing `ELIXIR_VERSION`, `OTP_VERSION`, or `DEBIAN_VERSION` in the Dockerfile, run `mise run dev:validate-docker-image` to confirm the generated `hexpm/elixir` tag exists on Docker Hub and supports both `linux/amd64` and `linux/arm64`.
