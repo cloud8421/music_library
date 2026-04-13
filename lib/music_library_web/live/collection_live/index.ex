@@ -237,8 +237,9 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
      |> assign(:import_query, "")
      |> assign(:display, :grid)
      |> assign(:open_chat, false)
-     |> assign(:collection_summary, Collection.collection_summary())
-     |> assign(:chat_count, Chats.count_chats(:collection, Chats.collection_musicbrainz_id()))}
+     |> assign(:collection_summary, {"", 0})
+     |> assign(:chat_count, Chats.count_chats(:collection, Chats.collection_musicbrainz_id()))
+     |> start_async(:collection_summary, &Collection.collection_summary/0)}
   end
 
   @impl true
@@ -296,6 +297,15 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
   def handle_info({MusicLibraryWeb.Components.Chat, :chats_changed}, socket) do
     chat_count = Chats.count_chats(:collection, Chats.collection_musicbrainz_id())
     {:noreply, assign(socket, :chat_count, chat_count)}
+  end
+
+  @impl true
+  def handle_async(:collection_summary, {:ok, summary}, socket) do
+    {:noreply, assign(socket, :collection_summary, summary)}
+  end
+
+  def handle_async(:collection_summary, {:exit, _reason}, socket) do
+    {:noreply, socket}
   end
 
   @impl true
