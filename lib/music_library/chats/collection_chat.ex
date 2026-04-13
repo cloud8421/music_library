@@ -12,7 +12,11 @@ defmodule MusicLibrary.Chats.CollectionChat do
   def stream_response(messages, collection_summary, callback) do
     instructions = build_instructions(collection_summary)
 
-    OpenAI.chat_stream(messages, on_chunk: callback, instructions: instructions)
+    OpenAI.chat_stream(messages,
+      on_chunk: callback,
+      instructions: instructions,
+      model: "gpt-4.1-mini"
+    )
   end
 
   defp build_instructions(collection_summary) do
