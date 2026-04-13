@@ -128,11 +128,6 @@ verify worktree changes visually, start a separate server in the worktree with
 - [html](references/html.md)
 - [liveview](references/liveview.md)
 - [phoenix](references/phoenix.md)
-- [phoenix_ecto](references/phoenix_ecto.md)
-- [phoenix_html](references/phoenix_html.md)
-- [phoenix_live_dashboard](references/phoenix_live_dashboard.md)
-- [phoenix_live_reload](references/phoenix_live_reload.md)
-- [phoenix_live_view](references/phoenix_live_view.md)
 - [fluxon](references/fluxon.md)
 
 ## Searching Documentation
