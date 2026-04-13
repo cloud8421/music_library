@@ -8,7 +8,7 @@ defmodule MusicLibrary.Chats.Chat do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "chats" do
-    field :entity, Ecto.Enum, values: [:record, :artist]
+    field :entity, Ecto.Enum, values: [:record, :artist, :collection]
     field :musicbrainz_id, Ecto.UUID
     field :topic, :string
 
