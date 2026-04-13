@@ -38,7 +38,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
               patch={~p"/collection/import"}
             >
               <.icon name="hero-plus" class="icon" aria-hidden="true" data-slot="icon" />
-              {gettext("Add")}
+              <span class="sr-only sm:not-sr-only">{gettext("Add")}</span>
             </.button>
             <.button
               variant="solid"
@@ -46,7 +46,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
               patch={~p"/collection/scan"}
             >
               <.barcode_icon class="icon fill-current" />
-              {gettext("Scan")}
+              <span class="sr-only sm:not-sr-only">{gettext("Scan")}</span>
             </.button>
             <.button
               variant="solid"
@@ -59,8 +59,10 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
                 aria-hidden="true"
                 data-slot="icon"
               />
-              {gettext("Chat")}
-              <span :if={@chat_count > 0} class="text-xs font-medium">{@chat_count}</span>
+              <span class="sr-only sm:not-sr-only">{gettext("Chat")}</span>
+              <span :if={@chat_count > 0} class="sr-only sm:not-sr-only text-xs font-medium">
+                {@chat_count}
+              </span>
             </.button>
           </.button_group>
         </div>

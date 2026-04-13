@@ -34,7 +34,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
             patch={~p"/wishlist/import"}
           >
             <.icon name="hero-plus" class="icon" aria-hidden="true" data-slot="icon" />
-            {gettext("Add")}
+            <span class="sr-only sm:not-sr-only">{gettext("Add")}</span>
           </.button>
         </div>
       </header>
