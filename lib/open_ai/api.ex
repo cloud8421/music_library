@@ -33,37 +33,61 @@ defmodule OpenAI.API do
                                                                                     any())) ::
           :ok | {:error, String.t()}
   def chat_stream(messages, instructions, model, temperature, config, cb) do
-    case config
-         |> new_request()
-         |> Req.merge(
-           url: "/v1/responses",
-           receive_timeout: 60_000,
-           connect_options: [timeout: 5_000],
-           json: %{
-             model: model,
-             instructions: instructions,
-             input: messages,
-             tools: [%{type: "web_search_preview"}],
-             stream: true,
-             temperature: temperature
-           },
-           into: fn {:data, data}, {req, resp} ->
-             buffer = Req.Request.get_private(req, :sse_buffer, "")
-             {events, buffer} = ServerSentEvents.parse(buffer <> data)
-             req = Req.Request.put_private(req, :sse_buffer, buffer)
+    config
+    |> new_request()
+    |> Req.merge(
+      url: "/v1/responses",
+      receive_timeout: 60_000,
+      connect_options: [timeout: 5_000],
+      json: %{
+        model: model,
+        instructions: instructions,
+        input: messages,
+        tools: [%{type: "web_search_preview"}],
+        stream: true,
+        temperature: temperature
+      },
+      into: fn {:data, data}, {req, resp} ->
+        buffer = Req.Request.get_private(req, :sse_buffer, "")
+        {events, buffer} = ServerSentEvents.parse(buffer <> data)
+        req = Req.Request.put_private(req, :sse_buffer, buffer)
 
-             for %{data: json} <- events do
-               decode_responses_event(json, cb)
-             end
+        decode_events(events, cb, req, resp)
+      end
+    )
+    |> do_chat_stream()
+  end
 
-             {:cont, {req, resp}}
-           end
-         )
-         |> Req.post() do
-      {:ok, %{status: status}} when status in 200..299 -> :ok
-      {:ok, %{body: body}} -> {:error, "OpenAI API error: #{inspect(body)}"}
-      {:error, exception} -> {:error, "Connection error: #{Exception.message(exception)}"}
+  defp decode_events([], _cb, req, resp), do: {:cont, {req, resp}}
+
+  defp decode_events([%{data: json} | rest], cb, req, resp) do
+    case decode_responses_event(json, cb) do
+      {:error, message} ->
+        Logger.error(message)
+        {:halt, {req, Req.Response.put_private(resp, :error, message)}}
+
+      _ ->
+        decode_events(rest, cb, req, resp)
     end
+  end
+
+  defp do_chat_stream(req) do
+    case Req.post(req) do
+      {:ok, %{status: status} = resp} when status in 200..299 ->
+        if message = Req.Response.get_private(resp, :error) do
+          {:error, message}
+        else
+          :ok
+        end
+
+      {:ok, %{body: body}} ->
+        {:error, "OpenAI API error: #{inspect(body)}"}
+
+      {:error, exception} ->
+        {:error, "Connection error: #{Exception.message(exception)}"}
+    end
+  catch
+    {:stream_error, message} -> {:error, message}
   end
 
   @spec get_embeddings(String.t(), OpenAI.Config.t()) :: {:ok, [float()]} | {:error, term()}
@@ -101,8 +125,22 @@ defmodule OpenAI.API do
 
   defp decode_responses_event(json, cb) do
     case JSON.decode!(json) do
-      %{"type" => "response.output_text.delta", "delta" => delta} -> cb.(delta)
-      _other -> :ok
+      %{"type" => "response.output_text.delta", "delta" => delta} ->
+        cb.(delta)
+
+      %{"type" => "error", "error" => %{"message" => message}} ->
+        {:error, message}
+
+      %{"type" => "response.failed", "response" => %{"error" => %{"message" => message}}} ->
+        {:error, message}
+
+      %{"type" => "response." <> _} ->
+        :ok
+
+      other ->
+        Logger.warning(fn ->
+          "Unexpected response: #{inspect(other)}"
+        end)
     end
   end
 
