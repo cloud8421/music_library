@@ -11,7 +11,7 @@ defmodule DiscogsTest do
         Fixtures.Artist.get_artist()
 
       Req.Test.stub(Discogs.API, fn %{request_path: "/artists/discogs_id"} = conn ->
-        Req.Test.json(conn, Fixtures.Artist.get_artist())
+        Req.Test.json(conn, expected_info)
       end)
 
       assert {:ok, expected_info} == Discogs.get_artist(discogs_id)
