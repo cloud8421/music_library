@@ -24,6 +24,10 @@ defmodule MusicLibrary.Chats.CollectionChat do
 
     Collection catalog:
     #{collection_summary}
+
+    # Mentioning artists/albums
+
+    **IF YOU MENTION AN ARTIST NAME OR ALBUM NAME, wrap it in "[[name]]", for example "[[Steven Wilson]]"
     """)
   end
 end

@@ -83,10 +83,11 @@ defmodule MusicLibraryWeb.MarkdownTest do
       assert result =~ ~s(href="http://example.com")
     end
 
-    test "adds target to double bracket links" do
+    test "does not add target to internal links" do
       result = Markdown.to_html("Check [[Porcupine Tree]]", link_target: "_blank")
 
-      assert result =~ ~s(target="_blank")
+      refute result =~ ~s(target="_blank")
+      assert result =~ ~s(href="/collection?query=Porcupine+Tree")
       assert result =~ "Porcupine Tree</a>"
     end
 

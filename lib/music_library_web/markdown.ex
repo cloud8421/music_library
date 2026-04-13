@@ -120,18 +120,26 @@ defmodule MusicLibraryWeb.Markdown do
   end
 
   defp open_links_in_new_tab(doc, target) do
-    MDEx.Document.update_nodes(doc, MDEx.Link, fn %MDEx.Link{url: url, title: title, nodes: nodes} ->
-      text = extract_text(nodes)
+    MDEx.Document.update_nodes(doc, MDEx.Link, fn %MDEx.Link{url: url} = link ->
+      if external_link?(url) do
+        text = extract_text(link.nodes)
 
-      title_attr =
-        if title != "" and title != nil, do: ~s( title="#{html_escape(title)}"), else: ""
+        title_attr =
+          if link.title != "" and link.title != nil,
+            do: ~s( title="#{html_escape(link.title)}"),
+            else: ""
 
-      %MDEx.HtmlInline{
-        literal:
-          ~s(<a href="#{html_escape(url)}" target="#{target}"#{title_attr}>#{html_escape(text)}</a>)
-      }
+        %MDEx.HtmlInline{
+          literal:
+            ~s(<a href="#{html_escape(url)}" target="#{target}"#{title_attr}>#{html_escape(text)}</a>)
+        }
+      else
+        link
+      end
     end)
   end
+
+  defp external_link?(url), do: url =~ ~r"^https?://"
 
   defp extract_text(nodes) when is_list(nodes), do: Enum.map_join(nodes, "", &extract_text/1)
   defp extract_text(%{literal: literal}), do: literal
