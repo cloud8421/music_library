@@ -18,12 +18,12 @@ defmodule MusicLibrary.Chats.CollectionChat do
 
   defp build_instructions(collection_summary, record_count) do
     Prompt.build("""
-    Answer questions about the user's music collection. \
-    Use the provided collection catalog as your primary reference. \
+    Answer questions about the user's music collection.
+    Use the provided collection catalog as your primary reference.
     The collection contains #{record_count} records.
 
     Collection catalog:
-    #{collection_summary}\
+    #{collection_summary}
     """)
   end
 end
