@@ -191,7 +191,9 @@ defmodule MusicLibrary.Collection do
     |> MapSet.new()
   end
 
-  @spec collection_summary() :: String.t()
+  @max_genres_per_record 3
+
+  @spec collection_summary() :: {String.t(), non_neg_integer()}
   def collection_summary do
     records =
       from(r in Record,
@@ -201,16 +203,31 @@ defmodule MusicLibrary.Collection do
       )
       |> Repo.all()
 
-    records
-    |> Enum.map_join("\n", &format_record_line/1)
+    record_count = length(records)
+
+    summary =
+      records
+      |> Enum.group_by(& &1.musicbrainz_id)
+      |> Enum.map(fn {_id, group} -> format_group(group) end)
+      |> Enum.sort()
+      |> Enum.join("\n")
+
+    {summary, record_count}
   end
 
-  defp format_record_line(record) do
+  defp format_group(records) do
+    record = hd(records)
     artist_names = Record.artist_names(record)
-    genres = record.genres || []
+    formats = records |> Enum.map(& &1.format) |> Enum.uniq() |> Enum.join("/")
+
+    genres =
+      records
+      |> Enum.flat_map(&(&1.genres || []))
+      |> Enum.uniq()
+      |> Enum.take(@max_genres_per_record)
 
     base =
-      "#{artist_names} - #{record.title} (#{record.release_date || "Unknown"}, #{record.format}, #{record.type})"
+      "#{artist_names} - #{record.title} (#{record.release_date || "Unknown"}, #{formats}, #{record.type})"
 
     if genres == [] do
       base

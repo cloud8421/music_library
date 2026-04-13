@@ -31,7 +31,7 @@ defmodule MusicLibrary.Chats.CollectionChatTest do
     summary =
       "Radiohead - OK Computer (1997-06-16, cd, album) [alternative rock, art rock]\nPink Floyd - The Wall (1979-11-30, vinyl, album) [progressive rock]"
 
-    assert :ok = CollectionChat.stream_response([], summary, fn _chunk -> :ok end)
+    assert :ok = CollectionChat.stream_response([], {summary, 2}, fn _chunk -> :ok end)
 
     assert_receive {:captured_instructions, instructions}
     assert instructions =~ summary
@@ -43,7 +43,7 @@ defmodule MusicLibrary.Chats.CollectionChatTest do
   test "stream_response handles empty collection" do
     stub_and_capture_instructions(self())
 
-    assert :ok = CollectionChat.stream_response([], "", fn _chunk -> :ok end)
+    assert :ok = CollectionChat.stream_response([], {"", 0}, fn _chunk -> :ok end)
 
     assert_receive {:captured_instructions, instructions}
     assert instructions =~ "0 records"

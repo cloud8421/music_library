@@ -298,11 +298,11 @@ defmodule MusicLibrary.CollectionTest do
   end
 
   describe "collection_summary/0" do
-    test "returns empty string when collection is empty" do
-      assert Collection.collection_summary() == ""
+    test "returns empty string and zero count when collection is empty" do
+      assert Collection.collection_summary() == {"", 0}
     end
 
-    test "returns one line per collected record" do
+    test "returns one line per collected record with record count" do
       record_with_artist("Radiohead", %{
         title: "OK Computer",
         format: :cd,
@@ -321,9 +321,10 @@ defmodule MusicLibrary.CollectionTest do
         purchased_at: ~U[2024-01-02 00:00:00Z]
       })
 
-      summary = Collection.collection_summary()
+      {summary, record_count} = Collection.collection_summary()
       lines = String.split(summary, "\n")
 
+      assert record_count == 2
       assert length(lines) == 2
 
       assert Enum.any?(lines, fn line ->
@@ -339,6 +340,54 @@ defmodule MusicLibrary.CollectionTest do
              end)
     end
 
+    test "deduplicates records with same musicbrainz_id and merges formats" do
+      mbid = Ecto.UUID.generate()
+
+      record_with_artist("AC/DC", %{
+        title: "Highway to Hell",
+        format: :cd,
+        type: :album,
+        genres: ["hard rock", "rock"],
+        release_date: "1979-07-27",
+        musicbrainz_id: mbid,
+        purchased_at: ~U[2024-01-01 00:00:00Z]
+      })
+
+      record_with_artist("AC/DC", %{
+        title: "Highway to Hell",
+        format: :vinyl,
+        type: :album,
+        genres: ["hard rock", "rock"],
+        release_date: "1979-07-27",
+        musicbrainz_id: mbid,
+        purchased_at: ~U[2024-01-02 00:00:00Z]
+      })
+
+      {summary, record_count} = Collection.collection_summary()
+      lines = String.split(summary, "\n")
+
+      assert record_count == 2
+      assert length(lines) == 1
+      assert hd(lines) =~ "cd/vinyl"
+    end
+
+    test "caps genres to 3 per record" do
+      record_with_artist("ABC", %{
+        title: "The Lexicon of Love",
+        format: :vinyl,
+        type: :album,
+        genres: ~w[dance dance-pop disco electronic new-wave pop synth-pop],
+        release_date: "1982-06-21",
+        purchased_at: ~U[2024-01-01 00:00:00Z]
+      })
+
+      {summary, _count} = Collection.collection_summary()
+      [genres_str] = Regex.run(~r/\[(.+)\]/, summary, capture: :all_but_first)
+      genre_count = genres_str |> String.split(", ") |> length()
+
+      assert genre_count == 3
+    end
+
     test "omits genre brackets when genres are empty" do
       record_with_artist("Radiohead", %{
         title: "OK Computer",
@@ -349,7 +398,7 @@ defmodule MusicLibrary.CollectionTest do
         purchased_at: ~U[2024-01-01 00:00:00Z]
       })
 
-      summary = Collection.collection_summary()
+      {summary, _count} = Collection.collection_summary()
       refute summary =~ "["
       refute summary =~ "]"
     end
@@ -365,7 +414,8 @@ defmodule MusicLibrary.CollectionTest do
         purchased_at: nil
       })
 
-      summary = Collection.collection_summary()
+      {summary, record_count} = Collection.collection_summary()
+      assert record_count == 1
       assert summary =~ "OK Computer"
       refute summary =~ "Wish You Were Here"
     end
