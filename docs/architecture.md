@@ -129,7 +129,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Chats.StreamProvider` | Behaviour for streaming AI chat (`stream_response/3` callback) |
 | `Chats.RecordChat` | Chat implementation for records (OpenAI streaming, web search enabled) |
 | `Chats.ArtistChat` | Chat implementation for artists (OpenAI streaming, uses Wikipedia/artist context) |
-| `Chats.CollectionChat` | Chat implementation for the collection (OpenAI streaming via gpt-4.1-mini, uses collection summary as context) |
+| `Chats.CollectionChat` | Chat implementation for the collection (OpenAI streaming via gpt-5.1, uses collection summary as context) |
 | `Chats.Prompt` | Builds complete chat prompts by interpolating identity, content, and approach guidelines |
 | `Country` | Country code (alpha-2, alpha-3, subdivision, IETF) to flag emoji conversion |
 | `ErrorTracker.ErrorNotifier` | GenServer: attaches to ErrorTracker telemetry, skips muted errors, throttles repeated errors, dispatches email notifications |
@@ -151,7 +151,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Discogs` / `Discogs.API` | discogs.com | 2000 ms | Artist profiles, images |
 | `Wikipedia` / `Wikipedia.API` | wikipedia.org | 1000 ms | Artist biographies |
 | `BraveSearch` / `BraveSearch.API` | search.brave.com | 1000 ms | Cover art and artist image search |
-| `OpenAI` / `OpenAI.API` | api.openai.com | 250 ms | Text embeddings for similarity, streaming chat via Responses API (gpt-4.1/gpt-4.1-mini + web search) |
+| `OpenAI` / `OpenAI.API` | api.openai.com | 250 ms | Text embeddings for similarity, streaming chat via Responses API (gpt-4.1/gpt-5.1 + web search) |
 | `MusicLibrary.Mailer` | Mailgun (via Swoosh) | — | Transactional email delivery (error notifications, daily digest) |
 
 Each has a `Config` module reading from application env. All HTTP clients use `Req` with
