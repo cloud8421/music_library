@@ -43,6 +43,15 @@ defmodule MusicLibrary.ChatsTest do
 
       assert Chats.count_chats(:artist, @musicbrainz_id) == 0
     end
+
+    test "counts collection chats" do
+      Chats.create_chat_with_message(
+        %{entity: :collection, musicbrainz_id: Chats.collection_musicbrainz_id()},
+        %{role: "user", content: "Tell me about my collection"}
+      )
+
+      assert Chats.count_chats(:collection, Chats.collection_musicbrainz_id()) == 1
+    end
   end
 
   describe "list_chats/2" do
@@ -132,6 +141,25 @@ defmodule MusicLibrary.ChatsTest do
                  %{},
                  %{role: "user", content: "Hello"}
                )
+    end
+
+    test "creates chat with collection entity" do
+      assert {:ok, chat} =
+               Chats.create_chat_with_message(
+                 %{entity: :collection, musicbrainz_id: Chats.collection_musicbrainz_id()},
+                 %{role: "user", content: "What prog rock do I have?"}
+               )
+
+      assert chat.entity == :collection
+      assert chat.musicbrainz_id == Chats.collection_musicbrainz_id()
+      assert chat.topic == "What prog rock do I have?"
+    end
+  end
+
+  describe "collection_musicbrainz_id/0" do
+    test "returns a valid UUID" do
+      id = Chats.collection_musicbrainz_id()
+      assert {:ok, _} = Ecto.UUID.cast(id)
     end
   end
 

@@ -1,12 +1,17 @@
 defmodule MusicLibrary.Chats do
   @moduledoc """
-  Persistent storage for AI chat conversations about records and artists.
+  Persistent storage for AI chat conversations about records, artists, and the collection.
   """
 
   import Ecto.Query, warn: false
 
   alias MusicLibrary.Chats.{Chat, Message}
   alias MusicLibrary.Repo
+
+  @collection_musicbrainz_id "00000000-0000-0000-0000-000000000000"
+
+  @spec collection_musicbrainz_id() :: String.t()
+  def collection_musicbrainz_id, do: @collection_musicbrainz_id
 
   @spec list_chats(atom(), String.t()) :: [Chat.t()]
   def list_chats(entity, musicbrainz_id) do
