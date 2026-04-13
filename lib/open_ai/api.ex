@@ -86,8 +86,6 @@ defmodule OpenAI.API do
       {:error, exception} ->
         {:error, "Connection error: #{Exception.message(exception)}"}
     end
-  catch
-    {:stream_error, message} -> {:error, message}
   end
 
   @spec get_embeddings(String.t(), OpenAI.Config.t()) :: {:ok, [float()]} | {:error, term()}
