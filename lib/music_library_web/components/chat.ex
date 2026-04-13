@@ -10,17 +10,7 @@ defmodule MusicLibraryWeb.Components.Chat do
 
   @impl true
   def mount(socket) do
-    {:ok,
-     socket
-     |> assign(:messages, [])
-     |> assign(:current_response, "")
-     |> assign(:loading, false)
-     |> assign(:error, nil)
-     |> assign(:view, :active)
-     |> assign(:chat, nil)
-     |> assign(:chats, [])
-     |> assign(:streaming_doc, nil)
-     |> assign(:has_history, false)}
+    {:ok, reset_chat_state(socket)}
   end
 
   @impl true
@@ -56,27 +46,11 @@ defmodule MusicLibraryWeb.Components.Chat do
   def update(assigns, socket) do
     socket = assign(socket, assigns)
 
-    socket =
-      if changed?(socket, :entity) or changed?(socket, :musicbrainz_id) do
-        has_history = check_chat_history(socket.assigns)
-
-        if has_history do
-          chats = Chats.list_chats(socket.assigns.entity, socket.assigns.musicbrainz_id)
-
-          socket
-          |> assign(:has_history, true)
-          |> assign(:chats, chats)
-          |> assign(:view, :list)
-        else
-          socket
-          |> assign(:has_history, false)
-          |> assign(:view, :active)
-        end
-      else
-        socket
-      end
-
-    {:ok, socket}
+    if changed?(socket, :entity) or changed?(socket, :musicbrainz_id) do
+      {:ok, load_for_entity(socket)}
+    else
+      {:ok, socket}
+    end
   end
 
   @impl true
@@ -476,12 +450,33 @@ defmodule MusicLibraryWeb.Components.Chat do
     end
   end
 
-  defp check_chat_history(%{entity: entity, musicbrainz_id: musicbrainz_id})
-       when not is_nil(entity) and not is_nil(musicbrainz_id) do
-    Chats.has_any_chats?(entity, musicbrainz_id)
+  defp reset_chat_state(socket) do
+    socket
+    |> assign(:messages, [])
+    |> assign(:current_response, "")
+    |> assign(:loading, false)
+    |> assign(:error, nil)
+    |> assign(:view, :active)
+    |> assign(:chat, nil)
+    |> assign(:chats, [])
+    |> assign(:streaming_doc, nil)
+    |> assign(:has_history, false)
   end
 
-  defp check_chat_history(_assigns), do: false
+  defp load_for_entity(socket) do
+    socket = reset_chat_state(socket)
+
+    if Chats.has_any_chats?(socket.assigns.entity, socket.assigns.musicbrainz_id) do
+      chats = Chats.list_chats(socket.assigns.entity, socket.assigns.musicbrainz_id)
+
+      socket
+      |> assign(:has_history, true)
+      |> assign(:chats, chats)
+      |> assign(:view, :list)
+    else
+      socket
+    end
+  end
 
   defp message_classes("user") do
     "ml-auto bg-red-500 dark:bg-red-700 text-white"
