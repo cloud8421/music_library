@@ -23,6 +23,12 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   describe "Collection" do
     setup [:fill_collection]
 
+    test "shows the chat button", %{conn: conn} do
+      conn
+      |> visit(~p"/collection")
+      |> assert_has("button", "Chat")
+    end
+
     test "does not show wishlist records", %{conn: conn} do
       wishlist_records = Enum.map(1..3, fn _ -> record(%{purchased_at: nil}) end)
       session = visit(conn, ~p"/collection")

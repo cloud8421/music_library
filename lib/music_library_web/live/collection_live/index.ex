@@ -6,6 +6,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
   import MusicLibraryWeb.LiveHelpers.Params
   import MusicLibraryWeb.RecordComponents
 
+  alias MusicLibrary.Chats
   alias MusicLibrary.Collection
   alias MusicLibrary.Records
 
@@ -46,6 +47,20 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
             >
               <.barcode_icon class="icon fill-current" />
               {gettext("Scan")}
+            </.button>
+            <.button
+              variant="solid"
+              size="sm"
+              phx-click={MusicLibraryWeb.Components.Chat.open("collection-chat-sheet")}
+            >
+              <.icon
+                name="hero-chat-bubble-left-right"
+                class="icon"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+              {gettext("Chat")}
+              <span :if={@chat_count > 0} class="text-xs font-medium">{@chat_count}</span>
             </.button>
           </.button_group>
         </div>
@@ -189,6 +204,19 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
       </.structured_modal>
 
       <.pagination id={:bottom_pagination} pagination_params={@record_list_params} />
+
+      <.live_component
+        id="collection-chat"
+        sheet_id="collection-chat-sheet"
+        module={MusicLibraryWeb.Components.Chat}
+        title={gettext("Collection")}
+        entity={:collection}
+        musicbrainz_id={Chats.collection_musicbrainz_id()}
+        chat_module={MusicLibrary.Chats.CollectionChat}
+        chat_context={@collection_summary}
+        placeholder={gettext("Ask about your collection...")}
+        empty_prompt={gettext("Ask anything about your music collection")}
+      />
     </Layouts.app>
     """
   end
@@ -199,7 +227,9 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
      socket
      |> assign(:current_section, :collection)
      |> assign(:import_query, "")
-     |> assign(:display, :grid)}
+     |> assign(:display, :grid)
+     |> assign(:collection_summary, Collection.collection_summary())
+     |> assign(:chat_count, Chats.count_chats(:collection, Chats.collection_musicbrainz_id()))}
   end
 
   @impl true
@@ -250,6 +280,11 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
   @impl true
   def handle_info({MusicLibraryWeb.Components.RecordForm, {:saved, _record}}, socket) do
     {:noreply, load_and_assign_records(socket, socket.assigns.record_list_params)}
+  end
+
+  def handle_info({MusicLibraryWeb.Components.Chat, :chats_changed}, socket) do
+    chat_count = Chats.count_chats(:collection, Chats.collection_musicbrainz_id())
+    {:noreply, assign(socket, :chat_count, chat_count)}
   end
 
   @impl true

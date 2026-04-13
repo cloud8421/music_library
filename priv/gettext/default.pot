@@ -2407,3 +2407,18 @@ msgstr[1] ""
 #, elixir-autogen, elixir-format
 msgid "Copy message"
 msgstr ""
+
+#: lib/music_library_web/live/collection_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Ask about your collection..."
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Ask anything about your music collection"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Chat"
+msgstr ""
