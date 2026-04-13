@@ -1,4 +1,8 @@
 defmodule OpenAI.API do
+  @moduledoc """
+  Low-level HTTP client for the OpenAI API (chat completions, streaming responses, embeddings).
+  """
+
   require Logger
 
   @spec gpt(OpenAI.Completion.t(), OpenAI.Config.t()) :: {:ok, map()} | {:error, term()}
