@@ -29,6 +29,18 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       |> assert_has("button", "Chat")
     end
 
+    test "auto-opens chat when ?chat=open is present", %{conn: conn} do
+      conn
+      |> visit(~p"/collection?chat=open")
+      |> assert_has("#auto-open-chat")
+    end
+
+    test "does not auto-open chat by default", %{conn: conn} do
+      conn
+      |> visit(~p"/collection")
+      |> refute_has("#auto-open-chat")
+    end
+
     test "does not show wishlist records", %{conn: conn} do
       wishlist_records = Enum.map(1..3, fn _ -> record(%{purchased_at: nil}) end)
       session = visit(conn, ~p"/collection")
