@@ -113,5 +113,81 @@ defmodule OpenAI.APITest do
       assert {:error, "Connection error:" <> _} =
                API.chat_stream([], "instructions", "gpt-4.1", 0.7, @config, cb)
     end
+
+    @tag :capture_log
+    test "returns error when stream contains an error event" do
+      Req.Test.stub(__MODULE__, fn conn ->
+        body =
+          "data: #{JSON.encode!(%{"type" => "response.output_text.delta", "delta" => "Hi"})}\n\n" <>
+            "data: #{JSON.encode!(%{"type" => "error", "error" => %{"message" => "token limit exceeded"}})}\n\n"
+
+        conn
+        |> Plug.Conn.put_resp_content_type("text/event-stream")
+        |> Plug.Conn.send_resp(200, body)
+      end)
+
+      test_pid = self()
+      cb = fn chunk -> send(test_pid, {:chunk, chunk}) end
+
+      assert {:error, "token limit exceeded"} =
+               API.chat_stream([], "instructions", "gpt-4.1", 0.7, @config, cb)
+
+      assert_received {:chunk, "Hi"}
+    end
+
+    @tag :capture_log
+    test "returns error when stream contains a response.failed event" do
+      Req.Test.stub(__MODULE__, fn conn ->
+        body =
+          "data: #{JSON.encode!(%{"type" => "response.failed", "response" => %{"error" => %{"message" => "content filter triggered"}}})}\n\n"
+
+        conn
+        |> Plug.Conn.put_resp_content_type("text/event-stream")
+        |> Plug.Conn.send_resp(200, body)
+      end)
+
+      cb = fn _chunk -> :ok end
+
+      assert {:error, "content filter triggered"} =
+               API.chat_stream([], "instructions", "gpt-4.1", 0.7, @config, cb)
+    end
+
+    @tag :capture_log
+    test "halts processing of remaining events after an error" do
+      Req.Test.stub(__MODULE__, fn conn ->
+        body =
+          "data: #{JSON.encode!(%{"type" => "error", "error" => %{"message" => "rate limited"}})}\n\n" <>
+            "data: #{JSON.encode!(%{"type" => "response.output_text.delta", "delta" => "should not arrive"})}\n\n"
+
+        conn
+        |> Plug.Conn.put_resp_content_type("text/event-stream")
+        |> Plug.Conn.send_resp(200, body)
+      end)
+
+      test_pid = self()
+      cb = fn chunk -> send(test_pid, {:chunk, chunk}) end
+
+      assert {:error, "rate limited"} =
+               API.chat_stream([], "instructions", "gpt-4.1", 0.7, @config, cb)
+
+      refute_received {:chunk, "should not arrive"}
+    end
+
+    @tag :capture_log
+    test "logs warning for unexpected event types" do
+      Req.Test.stub(__MODULE__, fn conn ->
+        body =
+          "data: #{JSON.encode!(%{"type" => "unknown.event", "foo" => "bar"})}\n\n" <>
+            "data: #{JSON.encode!(%{"type" => "response.completed"})}\n\n"
+
+        conn
+        |> Plug.Conn.put_resp_content_type("text/event-stream")
+        |> Plug.Conn.send_resp(200, body)
+      end)
+
+      cb = fn _chunk -> :ok end
+
+      assert :ok = API.chat_stream([], "instructions", "gpt-4.1", 0.7, @config, cb)
+    end
   end
 end
