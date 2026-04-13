@@ -363,6 +363,12 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
         keywords: ["collection", "collected", "records"]
       },
       %{
+        label: "Collection Chat",
+        path: ~p"/collection?chat=open",
+        icon: "hero-chat-bubble-left-right",
+        keywords: ["chat", "collection", "ask", "ai"]
+      },
+      %{
         label: "Wishlist",
         path: ~p"/wishlist",
         icon: "hero-star",

@@ -217,6 +217,12 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
         placeholder={gettext("Ask about your collection...")}
         empty_prompt={gettext("Ask anything about your music collection")}
       />
+
+      <div
+        :if={@open_chat}
+        id="auto-open-chat"
+        phx-mounted={MusicLibraryWeb.Components.Chat.open("collection-chat-sheet")}
+      />
     </Layouts.app>
     """
   end
@@ -228,6 +234,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
      |> assign(:current_section, :collection)
      |> assign(:import_query, "")
      |> assign(:display, :grid)
+     |> assign(:open_chat, false)
      |> assign(:collection_summary, Collection.collection_summary())
      |> assign(:chat_count, Chats.count_chats(:collection, Chats.collection_musicbrainz_id()))}
   end
@@ -274,7 +281,9 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
       |> merge_order(order)
       |> merge_pagination(params, total_records)
 
-    load_and_assign_records(socket, record_list_params)
+    socket
+    |> load_and_assign_records(record_list_params)
+    |> assign(:open_chat, params["chat"] == "open")
   end
 
   @impl true

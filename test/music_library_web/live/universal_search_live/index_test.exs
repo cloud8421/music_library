@@ -115,6 +115,16 @@ defmodule MusicLibraryWeb.UniversalSearchLive.IndexTest do
     end
   end
 
+  describe "Navigation links" do
+    test "shows Collection Chat link when searching for chat", %{conn: conn} do
+      conn
+      |> visit(~p"/collection")
+      |> click_button("Search (Cmd/Ctrl+K)")
+      |> fill_in("Universal Search", with: "chat")
+      |> assert_has("[role='option']", "Collection Chat")
+    end
+  end
+
   describe "Keyboard navigation" do
     test "displays keyboard navigation hints when results are present", %{
       conn: conn,
