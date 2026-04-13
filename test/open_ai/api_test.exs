@@ -89,6 +89,30 @@ defmodule OpenAI.APITest do
       assert_received {:chunk, " world"}
     end
 
+    test "callback return value does not affect stream processing" do
+      Req.Test.stub(__MODULE__, fn conn ->
+        body =
+          "data: #{JSON.encode!(%{"type" => "response.output_text.delta", "delta" => "Hello"})}\n\n" <>
+            "data: #{JSON.encode!(%{"type" => "response.output_text.delta", "delta" => " world"})}\n\n" <>
+            "data: #{JSON.encode!(%{"type" => "response.completed"})}\n\n"
+
+        conn
+        |> Plug.Conn.put_resp_content_type("text/event-stream")
+        |> Plug.Conn.send_resp(200, body)
+      end)
+
+      test_pid = self()
+
+      cb = fn chunk ->
+        send(test_pid, {:chunk, chunk})
+        {:error, "callback error"}
+      end
+
+      assert :ok = API.chat_stream([], "instructions", "gpt-4.1", 0.7, @config, cb)
+      assert_received {:chunk, "Hello"}
+      assert_received {:chunk, " world"}
+    end
+
     @tag :capture_log
     test "returns error on non-2xx response" do
       Req.Test.stub(__MODULE__, fn conn ->

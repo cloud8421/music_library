@@ -125,6 +125,7 @@ defmodule OpenAI.API do
     case JSON.decode!(json) do
       %{"type" => "response.output_text.delta", "delta" => delta} ->
         cb.(delta)
+        :ok
 
       %{"type" => "error", "error" => %{"message" => message}} ->
         {:error, message}
