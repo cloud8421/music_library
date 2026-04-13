@@ -191,6 +191,34 @@ defmodule MusicLibrary.Collection do
     |> MapSet.new()
   end
 
+  @spec collection_summary() :: String.t()
+  def collection_summary do
+    records =
+      from(r in Record,
+        where: not is_nil(r.purchased_at),
+        order_by: [order_alphabetically()],
+        select: ^Records.essential_fields()
+      )
+      |> Repo.all()
+
+    records
+    |> Enum.map_join("\n", &format_record_line/1)
+  end
+
+  defp format_record_line(record) do
+    artist_names = Record.artist_names(record)
+    genres = record.genres || []
+
+    base =
+      "#{artist_names} - #{record.title} (#{record.release_date || "Unknown"}, #{record.format}, #{record.type})"
+
+    if genres == [] do
+      base
+    else
+      base <> " [#{Enum.join(genres, ", ")}]"
+    end
+  end
+
   defp base_search do
     from r in SearchIndex,
       where: not is_nil(r.purchased_at)

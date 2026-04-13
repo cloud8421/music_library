@@ -296,4 +296,78 @@ defmodule MusicLibrary.CollectionTest do
       assert random_record.id in collection_ids
     end
   end
+
+  describe "collection_summary/0" do
+    test "returns empty string when collection is empty" do
+      assert Collection.collection_summary() == ""
+    end
+
+    test "returns one line per collected record" do
+      record_with_artist("Radiohead", %{
+        title: "OK Computer",
+        format: :cd,
+        type: :album,
+        genres: ["alternative rock", "art rock"],
+        release_date: "1997-06-16",
+        purchased_at: ~U[2024-01-01 00:00:00Z]
+      })
+
+      record_with_artist("Pink Floyd", %{
+        title: "The Dark Side of the Moon",
+        format: :vinyl,
+        type: :album,
+        genres: ["progressive rock"],
+        release_date: "1973-03-01",
+        purchased_at: ~U[2024-01-02 00:00:00Z]
+      })
+
+      summary = Collection.collection_summary()
+      lines = String.split(summary, "\n")
+
+      assert length(lines) == 2
+
+      assert Enum.any?(lines, fn line ->
+               line =~ "Radiohead" and line =~ "OK Computer" and
+                 line =~ "1997-06-16" and line =~ "cd" and line =~ "album" and
+                 line =~ "alternative rock, art rock"
+             end)
+
+      assert Enum.any?(lines, fn line ->
+               line =~ "Pink Floyd" and line =~ "The Dark Side of the Moon" and
+                 line =~ "1973-03-01" and line =~ "vinyl" and line =~ "album" and
+                 line =~ "progressive rock"
+             end)
+    end
+
+    test "omits genre brackets when genres are empty" do
+      record_with_artist("Radiohead", %{
+        title: "OK Computer",
+        format: :cd,
+        type: :album,
+        genres: [],
+        release_date: "1997-06-16",
+        purchased_at: ~U[2024-01-01 00:00:00Z]
+      })
+
+      summary = Collection.collection_summary()
+      refute summary =~ "["
+      refute summary =~ "]"
+    end
+
+    test "excludes wishlist records" do
+      record_with_artist("Radiohead", %{
+        title: "OK Computer",
+        purchased_at: ~U[2024-01-01 00:00:00Z]
+      })
+
+      record_with_artist("Pink Floyd", %{
+        title: "Wish You Were Here",
+        purchased_at: nil
+      })
+
+      summary = Collection.collection_summary()
+      assert summary =~ "OK Computer"
+      refute summary =~ "Wish You Were Here"
+    end
+  end
 end
