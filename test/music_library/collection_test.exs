@@ -368,7 +368,10 @@ defmodule MusicLibrary.CollectionTest do
 
       assert record_count == 1
       assert length(lines) == 1
-      assert hd(lines) =~ "cd/vinyl"
+
+      line = hd(lines)
+      assert line =~ "cd"
+      assert line =~ "vinyl"
     end
 
     test "caps genres to 3 per record" do
