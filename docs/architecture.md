@@ -77,7 +77,7 @@ write to it directly; insert/update the `records` table instead.
 | `ScrobbleRules.ScrobbleRule` | `scrobble_rules` | `id` (integer) | type (:album/:artist), match_value, target_musicbrainz_id, enabled |
 | `OnlineStoreTemplates.OnlineStoreTemplate` | `online_store_templates` | `id` | name, url_template, enabled |
 | `Secrets.Secret` | `secrets` | `name` (string) | value (encrypted binary) |
-| `Chats.Chat` | `chats` | `id` (binary_id) | entity (:record/:artist), musicbrainz_id, topic, has_many :messages |
+| `Chats.Chat` | `chats` | `id` (binary_id) | entity (:record/:artist/:collection), musicbrainz_id, topic, has_many :messages |
 | `Chats.Message` | `chat_messages` | `id` (binary_id) | role, content, position, belongs_to :chat |
 
 Last.fm schemas (separate, not Ecto-persisted to main DB):
@@ -91,12 +91,12 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | Context | Schemas | Responsibility |
 |---------|---------|---------------|
 | `Records` | Record, RecordEmbedding, SearchIndex | CRUD, search, import from MusicBrainz, cover/genre/color management, PubSub notifications |
-| `Collection` | Record (via SearchIndex) | Querying collected records (purchased_at != nil), stats, collected artist IDs |
+| `Collection` | Record (via SearchIndex) | Querying collected records (purchased_at != nil), stats, collected artist IDs, collection summary for AI chat |
 | `Wishlist` | Record (via SearchIndex) | Querying wishlisted records (purchased_at is nil) |
 | `Artists` | ArtistInfo, ArtistRecord | Artist metadata from MusicBrainz/Discogs/Wikipedia/Last.fm, images, search |
 | `Assets` | Asset | Binary asset storage (covers, artist images), cache tracking, pruning unreferenced assets |
 | `Notes` | Note | Free-text notes for records and artists |
-| `Chats` | Chat, Message, StreamProvider, RecordChat, ArtistChat | Persistent AI chat conversations for records and artists, streaming AI chat behaviour and entity-specific implementations |
+| `Chats` | Chat, Message, StreamProvider, RecordChat, ArtistChat, CollectionChat | Persistent AI chat conversations for records, artists, and the collection, streaming AI chat behaviour and entity-specific implementations |
 | `RecordSets` | RecordSet, RecordSetItem | User-curated record groupings with ordering |
 | `ScrobbleRules` | ScrobbleRule | Rules to remap Last.fm scrobble data to correct MusicBrainz IDs; searchable by match_value/target/description, orderable by alphabetical or inserted_at |
 | `ScrobbleActivity` | — | Scrobbling releases/media/tracks to Last.fm |
@@ -129,6 +129,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Chats.StreamProvider` | Behaviour for streaming AI chat (`stream_response/3` callback) |
 | `Chats.RecordChat` | Chat implementation for records (OpenAI streaming, web search enabled) |
 | `Chats.ArtistChat` | Chat implementation for artists (OpenAI streaming, uses Wikipedia/artist context) |
+| `Chats.CollectionChat` | Chat implementation for the collection (OpenAI streaming via gpt-4.1-mini, uses collection summary as context) |
 | `Chats.Prompt` | Builds complete chat prompts by interpolating identity, content, and approach guidelines |
 | `Country` | Country code (alpha-2, alpha-3, subdivision, IETF) to flag emoji conversion |
 | `ErrorTracker.ErrorNotifier` | GenServer: attaches to ErrorTracker telemetry, skips muted errors, throttles repeated errors, dispatches email notifications |
@@ -150,7 +151,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Discogs` / `Discogs.API` | discogs.com | 2000 ms | Artist profiles, images |
 | `Wikipedia` / `Wikipedia.API` | wikipedia.org | 1000 ms | Artist biographies |
 | `BraveSearch` / `BraveSearch.API` | search.brave.com | 1000 ms | Cover art and artist image search |
-| `OpenAI` / `OpenAI.API` | api.openai.com | 250 ms | Text embeddings for similarity, streaming chat via Responses API (gpt-4.1 + web search) |
+| `OpenAI` / `OpenAI.API` | api.openai.com | 250 ms | Text embeddings for similarity, streaming chat via Responses API (gpt-4.1/gpt-4.1-mini + web search) |
 | `MusicLibrary.Mailer` | Mailgun (via Swoosh) | — | Transactional email delivery (error notifications, daily digest) |
 
 Each has a `Config` module reading from application env. All HTTP clients use `Req` with
@@ -275,8 +276,8 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `StatsLive.TopByPeriod` | StatsLive.TopAlbums, StatsLive.TopArtists | Generic period-tabbed stats display (7d, 30d, 90d, 1y, all-time) |
 | `StatsLive.TopAlbums` | StatsLive.Index | Top albums by period (uses TopByPeriod) |
 | `StatsLive.TopArtists` | StatsLive.Index | Top artists by period (uses TopByPeriod) |
-| `UniversalSearchLive.Index` | Layout (global) | Cmd+K search modal with quick actions (add to wishlist/collection, scrobble) |
-| `Chat` | CollectionLive.Show, WishlistLive.Show, ArtistLive.Show | AI chat sheet (OpenAI streaming, configurable per entity) |
+| `UniversalSearchLive.Index` | Layout (global) | Cmd+K search modal with quick actions (add to wishlist/collection, scrobble, collection chat) |
+| `Chat` | CollectionLive.Index, CollectionLive.Show, WishlistLive.Show, ArtistLive.Show | AI chat sheet (OpenAI streaming, configurable per entity) |
 | `Notes` | CollectionLive.Show, WishlistLive.Show, ArtistLive.Show | Markdown note rendering and editing |
 | `AddRecord` | CollectionLive.Index, WishlistLive.Index | MusicBrainz import interface |
 | `BarcodeScanner` | CollectionLive.Index | Barcode scanning UI (uses barcode-detector JS) |
