@@ -8,16 +8,24 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
   alias MusicLibrary.Chats
   alias MusicLibrary.Collection
-  alias MusicLibrary.Records
+  alias MusicLibraryWeb.LiveHelpers.IndexActions
 
-  alias MusicLibraryWeb.ErrorMessages
-
-  @default_records_list_params %{
-    query: "",
-    page: 1,
-    page_size: 72,
-    order: :purchase
-  }
+  defp index_config do
+    %{
+      context_module: Collection,
+      default_order: "purchase",
+      allowed_orders: [:purchase, :alphabetical, :release],
+      default_records_list_params: %{query: "", page: 1, page_size: 72, order: :purchase},
+      purchased_at_fn: fn -> DateTime.utc_now() end,
+      import_page_title: gettext("Add new Record · Collection"),
+      section_page_title: gettext("Collection"),
+      import_success_toast: gettext("Record imported successfully"),
+      import_error_toast: gettext("Error importing record"),
+      record_path_fn: fn id -> ~p"/collection/#{id}" end,
+      index_path_fn: fn qs -> ~p"/collection?#{qs}" end,
+      base_index_path: ~p"/collection"
+    }
+  end
 
   @impl true
   def render(assigns) do
@@ -234,6 +242,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
     {:ok,
      socket
      |> assign(:current_section, :collection)
+     |> assign(:index_config, index_config())
      |> assign(:import_query, "")
      |> assign(:display, :grid)
      |> assign(:open_chat, false)
@@ -248,50 +257,31 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
   end
 
   defp apply_action(socket, :import, params) do
-    import_query = params["import_query"] || ""
-
-    socket
-    |> apply_fallback_index(params, :records, &apply_action/3)
-    |> assign(:page_title, gettext("Add new Record · Collection"))
-    |> assign(:import_query, import_query)
-    |> assign(:record, nil)
+    IndexActions.apply_import_action(socket, params)
   end
 
   defp apply_action(socket, :barcode_scan, params) do
     socket
-    |> apply_fallback_index(params, :records, &apply_action/3)
+    |> apply_fallback_index(params, :records, fn s, :index, p ->
+      IndexActions.apply_index_action(s, p)
+    end)
     |> assign(:page_title, gettext("Scan barcodes · Collection"))
     |> assign(:record, nil)
   end
 
-  defp apply_action(socket, :edit, %{"id" => id} = params) do
-    record = Records.get_record!(id)
-
-    socket
-    |> apply_fallback_index(params, :records, &apply_action/3)
-    |> assign(:page_title, page_title(:edit, record))
-    |> assign(:record, record)
+  defp apply_action(socket, :edit, params) do
+    IndexActions.apply_edit_action(socket, params)
   end
 
   defp apply_action(socket, :index, params) do
-    query = params["query"] || ""
-    order = parse_order(params["order"] || "purchase", [:purchase, :alphabetical, :release])
-    total_records = Collection.search_records_count(query)
-
-    record_list_params =
-      @default_records_list_params
-      |> merge_query(query)
-      |> merge_order(order)
-      |> merge_pagination(params, total_records)
-
     socket
-    |> load_and_assign_records(record_list_params)
+    |> IndexActions.apply_index_action(params)
     |> assign(:open_chat, params["chat"] == "open")
   end
 
   @impl true
   def handle_info({MusicLibraryWeb.Components.RecordForm, {:saved, _record}}, socket) do
-    {:noreply, load_and_assign_records(socket, socket.assigns.record_list_params)}
+    IndexActions.handle_record_saved(socket)
   end
 
   def handle_info({MusicLibraryWeb.Components.Chat, :chats_changed}, socket) do
@@ -310,71 +300,19 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    record = Records.get_record!(id)
-    {:ok, _} = Records.delete_record(record)
-
-    {:noreply, stream_delete(socket, :records, record)}
+    IndexActions.handle_delete(socket, id)
   end
 
   def handle_event("search", %{"query" => query}, socket) do
-    qs =
-      @default_records_list_params
-      |> Map.put(:query, query)
-      |> Map.take([:query, :page, :page_size])
-
-    {:noreply, push_patch(socket, to: ~p"/collection?#{qs}")}
+    IndexActions.handle_search(socket, query)
   end
 
   def handle_event("import", %{"id" => musicbrainz_id, "format" => format}, socket) do
-    current_time = DateTime.utc_now()
-
-    case Records.import_from_musicbrainz_release_group(musicbrainz_id,
-           format: format,
-           purchased_at: current_time
-         ) do
-      {:ok, record} ->
-        {:noreply,
-         socket
-         |> put_toast(:info, gettext("Record imported successfully"))
-         |> push_navigate(to: ~p"/collection/#{record.id}")}
-
-      {:error, reason} ->
-        {:noreply,
-         socket
-         |> put_toast(
-           :error,
-           gettext("Error importing record") <> ": " <> ErrorMessages.friendly_message(reason)
-         )
-         |> push_patch(to: ~p"/collection")}
-    end
+    IndexActions.handle_import(socket, musicbrainz_id, format)
   end
 
   def handle_event("set_display", %{"mode" => mode}, socket) do
-    mode = parse_mode(mode)
-
-    {:noreply,
-     socket
-     |> assign(:display, mode)
-     |> load_and_assign_records(socket.assigns.record_list_params)}
-  end
-
-  defp load_and_assign_records(socket, record_list_params) do
-    offset = page_to_offset(record_list_params.page, record_list_params.page_size)
-
-    opts = [
-      limit: record_list_params.page_size,
-      offset: offset,
-      order: record_list_params.order
-    ]
-
-    records =
-      Collection.search_records(record_list_params.query, opts)
-
-    socket
-    |> assign(:page_title, gettext("Collection"))
-    |> assign(:record, nil)
-    |> assign(:record_list_params, record_list_params)
-    |> stream(:records, records, reset: true)
+    IndexActions.handle_set_display(socket, mode)
   end
 
   defp order_path(record_list_params, order) do
@@ -395,21 +333,4 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
     ~p"/collection?#{qs}"
   end
-
-  defp page_title(action, record) do
-    Enum.join(
-      [
-        Records.Record.artist_names(record),
-        "-",
-        record.title,
-        "·",
-        title_segment(action),
-        "·",
-        gettext("Collection")
-      ],
-      " "
-    )
-  end
-
-  defp title_segment(:edit), do: gettext("Edit")
 end

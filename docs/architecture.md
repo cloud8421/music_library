@@ -306,6 +306,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `Auth` | Authentication plugs: login password check, API token validation, session enforcement |
 | `ArtistLive.Biography` | Artist biography building/rendering from Wikipedia and Last.fm data |
 | `LiveHelpers.Params` | URL query param parsing: pagination, search query, sort order, display mode, fallback index |
+| `LiveHelpers.IndexActions` | Shared index page logic (search, pagination, import, delete, display mode) for Collection/Wishlist index pages, parameterized by config map |
 | `LiveHelpers.RecordActions` | Shared record action handlers (refresh cover, genres, embeddings, MusicBrainz data) for Collection/Wishlist show pages |
 
 ### Controllers

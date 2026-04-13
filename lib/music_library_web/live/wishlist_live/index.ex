@@ -2,19 +2,28 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
   use MusicLibraryWeb, :live_view
 
   import MusicLibraryWeb.Components.Pagination
-  import MusicLibraryWeb.LiveHelpers.Params
   import MusicLibraryWeb.RecordComponents
 
   alias MusicLibrary.Records
   alias MusicLibrary.Wishlist
-  alias MusicLibraryWeb.ErrorMessages
+  alias MusicLibraryWeb.LiveHelpers.IndexActions
 
-  @default_records_list_params %{
-    query: "",
-    page: 1,
-    page_size: 72,
-    order: :alphabetical
-  }
+  defp index_config do
+    %{
+      context_module: Wishlist,
+      default_order: "insertion",
+      allowed_orders: [:insertion, :alphabetical, :release],
+      default_records_list_params: %{query: "", page: 1, page_size: 72, order: :alphabetical},
+      purchased_at_fn: fn -> nil end,
+      import_page_title: gettext("Add new Record · Wishlist"),
+      section_page_title: gettext("Wishlist"),
+      import_success_toast: gettext("Record wishlisted successfully"),
+      import_error_toast: gettext("Error wishlisting record"),
+      record_path_fn: fn id -> ~p"/wishlist/#{id}" end,
+      index_path_fn: fn qs -> ~p"/wishlist?#{qs}" end,
+      base_index_path: ~p"/wishlist"
+    }
+  end
 
   @impl true
   def render(assigns) do
@@ -170,6 +179,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
     {:ok,
      socket
      |> assign(current_section: :wishlist)
+     |> assign(:index_config, index_config())
      |> assign(:import_query, "")
      |> assign(:display, :grid)
      |> assign(:current_date, current_date)}
@@ -181,81 +191,33 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
   end
 
   defp apply_action(socket, :import, params) do
-    import_query = params["import_query"] || ""
-
-    socket
-    |> apply_fallback_index(params, :records, &apply_action/3)
-    |> assign(:page_title, gettext("Add new Record · Wishlist"))
-    |> assign(:import_query, import_query)
-    |> assign(:record, nil)
+    IndexActions.apply_import_action(socket, params)
   end
 
-  defp apply_action(socket, :edit, %{"id" => id} = params) do
-    record = Records.get_record!(id)
-
-    socket
-    |> apply_fallback_index(params, :records, &apply_action/3)
-    |> assign(:page_title, page_title(:edit, record))
-    |> assign(:record, record)
+  defp apply_action(socket, :edit, params) do
+    IndexActions.apply_edit_action(socket, params)
   end
 
   defp apply_action(socket, :index, params) do
-    query = params["query"] || ""
-    order = parse_order(params["order"] || "insertion", [:insertion, :alphabetical, :release])
-    total_records = Wishlist.search_records_count(query)
-
-    record_list_params =
-      @default_records_list_params
-      |> merge_query(query)
-      |> merge_order(order)
-      |> merge_pagination(params, total_records)
-
-    load_and_assign_records(socket, record_list_params)
+    IndexActions.apply_index_action(socket, params)
   end
 
   @impl true
   def handle_info({MusicLibraryWeb.Components.RecordForm, {:saved, _record}}, socket) do
-    {:noreply, load_and_assign_records(socket, socket.assigns.record_list_params)}
+    IndexActions.handle_record_saved(socket)
   end
 
   @impl true
-
   def handle_event("delete", %{"id" => id}, socket) do
-    record = Records.get_record!(id)
-    {:ok, _} = Records.delete_record(record)
-
-    {:noreply, stream_delete(socket, :records, record)}
+    IndexActions.handle_delete(socket, id)
   end
 
   def handle_event("search", %{"query" => query}, socket) do
-    qs =
-      @default_records_list_params
-      |> Map.put(:query, query)
-      |> Map.take([:query, :page, :page_size])
-
-    {:noreply, push_patch(socket, to: ~p"/wishlist?#{qs}")}
+    IndexActions.handle_search(socket, query)
   end
 
   def handle_event("import", %{"id" => musicbrainz_id, "format" => format}, socket) do
-    case Records.import_from_musicbrainz_release_group(musicbrainz_id,
-           format: format,
-           purchased_at: nil
-         ) do
-      {:ok, record} ->
-        {:noreply,
-         socket
-         |> put_toast(:info, gettext("Record wishlisted successfully"))
-         |> push_navigate(to: ~p"/wishlist/#{record.id}")}
-
-      {:error, reason} ->
-        {:noreply,
-         socket
-         |> put_toast(
-           :error,
-           gettext("Error wishlisting record") <> ": " <> ErrorMessages.friendly_message(reason)
-         )
-         |> push_patch(to: ~p"/wishlist")}
-    end
+    IndexActions.handle_import(socket, musicbrainz_id, format)
   end
 
   def handle_event("add-to-collection", %{"id" => id}, socket) do
@@ -275,29 +237,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
   end
 
   def handle_event("set_display", %{"mode" => mode}, socket) do
-    mode = parse_mode(mode)
-
-    {:noreply,
-     socket
-     |> assign(:display, mode)
-     |> load_and_assign_records(socket.assigns.record_list_params)}
-  end
-
-  defp load_and_assign_records(socket, record_list_params) do
-    offset = page_to_offset(record_list_params.page, record_list_params.page_size)
-
-    records =
-      Wishlist.search_records(record_list_params.query,
-        limit: record_list_params.page_size,
-        offset: offset,
-        order: record_list_params.order
-      )
-
-    socket
-    |> assign(:page_title, gettext("Wishlist"))
-    |> assign(:record, nil)
-    |> assign(:record_list_params, record_list_params)
-    |> stream(:records, records, reset: true)
+    IndexActions.handle_set_display(socket, mode)
   end
 
   defp order_path(record_list_params, order) do
@@ -313,26 +253,9 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
   defp back_path(record_list_params) do
     qs =
       record_list_params
-      |> Map.take([:query, :page, :page_size])
+      |> Map.take([:query, :page, :page_size, :order])
       |> Enum.filter(fn {_, v} -> v not in ["", nil] end)
 
     ~p"/wishlist?#{qs}"
   end
-
-  defp page_title(action, record) do
-    Enum.join(
-      [
-        Records.Record.artist_names(record),
-        "-",
-        record.title,
-        "·",
-        title_segment(action),
-        "·",
-        gettext("Wishlist")
-      ],
-      " "
-    )
-  end
-
-  defp title_segment(:edit), do: gettext("Edit")
 end
