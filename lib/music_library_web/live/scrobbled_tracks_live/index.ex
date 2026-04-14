@@ -107,8 +107,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
                %{
                  track: track,
                  artist_id: artist_id,
-                 collected_record_id: collected_record_id,
-                 wishlisted_record_id: wishlisted_record_id,
+                 matching_records: matching_records,
                  cover_hash: cover_hash
                }} <- @streams.tracks
             }
@@ -147,16 +146,13 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
 
             <div class="flex items-center">
               <.record_status_badges
+                id={"status-#{track.scrobbled_at_uts}"}
                 musicbrainz_id={track.album.musicbrainz_id}
-                collected_record_id={collected_record_id}
-                wishlisted_record_id={wishlisted_record_id}
+                matching_records={matching_records}
               />
 
               <.import_format_dropdown
-                :if={
-                  track.album.musicbrainz_id !== "" and !collected_record_id and
-                    !wishlisted_record_id
-                }
+                :if={track.album.musicbrainz_id !== "" and matching_records == []}
                 id={"actions-#{track.scrobbled_at_uts}-tracks"}
                 musicbrainz_id={track.album.musicbrainz_id}
               />

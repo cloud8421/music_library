@@ -123,12 +123,9 @@ defmodule MusicLibrary.ListeningStats do
       recent_tracks
       |> Enum.map(fn %{track: track, artist_id: artist_id, matching_records: matching_records} =
                        rt ->
-        parsed = parse_matching_records(matching_records)
-
         rt
         |> Map.put(:track, polyfill_track(track, timezone, artist_id))
-        |> Map.put(:matching_records, parsed)
-        |> derive_legacy_record_ids(parsed)
+        |> Map.put(:matching_records, parse_matching_records(matching_records))
       end)
 
     recent_albums =
@@ -200,11 +197,7 @@ defmodule MusicLibrary.ListeningStats do
     from(t in ordered_query, limit: ^page_size, offset: ^offset)
     |> Repo.all()
     |> Enum.map(fn result ->
-      parsed = parse_matching_records(result.matching_records)
-
-      result
-      |> Map.put(:matching_records, parsed)
-      |> derive_legacy_record_ids(parsed)
+      %{result | matching_records: parse_matching_records(result.matching_records)}
     end)
   end
 
@@ -623,17 +616,5 @@ defmodule MusicLibrary.ListeningStats do
   defp parse_purchased_at(dt_string) do
     {:ok, dt, _offset} = DateTime.from_iso8601(dt_string)
     dt
-  end
-
-  # Temporary bridge: derive collected_record_id and wishlisted_record_id from
-  # matching_records so existing LiveView templates keep working until they are
-  # migrated to use matching_records directly.
-  defp derive_legacy_record_ids(result, matching_records) do
-    collected = Enum.find(matching_records, &(&1.purchased_at != nil))
-    wishlisted = Enum.find(matching_records, &is_nil(&1.purchased_at))
-
-    result
-    |> Map.put(:collected_record_id, collected && collected.id)
-    |> Map.put(:wishlisted_record_id, wishlisted && wishlisted.id)
   end
 end

@@ -266,8 +266,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
                    %{
                      album: album,
                      artist_id: artist_id,
-                     collected_record_id: collected_record_id,
-                     wishlisted_record_id: wishlisted_record_id,
+                     matching_records: matching_records,
                      cover_hash: cover_hash
                    }} <- @streams.recent_albums
                 }
@@ -316,16 +315,13 @@ defmodule MusicLibraryWeb.StatsLive.Index do
                     </div>
 
                     <.record_status_badges
+                      id={"status-#{album.scrobbled_at_uts}-albums"}
                       musicbrainz_id={album.metadata.musicbrainz_id}
-                      collected_record_id={collected_record_id}
-                      wishlisted_record_id={wishlisted_record_id}
+                      matching_records={matching_records}
                     />
 
                     <.import_format_dropdown
-                      :if={
-                        album.metadata.musicbrainz_id !== "" and !collected_record_id and
-                          !wishlisted_record_id
-                      }
+                      :if={album.metadata.musicbrainz_id !== "" and matching_records == []}
                       id={"actions-#{album.scrobbled_at_uts}-albums"}
                       musicbrainz_id={album.metadata.musicbrainz_id}
                     />
@@ -347,8 +343,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
                    %{
                      track: track,
                      artist_id: artist_id,
-                     collected_record_id: collected_record_id,
-                     wishlisted_record_id: wishlisted_record_id,
+                     matching_records: matching_records,
                      cover_hash: cover_hash
                    }} <- @streams.recent_tracks
                 }
@@ -400,16 +395,13 @@ defmodule MusicLibraryWeb.StatsLive.Index do
                     </div>
 
                     <.record_status_badges
+                      id={"status-#{track.scrobbled_at_uts}-tracks"}
                       musicbrainz_id={track.album.musicbrainz_id}
-                      collected_record_id={collected_record_id}
-                      wishlisted_record_id={wishlisted_record_id}
+                      matching_records={matching_records}
                     />
 
                     <.import_format_dropdown
-                      :if={
-                        track.album.musicbrainz_id !== "" and !collected_record_id and
-                          !wishlisted_record_id
-                      }
+                      :if={track.album.musicbrainz_id !== "" and matching_records == []}
                       id={"actions-#{track.scrobbled_at_uts}-tracks"}
                       musicbrainz_id={track.album.musicbrainz_id}
                     />

@@ -1,8 +1,11 @@
 defmodule MusicLibraryWeb.StatsLive.TopAlbums do
   use MusicLibraryWeb, :html
 
+  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
+
   alias MusicLibrary.Assets.Transform
   alias MusicLibrary.ListeningStats
+  alias MusicLibrary.Records
   alias MusicLibraryWeb.StatsLive.TopByPeriod
 
   attr :id, :string, required: true
@@ -25,7 +28,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
           phx-click={navigate_to_record(album)}
           class={[
             "flex items-center space-x-3 p-2",
-            (album.collected_record_id || album.wishlisted_record_id) &&
+            navigable?(album) &&
               "cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-700"
           ]}
         >
@@ -45,45 +48,120 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
               {album.album_title}
             </p>
           </div>
-          <.badge :if={album.album_musicbrainz_id == ""}>
-            {album.play_count}
-          </.badge>
-          <.badge :if={
-            album.album_musicbrainz_id !== "" and !album.collected_record_id and
-              !album.wishlisted_record_id
-          }>
-            {album.play_count}
-          </.badge>
-          <.badge
-            :if={album.collected_record_id}
-            color="success"
-          >
-            {album.play_count}
-          </.badge>
-          <.badge
-            :if={album.wishlisted_record_id}
-            color="warning"
-          >
-            {album.play_count}
-          </.badge>
+          <.top_album_badge album={album} />
         </div>
       </:item>
     </TopByPeriod.live>
     """
   end
 
-  defp navigate_to_record(album) do
-    cond do
-      album.collected_record_id ->
-        JS.navigate(~p"/collection/#{album.collected_record_id}")
+  attr :album, :map, required: true
 
-      album.wishlisted_record_id ->
-        JS.navigate(~p"/wishlist/#{album.wishlisted_record_id}")
+  defp top_album_badge(assigns) do
+    assigns =
+      assigns
+      |> assign(:status, badge_status(assigns.album.matching_records))
+      |> assign(:count, length(assigns.album.matching_records))
 
-      true ->
-        nil
+    ~H"""
+    <%= case {@count, @status} do %>
+      <% {0, _} -> %>
+        <.badge>{@album.play_count}</.badge>
+      <% {1, :collected} -> %>
+        <.badge color="success">{@album.play_count}</.badge>
+      <% {1, :wishlisted} -> %>
+        <.badge color="warning">{@album.play_count}</.badge>
+      <% {_, status} -> %>
+        <.dropdown
+          id={"top-album-#{@album.album_musicbrainz_id}"}
+          placement="bottom-end"
+        >
+          <:toggle>
+            <span class={[
+              "inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium cursor-pointer",
+              play_count_badge_classes(status)
+            ]}>
+              {@album.play_count}
+            </span>
+          </:toggle>
+          <.top_album_dropdown_link
+            :for={record <- @album.matching_records}
+            record={record}
+          />
+        </.dropdown>
+    <% end %>
+    """
+  end
+
+  attr :record, :map, required: true
+
+  defp top_album_dropdown_link(assigns) do
+    path =
+      if assigns.record.purchased_at,
+        do: ~p"/collection/#{assigns.record.id}",
+        else: ~p"/wishlist/#{assigns.record.id}"
+
+    assigns = assign(assigns, :path, path)
+
+    ~H"""
+    <.dropdown_link navigate={@path}>
+      <span class="flex items-center gap-2">
+        <.badge :if={@record.purchased_at} color="success" size="sm">
+          {gettext("C")}
+        </.badge>
+        <.badge :if={!@record.purchased_at} color="warning" size="sm">
+          {gettext("W")}
+        </.badge>
+        <span>
+          {format_label(String.to_existing_atom(@record.format))} · {type_label(
+            String.to_existing_atom(@record.type)
+          )}
+          <span :if={@record.purchased_at} class="text-zinc-500 dark:text-zinc-400">
+            · {Records.Record.format_as_date(@record.purchased_at)}
+          </span>
+        </span>
+      </span>
+    </.dropdown_link>
+    """
+  end
+
+  defp navigate_to_record(%{matching_records: [record]}) do
+    if record.purchased_at do
+      JS.navigate(~p"/collection/#{record.id}")
+    else
+      JS.navigate(~p"/wishlist/#{record.id}")
     end
   end
+
+  defp navigate_to_record(_album), do: nil
+
+  defp navigable?(%{matching_records: [_]}), do: true
+  defp navigable?(_), do: false
+
+  defp badge_status([]), do: nil
+
+  defp badge_status(records) do
+    all_collected = Enum.all?(records, & &1.purchased_at)
+    all_wishlisted = Enum.all?(records, &is_nil(&1.purchased_at))
+
+    cond do
+      all_collected -> :collected
+      all_wishlisted -> :wishlisted
+      true -> :mixed
+    end
+  end
+
+  defp play_count_badge_classes(:collected),
+    do:
+      "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20 dark:bg-emerald-400/10 dark:text-emerald-400 dark:ring-emerald-400/20"
+
+  defp play_count_badge_classes(:wishlisted),
+    do:
+      "bg-yellow-50 text-yellow-800 ring-1 ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:ring-yellow-400/20"
+
+  defp play_count_badge_classes(:mixed),
+    do:
+      "bg-yellow-50 text-emerald-700 ring-1 ring-emerald-600/40 dark:bg-yellow-400/10 dark:text-emerald-400 dark:ring-emerald-400/40"
 
   defp cover_url(album) when is_nil(album.cover_hash) do
     album.cover_url
