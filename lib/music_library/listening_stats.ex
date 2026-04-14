@@ -282,6 +282,7 @@ defmodule MusicLibrary.ListeningStats do
     |> top_albums_aggregate_query(limit)
     |> top_albums_attach_metadata()
     |> Repo.all()
+    |> parse_top_albums_matching_records()
   end
 
   @doc """
@@ -299,6 +300,7 @@ defmodule MusicLibrary.ListeningStats do
     |> top_albums_aggregate_query(limit)
     |> top_albums_attach_metadata()
     |> Repo.all()
+    |> parse_top_albums_matching_records()
   end
 
   @doc """
@@ -437,10 +439,11 @@ defmodule MusicLibrary.ListeningStats do
       limit: ^limit
   end
 
-  # Attaches `record_releases` and `cover_hash` lookups to the LIMIT'd
-  # aggregate result via correlated scalar subqueries. The cost of these
-  # lookups scales with the number of result rows (≤ limit), not with the
-  # size of `record_releases`.
+  # Attaches `matching_records` and `cover_hash` lookups to the LIMIT'd
+  # aggregate result via correlated subqueries. Groups by release group
+  # (records.musicbrainz_id) so all records for the same album appear.
+  # The cost scales with the number of result rows (≤ limit), not with
+  # the size of `record_releases`.
   defp top_albums_attach_metadata(aggregate_query) do
     from g in subquery(aggregate_query),
       select: %{
@@ -450,20 +453,40 @@ defmodule MusicLibrary.ListeningStats do
         play_count: g.play_count,
         cover_url: g.cover_url,
         album_musicbrainz_id: g.album_musicbrainz_id,
-        collected_record_id:
+        matching_records:
           fragment(
-            "(SELECT min(record_id) FROM record_releases WHERE release_id = ? AND purchased_at IS NOT NULL)",
-            g.album_musicbrainz_id
-          ),
-        wishlisted_record_id:
-          fragment(
-            "(SELECT min(record_id) FROM record_releases WHERE release_id = ? AND purchased_at IS NULL)",
+            """
+            (SELECT json_group_array(json_object(\
+            'id', r.id, \
+            'title', r.title, \
+            'format', r.format, \
+            'type', r.type, \
+            'purchased_at', r.purchased_at, \
+            'cover_hash', r.cover_hash\
+            )) \
+            FROM records r \
+            WHERE r.musicbrainz_id = (\
+            SELECT r2.musicbrainz_id FROM records r2 \
+            INNER JOIN record_releases rr ON rr.record_id = r2.id \
+            WHERE rr.release_id = ? \
+            LIMIT 1\
+            ))\
+            """,
             g.album_musicbrainz_id
           ),
         cover_hash:
           fragment(
-            "coalesce((SELECT min(cover_hash) FROM record_releases WHERE release_id = ? AND purchased_at IS NOT NULL), (SELECT min(cover_hash) FROM record_releases WHERE release_id = ? AND purchased_at IS NULL))",
-            g.album_musicbrainz_id,
+            """
+            (SELECT r.cover_hash FROM records r \
+            WHERE r.musicbrainz_id = (\
+            SELECT r2.musicbrainz_id FROM records r2 \
+            INNER JOIN record_releases rr ON rr.record_id = r2.id \
+            WHERE rr.release_id = ? \
+            LIMIT 1\
+            ) \
+            ORDER BY (CASE WHEN r.purchased_at IS NOT NULL THEN 0 ELSE 1 END), r.id \
+            LIMIT 1)\
+            """,
             g.album_musicbrainz_id
           )
       }
@@ -569,6 +592,12 @@ defmodule MusicLibrary.ListeningStats do
     else
       artist
     end
+  end
+
+  defp parse_top_albums_matching_records(albums) do
+    Enum.map(albums, fn album ->
+      %{album | matching_records: parse_matching_records(album.matching_records)}
+    end)
   end
 
   defp parse_matching_records(nil), do: []

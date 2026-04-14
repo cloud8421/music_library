@@ -417,7 +417,6 @@ defmodule MusicLibrary.ListeningStatsTest do
       end
     end
 
-    @tag :skip
     test "get_top_albums returns one entry per album", %{expected_record_id: expected_record_id} do
       results = ListeningStats.get_top_albums(limit: 10)
 
