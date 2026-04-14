@@ -8,7 +8,7 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
 
   use MusicLibraryWeb, :html
 
-  import MusicLibraryWeb.RecordComponents, only: [format_label: 1]
+  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
 
   def refresh_scrobbles_button(assigns) do
     ~H"""
@@ -96,25 +96,117 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
     """
   end
 
+  attr :id, :string, required: true
   attr :musicbrainz_id, :string, required: true
-  attr :collected_record_id, :string, default: nil
-  attr :wishlisted_record_id, :string, default: nil
+  attr :matching_records, :list, default: []
 
   def record_status_badges(assigns) do
+    assigns =
+      assigns
+      |> assign(:record_count, length(assigns.matching_records))
+      |> assign(:status, badge_status(assigns.matching_records))
+
     ~H"""
     <div class="flex flex-col gap-1 text-right">
       <.badge :if={@musicbrainz_id == ""}>
         {gettext("No MB ID")}
       </.badge>
-      <.link :if={@collected_record_id} navigate={~p"/collection/#{@collected_record_id}"}>
-        <.badge color="success">{gettext("Collected")}</.badge>
-      </.link>
-      <.link :if={@wishlisted_record_id} navigate={~p"/wishlist/#{@wishlisted_record_id}"}>
-        <.badge color="warning">{gettext("Wishlisted")}</.badge>
-      </.link>
+
+      <%= case {@record_count, @status} do %>
+        <% {0, _} -> %>
+        <% {1, :collected} -> %>
+          <.link navigate={~p"/collection/#{hd(@matching_records).id}"}>
+            <.badge color="success">{gettext("Collected")}</.badge>
+          </.link>
+        <% {1, :wishlisted} -> %>
+          <.link navigate={~p"/wishlist/#{hd(@matching_records).id}"}>
+            <.badge color="warning">{gettext("Wishlisted")}</.badge>
+          </.link>
+        <% {_, status} -> %>
+          <.dropdown id={@id} placement="bottom-end">
+            <:toggle>
+              <.record_group_badge status={status} count={@record_count} />
+            </:toggle>
+            <.record_dropdown_link
+              :for={record <- @matching_records}
+              record={record}
+            />
+          </.dropdown>
+      <% end %>
     </div>
     """
   end
+
+  attr :status, :atom, required: true, values: [:collected, :wishlisted, :mixed]
+  attr :count, :integer, required: true
+
+  defp record_group_badge(assigns) do
+    ~H"""
+    <span class={[
+      "inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium cursor-pointer",
+      badge_classes(@status)
+    ]}>
+      {ngettext("1 record", "%{count} records", @count)}
+    </span>
+    """
+  end
+
+  attr :record, :map, required: true
+
+  defp record_dropdown_link(assigns) do
+    path =
+      if assigns.record.purchased_at,
+        do: ~p"/collection/#{assigns.record.id}",
+        else: ~p"/wishlist/#{assigns.record.id}"
+
+    assigns = assign(assigns, :path, path)
+
+    ~H"""
+    <.dropdown_link navigate={@path}>
+      <span class="flex items-center gap-2">
+        <.badge :if={@record.purchased_at} color="success" size="sm">
+          {gettext("C")}
+        </.badge>
+        <.badge :if={!@record.purchased_at} color="warning" size="sm">
+          {gettext("W")}
+        </.badge>
+        <span>
+          {format_label(String.to_existing_atom(@record.format))} · {type_label(
+            String.to_existing_atom(@record.type)
+          )}
+          <span :if={@record.purchased_at} class="text-zinc-500 dark:text-zinc-400">
+            · {Records.Record.format_as_date(@record.purchased_at)}
+          </span>
+        </span>
+      </span>
+    </.dropdown_link>
+    """
+  end
+
+  defp badge_status([]), do: nil
+
+  defp badge_status(records) do
+    all_collected = Enum.all?(records, & &1.purchased_at)
+    all_wishlisted = Enum.all?(records, &is_nil(&1.purchased_at))
+
+    cond do
+      all_collected -> :collected
+      all_wishlisted -> :wishlisted
+      true -> :mixed
+    end
+  end
+
+  defp badge_classes(:collected),
+    do:
+      "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20 dark:bg-emerald-400/10 dark:text-emerald-400 dark:ring-emerald-400/20"
+
+  defp badge_classes(:wishlisted),
+    do:
+      "bg-yellow-50 text-yellow-800 ring-1 ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:ring-yellow-400/20"
+
+  defp badge_classes(:mixed),
+    do:
+      "bg-yellow-50 text-emerald-700 ring-1 ring-emerald-600/40 dark:bg-yellow-400/10 dark:text-emerald-400 dark:ring-emerald-400/40"
 
   attr :id, :string, required: true
   attr :musicbrainz_id, :string, required: true

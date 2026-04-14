@@ -331,6 +331,7 @@ msgid "A->Z"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
+#: lib/music_library_web/components/scrobble_components.ex
 #, elixir-autogen, elixir-format
 msgid "1 record"
 msgid_plural "%{count} records"
@@ -2420,4 +2421,14 @@ msgstr ""
 #: lib/music_library_web/live/collection_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Chat"
+msgstr ""
+
+#: lib/music_library_web/components/scrobble_components.ex
+#, elixir-autogen, elixir-format
+msgid "C"
+msgstr ""
+
+#: lib/music_library_web/components/scrobble_components.ex
+#, elixir-autogen, elixir-format
+msgid "W"
 msgstr ""
