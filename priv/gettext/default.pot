@@ -2424,13 +2424,11 @@ msgid "Chat"
 msgstr ""
 
 #: lib/music_library_web/components/scrobble_components.ex
-#: lib/music_library_web/live/stats_live/top_albums.ex
 #, elixir-autogen, elixir-format
 msgid "C"
 msgstr ""
 
 #: lib/music_library_web/components/scrobble_components.ex
-#: lib/music_library_web/live/stats_live/top_albums.ex
 #, elixir-autogen, elixir-format
 msgid "W"
 msgstr ""

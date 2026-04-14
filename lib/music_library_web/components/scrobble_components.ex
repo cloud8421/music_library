@@ -1,6 +1,7 @@
 defmodule MusicLibraryWeb.ScrobbleComponents do
   @moduledoc """
-  Universal search modal and related components.
+  Scrobble activity display components: status badges, import dropdowns,
+  metadata tooltips, and record-matching UI.
   """
 
   alias LastFm.Track
@@ -153,7 +154,7 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
 
   attr :record, :map, required: true
 
-  defp record_dropdown_link(assigns) do
+  def record_dropdown_link(assigns) do
     path =
       if assigns.record.purchased_at,
         do: ~p"/collection/#{assigns.record.id}",
@@ -171,9 +172,7 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
           {gettext("W")}
         </.badge>
         <span>
-          {format_label(String.to_existing_atom(@record.format))} · {type_label(
-            String.to_existing_atom(@record.type)
-          )}
+          {format_label(@record.format)} · {type_label(@record.type)}
           <span :if={@record.purchased_at} class="text-zinc-500 dark:text-zinc-400">
             · {Records.Record.format_as_date(@record.purchased_at)}
           </span>
@@ -183,9 +182,9 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
     """
   end
 
-  defp badge_status([]), do: nil
+  def badge_status([]), do: nil
 
-  defp badge_status(records) do
+  def badge_status(records) do
     all_collected = Enum.all?(records, & &1.purchased_at)
     all_wishlisted = Enum.all?(records, &is_nil(&1.purchased_at))
 
@@ -196,15 +195,15 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
     end
   end
 
-  defp badge_classes(:collected),
+  def badge_classes(:collected),
     do:
       "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20 dark:bg-emerald-400/10 dark:text-emerald-400 dark:ring-emerald-400/20"
 
-  defp badge_classes(:wishlisted),
+  def badge_classes(:wishlisted),
     do:
       "bg-yellow-50 text-yellow-800 ring-1 ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:ring-yellow-400/20"
 
-  defp badge_classes(:mixed),
+  def badge_classes(:mixed),
     do:
       "bg-yellow-50 text-emerald-700 ring-1 ring-emerald-600/40 dark:bg-yellow-400/10 dark:text-emerald-400 dark:ring-emerald-400/40"
 

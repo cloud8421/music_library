@@ -1,11 +1,11 @@
 defmodule MusicLibraryWeb.StatsLive.TopAlbums do
   use MusicLibraryWeb, :html
 
-  import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
+  import MusicLibraryWeb.ScrobbleComponents,
+    only: [record_dropdown_link: 1, badge_status: 1, badge_classes: 1]
 
   alias MusicLibrary.Assets.Transform
   alias MusicLibrary.ListeningStats
-  alias MusicLibrary.Records
   alias MusicLibraryWeb.StatsLive.TopByPeriod
 
   attr :id, :string, required: true
@@ -79,49 +79,17 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
           <:toggle>
             <span class={[
               "inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium cursor-pointer",
-              play_count_badge_classes(status)
+              badge_classes(status)
             ]}>
               {@album.play_count}
             </span>
           </:toggle>
-          <.top_album_dropdown_link
+          <.record_dropdown_link
             :for={record <- @album.matching_records}
             record={record}
           />
         </.dropdown>
     <% end %>
-    """
-  end
-
-  attr :record, :map, required: true
-
-  defp top_album_dropdown_link(assigns) do
-    path =
-      if assigns.record.purchased_at,
-        do: ~p"/collection/#{assigns.record.id}",
-        else: ~p"/wishlist/#{assigns.record.id}"
-
-    assigns = assign(assigns, :path, path)
-
-    ~H"""
-    <.dropdown_link navigate={@path}>
-      <span class="flex items-center gap-2">
-        <.badge :if={@record.purchased_at} color="success" size="sm">
-          {gettext("C")}
-        </.badge>
-        <.badge :if={!@record.purchased_at} color="warning" size="sm">
-          {gettext("W")}
-        </.badge>
-        <span>
-          {format_label(String.to_existing_atom(@record.format))} · {type_label(
-            String.to_existing_atom(@record.type)
-          )}
-          <span :if={@record.purchased_at} class="text-zinc-500 dark:text-zinc-400">
-            · {Records.Record.format_as_date(@record.purchased_at)}
-          </span>
-        </span>
-      </span>
-    </.dropdown_link>
     """
   end
 
@@ -137,31 +105,6 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
 
   defp navigable?(%{matching_records: [_]}), do: true
   defp navigable?(_), do: false
-
-  defp badge_status([]), do: nil
-
-  defp badge_status(records) do
-    all_collected = Enum.all?(records, & &1.purchased_at)
-    all_wishlisted = Enum.all?(records, &is_nil(&1.purchased_at))
-
-    cond do
-      all_collected -> :collected
-      all_wishlisted -> :wishlisted
-      true -> :mixed
-    end
-  end
-
-  defp play_count_badge_classes(:collected),
-    do:
-      "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20 dark:bg-emerald-400/10 dark:text-emerald-400 dark:ring-emerald-400/20"
-
-  defp play_count_badge_classes(:wishlisted),
-    do:
-      "bg-yellow-50 text-yellow-800 ring-1 ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:ring-yellow-400/20"
-
-  defp play_count_badge_classes(:mixed),
-    do:
-      "bg-yellow-50 text-emerald-700 ring-1 ring-emerald-600/40 dark:bg-yellow-400/10 dark:text-emerald-400 dark:ring-emerald-400/40"
 
   defp cover_url(album) when is_nil(album.cover_hash) do
     album.cover_url
