@@ -454,6 +454,74 @@ defmodule MusicLibrary.ListeningStatsTest do
     end
   end
 
+  describe "matching_records with mixed collected and wishlisted" do
+    setup do
+      shared_musicbrainz_id = Ecto.UUID.generate()
+
+      collected =
+        RecordsFixtures.record(%{
+          title: "Marbles CD",
+          format: :cd,
+          musicbrainz_id: shared_musicbrainz_id
+        })
+
+      wishlisted =
+        RecordsFixtures.record(%{
+          title: "Marbles Vinyl",
+          format: :vinyl,
+          musicbrainz_id: shared_musicbrainz_id,
+          purchased_at: nil
+        })
+
+      shared_release_id = "d3f9b9e2-73f5-4b47-a2a7-2c2199aad608"
+
+      track_fixture(%{
+        title: "The Invisible Man",
+        album_title: "Marbles",
+        album_musicbrainz_id: shared_release_id,
+        artist_name: "Marillion",
+        scrobbled_at_uts: System.system_time(:second) - 100
+      })
+
+      %{collected: collected, wishlisted: wishlisted}
+    end
+
+    test "recent_activity includes both collected and wishlisted records",
+         %{collected: collected, wishlisted: wishlisted} do
+      %{recent_tracks: recent_tracks} =
+        ListeningStats.recent_activity("Etc/UTC", 20)
+
+      [result] = recent_tracks
+
+      assert length(result.matching_records) == 2
+
+      record_ids = Enum.map(result.matching_records, & &1.id)
+      assert collected.id in record_ids
+      assert wishlisted.id in record_ids
+
+      collected_record = Enum.find(result.matching_records, &(&1.id == collected.id))
+      assert collected_record.purchased_at
+
+      wishlisted_record = Enum.find(result.matching_records, &(&1.id == wishlisted.id))
+      refute wishlisted_record.purchased_at
+    end
+
+    test "get_top_albums includes both collected and wishlisted records",
+         %{collected: collected, wishlisted: wishlisted} do
+      results = ListeningStats.get_top_albums(limit: 10)
+
+      marbles_entries = Enum.filter(results, fn r -> r.album_title == "Marbles" end)
+      assert length(marbles_entries) == 1
+
+      [entry] = marbles_entries
+      assert length(entry.matching_records) == 2
+
+      record_ids = Enum.map(entry.matching_records, & &1.id)
+      assert collected.id in record_ids
+      assert wishlisted.id in record_ids
+    end
+  end
+
   describe "play_count uses count(DISTINCT scrobbled_at_uts)" do
     test "two tracks at the same scrobbled_at_uts count as one play in get_top_albums" do
       shared_uts = System.system_time(:second) - 100
