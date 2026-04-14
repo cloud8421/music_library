@@ -322,7 +322,7 @@ defmodule MusicLibrary.Records.Record do
     Calendar.strftime(dt, "%d/%m/%Y")
   end
 
-  @spec parse_matching_record(map()) :: map()
+  @spec parse_matching_record(map()) :: map() | no_return()
   def parse_matching_record(%{
         "id" => id,
         "title" => title,
@@ -334,11 +334,19 @@ defmodule MusicLibrary.Records.Record do
     %{
       id: id,
       title: title,
-      format: String.to_existing_atom(format),
-      type: String.to_existing_atom(type),
+      format: parse_format(format),
+      type: parse_type(type),
       purchased_at: parse_datetime(purchased_at),
       cover_hash: cover_hash
     }
+  end
+
+  for type <- @types do
+    defp parse_type(unquote(Atom.to_string(type))), do: unquote(type)
+  end
+
+  for format <- @formats do
+    defp parse_format(unquote(Atom.to_string(format))), do: unquote(format)
   end
 
   defp parse_datetime(nil), do: nil
