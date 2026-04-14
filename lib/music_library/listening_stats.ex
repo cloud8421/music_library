@@ -356,8 +356,12 @@ defmodule MusicLibrary.ListeningStats do
             'cover_hash', r.cover_hash\
             )) \
             FROM records r \
-            JOIN record_releases rr ON rr.record_id = r.id \
-            WHERE rr.release_id = (? ->> '$.musicbrainz_id'))\
+            WHERE r.musicbrainz_id = (\
+            SELECT r2.musicbrainz_id FROM records r2 \
+            INNER JOIN record_releases rr ON rr.record_id = r2.id \
+            WHERE rr.release_id = (? ->> '$.musicbrainz_id') \
+            LIMIT 1\
+            ))\
             """,
             t.album
           ),
@@ -365,8 +369,10 @@ defmodule MusicLibrary.ListeningStats do
           fragment(
             """
             (SELECT min(ar.musicbrainz_id) FROM artist_records ar \
-            WHERE ar.record_id = (\
-            SELECT rr.record_id FROM record_releases rr \
+            INNER JOIN records r ON r.id = ar.record_id \
+            WHERE r.musicbrainz_id = (\
+            SELECT r2.musicbrainz_id FROM records r2 \
+            INNER JOIN record_releases rr ON rr.record_id = r2.id \
             WHERE rr.release_id = (? ->> '$.musicbrainz_id') \
             LIMIT 1\
             ))\
@@ -377,10 +383,13 @@ defmodule MusicLibrary.ListeningStats do
           fragment(
             """
             (SELECT r.cover_hash FROM records r \
-            JOIN record_releases rr ON rr.record_id = r.id \
+            WHERE r.musicbrainz_id = (\
+            SELECT r2.musicbrainz_id FROM records r2 \
+            INNER JOIN record_releases rr ON rr.record_id = r2.id \
             WHERE rr.release_id = (? ->> '$.musicbrainz_id') \
-            AND r.purchased_at IS NOT NULL \
-            ORDER BY r.id \
+            LIMIT 1\
+            ) \
+            ORDER BY (CASE WHEN r.purchased_at IS NOT NULL THEN 0 ELSE 1 END), r.id \
             LIMIT 1)\
             """,
             t.album

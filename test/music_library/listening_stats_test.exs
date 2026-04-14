@@ -335,16 +335,28 @@ defmodule MusicLibrary.ListeningStatsTest do
     end
   end
 
-  describe "deduplication when multiple records share release IDs" do
+  describe "deduplication when multiple records share a release group" do
     setup do
-      # Create two collected records that share the same MusicBrainz release IDs
-      # (both use the default marbles fixture with identical musicbrainz_data).
-      # This produces two rows per release_id in record_releases, which previously
-      # caused fan-out in ListeningStats joins.
-      record_a = RecordsFixtures.record(%{title: "Marbles Copy A"})
-      record_b = RecordsFixtures.record(%{title: "Marbles Copy B"})
+      # Create two collected records that share the same release group
+      # (musicbrainz_id) but may have different physical release IDs.
+      # The matching_records query groups by release group, so both records
+      # should appear for any scrobble matching either record's release IDs.
+      shared_musicbrainz_id = Ecto.UUID.generate()
 
-      # Pick a release_id shared by both records
+      record_a =
+        RecordsFixtures.record(%{
+          title: "Marbles Copy A",
+          musicbrainz_id: shared_musicbrainz_id
+        })
+
+      record_b =
+        RecordsFixtures.record(%{
+          title: "Marbles Copy B",
+          musicbrainz_id: shared_musicbrainz_id
+        })
+
+      # Pick a release_id from the marbles fixture (shared by both records
+      # since they use the same musicbrainz_data)
       shared_release_id = "d3f9b9e2-73f5-4b47-a2a7-2c2199aad608"
       now = System.system_time(:second)
 
@@ -364,10 +376,11 @@ defmodule MusicLibrary.ListeningStatsTest do
         scrobbled_at_uts: now - 200
       })
 
-      # The lexicographically smaller record_id should consistently win (MIN)
       expected_record_id = Enum.min([record_a.id, record_b.id])
 
       %{
+        record_a: record_a,
+        record_b: record_b,
         expected_record_id: expected_record_id,
         shared_release_id: shared_release_id
       }
