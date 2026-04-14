@@ -121,8 +121,14 @@ defmodule MusicLibrary.ListeningStats do
 
     recent_tracks =
       recent_tracks
-      |> Enum.map(fn %{track: track, artist_id: artist_id} = rt ->
-        %{rt | track: polyfill_track(track, timezone, artist_id)}
+      |> Enum.map(fn %{track: track, artist_id: artist_id, matching_records: matching_records} =
+                       rt ->
+        parsed = parse_matching_records(matching_records)
+
+        rt
+        |> Map.put(:track, polyfill_track(track, timezone, artist_id))
+        |> Map.put(:matching_records, parsed)
+        |> derive_legacy_record_ids(parsed)
       end)
 
     recent_albums =
@@ -193,6 +199,13 @@ defmodule MusicLibrary.ListeningStats do
 
     from(t in ordered_query, limit: ^page_size, offset: ^offset)
     |> Repo.all()
+    |> Enum.map(fn result ->
+      parsed = parse_matching_records(result.matching_records)
+
+      result
+      |> Map.put(:matching_records, parsed)
+      |> derive_legacy_record_ids(parsed)
+    end)
   end
 
   @spec get_track!(integer() | String.t()) :: LastFm.Track.t()
@@ -321,35 +334,55 @@ defmodule MusicLibrary.ListeningStats do
 
   # Shared base queries
 
-  # Correlated scalar subqueries against `record_releases` and `artist_records`
-  # avoid materializing helper subqueries for the entire `record_releases` table
-  # on every call. They evaluate per result row, so the cost scales with the
-  # outer LIMIT, not with the number of releases in the database.
+  # Returns all records sharing the same release group as the scrobbled track's
+  # album release ID via a `json_group_array` subquery. The join path is:
+  # track.album ->> '$.musicbrainz_id' (release ID) -> record_releases.release_id
+  # -> records.musicbrainz_id -> all records with that musicbrainz_id.
+  # Correlated subqueries scale with the outer LIMIT, not the table size.
   # See issue #148.
   defp tracks_with_record_info_query do
     from t in Track,
       select: %{
         track: t,
-        collected_record_id:
+        matching_records:
           fragment(
-            "(SELECT min(record_id) FROM record_releases WHERE release_id = (? ->> '$.musicbrainz_id') AND purchased_at IS NOT NULL)",
-            t.album
-          ),
-        wishlisted_record_id:
-          fragment(
-            "(SELECT min(record_id) FROM record_releases WHERE release_id = (? ->> '$.musicbrainz_id') AND purchased_at IS NULL)",
+            """
+            (SELECT json_group_array(json_object(\
+            'id', r.id, \
+            'title', r.title, \
+            'format', r.format, \
+            'type', r.type, \
+            'purchased_at', r.purchased_at, \
+            'cover_hash', r.cover_hash\
+            )) \
+            FROM records r \
+            JOIN record_releases rr ON rr.record_id = r.id \
+            WHERE rr.release_id = (? ->> '$.musicbrainz_id'))\
+            """,
             t.album
           ),
         artist_id:
           fragment(
-            "(SELECT min(musicbrainz_id) FROM artist_records WHERE record_id = coalesce((SELECT min(record_id) FROM record_releases WHERE release_id = (? ->> '$.musicbrainz_id') AND purchased_at IS NOT NULL), (SELECT min(record_id) FROM record_releases WHERE release_id = (? ->> '$.musicbrainz_id') AND purchased_at IS NULL)))",
-            t.album,
+            """
+            (SELECT min(ar.musicbrainz_id) FROM artist_records ar \
+            WHERE ar.record_id = (\
+            SELECT rr.record_id FROM record_releases rr \
+            WHERE rr.release_id = (? ->> '$.musicbrainz_id') \
+            LIMIT 1\
+            ))\
+            """,
             t.album
           ),
         cover_hash:
           fragment(
-            "coalesce((SELECT min(cover_hash) FROM record_releases WHERE release_id = (? ->> '$.musicbrainz_id') AND purchased_at IS NOT NULL), (SELECT min(cover_hash) FROM record_releases WHERE release_id = (? ->> '$.musicbrainz_id') AND purchased_at IS NULL))",
-            t.album,
+            """
+            (SELECT r.cover_hash FROM records r \
+            JOIN record_releases rr ON rr.record_id = r.id \
+            WHERE rr.release_id = (? ->> '$.musicbrainz_id') \
+            AND r.purchased_at IS NOT NULL \
+            ORDER BY r.id \
+            LIMIT 1)\
+            """,
             t.album
           )
       }
@@ -527,5 +560,42 @@ defmodule MusicLibrary.ListeningStats do
     else
       artist
     end
+  end
+
+  defp parse_matching_records(nil), do: []
+  defp parse_matching_records("[]"), do: []
+
+  defp parse_matching_records(json) when is_binary(json) do
+    json
+    |> JSON.decode!()
+    |> Enum.map(fn record ->
+      %{
+        id: record["id"],
+        title: record["title"],
+        format: record["format"],
+        type: record["type"],
+        purchased_at: parse_purchased_at(record["purchased_at"]),
+        cover_hash: record["cover_hash"]
+      }
+    end)
+  end
+
+  defp parse_purchased_at(nil), do: nil
+
+  defp parse_purchased_at(dt_string) do
+    {:ok, dt, _offset} = DateTime.from_iso8601(dt_string)
+    dt
+  end
+
+  # Temporary bridge: derive collected_record_id and wishlisted_record_id from
+  # matching_records so existing LiveView templates keep working until they are
+  # migrated to use matching_records directly.
+  defp derive_legacy_record_ids(result, matching_records) do
+    collected = Enum.find(matching_records, &(&1.purchased_at != nil))
+    wishlisted = Enum.find(matching_records, &is_nil(&1.purchased_at))
+
+    result
+    |> Map.put(:collected_record_id, collected && collected.id)
+    |> Map.put(:wishlisted_record_id, wishlisted && wishlisted.id)
   end
 end
