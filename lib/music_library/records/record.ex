@@ -321,4 +321,30 @@ defmodule MusicLibrary.Records.Record do
   def format_as_date(dt) do
     Calendar.strftime(dt, "%d/%m/%Y")
   end
+
+  @spec parse_matching_record(map()) :: map()
+  def parse_matching_record(%{
+        "id" => id,
+        "title" => title,
+        "format" => format,
+        "type" => type,
+        "purchased_at" => purchased_at,
+        "cover_hash" => cover_hash
+      }) do
+    %{
+      id: id,
+      title: title,
+      format: String.to_existing_atom(format),
+      type: String.to_existing_atom(type),
+      purchased_at: parse_datetime(purchased_at),
+      cover_hash: cover_hash
+    }
+  end
+
+  defp parse_datetime(nil), do: nil
+
+  defp parse_datetime(dt_string) do
+    {:ok, dt, _offset} = DateTime.from_iso8601(dt_string)
+    dt
+  end
 end

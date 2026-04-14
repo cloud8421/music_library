@@ -599,22 +599,6 @@ defmodule MusicLibrary.ListeningStats do
   defp parse_matching_records(json) when is_binary(json) do
     json
     |> JSON.decode!()
-    |> Enum.map(fn record ->
-      %{
-        id: record["id"],
-        title: record["title"],
-        format: record["format"],
-        type: record["type"],
-        purchased_at: parse_purchased_at(record["purchased_at"]),
-        cover_hash: record["cover_hash"]
-      }
-    end)
-  end
-
-  defp parse_purchased_at(nil), do: nil
-
-  defp parse_purchased_at(dt_string) do
-    {:ok, dt, _offset} = DateTime.from_iso8601(dt_string)
-    dt
+    |> Enum.map(&Record.parse_matching_record/1)
   end
 end
