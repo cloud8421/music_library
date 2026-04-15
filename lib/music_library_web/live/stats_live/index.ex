@@ -47,6 +47,18 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         <.top_collection_genres records_by_genre={@records_by_genre} />
         <.top_release_years records_by_release_year={@records_by_release_year} />
       </div>
+
+      <.structured_modal
+        :if={@rule_picker_album_title}
+        id="rule-picker-modal"
+        on_close={JS.push("close_rule_picker")}
+      >
+        <.live_component
+          module={MusicLibraryWeb.ScrobbleRulePicker}
+          id="rule-picker"
+          album_title={@rule_picker_album_title}
+        />
+      </.structured_modal>
     </Layouts.app>
     """
   end
@@ -84,6 +96,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        latest_record: latest_record,
        page_title: gettext("Stats"),
        current_section: :stats,
+       rule_picker_album_title: nil,
        records_by_artist: records_by_artists,
        records_by_genre: records_by_genre,
        records_by_release_year: records_by_release_year,
@@ -142,7 +155,22 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     end
   end
 
+  def handle_event("open_rule_picker", %{"album-title" => album_title}, socket) do
+    {:noreply, assign(socket, :rule_picker_album_title, album_title)}
+  end
+
+  def handle_event("close_rule_picker", _, socket) do
+    {:noreply, assign(socket, :rule_picker_album_title, nil)}
+  end
+
   @impl true
+  def handle_info({MusicLibraryWeb.ScrobbleRulePicker, {:rule_created, _rule}}, socket) do
+    {:noreply,
+     socket
+     |> assign(:rule_picker_album_title, nil)
+     |> assign_scrobble_activity()}
+  end
+
   def handle_info(%{track_count: 0}, socket) do
     {:noreply, socket}
   end
@@ -318,6 +346,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
                       id={"status-#{album.scrobbled_at_uts}-albums"}
                       musicbrainz_id={album.metadata.musicbrainz_id}
                       matching_records={matching_records}
+                      album_title={album.metadata.title}
                     />
 
                     <.import_format_dropdown
@@ -398,6 +427,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
                       id={"status-#{track.scrobbled_at_uts}-tracks"}
                       musicbrainz_id={track.album.musicbrainz_id}
                       matching_records={matching_records}
+                      album_title={track.album.title}
                     />
 
                     <.import_format_dropdown

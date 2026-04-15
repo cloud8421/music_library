@@ -26,6 +26,7 @@ import { Hooks as FluxonHooks, DOM as FluxonDOM } from "fluxon";
 import FormatNumberHook from "./hooks/format-number";
 import UniversalSearchNavigationHook from "./hooks/universal-search-navigation";
 import RecordPickerNavigationHook from "./hooks/record-picker-navigation";
+import RulePickerNavigationHook from "./hooks/rule-picker-navigation";
 import SortableListHook from "./hooks/sortable-list";
 import confetti from "canvas-confetti";
 import { createLiveToastHook } from "live_toast";
@@ -43,6 +44,7 @@ let Hooks = FluxonHooks;
 Hooks.FormatNumber = FormatNumberHook;
 Hooks.UniversalSearchNavigation = UniversalSearchNavigationHook;
 Hooks.RecordPickerNavigation = RecordPickerNavigationHook;
+Hooks.RulePickerNavigation = RulePickerNavigationHook;
 Hooks.SortableList = SortableListHook;
 Hooks.LiveToast = liveToastHook;
 

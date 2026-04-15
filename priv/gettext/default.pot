@@ -180,6 +180,7 @@ msgstr ""
 
 #: lib/music_library_web/components/core_components.ex
 #: lib/music_library_web/components/record_form.ex
+#: lib/music_library_web/components/scrobble_rule_picker.ex
 #: lib/music_library_web/live/artist_live/form.ex
 #: lib/music_library_web/live/record_set_live/record_picker.ex
 #, elixir-autogen, elixir-format
@@ -234,6 +235,7 @@ msgstr ""
 
 #: lib/music_library_web/components/barcode_scanner.ex
 #: lib/music_library_web/components/scrobble_components.ex
+#: lib/music_library_web/components/scrobble_rule_picker.ex
 #: lib/music_library_web/live/record_set_live/record_picker.ex
 #, elixir-autogen, elixir-format
 msgid "Collected"
@@ -241,6 +243,7 @@ msgstr ""
 
 #: lib/music_library_web/components/barcode_scanner.ex
 #: lib/music_library_web/components/scrobble_components.ex
+#: lib/music_library_web/components/scrobble_rule_picker.ex
 #: lib/music_library_web/live/record_set_live/record_picker.ex
 #, elixir-autogen, elixir-format
 msgid "Wishlisted"
@@ -1559,6 +1562,7 @@ msgstr ""
 msgid "No record sets yet"
 msgstr ""
 
+#: lib/music_library_web/components/scrobble_rule_picker.ex
 #: lib/music_library_web/live/record_set_live/record_picker.ex
 #, elixir-autogen, elixir-format
 msgid "No records found"
@@ -2431,4 +2435,29 @@ msgstr ""
 #: lib/music_library_web/components/scrobble_components.ex
 #, elixir-autogen, elixir-format
 msgid "W"
+msgstr ""
+
+#: lib/music_library_web/components/scrobble_rule_picker.ex
+#, elixir-autogen, elixir-format
+msgid "Could not create scrobble rule"
+msgstr ""
+
+#: lib/music_library_web/components/scrobble_rule_picker.ex
+#, elixir-autogen, elixir-format
+msgid "Create Scrobble Rule"
+msgstr ""
+
+#: lib/music_library_web/components/scrobble_rule_picker.ex
+#, elixir-autogen, elixir-format
+msgid "Scrobble rule created"
+msgstr ""
+
+#: lib/music_library_web/components/scrobble_rule_picker.ex
+#, elixir-autogen, elixir-format
+msgid "Search your records to map \"%{album_title}\" to a release."
+msgstr ""
+
+#: lib/music_library_web/components/scrobble_rule_picker.ex
+#, elixir-autogen, elixir-format
+msgid "A rule for this album already exists"
 msgstr ""

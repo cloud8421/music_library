@@ -100,6 +100,7 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
   attr :id, :string, required: true
   attr :musicbrainz_id, :string, required: true
   attr :matching_records, :list, default: []
+  attr :album_title, :string, default: nil
 
   def record_status_badges(assigns) do
     assigns =
@@ -109,7 +110,16 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
 
     ~H"""
     <div class="flex flex-col gap-1 text-right">
-      <.badge :if={@musicbrainz_id == ""}>
+      <.badge :if={@musicbrainz_id == "" and is_nil(@album_title)}>
+        {gettext("No MB ID")}
+      </.badge>
+      <.badge
+        :if={@musicbrainz_id == "" and @album_title}
+        class="cursor-pointer"
+        phx-click="open_rule_picker"
+        phx-value-album-title={@album_title}
+      >
+        <.icon name="hero-link" class="icon" />
         {gettext("No MB ID")}
       </.badge>
 

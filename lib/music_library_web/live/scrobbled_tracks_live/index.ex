@@ -149,6 +149,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
                 id={"status-#{track.scrobbled_at_uts}"}
                 musicbrainz_id={track.album.musicbrainz_id}
                 matching_records={matching_records}
+                album_title={track.album.title}
               />
 
               <.import_format_dropdown
@@ -204,6 +205,18 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
           patch={back_path(@track_list_params)}
         />
       </.structured_modal>
+
+      <.structured_modal
+        :if={@rule_picker_album_title}
+        id="rule-picker-modal"
+        on_close={JS.push("close_rule_picker")}
+      >
+        <.live_component
+          module={MusicLibraryWeb.ScrobbleRulePicker}
+          id="rule-picker"
+          album_title={@rule_picker_album_title}
+        />
+      </.structured_modal>
     </Layouts.app>
     """
   end
@@ -213,6 +226,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
     socket =
       socket
       |> assign(:current_section, :scrobble_activity)
+      |> assign(:rule_picker_album_title, nil)
       |> stream_configure(:tracks,
         dom_id: fn %{track: %Track{scrobbled_at_uts: id}} -> "tracks-#{id}" end
       )
@@ -266,7 +280,22 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
     {:noreply, load_and_assign_tracks(socket, socket.assigns.track_list_params)}
   end
 
+  def handle_info({MusicLibraryWeb.ScrobbleRulePicker, {:rule_created, _rule}}, socket) do
+    {:noreply,
+     socket
+     |> assign(:rule_picker_album_title, nil)
+     |> load_and_assign_tracks(socket.assigns.track_list_params)}
+  end
+
   @impl true
+  def handle_event("open_rule_picker", %{"album-title" => album_title}, socket) do
+    {:noreply, assign(socket, :rule_picker_album_title, album_title)}
+  end
+
+  def handle_event("close_rule_picker", _, socket) do
+    {:noreply, assign(socket, :rule_picker_album_title, nil)}
+  end
+
   def handle_event("delete", %{"scrobbled-at-uts" => scrobbled_at_uts}, socket) do
     track = ListeningStats.get_track!(scrobbled_at_uts)
     {:ok, _} = ListeningStats.delete_track(track)
