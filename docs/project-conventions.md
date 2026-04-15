@@ -22,7 +22,8 @@ Rules extracted from commit history that are specific to this project and not al
 - **Oban workers are thin wrappers** that delegate to context modules. `perform/1` should be minimal.
 - **Shared utilities** live at parent namespace level (`MusicLibrary.Batch`, not `MusicLibrary.Records.Batch`).
 - **Domain sub-modules group under their context.** Modules strongly related to a context live as sub-modules (e.g., `Chats.StreamProvider`, `Chats.RecordChat`), distinct from shared utilities which live at the parent namespace level.
-- **Shared LiveView logic goes in `LiveHelpers.*` modules.** Event handlers, param parsing, and rendering helpers used across 2+ LiveViews are extracted to `LiveHelpers.*` rather than duplicated.
+- **Structured search uses NimbleParsec-based `SearchParser` sub-modules.** Each context that supports `key:value` search syntax has a `SearchParser` sub-module (e.g., `Records.SearchParser`, `ListeningStats.SearchParser`) using NimbleParsec. Parsers support quoted multi-word values, free-text fallback, and normalize results into a map. Tests use doctests on the `parse/1` function.
+- **Shared LiveView logic goes in `LiveHelpers.*` modules.** Event handlers, param parsing, and rendering helpers used across 2+ LiveViews are extracted to `LiveHelpers.*` rather than duplicated. When shared helpers need per-caller configuration (routes, labels, context modules), the calling LiveView defines a private config function (e.g., `index_config/0`) and assigns the resulting map in `mount/3`; the helper module reads it from `socket.assigns`.
 
 ## Extraction / Refactoring
 
