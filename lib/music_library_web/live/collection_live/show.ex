@@ -245,9 +245,13 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
                 <span :if={@play_count == 0}>
                   {gettext("Never")}
                 </span>
-                <span :if={@play_count > 0}>
+                <.link
+                  :if={@play_count > 0}
+                  navigate={~p"/scrobbled-tracks?#{%{query: "record:#{@record.id}"}}"}
+                  class="text-zinc-900 underline dark:text-zinc-100"
+                >
                   {ngettext("(1 scrobble)", "(%{count} scrobbles)", @play_count)}
-                </span>
+                </.link>
               </.dl_row>
               <.record_published_releases record={@record} />
               <.dl_row label={gettext("Collected release")}>

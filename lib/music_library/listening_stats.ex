@@ -15,6 +15,7 @@ defmodule MusicLibrary.ListeningStats do
   alias MusicLibrary.{
     Artists,
     BackgroundRepo,
+    ListeningStats.SearchParser,
     Records.Record,
     Repo,
     Worker
@@ -569,14 +570,62 @@ defmodule MusicLibrary.ListeningStats do
 
   defp search_query(base_query, ""), do: base_query
 
-  defp search_query(base_query, query) do
-    query_term = "%#{String.downcase(query)}%"
+  defp search_query(base_query, query_string) do
+    {:ok, parsed} = SearchParser.parse(query_string)
+
+    Enum.reduce(parsed, base_query, fn
+      {:record, record_id}, q ->
+        apply_record_filter(q, record_id)
+
+      {:album_mbid, mbid}, q ->
+        from t in q,
+          where: fragment("json_extract(?, '$.musicbrainz_id')", t.album) == ^mbid
+
+      {:artist_mbid, mbid}, q ->
+        from t in q,
+          where: fragment("json_extract(?, '$.musicbrainz_id')", t.artist) == ^mbid
+
+      {:artist, artist}, q ->
+        term = "%#{String.downcase(artist)}%"
+
+        from t in q,
+          where: like(fragment("lower(json_extract(?, '$.name'))", t.artist), ^term)
+
+      {:album, album}, q ->
+        term = "%#{String.downcase(album)}%"
+
+        from t in q,
+          where: like(fragment("lower(json_extract(?, '$.title'))", t.album), ^term)
+
+      {:track, track}, q ->
+        term = "%#{String.downcase(track)}%"
+        from t in q, where: like(fragment("lower(?)", t.title), ^term)
+
+      {:query, ""}, q ->
+        q
+
+      {:query, text}, q ->
+        term = "%#{String.downcase(text)}%"
+
+        from t in q,
+          where:
+            like(fragment("lower(?)", t.title), ^term) or
+              like(fragment("lower(json_extract(?, '$.name'))", t.artist), ^term) or
+              like(fragment("lower(json_extract(?, '$.title'))", t.album), ^term)
+    end)
+  end
+
+  defp apply_record_filter(base_query, record_id) do
+    record = Repo.get!(Record, record_id)
+    release_ids = record.release_ids
+    main_artist_name = Record.main_artist(record).name
+    record_title = record.title
 
     from t in base_query,
       where:
-        like(fragment("lower(?)", t.title), ^query_term) or
-          like(fragment("lower(json_extract(?, '$.name'))", t.artist), ^query_term) or
-          like(fragment("lower(json_extract(?, '$.title'))", t.album), ^query_term)
+        fragment("json_extract(?, '$.musicbrainz_id')", t.album) in ^release_ids or
+          (fragment("json_extract(?, '$.title')", t.album) == ^record_title and
+             fragment("json_extract(?, '$.name')", t.artist) == ^main_artist_name)
   end
 
   defp polyfill_artist(artist, musicbrainz_id) do
