@@ -20,8 +20,8 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
     >
       <span class="sr-only">{gettext("Refresh scrobbles")}</span>
       <.icon
-        name="hero-arrow-path"
-        class="phx-click-loading:animate-spin size-5"
+        name="hero-cloud-arrow-down"
+        class="phx-click-loading:animate-bounce size-5"
         aria-hidden="true"
         data-slot="icon"
       />

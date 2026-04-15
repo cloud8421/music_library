@@ -117,8 +117,8 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                       phx-click="refresh_musicbrainz_data"
                     >
                       <.icon
-                        name="hero-arrow-path"
-                        class="phx-click-loading:animate-spin mr-1 size-4"
+                        name="hero-cloud-arrow-down"
+                        class="phx-click-loading:animate-bounce mr-1 size-4"
                         aria-hidden="true"
                         data-slot="icon"
                       />
