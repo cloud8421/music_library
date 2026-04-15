@@ -185,7 +185,7 @@ defmodule MusicLibraryWeb.Router do
     csp =
       "default-src 'self'" <>
         "; script-src 'self' 'nonce-#{nonce}'" <>
-        "; style-src 'self' 'unsafe-inline' https://rsms.me" <>
+        "; style-src 'self' 'unsafe-inline' 'nonce-#{nonce}' https://rsms.me" <>
         "; font-src 'self' data: https://rsms.me" <>
         "; img-src 'self' data: blob: 'nonce-#{nonce}' #{@img_origins}" <>
         "; connect-src 'self' https://fastly.jsdelivr.net" <>
