@@ -76,12 +76,10 @@ defmodule MusicLibraryWeb.StatsComponents do
     ~H"""
     <div class="flex items-center justify-center overflow-hidden rounded-md bg-white shadow-sm dark:bg-zinc-800">
       <div class="p-4 md:p-0">
-        <dt>
-          <p class="truncate text-center text-sm font-medium text-zinc-500 dark:text-zinc-400">
-            {@title}
-          </p>
-        </dt>
-        <dd :if={!@tooltip} class="mt-1">
+        <p class="truncate text-center text-sm font-medium text-zinc-500 dark:text-zinc-400">
+          {@title}
+        </p>
+        <div :if={!@tooltip} class="mt-1">
           <.link
             :if={@path}
             navigate={@path}
@@ -95,8 +93,8 @@ defmodule MusicLibraryWeb.StatsComponents do
           >
             {@count}
           </p>
-        </dd>
-        <dd :if={@tooltip} class="mt-1">
+        </div>
+        <div :if={@tooltip} class="mt-1">
           <.tooltip>
             <:content>
               <span id={"#{@title}-counter-tooltip"} phx-hook="FormatNumber">{@tooltip}</span>
@@ -115,7 +113,7 @@ defmodule MusicLibraryWeb.StatsComponents do
               {@count}
             </p>
           </.tooltip>
-        </dd>
+        </div>
       </div>
     </div>
     """

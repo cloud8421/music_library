@@ -68,7 +68,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
     test "shows the wishlist total count", %{conn: conn, wishlist: wishlist} do
       conn
       |> visit("/")
-      |> assert_has("dd", wishlist |> length() |> Integer.to_string())
+      |> assert_has("a", wishlist |> length() |> Integer.to_string())
     end
 
     test "displays records for the current date in the 'On This Day' section", %{

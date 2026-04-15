@@ -522,7 +522,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     ~H"""
     <.section>
       <:title>{gettext("Records")}</:title>
-      <dl class="mt-5 grid grid-cols-3 gap-5 sm:grid-cols-5 min-h-35">
+      <div class="mt-5 grid grid-cols-3 gap-5 sm:grid-cols-5 min-h-35">
         <.album_preview
           record={@latest_record}
           title={gettext("Latest purchase")}
@@ -540,7 +540,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
           tooltip={@scrobble_count}
           path={~p"/scrobbled-tracks"}
         />
-      </dl>
+      </div>
     </.section>
     """
   end
