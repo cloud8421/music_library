@@ -299,7 +299,7 @@ defmodule MusicLibraryWeb.StatsComponents do
 
     ~H"""
     <span
-      :if={same_year?(@years)}
+      :if={@years && same_year?(@years)}
       class={[
         "text-xs/5",
         "animate-shine bg-linear-to-r from-red-500 via-red-200 to-red-700 bg-clip-text font-semibold text-transparent"
@@ -308,7 +308,7 @@ defmodule MusicLibraryWeb.StatsComponents do
       {gettext("Today")}
     </span>
     <span
-      :if={!same_year?(@years)}
+      :if={@years && !same_year?(@years)}
       class={[
         "text-xs/5",
         normal_year?(@years) && "text-zinc-500 dark:text-zinc-400",
