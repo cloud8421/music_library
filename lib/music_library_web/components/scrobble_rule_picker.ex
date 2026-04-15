@@ -138,9 +138,9 @@ defmodule MusicLibraryWeb.ScrobbleRulePicker do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:query, "")
-     |> assign(:collected_results, [])
-     |> assign(:wishlisted_results, [])}
+     |> assign_new(:query, fn -> "" end)
+     |> assign_new(:collected_results, fn -> [] end)
+     |> assign_new(:wishlisted_results, fn -> [] end)}
   end
 
   @impl true
