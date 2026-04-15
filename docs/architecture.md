@@ -114,6 +114,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | Module | Purpose |
 |--------|---------|
 | `Records.SearchParser` | Parses search syntax: `artist:X`, `album:X`, `genre:"Y"`, `format:cd`, `type:album`, `purchase_year:2024`, `release_year:2024`, free text |
+| `ListeningStats.SearchParser` | Parses scrobbled tracks search syntax: `record:X`, `album_mbid:X`, `artist_mbid:X`, `artist:X`, `album:X`, `track:X`, free text |
 | `Records.Similarity` | Embedding generation and async enqueue (OpenAI, enriched with Last.fm tags, skips API call when text representation unchanged), artist-cascade regeneration when upstream metadata changes, cosine-distance search (sqlite-vec) |
 | `Records.TracklistPdf` | Generates 120mm×120mm PDF tracklist from record + release data (Typst) |
 | `Batch` | Generic batch runner: stream + transaction + error accumulation |
@@ -272,6 +273,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `RecordSetLive.RecordPicker` | RecordSetLive.Show | Search and add records to set |
 | `ScrobbledTracksLive.Form` | ScrobbledTracksLive.Index | Edit scrobbled track |
 | `ScrobbleRulesLive.Form` | ScrobbleRulesLive.Index | Create/edit scrobble rule |
+| `ScrobbleRulePicker` | ScrobbledTracksLive.Index, StatsLive.Index | Search records and create scrobble rules inline |
 | `OnlineStoreTemplateLive.Form` | OnlineStoreTemplateLive.Index | Create/edit store template |
 | `StatsLive.TopByPeriod` | StatsLive.TopAlbums, StatsLive.TopArtists | Generic period-tabbed stats display (7d, 30d, 90d, 1y, all-time) |
 | `StatsLive.TopAlbums` | StatsLive.Index | Top albums by period (uses TopByPeriod) |
@@ -292,7 +294,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `RecordComponents` | Record cards, cover images, artist images, labels, grids, release status icon badge, shared show-page sections (title, external links, genres, releases, timestamps, debug) |
 | `ChartComponents` | Charts for stats dashboard |
 | `StatsComponents` | Stats dashboard widgets (`section/1` layout, counters, album preview, records on this day) |
-| `ScrobbleComponents` | Scrobble activity displays |
+| `ScrobbleComponents` | Scrobble activity displays: status badges, import dropdowns, metadata tooltips, and record-matching UI |
 | `SearchComponents` | Search result rendering |
 | `Pagination` | Pagination UI and logic |
 
@@ -335,6 +337,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `FormatNumber` | External (`assets/js/hooks/`) | Client-side number formatting |
 | `UniversalSearchNavigation` | External | Keyboard navigation in search modal (via `create-navigation-hook` factory) |
 | `RecordPickerNavigation` | External | Keyboard navigation in record picker (via `create-navigation-hook` factory) |
+| `RulePickerNavigation` | External | Keyboard navigation in scrobble rule picker (via `create-navigation-hook` factory) |
 | `SortableList` | External (`assets/js/hooks/`) | Drag-and-drop reordering of record set items (uses sortablejs) |
 | `LiveToast` | External (via `createLiveToastHook`) | Toast notification rendering |
 | Various `.ColocatedHooks` | Colocated (in .heex) | Inline hooks prefixed with `.` (includes `.ScrollBottom` for Chat) |
