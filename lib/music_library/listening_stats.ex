@@ -16,6 +16,7 @@ defmodule MusicLibrary.ListeningStats do
     Artists,
     BackgroundRepo,
     ListeningStats.SearchParser,
+    Records,
     Records.Record,
     Repo,
     Worker
@@ -616,16 +617,21 @@ defmodule MusicLibrary.ListeningStats do
   end
 
   defp apply_record_filter(base_query, record_id) do
-    record = Repo.get!(Record, record_id)
-    release_ids = record.release_ids
-    main_artist_name = Record.main_artist(record).name
-    record_title = record.title
+    case Records.get_record(record_id) do
+      nil ->
+        from t in base_query, where: false
 
-    from t in base_query,
-      where:
-        fragment("json_extract(?, '$.musicbrainz_id')", t.album) in ^release_ids or
-          (fragment("json_extract(?, '$.title')", t.album) == ^record_title and
-             fragment("json_extract(?, '$.name')", t.artist) == ^main_artist_name)
+      record ->
+        release_ids = record.release_ids
+        main_artist_name = Record.main_artist(record).name
+        record_title = record.title
+
+        from t in base_query,
+          where:
+            fragment("json_extract(?, '$.musicbrainz_id')", t.album) in ^release_ids or
+              (fragment("json_extract(?, '$.title')", t.album) == ^record_title and
+                 fragment("json_extract(?, '$.name')", t.artist) == ^main_artist_name)
+    end
   end
 
   defp polyfill_artist(artist, musicbrainz_id) do

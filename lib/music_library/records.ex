@@ -189,6 +189,9 @@ defmodule MusicLibrary.Records do
     Repo.all(q)
   end
 
+  @spec get_record(String.t()) :: Record.t() | nil
+  def get_record(id), do: Repo.get(Record, id)
+
   @spec get_record!(String.t()) :: Record.t()
   def get_record!(id), do: Repo.get!(Record, id)
 
