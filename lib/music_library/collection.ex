@@ -58,7 +58,13 @@ defmodule MusicLibrary.Collection do
     q =
       from r in Record,
         where: not is_nil(r.purchased_at),
-        where: fragment("strftime('%m-%d', ?) = ?", r.release_date, ^month_day),
+        where:
+          fragment(
+            "length(?) = 10 AND strftime('%m-%d', ?) = ?",
+            r.release_date,
+            r.release_date,
+            ^month_day
+          ),
         order_by: [{:desc, r.release_date}, order_alphabetically()],
         select: ^Records.essential_fields()
 

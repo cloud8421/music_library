@@ -249,6 +249,76 @@ defmodule MusicLibrary.CollectionTest do
     end
   end
 
+  describe "get_records_on_this_day/1" do
+    test "returns collected records matching the month-day of the given date" do
+      record_with_artist("Marillion", %{
+        title: "Brave",
+        release_date: "1994-04-15",
+        purchased_at: ~U[2024-12-27 16:50:57Z]
+      })
+
+      record_with_artist("Marillion", %{
+        title: "Misplaced Childhood",
+        release_date: "1985-06-17",
+        purchased_at: ~U[2024-12-28 16:50:57Z]
+      })
+
+      assert [%{title: "Brave"}] = Collection.get_records_on_this_day(~D[2026-04-15])
+    end
+
+    test "excludes records with bare-year release dates" do
+      record_with_artist("Marillion", %{
+        title: "Brave",
+        release_date: "1994-04-15",
+        purchased_at: ~U[2024-12-27 16:50:57Z]
+      })
+
+      record_with_artist("Marillion", %{
+        title: "Magician",
+        release_date: "1970",
+        purchased_at: ~U[2024-10-03 07:52:33Z]
+      })
+
+      results = Collection.get_records_on_this_day(~D[2026-04-15])
+
+      assert [%{title: "Brave"}] = results
+    end
+
+    test "excludes records with year-month release dates" do
+      record_with_artist("Marillion", %{
+        title: "Brave",
+        release_date: "1994-04-15",
+        purchased_at: ~U[2024-12-27 16:50:57Z]
+      })
+
+      record_with_artist("Porcupine Tree", %{
+        title: "Up the Downstair",
+        release_date: "1993-04",
+        purchased_at: ~U[2024-12-28 16:50:57Z]
+      })
+
+      results = Collection.get_records_on_this_day(~D[2026-04-15])
+
+      assert [%{title: "Brave"}] = results
+    end
+
+    test "excludes wishlisted records" do
+      record_with_artist("Marillion", %{
+        title: "Brave",
+        release_date: "1994-04-15",
+        purchased_at: ~U[2024-12-27 16:50:57Z]
+      })
+
+      record_with_artist("Marillion", %{
+        title: "Anoraknophobia",
+        release_date: "2001-04-15",
+        purchased_at: nil
+      })
+
+      assert [%{title: "Brave"}] = Collection.get_records_on_this_day(~D[2026-04-15])
+    end
+  end
+
   describe "collected_artist_ids/0" do
     setup [:fill_collection]
 
