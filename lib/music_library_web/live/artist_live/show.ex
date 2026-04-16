@@ -295,7 +295,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
                 placement="left"
               >
                 <div class="dark:prose-invert prose prose-sm">
-                  {Phoenix.HTML.raw(@biography.bio_html)}
+                  {render_bio(@biography)}
                 </div>
                 <a
                   :if={@biography.url}
@@ -734,5 +734,11 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
       collection: Enum.sort_by(collection, fn r -> r.release_date end, :desc),
       wishlist: Enum.sort_by(wishlist, fn r -> r.release_date end, :desc)
     }
+  end
+
+  # Wikipedia returns sanitized HTML, so we can skip sanitization.
+  # sobelow_skip ["XSS.Raw"]
+  defp render_bio(biography) do
+    {Phoenix.HTML.raw(biography.bio_html)}
   end
 end
