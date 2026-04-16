@@ -162,6 +162,7 @@ defmodule MusicLibraryWeb.CoreComponents do
     <Fluxon.Components.Modal.modal
       id={@id}
       class="mx-auto mt-8 max-w-sm sm:min-w-2xl md:max-w-3xl"
+      animation="transition duration-100 ease-in-out"
       placement="top"
       open={@open}
       on_close={@on_close}
