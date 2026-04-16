@@ -30,7 +30,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
       socket={@socket}
       toasts_sync={assigns[:toasts_sync]}
     >
-      <div class="mt-4 px-4 md:gap-x-4 lg:grid lg:grid-cols-2 xl:grid-cols-5">
+      <div class="mt-4 md:gap-x-4 lg:grid lg:grid-cols-2 xl:grid-cols-5">
         <div class="drop-shadow-sm xl:col-span-2">
           <.record_cover
             record={@record}

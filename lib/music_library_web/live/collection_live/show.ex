@@ -37,7 +37,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
       socket={@socket}
       toasts_sync={assigns[:toasts_sync]}
     >
-      <div class="mt-4 px-4 md:gap-x-4 lg:grid lg:grid-cols-2 xl:grid-cols-5">
+      <div class="mt-4 md:gap-x-4 lg:grid lg:grid-cols-2 xl:grid-cols-5">
         <div class="drop-shadow-sm xl:col-span-2">
           <.record_cover
             record={@record}
@@ -493,7 +493,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
   defp similar_records(assigns) do
     ~H"""
-    <div :if={@similar_records != []} class="mt-8 px-4">
+    <div :if={@similar_records != []} class="mt-8">
       <header class="flex items-baseline justify-start">
         <h2 class="text-base/5 font-semibold text-zinc-700 sm:text-lg dark:text-zinc-300">
           {gettext("Similar Records")}
