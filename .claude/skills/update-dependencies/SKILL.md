@@ -1,6 +1,8 @@
 ---
 name: update-dependencies
 description: Use when the user asks to update, upgrade, or refresh project dependencies, or when outdated dependencies need attention. Also use when the user mentions "outdated", "bump", "upgrade", or asks about dependency versions — even if they don't say "update dependencies" explicitly.
+model: haiku
+context: fork
 ---
 
 # Update Dependencies

@@ -1,6 +1,8 @@
 ---
 name: query-reporter
 description: Capture Ecto SQL queries to a log file for analysis. Use this skill when the user asks to trace, capture, log, or inspect database queries, or mentions "SQL log", "query trace", "query capture", "what queries does this page run". Also use proactively when investigating slow pages, debugging N+1 queries, analyzing database performance, or when you need to understand what SQL a LiveView or action produces. Requires a running Phoenix server with Tidewave MCP.
+model: haiku
+context: fork
 ---
 
 # Query Reporter
