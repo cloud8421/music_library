@@ -92,7 +92,10 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
                 name="image_search_query"
                 value={@image_search_query}
                 phx-keyup="update_image_search_query"
+                phx-keydown="search_images"
+                phx-key="Enter"
                 phx-target={@myself}
+                onkeydown="if(event.key==='Enter')event.preventDefault()"
               />
             </div>
             <.button

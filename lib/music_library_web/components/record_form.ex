@@ -301,7 +301,10 @@ defmodule MusicLibraryWeb.Components.RecordForm do
                 name="cover_search_query"
                 value={@cover_search_query}
                 phx-keyup="update_cover_search_query"
+                phx-keydown="search_covers"
+                phx-key="Enter"
                 phx-target={@myself}
+                onkeydown="if(event.key==='Enter')event.preventDefault()"
               />
             </div>
             <.button
