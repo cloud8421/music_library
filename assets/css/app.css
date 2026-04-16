@@ -19,6 +19,16 @@
 [data-phx-session], [data-phx-teleported-src] { display: contents }
 
 @layer base {
+  a,
+  button,
+  [role="button"],
+  input,
+  select,
+  textarea,
+  label {
+    touch-action: manipulation;
+  }
+
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
