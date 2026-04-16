@@ -86,6 +86,7 @@ defmodule MusicLibrary.MixProject do
       # Mailers
       {:idna, "~> 7.1", override: true},
       {:swoosh, "~> 1.22"},
+      # not used direclty, but required by Swoosh
       {:multipart, "~> 0.6.0"},
 
       # Parsing
