@@ -12,7 +12,7 @@ defmodule MusicLibraryWeb.Components.Notes do
     note = find_or_initialize_note(assigns)
 
     changeset =
-      Note.changeset(note, %{})
+      Notes.change_note(note, %{})
 
     {:ok,
      socket
@@ -118,7 +118,7 @@ defmodule MusicLibraryWeb.Components.Notes do
     case Notes.update_note(socket.assigns.note, note_params) do
       {:ok, note} ->
         changeset =
-          Note.changeset(note, %{})
+          Notes.change_note(note, %{})
 
         {:noreply,
          socket
@@ -135,7 +135,7 @@ defmodule MusicLibraryWeb.Components.Notes do
     case Notes.create_note(socket.assigns.note, note_params) do
       {:ok, note} ->
         changeset =
-          Note.changeset(note, %{})
+          Notes.change_note(note, %{})
 
         {:noreply,
          socket
