@@ -739,6 +739,6 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
   # Wikipedia returns sanitized HTML, so we can skip sanitization.
   # sobelow_skip ["XSS.Raw"]
   defp render_bio(biography) do
-    {Phoenix.HTML.raw(biography.bio_html)}
+    Phoenix.HTML.raw(biography.bio_html)
   end
 end

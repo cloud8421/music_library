@@ -47,6 +47,33 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       |> assert_has("dt", "Biography")
     end
 
+    test "renders the Wikipedia biography in the bio sheet", %{
+      conn: conn,
+      artist_musicbrainz_id: artist_musicbrainz_id,
+      artist_info: artist_info
+    } do
+      artist_info
+      |> Ecto.Changeset.change(wikipedia_data: Wikipedia.Fixtures.article_summary())
+      |> MusicLibrary.Repo.update!()
+
+      Req.Test.stub(LastFm.API, fn conn ->
+        case Map.get(conn.params, "method") do
+          "artist.getInfo" ->
+            Req.Test.json(conn, Fixtures.Artist.get_info())
+
+          "artist.getSimilar" ->
+            Req.Test.json(conn, Fixtures.Artist.get_similar_artists())
+        end
+      end)
+
+      conn
+      |> visit(~p"/artists/#{artist_musicbrainz_id}")
+      |> unwrap(&render_async/1)
+      |> assert_has("dt", "Biography")
+      |> assert_has("span", "Wikipedia")
+      |> assert_has("p", text: "English musician")
+    end
+
     test "gracefully handles errors in fetching bio and play count", %{
       conn: conn,
       artist_musicbrainz_id: artist_musicbrainz_id
