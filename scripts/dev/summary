@@ -1,0 +1,287 @@
+#!/usr/bin/env bash
+
+#MISE description="Summarise codebase shape"
+
+set -euo pipefail
+
+source "$(git rev-parse --show-toplevel)/scripts/_helpers.sh"
+
+ensure_working_directory!
+
+# Thin contexts have no sub-directory but are contexts per docs/architecture.md.
+THIN_CONTEXTS=(
+  "lib/music_library/collection.ex"
+  "lib/music_library/wishlist.ex"
+  "lib/music_library/search.ex"
+  "lib/music_library/scrobble_activity.ex"
+  "lib/music_library/maintenance.ex"
+)
+
+# Namespace modules whose matching sibling dir is structural, not a context.
+CONTEXT_EXCLUSIONS=(
+  "lib/music_library.ex"
+  "lib/music_library_web.ex"
+)
+
+BAR_WIDTH=33
+INNER_WIDTH=62          # dashes between box corners
+BOX_WIDTH=$((INNER_WIDTH + 2))
+
+if [[ -n "${NO_COLOR:-}" ]] || ! command -v tput >/dev/null 2>&1; then
+  COLOR=0
+  BLOCK_FILL="#"
+  BLOCK_EMPTY="-"
+  BOX_TL="+"
+  BOX_TR="+"
+  BOX_BL="+"
+  BOX_BR="+"
+  BOX_H="-"
+  BOX_V="|"
+  RULE="-"
+  reset=""
+  dim=""
+  bold=""
+  declare -a PALETTE=("" "" "" "" "" "")
+else
+  COLOR=1
+  BLOCK_FILL="█"
+  BLOCK_EMPTY="░"
+  BOX_TL="╭"
+  BOX_TR="╮"
+  BOX_BL="╰"
+  BOX_BR="╯"
+  BOX_H="─"
+  BOX_V="│"
+  RULE="─"
+  reset="$(tput sgr0)"
+  dim="$(tput setaf 8 2>/dev/null || tput setaf 0)"
+  bold="$(tput bold)"
+  declare -a PALETTE=(
+    "$(tput setaf 6)" # cyan
+    "$(tput setaf 5)" # magenta
+    "$(tput setaf 3)" # yellow
+    "$(tput setaf 2)" # green
+    "$(tput setaf 4)" # blue
+    "$(tput setaf 7)" # white
+  )
+fi
+
+workdir="$(mktemp -d)"
+trap 'rm -rf "$workdir"' EXIT
+
+# Build "all lib .ex files" (sorted, unique) as the candidate pool.
+all_lib="$workdir/all_lib"
+fd --type file --extension ex . lib | sort -u > "$all_lib"
+
+# Helper: subtract a classified list from the candidate pool in place.
+function consume {
+  local classified="$1"
+  local remaining="$workdir/remaining"
+  comm -23 "$all_lib" <(sort -u "$classified") > "$remaining"
+  mv "$remaining" "$all_lib"
+}
+
+# 1. Schemas — any .ex with `use Ecto.Schema`.
+schemas="$workdir/schemas"
+grep -rlE '^\s*use\s+Ecto\.Schema' lib | sort -u > "$schemas" || true
+# Intersect with the candidate pool so we only count pool members.
+comm -12 "$all_lib" "$schemas" > "$workdir/schemas.scoped"
+mv "$workdir/schemas.scoped" "$schemas"
+consume "$schemas"
+
+# 2. Controllers.
+controllers="$workdir/controllers"
+fd --type file --extension ex . lib/music_library_web/controllers | sort -u > "$controllers"
+comm -12 "$all_lib" "$controllers" > "$workdir/controllers.scoped"
+mv "$workdir/controllers.scoped" "$controllers"
+consume "$controllers"
+
+# 3. Components.
+components="$workdir/components"
+fd --type file --extension ex . lib/music_library_web/components | sort -u > "$components"
+comm -12 "$all_lib" "$components" > "$workdir/components.scoped"
+mv "$workdir/components.scoped" "$components"
+consume "$components"
+
+# 4. Live Views.
+liveviews="$workdir/liveviews"
+fd --type file --extension ex . lib/music_library_web/live | sort -u > "$liveviews"
+comm -12 "$all_lib" "$liveviews" > "$workdir/liveviews.scoped"
+mv "$workdir/liveviews.scoped" "$liveviews"
+consume "$liveviews"
+
+# 5. Contexts — depth-1 .ex with sibling directory OR in THIN_CONTEXTS allowlist.
+contexts="$workdir/contexts"
+: > "$contexts"
+for f in lib/*.ex lib/music_library/*.ex; do
+  [[ -f "$f" ]] || continue
+  dir="${f%.ex}"
+  if [[ -d "$dir" ]]; then
+    echo "$f"
+  fi
+done >> "$contexts"
+for f in "${THIN_CONTEXTS[@]}"; do
+  [[ -f "$f" ]] && echo "$f" >> "$contexts"
+done
+sort -u "$contexts" -o "$contexts"
+excluded="$workdir/context_exclusions"
+printf "%s\n" "${CONTEXT_EXCLUSIONS[@]}" | sort -u > "$excluded"
+comm -23 "$contexts" "$excluded" > "$workdir/contexts.filtered"
+mv "$workdir/contexts.filtered" "$contexts"
+comm -12 "$all_lib" "$contexts" > "$workdir/contexts.scoped"
+mv "$workdir/contexts.scoped" "$contexts"
+consume "$contexts"
+
+# 6. Logic — everything else.
+logic="$workdir/logic"
+cp "$all_lib" "$logic"
+
+lib_liveviews=$(wc -l < "$liveviews" | tr -d ' ')
+lib_components=$(wc -l < "$components" | tr -d ' ')
+lib_controllers=$(wc -l < "$controllers" | tr -d ' ')
+lib_contexts=$(wc -l < "$contexts" | tr -d ' ')
+lib_schemas=$(wc -l < "$schemas" | tr -d ' ')
+lib_logic=$(wc -l < "$logic" | tr -d ' ')
+lib_total=$((lib_liveviews + lib_components + lib_controllers + lib_contexts + lib_schemas + lib_logic))
+
+# test/ counts.
+test_files=$(fd --type file --full-path '_test\.exs$' test | wc -l | tr -d ' ')
+test_support=$(
+  fd --type file --extension ex --extension exs . test \
+    | grep -cvE '(_test\.exs|/test_helper\.exs)$'
+)
+test_hurl=$(fd --type file --extension hurl . test | wc -l | tr -d ' ')
+test_total=$((test_files + test_support + test_hurl))
+
+# Stack versions and prod-dep count.
+elixir_ver=$(sed -nE 's/^elixir[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/p' mise.toml)
+elixir_ver="${elixir_ver%-otp-*}"
+otp_ver=$(sed -nE 's/^erlang[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/p' mise.toml)
+phoenix_ver=$(sed -nE 's/.*"phoenix":[[:space:]]*\{:hex, :phoenix, "([^"]+)".*/\1/p' mix.lock)
+liveview_ver=$(sed -nE 's/.*"phoenix_live_view":[[:space:]]*\{:hex, :phoenix_live_view, "([^"]+)".*/\1/p' mix.lock)
+
+# Prod deps: lines starting with `{:name` in mix.exs minus those tagged only: :dev/:test.
+total_deps=$(grep -cE '^[[:space:]]*\{:[a-z_]+' mix.exs)
+nonprod_deps=$(grep -cE 'only:[[:space:]]*(:dev|:test|\[:dev|\[:test)' mix.exs)
+prod_deps=$((total_deps - nonprod_deps))
+
+function max_of {
+  local max=0
+  for v in "$@"; do
+    (( v > max )) && max=$v
+  done
+  echo "$max"
+}
+
+function repeat {
+  local s="$1" n="$2"
+  local out=""
+  for ((i = 0; i < n; i++)); do out+="$s"; done
+  printf "%s" "$out"
+}
+
+function render_bar {
+  local count="$1" max="$2" color="$3"
+  local filled=0
+  if (( max > 0 )); then
+    filled=$(( count * BAR_WIDTH / max ))
+  fi
+  local empty=$(( BAR_WIDTH - filled ))
+  if (( COLOR )); then
+    printf "%s%s%s%s%s%s" \
+      "$color" "$(repeat "$BLOCK_FILL" "$filled")" "$reset" \
+      "$dim" "$(repeat "$BLOCK_EMPTY" "$empty")" "$reset"
+  else
+    printf "%s%s" \
+      "$(repeat "$BLOCK_FILL" "$filled")" \
+      "$(repeat "$BLOCK_EMPTY" "$empty")"
+  fi
+}
+
+function render_row {
+  local label="$1" count="$2" max="$3" total="$4" color="$5"
+  local pct="0.0"
+  if (( total > 0 )); then
+    pct=$(awk -v c="$count" -v t="$total" 'BEGIN { printf "%.1f", (c*100)/t }')
+  fi
+  printf "%-15s " "$label"
+  render_bar "$count" "$max" "$color"
+  printf " %4d  (%5s%%)\n" "$count" "$pct"
+}
+
+function render_fact {
+  local label="$1" value="$2" color="$3"
+  if (( COLOR )); then
+    printf "%-15s %s%s%s\n" "$label" "$color" "$value" "$reset"
+  else
+    printf "%-15s %s\n" "$label" "$value"
+  fi
+}
+
+function render_header {
+  local title="$1"
+  local pad=$(( INNER_WIDTH - ${#title} - 2 ))
+  (( pad < 0 )) && pad=0
+  printf "%s%s%s\n" "$BOX_TL" "$(repeat "$BOX_H" "$INNER_WIDTH")" "$BOX_TR"
+  if (( COLOR )); then
+    printf "%s  %s%s%s%s%s\n" "$BOX_V" "$bold" "$title" "$reset" "$(repeat " " "$pad")" "$BOX_V"
+  else
+    printf "%s  %s%s%s\n" "$BOX_V" "$title" "$(repeat " " "$pad")" "$BOX_V"
+  fi
+  printf "%s%s%s\n" "$BOX_BL" "$(repeat "$BOX_H" "$INNER_WIDTH")" "$BOX_BR"
+}
+
+function render_section_header {
+  local label="$1" total="${2:-}" unit="${3:-}"
+  local rule
+  rule="$(repeat "$RULE" "$BOX_WIDTH")"
+  if (( COLOR )); then
+    if [[ -n "$total" ]]; then
+      printf "\n%s%s%s  %s%s%s %s\n%s%s%s\n" \
+        "$bold" "$label" "$reset" \
+        "$bold" "$total" "$reset" "$unit" \
+        "$dim" "$rule" "$reset"
+    else
+      printf "\n%s%s%s\n%s%s%s\n" \
+        "$bold" "$label" "$reset" \
+        "$dim" "$rule" "$reset"
+    fi
+  else
+    if [[ -n "$total" ]]; then
+      printf "\n%s  %s %s\n%s\n" "$label" "$total" "$unit" "$rule"
+    else
+      printf "\n%s\n%s\n" "$label" "$rule"
+    fi
+  fi
+}
+
+render_header "music_library · codebase summary"
+
+render_section_header "stack" "" ""
+render_fact "Elixir"    "$elixir_ver"   "${PALETTE[0]}"
+render_fact "OTP"       "$otp_ver"      "${PALETTE[1]}"
+render_fact "Phoenix"   "$phoenix_ver"  "${PALETTE[2]}"
+render_fact "LiveView"  "$liveview_ver" "${PALETTE[3]}"
+render_fact "Prod deps" "$prod_deps"    "${PALETTE[4]}"
+
+lib_max=$(max_of "$lib_liveviews" "$lib_components" "$lib_controllers" "$lib_contexts" "$lib_schemas" "$lib_logic")
+render_section_header "lib/" "$lib_total" "modules"
+render_row "Live Views"  "$lib_liveviews"  "$lib_max" "$lib_total" "${PALETTE[0]}"
+render_row "Components"  "$lib_components" "$lib_max" "$lib_total" "${PALETTE[1]}"
+render_row "Controllers" "$lib_controllers" "$lib_max" "$lib_total" "${PALETTE[2]}"
+render_row "Contexts"    "$lib_contexts"   "$lib_max" "$lib_total" "${PALETTE[3]}"
+render_row "Schemas"     "$lib_schemas"    "$lib_max" "$lib_total" "${PALETTE[4]}"
+render_row "Logic"       "$lib_logic"      "$lib_max" "$lib_total" "${PALETTE[5]}"
+
+test_max=$(max_of "$test_files" "$test_support" "$test_hurl")
+render_section_header "test/" "$test_total" "files"
+render_row "Test files"   "$test_files"   "$test_max" "$test_total" "${PALETTE[0]}"
+render_row "Support"      "$test_support" "$test_max" "$test_total" "${PALETTE[1]}"
+render_row "HTTP (.hurl)" "$test_hurl"    "$test_max" "$test_total" "${PALETTE[2]}"
+
+if (( COLOR )); then
+  printf "\n%sgenerated %s · source: fd + grep%s\n" \
+    "$dim" "$(date +%Y-%m-%d)" "$reset"
+else
+  printf "\ngenerated %s · source: fd + grep\n" "$(date +%Y-%m-%d)"
+fi

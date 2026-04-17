@@ -64,6 +64,12 @@ Setup the local development environment
 
 Open an SQLite console to the development database with extensions loaded
 
+## `dev:summary`
+
+- **Usage**: `dev:summary`
+
+Summarise codebase shape
+
 ## `dev:update`
 
 - **Usage**: `dev:update`
