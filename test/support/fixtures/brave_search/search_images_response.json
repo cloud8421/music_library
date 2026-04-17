@@ -1,0 +1,43 @@
+{
+  "type": "images",
+  "results": [
+    {
+      "title": "The Raven That Refused To Sing - Cover",
+      "source": "https://example.com/page/raven",
+      "thumbnail": {
+        "src": "https://thumbnails.example.com/raven-thumb.jpg"
+      },
+      "properties": {
+        "url": "https://images.example.com/raven-cover.jpg",
+        "width": 1200,
+        "height": 1200
+      }
+    },
+    {
+      "title": "Hand. Cannot. Erase. - Alternate Cover",
+      "source": "https://example.com/page/hce",
+      "properties": {
+        "url": "https://images.example.com/hce-cover.jpg",
+        "width": 800,
+        "height": 800
+      }
+    },
+    {
+      "title": "To The Bone - Promo Shot",
+      "source": "https://example.com/page/ttb",
+      "thumbnail": {
+        "src": "https://thumbnails.example.com/ttb-thumb.jpg"
+      }
+    },
+    {
+      "thumbnail": {
+        "src": "https://thumbnails.example.com/unknown-thumb.jpg"
+      },
+      "properties": {
+        "url": "https://images.example.com/unknown.jpg",
+        "width": 640,
+        "height": 480
+      }
+    }
+  ]
+}
