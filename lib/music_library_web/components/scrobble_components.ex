@@ -153,12 +153,16 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
 
   defp record_group_badge(assigns) do
     ~H"""
-    <span class={[
-      "inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium cursor-pointer",
-      badge_classes(@status)
-    ]}>
+    <.badge
+      color={badge_color(@status)}
+      class={[
+        "cursor-pointer",
+        @status == :mixed &&
+          "bg-linear-50 from-success/10 to-warning/30 dark:from-success/20 dark:to-warning/60 text-foreground-success-soft"
+      ]}
+    >
       {ngettext("1 record", "%{count} records", @count)}
-    </span>
+    </.badge>
     """
   end
 
@@ -205,17 +209,9 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
     end
   end
 
-  def badge_classes(:collected),
-    do:
-      "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20 dark:bg-emerald-400/10 dark:text-emerald-400 dark:ring-emerald-400/20"
-
-  def badge_classes(:wishlisted),
-    do:
-      "bg-yellow-50 text-yellow-800 ring-1 ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:ring-yellow-400/20"
-
-  def badge_classes(:mixed),
-    do:
-      "bg-yellow-50 text-emerald-700 ring-1 ring-emerald-600/40 dark:bg-yellow-400/10 dark:text-emerald-400 dark:ring-emerald-400/40"
+  def badge_color(:collected), do: "success"
+  def badge_color(:wishlisted), do: "warning"
+  def badge_color(:mixed), do: "success"
 
   attr :id, :string, required: true
   attr :musicbrainz_id, :string, required: true

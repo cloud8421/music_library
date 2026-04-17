@@ -2,7 +2,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
   use MusicLibraryWeb, :html
 
   import MusicLibraryWeb.ScrobbleComponents,
-    only: [record_dropdown_link: 1, badge_status: 1, badge_classes: 1]
+    only: [record_dropdown_link: 1, badge_status: 1, badge_color: 1]
 
   alias MusicLibrary.Assets.Transform
   alias MusicLibrary.ListeningStats
@@ -77,12 +77,16 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
           placement="bottom-end"
         >
           <:toggle>
-            <span class={[
-              "inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium cursor-pointer",
-              badge_classes(status)
-            ]}>
+            <.badge
+              color={badge_color(status)}
+              class={[
+                "cursor-pointer",
+                status == :mixed &&
+                  "bg-linear-50 from-success/10 to-warning/30 dark:from-success/20 dark:to-warning/60 text-foreground-success-soft"
+              ]}
+            >
               {@album.play_count}
-            </span>
+            </.badge>
           </:toggle>
           <.record_dropdown_link
             :for={record <- @album.matching_records}
