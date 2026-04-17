@@ -46,3 +46,5 @@ npm-debug.log
 
 # Claude Code MCP config (port varies per worktree)
 /.mcp.json
+/.claude/audit
+/.claude/reviews
