@@ -123,7 +123,7 @@ defmodule ErrorTracker.ErrorNotifierTest do
         occurrence: occurrence(%{error_id: 1})
       })
 
-      Process.sleep(50)
+      :sys.get_state(ErrorNotifier)
       assert_email_sent()
 
       # Second notification for same error: throttled
@@ -133,7 +133,7 @@ defmodule ErrorTracker.ErrorNotifierTest do
         muted: false
       })
 
-      Process.sleep(50)
+      :sys.get_state(ErrorNotifier)
       refute_email_sent()
 
       GenServer.stop(pid)
@@ -152,7 +152,7 @@ defmodule ErrorTracker.ErrorNotifierTest do
         occurrence: occurrence(%{error_id: 1})
       })
 
-      Process.sleep(50)
+      :sys.get_state(ErrorNotifier)
       assert_email_sent()
 
       :telemetry.execute([:error_tracker, :occurrence, :new], %{}, %{
@@ -161,7 +161,7 @@ defmodule ErrorTracker.ErrorNotifierTest do
         muted: true
       })
 
-      Process.sleep(50)
+      :sys.get_state(ErrorNotifier)
       refute_email_sent()
 
       GenServer.stop(pid)
@@ -180,7 +180,7 @@ defmodule ErrorTracker.ErrorNotifierTest do
         occurrence: occurrence(%{error_id: 99})
       })
 
-      Process.sleep(50)
+      :sys.get_state(ErrorNotifier)
       assert_email_sent(subject: ~r/MusicLibrary/)
 
       GenServer.stop(pid)
