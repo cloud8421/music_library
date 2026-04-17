@@ -136,7 +136,14 @@ defmodule MusicLibrary.QueryReporter do
   end
 
   defp format_param(value) when is_list(value) or (is_map(value) and not is_struct(value)) do
-    "'" <> String.replace(JSON.encode!(value), "'", "''") <> "'"
+    encoded =
+      try do
+        JSON.encode!(value)
+      rescue
+        Protocol.UndefinedError -> inspect(value)
+      end
+
+    "'" <> String.replace(encoded, "'", "''") <> "'"
   end
 
   defp format_param(value), do: "'" <> String.replace(to_string(value), "'", "''") <> "'"
