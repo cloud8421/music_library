@@ -68,6 +68,10 @@ jobs:
           mise set MIX_OS_DEPS_COMPILE_PARTITION_COUNT=2
       - name: 🔮 Compile for DEV
         run: mix compile --warnings-as-errors
+      - name: Install npm dependencies
+        run: npm ci --prefix assets
+      - name: 🎨 Build assets
+        run: mix assets.build
       - name: 🌍 Check translations
         run: mix gettext.extract --check-up-to-date
       - name: 💅 Check formatting
