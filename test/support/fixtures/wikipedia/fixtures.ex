@@ -2,18 +2,22 @@ defmodule Wikipedia.Fixtures do
   @fixtures_folder Path.join([File.cwd!(), "test/support/fixtures/wikipedia"])
 
   # Cache fixtures at compile time to avoid repeated file I/O
+  @external_resource Path.join([@fixtures_folder, "wikidata_response.json"])
   @wikidata_response Path.join([@fixtures_folder, "wikidata_response.json"])
                      |> File.read!()
                      |> JSON.decode!()
 
+  @external_resource Path.join([@fixtures_folder, "wikidata_response_no_enwiki.json"])
   @wikidata_response_no_enwiki Path.join([@fixtures_folder, "wikidata_response_no_enwiki.json"])
                                |> File.read!()
                                |> JSON.decode!()
 
+  @external_resource Path.join([@fixtures_folder, "article_summary.json"])
   @article_summary Path.join([@fixtures_folder, "article_summary.json"])
                    |> File.read!()
                    |> JSON.decode!()
 
+  @external_resource Path.join([@fixtures_folder, "article_extract.json"])
   @article_extract Path.join([@fixtures_folder, "article_extract.json"])
                    |> File.read!()
                    |> JSON.decode!()

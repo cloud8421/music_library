@@ -2,10 +2,12 @@ defmodule Discogs.Fixtures.Artist do
   @fixtures_folder Path.join([File.cwd!(), "test/support/fixtures/discogs"])
 
   # Cache fixtures at compile time to avoid repeated file I/O
+  @external_resource Path.join([@fixtures_folder, "artist - steven wilson.json"])
   @get_artist Path.join([@fixtures_folder, "artist - steven wilson.json"])
               |> File.read!()
               |> JSON.decode!()
 
+  @external_resource Path.join([@fixtures_folder, "steven wilson.jpeg"])
   @image_data Path.join([@fixtures_folder, "steven wilson.jpeg"])
               |> File.read!()
 

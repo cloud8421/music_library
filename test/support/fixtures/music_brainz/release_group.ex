@@ -2,6 +2,10 @@ defmodule MusicBrainz.Fixtures.ReleaseGroup do
   @fixtures_folder Path.join([File.cwd!(), "test/support/fixtures/music_brainz"])
 
   # Cache JSON fixtures at compile time to avoid repeated file I/O
+  @external_resource Path.join([
+                       @fixtures_folder,
+                       "release_group_search_results - marillion - marbles.json"
+                     ])
   @release_group_search_results Path.join([
                                   @fixtures_folder,
                                   "release_group_search_results - marillion - marbles.json"
@@ -9,6 +13,10 @@ defmodule MusicBrainz.Fixtures.ReleaseGroup do
                                 |> File.read!()
                                 |> JSON.decode!()
 
+  @external_resource Path.join([
+                       @fixtures_folder,
+                       "release_group - avantasia - the mystery of time.json"
+                     ])
   @mystery_of_time Path.join([
                      @fixtures_folder,
                      "release_group - avantasia - the mystery of time.json"
@@ -16,10 +24,15 @@ defmodule MusicBrainz.Fixtures.ReleaseGroup do
                    |> File.read!()
                    |> JSON.decode!()
 
+  @external_resource Path.join([@fixtures_folder, "release_group - marillion - marbles.json"])
   @marbles Path.join([@fixtures_folder, "release_group - marillion - marbles.json"])
            |> File.read!()
            |> JSON.decode!()
 
+  @external_resource Path.join([
+                       @fixtures_folder,
+                       "release_group_with_includes - mariusz duda - lockdown trilogy.json"
+                     ])
   @lockdown_trilogy Path.join([
                       @fixtures_folder,
                       "release_group_with_includes - mariusz duda - lockdown trilogy.json"
