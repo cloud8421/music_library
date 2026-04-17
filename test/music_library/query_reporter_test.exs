@@ -1,5 +1,5 @@
 defmodule MusicLibrary.QueryReporterTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   alias MusicLibrary.QueryReporter
 
