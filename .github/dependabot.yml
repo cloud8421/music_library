@@ -44,3 +44,10 @@ updates:
   - cloud8421
   ignore:
   - dependency-name: "live_toast"
+- package-ecosystem: docker
+  directory: /
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 5
+  assignees:
+  - cloud8421
