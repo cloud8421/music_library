@@ -143,7 +143,7 @@ jobs:
       - name: 🔮 Compile for TEST
         run: mix compile
       - name: 🧪 Run tests
-        run: mix test --max-cases 8
+        run: mix test --cover --export-coverage ci-run --max-cases 8
 
   deploy:
     name: Deploy

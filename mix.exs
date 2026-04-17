@@ -13,7 +13,27 @@ defmodule MusicLibrary.MixProject do
       deps: deps(),
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
       listeners: [Phoenix.CodeReloader],
+      test_coverage: [
+        ignore_modules: ignored_coverage_modules(),
+        summary: [threshold: 75]
+      ],
       usage_rules: usage_rules()
+    ]
+  end
+
+  # Modules excluded from coverage accounting: cron-only workers that run
+  # operations incompatible with the Ecto sandbox (VACUUM / OPTIMIZE outside a
+  # transaction) or whose behaviour beyond a delegate call is untestable, and
+  # all Mix tasks (developer tooling not exercised by the application test
+  # suite).
+  defp ignored_coverage_modules do
+    [
+      MusicLibrary.Worker.RepoVacuum,
+      MusicLibrary.Worker.RepoOptimize,
+      MusicLibrary.Worker.SendRecordsOnThisDayEmail,
+      MusicLibrary.Worker.RefreshScrobbles,
+      MusicLibrary.Worker.BackfillScrobbledTracks,
+      ~r/^Mix\.Tasks\./
     ]
   end
 
