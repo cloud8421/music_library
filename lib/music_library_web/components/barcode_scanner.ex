@@ -116,11 +116,31 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
                 });
             });
           },
-          destroyed() {
-            if (this.cameraPreview.srcObject) {
+          teardownCamera() {
+            if (this.cameraPreview && this.cameraPreview.srcObject) {
               this.cameraPreview.srcObject.getTracks().forEach((track) => track.stop());
-              window.clearInterval(this.scanInterval);
+              this.cameraPreview.srcObject = null;
             }
+            if (this.scanInterval) {
+              window.clearInterval(this.scanInterval);
+              this.scanInterval = null;
+            }
+          },
+          disconnected() {
+            // Stop the camera while we're disconnected so that on reconnect
+            // the server's :pending state and our DOM agree (button visible,
+            // preview hidden) instead of leaving a live stream behind.
+            this.teardownCamera();
+            if (this.cameraPreview) {
+              this.cameraPreview.classList.add("hidden");
+            }
+            const button = this.el.querySelector("#camera-button");
+            if (button) {
+              button.style.display = "";
+            }
+          },
+          destroyed() {
+            this.teardownCamera();
           },
         };
       </script>
