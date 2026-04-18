@@ -339,8 +339,8 @@ defmodule MusicLibraryWeb.RecordComponents do
   def release_summary(assigns) do
     ~H"""
     <div class={[
-      @class,
-      "grid w-full auto-cols-min grid-cols-2 items-center space-x-1 text-zinc-700 dark:text-zinc-300"
+      "grid w-full auto-cols-min grid-cols-2 items-center space-x-1 text-zinc-700 dark:text-zinc-300",
+      @class
     ]}>
       <div class="space-x-1">
         <.format_badge release={@release} />

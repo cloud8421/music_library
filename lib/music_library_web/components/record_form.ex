@@ -395,7 +395,7 @@ defmodule MusicLibraryWeb.Components.RecordForm do
       "in-data-highlighted:bg-zinc-100 dark:in-data-highlighted:bg-zinc-600",
       "[[data-highlighted]_&]:flx-focus:bg-zinc-100"
     ]}>
-      <.release_summary release={@release} class="w-74" />
+      <.release_summary release={@release} class="max-w-74 sm:max-w-none" />
     </div>
     """
   end
