@@ -636,6 +636,13 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
      )}
   end
 
+  def handle_info({MusicLibraryWeb.ArtistLive.Form, {:saved, artist_info}}, socket) do
+    {:noreply,
+     socket
+     |> assign(:artist_info, artist_info)
+     |> assign(:biography, Biography.build(artist_info))}
+  end
+
   defp apply_action(socket, :show, %{"musicbrainz_id" => musicbrainz_id}) do
     artist = Artists.get_artist!(musicbrainz_id)
     artist_info = Artists.get_artist_info!(musicbrainz_id)
