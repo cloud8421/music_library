@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
   use MusicLibraryWeb.ConnCase
 
   import MusicLibrary.Fixtures.RecordSets
+  import MusicLibrary.Fixtures.Records, only: [record: 1]
   import Phoenix.LiveViewTest
 
   alias MusicLibrary.RecordSets
@@ -104,5 +105,87 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
       |> assert_has("h1", "Linked Set")
       |> assert_path(~p"/record-sets/#{set}")
     end
+  end
+
+  describe "Add record" do
+    test "opens the picker modal", %{conn: conn} do
+      set = record_set()
+
+      conn
+      |> visit(~p"/record-sets/#{set}/show/add-record")
+      |> assert_has("h1", text: "Add Record")
+      |> assert_has("#record-picker-search-input")
+    end
+
+    test "shows collected records matching the query", %{conn: conn} do
+      set = record_set()
+      collected = record(%{title: "Collected Unique Xyzzy", purchased_at: DateTime.utc_now()})
+
+      {:ok, view, _html} = live(conn, ~p"/record-sets/#{set}/show/add-record")
+
+      html = search_picker(view, "Xyzzy")
+
+      assert html =~ "Collected"
+      assert html =~ escape(collected.title)
+    end
+
+    test "shows wishlisted records matching the query", %{conn: conn} do
+      set = record_set()
+      wishlisted = record(%{title: "Wishlisted Unique Xyzzy", purchased_at: nil})
+
+      {:ok, view, _html} = live(conn, ~p"/record-sets/#{set}/show/add-record")
+
+      html = search_picker(view, "Xyzzy")
+
+      assert html =~ "Wishlisted"
+      assert html =~ escape(wishlisted.title)
+    end
+
+    test "shows 'No records found' for non-matching queries", %{conn: conn} do
+      set = record_set()
+
+      {:ok, view, _html} = live(conn, ~p"/record-sets/#{set}/show/add-record")
+
+      html = search_picker(view, "NonexistentTitleZzzzzzzz")
+
+      assert html =~ "No records found"
+    end
+
+    test "adds a record to the set", %{conn: conn} do
+      set = record_set()
+      picked = record(%{title: "Pickable Unique Xyzzy", purchased_at: DateTime.utc_now()})
+
+      {:ok, view, _html} = live(conn, ~p"/record-sets/#{set}/show/add-record")
+
+      search_picker(view, "Xyzzy")
+
+      view
+      |> element("li[phx-click='add_record'][phx-value-record-id='#{picked.id}']")
+      |> render_click()
+
+      updated = RecordSets.get_record_set!(set.id)
+      assert Enum.any?(updated.items, fn item -> item.record.id == picked.id end)
+    end
+
+    test "excludes records already in the set from results", %{conn: conn} do
+      set = record_set()
+      existing = record(%{title: "Already In Set Xyzzy", purchased_at: DateTime.utc_now()})
+      {:ok, _} = RecordSets.add_record_to_set(set, existing.id)
+
+      {:ok, view, _html} = live(conn, ~p"/record-sets/#{set}/show/add-record")
+
+      search_picker(view, "Xyzzy")
+
+      refute has_element?(
+               view,
+               "li[phx-click='add_record'][phx-value-record-id='#{existing.id}']"
+             )
+    end
+  end
+
+  defp search_picker(view, query) do
+    view
+    |> form("#record-picker-navigation form", %{query: query})
+    |> render_submit()
   end
 end

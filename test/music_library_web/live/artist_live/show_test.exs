@@ -2,8 +2,10 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
   use MusicLibraryWeb.ConnCase
 
   import MusicLibrary.Fixtures.Records
+  import Phoenix.LiveViewTest
 
   alias LastFm.Fixtures
+  alias MusicLibrary.Artists
 
   defp fill_collection(_config) do
     collection_record =
@@ -150,5 +152,133 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       |> refute_has("#collection p", escape(other_collection_record.title))
       |> refute_has("#wishlist p", escape(other_collection_record.title))
     end
+  end
+
+  describe "Edit artist image" do
+    setup :fill_collection
+    setup :stub_last_fm
+
+    test "opens the edit modal with the form", %{
+      conn: conn,
+      artist_musicbrainz_id: musicbrainz_id
+    } do
+      conn
+      |> visit(~p"/artists/#{musicbrainz_id}/edit")
+      |> unwrap(&render_async/1)
+      |> assert_has("#artist-info-form")
+      |> assert_has("label", text: "Search for artist image online")
+    end
+
+    test "Brave Search displays image results", %{
+      conn: conn,
+      artist_musicbrainz_id: musicbrainz_id
+    } do
+      Req.Test.stub(BraveSearch.API, fn conn ->
+        assert conn.request_path == "/res/v1/images/search"
+        Req.Test.json(conn, BraveSearch.Fixtures.search_images_response())
+      end)
+
+      {:ok, view, _html} = live(conn, ~p"/artists/#{musicbrainz_id}/edit")
+
+      view
+      |> element("#image-search-button")
+      |> render_click()
+
+      html = render_async(view)
+
+      assert html =~ "https://thumbnails.example.com/raven-thumb.jpg"
+    end
+
+    @tag :capture_log
+    test "Brave Search transport error surfaces a friendly message", %{
+      conn: conn,
+      artist_musicbrainz_id: musicbrainz_id
+    } do
+      Req.Test.stub(BraveSearch.API, fn conn ->
+        Req.Test.transport_error(conn, :timeout)
+      end)
+
+      {:ok, view, _html} = live(conn, ~p"/artists/#{musicbrainz_id}/edit")
+
+      view
+      |> element("#image-search-button")
+      |> render_click()
+
+      html = render_async(view)
+
+      assert html =~ "Search failed"
+    end
+
+    test "uploading an image saves and updates the artist info", %{
+      conn: conn,
+      artist_musicbrainz_id: musicbrainz_id,
+      artist_info: artist_info
+    } do
+      {:ok, view, _html} = live(conn, ~p"/artists/#{musicbrainz_id}/edit")
+
+      image =
+        file_input(view, "#artist-info-form", :image_data, [
+          %{name: "raven.jpg", content: raven_cover_data(), type: "image/jpeg"}
+        ])
+
+      render_upload(image, "raven.jpg")
+
+      view
+      |> form("#artist-info-form")
+      |> render_submit()
+
+      updated = Artists.get_artist_info!(artist_info.id)
+      assert updated.image_data_hash != artist_info.image_data_hash
+      assert updated.image_data_hash != nil
+    end
+
+    test "selecting a Brave Search result downloads and saves the image", %{
+      conn: conn,
+      artist_musicbrainz_id: musicbrainz_id,
+      artist_info: artist_info
+    } do
+      raven_binary = raven_cover_data()
+
+      Req.Test.stub(BraveSearch.API, fn conn ->
+        case conn.request_path do
+          "/res/v1/images/search" ->
+            Req.Test.json(conn, BraveSearch.Fixtures.search_images_response())
+
+          _ ->
+            Plug.Conn.send_resp(conn, 200, raven_binary)
+        end
+      end)
+
+      {:ok, view, _html} = live(conn, ~p"/artists/#{musicbrainz_id}/edit")
+
+      view |> element("#image-search-button") |> render_click()
+      render_async(view)
+
+      view
+      |> element(
+        "button[phx-click='select_image'][phx-value-url='https://images.example.com/raven-cover.jpg']"
+      )
+      |> render_click()
+
+      render_async(view)
+
+      updated = Artists.get_artist_info!(artist_info.id)
+      assert updated.image_data_hash != artist_info.image_data_hash
+      assert updated.image_data_hash != nil
+    end
+  end
+
+  defp stub_last_fm(_config) do
+    Req.Test.stub(LastFm.API, fn conn ->
+      case Map.get(conn.params, "method") do
+        "artist.getInfo" ->
+          Req.Test.json(conn, Fixtures.Artist.get_info())
+
+        "artist.getSimilar" ->
+          Req.Test.json(conn, Fixtures.Artist.get_similar_artists())
+      end
+    end)
+
+    :ok
   end
 end
