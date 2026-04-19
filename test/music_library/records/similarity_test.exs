@@ -215,7 +215,8 @@ defmodule MusicLibrary.Records.SimilarityTest do
       embedding = Enum.map(1..1536, fn _ -> :rand.uniform() end)
       text_rep = "Test representation"
 
-      assert {:ok, _} = Similarity.store_embedding(record.id, embedding, text_rep)
+      assert {:ok, stored} = Similarity.store_embedding(record.id, embedding, text_rep)
+      assert stored.record_id == record.id
       assert {:ok, retrieved_embedding} = Similarity.get_embedding(record.id)
 
       assert SqliteVec.Float32.new(embedding) == retrieved_embedding
@@ -226,8 +227,10 @@ defmodule MusicLibrary.Records.SimilarityTest do
       embedding1 = Enum.map(1..1536, fn _ -> 0.5 end)
       embedding2 = Enum.map(1..1536, fn _ -> 0.7 end)
 
-      assert {:ok, _} = Similarity.store_embedding(record.id, embedding1, "Text 1")
-      assert {:ok, _} = Similarity.store_embedding(record.id, embedding2, "Text 2")
+      assert {:ok, first} = Similarity.store_embedding(record.id, embedding1, "Text 1")
+      assert first.text_representation == "Text 1"
+      assert {:ok, second} = Similarity.store_embedding(record.id, embedding2, "Text 2")
+      assert second.text_representation == "Text 2"
 
       assert {:ok, retrieved_embedding} = Similarity.get_embedding(record.id)
       assert SqliteVec.Float32.new(embedding2) == retrieved_embedding
@@ -251,8 +254,10 @@ defmodule MusicLibrary.Records.SimilarityTest do
         })
       end)
 
-      assert {:ok, _record_embedding} = Similarity.generate_embedding(record)
-      assert {:ok, _stored} = Similarity.get_embedding(record.id)
+      assert {:ok, generated} = Similarity.generate_embedding(record)
+      assert generated.record_id == record.id
+      assert {:ok, stored} = Similarity.get_embedding(record.id)
+      assert stored == SqliteVec.Float32.new(embedding)
     end
 
     test "returns :noop when text representation is unchanged" do
@@ -279,7 +284,8 @@ defmodule MusicLibrary.Records.SimilarityTest do
         })
       end)
 
-      assert {:ok, _record_embedding} = Similarity.generate_embedding(record)
+      assert {:ok, generated} = Similarity.generate_embedding(record)
+      assert generated.record_id == record.id
 
       assert {:ok, stored_text} = Similarity.get_embedding_text(record.id)
       refute stored_text == old_text
@@ -293,7 +299,8 @@ defmodule MusicLibrary.Records.SimilarityTest do
         Plug.Conn.send_resp(conn, 500, JSON.encode!(%{"error" => "internal server error"}))
       end)
 
-      assert {:error, _reason} = Similarity.generate_embedding(record)
+      assert {:error, "{\"error\":\"internal server error\"}"} =
+               Similarity.generate_embedding(record)
     end
   end
 
