@@ -252,7 +252,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       {:ok, view, _html} = live(conn, ~p"/artists/#{musicbrainz_id}/edit")
 
       view |> element("#image-search-button") |> render_click()
-      render_async(view)
+      render_async(view, 300)
 
       view
       |> element(
@@ -260,7 +260,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       )
       |> render_click()
 
-      render_async(view)
+      render_async(view, 300)
 
       updated = Artists.get_artist_info!(artist_info.id)
       assert updated.image_data_hash != artist_info.image_data_hash
