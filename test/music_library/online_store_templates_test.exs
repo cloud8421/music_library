@@ -113,7 +113,8 @@ defmodule MusicLibrary.OnlineStoreTemplatesTest do
   describe "delete_template/1" do
     test "deletes the template" do
       template = online_store_template()
-      assert {:ok, _} = OnlineStoreTemplates.delete_template(template)
+      assert {:ok, deleted} = OnlineStoreTemplates.delete_template(template)
+      assert deleted.id == template.id
       assert_raise Ecto.NoResultsError, fn -> OnlineStoreTemplates.get_template!(template.id) end
     end
   end
