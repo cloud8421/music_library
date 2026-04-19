@@ -72,7 +72,8 @@ defmodule MusicLibrary.ScrobbleRulesTest do
 
       assert scrobble_rule.type == :album
 
-      assert {:error, _changeset} = ScrobbleRules.create_scrobble_rule(valid_attrs)
+      assert {:error, changeset} = ScrobbleRules.create_scrobble_rule(valid_attrs)
+      assert %{match_value: ["has already been taken"]} = errors_on(changeset)
     end
 
     test "create_scrobble_rule/1 with invalid data returns error changeset" do
