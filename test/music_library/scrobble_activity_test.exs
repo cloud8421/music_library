@@ -40,12 +40,20 @@ defmodule MusicLibrary.ScrobbleActivityTest do
 
     test "scrobbles all tracks with :started_at" do
       started_at = DateTime.utc_now()
-      assert {:ok, _} = ScrobbleActivity.scrobble_release(@release, :started_at, started_at)
+
+      assert {:ok, response} =
+               ScrobbleActivity.scrobble_release(@release, :started_at, started_at)
+
+      assert response["scrobbles"]["@attr"]["accepted"] == 1
     end
 
     test "scrobbles all tracks with :finished_at" do
       finished_at = DateTime.utc_now()
-      assert {:ok, _} = ScrobbleActivity.scrobble_release(@release, :finished_at, finished_at)
+
+      assert {:ok, response} =
+               ScrobbleActivity.scrobble_release(@release, :finished_at, finished_at)
+
+      assert response["scrobbles"]["@attr"]["accepted"] == 1
     end
 
     test "returns error when release has zero duration" do
@@ -93,12 +101,20 @@ defmodule MusicLibrary.ScrobbleActivityTest do
 
     test "scrobbles tracks from a specific medium with :started_at" do
       started_at = DateTime.utc_now()
-      assert {:ok, _} = ScrobbleActivity.scrobble_medium(1, @release, :started_at, started_at)
+
+      assert {:ok, response} =
+               ScrobbleActivity.scrobble_medium(1, @release, :started_at, started_at)
+
+      assert response["scrobbles"]["@attr"]["accepted"] == 1
     end
 
     test "scrobbles tracks from a specific medium with :finished_at" do
       finished_at = DateTime.utc_now()
-      assert {:ok, _} = ScrobbleActivity.scrobble_medium(1, @release, :finished_at, finished_at)
+
+      assert {:ok, response} =
+               ScrobbleActivity.scrobble_medium(1, @release, :finished_at, finished_at)
+
+      assert response["scrobbles"]["@attr"]["accepted"] == 1
     end
 
     test "returns error when medium not found" do
@@ -151,15 +167,19 @@ defmodule MusicLibrary.ScrobbleActivityTest do
     test "scrobbles selected tracks with :started_at", %{track_ids: track_ids} do
       started_at = DateTime.utc_now()
 
-      assert {:ok, _} =
+      assert {:ok, response} =
                ScrobbleActivity.scrobble_tracks(track_ids, @release, :started_at, started_at)
+
+      assert response["scrobbles"]["@attr"]["accepted"] == 1
     end
 
     test "scrobbles selected tracks with :finished_at", %{track_ids: track_ids} do
       finished_at = DateTime.utc_now()
 
-      assert {:ok, _} =
+      assert {:ok, response} =
                ScrobbleActivity.scrobble_tracks(track_ids, @release, :finished_at, finished_at)
+
+      assert response["scrobbles"]["@attr"]["accepted"] == 1
     end
 
     test "returns error when no tracks selected" do
@@ -220,7 +240,10 @@ defmodule MusicLibrary.ScrobbleActivityTest do
         Req.Test.json(conn, %{"scrobbles" => %{"@attr" => %{"accepted" => 1}}})
       end)
 
-      assert {:ok, _} = ScrobbleActivity.scrobble_release(@release, :started_at, started_at)
+      assert {:ok, response} =
+               ScrobbleActivity.scrobble_release(@release, :started_at, started_at)
+
+      assert response["scrobbles"]["@attr"]["accepted"] == 1
     end
 
     test "sets album_artist when track artist differs from release artist" do
@@ -248,8 +271,10 @@ defmodule MusicLibrary.ScrobbleActivityTest do
         Req.Test.json(conn, %{"scrobbles" => %{"@attr" => %{"accepted" => 1}}})
       end)
 
-      assert {:ok, _} =
+      assert {:ok, response} =
                ScrobbleActivity.scrobble_release(release, :started_at, ~U[2024-01-01 12:00:00Z])
+
+      assert response["scrobbles"]["@attr"]["accepted"] == 1
     end
 
     test "does not set album_artist when track artist matches release artist" do
@@ -269,13 +294,15 @@ defmodule MusicLibrary.ScrobbleActivityTest do
         Req.Test.json(conn, %{"scrobbles" => %{"@attr" => %{"accepted" => 1}}})
       end)
 
-      assert {:ok, _} =
+      assert {:ok, response} =
                ScrobbleActivity.scrobble_tracks(
                  track_ids,
                  @release,
                  :started_at,
                  ~U[2024-01-01 12:00:00Z]
                )
+
+      assert response["scrobbles"]["@attr"]["accepted"] == 1
     end
   end
 end
