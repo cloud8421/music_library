@@ -31,7 +31,8 @@ defmodule MusicLibrary.Worker.ArtistRefreshWikipediaDataTest do
         end
       end)
 
-      assert {:ok, _} = perform_job(ArtistRefreshWikipediaData, %{"id" => artist_info.id})
+      assert {:ok, refreshed} = perform_job(ArtistRefreshWikipediaData, %{"id" => artist_info.id})
+      assert refreshed.id == artist_info.id
 
       updated = Artists.get_artist_info!(artist_info.id)
       assert is_map(updated.wikipedia_data)
@@ -44,7 +45,9 @@ defmodule MusicLibrary.Worker.ArtistRefreshWikipediaDataTest do
 
       # No wikidata relation in musicbrainz_data → fetch_wikipedia_data returns {:ok, artist_info}
       # Worker wraps non-error returns with `with`, so it passes through as :ok
-      assert {:ok, _} = perform_job(ArtistRefreshWikipediaData, %{"id" => artist_info.id})
+      assert {:ok, unchanged} = perform_job(ArtistRefreshWikipediaData, %{"id" => artist_info.id})
+      assert unchanged.id == artist_info.id
+      assert unchanged.wikipedia_data == artist_info.wikipedia_data
     end
   end
 end
