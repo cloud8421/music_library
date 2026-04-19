@@ -26,8 +26,9 @@ defmodule MusicLibrary.AssetsTest do
         properties: %{"language" => "english"}
       }
 
-      assert {:ok, _} = Assets.store(params)
-      assert {:ok, _} = Assets.store(params)
+      assert {:ok, first} = Assets.store(params)
+      assert {:ok, second} = Assets.store(params)
+      assert second.hash == first.hash
 
       assert 1 = Repo.aggregate(Assets.Asset, :count, :hash)
     end
