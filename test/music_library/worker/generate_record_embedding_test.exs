@@ -22,7 +22,8 @@ defmodule MusicLibrary.Worker.GenerateRecordEmbeddingTest do
       assert_receive {:update, %Records.Record{id: id}}
       assert id == record.id
 
-      assert {:ok, _text} = Similarity.get_embedding_text(record.id)
+      assert {:ok, text} = Similarity.get_embedding_text(record.id)
+      assert text == Similarity.text_representation(record)
     end
 
     test "returns :ok without broadcasting when text representation is unchanged" do
@@ -50,7 +51,7 @@ defmodule MusicLibrary.Worker.GenerateRecordEmbeddingTest do
         Plug.Conn.send_resp(conn, 500, JSON.encode!(%{"error" => "internal server error"}))
       end)
 
-      assert {:error, _reason} =
+      assert {:error, "{\"error\":\"internal server error\"}"} =
                perform_job(GenerateRecordEmbedding, %{"record_id" => record.id})
     end
 
