@@ -38,7 +38,8 @@ defmodule MusicLibrary.Worker.PopulateGenresTest do
         Plug.Conn.send_resp(conn, 500, JSON.encode!(%{"error" => "internal server error"}))
       end)
 
-      assert {:error, _reason} = perform_job(PopulateGenres, %{"id" => record.id})
+      assert {:error, "OpenAI API error:" <> _} =
+               perform_job(PopulateGenres, %{"id" => record.id})
     end
   end
 end
