@@ -1,15 +1,11 @@
 defmodule LastFm.TrackTest do
   use ExUnit.Case, async: true
 
-  @api_response_path Path.expand("../support/fixtures/last_fm/user.getrecenttracks.json", __DIR__)
+  alias LastFm.Fixtures.RecentTracks
 
   describe "from_api_response/1" do
     test "returns correct data" do
-      api_response =
-        @api_response_path
-        |> File.read!()
-        |> JSON.decode!()
-        |> get_in(["recenttracks", "track"])
+      api_response = get_in(RecentTracks.get(), ["recenttracks", "track"])
 
       assert [
                %LastFm.Track{

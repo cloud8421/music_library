@@ -1,21 +1,15 @@
 defmodule LastFm.ImportTest do
   use MusicLibrary.DataCase
 
+  alias LastFm.Fixtures.RecentTracks
   alias MusicLibrary.ListeningStats
-
-  @recent_tracks_fixture Path.expand(
-                           "../support/fixtures/last_fm/user.getrecenttracks.json",
-                           __DIR__
-                         )
 
   describe "batch/1" do
     test "fetches recent tracks and persists them via ListeningStats" do
-      response = @recent_tracks_fixture |> File.read!() |> JSON.decode!()
-
       Req.Test.stub(LastFm.API, fn conn ->
         assert URI.decode_query(conn.query_string)["method"] == "user.getrecenttracks"
 
-        Req.Test.json(conn, response)
+        Req.Test.json(conn, RecentTracks.get())
       end)
 
       assert {:ok, count} = LastFm.Import.batch([])
@@ -24,14 +18,12 @@ defmodule LastFm.ImportTest do
     end
 
     test "forwards limit and to_uts options to the Last.fm API" do
-      response = @recent_tracks_fixture |> File.read!() |> JSON.decode!()
-
       Req.Test.stub(LastFm.API, fn conn ->
         params = URI.decode_query(conn.query_string)
         assert params["limit"] == "50"
         assert params["to"] == "1730600000"
 
-        Req.Test.json(conn, response)
+        Req.Test.json(conn, RecentTracks.get())
       end)
 
       assert {:ok, _count} = LastFm.Import.batch(limit: 50, to_uts: 1_730_600_000)
