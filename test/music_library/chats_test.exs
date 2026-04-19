@@ -136,11 +136,13 @@ defmodule MusicLibrary.ChatsTest do
     end
 
     test "returns error for invalid chat attrs" do
-      assert {:error, _changeset} =
+      assert {:error, changeset} =
                Chats.create_chat_with_message(
                  %{},
                  %{role: "user", content: "Hello"}
                )
+
+      assert %{entity: ["can't be blank"]} = errors_on(changeset)
     end
 
     test "creates chat with collection entity" do
@@ -159,7 +161,7 @@ defmodule MusicLibrary.ChatsTest do
   describe "collection_musicbrainz_id/0" do
     test "returns a valid UUID" do
       id = Chats.collection_musicbrainz_id()
-      assert {:ok, _} = Ecto.UUID.cast(id)
+      assert {:ok, ^id} = Ecto.UUID.cast(id)
     end
   end
 
@@ -200,7 +202,8 @@ defmodule MusicLibrary.ChatsTest do
     setup [:create_chat]
 
     test "deletes chat and its messages", %{chat: chat} do
-      assert {:ok, _} = Chats.delete_chat(chat)
+      assert {:ok, deleted} = Chats.delete_chat(chat)
+      assert deleted.id == chat.id
 
       assert_raise Ecto.NoResultsError, fn ->
         Chats.get_chat!(chat.id)
