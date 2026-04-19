@@ -738,7 +738,12 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     {collection, wishlist} = Enum.split_with(records, fn r -> r.purchased_at end)
 
     %{
-      collection: Enum.sort_by(collection, fn r -> r.release_date end, :desc),
+      collection:
+        Enum.sort_by(
+          collection,
+          fn r -> {r.release_date, DateTime.to_unix(r.purchased_at)} end,
+          :desc
+        ),
       wishlist: Enum.sort_by(wishlist, fn r -> r.release_date end, :desc)
     }
   end
