@@ -12,6 +12,29 @@ defmodule MusicLibrary.ErrorIgnorer do
     to_string(Phoenix.Router.NoRouteError)
   ]
 
+  @doc """
+  Returns `true` when the error kind should not be tracked.
+
+  ## Examples
+
+      iex> MusicLibrary.ErrorIgnorer.ignore?(
+      ...>   %ErrorTracker.Error{kind: "Elixir.Phoenix.Router.NoRouteError"},
+      ...>   %{}
+      ...> )
+      true
+
+      iex> MusicLibrary.ErrorIgnorer.ignore?(
+      ...>   %ErrorTracker.Error{kind: "Elixir.RuntimeError"},
+      ...>   %{}
+      ...> )
+      false
+
+      iex> MusicLibrary.ErrorIgnorer.ignore?(
+      ...>   %ErrorTracker.Error{kind: "Elixir.Ecto.NoResultsError"},
+      ...>   %{}
+      ...> )
+      false
+  """
   @impl true
   def ignore?(%ErrorTracker.Error{kind: kind}, _context) when kind in @ignored_kinds, do: true
   def ignore?(_error, _context), do: false
