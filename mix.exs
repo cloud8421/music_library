@@ -28,6 +28,7 @@ defmodule MusicLibrary.MixProject do
   # suite).
   defp ignored_coverage_modules do
     [
+      MusicLibrary.Release,
       MusicLibrary.Worker.RepoVacuum,
       MusicLibrary.Worker.RepoOptimize,
       MusicLibrary.Worker.SendRecordsOnThisDayEmail,
