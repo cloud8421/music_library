@@ -136,7 +136,8 @@ defmodule MusicLibrary.RecordSetsTest do
   describe "delete_record_set/1" do
     test "deletes the record set" do
       set = record_set()
-      assert {:ok, _} = RecordSets.delete_record_set(set)
+      assert {:ok, deleted} = RecordSets.delete_record_set(set)
+      assert deleted.id == set.id
       assert_raise Ecto.NoResultsError, fn -> RecordSets.get_record_set!(set.id) end
     end
   end
@@ -156,7 +157,8 @@ defmodule MusicLibrary.RecordSetsTest do
       rec = record()
 
       {:ok, _} = RecordSets.add_record_to_set(set, rec.id)
-      assert {:error, _changeset} = RecordSets.add_record_to_set(set, rec.id)
+      assert {:error, changeset} = RecordSets.add_record_to_set(set, rec.id)
+      assert %{record_set_id: ["has already been taken"]} = errors_on(changeset)
     end
   end
 
