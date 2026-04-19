@@ -21,7 +21,8 @@ defmodule MusicLibrary.Worker.ArtistRefreshDiscogsDataTest do
         Req.Test.json(conn, ArtistFixture.get_artist())
       end)
 
-      assert {:ok, _} = perform_job(ArtistRefreshDiscogsData, %{"id" => artist_info.id})
+      assert {:ok, refreshed} = perform_job(ArtistRefreshDiscogsData, %{"id" => artist_info.id})
+      assert refreshed.id == artist_info.id
 
       updated = Artists.get_artist_info!(artist_info.id)
       assert updated.discogs_data == ArtistFixture.get_artist()
@@ -31,7 +32,9 @@ defmodule MusicLibrary.Worker.ArtistRefreshDiscogsDataTest do
       artist_info =
         artist_info_fixture(%{musicbrainz_data: %{"name" => "No Discogs Artist"}})
 
-      assert {:ok, _} = perform_job(ArtistRefreshDiscogsData, %{"id" => artist_info.id})
+      assert {:ok, unchanged} = perform_job(ArtistRefreshDiscogsData, %{"id" => artist_info.id})
+      assert unchanged.id == artist_info.id
+      assert unchanged.discogs_data == artist_info.discogs_data
     end
   end
 end
