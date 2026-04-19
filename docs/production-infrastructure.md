@@ -26,7 +26,7 @@ push via GitHub Actions.
 The Docker image is a multi-stage build:
 
 1. **Builder** — `hexpm/elixir:1.20.0-rc.4-erlang-28.4.2-debian-trixie-20260406-slim` with
-   Node.js 24, compiles deps, builds assets (`mix assets.deploy`), generates an OTP release.
+   Node.js 25, compiles deps, builds assets (`mix assets.deploy`), generates an OTP release.
 2. **Runner** — `debian:trixie-20260406-slim` with minimal runtime deps (`libstdc++6`,
    `openssl`, `libncurses6`, `ca-certificates`). Runs as unprivileged `nobody` user.
 
@@ -88,8 +88,8 @@ Uses `mise` (via `jdx/mise-action@v4`) for tool version management.
 
 ```
 Push to main (or PR / manual dispatch)
-  ├── Lint (format, gettext, credo, sobelow, shellcheck, docker image)
-  ├── Test (mix test with partitioning)
+  ├── Lint (format, gettext, credo, sobelow, shellcheck, docker image, asset build)
+  ├── Test (mix test with partitioning, coverage ≥75%)
   └── Deploy (requires GitHub environment approval, main branch only)
         ├── Trigger deployment via Coolify API (hurl)
         ├── Wait for container health check
@@ -103,7 +103,8 @@ A manual verification workflow (`.github/workflows/verify.yml`) can be triggered
 
 Automated dependency updates via GitHub Dependabot (`.github/dependabot.yml`):
 
-- **Docker**: daily checks for base image updates
+- **Docker (Dockerfile)**: daily checks for builder/runner base image updates, max 5 open PRs
+- **Docker Compose**: daily checks for service image updates
 - **Elixir (mix)**: daily checks, max 10 open PRs
 - **NPM**: daily checks, max 10 open PRs, ignores path-based local deps
 - **GitHub Actions**: daily checks for action version updates
