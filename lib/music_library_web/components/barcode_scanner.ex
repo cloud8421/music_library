@@ -422,14 +422,14 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
 
   defp status_badge(%{status: :new} = assigns) do
     ~H"""
-    <.badge>{gettext("New")}</.badge>
+    <.badge class="block">{gettext("New")}</.badge>
     """
   end
 
   defp status_badge(%{status: :wishlisted} = assigns) do
     ~H"""
     <.link navigate={~p"/wishlist/#{@record_id}"}>
-      <.badge color="warning">{gettext("Wishlisted")}</.badge>
+      <.badge size="xs" color="warning" class="block">{gettext("Wishlisted")}</.badge>
     </.link>
     """
   end
@@ -437,14 +437,14 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
   defp status_badge(%{status: :collected} = assigns) do
     ~H"""
     <.link navigate={~p"/collection/#{@record_id}"}>
-      <.badge color="success">{gettext("Collected")}</.badge>
+      <.badge size="xs" color="success" class="block">{gettext("Collected")}</.badge>
     </.link>
     """
   end
 
   defp status_badge(%{status: :not_found} = assigns) do
     ~H"""
-    <.badge color="danger">{gettext("Not found")}</.badge>
+    <.badge size="xs" color="danger" class="block">{gettext("Not found")}</.badge>
     """
   end
 
