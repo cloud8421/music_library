@@ -6,6 +6,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
 
   alias MusicLibrary.Records
   alias MusicLibrary.Wishlist
+  alias MusicLibraryWeb.Components.AddRecord
   alias MusicLibraryWeb.LiveHelpers.IndexActions
 
   defp index_config do
@@ -18,7 +19,6 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
       import_page_title: gettext("Add new Record · Wishlist"),
       section_page_title: gettext("Wishlist"),
       import_success_toast: gettext("Record wishlisted successfully"),
-      import_error_toast: gettext("Error wishlisting record"),
       record_path_fn: fn id -> ~p"/wishlist/#{id}" end,
       index_path_fn: fn qs -> ~p"/wishlist?#{qs}" end,
       base_index_path: ~p"/wishlist"
@@ -154,9 +154,10 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
         :if={@live_action == :import}
         id="record-modal"
         on_close={JS.patch(back_path(@record_list_params))}
+        width_class="md:max-w-4xl lg:max-w-5xl"
       >
         <.live_component
-          module={MusicLibraryWeb.Components.AddRecord}
+          module={AddRecord}
           id={:search}
           title={@page_title}
           action={@live_action}
@@ -164,6 +165,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
           patch={back_path(@record_list_params)}
           initial_query={@import_query}
           icon_name="hero-plus"
+          purchased_at_fn={@index_config.purchased_at_fn}
         />
       </.structured_modal>
 
@@ -207,6 +209,14 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
     IndexActions.handle_record_saved(socket)
   end
 
+  def handle_info({AddRecord, {:imported_single, record}}, socket) do
+    IndexActions.handle_cart_imported_single(socket, record)
+  end
+
+  def handle_info({AddRecord, {:imported_async, count}}, socket) do
+    IndexActions.handle_cart_imported_async(socket, count)
+  end
+
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     IndexActions.handle_delete(socket, id)
@@ -214,10 +224,6 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
 
   def handle_event("search", %{"query" => query}, socket) do
     IndexActions.handle_search(socket, query)
-  end
-
-  def handle_event("import", %{"id" => musicbrainz_id, "format" => format}, socket) do
-    IndexActions.handle_import(socket, musicbrainz_id, format)
   end
 
   def handle_event("add-to-collection", %{"id" => id}, socket) do

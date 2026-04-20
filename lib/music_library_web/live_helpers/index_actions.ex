@@ -10,7 +10,6 @@ defmodule MusicLibraryWeb.LiveHelpers.IndexActions do
   use Gettext, backend: MusicLibraryWeb.Gettext
 
   alias MusicLibrary.Records
-  alias MusicLibraryWeb.ErrorMessages
 
   @doc """
   Applies the :index action. Reads config from `socket.assigns.index_config`
@@ -108,28 +107,30 @@ defmodule MusicLibraryWeb.LiveHelpers.IndexActions do
     {:noreply, push_patch(socket, to: config.index_path_fn.(qs))}
   end
 
-  def handle_import(socket, musicbrainz_id, format) do
+  def handle_cart_imported_single(socket, record) do
     config = socket.assigns.index_config
 
-    case Records.import_from_musicbrainz_release_group(musicbrainz_id,
-           format: format,
-           purchased_at: config.purchased_at_fn.()
-         ) do
-      {:ok, record} ->
-        {:noreply,
-         socket
-         |> put_toast(:info, config.import_success_toast)
-         |> push_navigate(to: config.record_path_fn.(record.id))}
+    {:noreply,
+     socket
+     |> put_toast(:info, config.import_success_toast)
+     |> push_navigate(to: config.record_path_fn.(record.id))}
+  end
 
-      {:error, reason} ->
-        {:noreply,
-         socket
-         |> put_toast(
-           :error,
-           config.import_error_toast <> ": " <> ErrorMessages.friendly_message(reason)
-         )
-         |> push_patch(to: config.base_index_path)}
-    end
+  def handle_cart_imported_async(socket, count) do
+    config = socket.assigns.index_config
+
+    msg =
+      ngettext(
+        "Importing %{count} record in the background...",
+        "Importing %{count} records in the background...",
+        count,
+        count: count
+      )
+
+    {:noreply,
+     socket
+     |> put_toast(:info, msg)
+     |> push_patch(to: config.base_index_path)}
   end
 
   def handle_set_display(socket, mode) do

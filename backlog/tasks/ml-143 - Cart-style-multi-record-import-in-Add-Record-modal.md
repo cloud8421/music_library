@@ -1,10 +1,10 @@
 ---
 id: ML-143
 title: Cart-style multi-record import in Add Record modal
-status: To Do
+status: In Progress
 assignee: []
 created_date: '2026-04-20 10:00'
-updated_date: '2026-04-20 10:01'
+updated_date: '2026-04-20 10:15'
 labels:
   - ui
   - liveview
@@ -17,6 +17,7 @@ documentation:
   - backlog/ml-143/plan.md
   - backlog/ml-143/mockups.html
 priority: medium
+ordinal: 1000
 ---
 
 ## Description
