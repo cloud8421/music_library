@@ -348,6 +348,82 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       assert_has(session, "#cart-empty")
     end
 
+    test "changes the format of a cart item", %{conn: conn} do
+      alias Phoenix.LiveViewTest, as: LVT
+
+      stub_release_group_search()
+
+      [first | _] = Map.get(release_group_search_results(), "release-groups")
+      first_id = first["id"]
+
+      {:ok, view, _html} = LVT.live(conn, ~p"/collection/import")
+
+      view
+      |> LVT.form("#import_form", %{"mb_query" => "Marillion Marbles"})
+      |> LVT.render_change()
+
+      view
+      |> LVT.element("#musicbrainz_#{first_id} a", "CD")
+      |> LVT.render_click()
+
+      view
+      |> LVT.element("#cart-items form")
+      |> LVT.render_change(%{"format" => "vinyl"})
+
+      assert LVT.render(view) =~ "In cart · Vinyl"
+    end
+
+    test "rejects change_format when the resulting pair is already in the cart", %{conn: conn} do
+      alias Phoenix.LiveViewTest, as: LVT
+
+      stub_release_group_search()
+
+      [first | _] = Map.get(release_group_search_results(), "release-groups")
+      first_id = first["id"]
+
+      {:ok, view, _html} = LVT.live(conn, ~p"/collection/import")
+
+      view
+      |> LVT.form("#import_form", %{"mb_query" => "Marillion Marbles"})
+      |> LVT.render_change()
+
+      view
+      |> LVT.element("#musicbrainz_#{first_id} a", "CD")
+      |> LVT.render_click()
+
+      view
+      |> LVT.element("#musicbrainz_#{first_id} a", "Vinyl")
+      |> LVT.render_click()
+
+      html = LVT.render(view)
+      cart_item_ids = Regex.scan(~r/id="cart-item-(\d+)"/, html, capture: :all_but_first)
+      assert length(cart_item_ids) == 2
+
+      [first_id_match | _] = cart_item_ids
+      [item_id] = first_id_match
+
+      view
+      |> LVT.element("#cart-item-#{item_id} form")
+      |> LVT.render_change(%{"cart_item_id" => item_id, "format" => "vinyl"})
+
+      html_after = LVT.render(view)
+      assert Regex.scan(~r/id="cart-item-/, html_after) |> length() == 2
+    end
+
+    test "clears the cart", %{conn: conn} do
+      stub_release_group_search()
+
+      [first | _] = Map.get(release_group_search_results(), "release-groups")
+      first_id = first["id"]
+
+      conn
+      |> visit(~p"/collection/import")
+      |> fill_in("Search for a record", with: "Marillion Marbles")
+      |> click_link("#musicbrainz_#{first_id} a", "CD")
+      |> click_button("Clear all")
+      |> assert_has("#cart-empty")
+    end
+
     test "imports a single cart item synchronously and navigates", %{conn: conn} do
       alias Phoenix.LiveViewTest, as: LVT
 
@@ -378,7 +454,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       assert record.musicbrainz_id == first_id
       assert record.title == "Marbles"
       assert record.format == :cd
-      assert record.purchased_at != nil
+      refute is_nil(record.purchased_at)
 
       {:ok, resized_cover_data} = Image.resize(marbles_cover_data())
       assets = Assets.get(record.cover_hash)

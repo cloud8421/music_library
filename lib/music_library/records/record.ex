@@ -349,10 +349,13 @@ defmodule MusicLibrary.Records.Record do
     defp parse_format(unquote(Atom.to_string(format))), do: unquote(format)
   end
 
-  defp parse_datetime(nil), do: nil
+  @doc false
+  def parse_datetime(nil), do: nil
 
-  defp parse_datetime(dt_string) do
-    {:ok, dt, _offset} = DateTime.from_iso8601(dt_string)
-    dt
+  def parse_datetime(str) when is_binary(str) do
+    case DateTime.from_iso8601(str) do
+      {:ok, dt, _offset} -> dt
+      {:error, _} -> nil
+    end
   end
 end

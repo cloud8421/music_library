@@ -291,14 +291,7 @@ defmodule MusicLibraryWeb.Components.AddRecord do
               id={"actions-#{@release_group.id}-#{format}-add"}
               phx-click={
                 JS.push("add_to_cart",
-                  value: %{
-                    id: @release_group.id,
-                    format: format,
-                    title: @release_group.title,
-                    artists: @release_group.artists,
-                    release_date: @release_group.release_date,
-                    thumb_url: ReleaseGroupSearchResult.thumb_url(@release_group)
-                  },
+                  value: %{id: @release_group.id, format: format},
                   target: @myself
                 )
               }
@@ -418,27 +411,29 @@ defmodule MusicLibraryWeb.Components.AddRecord do
     end
   end
 
-  def handle_event("add_to_cart", params, socket) do
-    case parse_format(params["format"]) do
-      {:ok, format} ->
-        {:noreply, add_to_cart(socket, params, format)}
-
-      :error ->
-        {:noreply, socket}
+  def handle_event("add_to_cart", %{"id" => rg_id, "format" => format_str}, socket) do
+    with release_group when not is_nil(release_group) <-
+           Enum.find(socket.assigns.release_groups, &(&1.id == rg_id)),
+         {:ok, format} <- parse_format(format_str) do
+      {:noreply, add_to_cart(socket, release_group, format)}
+    else
+      _ -> {:noreply, socket}
     end
   end
 
   def handle_event("remove_from_cart", %{"cart_item_id" => id}, socket) do
-    id = cast_id(id)
-    {:noreply, remove_cart_item(socket, id)}
+    case cast_id(id) do
+      {:ok, id} -> {:noreply, remove_cart_item(socket, id)}
+      :error -> {:noreply, socket}
+    end
   end
 
   def handle_event("change_format", %{"cart_item_id" => id, "format" => format_str}, socket) do
-    id = cast_id(id)
-
-    case parse_format(format_str) do
-      {:ok, format} -> {:noreply, change_cart_format(socket, id, format)}
-      :error -> {:noreply, socket}
+    with {:ok, id} <- cast_id(id),
+         {:ok, format} <- parse_format(format_str) do
+      {:noreply, change_cart_format(socket, id, format)}
+    else
+      _ -> {:noreply, socket}
     end
   end
 
@@ -484,8 +479,18 @@ defmodule MusicLibraryWeb.Components.AddRecord do
             })
           end)
 
-        Oban.insert_all(changesets)
-        notify_parent({:imported_async, length(items)})
+        jobs = Oban.insert_all(changesets)
+
+        if length(jobs) == length(changesets) do
+          notify_parent({:imported_async, length(items)})
+        else
+          Logger.error(
+            "Cart import job enqueue failed: only #{length(jobs)}/#{length(changesets)} jobs inserted"
+          )
+
+          put_toast!(:error, gettext("Error queuing records for import"))
+        end
+
         {:noreply, socket}
     end
   end
@@ -495,7 +500,7 @@ defmodule MusicLibraryWeb.Components.AddRecord do
   # component and is silently dropped by Phoenix — no user-visible bug.
   def handle_async(:import_cart, {:ok, {:ok, record}}, socket) do
     notify_parent({:imported_single, record})
-    {:noreply, socket}
+    {:noreply, assign(socket, :importing?, false)}
   end
 
   def handle_async(:import_cart, {:ok, {:error, reason}}, socket) do
@@ -513,20 +518,19 @@ defmodule MusicLibraryWeb.Components.AddRecord do
     {:noreply, assign(socket, :importing?, false)}
   end
 
-  defp add_to_cart(socket, params, format) do
-    rg_id = params["id"]
-    pair = {rg_id, format}
+  defp add_to_cart(socket, %ReleaseGroupSearchResult{} = release_group, format) do
+    pair = {release_group.id, format}
 
     if MapSet.member?(socket.assigns.cart_pairs, pair) do
       socket
     else
       item = %{
         cart_item_id: System.unique_integer([:positive]),
-        release_group_id: rg_id,
-        title: params["title"],
-        artists: params["artists"],
-        release_date: params["release_date"],
-        thumb_url: params["thumb_url"],
+        release_group_id: release_group.id,
+        title: release_group.title,
+        artists: release_group.artists,
+        release_date: release_group.release_date,
+        thumb_url: ReleaseGroupSearchResult.thumb_url(release_group),
         format: format
       }
 
@@ -598,8 +602,14 @@ defmodule MusicLibraryWeb.Components.AddRecord do
     if format in Records.Record.formats(), do: {:ok, format}, else: :error
   end
 
-  defp cast_id(id) when is_integer(id), do: id
-  defp cast_id(id) when is_binary(id), do: String.to_integer(id)
+  defp cast_id(id) when is_integer(id), do: {:ok, id}
+
+  defp cast_id(id) when is_binary(id) do
+    case Integer.parse(id) do
+      {int, ""} -> {:ok, int}
+      _ -> :error
+    end
+  end
 
   defp in_cart?(cart_pairs, rg_id) do
     Enum.any?(cart_pairs, fn {id, _format} -> id == rg_id end)
