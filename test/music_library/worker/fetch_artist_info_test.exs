@@ -102,7 +102,7 @@ defmodule MusicLibrary.Worker.FetchArtistInfoTest do
 
       artist_info = Artists.get_artist_info!(@steven_wilson_mbid)
       assert artist_info.musicbrainz_data["name"] == "Steven Wilson"
-      assert Map.has_key?(artist_info.wikipedia_data, "intro_html")
+      assert artist_info.wikipedia_data["intro_html"] == Wikipedia.Fixtures.article_extract_html()
 
       assert_enqueued(
         worker: MusicLibrary.Worker.GenerateRecordEmbedding,
