@@ -27,6 +27,7 @@ gh = 'latest'
 shellcheck = 'latest'
 fd = 'latest'
 litestream = 'latest'
+"npm:backlog.md" = 'latest'
 
 [task_config]
 includes = ["scripts"]
