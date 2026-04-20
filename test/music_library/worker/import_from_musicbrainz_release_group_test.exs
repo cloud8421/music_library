@@ -1,10 +1,11 @@
 defmodule MusicLibrary.Worker.ImportFromMusicbrainzReleaseGroupTest do
-  use MusicLibrary.DataCase
+  use MusicLibrary.DataCase, async: true
 
   import MusicBrainz.Fixtures.ReleaseGroup
   import MusicLibrary.Fixtures.Records
 
   alias MusicLibrary.Records.Record
+  alias MusicLibrary.Worker.FetchArtistInfo
   alias MusicLibrary.Worker.ImportFromMusicbrainzReleaseGroup
 
   describe "perform/1" do
@@ -41,6 +42,11 @@ defmodule MusicLibrary.Worker.ImportFromMusicbrainzReleaseGroupTest do
       assert imported_record.title == "Marbles"
       assert imported_record.format == :cd
       assert imported_record.purchased_at == DateTime.truncate(purchased_at, :second)
+
+      assert_enqueued(
+        worker: FetchArtistInfo,
+        args: %{"id" => "1932f5b6-0b7b-4050-b1df-833ca89e5f44"}
+      )
     end
 
     test "imports a wishlist record when purchased_at is nil" do

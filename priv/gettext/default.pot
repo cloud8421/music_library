@@ -2511,3 +2511,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Your cart is empty"
 msgstr ""
+
+#: lib/music_library_web/components/add_record.ex
+#, elixir-autogen, elixir-format
+msgid "Error queuing records for import"
+msgstr ""

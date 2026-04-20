@@ -6,27 +6,24 @@ defmodule MusicLibrary.Worker.ImportFromMusicbrainzReleaseGroup do
   records to import at once.
   """
 
-  use Oban.Worker, queue: :music_brainz, max_attempts: 3
+  use Oban.Worker,
+    queue: :music_brainz,
+    max_attempts: 3,
+    unique: [period: 300, keys: [:release_group_id, :format]]
 
   alias MusicLibrary.Records
+  alias MusicLibrary.Records.Record
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"release_group_id" => release_group_id} = args}) do
     opts = [
       format: args["format"],
-      purchased_at: parse_datetime(args["purchased_at"])
+      purchased_at: Record.parse_datetime(args["purchased_at"])
     ]
 
     case Records.import_from_musicbrainz_release_group(release_group_id, opts) do
       {:ok, _record} -> :ok
       {:error, reason} -> {:error, reason}
     end
-  end
-
-  defp parse_datetime(nil), do: nil
-
-  defp parse_datetime(str) do
-    {:ok, datetime, _offset} = DateTime.from_iso8601(str)
-    datetime
   end
 end
