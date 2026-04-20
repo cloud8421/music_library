@@ -59,7 +59,7 @@ defmodule BraveSearch.APITest do
         |> Req.Test.json(%{"error" => "rate limited"})
       end)
 
-      assert {:error, _} = API.search_images("test", [], @config)
+      assert {:error, %{"error" => "rate limited"}} = API.search_images("test", [], @config)
     end
 
     test "passes count option as query param" do
