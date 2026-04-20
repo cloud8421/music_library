@@ -296,10 +296,12 @@ defmodule MusicLibrary.Records.SimilarityTest do
       record = record(%{genres: ["rock"]})
 
       Req.Test.stub(OpenAI.API, fn conn ->
-        Plug.Conn.send_resp(conn, 500, JSON.encode!(%{"error" => "internal server error"}))
+        conn
+        |> Plug.Conn.put_status(500)
+        |> Req.Test.json(%{"error" => "internal server error"})
       end)
 
-      assert {:error, "{\"error\":\"internal server error\"}"} =
+      assert {:error, %{"error" => "internal server error"}} =
                Similarity.generate_embedding(record)
     end
   end
