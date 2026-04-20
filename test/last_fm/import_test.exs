@@ -26,7 +26,8 @@ defmodule LastFm.ImportTest do
         Req.Test.json(conn, RecentTracks.get())
       end)
 
-      assert {:ok, _count} = LastFm.Import.batch(limit: 50, to_uts: 1_730_600_000)
+      assert {:ok, count} = LastFm.Import.batch(limit: 50, to_uts: 1_730_600_000)
+      assert count > 0
     end
 
     @tag :capture_log
