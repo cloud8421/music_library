@@ -34,7 +34,7 @@ defmodule OpenAI.APITest do
       end)
 
       completion = %{model: "gpt-4.1-mini", content: "test", role: "user", temperature: 0.5}
-      assert {:error, _} = API.gpt(completion, @config)
+      assert {:error, "OpenAI API error:" <> _} = API.gpt(completion, @config)
     end
   end
 
@@ -61,7 +61,7 @@ defmodule OpenAI.APITest do
         |> Req.Test.json(%{"error" => "internal error"})
       end)
 
-      assert {:error, _} = API.get_embeddings("test text", @config)
+      assert {:error, %{"error" => "internal error"}} = API.get_embeddings("test text", @config)
     end
   end
 
