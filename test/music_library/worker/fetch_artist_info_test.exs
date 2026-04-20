@@ -101,8 +101,8 @@ defmodule MusicLibrary.Worker.FetchArtistInfoTest do
       assert :ok = perform_job(FetchArtistInfo, %{"id" => @steven_wilson_mbid})
 
       artist_info = Artists.get_artist_info!(@steven_wilson_mbid)
-      assert artist_info.musicbrainz_data != nil
-      assert artist_info.wikipedia_data != nil
+      assert artist_info.musicbrainz_data["name"] == "Steven Wilson"
+      assert Map.has_key?(artist_info.wikipedia_data, "intro_html")
 
       assert_enqueued(
         worker: MusicLibrary.Worker.GenerateRecordEmbedding,
