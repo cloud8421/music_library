@@ -6,6 +6,8 @@ defmodule MusicLibrary.Worker.FetchArtistImageTest do
 
   alias Discogs.Fixtures.Artist
   alias MusicLibrary.Artists
+  alias MusicLibrary.Assets
+  alias MusicLibrary.Assets.Asset
   alias MusicLibrary.Worker.FetchArtistImage
 
   setup do
@@ -25,7 +27,8 @@ defmodule MusicLibrary.Worker.FetchArtistImageTest do
 
       updated = Artists.get_artist_info!(artist_info.id)
       assert is_binary(updated.image_data_hash) and byte_size(updated.image_data_hash) > 0
-      assert MusicLibrary.Assets.get(updated.image_data_hash) != nil
+      hash = updated.image_data_hash
+      assert %Asset{hash: ^hash} = Assets.get(hash)
     end
 
     test "cancels when no discogs data exists" do
