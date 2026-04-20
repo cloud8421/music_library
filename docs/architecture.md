@@ -191,6 +191,7 @@ stubbed via `Req.Test` (configured in `config/test.exs`).
 | `FetchArtistImage` | heavy_writes | Artist info fetched |
 | `RefreshCover` | heavy_writes | Manual action / import |
 | `ImportFromMusicbrainzRelease` | music_brainz | Barcode scan batch import (2+ new records) |
+| `ImportFromMusicbrainzReleaseGroup` | music_brainz | Cart-style multi-record import in AddRecord component (2+ records selected) |
 | `PopulateGenres` | heavy_writes | Manual action (chains → GenerateRecordEmbedding) |
 | `GenerateRecordEmbedding` | heavy_writes | Manual / after genre population (delegates to Similarity, skips unchanged) |
 | `RecordRefreshMusicBrainzData` | music_brainz | Manual / batch |
