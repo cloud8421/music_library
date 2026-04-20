@@ -67,7 +67,7 @@ defmodule MusicLibraryWeb.Components.AddRecord do
             id={"musicbrainz_#{release_group.id}"}
             myself={@myself}
             in_cart?={in_cart?(@cart_pairs, release_group.id)}
-            cart_format={cart_format(@cart, release_group.id)}
+            cart_formats={cart_formats(@cart, release_group.id)}
             release_group={release_group}
             icon_name={@icon_name}
           />
@@ -241,14 +241,17 @@ defmodule MusicLibraryWeb.Components.AddRecord do
   attr :release_group, MusicBrainz.ReleaseGroupSearchResult, required: true
   attr :myself, :any, required: true
   attr :in_cart?, :boolean, required: true
-  attr :cart_format, :atom, required: true
+  attr :cart_formats, :list, required: true
 
   defp result(assigns) do
     ~H"""
-    <li id={@id} class="flex justify-between gap-x-6 py-5 hover:bg-zinc-100 dark:hover:bg-zinc-700">
-      <div class="flex w-full shrink-0 items-center justify-between px-4">
+    <li
+      id={@id}
+      class="flex justify-between gap-x-6 py-5 md:px-4 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+    >
+      <div class="flex w-full shrink-0 items-center justify-between">
         <img
-          class="mr-4 w-20 flex-none rounded-lg"
+          class="mr-4 w-12 md:w-20 flex-none rounded-lg"
           alt={@release_group.title}
           src={ReleaseGroupSearchResult.thumb_url(@release_group)}
           onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
@@ -272,7 +275,8 @@ defmodule MusicLibraryWeb.Components.AddRecord do
           class="mr-2 inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-medium px-2 py-0.5"
         >
           <.icon name="hero-check" class="size-3" aria-hidden="true" data-slot="icon" />
-          {gettext("In cart · %{format}", format: format_label(@cart_format))}
+          <span :if={length(@cart_formats) > 1}>{length(@cart_formats)}</span>
+          <span class="sr-only sm:not-sr-only">{gettext("In cart")}</span>
         </span>
 
         <.dropdown id={"actions-#{@release_group.id}"} placement="bottom-end">
@@ -615,11 +619,10 @@ defmodule MusicLibraryWeb.Components.AddRecord do
     Enum.any?(cart_pairs, fn {id, _format} -> id == rg_id end)
   end
 
-  defp cart_format(cart, rg_id) do
-    case Enum.find(cart, &(&1.release_group_id == rg_id)) do
-      nil -> nil
-      item -> item.format
-    end
+  defp cart_formats(cart, rg_id) do
+    cart
+    |> Enum.filter(&(&1.release_group_id == rg_id))
+    |> Enum.map(& &1.format)
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
