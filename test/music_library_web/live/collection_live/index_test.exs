@@ -293,8 +293,10 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       |> visit(~p"/collection/import")
       |> fill_in("Search for a record", with: "Marillion Marbles")
       |> click_link("#musicbrainz_#{first_id} a", "CD")
-      |> assert_has("#musicbrainz_#{first_id} span", text: "In cart · CD")
+      |> assert_has("#musicbrainz_#{first_id} span", text: "In cart")
       |> assert_has("#cart-items li", count: 1)
+      |> click_link("#musicbrainz_#{first_id} a", "Vinyl")
+      |> assert_has("#musicbrainz_#{first_id} span", text: "2 In cart")
 
       assert MusicLibrary.Repo.all(Record) == []
       refute_enqueued(worker: ImportFromMusicbrainzReleaseGroup)
@@ -370,7 +372,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       |> LVT.element("#cart-items form")
       |> LVT.render_change(%{"format" => "vinyl"})
 
-      assert LVT.render(view) =~ "In cart · Vinyl"
+      assert LVT.render(view) =~ "In cart"
     end
 
     test "rejects change_format when the resulting pair is already in the cart", %{conn: conn} do

@@ -2499,11 +2499,6 @@ msgstr[1] ""
 
 #: lib/music_library_web/components/add_record.ex
 #, elixir-autogen, elixir-format
-msgid "In cart · %{format}"
-msgstr ""
-
-#: lib/music_library_web/components/add_record.ex
-#, elixir-autogen, elixir-format
 msgid "Toggle cart"
 msgstr ""
 
@@ -2515,4 +2510,9 @@ msgstr ""
 #: lib/music_library_web/components/add_record.ex
 #, elixir-autogen, elixir-format
 msgid "Error queuing records for import"
+msgstr ""
+
+#: lib/music_library_web/components/add_record.ex
+#, elixir-autogen, elixir-format
+msgid "In cart"
 msgstr ""
