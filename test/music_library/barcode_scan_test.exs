@@ -18,9 +18,16 @@ defmodule MusicLibrary.BarcodeScanTest do
         Req.Test.json(conn, releases)
       end)
 
+      {:ok, [first_release | _]} = MusicBrainz.search_release_by_barcode("5052205070023")
+
+      # Re-stub since the previous stub was consumed
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        Req.Test.json(conn, releases)
+      end)
+
       assert {:ok, %Result{status: :new} = result} = BarcodeScan.scan("5052205070023")
       assert result.number == "5052205070023"
-      assert result.release != nil
+      assert result.release.id == first_release.id
     end
 
     test "returns :wishlisted when barcode matches a wishlisted record" do
@@ -60,7 +67,7 @@ defmodule MusicLibrary.BarcodeScanTest do
 
       assert {:ok, %Result{status: :wishlisted} = result} = BarcodeScan.scan("5052205070023")
       assert result.record_id == wishlisted_record.id
-      assert result.release != nil
+      assert result.release.id == first_release.id
     end
 
     test "returns :collected when barcode matches a collected record" do
@@ -97,7 +104,7 @@ defmodule MusicLibrary.BarcodeScanTest do
 
       assert {:ok, %Result{status: :collected} = result} = BarcodeScan.scan("5052205070023")
       assert result.record_id == collected_record.id
-      assert result.release != nil
+      assert result.release.id == first_release.id
     end
 
     test "returns :not_found when barcode has no MusicBrainz results" do
