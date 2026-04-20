@@ -160,8 +160,11 @@ defmodule Mix.Tasks.Scrobble.AuditTest do
       assert output =~ ~s("artist_issues")
       assert output =~ ~s("album_issues")
 
-      # Validate it's valid JSON
-      assert {:ok, _parsed} = Jason.decode(output)
+      # Validate it's valid JSON with expected structure
+      assert {:ok, parsed} = Jason.decode(output)
+      assert is_integer(parsed["total_tracks"])
+      assert is_map(parsed["artist_issues"])
+      assert is_map(parsed["album_issues"])
     end
 
     test "audit report shows summary with remediation steps" do
