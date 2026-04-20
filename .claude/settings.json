@@ -25,6 +25,7 @@
       "WebFetch(domain:hex.pm)",
       "WebFetch(domain:hexdocs.pm)",
       "WebSearch",
+      "mcp__backlog",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools",
       "mcp__tidewave"
     ]
