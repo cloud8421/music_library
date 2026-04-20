@@ -4,14 +4,16 @@ defmodule MusicLibrary.Worker.PruneAssetsTest do
   import MusicLibrary.Fixtures.Records
 
   alias MusicLibrary.Assets
+  alias MusicLibrary.Assets.Asset
   alias MusicLibrary.Worker.PruneAssets
 
   describe "perform/1" do
     @describetag :capture_log
     test "deletes unreferenced assets" do
       {:ok, orphan} = Assets.store(%{content: "orphan_data", format: "image/jpeg"})
+      orphan_hash = orphan.hash
 
-      assert Assets.get(orphan.hash) != nil
+      assert %Asset{hash: ^orphan_hash} = Assets.get(orphan_hash)
 
       assert :ok = perform_job(PruneAssets, %{})
 
@@ -20,10 +22,11 @@ defmodule MusicLibrary.Worker.PruneAssetsTest do
 
     test "keeps assets referenced by records" do
       record = record()
+      cover_hash = record.cover_hash
 
       assert :ok = perform_job(PruneAssets, %{})
 
-      assert Assets.get(record.cover_hash) != nil
+      assert %Asset{hash: ^cover_hash} = Assets.get(cover_hash)
     end
 
     test "keeps assets referenced by artist info" do
@@ -35,7 +38,8 @@ defmodule MusicLibrary.Worker.PruneAssetsTest do
 
       # The artist info image data comes from Discogs fixture which stores an asset
       # The record's cover asset should still be present
-      assert Assets.get(record.cover_hash) != nil
+      cover_hash = record.cover_hash
+      assert %Asset{hash: ^cover_hash} = Assets.get(cover_hash)
     end
 
     test "succeeds with no unreferenced assets" do
