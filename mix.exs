@@ -33,6 +33,7 @@ defmodule MusicLibrary.MixProject do
   # - Telemetry instrumentation whose write paths are only reachable from real
   #   `:telemetry.execute/3` events emitted by external libraries.
   # - Vendored `SqliteVec.*` library code under `lib/sqlite_vec/`.
+  # - Req Rate Limiter System Clock (exposes std library built-ins)
   # - All Mix tasks (developer tooling not exercised by the application test
   #   suite).
   defp ignored_coverage_modules do
@@ -49,8 +50,9 @@ defmodule MusicLibrary.MixProject do
       MusicLibraryWeb.ErrorHTML,
       MusicLibraryWeb.Telemetry,
       MusicLibraryWeb.Telemetry.Storage,
+      Req.RateLimiter.SystemClock,
       ~r/^Mix\.Tasks\./,
-      ~r/^SqliteVec\./
+      ~r/SqliteVec\./
     ]
   end
 
