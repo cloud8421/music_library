@@ -538,11 +538,6 @@ msgstr ""
 
 #: lib/music_library_web/components/barcode_scanner.ex
 #, elixir-autogen, elixir-format
-msgid "Add releases"
-msgstr ""
-
-#: lib/music_library_web/components/barcode_scanner.ex
-#, elixir-autogen, elixir-format
 msgid "Adding..."
 msgstr ""
 
@@ -1588,6 +1583,7 @@ msgid "Record set updated successfully"
 msgstr ""
 
 #: lib/music_library_web/components/add_record.ex
+#: lib/music_library_web/components/barcode_scanner.ex
 #: lib/music_library_web/live/record_set_live/index.ex
 #: lib/music_library_web/live/record_set_live/show.ex
 #, elixir-autogen, elixir-format
@@ -2464,6 +2460,7 @@ msgid "A rule for this album already exists"
 msgstr ""
 
 #: lib/music_library_web/components/add_record.ex
+#: lib/music_library_web/components/barcode_scanner.ex
 #, elixir-autogen, elixir-format
 msgid "%{count} record"
 msgid_plural "%{count} records"
@@ -2476,6 +2473,7 @@ msgid "Add records from the search results to get started."
 msgstr ""
 
 #: lib/music_library_web/components/add_record.ex
+#: lib/music_library_web/components/barcode_scanner.ex
 #, elixir-autogen, elixir-format
 msgid "Cart"
 msgstr ""
@@ -2486,6 +2484,7 @@ msgid "Choose which format to add"
 msgstr ""
 
 #: lib/music_library_web/components/add_record.ex
+#: lib/music_library_web/components/barcode_scanner.ex
 #, elixir-autogen, elixir-format
 msgid "Clear all"
 msgstr ""
@@ -2498,11 +2497,13 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: lib/music_library_web/components/add_record.ex
+#: lib/music_library_web/components/barcode_scanner.ex
 #, elixir-autogen, elixir-format
 msgid "Toggle cart"
 msgstr ""
 
 #: lib/music_library_web/components/add_record.ex
+#: lib/music_library_web/components/barcode_scanner.ex
 #, elixir-autogen, elixir-format
 msgid "Your cart is empty"
 msgstr ""
@@ -2515,4 +2516,21 @@ msgstr ""
 #: lib/music_library_web/components/add_record.ex
 #, elixir-autogen, elixir-format
 msgid "In cart"
+msgstr ""
+
+#: lib/music_library_web/components/barcode_scanner.ex
+#, elixir-autogen, elixir-format
+msgid "Add %{count} release"
+msgid_plural "Add %{count} releases"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/music_library_web/components/barcode_scanner.ex
+#, elixir-autogen, elixir-format
+msgid "Not found"
+msgstr ""
+
+#: lib/music_library_web/components/barcode_scanner.ex
+#, elixir-autogen, elixir-format
+msgid "Scan barcodes to add records."
 msgstr ""

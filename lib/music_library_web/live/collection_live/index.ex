@@ -205,6 +205,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
         :if={@live_action == :barcode_scan}
         id="barcode-scanner-modal"
         on_close={JS.patch(back_path(@record_list_params))}
+        width_class="md:max-w-4xl lg:max-w-5xl"
       >
         <.live_component
           module={MusicLibraryWeb.Components.BarcodeScanner}

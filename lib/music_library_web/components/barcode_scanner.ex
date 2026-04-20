@@ -14,49 +14,134 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
     {:ok,
      socket
      |> assign(:camera, :pending)
-     |> assign(:scan_results, [])}
+     |> assign(:scan_results, [])
+     |> assign(:cart_expanded?, true)}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="min-w-72" id="barcode-scanner" phx-hook=".BarcodeScanner" phx-target={@myself}>
-      <header>
-        <h1 class="text-sm/6 font-medium text-zinc-700 dark:text-zinc-400">
-          {gettext("Scan one or more barcodes")}
-        </h1>
-      </header>
-      <div class="mt-4">
-        <.camera_button camera={@camera} />
-        <video :if={!(@camera == :denied)} class="hidden h-96 w-full" id="camera-preview" playsinline />
-      </div>
+    <div id="barcode-scanner" phx-hook=".BarcodeScanner" phx-target={@myself}>
+      <div class="grid grid-cols-1 md:grid-cols-5">
+        <section class="md:col-span-3 md:p-4 md:border-r md:border-zinc-200 md:dark:border-zinc-800">
+          <header>
+            <h1 class="text-sm/6 font-medium text-zinc-700 dark:text-zinc-400">
+              {gettext("Scan one or more barcodes")}
+            </h1>
+          </header>
+          <div class="mt-4">
+            <.camera_button camera={@camera} />
+            <video
+              :if={!(@camera == :denied)}
+              class="hidden h-96 w-full"
+              id="camera-preview"
+              playsinline
+            />
+          </div>
+        </section>
 
-      <ul class="mt-5 divide-y divide-zinc-100 dark:divide-slate-300/30">
-        <li
-          :for={scan_result <- @scan_results}
-          id={scan_result.number}
-          class="flex justify-between gap-x-6 py-5"
-          phx-mounted={
-            JS.transition(
-              {"first:ease-in duration-300", "first:opacity-0 first:p-0 first:h-0",
-               "first:opacity-100"},
-              time: 300
-            )
-          }
-        >
-          <.scan_result scan_result={scan_result} />
-        </li>
-      </ul>
+        <aside class={[
+          "md:col-span-2",
+          "border-t md:border-t-0 md:border-l md:border-zinc-200 md:dark:border-zinc-800",
+          "flex flex-col"
+        ]}>
+          <div class="px-4 py-3 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800">
+            <div class="flex items-center gap-2">
+              <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                {gettext("Cart")}
+              </p>
+              <span class="text-xs text-zinc-500 dark:text-zinc-400">
+                {ngettext(
+                  "%{count} record",
+                  "%{count} records",
+                  length(@scan_results),
+                  count: length(@scan_results)
+                )}
+              </span>
+            </div>
+            <div class="flex items-center gap-3">
+              <button
+                :if={@scan_results != []}
+                type="button"
+                phx-click="clear_results"
+                phx-target={@myself}
+                class="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+              >
+                {gettext("Clear all")}
+              </button>
+              <button
+                type="button"
+                phx-click="toggle_cart"
+                phx-target={@myself}
+                class="rounded-md p-1 text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-800 md:hidden"
+                aria-label={gettext("Toggle cart")}
+              >
+                <.icon
+                  name={if @cart_expanded?, do: "hero-chevron-down", else: "hero-chevron-up"}
+                  class="size-4"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+              </button>
+            </div>
+          </div>
 
-      <div class="mt-4 flex justify-center">
-        <.button
-          variant="solid"
-          disabled={length(@scan_results) == 0}
-          phx-disable-with={gettext("Adding...")}
-          phx-click={JS.push("import_releases", target: "#barcode-scanner")}
-        >
-          {gettext("Add releases")}
-        </.button>
+          <div class={["md:!block", not @cart_expanded? && "hidden"]}>
+            <div
+              :if={@scan_results == []}
+              id="cart-empty"
+              class="flex flex-col items-center justify-center gap-2 px-6 py-10 text-center"
+            >
+              <.barcode_icon class="size-8 text-zinc-400" />
+              <p class="text-sm text-zinc-500 dark:text-zinc-400">
+                {gettext("Your cart is empty")}
+              </p>
+              <p class="text-xs text-zinc-500 dark:text-zinc-400">
+                {gettext("Scan barcodes to add records.")}
+              </p>
+            </div>
+
+            <ul
+              :if={@scan_results != []}
+              id="cart-items"
+              class="divide-y divide-zinc-200 dark:divide-zinc-800 md:max-h-[calc(100vh-20rem)] overflow-y-auto"
+            >
+              <li
+                :for={result <- @scan_results}
+                id={"cart-item-#{result.number}"}
+                class="flex gap-3 px-4 py-3"
+                phx-mounted={
+                  JS.transition(
+                    {"first:ease-in duration-300", "first:opacity-0 first:p-0 first:h-0",
+                     "first:opacity-100"},
+                    time: 300
+                  )
+                }
+              >
+                <.cart_item result={result} myself={@myself} />
+              </li>
+            </ul>
+
+            <div
+              :if={@scan_results != []}
+              class="border-t border-zinc-200 dark:border-zinc-800 px-4 py-3"
+            >
+              <.button
+                variant="solid"
+                phx-disable-with={gettext("Adding...")}
+                phx-click={JS.push("import_releases", target: "#barcode-scanner")}
+                class="w-full"
+              >
+                {ngettext(
+                  "Add %{count} release",
+                  "Add %{count} releases",
+                  length(@scan_results),
+                  count: length(@scan_results)
+                )}
+              </.button>
+            </div>
+          </div>
+        </aside>
       </div>
 
       <script :type={Phoenix.LiveView.ColocatedHook} name=".BarcodeScanner">
@@ -75,6 +160,7 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
           async mounted() {
             const detectedBarcodes = new Set([]);
             const barcodeDetector = await barcodeReaderSetup();
+            this.detectedBarcodes = detectedBarcodes;
             this.cameraPreview = this.el.querySelector("#camera-preview");
             const constraints = {
               audio: false,
@@ -86,6 +172,12 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
                 },
               },
             };
+            this.handleEvent("remove_barcode", ({ number }) => {
+              detectedBarcodes.delete(number);
+            });
+            this.handleEvent("clear_barcodes", () => {
+              detectedBarcodes.clear();
+            });
             this.el.addEventListener("camera_request", () => {
               navigator.mediaDevices
                 .getUserMedia(constraints)
@@ -318,75 +410,99 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
     """
   end
 
-  attr :scan_result, BarcodeScan.Result, required: true
+  attr :result, BarcodeScan.Result, required: true
+  attr :myself, :any, required: true
 
-  defp scan_result(assigns) do
+  defp cart_item(%{result: %{status: :not_found}} = assigns) do
     ~H"""
-    <.barcode_not_found :if={@scan_result.status == :not_found} number={@scan_result.number} />
-    <.release
-      :if={@scan_result.status != :not_found}
-      release={@scan_result.release}
-      record_id={@scan_result.record_id}
-      status={@scan_result.status}
-    />
-    """
-  end
-
-  attr :number, :string, required: true
-
-  defp barcode_not_found(assigns) do
-    ~H"""
-    <div class="w-full bg-red-50 p-4 dark:bg-red-950">
-      <h1 class="text-sm/6 text-zinc-700 dark:text-zinc-400">
+    <.barcode_icon class="w-12 h-12 flex-none rounded-md p-2 bg-red-50 text-red-400 dark:bg-red-950" />
+    <div class="min-w-0 flex-1">
+      <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">
+        {@result.number}
+      </p>
+      <p class="truncate text-sm font-medium text-zinc-700 dark:text-zinc-300">
         {gettext("Barcode not found")}
-      </h1>
-      <h2 class="mt-1 flex text-sm/5 font-semibold text-wrap text-zinc-700 sm:text-base dark:text-zinc-300">
-        {@number}
-      </h2>
+      </p>
+      <div class="mt-1 flex items-center gap-2">
+        <.status_badge status={:not_found} />
+        <button
+          type="button"
+          phx-click="remove_result"
+          phx-value-number={@result.number}
+          phx-target={@myself}
+          class="text-xs text-zinc-500 hover:text-red-600 dark:hover:text-red-400"
+        >
+          {gettext("Remove")}
+        </button>
+      </div>
     </div>
     """
   end
 
-  attr :release, MusicBrainz.ReleaseSearchResult, required: true
-  attr :record_id, :string
-  attr :status, :atom, required: true, values: [:collected, :wishlisted, :new]
-
-  defp release(assigns) do
+  defp cart_item(assigns) do
     ~H"""
-    <div class="flex w-full items-center justify-between">
-      <img
-        class="mr-4 w-16 flex-none rounded-lg md:w-20"
-        alt={@release.release_group.title}
-        src={ReleaseGroupSearchResult.thumb_url(@release.release_group)}
-        onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
-      />
-      <div class="min-w-0 flex-auto">
-        <h1 class="text-sm/6 text-zinc-700 dark:text-zinc-400">
-          {@release.artists}
-        </h1>
-        <h2 class="mt-1 flex text-sm/5 font-semibold text-wrap text-zinc-700 sm:text-base dark:text-zinc-300">
-          {@release.title}
-        </h2>
-        <p class="mt-1 text-xs/5 text-zinc-500 dark:text-zinc-400">
-          {release_format_label(@release)} · {Records.Record.format_release_date(@release.date)} · {RecordComponents.type_label(
-            @release.release_group.type
-          )}
-        </p>
+    <img
+      class="w-12 h-12 rounded-md flex-none object-cover"
+      alt={@result.release.release_group.title}
+      src={ReleaseGroupSearchResult.thumb_url(@result.release.release_group)}
+      onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
+    />
+    <div class="min-w-0 flex-1">
+      <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">
+        {@result.release.artists}
+      </p>
+      <p class="truncate text-sm font-medium text-zinc-700 dark:text-zinc-300">
+        {@result.release.title}
+      </p>
+      <p class="truncate text-xs/5 text-zinc-500 dark:text-zinc-400">
+        {release_format_label(@result.release)} · {Records.Record.format_release_date(
+          @result.release.date
+        )} · {RecordComponents.type_label(@result.release.release_group.type)}
+      </p>
+      <div class="mt-1 flex items-center gap-2">
+        <.status_badge status={@result.status} record_id={@result.record_id} />
+        <button
+          type="button"
+          phx-click="remove_result"
+          phx-value-number={@result.number}
+          phx-target={@myself}
+          class="text-xs text-zinc-500 hover:text-red-600 dark:hover:text-red-400"
+        >
+          {gettext("Remove")}
+        </button>
       </div>
-      <.badge :if={@status == :new}>
-        {gettext("New")}
-      </.badge>
-      <.link :if={@status == :wishlisted} navigate={~p"/wishlist/#{@record_id}"}>
-        <.badge color="warning">
-          {gettext("Wishlisted")}
-        </.badge>
-      </.link>
-      <.link :if={@status == :collected} navigate={~p"/collection/#{@record_id}"}>
-        <.badge color="success">
-          {gettext("Collected")}
-        </.badge>
-      </.link>
     </div>
+    """
+  end
+
+  attr :status, :atom, required: true, values: [:new, :wishlisted, :collected, :not_found]
+  attr :record_id, :string, default: nil
+
+  defp status_badge(%{status: :new} = assigns) do
+    ~H"""
+    <.badge>{gettext("New")}</.badge>
+    """
+  end
+
+  defp status_badge(%{status: :wishlisted} = assigns) do
+    ~H"""
+    <.link navigate={~p"/wishlist/#{@record_id}"}>
+      <.badge color="warning">{gettext("Wishlisted")}</.badge>
+    </.link>
+    """
+  end
+
+  defp status_badge(%{status: :collected} = assigns) do
+    ~H"""
+    <.link navigate={~p"/collection/#{@record_id}"}>
+      <.badge color="success">{gettext("Collected")}</.badge>
+    </.link>
+    """
+  end
+
+  defp status_badge(%{status: :not_found} = assigns) do
+    ~H"""
+    <.badge color="danger">{gettext("Not found")}</.badge>
     """
   end
 
@@ -418,6 +534,26 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
       end
 
     {:noreply, socket}
+  end
+
+  def handle_event("remove_result", %{"number" => number}, socket) do
+    scan_results = Enum.reject(socket.assigns.scan_results, &(&1.number == number))
+
+    {:noreply,
+     socket
+     |> assign(:scan_results, scan_results)
+     |> push_event("remove_barcode", %{number: number})}
+  end
+
+  def handle_event("clear_results", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:scan_results, [])
+     |> push_event("clear_barcodes", %{})}
+  end
+
+  def handle_event("toggle_cart", _params, socket) do
+    {:noreply, assign(socket, :cart_expanded?, not socket.assigns.cart_expanded?)}
   end
 
   def handle_event("import_releases", _params, socket) do
