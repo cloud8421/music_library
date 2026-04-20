@@ -48,10 +48,12 @@ defmodule MusicLibrary.Worker.GenerateRecordEmbeddingTest do
       record = record()
 
       Req.Test.stub(OpenAI.API, fn conn ->
-        Plug.Conn.send_resp(conn, 500, JSON.encode!(%{"error" => "internal server error"}))
+        conn
+        |> Plug.Conn.put_status(500)
+        |> Req.Test.json(%{"error" => "internal server error"})
       end)
 
-      assert {:error, "{\"error\":\"internal server error\"}"} =
+      assert {:error, %{"error" => "internal server error"}} =
                perform_job(GenerateRecordEmbedding, %{"record_id" => record.id})
     end
 
