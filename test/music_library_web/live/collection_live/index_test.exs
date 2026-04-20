@@ -1,15 +1,17 @@
 defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   use MusicLibraryWeb.ConnCase
+  use Oban.Testing, repo: MusicLibrary.BackgroundRepo
 
   import MusicBrainz.Fixtures.Release
   import MusicBrainz.Fixtures.ReleaseGroup
   import MusicLibrary.Fixtures.Records
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
+  import Phoenix.LiveViewTest, only: [assert_redirect: 2]
 
-  alias MusicBrainz.ReleaseGroupSearchResult
   alias MusicLibrary.Assets
   alias MusicLibrary.Assets.{Image, Transform}
   alias MusicLibrary.Records.Record
+  alias MusicLibrary.Worker.ImportFromMusicbrainzReleaseGroup
 
   # make it a multiple of 4 for easier calculations
   @default_records_page_size 4
@@ -281,93 +283,171 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       |> assert_has("input[value='test query']")
     end
 
-    test "imports a record when selected", %{conn: conn} do
-      release_group_search_results = Map.get(release_group_search_results(), "release-groups")
+    test "adds a record to the cart instead of importing immediately", %{conn: conn} do
+      stub_release_group_search()
 
-      first_release_group_search_result = hd(release_group_search_results)
-      first_release_group_search_result_id = first_release_group_search_result["id"]
+      [first | _] = Map.get(release_group_search_results(), "release-groups")
+      first_id = first["id"]
 
-      release_group = release_group(:marbles)
-      release_group_releases = release_group_releases(:marbles)
+      conn
+      |> visit(~p"/collection/import")
+      |> fill_in("Search for a record", with: "Marillion Marbles")
+      |> click_link("#musicbrainz_#{first_id} a", "CD")
+      |> assert_has("#musicbrainz_#{first_id} span", text: "In cart · CD")
+      |> assert_has("#cart-items li", count: 1)
 
-      cover_data = marbles_cover_data()
+      assert MusicLibrary.Repo.all(Record) == []
+      refute_enqueued(worker: ImportFromMusicbrainzReleaseGroup)
+    end
 
-      Req.Test.stub(MusicBrainz.API, fn conn ->
-        case conn.path_info do
-          [_ws, _version, "release-group", ^first_release_group_search_result_id] ->
-            Req.Test.json(conn, release_group)
+    test "deduplicates the same {release_group, format} pair", %{conn: conn} do
+      stub_release_group_search()
 
-          [_ws, _version, "release-group"] ->
-            Req.Test.json(conn, release_group_search_results())
-
-          [_ws, _version, "release"] ->
-            Req.Test.json(conn, release_group_releases)
-
-          [_release_group, ^first_release_group_search_result_id, "front"] ->
-            Plug.Conn.send_resp(conn, 200, cover_data)
-        end
-      end)
+      [first | _] = Map.get(release_group_search_results(), "release-groups")
+      first_id = first["id"]
 
       session =
         conn
         |> visit(~p"/collection/import")
         |> fill_in("Search for a record", with: "Marillion Marbles")
+        |> click_link("#musicbrainz_#{first_id} a", "CD")
+        |> click_link("#musicbrainz_#{first_id} a", "CD")
 
-      for release_group_search_result <- release_group_search_results do
-        result = ReleaseGroupSearchResult.from_api_response(release_group_search_result)
+      assert_has(session, "#cart-items li", count: 1)
+    end
 
-        session
-        |> assert_has("h1", result.artists)
-        |> assert_has("h2", result.title)
-        |> assert_has("p", Record.format_release_date(result.release_date))
-      end
+    test "allows same release group with different formats", %{conn: conn} do
+      stub_release_group_search()
+
+      [first | _] = Map.get(release_group_search_results(), "release-groups")
+      first_id = first["id"]
 
       session =
-        session
-        |> click_link("#musicbrainz_#{first_release_group_search_result_id} a", "CD")
+        conn
+        |> visit(~p"/collection/import")
+        |> fill_in("Search for a record", with: "Marillion Marbles")
+        |> click_link("#musicbrainz_#{first_id} a", "CD")
+        |> click_link("#musicbrainz_#{first_id} a", "Vinyl")
 
-      [record] = MusicLibrary.Repo.all(MusicLibrary.Records.Record)
+      assert_has(session, "#cart-items li", count: 2)
+    end
 
-      assert record.musicbrainz_id == first_release_group_search_result_id
+    test "removes an item from the cart", %{conn: conn} do
+      stub_release_group_search()
+
+      [first | _] = Map.get(release_group_search_results(), "release-groups")
+      first_id = first["id"]
+
+      session =
+        conn
+        |> visit(~p"/collection/import")
+        |> fill_in("Search for a record", with: "Marillion Marbles")
+        |> click_link("#musicbrainz_#{first_id} a", "CD")
+        |> click_button("#cart-items button", "Remove")
+
+      assert_has(session, "#cart-empty")
+    end
+
+    test "imports a single cart item synchronously and navigates", %{conn: conn} do
+      alias Phoenix.LiveViewTest, as: LVT
+
+      stub_full_import()
+
+      [first | _] = Map.get(release_group_search_results(), "release-groups")
+      first_id = first["id"]
+
+      {:ok, view, _html} = LVT.live(conn, ~p"/collection/import")
+
+      view
+      |> LVT.form("#import_form", %{"mb_query" => "Marillion Marbles"})
+      |> LVT.render_change()
+
+      view
+      |> LVT.element("#musicbrainz_#{first_id} a", "CD")
+      |> LVT.render_click()
+
+      view
+      |> LVT.element("button", "Import 1 record")
+      |> LVT.render_click()
+
+      {path, _flash} = assert_redirect(view, 2_000)
+      "/collection/" <> record_id = path
+
+      record = MusicLibrary.Records.get_record!(record_id)
+
+      assert record.musicbrainz_id == first_id
       assert record.title == "Marbles"
-      assert record.release_date == "2004-05-03"
       assert record.format == :cd
-      assert record.musicbrainz_data == release_group
+      assert record.purchased_at != nil
 
-      assert record.genres == [
-               "alternative rock",
-               "art rock",
-               "baroque pop",
-               "pop rock",
-               "progressive rock",
-               "psychedelic pop",
-               "rock"
-             ]
-
-      assert record.cover_hash ==
-               "E7238C742E5B8711FC5BFF01A4A1F727D9E404A4D1420429A6B37ABFFC0B5960"
-
-      {:ok, resized_cover_data} = Image.resize(cover_data)
-
+      {:ok, resized_cover_data} = Image.resize(marbles_cover_data())
       assets = Assets.get(record.cover_hash)
-
       assert assets.content == resized_cover_data
 
-      assert record.inserted_at !== nil
-      assert record.updated_at !== nil
-      assert record.purchased_at !== nil
-
-      [marillion] = record.artists
-
-      assert %MusicLibrary.Artists.Artist{
-               name: "Marillion",
-               sort_name: "Marillion",
-               disambiguation: "British progressive rock band",
-               musicbrainz_id: "1932f5b6-0b7b-4050-b1df-833ca89e5f44"
-             } = marillion
-
-      assert_path(session, ~p"/collection/#{record.id}")
+      refute_enqueued(worker: ImportFromMusicbrainzReleaseGroup)
     end
+
+    test "enqueues one job per cart item for 2+ items and closes modal", %{conn: conn} do
+      stub_release_group_search()
+
+      [first, second | _] = Map.get(release_group_search_results(), "release-groups")
+      first_id = first["id"]
+      second_id = second["id"]
+
+      conn
+      |> visit(~p"/collection/import")
+      |> fill_in("Search for a record", with: "Marillion Marbles")
+      |> click_link("#musicbrainz_#{first_id} a", "CD")
+      |> click_link("#musicbrainz_#{second_id} a", "Vinyl")
+      |> click_button("Import 2 records")
+      |> assert_has("p", text: "Importing 2 records in the background...")
+
+      assert_enqueued(
+        worker: ImportFromMusicbrainzReleaseGroup,
+        args: %{"release_group_id" => first_id, "format" => "cd"}
+      )
+
+      assert_enqueued(
+        worker: ImportFromMusicbrainzReleaseGroup,
+        args: %{"release_group_id" => second_id, "format" => "vinyl"}
+      )
+
+      assert MusicLibrary.Repo.all(Record) == []
+    end
+  end
+
+  defp stub_release_group_search do
+    Req.Test.stub(MusicBrainz.API, fn conn ->
+      case conn.path_info do
+        [_ws, _version, "release-group"] ->
+          Req.Test.json(conn, release_group_search_results())
+      end
+    end)
+  end
+
+  defp stub_full_import do
+    [first | _] = Map.get(release_group_search_results(), "release-groups")
+    first_id = first["id"]
+
+    release_group = release_group(:marbles)
+    release_group_releases = release_group_releases(:marbles)
+    cover_data = marbles_cover_data()
+
+    Req.Test.stub(MusicBrainz.API, fn conn ->
+      case conn.path_info do
+        [_ws, _version, "release-group", ^first_id] ->
+          Req.Test.json(conn, release_group)
+
+        [_ws, _version, "release-group"] ->
+          Req.Test.json(conn, release_group_search_results())
+
+        [_ws, _version, "release"] ->
+          Req.Test.json(conn, release_group_releases)
+
+        [_release_group, ^first_id, "front"] ->
+          Plug.Conn.send_resp(conn, 200, cover_data)
+      end
+    end)
   end
 
   describe "Add via barcode scan" do

@@ -8,6 +8,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
   alias MusicLibrary.Chats
   alias MusicLibrary.Collection
+  alias MusicLibraryWeb.Components.AddRecord
   alias MusicLibraryWeb.LiveHelpers.IndexActions
 
   defp index_config do
@@ -20,7 +21,6 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
       import_page_title: gettext("Add new Record · Collection"),
       section_page_title: gettext("Collection"),
       import_success_toast: gettext("Record imported successfully"),
-      import_error_toast: gettext("Error importing record"),
       record_path_fn: fn id -> ~p"/collection/#{id}" end,
       index_path_fn: fn qs -> ~p"/collection?#{qs}" end,
       base_index_path: ~p"/collection"
@@ -186,9 +186,10 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
         :if={@live_action == :import}
         id="record-modal"
         on_close={JS.patch(back_path(@record_list_params))}
+        width_class="md:max-w-4xl lg:max-w-5xl"
       >
         <.live_component
-          module={MusicLibraryWeb.Components.AddRecord}
+          module={AddRecord}
           id={:search}
           title={@page_title}
           action={@live_action}
@@ -196,6 +197,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
           patch={back_path(@record_list_params)}
           initial_query={@import_query}
           icon_name="hero-plus"
+          purchased_at_fn={@index_config.purchased_at_fn}
         />
       </.structured_modal>
 
@@ -284,6 +286,14 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
     IndexActions.handle_record_saved(socket)
   end
 
+  def handle_info({AddRecord, {:imported_single, record}}, socket) do
+    IndexActions.handle_cart_imported_single(socket, record)
+  end
+
+  def handle_info({AddRecord, {:imported_async, count}}, socket) do
+    IndexActions.handle_cart_imported_async(socket, count)
+  end
+
   def handle_info({MusicLibraryWeb.Components.Chat, :chats_changed}, socket) do
     chat_count = Chats.count_chats(:collection, Chats.collection_musicbrainz_id())
     {:noreply, assign(socket, :chat_count, chat_count)}
@@ -305,10 +315,6 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
   def handle_event("search", %{"query" => query}, socket) do
     IndexActions.handle_search(socket, query)
-  end
-
-  def handle_event("import", %{"id" => musicbrainz_id, "format" => format}, socket) do
-    IndexActions.handle_import(socket, musicbrainz_id, format)
   end
 
   def handle_event("set_display", %{"mode" => mode}, socket) do

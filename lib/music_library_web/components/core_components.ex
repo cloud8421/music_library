@@ -154,6 +154,7 @@ defmodule MusicLibraryWeb.CoreComponents do
   attr :id, :string, required: true
   attr :on_close, :any, required: false, default: nil
   attr :open, :boolean, required: false, default: true
+  attr :width_class, :string, required: false, default: "md:max-w-3xl"
 
   slot :inner_block, required: true
 
@@ -161,7 +162,7 @@ defmodule MusicLibraryWeb.CoreComponents do
     ~H"""
     <Fluxon.Components.Modal.modal
       id={@id}
-      class="mx-auto mt-8 max-w-sm sm:min-w-2xl md:max-w-3xl"
+      class={"mx-auto mt-8 max-w-sm sm:min-w-2xl #{@width_class}"}
       animation="transition duration-100 ease-in-out"
       placement="top"
       open={@open}

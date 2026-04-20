@@ -64,12 +64,13 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
+#: lib/music_library_web/components/add_record.ex
 #: lib/music_library_web/live/artist_live/show.ex
-#: lib/music_library_web/live/collection_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Error importing record"
 msgstr ""
 
+#: lib/music_library_web/components/add_record.ex
 #: lib/music_library_web/components/record_form.ex
 #, elixir-autogen, elixir-format
 msgid "Format"
@@ -227,7 +228,6 @@ msgstr ""
 msgid "Scrobble activity"
 msgstr ""
 
-#: lib/music_library_web/components/add_record.ex
 #: lib/music_library_web/components/scrobble_components.ex
 #, elixir-autogen, elixir-format
 msgid "Choose which format to import"
@@ -569,7 +569,6 @@ msgid "Add more · Artist"
 msgstr ""
 
 #: lib/music_library_web/live/stats_live/index.ex
-#: lib/music_library_web/live/wishlist_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Error wishlisting record"
 msgstr ""
@@ -1588,6 +1587,7 @@ msgstr ""
 msgid "Record set updated successfully"
 msgstr ""
 
+#: lib/music_library_web/components/add_record.ex
 #: lib/music_library_web/live/record_set_live/index.ex
 #: lib/music_library_web/live/record_set_live/show.ex
 #, elixir-autogen, elixir-format
@@ -2401,6 +2401,7 @@ msgid "Record has a selected release"
 msgstr ""
 
 #: lib/music_library_web/components/barcode_scanner.ex
+#: lib/music_library_web/live_helpers/index_actions.ex
 #, elixir-autogen, elixir-format
 msgid "Importing %{count} record in the background..."
 msgid_plural "Importing %{count} records in the background..."
@@ -2460,4 +2461,53 @@ msgstr ""
 #: lib/music_library_web/components/scrobble_rule_picker.ex
 #, elixir-autogen, elixir-format
 msgid "A rule for this album already exists"
+msgstr ""
+
+#: lib/music_library_web/components/add_record.ex
+#, elixir-autogen, elixir-format
+msgid "%{count} record"
+msgid_plural "%{count} records"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/music_library_web/components/add_record.ex
+#, elixir-autogen, elixir-format
+msgid "Add records from the search results to get started."
+msgstr ""
+
+#: lib/music_library_web/components/add_record.ex
+#, elixir-autogen, elixir-format
+msgid "Cart"
+msgstr ""
+
+#: lib/music_library_web/components/add_record.ex
+#, elixir-autogen, elixir-format
+msgid "Choose which format to add"
+msgstr ""
+
+#: lib/music_library_web/components/add_record.ex
+#, elixir-autogen, elixir-format
+msgid "Clear all"
+msgstr ""
+
+#: lib/music_library_web/components/add_record.ex
+#, elixir-autogen, elixir-format
+msgid "Import %{count} record"
+msgid_plural "Import %{count} records"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/music_library_web/components/add_record.ex
+#, elixir-autogen, elixir-format
+msgid "In cart · %{format}"
+msgstr ""
+
+#: lib/music_library_web/components/add_record.ex
+#, elixir-autogen, elixir-format
+msgid "Toggle cart"
+msgstr ""
+
+#: lib/music_library_web/components/add_record.ex
+#, elixir-autogen, elixir-format
+msgid "Your cart is empty"
 msgstr ""
