@@ -6,6 +6,8 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
 
   alias LastFm.Fixtures
   alias MusicLibrary.Artists
+  alias MusicLibrary.Assets
+  alias MusicLibrary.Assets.Asset
 
   defp fill_collection(_config) do
     collection_record =
@@ -229,7 +231,9 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
 
       updated = Artists.get_artist_info!(artist_info.id)
       assert updated.image_data_hash != artist_info.image_data_hash
-      assert updated.image_data_hash != nil
+      hash = updated.image_data_hash
+      assert is_binary(hash) and byte_size(hash) > 0
+      assert %Asset{hash: ^hash} = Assets.get(hash)
     end
 
     test "selecting a Brave Search result downloads and saves the image", %{
@@ -264,7 +268,9 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
 
       updated = Artists.get_artist_info!(artist_info.id)
       assert updated.image_data_hash != artist_info.image_data_hash
-      assert updated.image_data_hash != nil
+      hash = updated.image_data_hash
+      assert is_binary(hash) and byte_size(hash) > 0
+      assert %Asset{hash: ^hash} = Assets.get(hash)
     end
   end
 
