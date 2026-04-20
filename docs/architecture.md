@@ -297,6 +297,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `StatsComponents` | Stats dashboard widgets (`section/1` layout, counters, album preview, records on this day) |
 | `ScrobbleComponents` | Scrobble activity displays: status badges, import dropdowns, metadata tooltips, and record-matching UI |
 | `SearchComponents` | Search result rendering |
+| `CartComponents` | `cart_sidebar/1` — shared cart aside used by `AddRecord` and `BarcodeScanner` |
 | `Pagination` | Pagination UI and logic |
 
 ### Web Utility Modules (lib/music_library_web/)

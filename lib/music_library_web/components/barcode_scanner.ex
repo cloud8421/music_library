@@ -1,6 +1,8 @@
 defmodule MusicLibraryWeb.Components.BarcodeScanner do
   use MusicLibraryWeb, :live_component
 
+  import MusicLibraryWeb.CartComponents, only: [cart_sidebar: 1]
+
   alias MusicBrainz.ReleaseGroupSearchResult
   alias MusicLibrary.BarcodeScan
   alias MusicLibrary.Records
@@ -40,108 +42,48 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
           </div>
         </section>
 
-        <aside class={[
-          "md:col-span-2",
-          "border-t md:border-t-0 md:border-l md:border-zinc-200 md:dark:border-zinc-800",
-          "flex flex-col"
-        ]}>
-          <div class="px-4 py-3 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800">
-            <div class="flex items-center gap-2">
-              <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                {gettext("Cart")}
-              </p>
-              <span class="text-xs text-zinc-500 dark:text-zinc-400">
-                {ngettext(
-                  "%{count} record",
-                  "%{count} records",
-                  length(@scan_results),
-                  count: length(@scan_results)
-                )}
-              </span>
-            </div>
-            <div class="flex items-center gap-3">
-              <button
-                :if={@scan_results != []}
-                type="button"
-                phx-click="clear_results"
-                phx-target={@myself}
-                class="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
-              >
-                {gettext("Clear all")}
-              </button>
-              <button
-                type="button"
-                phx-click="toggle_cart"
-                phx-target={@myself}
-                class="rounded-md p-1 text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-800 md:hidden"
-                aria-label={gettext("Toggle cart")}
-              >
-                <.icon
-                  name={if @cart_expanded?, do: "hero-chevron-down", else: "hero-chevron-up"}
-                  class="size-4"
-                  aria-hidden="true"
-                  data-slot="icon"
-                />
-              </button>
-            </div>
-          </div>
-
-          <div class={["md:!block", not @cart_expanded? && "hidden"]}>
-            <div
-              :if={@scan_results == []}
-              id="cart-empty"
-              class="flex flex-col items-center justify-center gap-2 px-6 py-10 text-center"
+        <.cart_sidebar
+          count={length(@scan_results)}
+          expanded?={@cart_expanded?}
+          on_clear="clear_results"
+          on_toggle="toggle_cart"
+          target={@myself}
+          empty_heading={gettext("Your cart is empty")}
+          empty_subtext={gettext("Scan barcodes to add records.")}
+        >
+          <:empty_icon>
+            <.barcode_icon class="size-8 text-zinc-400" />
+          </:empty_icon>
+          <:action>
+            <.button
+              variant="solid"
+              phx-disable-with={gettext("Adding...")}
+              phx-click={JS.push("import_releases", target: "#barcode-scanner")}
+              class="w-full"
             >
-              <.barcode_icon class="size-8 text-zinc-400" />
-              <p class="text-sm text-zinc-500 dark:text-zinc-400">
-                {gettext("Your cart is empty")}
-              </p>
-              <p class="text-xs text-zinc-500 dark:text-zinc-400">
-                {gettext("Scan barcodes to add records.")}
-              </p>
-            </div>
-
-            <ul
-              :if={@scan_results != []}
-              id="cart-items"
-              class="divide-y divide-zinc-200 dark:divide-zinc-800 md:max-h-[calc(100vh-20rem)] overflow-y-auto"
-            >
-              <li
-                :for={result <- @scan_results}
-                id={"cart-item-#{result.number}"}
-                class="flex gap-3 px-4 py-3"
-                phx-mounted={
-                  JS.transition(
-                    {"first:ease-in duration-300", "first:opacity-0 first:p-0 first:h-0",
-                     "first:opacity-100"},
-                    time: 300
-                  )
-                }
-              >
-                <.cart_item result={result} myself={@myself} />
-              </li>
-            </ul>
-
-            <div
-              :if={@scan_results != []}
-              class="border-t border-zinc-200 dark:border-zinc-800 px-4 py-3"
-            >
-              <.button
-                variant="solid"
-                phx-disable-with={gettext("Adding...")}
-                phx-click={JS.push("import_releases", target: "#barcode-scanner")}
-                class="w-full"
-              >
-                {ngettext(
-                  "Add %{count} release",
-                  "Add %{count} releases",
-                  length(@scan_results),
-                  count: length(@scan_results)
-                )}
-              </.button>
-            </div>
-          </div>
-        </aside>
+              {ngettext(
+                "Add %{count} release",
+                "Add %{count} releases",
+                length(@scan_results),
+                count: length(@scan_results)
+              )}
+            </.button>
+          </:action>
+          <li
+            :for={result <- @scan_results}
+            id={"cart-item-#{result.number}"}
+            class="flex gap-3 px-4 py-3"
+            phx-mounted={
+              JS.transition(
+                {"first:ease-in duration-300", "first:opacity-0 first:p-0 first:h-0",
+                 "first:opacity-100"},
+                time: 300
+              )
+            }
+          >
+            <.cart_item result={result} myself={@myself} />
+          </li>
+        </.cart_sidebar>
       </div>
 
       <script :type={Phoenix.LiveView.ColocatedHook} name=".BarcodeScanner">

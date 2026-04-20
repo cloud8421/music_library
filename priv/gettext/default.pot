@@ -2459,8 +2459,7 @@ msgstr ""
 msgid "A rule for this album already exists"
 msgstr ""
 
-#: lib/music_library_web/components/add_record.ex
-#: lib/music_library_web/components/barcode_scanner.ex
+#: lib/music_library_web/components/cart_components.ex
 #, elixir-autogen, elixir-format
 msgid "%{count} record"
 msgid_plural "%{count} records"
@@ -2472,8 +2471,7 @@ msgstr[1] ""
 msgid "Add records from the search results to get started."
 msgstr ""
 
-#: lib/music_library_web/components/add_record.ex
-#: lib/music_library_web/components/barcode_scanner.ex
+#: lib/music_library_web/components/cart_components.ex
 #, elixir-autogen, elixir-format
 msgid "Cart"
 msgstr ""
@@ -2483,8 +2481,7 @@ msgstr ""
 msgid "Choose which format to add"
 msgstr ""
 
-#: lib/music_library_web/components/add_record.ex
-#: lib/music_library_web/components/barcode_scanner.ex
+#: lib/music_library_web/components/cart_components.ex
 #, elixir-autogen, elixir-format
 msgid "Clear all"
 msgstr ""
@@ -2496,8 +2493,7 @@ msgid_plural "Import %{count} records"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/music_library_web/components/add_record.ex
-#: lib/music_library_web/components/barcode_scanner.ex
+#: lib/music_library_web/components/cart_components.ex
 #, elixir-autogen, elixir-format
 msgid "Toggle cart"
 msgstr ""

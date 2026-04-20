@@ -13,6 +13,7 @@ defmodule MusicLibraryWeb.Components.AddRecord do
 
   use MusicLibraryWeb, :live_component
 
+  import MusicLibraryWeb.CartComponents, only: [cart_sidebar: 1]
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
 
   alias MusicBrainz.ReleaseGroupSearchResult
@@ -81,156 +82,101 @@ defmodule MusicLibraryWeb.Components.AddRecord do
           </div>
         </section>
 
-        <aside class={[
-          "md:col-span-2",
-          "border-t md:border-t-0 md:border-l md:border-zinc-200 md:dark:border-zinc-800",
-          "flex flex-col"
-        ]}>
-          <div class="px-4 py-3 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800">
-            <div class="flex items-center gap-2">
-              <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                {gettext("Cart")}
-              </p>
-              <span class="text-xs text-zinc-500 dark:text-zinc-400">
-                {ngettext("%{count} record", "%{count} records", length(@cart), count: length(@cart))}
-              </span>
-            </div>
-            <div class="flex items-center gap-3">
-              <button
-                :if={@cart != []}
-                type="button"
-                phx-click="clear_cart"
-                phx-target={@myself}
-                class="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
-              >
-                {gettext("Clear all")}
-              </button>
-              <button
-                type="button"
-                phx-click="toggle_cart"
-                phx-target={@myself}
-                class="rounded-md p-1 text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-800 md:hidden"
-                aria-label={gettext("Toggle cart")}
-              >
-                <.icon
-                  name={if @cart_expanded?, do: "hero-chevron-down", else: "hero-chevron-up"}
-                  class="size-4"
-                  aria-hidden="true"
-                  data-slot="icon"
-                />
-              </button>
-            </div>
-          </div>
-
-          <div class={["md:!block", not @cart_expanded? && "hidden"]}>
-            <div
-              :if={@cart == []}
-              id="cart-empty"
-              class="flex flex-col items-center justify-center gap-2 px-6 py-10 text-center"
+        <.cart_sidebar
+          count={length(@cart)}
+          expanded?={@cart_expanded?}
+          on_clear="clear_cart"
+          on_toggle="toggle_cart"
+          target={@myself}
+          empty_heading={gettext("Your cart is empty")}
+          empty_subtext={gettext("Add records from the search results to get started.")}
+        >
+          <:empty_icon>
+            <.icon
+              name="hero-shopping-bag"
+              class="size-8 text-zinc-400"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+          </:empty_icon>
+          <:action>
+            <.button
+              variant="solid"
+              phx-click="import_cart"
+              phx-target={@myself}
+              disabled={@importing?}
+              class="w-full"
             >
               <.icon
-                name="hero-shopping-bag"
-                class="size-8 text-zinc-400"
+                :if={@importing?}
+                name="hero-arrow-path"
+                class="icon animate-spin"
                 aria-hidden="true"
                 data-slot="icon"
               />
-              <p class="text-sm text-zinc-500 dark:text-zinc-400">
-                {gettext("Your cart is empty")}
+              <.icon
+                :if={not @importing?}
+                name="hero-plus"
+                class="icon"
+                aria-hidden="true"
+                data-slot="icon"
+              />
+              {ngettext(
+                "Import %{count} record",
+                "Import %{count} records",
+                length(@cart),
+                count: length(@cart)
+              )}
+            </.button>
+          </:action>
+          <li
+            :for={item <- @cart}
+            id={"cart-item-#{item.cart_item_id}"}
+            class="flex gap-3 px-4 py-3"
+          >
+            <img
+              class="w-12 h-12 rounded-md object-cover"
+              alt={item.title}
+              src={item.thumb_url}
+              onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
+            />
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                {item.artists}
               </p>
-              <p class="text-xs text-zinc-500 dark:text-zinc-400">
-                {gettext("Add records from the search results to get started.")}
+              <p class="truncate text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                {item.title}
               </p>
-            </div>
-
-            <ul
-              :if={@cart != []}
-              id="cart-items"
-              class="divide-y divide-zinc-200 dark:divide-zinc-800 md:max-h-[calc(100vh-20rem)] overflow-y-auto"
-            >
-              <li
-                :for={item <- @cart}
-                id={"cart-item-#{item.cart_item_id}"}
-                class="flex gap-3 px-4 py-3"
-              >
-                <img
-                  class="w-12 h-12 rounded-md object-cover"
-                  alt={item.title}
-                  src={item.thumb_url}
-                  onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
-                />
-                <div class="min-w-0 flex-1">
-                  <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">
-                    {item.artists}
-                  </p>
-                  <p class="truncate text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                    {item.title}
-                  </p>
-                  <div class="mt-1 flex items-center gap-2">
-                    <form phx-change="change_format" phx-target={@myself}>
-                      <input type="hidden" name="cart_item_id" value={item.cart_item_id} />
-                      <select
-                        name="format"
-                        aria-label={gettext("Format")}
-                        class="rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-xs px-1.5 py-0.5"
-                      >
-                        <option
-                          :for={format <- Records.Record.formats()}
-                          value={format}
-                          selected={format == item.format}
-                        >
-                          {format_label(format)}
-                        </option>
-                      </select>
-                    </form>
-                    <button
-                      type="button"
-                      phx-click="remove_from_cart"
-                      phx-value-cart_item_id={item.cart_item_id}
-                      phx-target={@myself}
-                      class="text-xs text-zinc-500 hover:text-red-600 dark:hover:text-red-400"
+              <div class="mt-1 flex items-center gap-2">
+                <form phx-change="change_format" phx-target={@myself}>
+                  <input type="hidden" name="cart_item_id" value={item.cart_item_id} />
+                  <select
+                    name="format"
+                    aria-label={gettext("Format")}
+                    class="rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-xs px-1.5 py-0.5"
+                  >
+                    <option
+                      :for={format <- Records.Record.formats()}
+                      value={format}
+                      selected={format == item.format}
                     >
-                      {gettext("Remove")}
-                    </button>
-                  </div>
-                </div>
-              </li>
-            </ul>
-
-            <div
-              :if={@cart != []}
-              class="border-t border-zinc-200 dark:border-zinc-800 px-4 py-3"
-            >
-              <.button
-                variant="solid"
-                phx-click="import_cart"
-                phx-target={@myself}
-                disabled={@importing?}
-                class="w-full"
-              >
-                <.icon
-                  :if={@importing?}
-                  name="hero-arrow-path"
-                  class="icon animate-spin"
-                  aria-hidden="true"
-                  data-slot="icon"
-                />
-                <.icon
-                  :if={not @importing?}
-                  name="hero-plus"
-                  class="icon"
-                  aria-hidden="true"
-                  data-slot="icon"
-                />
-                {ngettext(
-                  "Import %{count} record",
-                  "Import %{count} records",
-                  length(@cart),
-                  count: length(@cart)
-                )}
-              </.button>
+                      {format_label(format)}
+                    </option>
+                  </select>
+                </form>
+                <button
+                  type="button"
+                  phx-click="remove_from_cart"
+                  phx-value-cart_item_id={item.cart_item_id}
+                  phx-target={@myself}
+                  class="text-xs text-zinc-500 hover:text-red-600 dark:hover:text-red-400"
+                >
+                  {gettext("Remove")}
+                </button>
+              </div>
             </div>
-          </div>
-        </aside>
+          </li>
+        </.cart_sidebar>
       </div>
     </div>
     """
