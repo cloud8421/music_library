@@ -49,7 +49,7 @@ defmodule MusicLibrary.ScrobbleRules do
   def get_scrobble_rule!(id), do: Repo.get!(ScrobbleRule, id)
 
   @spec create_scrobble_rule(map()) :: {:ok, ScrobbleRule.t()} | {:error, Ecto.Changeset.t()}
-  def create_scrobble_rule(attrs \\ %{}) do
+  def create_scrobble_rule(attrs) do
     %ScrobbleRule{}
     |> ScrobbleRule.changeset(attrs)
     |> Repo.insert()

@@ -5,9 +5,9 @@ defmodule MusicLibrary.ScrobbleRules.ScrobbleRule do
 
   @type t :: %__MODULE__{
           id: integer() | nil,
-          type: :album | :artist,
-          match_value: String.t(),
-          target_musicbrainz_id: String.t(),
+          type: :album | :artist | nil,
+          match_value: String.t() | nil,
+          target_musicbrainz_id: String.t() | nil,
           enabled: boolean(),
           description: String.t() | nil,
           inserted_at: DateTime.t() | nil,
