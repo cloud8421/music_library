@@ -605,9 +605,6 @@ defmodule MusicLibraryWeb.Components.RecordForm do
     else
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
-
-      {:error, _reason} ->
-        {:noreply, put_toast(socket, :error, gettext("Failed to store cover image"))}
     end
   end
 

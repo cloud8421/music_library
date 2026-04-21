@@ -323,10 +323,6 @@ defmodule MusicLibraryWeb.ArtistLive.Form do
     else
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
-
-      {:error, _reason} ->
-        put_toast!(:error, gettext("Failed to store artist image"))
-        {:noreply, socket}
     end
   end
 
