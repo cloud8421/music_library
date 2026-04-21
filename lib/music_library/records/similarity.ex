@@ -299,7 +299,7 @@ defmodule MusicLibrary.Records.Similarity do
     end
   end
 
-  @spec store_embedding(String.t(), binary(), String.t()) ::
+  @spec store_embedding(String.t(), [float()], String.t()) ::
           {:ok, RecordEmbedding.t()} | {:error, Ecto.Changeset.t()}
   def store_embedding(record_id, embedding, text_representation) do
     attrs = %{
