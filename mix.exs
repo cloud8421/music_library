@@ -19,7 +19,8 @@ defmodule MusicLibrary.MixProject do
       ],
       usage_rules: usage_rules(),
       dialyzer: [
-        plt_add_apps: [:mix, :ex_unit]
+        plt_add_apps: [:mix, :ex_unit],
+        flags: [:no_opaque]
       ]
     ]
   end
