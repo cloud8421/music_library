@@ -552,6 +552,7 @@ defmodule MusicLibraryWeb.Components.Release do
     end
   end
 
+  @spec medium_selected?(MusicBrainz.Release.Medium.t(), MapSet.t()) :: boolean()
   defp medium_selected?(medium, selected_tracks) do
     medium_track_ids = medium.tracks |> Enum.map(& &1.id) |> MapSet.new()
     MapSet.subset?(medium_track_ids, selected_tracks)
@@ -605,6 +606,7 @@ defmodule MusicLibraryWeb.Components.Release do
     end)
   end
 
+  @spec scrobble_button_label(MapSet.t()) :: String.t()
   def scrobble_button_label(selected_tracks) do
     if MapSet.size(selected_tracks) > 0 do
       gettext("Scrobble selected tracks")
