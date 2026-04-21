@@ -100,6 +100,12 @@ Backup the production database to the local development env
 
 Deploy on production and monitor deployment
 
+## `prod:litestream-backup`
+
+- **Usage**: `prod:litestream-backup`
+
+Restore the production database locally from the Litestream S3 replica
+
 ## `prod:prune-backups`
 
 - **Usage**: `prod:prune-backups`

@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+#MISE description="Restore the production database locally from the Litestream S3 replica"
+#MISE confirm="This will overwrite data/music_library_dev.db. Continue?"
+
+set -euo pipefail
+
+source "$(git rev-parse --show-toplevel)/scripts/_helpers.sh"
+
+ensure_working_directory!
+
+: "${LITESTREAM_ACCESS_KEY_ID:?must be set}"
+: "${LITESTREAM_SECRET_ACCESS_KEY:?must be set}"
+
+current_date=$(date +%Y-%m-%d_%H-%M-%S)
+project_dir=$(git rev-parse --show-toplevel)
+data_dir="$project_dir/data"
+dest_file="$data_dir/music_library_prod_$current_date.db"
+replica_db_path="/mnt/music_library/music_library_prod.db"
+
+config_file=$(mktemp)
+trap 'rm -f "$config_file"' EXIT
+
+cat >"$config_file" <<YAML
+dbs:
+  - path: $replica_db_path
+    replica:
+      type: s3
+      name: music_library_prod
+      bucket: ffmusiclibrary
+      path: prod
+      endpoint: https://nbg1.your-objectstorage.com
+logging:
+  level: debug
+YAML
+
+litestream restore -config "$config_file" -o "$dest_file" "$replica_db_path"
+
+rm -f "$data_dir/music_library_dev.db" \
+  "$data_dir/music_library_dev.db-shm" \
+  "$data_dir/music_library_dev.db-wal"
+cp "$dest_file" "$data_dir/music_library_dev.db"
