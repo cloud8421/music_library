@@ -32,8 +32,9 @@ defmodule MusicLibrary.MixProject do
   #   delegate call is untestable.
   # - Ecto.Repo shells (boilerplate plus platform-exclusive `extension_path/1`
   #   branches that cannot all execute on a single host).
-  # - Phoenix generator output (ErrorHTML, the MusicLibraryWeb `use` entrypoint)
-  #   with no application behaviour.
+  # - Phoenix generator output (ErrorHTML, ErrorJSON, the MusicLibraryWeb `use`
+  #   entrypoint) with no application behaviour.
+  # - The SessionHTML module housing session templates.
   # - Telemetry instrumentation whose write paths are only reachable from real
   #   `:telemetry.execute/3` events emitted by external libraries.
   # - Vendored `SqliteVec.*` library code under `lib/sqlite_vec/`.
@@ -52,6 +53,8 @@ defmodule MusicLibrary.MixProject do
       MusicLibrary.Worker.BackfillScrobbledTracks,
       MusicLibraryWeb,
       MusicLibraryWeb.ErrorHTML,
+      MusicLibraryWeb.ErrorJSON,
+      MusicLibraryWeb.SessionHTML,
       MusicLibraryWeb.Telemetry,
       MusicLibraryWeb.Telemetry.Storage,
       Req.RateLimiter.SystemClock,
