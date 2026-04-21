@@ -29,7 +29,7 @@ defmodule MusicLibrary.Maintenance do
   @doc """
   Runs VACUUM on the main database.
   """
-  @spec vacuum() :: :ok
+  @spec vacuum() :: {:ok, Ecto.Adapters.SQL.query_result()} | {:error, Exception.t()}
   def vacuum do
     Repo.vacuum()
   end
@@ -37,7 +37,7 @@ defmodule MusicLibrary.Maintenance do
   @doc """
   Runs PRAGMA optimize on the main database.
   """
-  @spec optimize() :: :ok
+  @spec optimize() :: {:ok, Ecto.Adapters.SQL.query_result()} | {:error, Exception.t()}
   def optimize do
     Repo.optimize()
   end
