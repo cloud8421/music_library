@@ -1,21 +1,32 @@
 #!/usr/bin/env bash
 
 #MISE description="Backup the production database to the local development env"
+#MISE confirm="This will overwrite data/music_library_dev.db. Continue?"
 
-set -e
+set -euo pipefail
 
 source "$(git rev-parse --show-toplevel)/scripts/_helpers.sh"
 
 ensure_working_directory!
 
-current_date=$(date +%s)
+current_date=$(date +%Y-%m-%d_%H-%M-%S)
 project_dir=$(git rev-parse --show-toplevel)
 data_dir="$project_dir/data"
 dest_file="$data_dir/music_library_prod_$current_date.db"
+remote_host="music-library-prod"
+remote_dir="/data/coolify/applications/music-library"
+remote_db="$remote_dir/music_library_prod.db"
+remote_snapshot="$remote_dir/snapshot_$current_date.db"
 
-rsync -chavzP music-library-prod:/data/coolify/applications/music-library/music_library_prod.db "$dest_file"
+trap 'ssh "$remote_host" "rm -f $remote_snapshot" || true' EXIT
 
-rm "$data_dir/music_library_dev.db" || true
-rm "$data_dir/music_library_dev.db-shm" || true
-rm "$data_dir/music_library_dev.db-wal" || true
+# Take an atomic online snapshot via sqlite3 .backup (safe during concurrent writes)
+# shellcheck disable=SC2029 # Client-side expansion of remote_db/remote_snapshot is intentional.
+ssh "$remote_host" "sqlite3 $remote_db '.backup $remote_snapshot'"
+
+rsync -chavzP "$remote_host:$remote_snapshot" "$dest_file"
+
+rm -f "$data_dir/music_library_dev.db" \
+  "$data_dir/music_library_dev.db-shm" \
+  "$data_dir/music_library_dev.db-wal"
 cp "$dest_file" "$data_dir/music_library_dev.db"
