@@ -355,7 +355,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   def handle_params(%{"id" => id}, _, socket) do
     record = Records.get_record!(id)
     last_listened_track = ListeningStats.get_last_listened_track(record)
-    play_count = ListeningStats.play_count(record) || 0
+    play_count = ListeningStats.play_count(record)
     record_sets = RecordSets.list_record_sets_for_record(record.id)
 
     {:noreply,
