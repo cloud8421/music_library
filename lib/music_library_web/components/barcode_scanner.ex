@@ -25,7 +25,7 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
     ~H"""
     <div id="barcode-scanner" phx-hook=".BarcodeScanner" phx-target={@myself}>
       <div class="grid grid-cols-1 md:grid-cols-5">
-        <section class="md:col-span-3 md:p-4 md:border-r md:border-zinc-200 md:dark:border-zinc-800">
+        <section class="md:col-span-3 md:border-r md:border-zinc-200 md:p-4 md:dark:border-zinc-800">
           <header>
             <h1 class="text-sm/6 font-medium text-zinc-700 dark:text-zinc-400">
               {gettext("Scan one or more barcodes")}
@@ -357,7 +357,7 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
 
   defp cart_item(%{result: %{status: :not_found}} = assigns) do
     ~H"""
-    <.barcode_icon class="w-12 h-12 flex-none rounded-md p-2 bg-red-50 text-red-400 dark:bg-red-950" />
+    <.barcode_icon class="size-12 flex-none rounded-md bg-red-50 p-2 text-red-400 dark:bg-red-950" />
     <div class="min-w-0 flex-1">
       <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">
         {@result.number}
@@ -384,7 +384,7 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
   defp cart_item(assigns) do
     ~H"""
     <img
-      class="w-12 h-12 rounded-md flex-none object-cover"
+      class="size-12 flex-none rounded-md object-cover"
       alt={@result.release.release_group.title}
       src={ReleaseGroupSearchResult.thumb_url(@result.release.release_group)}
       onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}

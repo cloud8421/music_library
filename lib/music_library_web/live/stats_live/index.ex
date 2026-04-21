@@ -310,7 +310,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
                   <div class="relative flex items-center justify-between space-x-3">
                     <div class="flex min-w-0 items-center justify-between space-x-4">
                       <img
-                        class="size-12 object-cover rounded-md shadow-sm"
+                        class="size-12 rounded-md object-cover shadow-sm"
                         src={track_or_album_cover_url(album, cover_hash)}
                         alt={album.metadata.title}
                         onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
@@ -388,7 +388,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
                   <div class="relative flex items-center justify-between space-x-3">
                     <div class="flex min-w-0 items-center justify-between space-x-4">
                       <img
-                        class="size-12 object-cover rounded-md shadow-sm"
+                        class="size-12 rounded-md object-cover shadow-sm"
                         src={track_or_album_cover_url(track, cover_hash)}
                         alt={track.title}
                         onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
@@ -522,7 +522,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     ~H"""
     <.section>
       <:title>{gettext("Records")}</:title>
-      <div class="mt-5 grid grid-cols-3 gap-5 sm:grid-cols-5 min-h-35">
+      <div class="mt-5 grid min-h-35 grid-cols-3 gap-5 sm:grid-cols-5">
         <.album_preview
           record={@latest_record}
           title={gettext("Latest purchase")}

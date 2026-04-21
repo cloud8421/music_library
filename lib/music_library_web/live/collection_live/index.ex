@@ -68,7 +68,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
                 data-slot="icon"
               />
               <span class="sr-only sm:not-sr-only">{gettext("Chat")}</span>
-              <span :if={@chat_count > 0} class="sr-only sm:not-sr-only text-xs font-medium">
+              <span :if={@chat_count > 0} class="sr-only text-xs font-medium sm:not-sr-only">
                 {@chat_count}
               </span>
             </.button>

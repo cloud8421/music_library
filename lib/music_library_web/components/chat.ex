@@ -226,7 +226,7 @@ defmodule MusicLibraryWeb.Components.Chat do
         >
           {raw(Markdown.to_html(message.content, link_target: "_blank"))}
         </div>
-        <div :if={message.role == "assistant"} class="flex justify-end -mb-1 -mr-2">
+        <div :if={message.role == "assistant"} class="-mr-2 -mb-1 flex justify-end">
           <.copy_to_clipboard
             target_id={"#{@id}-msg-#{index}"}
             label={gettext("Copy message")}

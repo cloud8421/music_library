@@ -82,7 +82,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbums do
               class={[
                 "cursor-pointer",
                 status == :mixed &&
-                  "bg-linear-50 from-success/10 to-warning/30 dark:from-success/20 dark:to-warning/60 text-foreground-success-soft"
+                  "dark:from-success/20 dark:to-warning/60 from-success/10 text-foreground-success-soft to-warning/30 bg-linear-50"
               ]}
             >
               {@album.play_count}

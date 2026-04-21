@@ -31,7 +31,7 @@ defmodule MusicLibraryWeb.Components.AddRecord do
     ~H"""
     <div>
       <div class="grid grid-cols-1 md:grid-cols-5">
-        <section class="md:col-span-3 md:p-4 md:border-r md:border-zinc-200 md:dark:border-zinc-800">
+        <section class="md:col-span-3 md:border-r md:border-zinc-200 md:p-4 md:dark:border-zinc-800">
           <.simple_form
             for={@form}
             id={:import_form}
@@ -135,7 +135,7 @@ defmodule MusicLibraryWeb.Components.AddRecord do
             class="flex gap-3 px-4 py-3"
           >
             <img
-              class="w-12 h-12 rounded-md object-cover"
+              class="size-12 rounded-md object-cover"
               alt={item.title}
               src={item.thumb_url}
               onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
@@ -153,7 +153,7 @@ defmodule MusicLibraryWeb.Components.AddRecord do
                   <select
                     name="format"
                     aria-label={gettext("Format")}
-                    class="rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-xs px-1.5 py-0.5"
+                    class="rounded-md border border-zinc-300 bg-white px-1.5 py-0.5 text-xs dark:border-zinc-700 dark:bg-zinc-950"
                   >
                     <option
                       :for={format <- Records.Record.formats()}
@@ -193,11 +193,11 @@ defmodule MusicLibraryWeb.Components.AddRecord do
     ~H"""
     <li
       id={@id}
-      class="flex justify-between gap-x-6 py-5 md:px-4 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+      class="flex justify-between gap-x-6 py-5 hover:bg-zinc-100 md:px-4 dark:hover:bg-zinc-700"
     >
       <div class="flex w-full shrink-0 items-center justify-between">
         <img
-          class="mr-4 w-12 md:w-20 flex-none rounded-lg"
+          class="mr-4 w-12 flex-none rounded-lg md:w-20"
           alt={@release_group.title}
           src={ReleaseGroupSearchResult.thumb_url(@release_group)}
           onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
@@ -218,7 +218,7 @@ defmodule MusicLibraryWeb.Components.AddRecord do
 
         <span
           :if={@in_cart?}
-          class="mr-2 inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-medium px-2 py-0.5"
+          class="mr-2 inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300"
         >
           <.icon name="hero-check" class="size-3" aria-hidden="true" data-slot="icon" />
           <span :if={length(@cart_formats) > 1}>{length(@cart_formats)}</span>

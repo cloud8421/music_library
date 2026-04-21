@@ -400,7 +400,7 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
           <h3 class="text-sm/5 font-semibold text-wrap text-zinc-700 dark:text-zinc-300">
             {item.record.title}
           </h3>
-          <p class="flex gap-1 items-center pointer-events-none text-sm font-medium text-zinc-500">
+          <p class="pointer-events-none flex items-center gap-1 text-sm font-medium text-zinc-500">
             <.release_status_tooltip record={item.record} />
             {format_label(item.record.format)} · {type_label(item.record.type)}
           </p>

@@ -52,7 +52,7 @@ defmodule MusicLibraryWeb.StatsComponents do
       class={[
         "flex items-center rounded-md bg-white px-4 py-5 shadow-sm sm:px-6 sm:pt-6 dark:bg-zinc-800",
         "border border-dashed border-zinc-300 dark:border-zinc-600",
-        "group hover:border-zinc-400 dark:hover:border-zinc-500 transition-colors",
+        "group transition-colors hover:border-zinc-400 dark:hover:border-zinc-500",
         @class
       ]}
     >
@@ -204,7 +204,7 @@ defmodule MusicLibraryWeb.StatsComponents do
                   <li
                     :for={record <- records}
                     phx-click={JS.navigate(@record_show_path.(record))}
-                    class="flex items-center cursor-pointer rounded-md px-2 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                    class="flex cursor-pointer items-center rounded-md px-2 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700"
                     id={record.id}
                   >
                     <div class="w-6 flex-none">

@@ -55,7 +55,7 @@ defmodule MusicLibraryWeb.CartComponents do
       "border-t md:border-t-0 md:border-l md:border-zinc-200 md:dark:border-zinc-800",
       "flex flex-col"
     ]}>
-      <div class="px-4 py-3 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800">
+      <div class="flex items-center justify-between border-b border-zinc-200 px-4 py-3 dark:border-zinc-800">
         <div class="flex items-center gap-2">
           <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
             {gettext("Cart")}
@@ -78,7 +78,7 @@ defmodule MusicLibraryWeb.CartComponents do
             type="button"
             phx-click={@on_toggle}
             phx-target={@target}
-            class="rounded-md p-1 text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-800 md:hidden"
+            class="rounded-md p-1 text-zinc-500 hover:bg-zinc-200 md:hidden dark:hover:bg-zinc-800"
             aria-label={gettext("Toggle cart")}
           >
             <.icon
@@ -91,7 +91,7 @@ defmodule MusicLibraryWeb.CartComponents do
         </div>
       </div>
 
-      <div class={["md:!block", not @expanded? && "hidden"]}>
+      <div class={["md:block!", not @expanded? && "hidden"]}>
         <div
           :if={@count == 0}
           id="cart-empty"
@@ -109,14 +109,14 @@ defmodule MusicLibraryWeb.CartComponents do
         <ul
           :if={@count > 0}
           id="cart-items"
-          class="divide-y divide-zinc-200 dark:divide-zinc-800 md:max-h-[calc(100vh-20rem)] overflow-y-auto"
+          class="divide-y divide-zinc-200 overflow-y-auto md:max-h-[calc(100vh-20rem)] dark:divide-zinc-800"
         >
           {render_slot(@inner_block)}
         </ul>
 
         <div
           :if={@count > 0 and @action != []}
-          class="border-t border-zinc-200 dark:border-zinc-800 px-4 py-3"
+          class="border-t border-zinc-200 px-4 py-3 dark:border-zinc-800"
         >
           {render_slot(@action)}
         </div>

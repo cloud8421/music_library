@@ -42,7 +42,7 @@ defmodule MusicLibraryWeb.ChartComponents do
 
           <%= if @datum_click do %>
             <div
-              class="group col-span-3 grid grid-cols-subgrid cursor-pointer items-center"
+              class="group col-span-3 grid cursor-pointer grid-cols-subgrid items-center"
               phx-click={@datum_click.(datum)}
             >
               <.bar_row
