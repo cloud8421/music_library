@@ -31,12 +31,12 @@ defmodule MusicBrainz.Release do
           title: String.t(),
           disambiguation: String.t() | nil,
           packaging: String.t() | nil,
-          artists: [Artist.t()],
+          artists: [MusicBrainz.Release.Artist.t()],
           date: String.t() | nil,
           barcode: String.t() | nil,
           catalog_number: String.t(),
           country: String.t() | nil,
-          media: [Medium.t()]
+          media: [MusicBrainz.Release.Medium.t()]
         }
 
   defmodule Artist do
