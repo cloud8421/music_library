@@ -165,27 +165,31 @@ defmodule MusicLibrary.RecordSets do
       )
       |> Repo.all()
 
-    index = Enum.find_index(items, fn i -> i.record_id == record_id end)
+    case Enum.find_index(items, fn i -> i.record_id == record_id end) do
+      nil ->
+        :ok
 
-    swap_index =
-      case direction do
-        :up -> index - 1
-        :down -> index + 1
-      end
+      index ->
+        swap_index =
+          case direction do
+            :up -> index - 1
+            :down -> index + 1
+          end
 
-    if index && swap_index >= 0 && swap_index < length(items) do
-      item_a = Enum.at(items, index)
-      item_b = Enum.at(items, swap_index)
+        if swap_index >= 0 and swap_index < length(items) do
+          item_a = Enum.at(items, index)
+          item_b = Enum.at(items, swap_index)
 
-      Repo.transaction(fn ->
-        item_a
-        |> Ecto.Changeset.change(position: item_b.position)
-        |> Repo.update!()
+          Repo.transaction(fn ->
+            item_a
+            |> Ecto.Changeset.change(position: item_b.position)
+            |> Repo.update!()
 
-        item_b
-        |> Ecto.Changeset.change(position: item_a.position)
-        |> Repo.update!()
-      end)
+            item_b
+            |> Ecto.Changeset.change(position: item_a.position)
+            |> Repo.update!()
+          end)
+        end
     end
 
     {:ok, get_record_set!(record_set.id)}
