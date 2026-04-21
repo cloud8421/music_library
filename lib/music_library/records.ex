@@ -195,12 +195,14 @@ defmodule MusicLibrary.Records do
   @spec get_record!(String.t()) :: Record.t()
   def get_record!(id), do: Repo.get!(Record, id)
 
-  @spec get_release_status(String.t(), String.t()) ::
+  @spec get_release_status(String.t(), atom()) ::
           :new | {:wishlisted, String.t()} | {:collected, String.t()}
   def get_release_status(release_id, format) do
+    format_str = Atom.to_string(format)
+
     q =
       from r in fragment("records, json_each(records.release_ids)"),
-        where: fragment("records.format = ?", ^format) and r.value == ^release_id,
+        where: fragment("records.format = ?", ^format_str) and r.value == ^release_id,
         select: %{
           record_id: fragment("records.id"),
           purchased_at: fragment("records.purchased_at")
