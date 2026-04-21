@@ -116,7 +116,7 @@ defmodule MusicLibrary.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:ex_slop, "~> 0.1", only: [:dev, :test], runtime: false},
       {:quokka, "~> 2.6", only: [:dev, :test], runtime: false},
-      {:live_debugger, "~> 0.7.0", only: :dev},
+      {:live_debugger, "~> 0.8.0", only: :dev},
       {:usage_rules, "~> 1.1", only: [:dev]},
       {:tidewave, "~> 0.5", only: :dev},
       {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false, warn_if_outdated: true},
