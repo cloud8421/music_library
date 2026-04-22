@@ -297,6 +297,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
         sheet_id="release-with-tracks-sheet"
         module={MusicLibraryWeb.Components.Release}
         record={@record}
+        timezone={@timezone}
       />
 
       <.live_component

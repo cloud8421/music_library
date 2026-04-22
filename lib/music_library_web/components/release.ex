@@ -14,24 +14,27 @@ defmodule MusicLibraryWeb.Components.Release do
 
   @impl true
   def mount(socket) do
-    current_time = DateTime.utc_now()
-
     {:ok,
      socket
      |> assign(:can_scrobble?, ScrobbleActivity.can_scrobble?())
      |> assign(:release_with_tracks, AsyncResult.loading())
      |> assign(:already_scrobbled, false)
      |> assign(:selected_tracks, MapSet.new())
-     |> assign(:finished_at, current_time)
-     |> assign(:form, to_form(%{"finished_at" => current_time}, as: :release))
+     |> assign(:timezone, MusicLibrary.default_timezone())
+     |> assign(:finished_at, nil)
+     |> assign(:form, to_form(%{"finished_at" => nil}, as: :release))
      |> assign(:pending_form_params, nil)}
   end
 
   @impl true
   def update(%{record: record} = assigns, socket) do
+    socket = assign(socket, assigns)
+    current_time = DateTime.utc_now() |> DateTime.shift_zone!(socket.assigns.timezone)
+
     {:ok,
      socket
-     |> assign(assigns)
+     |> assign(:finished_at, current_time)
+     |> assign(:form, to_form(%{"finished_at" => DateTime.to_naive(current_time)}, as: :release))
      |> assign(:release_with_tracks, AsyncResult.loading())
      |> start_async(:release_with_tracks, fn ->
        load_release_with_tracks(record.selected_release_id)
@@ -81,32 +84,33 @@ defmodule MusicLibraryWeb.Components.Release do
       params ->
         release = socket.assigns.release_with_tracks.result
         new_selected = apply_form_params(release, params, socket.assigns.selected_tracks)
+        finished_at = parse_finished_at(params["finished_at"], socket.assigns.timezone)
 
         socket
         |> assign(:selected_tracks, new_selected)
-        |> assign(:finished_at, parse_finished_at(params["finished_at"]))
+        |> assign(:finished_at, finished_at)
         |> assign(:pending_form_params, nil)
     end
   end
 
-  @spec parse_finished_at(term()) :: DateTime.t() | nil
-  defp parse_finished_at(nil), do: nil
-  defp parse_finished_at(""), do: nil
+  @spec parse_finished_at(term(), String.t()) :: DateTime.t() | nil
+  defp parse_finished_at(nil, _timezone), do: nil
+  defp parse_finished_at("", _timezone), do: nil
 
-  defp parse_finished_at(value) when is_binary(value) do
+  defp parse_finished_at(value, timezone) when is_binary(value) do
     case DateTime.from_iso8601(value) do
       {:ok, datetime, _offset} ->
         datetime
 
       {:error, _} ->
         case NaiveDateTime.from_iso8601(value) do
-          {:ok, naive} -> DateTime.from_naive!(naive, "Etc/UTC")
+          {:ok, naive} -> DateTime.from_naive!(naive, timezone)
           {:error, _} -> nil
         end
     end
   end
 
-  defp parse_finished_at(_), do: nil
+  defp parse_finished_at(_, _), do: nil
 
   @impl true
   def render(assigns) do
@@ -535,11 +539,12 @@ defmodule MusicLibraryWeb.Components.Release do
     release = socket.assigns.release_with_tracks.result
     new_selected = apply_form_params(release, params, socket.assigns.selected_tracks)
     finished_at_raw = params["finished_at"]
+    finished_at = parse_finished_at(finished_at_raw, socket.assigns.timezone)
 
     {:noreply,
      socket
      |> assign(:selected_tracks, new_selected)
-     |> assign(:finished_at, parse_finished_at(finished_at_raw))
+     |> assign(:finished_at, finished_at)
      |> assign(:form, to_form(%{"finished_at" => finished_at_raw}, as: :release))}
   end
 
@@ -558,12 +563,12 @@ defmodule MusicLibraryWeb.Components.Release do
   end
 
   def handle_event("reset_to_now", _params, socket) do
-    current_time = DateTime.utc_now()
+    current_time = DateTime.utc_now() |> DateTime.shift_zone!(socket.assigns.timezone)
 
     {:noreply,
      socket
      |> assign(:finished_at, current_time)
-     |> assign(:form, to_form(%{"finished_at" => current_time}, as: :release))}
+     |> assign(:form, to_form(%{"finished_at" => DateTime.to_naive(current_time)}, as: :release))}
   end
 
   def handle_event("scrobble_selected_tracks", _params, socket)
