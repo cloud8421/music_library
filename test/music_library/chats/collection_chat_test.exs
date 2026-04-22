@@ -2,6 +2,7 @@ defmodule MusicLibrary.Chats.CollectionChatTest do
   use ExUnit.Case
 
   alias MusicLibrary.Chats.CollectionChat
+  alias Plug.Conn
 
   defp sse_event(type, data) do
     json = JSON.encode!(%{type: type, delta: data})
@@ -15,13 +16,13 @@ defmodule MusicLibrary.Chats.CollectionChatTest do
 
   defp stub_and_capture_instructions(test_pid) do
     Req.Test.stub(OpenAI.API, fn conn ->
-      {:ok, body, conn} = Plug.Conn.read_body(conn)
+      {:ok, body, conn} = Conn.read_body(conn)
       request = JSON.decode!(body)
       send(test_pid, {:captured_instructions, request["instructions"]})
 
       conn
-      |> Plug.Conn.put_resp_content_type("text/event-stream")
-      |> Plug.Conn.send_resp(200, completed_response())
+      |> Conn.put_resp_content_type("text/event-stream")
+      |> Conn.send_resp(200, completed_response())
     end)
   end
 

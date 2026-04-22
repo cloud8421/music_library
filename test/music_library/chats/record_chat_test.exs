@@ -4,6 +4,7 @@ defmodule MusicLibrary.Chats.RecordChatTest do
   alias MusicLibrary.Artists.Artist
   alias MusicLibrary.Chats.RecordChat
   alias MusicLibrary.Records.Record
+  alias Plug.Conn
 
   defp build_record(attrs \\ %{}) do
     defaults = %{
@@ -36,13 +37,13 @@ defmodule MusicLibrary.Chats.RecordChatTest do
 
   defp stub_and_capture_instructions(test_pid) do
     Req.Test.stub(OpenAI.API, fn conn ->
-      {:ok, body, conn} = Plug.Conn.read_body(conn)
+      {:ok, body, conn} = Conn.read_body(conn)
       request = JSON.decode!(body)
       send(test_pid, {:captured_instructions, request["instructions"]})
 
       conn
-      |> Plug.Conn.put_resp_content_type("text/event-stream")
-      |> Plug.Conn.send_resp(200, completed_response())
+      |> Conn.put_resp_content_type("text/event-stream")
+      |> Conn.send_resp(200, completed_response())
     end)
   end
 

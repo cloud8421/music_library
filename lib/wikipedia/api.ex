@@ -3,6 +3,8 @@ defmodule Wikipedia.API do
   Interface to the Wikidata and Wikipedia APIs.
   """
 
+  alias Req.Request
+
   require Logger
 
   @spec get_wikipedia_title(String.t(), Wikipedia.Config.t()) ::
@@ -75,10 +77,10 @@ defmodule Wikipedia.API do
       max_retries: 1,
       user_agent: config.user_agent
     )
-    |> Req.Request.merge_options(config.req_options)
+    |> Request.merge_options(config.req_options)
     |> Req.RateLimiter.attach(name: :wikipedia, cooldown: config.api_cooldown)
-    |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
-    |> Req.Request.append_response_steps(log_error: &log_error/1)
+    |> Request.append_request_steps(log_attempt: &log_attempt/1)
+    |> Request.append_response_steps(log_error: &log_error/1)
   end
 
   defp get_request(request) do

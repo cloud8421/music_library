@@ -1,6 +1,7 @@
 defmodule LastFm.API do
   alias LastFm.API.{ErrorResponse, Signature}
   alias LastFm.{Artist, Session, Track}
+  alias Req.Request
 
   require Logger
 
@@ -22,8 +23,8 @@ defmodule LastFm.API do
     config
     |> new_request()
     |> Req.merge(url: "/", params: params)
-    |> Req.Request.append_response_steps(parse_error: &parse_error/1)
-    |> Req.Request.append_response_steps(parse_session: &parse_session/1)
+    |> Request.append_response_steps(parse_error: &parse_error/1)
+    |> Request.append_response_steps(parse_session: &parse_session/1)
     |> get_request()
   end
 
@@ -70,7 +71,7 @@ defmodule LastFm.API do
     config
     |> new_request()
     |> Req.merge(url: "/", params: params)
-    |> Req.Request.append_response_steps(parse_tracks: &parse_tracks/1)
+    |> Request.append_response_steps(parse_tracks: &parse_tracks/1)
     |> get_request()
   end
 
@@ -85,7 +86,7 @@ defmodule LastFm.API do
     config
     |> new_request()
     |> Req.merge(url: "/", params: params)
-    |> Req.Request.append_response_steps(parse_tracks: &parse_artist/1)
+    |> Request.append_response_steps(parse_tracks: &parse_artist/1)
     |> get_request()
   end
 
@@ -101,7 +102,7 @@ defmodule LastFm.API do
     config
     |> new_request()
     |> Req.merge(url: "/", params: params)
-    |> Req.Request.append_response_steps(parse_tracks: &parse_similar_artists/1)
+    |> Request.append_response_steps(parse_tracks: &parse_similar_artists/1)
     |> get_request()
   end
 
@@ -117,7 +118,7 @@ defmodule LastFm.API do
     config
     |> new_request()
     |> Req.merge(url: "/", params: params)
-    |> Req.Request.append_response_steps(parse_tags: &parse_artist_tags/1)
+    |> Request.append_response_steps(parse_tags: &parse_artist_tags/1)
     |> get_request()
   end
 
@@ -134,7 +135,7 @@ defmodule LastFm.API do
     config
     |> new_request()
     |> Req.merge(url: "/", params: params)
-    |> Req.Request.append_response_steps(parse_user_info: &parse_user_info/1)
+    |> Request.append_response_steps(parse_user_info: &parse_user_info/1)
     |> get_request()
   end
 
@@ -169,11 +170,11 @@ defmodule LastFm.API do
       ],
       user_agent: config.user_agent
     )
-    |> Req.Request.merge_options(config.req_options)
+    |> Request.merge_options(config.req_options)
     |> Req.RateLimiter.attach(name: :last_fm, cooldown: config.api_cooldown)
-    |> Req.Request.put_private(:api_key, config.api_key)
-    |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
-    |> Req.Request.append_response_steps(parse_error: &parse_error/1)
+    |> Request.put_private(:api_key, config.api_key)
+    |> Request.append_request_steps(log_attempt: &log_attempt/1)
+    |> Request.append_response_steps(parse_error: &parse_error/1)
   end
 
   defp get_request(request) do
@@ -204,7 +205,7 @@ defmodule LastFm.API do
 
   defp log_attempt(request) do
     url = URI.to_string(request.url)
-    api_key = Req.Request.get_private(request, :api_key)
+    api_key = Request.get_private(request, :api_key)
     Logger.debug("Fetching data from #{sanitize_url(url, api_key)}")
     request
   end
@@ -221,11 +222,11 @@ defmodule LastFm.API do
 
         Logger.error(fn ->
           url = URI.to_string(request.url)
-          api_key = Req.Request.get_private(request, :api_key)
+          api_key = Request.get_private(request, :api_key)
           "Failed to fetch data from #{sanitize_url(url, api_key)}, reason: #{message}."
         end)
 
-        Req.Request.halt(request, Map.put(response, :body, error))
+        Request.halt(request, Map.put(response, :body, error))
 
       _other ->
         {request, response}

@@ -8,6 +8,7 @@ defmodule MusicLibraryWeb.Components.ChatTest do
   alias MusicBrainz.Fixtures.ReleaseGroup
   alias MusicLibrary.Chats
   alias MusicLibraryWeb.Components.Chat
+  alias Req.Test
 
   @component_id "record-chat"
 
@@ -16,7 +17,7 @@ defmodule MusicLibraryWeb.Components.ChatTest do
     # `OpenAI.API`. A default stub that returns an empty SSE stream prevents
     # Req.Test from raising inside the supervised Task process and keeps
     # test output noise-free. Individual tests can override this as needed.
-    Req.Test.stub(OpenAI.API, fn conn ->
+    Test.stub(OpenAI.API, fn conn ->
       conn
       |> Plug.Conn.put_resp_content_type("text/event-stream")
       |> Plug.Conn.send_resp(
@@ -32,22 +33,22 @@ defmodule MusicLibraryWeb.Components.ChatTest do
     release_group = ReleaseGroup.release_group(:marbles)
     release = ReleaseFixtures.release(:marbles)
 
-    Req.Test.stub(MusicBrainz.API, fn conn ->
+    Test.stub(MusicBrainz.API, fn conn ->
       cond do
         conn.host == "coverartarchive.org" ->
           Plug.Conn.send_resp(conn, 200, marbles_cover_data())
 
         match?([_, _, "release-group", ^release_group_id], conn.path_info) ->
-          Req.Test.json(conn, release_group)
+          Test.json(conn, release_group)
 
         match?([_, _, "release"], conn.path_info) ->
-          Req.Test.json(conn, ReleaseGroup.release_group_releases(:marbles))
+          Test.json(conn, ReleaseGroup.release_group_releases(:marbles))
 
         match?([_, _, "release", _], conn.path_info) ->
-          Req.Test.json(conn, release)
+          Test.json(conn, release)
 
         true ->
-          Req.Test.json(conn, %{})
+          Test.json(conn, %{})
       end
     end)
   end
@@ -164,7 +165,7 @@ defmodule MusicLibraryWeb.Components.ChatTest do
     test "streaming error propagates to the component as user-facing text", %{conn: conn} do
       record = setup_record()
 
-      Req.Test.stub(OpenAI.API, fn conn ->
+      Test.stub(OpenAI.API, fn conn ->
         Plug.Conn.send_resp(conn, 500, JSON.encode!(%{"error" => "internal server error"}))
       end)
 

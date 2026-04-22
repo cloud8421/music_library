@@ -20,6 +20,8 @@ defmodule Req.RateLimiter do
   Pass `:clock` in `attach/2` opts to override (useful in tests).
   """
 
+  alias Req.Request
+
   @table __MODULE__
   @default_clock Req.RateLimiter.SystemClock
 
@@ -44,25 +46,25 @@ defmodule Req.RateLimiter do
     * `:clock` - module implementing `Req.RateLimiter.Clock` (default: `Req.RateLimiter.SystemClock`)
 
   """
-  @spec attach(Req.Request.t(), attach_opts()) :: Req.Request.t()
+  @spec attach(Request.t(), attach_opts()) :: Request.t()
   def attach(request, opts) do
     name = Keyword.fetch!(opts, :name)
     cooldown = Keyword.fetch!(opts, :cooldown)
     clock = Keyword.get(opts, :clock, @default_clock)
 
     request
-    |> Req.Request.put_private(:rate_limiter_name, name)
-    |> Req.Request.put_private(:rate_limiter_cooldown, cooldown)
-    |> Req.Request.put_private(:rate_limiter_clock, clock)
-    |> Req.Request.prepend_request_steps(rate_limiter: &throttle/1)
+    |> Request.put_private(:rate_limiter_name, name)
+    |> Request.put_private(:rate_limiter_cooldown, cooldown)
+    |> Request.put_private(:rate_limiter_clock, clock)
+    |> Request.prepend_request_steps(rate_limiter: &throttle/1)
   end
 
   defp throttle(request) do
-    cooldown = Req.Request.get_private(request, :rate_limiter_cooldown)
+    cooldown = Request.get_private(request, :rate_limiter_cooldown)
 
     if cooldown > 0 do
-      name = Req.Request.get_private(request, :rate_limiter_name)
-      clock = Req.Request.get_private(request, :rate_limiter_clock)
+      name = Request.get_private(request, :rate_limiter_name)
+      clock = Request.get_private(request, :rate_limiter_clock)
       now = clock.now()
 
       case :ets.lookup(@table, name) do

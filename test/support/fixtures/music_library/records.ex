@@ -1,6 +1,7 @@
 defmodule MusicLibrary.Fixtures.Records do
   @moduledoc false
 
+  alias Discogs.Fixtures.Artist, as: DiscogsArtistFixture
   alias MusicBrainz.Fixtures.ReleaseGroup
   alias MusicLibrary.Assets
   alias MusicLibrary.Assets.Asset
@@ -105,9 +106,9 @@ defmodule MusicLibrary.Fixtures.Records do
       |> Enum.into(%{
         id: musicbrainz_id,
         musicbrainz_data: MusicBrainz.Fixtures.Artist.get_artist(),
-        discogs_data: Discogs.Fixtures.Artist.get_artist(),
-        image_data: Discogs.Fixtures.Artist.image_data(),
-        image_width: Discogs.Fixtures.Artist.image_width()
+        discogs_data: DiscogsArtistFixture.get_artist(),
+        image_data: DiscogsArtistFixture.image_data(),
+        image_width: DiscogsArtistFixture.image_width()
       })
       |> MusicLibrary.Artists.create_artist_info()
 

@@ -5,17 +5,18 @@ defmodule MusicLibraryWeb.ScrobbleLive.ShowTest do
 
   alias MusicBrainz.Fixtures.Release, as: ReleaseFixtures
   alias MusicLibrary.Secrets
+  alias Req.Test
 
   @release_id ReleaseFixtures.release_id(:marbles)
 
   defp stub_musicbrainz_release(_) do
-    Req.Test.stub(MusicBrainz.API, fn conn ->
+    Test.stub(MusicBrainz.API, fn conn ->
       case conn.request_path do
         "/ws/2/release/" <> _id ->
-          Req.Test.json(conn, ReleaseFixtures.release_with_media(:marbles))
+          Test.json(conn, ReleaseFixtures.release_with_media(:marbles))
 
         _ ->
-          Req.Test.json(conn, %{})
+          Test.json(conn, %{})
       end
     end)
 
@@ -23,7 +24,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.ShowTest do
   end
 
   defp stub_musicbrainz_release_error(_) do
-    Req.Test.stub(MusicBrainz.API, fn conn ->
+    Test.stub(MusicBrainz.API, fn conn ->
       Plug.Conn.send_resp(conn, 404, "Not Found")
     end)
 
@@ -31,16 +32,16 @@ defmodule MusicLibraryWeb.ScrobbleLive.ShowTest do
   end
 
   defp stub_lastfm_scrobble(_) do
-    Req.Test.stub(LastFm.API, fn conn ->
-      Req.Test.json(conn, %{"scrobbles" => %{"@attr" => %{"accepted" => 1}}})
+    Test.stub(LastFm.API, fn conn ->
+      Test.json(conn, %{"scrobbles" => %{"@attr" => %{"accepted" => 1}}})
     end)
 
     :ok
   end
 
   defp stub_lastfm_scrobble_error(_) do
-    Req.Test.stub(LastFm.API, fn conn ->
-      Req.Test.json(conn, %{"error" => 11, "message" => "Service temporarily unavailable"})
+    Test.stub(LastFm.API, fn conn ->
+      Test.json(conn, %{"error" => 11, "message" => "Service temporarily unavailable"})
     end)
 
     :ok

@@ -12,6 +12,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   alias MusicLibrary.Assets.{Image, Transform}
   alias MusicLibrary.Records.Record
   alias MusicLibrary.Worker.ImportFromMusicbrainzReleaseGroup
+  alias Req.Test
 
   # make it a multiple of 4 for easier calculations
   @default_records_page_size 4
@@ -274,8 +275,8 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     end
 
     test "pre-fills the search query from import_query param", %{conn: conn} do
-      Req.Test.stub(MusicBrainz.API, fn conn ->
-        Req.Test.json(conn, %{"release-groups" => [], "count" => 0})
+      Test.stub(MusicBrainz.API, fn conn ->
+        Test.json(conn, %{"release-groups" => [], "count" => 0})
       end)
 
       conn
@@ -495,10 +496,10 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   end
 
   defp stub_release_group_search do
-    Req.Test.stub(MusicBrainz.API, fn conn ->
+    Test.stub(MusicBrainz.API, fn conn ->
       case conn.path_info do
         [_ws, _version, "release-group"] ->
-          Req.Test.json(conn, release_group_search_results())
+          Test.json(conn, release_group_search_results())
       end
     end)
   end
@@ -511,16 +512,16 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     release_group_releases = release_group_releases(:marbles)
     cover_data = marbles_cover_data()
 
-    Req.Test.stub(MusicBrainz.API, fn conn ->
+    Test.stub(MusicBrainz.API, fn conn ->
       case conn.path_info do
         [_ws, _version, "release-group", ^first_id] ->
-          Req.Test.json(conn, release_group)
+          Test.json(conn, release_group)
 
         [_ws, _version, "release-group"] ->
-          Req.Test.json(conn, release_group_search_results())
+          Test.json(conn, release_group_search_results())
 
         [_ws, _version, "release"] ->
-          Req.Test.json(conn, release_group_releases)
+          Test.json(conn, release_group_releases)
 
         [_release_group, ^first_id, "front"] ->
           Plug.Conn.send_resp(conn, 200, cover_data)
@@ -560,21 +561,21 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
       cover_data = marbles_cover_data()
 
-      Req.Test.stub(MusicBrainz.API, fn conn ->
+      Test.stub(MusicBrainz.API, fn conn ->
         case conn.path_info do
           [_ws, _version, "release-group", ^release_group_id] ->
-            Req.Test.json(conn, release_group)
+            Test.json(conn, release_group)
 
           [_ws, _version, "release", ^release_id] ->
-            Req.Test.json(conn, release)
+            Test.json(conn, release)
 
           [_ws, _version, "release"] ->
             if conn.params["query"] do
               # barcode scan
-              Req.Test.json(conn, releases)
+              Test.json(conn, releases)
             else
               # Search by release group ID
-              Req.Test.json(conn, release_group_releases)
+              Test.json(conn, release_group_releases)
             end
 
           [_release_group, ^release_group_id, "front"] ->

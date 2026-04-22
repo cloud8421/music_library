@@ -37,6 +37,7 @@ defmodule Mix.Tasks.Scrobble.Audit do
   import Ecto.Query
 
   alias LastFm.Track
+  alias Mix.Shell.IO, as: ShellIO
   alias MusicLibrary.{ListeningStats, Maintenance, Repo}
 
   @impl Mix.Task
@@ -267,12 +268,12 @@ defmodule Mix.Tasks.Scrobble.Audit do
   defp output_json(report) do
     report
     |> Jason.encode!(pretty: true)
-    |> Mix.Shell.IO.info()
+    |> ShellIO.info()
   end
 
   defp output_text(report, verbose) do
-    Mix.Shell.IO.info("\n=== Scrobbled Tracks Data Quality Audit ===\n")
-    Mix.Shell.IO.info("Total scrobbled tracks: #{report.total_tracks}\n")
+    ShellIO.info("\n=== Scrobbled Tracks Data Quality Audit ===\n")
+    ShellIO.info("Total scrobbled tracks: #{report.total_tracks}\n")
 
     if Map.has_key?(report, :artist_issues) do
       output_artist_issues(report.artist_issues, verbose)
@@ -286,71 +287,71 @@ defmodule Mix.Tasks.Scrobble.Audit do
   end
 
   defp output_artist_issues(artist_issues, verbose) do
-    Mix.Shell.IO.info("--- Artists with Missing MusicBrainz IDs ---")
-    Mix.Shell.IO.info("Unique artists: #{artist_issues.total_artists}")
-    Mix.Shell.IO.info("Affected tracks: #{artist_issues.total_tracks_affected}\n")
+    ShellIO.info("--- Artists with Missing MusicBrainz IDs ---")
+    ShellIO.info("Unique artists: #{artist_issues.total_artists}")
+    ShellIO.info("Affected tracks: #{artist_issues.total_tracks_affected}\n")
 
     if artist_issues.total_artists > 0 do
-      Mix.Shell.IO.info("Top artists by track count:")
+      ShellIO.info("Top artists by track count:")
 
       artist_issues.artists
       |> Enum.take(10)
       |> Enum.each(fn %{name: name, track_count: count} ->
-        Mix.Shell.IO.info("  • #{name} (#{count} tracks)")
+        ShellIO.info("  • #{name} (#{count} tracks)")
       end)
 
-      Mix.Shell.IO.info("")
+      ShellIO.info("")
 
       if verbose and Map.has_key?(artist_issues, :sample_tracks) do
-        Mix.Shell.IO.info("Sample tracks:")
+        ShellIO.info("Sample tracks:")
 
         Enum.each(artist_issues.sample_tracks, fn %{artist: artist, sample_tracks: tracks} ->
-          Mix.Shell.IO.info("\n  Artist: #{artist}")
+          ShellIO.info("\n  Artist: #{artist}")
 
           # credo:disable-for-next-line Credo.Check.Refactor.Nesting
           Enum.each(tracks, fn track ->
-            Mix.Shell.IO.info("    - #{track.title} (from #{track.album})")
+            ShellIO.info("    - #{track.title} (from #{track.album})")
           end)
         end)
 
-        Mix.Shell.IO.info("")
+        ShellIO.info("")
       end
     end
   end
 
   defp output_album_issues(album_issues, verbose) do
-    Mix.Shell.IO.info("--- Albums with Missing MusicBrainz IDs ---")
-    Mix.Shell.IO.info("Unique albums: #{album_issues.total_albums}")
-    Mix.Shell.IO.info("Affected tracks: #{album_issues.total_tracks_affected}\n")
+    ShellIO.info("--- Albums with Missing MusicBrainz IDs ---")
+    ShellIO.info("Unique albums: #{album_issues.total_albums}")
+    ShellIO.info("Affected tracks: #{album_issues.total_tracks_affected}\n")
 
     if album_issues.total_albums > 0 do
-      Mix.Shell.IO.info("Top albums by track count:")
+      ShellIO.info("Top albums by track count:")
 
       album_issues.albums
       |> Enum.take(10)
       |> Enum.each(fn %{title: title, artist: artist, track_count: count} ->
-        Mix.Shell.IO.info("  • #{title} by #{artist} (#{count} tracks)")
+        ShellIO.info("  • #{title} by #{artist} (#{count} tracks)")
       end)
 
-      Mix.Shell.IO.info("")
+      ShellIO.info("")
 
       if verbose and Map.has_key?(album_issues, :sample_tracks) do
-        Mix.Shell.IO.info("Sample tracks:")
+        ShellIO.info("Sample tracks:")
 
         Enum.each(album_issues.sample_tracks, fn %{
                                                    album: album,
                                                    artist: artist,
                                                    sample_tracks: tracks
                                                  } ->
-          Mix.Shell.IO.info("\n  Album: #{album} by #{artist}")
+          ShellIO.info("\n  Album: #{album} by #{artist}")
 
           # credo:disable-for-next-line Credo.Check.Refactor.Nesting
           Enum.each(tracks, fn track ->
-            Mix.Shell.IO.info("    - #{track.title}")
+            ShellIO.info("    - #{track.title}")
           end)
         end)
 
-        Mix.Shell.IO.info("")
+        ShellIO.info("")
       end
     end
   end
@@ -360,10 +361,10 @@ defmodule Mix.Tasks.Scrobble.Audit do
       (Map.get(report, :artist_issues, %{}) |> Map.get(:total_tracks_affected, 0)) +
         (Map.get(report, :album_issues, %{}) |> Map.get(:total_tracks_affected, 0))
 
-    Mix.Shell.IO.info("--- Summary ---")
-    Mix.Shell.IO.info("Total tracks needing enrichment: #{total_issues}")
+    ShellIO.info("--- Summary ---")
+    ShellIO.info("Total tracks needing enrichment: #{total_issues}")
 
-    Mix.Shell.IO.info("""
+    ShellIO.info("""
 
     To fix these issues:
     1. Create scrobble rules for artists with missing MusicBrainz IDs:

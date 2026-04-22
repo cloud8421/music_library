@@ -3,6 +3,8 @@ defmodule BraveSearch.API do
   Interface to the Brave Search API.
   """
 
+  alias Req.Request
+
   require Logger
 
   @spec search_images(String.t(), keyword(), BraveSearch.Config.t()) ::
@@ -40,9 +42,9 @@ defmodule BraveSearch.API do
           {:ok, binary()} | {:error, :download_failed}
   def download_image(url, config) do
     case Req.new(url: url, max_retries: 1, user_agent: config.user_agent)
-         |> Req.Request.merge_options(config.req_options)
-         |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
-         |> Req.Request.append_response_steps(log_error: &log_error/1)
+         |> Request.merge_options(config.req_options)
+         |> Request.append_request_steps(log_attempt: &log_attempt/1)
+         |> Request.append_response_steps(log_error: &log_error/1)
          |> get_request() do
       {:ok, data} -> {:ok, data}
       {:error, _reason} -> {:error, :download_failed}
@@ -56,10 +58,10 @@ defmodule BraveSearch.API do
       user_agent: config.user_agent,
       headers: %{"x-subscription-token" => config.api_key}
     )
-    |> Req.Request.merge_options(config.req_options)
+    |> Request.merge_options(config.req_options)
     |> Req.RateLimiter.attach(name: :brave_search, cooldown: config.api_cooldown)
-    |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
-    |> Req.Request.append_response_steps(log_error: &log_error/1)
+    |> Request.append_request_steps(log_attempt: &log_attempt/1)
+    |> Request.append_response_steps(log_error: &log_error/1)
   end
 
   defp get_request(request) do

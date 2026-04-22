@@ -7,6 +7,7 @@ defmodule MusicBrainz.API do
   """
 
   alias MusicBrainz.{Artist, ReleaseGroupSearchResult, ReleaseSearchResult}
+  alias Req.Request
 
   require Logger
 
@@ -330,7 +331,7 @@ defmodule MusicBrainz.API do
         query: "barcode:#{barcode} AND NOT format:digitalmedia"
       ]
     )
-    |> Req.Request.append_response_steps(
+    |> Request.append_response_steps(
       parse_release_search_results: &parse_release_search_results/1
     )
     |> get_request()
@@ -454,7 +455,7 @@ defmodule MusicBrainz.API do
       url: "/release-group",
       params: params
     )
-    |> Req.Request.append_response_steps(
+    |> Request.append_response_steps(
       parse_release_group_search_results: &parse_release_group_search_results/1
     )
     |> get_request()
@@ -471,7 +472,7 @@ defmodule MusicBrainz.API do
         inc: "url-rels"
       ]
     )
-    |> Req.Request.append_response_steps(parse_artist: &parse_artist/1)
+    |> Request.append_response_steps(parse_artist: &parse_artist/1)
     |> get_request()
   end
 
@@ -488,9 +489,9 @@ defmodule MusicBrainz.API do
 
   def get_cover_art({:url, url}, config) do
     case Req.new(url: url, max_retries: 1, user_agent: config.user_agent)
-         |> Req.Request.merge_options(config.req_options)
-         |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
-         |> Req.Request.append_response_steps(log_error: &log_error/1)
+         |> Request.merge_options(config.req_options)
+         |> Request.append_request_steps(log_attempt: &log_attempt/1)
+         |> Request.append_response_steps(log_error: &log_error/1)
          |> get_request() do
       {:ok, data} -> {:ok, data}
       {:error, _reason} -> {:error, :cover_not_available}
@@ -503,9 +504,9 @@ defmodule MusicBrainz.API do
       max_retries: 1,
       user_agent: config.user_agent
     )
-    |> Req.Request.merge_options(config.req_options)
+    |> Request.merge_options(config.req_options)
     |> Req.RateLimiter.attach(name: :music_brainz, cooldown: config.api_cooldown)
-    |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
+    |> Request.append_request_steps(log_attempt: &log_attempt/1)
   end
 
   defp get_request(request) do

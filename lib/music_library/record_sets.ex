@@ -5,6 +5,7 @@ defmodule MusicLibrary.RecordSets do
 
   import Ecto.Query, warn: false
 
+  alias Ecto.Changeset
   alias MusicLibrary.RecordSets.{RecordSet, RecordSetItem}
   alias MusicLibrary.Repo
 
@@ -64,7 +65,7 @@ defmodule MusicLibrary.RecordSets do
     |> Repo.preload(items: :record)
   end
 
-  @spec create_record_set(map()) :: {:ok, RecordSet.t()} | {:error, Ecto.Changeset.t()}
+  @spec create_record_set(map()) :: {:ok, RecordSet.t()} | {:error, Changeset.t()}
   def create_record_set(attrs) do
     %RecordSet{}
     |> RecordSet.changeset(attrs)
@@ -76,7 +77,7 @@ defmodule MusicLibrary.RecordSets do
   end
 
   @spec update_record_set(RecordSet.t(), map()) ::
-          {:ok, RecordSet.t()} | {:error, Ecto.Changeset.t()}
+          {:ok, RecordSet.t()} | {:error, Changeset.t()}
   def update_record_set(%RecordSet{} = record_set, attrs) do
     record_set
     |> RecordSet.changeset(attrs)
@@ -87,18 +88,18 @@ defmodule MusicLibrary.RecordSets do
     end
   end
 
-  @spec delete_record_set(RecordSet.t()) :: {:ok, RecordSet.t()} | {:error, Ecto.Changeset.t()}
+  @spec delete_record_set(RecordSet.t()) :: {:ok, RecordSet.t()} | {:error, Changeset.t()}
   def delete_record_set(%RecordSet{} = record_set) do
     Repo.delete(record_set)
   end
 
-  @spec change_record_set(RecordSet.t(), map()) :: Ecto.Changeset.t()
+  @spec change_record_set(RecordSet.t(), map()) :: Changeset.t()
   def change_record_set(%RecordSet{} = record_set, attrs \\ %{}) do
     RecordSet.changeset(record_set, attrs)
   end
 
   @spec add_record_to_set(RecordSet.t(), String.t()) ::
-          {:ok, RecordSet.t()} | {:error, Ecto.Changeset.t()}
+          {:ok, RecordSet.t()} | {:error, Changeset.t()}
   def add_record_to_set(%RecordSet{} = record_set, record_id) do
     next_position =
       from(i in RecordSetItem,
@@ -110,9 +111,9 @@ defmodule MusicLibrary.RecordSets do
 
     %RecordSetItem{}
     |> RecordSetItem.changeset(%{position: next_position})
-    |> Ecto.Changeset.put_change(:record_set_id, record_set.id)
-    |> Ecto.Changeset.put_change(:record_id, record_id)
-    |> Ecto.Changeset.unique_constraint([:record_set_id, :record_id])
+    |> Changeset.put_change(:record_set_id, record_set.id)
+    |> Changeset.put_change(:record_id, record_id)
+    |> Changeset.unique_constraint([:record_set_id, :record_id])
     |> Repo.insert()
     |> case do
       {:ok, _item} -> {:ok, get_record_set!(record_set.id)}
@@ -182,11 +183,11 @@ defmodule MusicLibrary.RecordSets do
 
           Repo.transaction(fn ->
             item_a
-            |> Ecto.Changeset.change(position: item_b.position)
+            |> Changeset.change(position: item_b.position)
             |> Repo.update!()
 
             item_b
-            |> Ecto.Changeset.change(position: item_a.position)
+            |> Changeset.change(position: item_a.position)
             |> Repo.update!()
           end)
         end

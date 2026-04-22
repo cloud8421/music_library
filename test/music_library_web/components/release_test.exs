@@ -16,6 +16,7 @@ defmodule MusicLibraryWeb.Components.ReleaseTest do
 
   alias MusicBrainz.Fixtures.Release, as: ReleaseFixtures
   alias MusicLibrary.Secrets
+  alias Req.Test
 
   @finished_at ~U[2026-03-15 21:00:00Z]
   # `@sheet_form` scopes form-change events to the LiveComponent; button
@@ -24,13 +25,13 @@ defmodule MusicLibraryWeb.Components.ReleaseTest do
   @sheet_form "#release-with-tracks-sheet-form"
 
   defp stub_musicbrainz_release(_) do
-    Req.Test.stub(MusicBrainz.API, fn conn ->
+    Test.stub(MusicBrainz.API, fn conn ->
       case conn.request_path do
         "/ws/2/release/" <> _id ->
-          Req.Test.json(conn, ReleaseFixtures.release_with_media(:marbles))
+          Test.json(conn, ReleaseFixtures.release_with_media(:marbles))
 
         _ ->
-          Req.Test.json(conn, %{})
+          Test.json(conn, %{})
       end
     end)
 
@@ -40,11 +41,11 @@ defmodule MusicLibraryWeb.Components.ReleaseTest do
   defp capture_lastfm_scrobble(_) do
     test_pid = self()
 
-    Req.Test.stub(LastFm.API, fn conn ->
+    Test.stub(LastFm.API, fn conn ->
       {:ok, body, conn} = Plug.Conn.read_body(conn)
       params = URI.decode_query(body)
       send(test_pid, {:lastfm_scrobble, params})
-      Req.Test.json(conn, %{"scrobbles" => %{"@attr" => %{"accepted" => 1}}})
+      Test.json(conn, %{"scrobbles" => %{"@attr" => %{"accepted" => 1}}})
     end)
 
     :ok

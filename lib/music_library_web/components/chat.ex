@@ -5,6 +5,7 @@ defmodule MusicLibraryWeb.Components.Chat do
 
   alias MusicLibrary.Chats
   alias MusicLibraryWeb.Markdown
+  alias Phoenix.LiveView
 
   def open(id), do: Fluxon.open_dialog(id)
 
@@ -386,13 +387,13 @@ defmodule MusicLibraryWeb.Components.Chat do
 
     Task.Supervisor.start_child(MusicLibrary.TaskSupervisor, fn ->
       case chat_module.stream_response(stream_messages, chat_context, fn chunk ->
-             Phoenix.LiveView.send_update(parent_pid, __MODULE__,
+             LiveView.send_update(parent_pid, __MODULE__,
                id: component_id,
                chunk: chunk
              )
            end) do
         :ok ->
-          Phoenix.LiveView.send_update(parent_pid, __MODULE__,
+          LiveView.send_update(parent_pid, __MODULE__,
             id: component_id,
             done: true
           )
@@ -400,7 +401,7 @@ defmodule MusicLibraryWeb.Components.Chat do
         {:error, reason} ->
           Logger.error("Chat streaming error: #{reason}")
 
-          Phoenix.LiveView.send_update(parent_pid, __MODULE__,
+          LiveView.send_update(parent_pid, __MODULE__,
             id: component_id,
             error: gettext("Something went wrong. Please try again.")
           )

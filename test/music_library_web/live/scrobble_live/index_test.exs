@@ -4,18 +4,19 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
   import Phoenix.LiveViewTest, only: [render: 1, render_submit: 1, render_click: 3, form: 3]
 
   alias MusicBrainz.Fixtures.ReleaseGroup
+  alias Req.Test
 
   defp stub_search_results(_) do
-    Req.Test.stub(MusicBrainz.API, fn conn ->
+    Test.stub(MusicBrainz.API, fn conn ->
       case conn.request_path do
         "/ws/2/release-group" ->
-          Req.Test.json(conn, ReleaseGroup.release_group_search_results())
+          Test.json(conn, ReleaseGroup.release_group_search_results())
 
         "/ws/2/release" ->
-          Req.Test.json(conn, ReleaseGroup.release_group_releases(:marbles))
+          Test.json(conn, ReleaseGroup.release_group_releases(:marbles))
 
         _ ->
-          Req.Test.json(conn, %{})
+          Test.json(conn, %{})
       end
     end)
 
@@ -23,13 +24,13 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
   end
 
   defp stub_empty_search_results(_) do
-    Req.Test.stub(MusicBrainz.API, fn conn ->
+    Test.stub(MusicBrainz.API, fn conn ->
       case conn.request_path do
         "/ws/2/release-group" ->
-          Req.Test.json(conn, %{"count" => 0, "release-groups" => []})
+          Test.json(conn, %{"count" => 0, "release-groups" => []})
 
         _ ->
-          Req.Test.json(conn, %{})
+          Test.json(conn, %{})
       end
     end)
 

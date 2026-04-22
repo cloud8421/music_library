@@ -9,6 +9,7 @@ defmodule MusicLibraryWeb.WishlistLive.IndexTest do
 
   alias MusicLibrary.Records.Record
   alias MusicLibrary.Worker.ImportFromMusicbrainzReleaseGroup
+  alias Req.Test
 
   defp fill_wishlist(_) do
     records = Enum.map(1..5, fn _ -> record(%{purchased_at: nil}) end)
@@ -110,10 +111,10 @@ defmodule MusicLibraryWeb.WishlistLive.IndexTest do
   end
 
   defp stub_release_group_search do
-    Req.Test.stub(MusicBrainz.API, fn conn ->
+    Test.stub(MusicBrainz.API, fn conn ->
       case conn.path_info do
         [_ws, _version, "release-group"] ->
-          Req.Test.json(conn, release_group_search_results())
+          Test.json(conn, release_group_search_results())
       end
     end)
   end
@@ -126,16 +127,16 @@ defmodule MusicLibraryWeb.WishlistLive.IndexTest do
     release_group_releases = release_group_releases(:marbles)
     cover_data = marbles_cover_data()
 
-    Req.Test.stub(MusicBrainz.API, fn conn ->
+    Test.stub(MusicBrainz.API, fn conn ->
       case conn.path_info do
         [_ws, _version, "release-group", ^first_id] ->
-          Req.Test.json(conn, release_group)
+          Test.json(conn, release_group)
 
         [_ws, _version, "release-group"] ->
-          Req.Test.json(conn, release_group_search_results())
+          Test.json(conn, release_group_search_results())
 
         [_ws, _version, "release"] ->
-          Req.Test.json(conn, release_group_releases)
+          Test.json(conn, release_group_releases)
 
         [_release_group, ^first_id, "front"] ->
           Plug.Conn.send_resp(conn, 200, cover_data)

@@ -8,6 +8,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
   alias MusicLibrary.Artists
   alias MusicLibrary.Assets
   alias MusicLibrary.Assets.Asset
+  alias Req.Test
 
   defp fill_collection(_config) do
     collection_record =
@@ -34,13 +35,13 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       conn: conn,
       artist_musicbrainz_id: artist_musicbrainz_id
     } do
-      Req.Test.stub(LastFm.API, fn conn ->
+      Test.stub(LastFm.API, fn conn ->
         case Map.get(conn.params, "method") do
           "artist.getInfo" ->
-            Req.Test.json(conn, Fixtures.Artist.get_info())
+            Test.json(conn, Fixtures.Artist.get_info())
 
           "artist.getSimilar" ->
-            Req.Test.json(conn, Fixtures.Artist.get_similar_artists())
+            Test.json(conn, Fixtures.Artist.get_similar_artists())
         end
       end)
 
@@ -60,13 +61,13 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       |> Ecto.Changeset.change(wikipedia_data: Wikipedia.Fixtures.article_summary())
       |> MusicLibrary.Repo.update!()
 
-      Req.Test.stub(LastFm.API, fn conn ->
+      Test.stub(LastFm.API, fn conn ->
         case Map.get(conn.params, "method") do
           "artist.getInfo" ->
-            Req.Test.json(conn, Fixtures.Artist.get_info())
+            Test.json(conn, Fixtures.Artist.get_info())
 
           "artist.getSimilar" ->
-            Req.Test.json(conn, Fixtures.Artist.get_similar_artists())
+            Test.json(conn, Fixtures.Artist.get_similar_artists())
         end
       end)
 
@@ -82,13 +83,13 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       conn: conn,
       artist_musicbrainz_id: artist_musicbrainz_id
     } do
-      Req.Test.stub(LastFm.API, fn conn ->
+      Test.stub(LastFm.API, fn conn ->
         case Map.get(conn.params, "method") do
           "artist.getInfo" ->
-            Req.Test.transport_error(conn, :timeout)
+            Test.transport_error(conn, :timeout)
 
           "artist.getSimilar" ->
-            Req.Test.json(conn, Fixtures.Artist.get_similar_artists())
+            Test.json(conn, Fixtures.Artist.get_similar_artists())
         end
       end)
 
@@ -104,13 +105,13 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       conn: conn,
       artist_musicbrainz_id: artist_musicbrainz_id
     } do
-      Req.Test.stub(LastFm.API, fn conn ->
+      Test.stub(LastFm.API, fn conn ->
         case Map.get(conn.params, "method") do
           "artist.getInfo" ->
-            Req.Test.json(conn, Fixtures.Artist.get_info())
+            Test.json(conn, Fixtures.Artist.get_info())
 
           "artist.getSimilar" ->
-            Req.Test.json(conn, Fixtures.Artist.get_similar_artists())
+            Test.json(conn, Fixtures.Artist.get_similar_artists())
         end
       end)
 
@@ -136,13 +137,13 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       other_collection_record =
         record_with_artist("Porcupine Tree", %{purchased_at: DateTime.utc_now()})
 
-      Req.Test.stub(LastFm.API, fn conn ->
+      Test.stub(LastFm.API, fn conn ->
         case Map.get(conn.params, "method") do
           "artist.getInfo" ->
-            Req.Test.json(conn, Fixtures.Artist.get_info())
+            Test.json(conn, Fixtures.Artist.get_info())
 
           "artist.getSimilar" ->
-            Req.Test.json(conn, Fixtures.Artist.get_similar_artists())
+            Test.json(conn, Fixtures.Artist.get_similar_artists())
         end
       end)
 
@@ -175,9 +176,9 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       conn: conn,
       artist_musicbrainz_id: musicbrainz_id
     } do
-      Req.Test.stub(BraveSearch.API, fn conn ->
+      Test.stub(BraveSearch.API, fn conn ->
         assert conn.request_path == "/res/v1/images/search"
-        Req.Test.json(conn, BraveSearch.Fixtures.search_images_response())
+        Test.json(conn, BraveSearch.Fixtures.search_images_response())
       end)
 
       {:ok, view, _html} = live(conn, ~p"/artists/#{musicbrainz_id}/edit")
@@ -196,8 +197,8 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       conn: conn,
       artist_musicbrainz_id: musicbrainz_id
     } do
-      Req.Test.stub(BraveSearch.API, fn conn ->
-        Req.Test.transport_error(conn, :timeout)
+      Test.stub(BraveSearch.API, fn conn ->
+        Test.transport_error(conn, :timeout)
       end)
 
       {:ok, view, _html} = live(conn, ~p"/artists/#{musicbrainz_id}/edit")
@@ -243,10 +244,10 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
     } do
       raven_binary = raven_cover_data()
 
-      Req.Test.stub(BraveSearch.API, fn conn ->
+      Test.stub(BraveSearch.API, fn conn ->
         case conn.request_path do
           "/res/v1/images/search" ->
-            Req.Test.json(conn, BraveSearch.Fixtures.search_images_response())
+            Test.json(conn, BraveSearch.Fixtures.search_images_response())
 
           _ ->
             Plug.Conn.send_resp(conn, 200, raven_binary)
@@ -275,13 +276,13 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
   end
 
   defp stub_last_fm(_config) do
-    Req.Test.stub(LastFm.API, fn conn ->
+    Test.stub(LastFm.API, fn conn ->
       case Map.get(conn.params, "method") do
         "artist.getInfo" ->
-          Req.Test.json(conn, Fixtures.Artist.get_info())
+          Test.json(conn, Fixtures.Artist.get_info())
 
         "artist.getSimilar" ->
-          Req.Test.json(conn, Fixtures.Artist.get_similar_artists())
+          Test.json(conn, Fixtures.Artist.get_similar_artists())
       end
     end)
 

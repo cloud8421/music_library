@@ -3,6 +3,8 @@ defmodule OpenAI.API do
   Low-level HTTP client for the OpenAI API (chat completions, streaming responses, embeddings).
   """
 
+  alias Req.Request
+
   require Logger
 
   @spec gpt(OpenAI.Completion.t(), OpenAI.Config.t()) :: {:ok, map()} | {:error, term()}
@@ -52,9 +54,9 @@ defmodule OpenAI.API do
         temperature: temperature
       },
       into: fn {:data, data}, {req, resp} ->
-        buffer = Req.Request.get_private(req, :sse_buffer, "")
+        buffer = Request.get_private(req, :sse_buffer, "")
         {events, buffer} = ServerSentEvents.parse(buffer <> data)
-        req = Req.Request.put_private(req, :sse_buffer, buffer)
+        req = Request.put_private(req, :sse_buffer, buffer)
 
         decode_events(events, cb, req, resp)
       end
@@ -119,10 +121,10 @@ defmodule OpenAI.API do
       base_url: "https://api.openai.com",
       auth: {:bearer, config.api_key}
     )
-    |> Req.Request.merge_options(config.req_options)
+    |> Request.merge_options(config.req_options)
     |> Req.RateLimiter.attach(name: :open_ai, cooldown: config.api_cooldown)
-    |> Req.Request.append_request_steps(log_attempt: &log_attempt/1)
-    |> Req.Request.append_response_steps(log_error: &log_error/1)
+    |> Request.append_request_steps(log_attempt: &log_attempt/1)
+    |> Request.append_response_steps(log_error: &log_error/1)
   end
 
   defp decode_responses_event(json, cb) do

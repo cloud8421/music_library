@@ -10,6 +10,7 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
   alias MusicLibrary.Chats
   alias MusicLibrary.Records
   alias MusicLibrary.Records.Similarity
+  alias Req.Test
 
   # A MusicBrainz stub that returns valid fixture responses for every route
   # the Collection Show page touches during `handle_params` and via async
@@ -20,23 +21,23 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
     release = ReleaseFixtures.release(:marbles)
     cover_data = Keyword.get(opts, :cover_data, marbles_cover_data())
 
-    Req.Test.stub(MusicBrainz.API, fn conn ->
+    Test.stub(MusicBrainz.API, fn conn ->
       cond do
         # Cover art archive returns raw image bytes
         conn.host == "coverartarchive.org" ->
           Plug.Conn.send_resp(conn, 200, cover_data)
 
         match?([_, _, "release-group", ^release_group_id], conn.path_info) ->
-          Req.Test.json(conn, release_group)
+          Test.json(conn, release_group)
 
         match?([_, _, "release"], conn.path_info) ->
-          Req.Test.json(conn, ReleaseGroup.release_group_releases(:marbles))
+          Test.json(conn, ReleaseGroup.release_group_releases(:marbles))
 
         match?([_, _, "release", _], conn.path_info) ->
-          Req.Test.json(conn, release)
+          Test.json(conn, release)
 
         true ->
-          Req.Test.json(conn, %{})
+          Test.json(conn, %{})
       end
     end)
   end
@@ -58,13 +59,13 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
       release_group_id = record.musicbrainz_id
 
       # Initial page load needs a valid response, then the refresh request fails.
-      Req.Test.stub(MusicBrainz.API, fn conn ->
+      Test.stub(MusicBrainz.API, fn conn ->
         case conn.path_info do
           [_, _, "release-group", ^release_group_id] ->
-            Req.Test.transport_error(conn, :timeout)
+            Test.transport_error(conn, :timeout)
 
           _ ->
-            Req.Test.json(conn, %{})
+            Test.json(conn, %{})
         end
       end)
 
@@ -94,16 +95,16 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
       release_group_id = record.musicbrainz_id
       release_group = ReleaseGroup.release_group(:marbles)
 
-      Req.Test.stub(MusicBrainz.API, fn conn ->
+      Test.stub(MusicBrainz.API, fn conn ->
         cond do
           conn.host == "coverartarchive.org" ->
-            Req.Test.transport_error(conn, :timeout)
+            Test.transport_error(conn, :timeout)
 
           match?([_, _, "release-group", ^release_group_id], conn.path_info) ->
-            Req.Test.json(conn, release_group)
+            Test.json(conn, release_group)
 
           true ->
-            Req.Test.json(conn, %{})
+            Test.json(conn, %{})
         end
       end)
 

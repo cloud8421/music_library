@@ -27,6 +27,7 @@
           {ExSlop.Check.Readability.ObviousComment, []},
           {ExSlop.Check.Readability.StepComment, []},
           {ExSlop.Check.Readability.NarratorComment, []},
+          {ExSlop.Check.Readability.UnaliasedModuleUse, []},
           {Credo.Check.Refactor.Nesting, max_nesting: 3},
           {Credo.Check.Readability.ModuleDoc,
            ignore_names: [
