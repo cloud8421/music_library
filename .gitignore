@@ -48,3 +48,6 @@ npm-debug.log
 /.mcp.json
 /.claude/audit
 /.claude/reviews
+
+# Superpowers brainstorming mockups
+/.superpowers/
