@@ -83,7 +83,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
         |> visit(~p"/collection/#{record.id}")
         |> assert_has("button", "Show Tracks")
         |> unwrap(&render_async/1)
-        |> assert_has("a", "Connect your Last.fm account")
+        |> assert_has("a", "Connect Last.fm")
 
       release =
         MusicBrainz.Release.from_api_response(release_response)

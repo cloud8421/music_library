@@ -466,7 +466,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
                 type="button"
                 phx-click={JS.push("set_current_date", value: %{"current_date" => Date.utc_today()})}
               >
-                Today
+                {gettext("Today")}
               </.button>
             </:outer_suffix>
           </.date_picker>

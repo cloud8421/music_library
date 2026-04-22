@@ -551,7 +551,6 @@ msgstr ""
 msgid "Albums"
 msgstr ""
 
-#: lib/music_library_web/components/release.ex
 #: lib/music_library_web/live/scrobble_live/show.ex
 #: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format
@@ -655,7 +654,6 @@ msgstr ""
 msgid "Release scrobbled successfully"
 msgstr ""
 
-#: lib/music_library_web/components/release.ex
 #: lib/music_library_web/live/scrobble_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Connect your Last.fm account"
@@ -1325,6 +1323,7 @@ msgid "Scrobble Anything"
 msgstr ""
 
 #: lib/music_library_web/components/stats_components.ex
+#: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Today"
 msgstr ""
@@ -1464,6 +1463,7 @@ msgstr[1] ""
 msgid "Never"
 msgstr ""
 
+#: lib/music_library_web/components/release.ex
 #: lib/music_library_web/live/collection_live/index.ex
 #: lib/music_library_web/live/wishlist_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
@@ -2520,3 +2520,42 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Scan barcodes to add records."
 msgstr ""
+
+#: lib/music_library_web/components/release.ex
+#, elixir-autogen, elixir-format
+msgid "%{count} track selected"
+msgid_plural "%{count} tracks selected"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/music_library_web/components/release.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Connect Last.fm"
+msgstr ""
+
+#: lib/music_library_web/components/release.ex
+#, elixir-autogen, elixir-format
+msgid "Finished at"
+msgstr ""
+
+#: lib/music_library_web/components/release.ex
+#, elixir-autogen, elixir-format
+msgid "More actions"
+msgstr ""
+
+#: lib/music_library_web/components/release.ex
+#, elixir-autogen, elixir-format
+msgid "Now"
+msgstr ""
+
+#: lib/music_library_web/components/release.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Scrobble selected"
+msgstr ""
+
+#: lib/music_library_web/components/release.ex
+#, elixir-autogen, elixir-format
+msgid "across %{count} disc"
+msgid_plural "across %{count} discs"
+msgstr[0] ""
+msgstr[1] ""

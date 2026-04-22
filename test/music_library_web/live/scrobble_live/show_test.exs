@@ -112,6 +112,23 @@ defmodule MusicLibraryWeb.ScrobbleLive.ShowTest do
       |> assert_has("#toast-group", "Disc scrobbled successfully")
     end
 
+    test "scrobble single medium still works with tracks selected elsewhere", %{conn: conn} do
+      track_id = first_track_id()
+      session = visit(conn, ~p"/scrobble/#{@release_id}")
+
+      session
+      |> unwrap(fn view ->
+        # Select a track first — AC#3 regression: medium scrobble must not be
+        # blocked just because something is ticked.
+        view
+        |> element("#scrobble-release-form")
+        |> render_change(%{"release" => %{"selected_tracks" => [track_id]}})
+
+        render_click(view, "scrobble_medium", %{"number" => "1"})
+      end)
+      |> assert_has("#toast-group", "Disc scrobbled successfully")
+    end
+
     test "toggle track on and off changes button label", %{conn: conn} do
       track_id = first_track_id()
 
