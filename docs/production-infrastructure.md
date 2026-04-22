@@ -25,9 +25,9 @@ push via GitHub Actions.
 
 The Docker image is a multi-stage build:
 
-1. **Builder** — `hexpm/elixir:1.20.0-rc.4-erlang-28.4.2-debian-trixie-20260406-slim` with
+1. **Builder** — `hexpm/elixir:1.20.0-rc.4-erlang-28.4.3-debian-trixie-20260421-slim` with
    Node.js 25, compiles deps, builds assets (`mix assets.deploy`), generates an OTP release.
-2. **Runner** — `debian:trixie-20260406-slim` with minimal runtime deps (`libstdc++6`,
+2. **Runner** — `debian:trixie-20260421-slim` with minimal runtime deps (`libstdc++6`,
    `openssl`, `libncurses6`, `ca-certificates`). Runs as unprivileged `nobody` user.
 
 Fluxon UI (licensed dependency) is fetched during build via Docker build secrets
@@ -61,18 +61,24 @@ Configured inline in `compose.yaml`. Runs as a separate Docker Compose service
 |---------|-------|
 | S3 endpoint | `https://nbg1.your-objectstorage.com` |
 | Bucket | `ffmusiclibrary` |
-| Sync interval | 24 hours |
-| Snapshot interval | 24 hours |
-| Retention | 168 hours (1 week) |
+| Sync interval | 60 minutes |
+| Retention | 672 hours (28 days) |
 | Healthcheck | `litestream databases` every 30s (timeout 10s, 3 retries) |
 
 Credentials via environment: `LITESTREAM_ACCESS_KEY_ID`, `LITESTREAM_SECRET_ACCESS_KEY`.
 
 ### Manual backup
 
-`mise run prod:backup` pulls the production database via `rsync` and saves it locally
-as `data/music_library_prod_<timestamp>.db`. Old backups can be cleaned with
-`mise run prod:prune-backups`.
+Two manual options are available:
+
+- `mise run prod:backup` — takes an atomic snapshot of the live database on the
+  production server using `sqlite3 .backup`, then rsyncs it locally as
+  `data/music_library_prod_<timestamp>.db`. Safe under concurrent writes.
+- `mise run prod:litestream-backup` — restores the production database locally from
+  the S3 Litestream replica. Requires `LITESTREAM_ACCESS_KEY_ID` and
+  `LITESTREAM_SECRET_ACCESS_KEY`.
+
+Old backups can be cleaned with `mise run prod:prune-backups`.
 
 ---
 
