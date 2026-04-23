@@ -1,7 +1,7 @@
 defmodule MusicLibraryWeb.ScrobbleLive.Show do
   use MusicLibraryWeb, :live_view
 
-  import(MusicLibraryWeb.Components.Release, only: [medium: 1, scrobble_button_label: 1])
+  import(MusicLibraryWeb.Components.Release, only: [medium: 1])
   import MusicLibraryWeb.RecordComponents, only: [country_label: 1]
 
   alias MusicLibrary.ScrobbleActivity
@@ -103,7 +103,11 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
                       else: "scrobble_release"
                   }
                 >
-                  <span class="sr-only">{scrobble_button_label(@selected_tracks)}</span>
+                  <span class="sr-only">
+                    {if MapSet.size(@selected_tracks) > 0,
+                      do: gettext("Scrobble selected tracks"),
+                      else: gettext("Scrobble release")}
+                  </span>
                   <.icon name="hero-play" class="icon" aria-hidden="true" data-slot="icon" />
                 </.button>
               </div>
@@ -117,6 +121,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Show do
                 selected_tracks={@selected_tracks}
                 media_count={MusicBrainz.Release.media_count(@release)}
                 myself={nil}
+                show_print?={false}
               />
             </.form>
           </div>

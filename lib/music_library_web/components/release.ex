@@ -20,16 +20,14 @@ defmodule MusicLibraryWeb.Components.Release do
      |> assign(:release_with_tracks, AsyncResult.loading())
      |> assign(:already_scrobbled, false)
      |> assign(:selected_tracks, MapSet.new())
-     |> assign(:timezone, MusicLibrary.default_timezone())
-     |> assign(:finished_at, nil)
-     |> assign(:form, to_form(%{"finished_at" => nil}, as: :release))
      |> assign(:pending_form_params, nil)}
   end
 
   @impl true
-  def update(%{record: record} = assigns, socket) do
+  def update(%{release_id: release_id} = assigns, socket) do
     socket = assign(socket, assigns)
-    current_time = DateTime.utc_now() |> DateTime.shift_zone!(socket.assigns.timezone)
+    timezone = socket.assigns.timezone
+    current_time = DateTime.utc_now() |> DateTime.shift_zone!(timezone)
 
     {:ok,
      socket
@@ -37,7 +35,7 @@ defmodule MusicLibraryWeb.Components.Release do
      |> assign(:form, to_form(%{"finished_at" => DateTime.to_naive(current_time)}, as: :release))
      |> assign(:release_with_tracks, AsyncResult.loading())
      |> start_async(:release_with_tracks, fn ->
-       load_release_with_tracks(record.selected_release_id)
+       load_release_with_tracks(release_id)
      end)}
   end
 
@@ -116,156 +114,149 @@ defmodule MusicLibraryWeb.Components.Release do
   def render(assigns) do
     ~H"""
     <div>
-      <.sheet
-        :if={@record.selected_release_id}
-        id={@sheet_id}
-        placement="right"
-        class="flex min-w-xs flex-col overflow-hidden p-0 sm:min-w-sm"
+      <.form
+        for={@form}
+        id={"#{@sheet_id}-form"}
+        phx-target={@myself}
+        phx-change="validate"
+        phx-auto-recover="recover_form"
+        class="flex min-h-0 flex-1 flex-col"
       >
-        <.form
-          for={@form}
-          id={"#{@sheet_id}-form"}
-          phx-target={@myself}
-          phx-change="validate"
-          phx-auto-recover="recover_form"
-          class="flex min-h-0 flex-1 flex-col"
-        >
-          <div class="min-h-0 flex-1 overflow-y-auto px-6 pt-6 pb-4">
-            <input type="hidden" name="release[selected_tracks][]" value="" />
-            <input type="hidden" name="release[toggle_medium][]" value="" />
+        <div class="min-h-0 flex-1 overflow-y-auto px-6 pt-6 pb-4">
+          <input type="hidden" name="release[selected_tracks][]" value="" />
+          <input type="hidden" name="release[toggle_medium][]" value="" />
 
-            <div class="mt-6 flex flex-wrap items-start justify-between gap-3">
-              <div class="min-w-0 flex-1">
-                <h2 class="truncate text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-                  {@record.title}
-                </h2>
-                <p
-                  :if={artist_names = header_subtitle(@record)}
-                  class="truncate text-xs text-zinc-500 dark:text-zinc-400"
-                >
-                  {artist_names}
-                </p>
-              </div>
-              <div class="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto">
-                <.date_time_picker
-                  :if={@can_scrobble?}
-                  field={@form[:finished_at]}
-                  size="sm"
-                  display_format="%b %-d, %H:%M"
-                  time_format="24"
-                  placeholder={gettext("Now")}
-                  class="flex-1 sm:flex-initial"
-                >
-                  <:inner_prefix class="pl-2 text-zinc-500 dark:text-zinc-400">
-                    {gettext("Finished at")}
-                  </:inner_prefix>
-                  <:outer_suffix class="pr-2">
-                    <.button
-                      size="sm"
-                      type="button"
-                      phx-click="reset_to_now"
-                      phx-target={@myself}
-                    >
-                      {gettext("Now")}
-                    </.button>
-                  </:outer_suffix>
-                </.date_time_picker>
-                <.button
-                  :if={@can_scrobble? && @release_with_tracks.ok?}
-                  type="button"
-                  variant="solid"
-                  size="sm"
-                  disabled={@already_scrobbled}
-                  phx-click="scrobble_release"
-                  phx-target={@myself}
-                  phx-disable-with={gettext("Scrobbling...")}
-                >
-                  <.icon name="hero-play" class="icon" aria-hidden="true" data-slot="icon" />
-                  <span class="hidden sm:inline">{gettext("Scrobble release")}</span>
-                  <span class="sm:hidden">{gettext("Release")}</span>
-                </.button>
-                <.dropdown id={"#{@sheet_id}-release-actions"} placement="bottom-end">
-                  <:toggle>
-                    <.button type="button" variant="outline" size="sm">
-                      <span class="sr-only">{gettext("More actions")}</span>
-                      <.icon
-                        name="hero-ellipsis-vertical"
-                        class="icon"
-                        aria-hidden="true"
-                        data-slot="icon"
-                      />
-                    </.button>
-                  </:toggle>
-                  <.focus_wrap id={"#{@sheet_id}-release-actions-focus-wrap"}>
-                    <.dropdown_link
-                      :if={@release_with_tracks.ok?}
-                      phx-click="print_tracklist"
-                      phx-target={@myself}
-                    >
-                      <.icon name="hero-printer" class="icon" aria-hidden="true" data-slot="icon" />
-                      {gettext("Print tracklist")}
-                    </.dropdown_link>
-                    <.dropdown_link :if={!@can_scrobble?} href={LastFm.auth_url()}>
-                      <.icon name="hero-link" class="icon" aria-hidden="true" data-slot="icon" />
-                      {gettext("Connect Last.fm")}
-                    </.dropdown_link>
-                  </.focus_wrap>
-                </.dropdown>
-              </div>
+          <div class="mt-6 flex flex-wrap items-start justify-between gap-3">
+            <div class="min-w-0 flex-1">
+              <h2 class="truncate text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                {header_title(@release_with_tracks)}
+              </h2>
+              <p
+                :if={artist_names = header_subtitle(@release_with_tracks)}
+                class="truncate text-xs text-zinc-500 dark:text-zinc-400"
+              >
+                {artist_names}
+              </p>
             </div>
-
-            <div :if={@release_with_tracks} class="mt-4 space-y-4">
-              <.async_result :let={release_with_tracks} assign={@release_with_tracks}>
-                <:loading>
-                  <div class="mt-48 flex items-center justify-center">
-                    <span class="sr-only">{gettext("Loading release with tracks")}</span>
-                    <.loading />
-                  </div>
-                </:loading>
-                <:failed :let={_failure}>
-                  <div class="mt-4 text-sm/5 text-zinc-500 dark:text-zinc-400">
+            <div class="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto">
+              <.date_time_picker
+                :if={@can_scrobble?}
+                field={@form[:finished_at]}
+                size="sm"
+                display_format="%b %-d, %H:%M"
+                time_format="24"
+                placeholder={gettext("Now")}
+                class="flex-1 sm:flex-initial"
+              >
+                <:inner_prefix class="pl-2 text-zinc-500 dark:text-zinc-400">
+                  {gettext("Finished at")}
+                </:inner_prefix>
+                <:outer_suffix class="pr-2">
+                  <.button
+                    size="sm"
+                    type="button"
+                    phx-click="reset_to_now"
+                    phx-target={@myself}
+                  >
+                    {gettext("Now")}
+                  </.button>
+                </:outer_suffix>
+              </.date_time_picker>
+              <.button
+                :if={@can_scrobble? && @release_with_tracks.ok?}
+                type="button"
+                variant="solid"
+                size="sm"
+                disabled={@already_scrobbled}
+                phx-click="scrobble_release"
+                phx-target={@myself}
+                phx-disable-with={gettext("Scrobbling...")}
+              >
+                <.icon name="hero-play" class="icon" aria-hidden="true" data-slot="icon" />
+                <span class="hidden sm:inline">{gettext("Scrobble release")}</span>
+                <span class="sm:hidden">{gettext("Release")}</span>
+              </.button>
+              <.dropdown id={"#{@sheet_id}-release-actions"} placement="bottom-end">
+                <:toggle>
+                  <.button type="button" variant="outline" size="sm">
+                    <span class="sr-only">{gettext("More actions")}</span>
                     <.icon
-                      name="hero-exclamation-triangle"
-                      class="size-5"
+                      name="hero-ellipsis-vertical"
+                      class="icon"
                       aria-hidden="true"
                       data-slot="icon"
                     />
-                    {gettext("Error loading tracks")}
-                    <.button
-                      type="button"
-                      variant="ghost"
-                      size="xs"
-                      phx-click={JS.push("load_release_tracks", target: @myself)}
-                      class="ml-2 cursor-pointer"
-                    >
-                      {gettext("Retry")}
-                    </.button>
-                  </div>
-                </:failed>
-                <.medium
-                  :for={medium <- release_with_tracks.media}
-                  can_scrobble?={@can_scrobble?}
-                  already_scrobbled={@already_scrobbled}
-                  medium={medium}
-                  release_artists={release_with_tracks.artists}
-                  media_count={MusicBrainz.Release.media_count(release_with_tracks)}
-                  selected_tracks={@selected_tracks}
-                  myself={@myself}
-                  record={@record}
-                />
-              </.async_result>
+                  </.button>
+                </:toggle>
+                <.focus_wrap id={"#{@sheet_id}-release-actions-focus-wrap"}>
+                  <.dropdown_link
+                    :if={@show_print? && @release_with_tracks.ok?}
+                    phx-click="print_tracklist"
+                    phx-target={@myself}
+                  >
+                    <.icon name="hero-printer" class="icon" aria-hidden="true" data-slot="icon" />
+                    {gettext("Print tracklist")}
+                  </.dropdown_link>
+                  <.dropdown_link :if={!@can_scrobble?} href={LastFm.auth_url()}>
+                    <.icon name="hero-link" class="icon" aria-hidden="true" data-slot="icon" />
+                    {gettext("Connect Last.fm")}
+                  </.dropdown_link>
+                </.focus_wrap>
+              </.dropdown>
             </div>
           </div>
 
-          <.selection_bar
-            :if={@can_scrobble? && @release_with_tracks.ok? && MapSet.size(@selected_tracks) > 0}
-            release={@release_with_tracks.result}
-            selected_tracks={@selected_tracks}
-            already_scrobbled={@already_scrobbled}
-            myself={@myself}
-          />
-        </.form>
-      </.sheet>
+          <div :if={@release_with_tracks} class="mt-4 space-y-4">
+            <.async_result :let={release_with_tracks} assign={@release_with_tracks}>
+              <:loading>
+                <div class="mt-48 flex items-center justify-center">
+                  <span class="sr-only">{gettext("Loading release with tracks")}</span>
+                  <.loading />
+                </div>
+              </:loading>
+              <:failed :let={_failure}>
+                <div class="mt-4 text-sm/5 text-zinc-500 dark:text-zinc-400">
+                  <.icon
+                    name="hero-exclamation-triangle"
+                    class="size-5"
+                    aria-hidden="true"
+                    data-slot="icon"
+                  />
+                  {gettext("Error loading tracks")}
+                  <.button
+                    type="button"
+                    variant="ghost"
+                    size="xs"
+                    phx-click={JS.push("load_release_tracks", target: @myself)}
+                    class="ml-2 cursor-pointer"
+                  >
+                    {gettext("Retry")}
+                  </.button>
+                </div>
+              </:failed>
+              <.medium
+                :for={medium <- release_with_tracks.media}
+                can_scrobble?={@can_scrobble?}
+                already_scrobbled={@already_scrobbled}
+                medium={medium}
+                release_artists={release_with_tracks.artists}
+                media_count={MusicBrainz.Release.media_count(release_with_tracks)}
+                selected_tracks={@selected_tracks}
+                myself={@myself}
+                show_print?={@show_print?}
+              />
+            </.async_result>
+          </div>
+        </div>
+
+        <.selection_bar
+          :if={@can_scrobble? && @release_with_tracks.ok? && MapSet.size(@selected_tracks) > 0}
+          release={@release_with_tracks.result}
+          selected_tracks={@selected_tracks}
+          already_scrobbled={@already_scrobbled}
+          myself={@myself}
+        />
+      </.form>
     </div>
     """
   end
@@ -277,7 +268,7 @@ defmodule MusicLibraryWeb.Components.Release do
   attr :already_scrobbled, :boolean, required: true
   attr :selected_tracks, :any, required: true
   attr :myself, :any, required: true
-  attr :record, :any, default: nil
+  attr :show_print?, :boolean, required: true
 
   def medium(assigns) do
     ~H"""
@@ -317,7 +308,7 @@ defmodule MusicLibraryWeb.Components.Release do
           <span class="sr-only sm:hidden">{medium_scrobble_label(@medium.format)}</span>
         </.button>
         <.dropdown
-          :if={@record}
+          :if={@show_print?}
           id={"medium-actions-#{@medium.number}"}
           placement="bottom-end"
         >
@@ -435,7 +426,7 @@ defmodule MusicLibraryWeb.Components.Release do
       )
 
     ~H"""
-    <div class="flex flex-wrap items-center justify-between gap-3 border-t border-zinc-200 bg-white px-6 py-3 shadow-[0_-4px_14px_rgba(0,0,0,0.06)] dark:border-zinc-700 dark:bg-zinc-900">
+    <div class="sticky bottom-0 z-10 flex flex-wrap items-center justify-between gap-3 border-t border-zinc-200 bg-white px-6 py-3 shadow-[0_-4px_14px_rgba(0,0,0,0.06)] dark:border-zinc-700 dark:bg-zinc-900">
       <div class="min-w-0 flex-1 leading-tight">
         <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
           {ngettext("%{count} track selected", "%{count} tracks selected", @count, count: @count)}
@@ -618,11 +609,10 @@ defmodule MusicLibraryWeb.Components.Release do
 
   def handle_event("print_tracklist", _params, socket) when release_loaded?(socket.assigns) do
     release = socket.assigns.release_with_tracks.result
-    record = socket.assigns.record
 
     case TracklistPdf.generate(release) do
       {:ok, pdf_binary} ->
-        filename = "#{record.title} - Tracklist.pdf"
+        filename = "#{release.title} - Tracklist.pdf"
 
         {:noreply,
          push_event(socket, "music_library:download", %{
@@ -651,12 +641,11 @@ defmodule MusicLibraryWeb.Components.Release do
   def handle_event("print_medium_tracklist", %{"medium-number" => number}, socket)
       when release_loaded?(socket.assigns) do
     release = socket.assigns.release_with_tracks.result
-    record = socket.assigns.record
     {number, ""} = Integer.parse(number)
 
     case TracklistPdf.generate_medium(release, number) do
       {:ok, pdf_binary} ->
-        filename = "#{record.title} - Disc #{number} - Tracklist.pdf"
+        filename = "#{release.title} - Disc #{number} - Tracklist.pdf"
 
         {:noreply,
          push_event(socket, "music_library:download", %{
@@ -683,7 +672,7 @@ defmodule MusicLibraryWeb.Components.Release do
   end
 
   def handle_event("load_release_tracks", _params, socket) do
-    selected_release_id = socket.assigns.record.selected_release_id
+    selected_release_id = socket.assigns.release_id
 
     {:noreply,
      socket
@@ -753,15 +742,6 @@ defmodule MusicLibraryWeb.Components.Release do
     end)
   end
 
-  @spec scrobble_button_label(MapSet.t()) :: String.t()
-  def scrobble_button_label(selected_tracks) do
-    if MapSet.size(selected_tracks) > 0 do
-      gettext("Scrobble selected tracks")
-    else
-      gettext("Scrobble release")
-    end
-  end
-
   defp medium_duration(medium) do
     medium
     |> MusicBrainz.Release.medium_duration()
@@ -776,16 +756,28 @@ defmodule MusicLibraryWeb.Components.Release do
     end
   end
 
-  defp header_subtitle(%{artists: artists}) when is_list(artists) and artists != [] do
-    artists
-    |> Enum.map_join(", ", & &1.name)
-    |> case do
-      "" -> nil
-      names -> names
+  @spec header_title(AsyncResult.t() | term()) :: String.t()
+  defp header_title(%AsyncResult{ok?: true, result: release}), do: release.title
+  defp header_title(_), do: ""
+
+  @spec header_subtitle(AsyncResult.t() | term()) :: String.t() | nil
+  defp header_subtitle(%AsyncResult{ok?: true, result: release}) do
+    case release.artists do
+      [] ->
+        nil
+
+      artists ->
+        artists
+        |> Enum.map_join(fn artist -> artist.name <> (artist.joinphrase || "") end)
+        |> String.trim()
+        |> case do
+          "" -> nil
+          names -> names
+        end
     end
   end
 
-  defp header_subtitle(_record), do: nil
+  defp header_subtitle(_), do: nil
 
   @spec selected_tracks_summary(MusicBrainz.Release.t(), MapSet.t()) ::
           {non_neg_integer(), non_neg_integer(), non_neg_integer()}
