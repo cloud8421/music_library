@@ -1251,12 +1251,6 @@ msgid "90d"
 msgstr ""
 
 #: lib/music_library_web/live/scrobble_live/index.ex
-#: lib/music_library_web/live/scrobble_live/release_group_show.ex
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Scrobble"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Failed to search for release groups"
 msgstr ""
@@ -1294,6 +1288,8 @@ msgid "Scrobble side"
 msgstr ""
 
 #: lib/music_library_web/components/layouts/app.html.heex
+#: lib/music_library_web/live/scrobble_live/index.ex
+#: lib/music_library_web/live/scrobble_live/release_group_show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Scrobble Anything"
 msgstr ""
@@ -2531,4 +2527,9 @@ msgstr ""
 #: lib/music_library_web/live/scrobble_live/release_show.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Scrobble Release"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/release_group_show.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Release Group"
 msgstr ""

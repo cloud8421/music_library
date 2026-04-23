@@ -107,8 +107,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.ReleaseGroupShow do
      assign(socket,
        current_section: :scrobble,
        release_group_data: AsyncResult.loading(),
-       rg_id: nil,
-       page_title: gettext("Scrobble")
+       rg_id: nil
      )}
   end
 
@@ -124,11 +123,12 @@ defmodule MusicLibraryWeb.ScrobbleLive.ReleaseGroupShow do
   @impl true
   def handle_async(:release_group_data, {:ok, {:ok, data}}, socket) do
     {:noreply,
-     assign(
-       socket,
+     socket
+     |> assign(
        :release_group_data,
        AsyncResult.ok(socket.assigns.release_group_data, data)
-     )}
+     )
+     |> assign(:page_title, page_title(data.release_group))}
   end
 
   def handle_async(:release_group_data, {:ok, {:error, reason}}, socket) do
@@ -165,5 +165,20 @@ defmodule MusicLibraryWeb.ScrobbleLive.ReleaseGroupShow do
 
   defp parse_release_group(_) do
     {:error, :invalid_release_group_response}
+  end
+
+  defp page_title(release_group) do
+    Enum.join(
+      [
+        release_group.artists,
+        "-",
+        release_group.title,
+        "·",
+        gettext("Release Group"),
+        "·",
+        gettext("Scrobble Anything")
+      ],
+      " "
+    )
   end
 end

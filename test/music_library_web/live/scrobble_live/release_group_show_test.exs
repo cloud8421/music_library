@@ -51,6 +51,14 @@ defmodule MusicLibraryWeb.ScrobbleLive.ReleaseGroupShowTest do
       |> visit(~p"/scrobble/#{@rg_id}")
       |> assert_has("a[href='/scrobble']", text: "Back to search")
     end
+
+    test "sets the page title from the loaded release group", %{conn: conn} do
+      {:ok, view, _html} = Phoenix.LiveViewTest.live(conn, ~p"/scrobble/#{@rg_id}")
+      render_async(view)
+
+      assert Phoenix.LiveViewTest.page_title(view) ==
+               "Marillion - Marbles · Release Group · Scrobble Anything"
+    end
   end
 
   describe "fetch failure" do

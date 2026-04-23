@@ -116,7 +116,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
 
     socket =
       socket
-      |> assign(:page_title, gettext("Scrobble"))
+      |> assign(:page_title, gettext("Scrobble Anything"))
       |> assign(:search_query, query)
 
     if String.trim(query) != "" do
