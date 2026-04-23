@@ -36,7 +36,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.ReleaseShow do
         sheet_id="scrobble-release"
         module={MusicLibraryWeb.Components.Release}
         release_id={@release_id}
-        show_print?={true}
+        show_print?={false}
         timezone={@timezone}
       />
     </Layouts.app>
