@@ -21,7 +21,7 @@ defmodule MusicLibraryWeb.StatsLive.TopByPeriod do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
+    <div id={@id}>
       <.tabs>
         <.section>
           <:title>{@title}</:title>
