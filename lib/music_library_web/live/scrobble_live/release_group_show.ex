@@ -69,7 +69,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.ReleaseGroupShow do
         <ul class="mt-6 divide-y divide-zinc-100 dark:divide-slate-300/30">
           <li :for={release <- data.releases}>
             <.link
-              navigate={"/scrobble/#{@rg_id}/releases/#{release.id}"}
+              navigate={~p"/scrobble/#{@rg_id}/releases/#{release.id}"}
               class="flex items-center gap-x-4 px-4 py-5 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-700"
             >
               <img
