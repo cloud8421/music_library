@@ -1,6 +1,6 @@
 defmodule MusicLibrary.Records.TracklistPdf do
   @moduledoc """
-  Generates 120mm x 120mm PDF tracklists from record and release data via Typst.
+  Generates 120mm x 120mm PDF tracklists from release data via Typst.
   """
 
   alias MusicBrainz.Release
@@ -21,23 +21,21 @@ defmodule MusicLibrary.Records.TracklistPdf do
   # including the header area consumed by artist name and album title.
   @capacities %{8 => 35, 7 => 38, 6 => 45, 5 => 53}
 
-  @spec generate(MusicLibrary.Records.Record.t(), Release.t()) ::
-          {:ok, binary()} | {:error, term()}
-  def generate(record, release) do
-    markup = build_markup(record, release.media)
+  @spec generate(Release.t()) :: {:ok, binary()} | {:error, term()}
+  def generate(release) do
+    markup = build_markup(release, release.media)
     Typst.render_to_pdf(markup)
   end
 
-  @spec generate_medium(MusicLibrary.Records.Record.t(), Release.t(), integer()) ::
-          {:ok, binary()} | {:error, term()}
-  def generate_medium(record, release, medium_number) do
+  @spec generate_medium(Release.t(), integer()) :: {:ok, binary()} | {:error, term()}
+  def generate_medium(release, medium_number) do
     case Release.get_medium(release, medium_number) do
       nil -> {:error, :medium_not_found}
-      medium -> generate(record, %{release | media: [medium]})
+      medium -> generate(%{release | media: [medium]})
     end
   end
 
-  defp build_markup(record, media) do
+  defp build_markup(release, media) do
     media_count = length(media)
     track_count = Enum.sum(Enum.map(media, &length(&1.tracks)))
     header_count = if media_count > 1, do: media_count, else: 0
@@ -54,9 +52,9 @@ defmodule MusicLibrary.Records.TracklistPdf do
 
     #place(top + center, scope: "parent", float: true)[
       #align(center)[
-        #text(size: 10pt, weight: "bold")[#{Format.escape(artist_names(record))}]
+        #text(size: 10pt, weight: "bold")[#{Format.escape(artist_names(release))}]
         #linebreak()
-        #text(size: 9pt, style: "italic")[#{Format.escape(record.title)}]
+        #text(size: 9pt, style: "italic")[#{Format.escape(release.title)}]
       ]
       #v(3mm)
     ]
@@ -138,8 +136,8 @@ defmodule MusicLibrary.Records.TracklistPdf do
     Map.fetch!(@capacities, font_size) * columns
   end
 
-  defp artist_names(record) do
-    Enum.map_join(record.artists, fn artist ->
+  defp artist_names(release) do
+    Enum.map_join(release.artists, fn artist ->
       artist.name <> (artist.joinphrase || "")
     end)
   end

@@ -620,7 +620,7 @@ defmodule MusicLibraryWeb.Components.Release do
     release = socket.assigns.release_with_tracks.result
     record = socket.assigns.record
 
-    case TracklistPdf.generate(record, release) do
+    case TracklistPdf.generate(release) do
       {:ok, pdf_binary} ->
         filename = "#{record.title} - Tracklist.pdf"
 
@@ -654,7 +654,7 @@ defmodule MusicLibraryWeb.Components.Release do
     record = socket.assigns.record
     {number, ""} = Integer.parse(number)
 
-    case TracklistPdf.generate_medium(record, release, number) do
+    case TracklistPdf.generate_medium(release, number) do
       {:ok, pdf_binary} ->
         filename = "#{record.title} - Disc #{number} - Tracklist.pdf"
 
