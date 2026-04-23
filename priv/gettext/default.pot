@@ -1266,6 +1266,7 @@ msgid "90d"
 msgstr ""
 
 #: lib/music_library_web/live/scrobble_live/index.ex
+#: lib/music_library_web/live/scrobble_live/release_group_show.ex
 #, elixir-autogen, elixir-format
 msgid "Scrobble"
 msgstr ""
@@ -1286,6 +1287,7 @@ msgid "Release Groups"
 msgstr ""
 
 #: lib/music_library_web/live/scrobble_live/index.ex
+#: lib/music_library_web/live/scrobble_live/release_group_show.ex
 #: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "1 disc"
@@ -1719,6 +1721,7 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
+#: lib/music_library_web/live/scrobble_live/release_group_show.ex
 #: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Back to search"
@@ -2560,3 +2563,20 @@ msgid "across %{count} disc"
 msgid_plural "across %{count} discs"
 msgstr[0] ""
 msgstr[1] ""
+
+#: lib/music_library_web/live/scrobble_live/release_group_show.ex
+#, elixir-autogen, elixir-format
+msgid "%{count} release"
+msgid_plural "%{count} releases"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/music_library_web/live/scrobble_live/release_group_show.ex
+#, elixir-autogen, elixir-format
+msgid "Could not load release group"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/release_group_show.ex
+#, elixir-autogen, elixir-format
+msgid "Error loading release group"
+msgstr ""

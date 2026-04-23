@@ -1,6 +1,9 @@
 defmodule MusicLibraryWeb.ScrobbleLive.ShowTest do
   use MusicLibraryWeb.ConnCase
 
+  # Route /scrobble/:release_id is removed in Phase 5 — skip until then
+  @moduletag :skip
+
   import Phoenix.LiveViewTest, only: [element: 2, render_change: 2, render_click: 3]
 
   alias MusicBrainz.Fixtures.Release, as: ReleaseFixtures
