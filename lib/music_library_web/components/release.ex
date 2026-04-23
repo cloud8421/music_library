@@ -113,7 +113,7 @@ defmodule MusicLibraryWeb.Components.Release do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="flex h-full min-h-0 flex-1 flex-col">
       <.form
         for={@form}
         id={"#{@sheet_id}-form"}
