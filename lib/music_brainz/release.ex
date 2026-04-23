@@ -43,12 +43,13 @@ defmodule MusicBrainz.Release do
     @moduledoc false
 
     @enforce_keys [:id, :name, :sort_name]
-    defstruct [:id, :name, :sort_name]
+    defstruct [:id, :name, :sort_name, :joinphrase]
 
     @type t :: %__MODULE__{
             id: String.t(),
             name: String.t(),
-            sort_name: String.t()
+            sort_name: String.t(),
+            joinphrase: String.t() | nil
           }
   end
 
@@ -167,7 +168,8 @@ defmodule MusicBrainz.Release do
       %Artist{
         id: a["artist"]["id"],
         name: a["artist"]["name"],
-        sort_name: a["artist"]["sort-name"]
+        sort_name: a["artist"]["sort-name"],
+        joinphrase: a["joinphrase"]
       }
     end)
   end
