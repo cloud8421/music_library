@@ -257,8 +257,9 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `ArtistLive.Show` | `/artists/:musicbrainz_id` | Artist bio, discography, similar artists |
 | `RecordSetLive.Index` | `/record-sets` | Browse/manage curated record sets |
 | `RecordSetLive.Show` | `/record-sets/:id` | Set detail with reorderable items |
-| `ScrobbleLive.Index` | `/scrobble` | Search MusicBrainz releases to scrobble |
-| `ScrobbleLive.Show` | `/scrobble/:release_id` | Select tracks and scrobble |
+| `ScrobbleLive.Index` | `/scrobble` | Search MusicBrainz release groups to scrobble |
+| `ScrobbleLive.ReleaseGroupShow` | `/scrobble/:rg_id` | List releases within a release group |
+| `ScrobbleLive.ReleaseShow` | `/scrobble/:rg_id/releases/:release_id` | Select tracks and scrobble (uses `Release` live_component) |
 | `ScrobbledTracksLive.Index` | `/scrobbled-tracks` | Browse/search Last.fm history |
 | `ScrobbleRulesLive.Index` | `/scrobble-rules` | Browse/search/sort scrobble remapping rules (paginated, 50 per page) |
 | `OnlineStoreTemplateLive.Index` | `/online-store-templates` | Manage store URL templates |
@@ -284,7 +285,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `Notes` | CollectionLive.Show, WishlistLive.Show, ArtistLive.Show | Markdown note rendering and editing |
 | `AddRecord` | CollectionLive.Index, WishlistLive.Index | MusicBrainz import interface |
 | `BarcodeScanner` | CollectionLive.Index | Barcode scanning UI (uses barcode-detector JS) |
-| `Release` | CollectionLive.Show, ScrobbleLive.Show | MusicBrainz release display with scrobble (form-based with auto-recovery) |
+| `Release` | CollectionLive.Show, ScrobbleLive.ReleaseShow | MusicBrainz release display with scrobble (form-based with auto-recovery) |
 
 ### Shared Component Modules (lib/music_library_web/components/)
 
