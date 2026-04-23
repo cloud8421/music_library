@@ -45,6 +45,8 @@ defmodule MusicLibraryWeb.Components.Release do
 
   @impl true
   def handle_async(:release_with_tracks, {:ok, {:ok, release}}, socket) do
+    notify_release_loaded(socket, release)
+
     socket =
       socket
       |> assign(
@@ -72,6 +74,13 @@ defmodule MusicLibraryWeb.Components.Release do
        :release_with_tracks,
        AsyncResult.failed(socket.assigns.release_with_tracks, {:exit, reason})
      )}
+  end
+
+  defp notify_release_loaded(socket, release) do
+    case socket.assigns[:on_release_loaded] do
+      nil -> :ok
+      tag -> send(self(), {tag, release})
+    end
   end
 
   defp apply_pending_form_params(socket) do

@@ -42,5 +42,15 @@ defmodule MusicLibraryWeb.ScrobbleLive.ReleaseShowTest do
       |> visit(~p"/scrobble/#{@rg_id}/releases/#{@release_id}")
       |> assert_has("a[href='/scrobble/#{@rg_id}']", text: "Back to releases")
     end
+
+    test "sets the page title once the release loads", %{conn: conn} do
+      {:ok, view, _html} =
+        Phoenix.LiveViewTest.live(conn, ~p"/scrobble/#{@rg_id}/releases/#{@release_id}")
+
+      render_async(view)
+
+      assert Phoenix.LiveViewTest.page_title(view) ==
+               "Marillion - Marbles · Release · Scrobble Anything"
+    end
   end
 end

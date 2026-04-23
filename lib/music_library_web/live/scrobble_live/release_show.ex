@@ -38,6 +38,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.ReleaseShow do
         release_id={@release_id}
         show_print?={false}
         timezone={@timezone}
+        on_release_loaded={:release_loaded}
       />
     </Layouts.app>
     """
@@ -61,5 +62,31 @@ defmodule MusicLibraryWeb.ScrobbleLive.ReleaseShow do
      socket
      |> assign(:rg_id, rg_id)
      |> assign(:release_id, release_id)}
+  end
+
+  @impl true
+  def handle_info({:release_loaded, release}, socket) do
+    {:noreply, assign(socket, :page_title, page_title(release))}
+  end
+
+  defp page_title(release) do
+    Enum.join(
+      [
+        artist_names(release),
+        "-",
+        release.title,
+        "·",
+        gettext("Release"),
+        "·",
+        gettext("Scrobble Anything")
+      ],
+      " "
+    )
+  end
+
+  defp artist_names(release) do
+    release.artists
+    |> Enum.map_join(fn artist -> artist.name <> (artist.joinphrase || "") end)
+    |> String.trim()
   end
 end
