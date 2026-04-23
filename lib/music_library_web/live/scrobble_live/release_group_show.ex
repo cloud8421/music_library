@@ -152,10 +152,18 @@ defmodule MusicLibraryWeb.ScrobbleLive.ReleaseGroupShow do
 
   defp load(rg_id) do
     with {:ok, raw_rg} <- MusicBrainz.get_release_group(rg_id),
-         release_group = ReleaseGroupSearchResult.from_api_response(raw_rg),
+         {:ok, release_group} <- parse_release_group(raw_rg),
          {:ok, %{"releases" => raw_releases}} <- MusicBrainz.get_releases(rg_id, limit: 50) do
       releases = Enum.map(raw_releases, &Release.from_api_response/1)
       {:ok, %{release_group: release_group, releases: releases}}
     end
+  end
+
+  defp parse_release_group(%{"id" => _, "artist-credit" => _} = raw) do
+    {:ok, ReleaseGroupSearchResult.from_api_response(raw)}
+  end
+
+  defp parse_release_group(_) do
+    {:error, :invalid_release_group_response}
   end
 end
