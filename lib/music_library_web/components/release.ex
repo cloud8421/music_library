@@ -176,7 +176,11 @@ defmodule MusicLibraryWeb.Components.Release do
                 <span class="hidden sm:inline">{gettext("Scrobble release")}</span>
                 <span class="sm:hidden">{gettext("Release")}</span>
               </.button>
-              <.dropdown id={"#{@sheet_id}-release-actions"} placement="bottom-end">
+              <.dropdown
+                :if={(@show_print? && @release_with_tracks.ok?) || !@can_scrobble?}
+                id={"#{@sheet_id}-release-actions"}
+                placement="bottom-end"
+              >
                 <:toggle>
                   <.button type="button" variant="outline" size="sm">
                     <span class="sr-only">{gettext("More actions")}</span>
