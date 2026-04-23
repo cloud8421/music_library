@@ -292,13 +292,21 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
       <.record_debug_sheet record={@record} embedding_text={@embedding_text} />
 
-      <.live_component
-        id="release-with-tracks"
-        sheet_id="release-with-tracks-sheet"
-        module={MusicLibraryWeb.Components.Release}
-        record={@record}
-        timezone={@timezone}
-      />
+      <.sheet
+        :if={@record.selected_release_id}
+        id="release-with-tracks-sheet"
+        placement="right"
+        class="flex min-w-xs flex-col overflow-hidden p-0 sm:min-w-sm"
+      >
+        <.live_component
+          id="release-with-tracks"
+          sheet_id="release-with-tracks-sheet"
+          module={MusicLibraryWeb.Components.Release}
+          release_id={@record.selected_release_id}
+          show_print?={true}
+          timezone={@timezone}
+        />
+      </.sheet>
 
       <.live_component
         id="record-notes"

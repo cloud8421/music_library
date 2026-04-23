@@ -551,7 +551,6 @@ msgstr ""
 msgid "Albums"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/show.ex
 #: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Tracks"
@@ -594,7 +593,6 @@ msgid "Oban"
 msgstr ""
 
 #: lib/music_library_web/components/record_form.ex
-#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Release Date"
 msgstr ""
@@ -642,14 +640,12 @@ msgstr ""
 
 #: lib/music_library_web/components/release.ex
 #: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Error scrobbling release"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
 #: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Release scrobbled successfully"
 msgstr ""
@@ -672,35 +668,25 @@ msgstr ""
 
 #: lib/music_library_web/components/release.ex
 #, elixir-autogen, elixir-format
-msgid "Scrobble selected tracks"
-msgstr ""
-
-#: lib/music_library_web/components/release.ex
-#: lib/music_library_web/live/scrobble_live/show.ex
-#, elixir-autogen, elixir-format
 msgid "Selected tracks scrobbled successfully"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
-#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Error scrobbling selected tracks"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
-#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "No tracks selected"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
-#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Disc scrobbled successfully"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
-#: lib/music_library_web/live/scrobble_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Error scrobbling disc"
 msgstr ""
@@ -1265,13 +1251,9 @@ msgid "90d"
 msgstr ""
 
 #: lib/music_library_web/live/scrobble_live/index.ex
+#: lib/music_library_web/live/scrobble_live/release_group_show.ex
 #, elixir-autogen, elixir-format
 msgid "Scrobble"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/index.ex
-#, elixir-autogen, elixir-format
-msgid "Failed to fetch releases for this release group"
 msgstr ""
 
 #: lib/music_library_web/live/scrobble_live/index.ex
@@ -1284,20 +1266,14 @@ msgstr ""
 msgid "Release Groups"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/index.ex
-#: lib/music_library_web/live/scrobble_live/show.ex
+#: lib/music_library_web/live/scrobble_live/release_group_show.ex
 #, elixir-autogen, elixir-format
 msgid "1 disc"
 msgid_plural "%{count} discs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/music_library_web/live/scrobble_live/index.ex
-#, elixir-autogen, elixir-format
-msgid "Releases for \"%{title}\""
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.ex
+#: lib/music_library_web/live/scrobble_live/release_show.ex
 #, elixir-autogen, elixir-format
 msgid "You need to connect your Last.fm account to scrobble. Please set up your Last.fm session key in the settings."
 msgstr ""
@@ -1713,44 +1689,14 @@ msgstr ""
 msgid "Search for artist image online"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/index.ex
-#, elixir-autogen, elixir-format
-msgid "Back"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.ex
+#: lib/music_library_web/live/scrobble_live/release_group_show.ex
 #, elixir-autogen, elixir-format
 msgid "Back to search"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Barcode"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Catalog Number"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Country"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.ex
+#: lib/music_library_web/live/scrobble_live/release_show.ex
 #, elixir-autogen, elixir-format
 msgid "Last.fm not connected"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/index.ex
-#, elixir-autogen, elixir-format
-msgid "Loading releases..."
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/show.ex
-#, elixir-autogen, elixir-format
-msgid "Media"
 msgstr ""
 
 #: lib/music_library_web/live/scrobble_live/index.ex
@@ -2559,3 +2505,30 @@ msgid "across %{count} disc"
 msgid_plural "across %{count} discs"
 msgstr[0] ""
 msgstr[1] ""
+
+#: lib/music_library_web/live/scrobble_live/release_group_show.ex
+#, elixir-autogen, elixir-format
+msgid "%{count} release"
+msgid_plural "%{count} releases"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/music_library_web/live/scrobble_live/release_group_show.ex
+#, elixir-autogen, elixir-format
+msgid "Could not load release group"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/release_group_show.ex
+#, elixir-autogen, elixir-format
+msgid "Error loading release group"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/release_show.ex
+#, elixir-autogen, elixir-format
+msgid "Back to releases"
+msgstr ""
+
+#: lib/music_library_web/live/scrobble_live/release_show.ex
+#, elixir-autogen, elixir-format
+msgid "Scrobble Release"
+msgstr ""

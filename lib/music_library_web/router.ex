@@ -111,7 +111,8 @@ defmodule MusicLibraryWeb.Router do
         live "/scrobbled-tracks/:scrobbled_at_uts/edit", ScrobbledTracksLive.Index, :edit
 
         live "/scrobble", ScrobbleLive.Index, :index
-        live "/scrobble/:release_id", ScrobbleLive.Show, :show
+        live "/scrobble/:rg_id", ScrobbleLive.ReleaseGroupShow, :show
+        live "/scrobble/:rg_id/releases/:release_id", ScrobbleLive.ReleaseShow, :show
 
         live "/maintenance", MaintenanceLive.Index, :index
       end
