@@ -1257,11 +1257,6 @@ msgid "Scrobble"
 msgstr ""
 
 #: lib/music_library_web/live/scrobble_live/index.ex
-#, elixir-autogen, elixir-format
-msgid "Failed to fetch releases for this release group"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/index.ex
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Failed to search for release groups"
 msgstr ""
@@ -1271,18 +1266,12 @@ msgstr ""
 msgid "Release Groups"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/index.ex
 #: lib/music_library_web/live/scrobble_live/release_group_show.ex
 #, elixir-autogen, elixir-format
 msgid "1 disc"
 msgid_plural "%{count} discs"
 msgstr[0] ""
 msgstr[1] ""
-
-#: lib/music_library_web/live/scrobble_live/index.ex
-#, elixir-autogen, elixir-format
-msgid "Releases for \"%{title}\""
-msgstr ""
 
 #: lib/music_library_web/live/scrobble_live/release_show.ex
 #, elixir-autogen, elixir-format
@@ -1700,11 +1689,6 @@ msgstr ""
 msgid "Search for artist image online"
 msgstr ""
 
-#: lib/music_library_web/live/scrobble_live/index.ex
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Back"
-msgstr ""
-
 #: lib/music_library_web/live/scrobble_live/release_group_show.ex
 #, elixir-autogen, elixir-format
 msgid "Back to search"
@@ -1713,11 +1697,6 @@ msgstr ""
 #: lib/music_library_web/live/scrobble_live/release_show.ex
 #, elixir-autogen, elixir-format
 msgid "Last.fm not connected"
-msgstr ""
-
-#: lib/music_library_web/live/scrobble_live/index.ex
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Loading releases..."
 msgstr ""
 
 #: lib/music_library_web/live/scrobble_live/index.ex

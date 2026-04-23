@@ -1,7 +1,7 @@
 defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
   use MusicLibraryWeb.ConnCase
 
-  import Phoenix.LiveViewTest, only: [render: 1, render_submit: 1, render_click: 3, form: 3]
+  import Phoenix.LiveViewTest, only: [render: 1, render_submit: 1, form: 3]
 
   alias MusicBrainz.Fixtures.ReleaseGroup
   alias Req.Test
@@ -11,9 +11,6 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
       case conn.request_path do
         "/ws/2/release-group" ->
           Test.json(conn, ReleaseGroup.release_group_search_results())
-
-        "/ws/2/release" ->
-          Test.json(conn, ReleaseGroup.release_group_releases(:marbles))
 
         _ ->
           Test.json(conn, %{})
@@ -91,56 +88,14 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
       |> refute_has("h3", "Release Groups")
     end
 
-    test "select release group shows releases", %{conn: conn} do
+    test "clicking a release group navigates to /scrobble/:rg_id", %{conn: conn} do
       release_group_id = ReleaseGroup.release_group_id(:marbles)
 
-      session = visit(conn, ~p"/scrobble")
+      session = visit(conn, ~p"/scrobble?#{[query: "marbles"]}")
 
       session
-      |> unwrap(fn view ->
-        view
-        |> form("form[phx-submit='search']", %{query: "marbles"})
-        |> render_submit()
-
-        render(view)
-
-        view
-        |> render_click("select_release_group", %{
-          "release_group_id" => release_group_id
-        })
-
-        render(view)
-      end)
-      |> assert_has("h3", "Releases for")
-      |> assert_has("button", "Back")
-    end
-
-    test "clear selection goes back to release groups", %{conn: conn} do
-      release_group_id = ReleaseGroup.release_group_id(:marbles)
-
-      session = visit(conn, ~p"/scrobble")
-
-      session
-      |> unwrap(fn view ->
-        view
-        |> form("form[phx-submit='search']", %{query: "marbles"})
-        |> render_submit()
-
-        render(view)
-
-        view
-        |> render_click("select_release_group", %{
-          "release_group_id" => release_group_id
-        })
-
-        render(view)
-
-        # Click back button
-        view
-        |> render_click("clear_selection", %{})
-      end)
-      |> assert_has("h3", "Release Groups")
-      |> refute_has("h3", "Releases for")
+      |> click_link("a[href='/scrobble/#{release_group_id}']", "Marbles")
+      |> assert_path(~p"/scrobble/#{release_group_id}")
     end
   end
 
