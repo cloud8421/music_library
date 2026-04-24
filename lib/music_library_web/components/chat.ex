@@ -399,7 +399,7 @@ defmodule MusicLibraryWeb.Components.Chat do
           )
 
         {:error, reason} ->
-          Logger.error("Chat streaming error: #{reason}")
+          Logger.error("Chat streaming error: #{inspect(reason)}")
 
           LiveView.send_update(parent_pid, __MODULE__,
             id: component_id,

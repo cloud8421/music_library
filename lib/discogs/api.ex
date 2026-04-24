@@ -3,11 +3,13 @@ defmodule Discogs.API do
   Interface to the Discogs API.
   """
 
+  alias Discogs.API.ErrorResponse
   alias Req.Request
 
   require Logger
 
-  @spec get_artist(integer() | String.t(), Discogs.Config.t()) :: {:ok, map()} | {:error, term()}
+  @spec get_artist(integer() | String.t(), Discogs.Config.t()) ::
+          {:ok, map()} | {:error, ErrorResponse.t() | Exception.t()}
   def get_artist(id, config) do
     config
     |> new_request()
@@ -41,17 +43,20 @@ defmodule Discogs.API do
     |> Request.merge_options(config.req_options)
     |> Req.RateLimiter.attach(name: :discogs, cooldown: config.api_cooldown)
     |> Request.append_request_steps(log_attempt: &log_attempt/1)
-    |> Request.append_response_steps(log_error: &log_error/1)
+    |> Request.append_response_steps(parse_error: &parse_error/1)
   end
 
   defp get_request(request) do
     case Req.get(request) do
-      {:ok, response} when response.status == 200 ->
-        {:ok, response.body}
+      {:ok, %{status: status, body: body}} when status in 200..299 ->
+        {:ok, body}
 
-      # all non-success responses can be treated as errors
-      {:ok, response} ->
-        {:error, response.body}
+      {:ok, %{body: %ErrorResponse{} = error}} ->
+        {:error, error}
+
+      # Image download path does not attach parse_error; fall back to raw body.
+      {:ok, %{body: body}} ->
+        {:error, body}
 
       error ->
         error
@@ -74,4 +79,17 @@ defmodule Discogs.API do
 
     {request, response}
   end
+
+  defp parse_error({request, %{status: status} = response}) when status not in 200..299 do
+    error = ErrorResponse.from_response(response)
+
+    Logger.error(fn ->
+      url = URI.to_string(request.url)
+      "Failed to fetch data from #{url}, status: #{status}, reason: #{inspect(response.body)}"
+    end)
+
+    Request.halt(request, %{response | body: error})
+  end
+
+  defp parse_error(tuple), do: tuple
 end

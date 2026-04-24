@@ -121,6 +121,7 @@ defmodule MusicBrainzTest do
       assert releases == []
     end
 
+    @tag :capture_log
     test "error on a later page is returned immediately" do
       full_page = release_page(100)
 
@@ -138,7 +139,7 @@ defmodule MusicBrainzTest do
         end
       end)
 
-      assert {:error, %{"error" => "service unavailable"}} =
+      assert {:error, %MusicBrainz.API.ErrorResponse{status: 503, kind: :rate_limit}} =
                MusicBrainz.get_all_releases(@release_group_id)
     end
   end

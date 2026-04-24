@@ -8,6 +8,7 @@ defmodule MusicLibrary.Worker.ImportFromMusicbrainzRelease do
   use Oban.Worker, queue: :music_brainz, max_attempts: 3
 
   alias MusicLibrary.Records.Record
+  alias MusicLibrary.Worker.ErrorHandler
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"release_id" => release_id} = args}) do
@@ -19,7 +20,7 @@ defmodule MusicLibrary.Worker.ImportFromMusicbrainzRelease do
 
     case MusicLibrary.Records.import_from_musicbrainz_release(release_id, opts) do
       {:ok, _record} -> :ok
-      {:error, reason} -> {:error, reason}
+      other -> ErrorHandler.to_oban_result(other)
     end
   end
 end

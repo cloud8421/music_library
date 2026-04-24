@@ -44,16 +44,16 @@ defmodule MusicLibrary.Worker.GenerateRecordEmbeddingTest do
     end
 
     @tag :capture_log
-    test "returns {:error, reason} when OpenAI API fails" do
+    test "snoozes when OpenAI API fails with a 5xx (transient)" do
       record = record()
 
       Req.Test.stub(OpenAI.API, fn conn ->
         conn
         |> Plug.Conn.put_status(500)
-        |> Req.Test.json(%{"error" => "internal server error"})
+        |> Req.Test.json(%{"error" => %{"message" => "internal server error"}})
       end)
 
-      assert {:error, %{"error" => "internal server error"}} =
+      assert {:snooze, 30} =
                perform_job(GenerateRecordEmbedding, %{"record_id" => record.id})
     end
 

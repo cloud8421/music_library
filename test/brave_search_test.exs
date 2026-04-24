@@ -76,14 +76,14 @@ defmodule BraveSearchTest do
     end
 
     @tag :capture_log
-    test "returns the decoded error body on non-200 responses" do
+    test "returns an ErrorResponse struct on non-200 responses" do
       Req.Test.stub(BraveSearch.API, fn conn ->
         conn
         |> Plug.Conn.put_resp_content_type("application/json")
         |> Plug.Conn.send_resp(429, ~s({"error":"rate_limited"}))
       end)
 
-      assert {:error, %{"error" => "rate_limited"}} =
+      assert {:error, %BraveSearch.API.ErrorResponse{status: 429, kind: :rate_limit}} =
                BraveSearch.search_images("too many requests")
     end
   end

@@ -2,6 +2,7 @@ defmodule OpenAI.APITest do
   use ExUnit.Case, async: true
 
   alias OpenAI.API
+  alias OpenAI.API.ErrorResponse
 
   @config %OpenAI.Config{
     api_key: "test_key",
@@ -26,15 +27,62 @@ defmodule OpenAI.APITest do
     end
 
     @tag :capture_log
-    test "returns error on non-2xx response" do
+    test "returns a rate-limit error response on 429 rate_limit_exceeded" do
       Req.Test.stub(__MODULE__, fn conn ->
         conn
         |> Plug.Conn.put_status(429)
-        |> Req.Test.json(%{"error" => "rate limited"})
+        |> Req.Test.json(%{
+          "error" => %{
+            "code" => "rate_limit_exceeded",
+            "type" => "rate_limit_error",
+            "message" => "Rate limit reached"
+          }
+        })
       end)
 
       completion = %{model: "gpt-4.1-mini", content: "test", role: "user", temperature: 0.5}
-      assert {:error, "OpenAI API error:" <> _} = API.gpt(completion, @config)
+
+      assert {:error, %ErrorResponse{} = err} = API.gpt(completion, @config)
+      assert err.status == 429
+      assert err.code == "rate_limit_exceeded"
+      assert err.kind == :rate_limit
+      assert ErrorResponse.retryable?(err)
+    end
+
+    @tag :capture_log
+    test "returns an auth-error response on 429 insufficient_quota (non-retryable)" do
+      Req.Test.stub(__MODULE__, fn conn ->
+        conn
+        |> Plug.Conn.put_status(429)
+        |> Req.Test.json(%{
+          "error" => %{
+            "code" => "insufficient_quota",
+            "type" => "insufficient_quota",
+            "message" => "You exceeded your current quota"
+          }
+        })
+      end)
+
+      completion = %{model: "gpt-4.1-mini", content: "test", role: "user", temperature: 0.5}
+
+      assert {:error, %ErrorResponse{} = err} = API.gpt(completion, @config)
+      assert err.code == "insufficient_quota"
+      assert err.kind == :auth_error
+      refute ErrorResponse.retryable?(err)
+    end
+
+    @tag :capture_log
+    test "returns a server-error response on 500" do
+      Req.Test.stub(__MODULE__, fn conn ->
+        conn
+        |> Plug.Conn.put_status(500)
+        |> Req.Test.json(%{"error" => %{"message" => "boom"}})
+      end)
+
+      completion = %{model: "gpt-4.1-mini", content: "test", role: "user", temperature: 0.5}
+
+      assert {:error, %ErrorResponse{kind: :server_error}} =
+               API.gpt(completion, @config)
     end
   end
 
@@ -54,14 +102,26 @@ defmodule OpenAI.APITest do
     end
 
     @tag :capture_log
-    test "returns error on non-200 response" do
+    test "returns a retryable server-error ErrorResponse on 500" do
       Req.Test.stub(__MODULE__, fn conn ->
         conn
         |> Plug.Conn.put_status(500)
-        |> Req.Test.json(%{"error" => "internal error"})
+        |> Req.Test.json(%{"error" => %{"message" => "internal error"}})
       end)
 
-      assert {:error, %{"error" => "internal error"}} = API.get_embeddings("test text", @config)
+      assert {:error, %ErrorResponse{status: 500, kind: :server_error} = err} =
+               API.get_embeddings("test text", @config)
+
+      assert ErrorResponse.retryable?(err)
+    end
+
+    test "returns the transport exception on connection failure" do
+      Req.Test.stub(__MODULE__, fn conn ->
+        Req.Test.transport_error(conn, :timeout)
+      end)
+
+      assert {:error, %Req.TransportError{reason: :timeout}} =
+               API.get_embeddings("test text", @config)
     end
   end
 
@@ -114,27 +174,27 @@ defmodule OpenAI.APITest do
     end
 
     @tag :capture_log
-    test "returns error on non-2xx response" do
+    test "returns an ErrorResponse struct on non-2xx response" do
       Req.Test.stub(__MODULE__, fn conn ->
         conn
         |> Plug.Conn.put_status(500)
-        |> Req.Test.json(%{"error" => "server error"})
+        |> Req.Test.json(%{"error" => %{"message" => "server error"}})
       end)
 
       cb = fn _chunk -> :ok end
 
-      assert {:error, "OpenAI API error:" <> _} =
+      assert {:error, %ErrorResponse{status: 500, kind: :server_error}} =
                API.chat_stream([], "instructions", "gpt-4.1", 0.7, @config, cb)
     end
 
-    test "returns error on connection failure" do
+    test "returns the transport exception on connection failure" do
       Req.Test.stub(__MODULE__, fn conn ->
         Req.Test.transport_error(conn, :timeout)
       end)
 
       cb = fn _chunk -> :ok end
 
-      assert {:error, "Connection error:" <> _} =
+      assert {:error, %Req.TransportError{reason: :timeout}} =
                API.chat_stream([], "instructions", "gpt-4.1", 0.7, @config, cb)
     end
 

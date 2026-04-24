@@ -1,14 +1,23 @@
 defmodule Wikipedia.API do
   @moduledoc """
   Interface to the Wikidata and Wikipedia APIs.
+
+  Two API surfaces are used, with different error handling:
+
+    * **Action API** (`/w/api.php`) returns HTTP 200 with an `{"error": {...}}`
+      payload on failure. `parse_error/1` promotes those bodies into
+      `Wikipedia.API.ErrorResponse` errors.
+    * **REST v1 API** (`/api/rest_v1/page/summary/:title`) uses classic HTTP
+      status codes. `parse_error/1` handles non-2xx statuses the same way.
   """
 
   alias Req.Request
+  alias Wikipedia.API.ErrorResponse
 
   require Logger
 
   @spec get_wikipedia_title(String.t(), Wikipedia.Config.t()) ::
-          {:ok, String.t() | nil} | {:error, term()}
+          {:ok, String.t() | nil} | {:error, ErrorResponse.t() | Exception.t()}
   def get_wikipedia_title(wikidata_id, config) do
     case config
          |> new_request("https://www.wikidata.org")
@@ -32,7 +41,8 @@ defmodule Wikipedia.API do
     end
   end
 
-  @spec get_article_summary(String.t(), Wikipedia.Config.t()) :: {:ok, map()} | {:error, term()}
+  @spec get_article_summary(String.t(), Wikipedia.Config.t()) ::
+          {:ok, map()} | {:error, ErrorResponse.t() | Exception.t()}
   def get_article_summary(title, config) do
     config
     |> new_request("https://en.wikipedia.org")
@@ -41,7 +51,7 @@ defmodule Wikipedia.API do
   end
 
   @spec get_article_extract(String.t(), Wikipedia.Config.t()) ::
-          {:ok, String.t() | nil} | {:error, term()}
+          {:ok, String.t() | nil} | {:error, ErrorResponse.t() | Exception.t()}
   def get_article_extract(title, config) do
     case config
          |> new_request("https://en.wikipedia.org")
@@ -80,16 +90,22 @@ defmodule Wikipedia.API do
     |> Request.merge_options(config.req_options)
     |> Req.RateLimiter.attach(name: :wikipedia, cooldown: config.api_cooldown)
     |> Request.append_request_steps(log_attempt: &log_attempt/1)
-    |> Request.append_response_steps(log_error: &log_error/1)
+    |> Request.append_response_steps(parse_error: &parse_error/1)
   end
 
   defp get_request(request) do
     case Req.get(request) do
-      {:ok, response} when response.status == 200 ->
-        {:ok, response.body}
+      {:ok, %{status: 200, body: %ErrorResponse{} = error}} ->
+        {:error, error}
 
-      {:ok, response} ->
-        {:error, response.body}
+      {:ok, %{status: status, body: body}} when status in 200..299 ->
+        {:ok, body}
+
+      {:ok, %{body: %ErrorResponse{} = error}} ->
+        {:error, error}
+
+      {:ok, %{body: body}} ->
+        {:error, body}
 
       error ->
         error
@@ -102,14 +118,32 @@ defmodule Wikipedia.API do
     request
   end
 
-  defp log_error({request, response}) do
-    if response.status in 400..499 or response.status in 500..599 do
-      Logger.error(fn ->
-        url = URI.to_string(request.url)
-        "Failed to fetch data from #{url}, reason: #{inspect(response.body)}"
-      end)
-    end
+  # Action API: HTTP 200 with an error envelope in the body.
+  defp parse_error(
+         {request,
+          %{status: 200, body: %{"error" => %{"code" => _, "info" => _}} = body} = response}
+       ) do
+    error = ErrorResponse.from_action_api_body(body)
 
-    {request, response}
+    Logger.error(fn ->
+      url = URI.to_string(request.url)
+      "Failed to fetch data from #{url}, code: #{error.code}, info: #{error.message}"
+    end)
+
+    Request.halt(request, %{response | body: error})
   end
+
+  # REST v1 API and other non-2xx responses.
+  defp parse_error({request, %{status: status} = response}) when status not in 200..299 do
+    error = ErrorResponse.from_response(response)
+
+    Logger.error(fn ->
+      url = URI.to_string(request.url)
+      "Failed to fetch data from #{url}, status: #{status}, reason: #{inspect(response.body)}"
+    end)
+
+    Request.halt(request, %{response | body: error})
+  end
+
+  defp parse_error(tuple), do: tuple
 end

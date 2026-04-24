@@ -1,4 +1,19 @@
 defmodule LastFm.API.ErrorResponse do
+  @moduledoc """
+  Structured error response for Last.fm API calls.
+
+  Last.fm is unusual among the APIs this project consumes: it returns HTTP 200
+  with a `%{"error" => N, "message" => "..."}` JSON body on failure, carrying a
+  numeric application-level error code in the range 2–29. Those codes map to
+  the atoms declared in `t:error_atom/0`.
+
+  The struct-based helpers (`retryable?/1`, `retry_delay_seconds/1`) exist to
+  share a uniform protocol with the per-HTTP-status `ErrorResponse` modules
+  used by the other APIs — see `MusicLibrary.Worker.ErrorHandler`.
+  """
+
+  @behaviour MusicLibrary.ErrorResponse
+
   defstruct [:error, :message]
 
   @type error_atom ::
@@ -66,4 +81,28 @@ defmodule LastFm.API.ErrorResponse do
   # 5 seconds
   def retry_delay(:operation_failed), do: 5_000
   def retry_delay(_), do: nil
+
+  @doc """
+  Struct-based retryability predicate shared with other API `ErrorResponse` modules.
+
+  Enables `MusicLibrary.Worker.ErrorHandler.to_oban_result/1` to treat Last.fm
+  uniformly alongside HTTP-status-based errors without requiring callers to
+  unwrap the atom first.
+  """
+  @impl MusicLibrary.ErrorResponse
+  @spec retryable?(t()) :: boolean()
+  def retryable?(%__MODULE__{error: error}), do: retryable_error?(error)
+
+  @doc """
+  Struct-based retry delay in seconds. Falls back to 30 s when the underlying
+  atom has no specific delay (see `retry_delay/1`).
+  """
+  @impl MusicLibrary.ErrorResponse
+  @spec retry_delay_seconds(t()) :: pos_integer()
+  def retry_delay_seconds(%__MODULE__{error: error}) do
+    case retry_delay(error) do
+      ms when is_integer(ms) -> div(ms, 1000)
+      nil -> 30
+    end
+  end
 end

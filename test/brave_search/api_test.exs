@@ -2,6 +2,7 @@ defmodule BraveSearch.APITest do
   use ExUnit.Case, async: true
 
   alias BraveSearch.API
+  alias BraveSearch.API.ErrorResponse
 
   @config %BraveSearch.Config{
     api_key: "test_key",
@@ -52,14 +53,44 @@ defmodule BraveSearch.APITest do
     end
 
     @tag :capture_log
-    test "returns error on non-200 response" do
+    test "returns a rate-limit ErrorResponse on 429" do
       Req.Test.stub(__MODULE__, fn conn ->
         conn
         |> Plug.Conn.put_status(429)
-        |> Req.Test.json(%{"error" => "rate limited"})
+        |> Req.Test.json(%{
+          "type" => "ErrorResponse",
+          "error" => %{"status" => 429, "code" => "RATE_LIMITED", "detail" => "Too many requests"}
+        })
       end)
 
-      assert {:error, %{"error" => "rate limited"}} = API.search_images("test", [], @config)
+      assert {:error, %ErrorResponse{} = err} =
+               API.search_images("test", [], @config)
+
+      assert err.status == 429
+      assert err.code == "RATE_LIMITED"
+      assert err.kind == :rate_limit
+      assert ErrorResponse.retryable?(err)
+    end
+
+    @tag :capture_log
+    test "returns a client-error ErrorResponse on 422" do
+      Req.Test.stub(__MODULE__, fn conn ->
+        conn
+        |> Plug.Conn.put_status(422)
+        |> Req.Test.json(%{
+          "type" => "ErrorResponse",
+          "error" => %{
+            "status" => 422,
+            "code" => "SUBSCRIPTION_TOKEN_INVALID",
+            "detail" => "The provided subscription token is invalid."
+          }
+        })
+      end)
+
+      assert {:error, %ErrorResponse{kind: :client_error} = err} =
+               API.search_images("test", [], @config)
+
+      refute ErrorResponse.retryable?(err)
     end
 
     test "passes count option as query param" do

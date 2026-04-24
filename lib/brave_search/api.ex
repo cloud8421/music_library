@@ -3,12 +3,13 @@ defmodule BraveSearch.API do
   Interface to the Brave Search API.
   """
 
+  alias BraveSearch.API.ErrorResponse
   alias Req.Request
 
   require Logger
 
   @spec search_images(String.t(), keyword(), BraveSearch.Config.t()) ::
-          {:ok, [map()]} | {:error, term()}
+          {:ok, [map()]} | {:error, ErrorResponse.t() | Exception.t()}
   def search_images(query, opts, config) do
     params = [q: query, count: Keyword.get(opts, :count, 20)]
 
@@ -61,16 +62,20 @@ defmodule BraveSearch.API do
     |> Request.merge_options(config.req_options)
     |> Req.RateLimiter.attach(name: :brave_search, cooldown: config.api_cooldown)
     |> Request.append_request_steps(log_attempt: &log_attempt/1)
-    |> Request.append_response_steps(log_error: &log_error/1)
+    |> Request.append_response_steps(parse_error: &parse_error/1)
   end
 
   defp get_request(request) do
     case Req.get(request) do
-      {:ok, response} when response.status == 200 ->
-        {:ok, response.body}
+      {:ok, %{status: status, body: body}} when status in 200..299 ->
+        {:ok, body}
 
-      {:ok, response} ->
-        {:error, response.body}
+      {:ok, %{body: %ErrorResponse{} = error}} ->
+        {:error, error}
+
+      # Image download path does not attach parse_error; fall back to raw body.
+      {:ok, %{body: body}} ->
+        {:error, body}
 
       error ->
         error
@@ -93,4 +98,17 @@ defmodule BraveSearch.API do
 
     {request, response}
   end
+
+  defp parse_error({request, %{status: status} = response}) when status not in 200..299 do
+    error = ErrorResponse.from_response(response)
+
+    Logger.error(fn ->
+      url = URI.to_string(request.url)
+      "Failed to fetch data from #{url}, status: #{status}, reason: #{inspect(response.body)}"
+    end)
+
+    Request.halt(request, %{response | body: error})
+  end
+
+  defp parse_error(tuple), do: tuple
 end

@@ -17,7 +17,7 @@ defmodule OpenAI do
     API.gpt(completion, config())
   end
 
-  @spec chat_stream([map()], chat_stream_opts()) :: :ok | {:error, String.t()}
+  @spec chat_stream([map()], chat_stream_opts()) :: :ok | {:error, term()}
   def chat_stream(messages, opts \\ []) when is_list(messages) do
     model = Keyword.get(opts, :model, "gpt-4.1")
     temperature = Keyword.get(opts, :temperature, 0.7)

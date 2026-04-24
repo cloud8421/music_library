@@ -6,6 +6,7 @@ defmodule MusicBrainz.API do
   - Extend the metadata associated with existing records
   """
 
+  alias MusicBrainz.API.ErrorResponse
   alias MusicBrainz.{Artist, ReleaseGroupSearchResult, ReleaseSearchResult}
   alias Req.Request
 
@@ -207,7 +208,8 @@ defmodule MusicBrainz.API do
         }
   """
 
-  @spec get_release_group(String.t(), MusicBrainz.Config.t()) :: {:ok, map()} | {:error, term()}
+  @spec get_release_group(String.t(), MusicBrainz.Config.t()) ::
+          {:ok, map()} | {:error, ErrorResponse.t() | Exception.t()}
   def get_release_group(id, config) do
     config
     |> new_request()
@@ -284,7 +286,8 @@ defmodule MusicBrainz.API do
         "title": "Clark (Soundtrack From the Netflix Series)"
       }
   """
-  @spec get_release(String.t(), MusicBrainz.Config.t()) :: {:ok, map()} | {:error, term()}
+  @spec get_release(String.t(), MusicBrainz.Config.t()) ::
+          {:ok, map()} | {:error, ErrorResponse.t() | Exception.t()}
   def get_release(id, config) do
     config
     |> new_request()
@@ -299,7 +302,7 @@ defmodule MusicBrainz.API do
   end
 
   @spec get_releases(String.t(), keyword(), MusicBrainz.Config.t()) ::
-          {:ok, map()} | {:error, term()}
+          {:ok, map()} | {:error, ErrorResponse.t() | Exception.t()}
   def get_releases(release_group_id, opts, config) do
     Keyword.validate!(opts, [:limit, :offset])
 
@@ -320,7 +323,7 @@ defmodule MusicBrainz.API do
   end
 
   @spec search_release_by_barcode(String.t(), MusicBrainz.Config.t()) ::
-          {:ok, [ReleaseSearchResult.t()]} | {:error, term()}
+          {:ok, [ReleaseSearchResult.t()]} | {:error, ErrorResponse.t() | Exception.t()}
   def search_release_by_barcode(barcode, config) do
     config
     |> new_request()
@@ -439,7 +442,7 @@ defmodule MusicBrainz.API do
   """
   @spec search_release_group(String.t(), keyword(), MusicBrainz.Config.t()) ::
           {:ok, %{total_count: non_neg_integer(), release_groups: [ReleaseGroupSearchResult.t()]}}
-          | {:error, term()}
+          | {:error, ErrorResponse.t() | Exception.t()}
   def search_release_group(query, opts, config) do
     Keyword.validate!(opts, [:limit, :offset])
 
@@ -461,7 +464,8 @@ defmodule MusicBrainz.API do
     |> get_request()
   end
 
-  @spec get_artist(String.t(), MusicBrainz.Config.t()) :: {:ok, Artist.t()} | {:error, term()}
+  @spec get_artist(String.t(), MusicBrainz.Config.t()) ::
+          {:ok, Artist.t()} | {:error, ErrorResponse.t() | Exception.t()}
   def get_artist(musicbrainz_id, config) do
     config
     |> new_request()
@@ -507,21 +511,40 @@ defmodule MusicBrainz.API do
     |> Request.merge_options(config.req_options)
     |> Req.RateLimiter.attach(name: :music_brainz, cooldown: config.api_cooldown)
     |> Request.append_request_steps(log_attempt: &log_attempt/1)
+    |> Request.append_response_steps(parse_error: &parse_error/1)
   end
 
   defp get_request(request) do
     case Req.get(request) do
-      {:ok, response} when response.status == 200 ->
-        {:ok, response.body}
+      {:ok, %{status: status, body: body}} when status in 200..299 ->
+        {:ok, body}
 
-      # all non-success responses can be treated as errors
-      {:ok, response} ->
-        {:error, response.body}
+      {:ok, %{body: %ErrorResponse{} = error}} ->
+        {:error, error}
+
+      # Fallback for pipelines without parse_error (e.g. cover-art binary path)
+      # or Req exhausting retries before the step runs. Callers like
+      # get_cover_art/2 normalise this further.
+      {:ok, %{body: body}} ->
+        {:error, body}
 
       error ->
         error
     end
   end
+
+  defp parse_error({request, %{status: status} = response}) when status not in 200..299 do
+    error = ErrorResponse.from_response(response)
+
+    Logger.error(fn ->
+      url = URI.to_string(request.url)
+      "Failed to fetch data from #{url}, status: #{status}, reason: #{inspect(response.body)}"
+    end)
+
+    Request.halt(request, %{response | body: error})
+  end
+
+  defp parse_error(tuple), do: tuple
 
   defp log_attempt(request) do
     url = URI.to_string(request.url)

@@ -31,14 +31,38 @@ defmodule MusicLibrary.Worker.PopulateGenresTest do
     end
 
     @tag :capture_log
-    test "returns error when OpenAI API fails" do
+    test "snoozes when OpenAI API returns a 5xx (transient)" do
       record = record(%{genres: []})
 
       Req.Test.stub(OpenAI.API, fn conn ->
-        Plug.Conn.send_resp(conn, 500, JSON.encode!(%{"error" => "internal server error"}))
+        conn
+        |> Plug.Conn.put_status(500)
+        |> Req.Test.json(%{"error" => %{"message" => "internal server error"}})
       end)
 
-      assert {:error, "OpenAI API error:" <> _} =
+      assert {:snooze, 30} = perform_job(PopulateGenres, %{"id" => record.id})
+    end
+
+    @tag :capture_log
+    test "cancels when OpenAI API returns 429 insufficient_quota (permanent)" do
+      record = record(%{genres: []})
+
+      Req.Test.stub(OpenAI.API, fn conn ->
+        conn
+        |> Plug.Conn.put_resp_content_type("application/json")
+        |> Plug.Conn.send_resp(
+          429,
+          JSON.encode!(%{
+            "error" => %{
+              "code" => "insufficient_quota",
+              "type" => "insufficient_quota",
+              "message" => "quota exceeded"
+            }
+          })
+        )
+      end)
+
+      assert {:cancel, %OpenAI.API.ErrorResponse{code: "insufficient_quota"}} =
                perform_job(PopulateGenres, %{"id" => record.id})
     end
   end

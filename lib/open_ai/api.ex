@@ -1,13 +1,23 @@
 defmodule OpenAI.API do
   @moduledoc """
   Low-level HTTP client for the OpenAI API (chat completions, streaming responses, embeddings).
+
+  HTTP errors are returned as `OpenAI.API.ErrorResponse` structs, which classify
+  rate-limit failures (retryable) separately from billing-quota failures
+  (`insufficient_quota` — non-retryable) despite both using HTTP 429.
+
+  Mid-stream failures in `chat_stream/6` come from parsed SSE event payloads
+  rather than HTTP responses and remain as message strings passed through the
+  stream callback plumbing.
   """
 
+  alias OpenAI.API.ErrorResponse
   alias Req.Request
 
   require Logger
 
-  @spec gpt(OpenAI.Completion.t(), OpenAI.Config.t()) :: {:ok, map()} | {:error, term()}
+  @spec gpt(OpenAI.Completion.t(), OpenAI.Config.t()) ::
+          {:ok, map()} | {:error, ErrorResponse.t() | Exception.t()}
   def gpt(completion, config) do
     case config
          |> new_request()
@@ -27,17 +37,17 @@ defmodule OpenAI.API do
         content = get_in(body, ["choices", Access.at(0), "message", "content"])
         JSON.decode(content)
 
-      {:ok, %{body: body}} ->
-        {:error, "OpenAI API error: #{inspect(body)}"}
+      {:ok, response} ->
+        {:error, ErrorResponse.from_response(response)}
 
       {:error, exception} ->
-        {:error, "Connection error: #{Exception.message(exception)}"}
+        {:error, exception}
     end
   end
 
   @spec chat_stream([map()], String.t(), String.t(), float(), OpenAI.Config.t(), (String.t() ->
                                                                                     any())) ::
-          :ok | {:error, String.t()}
+          :ok | {:error, ErrorResponse.t() | Exception.t() | String.t()}
   def chat_stream(messages, instructions, model, temperature, config, cb) do
     config
     |> new_request()
@@ -86,33 +96,35 @@ defmodule OpenAI.API do
           :ok
         end
 
-      {:ok, %{body: body}} ->
-        {:error, "OpenAI API error: #{inspect(body)}"}
+      {:ok, response} ->
+        {:error, ErrorResponse.from_response(response)}
 
       {:error, exception} ->
-        {:error, "Connection error: #{Exception.message(exception)}"}
+        {:error, exception}
     end
   end
 
-  @spec get_embeddings(String.t(), OpenAI.Config.t()) :: {:ok, [float()]} | {:error, term()}
+  @spec get_embeddings(String.t(), OpenAI.Config.t()) ::
+          {:ok, [float()]} | {:error, ErrorResponse.t() | Exception.t()}
   def get_embeddings(text, config) do
-    resp =
-      config
-      |> new_request()
-      |> Req.merge(
-        url: "/v1/embeddings",
-        json: %{
-          input: text,
-          model: "text-embedding-3-small"
-        }
-      )
-      |> Req.post!()
+    case config
+         |> new_request()
+         |> Req.merge(
+           url: "/v1/embeddings",
+           json: %{
+             input: text,
+             model: "text-embedding-3-small"
+           }
+         )
+         |> Req.post() do
+      {:ok, %{status: 200, body: body}} ->
+        {:ok, get_in(body, ["data", Access.at(0), "embedding"])}
 
-    if resp.status == 200 do
-      embeddings = get_in(resp.body, ["data", Access.at(0), "embedding"])
-      {:ok, embeddings}
-    else
-      {:error, resp.body}
+      {:ok, response} ->
+        {:error, ErrorResponse.from_response(response)}
+
+      {:error, exception} ->
+        {:error, exception}
     end
   end
 

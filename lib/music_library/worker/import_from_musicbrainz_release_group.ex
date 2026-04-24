@@ -13,6 +13,7 @@ defmodule MusicLibrary.Worker.ImportFromMusicbrainzReleaseGroup do
 
   alias MusicLibrary.Records
   alias MusicLibrary.Records.Record
+  alias MusicLibrary.Worker.ErrorHandler
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"release_group_id" => release_group_id} = args}) do
@@ -23,7 +24,7 @@ defmodule MusicLibrary.Worker.ImportFromMusicbrainzReleaseGroup do
 
     case Records.import_from_musicbrainz_release_group(release_group_id, opts) do
       {:ok, _record} -> :ok
-      {:error, reason} -> {:error, reason}
+      other -> ErrorHandler.to_oban_result(other)
     end
   end
 end

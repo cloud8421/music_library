@@ -1,15 +1,16 @@
 ---
 id: ML-21
 title: Classify API errors as transient vs permanent in workers
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-04-20 08:50'
-updated_date: '2026-04-24 11:12'
+updated_date: '2026-04-24 11:59'
 labels: []
 dependencies: []
 references:
   - 'https://github.com/cloud8421/music_library/issues/158'
 priority: medium
+ordinal: 1000
 ---
 
 ## Description
@@ -69,10 +70,61 @@ Out of scope (tracked separately): honouring `Retry-After` / `X-*-Reset` headers
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 MusicBrainz, Discogs, Wikipedia REST v1, Brave Search, and OpenAI API modules expose a classifier that maps {status, body} to :retry or :cancel
-- [ ] #2 Wikipedia Action API responses (wbgetentities, prop=extracts) decode HTTP 200 bodies containing {"error": ...} into {:error, reason} instead of {:ok, body}
-- [ ] #3 OpenAI classifier distinguishes rate_limit_exceeded (retry) from insufficient_quota (cancel) despite both being HTTP 429
-- [ ] #4 MusicBrainz classifier treats 503 as the rate-limit signal (not 429) and is documented as such
-- [ ] #5 Workers using these APIs use the classifier to return {:snooze, n} / {:error, reason} / {:cancel, reason} instead of bubbling raw bodies
-- [ ] #6 Existing LastFm.API.ErrorResponse behaviour is preserved
+- [x] #1 MusicBrainz, Discogs, Wikipedia REST v1, Brave Search, and OpenAI API modules expose a classifier that maps {status, body} to :retry or :cancel
+- [x] #2 Wikipedia Action API responses (wbgetentities, prop=extracts) decode HTTP 200 bodies containing {"error": ...} into {:error, reason} instead of {:ok, body}
+- [x] #3 OpenAI classifier distinguishes rate_limit_exceeded (retry) from insufficient_quota (cancel) despite both being HTTP 429
+- [x] #4 MusicBrainz classifier treats 503 as the rate-limit signal (not 429) and is documented as such
+- [x] #5 Workers using these APIs use the classifier to return {:snooze, n} / {:error, reason} / {:cancel, reason} instead of bubbling raw bodies
+- [x] #6 Existing LastFm.API.ErrorResponse behaviour is preserved
 <!-- AC:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+## Summary
+
+Introduced structured per-API `ErrorResponse` modules for MusicBrainz, Discogs, Wikipedia, Brave Search, and OpenAI, so workers can now distinguish transient failures (rate limit, 5xx, timeout) from permanent ones (4xx, not found, auth, quota). Workers emit `{:snooze, seconds}` / `{:cancel, reason}` / `{:error, reason}` instead of bubbling raw bodies. Preserved the existing `LastFm.API.ErrorResponse` behaviour and added struct-based `retryable?/1` / `retry_delay_seconds/1` helpers so Last.fm plugs into the same handler.
+
+## What changed
+
+**New shared modules**
+- `MusicLibrary.HttpError` — default HTTP status → kind mapping
+- `MusicLibrary.Worker.ErrorHandler.to_oban_result/1` — maps any known `ErrorResponse` struct to the correct Oban tuple; passes through `{:ok, _}`, `{:cancel, _}`, and atom-reason errors unchanged
+
+**New per-API `ErrorResponse` modules**
+- `MusicBrainz.API.ErrorResponse` — maps 503 to `:rate_limit` (MusicBrainz-specific; 429 is not used upstream)
+- `Discogs.API.ErrorResponse`
+- `Wikipedia.API.ErrorResponse` — has a dedicated `from_action_api_body/1` for HTTP 200 Action API error envelopes (AC2 silent-bug fix)
+- `BraveSearch.API.ErrorResponse`
+- `OpenAI.API.ErrorResponse` — disambiguates HTTP 429 between `rate_limit_exceeded` (retry) and `insufficient_quota` (cancel) via body `code` (AC3)
+
+**Updated API modules** — each now attaches a `parse_error/1` Req response step that halts with the appropriate struct on failure:
+- `MusicBrainz.API`, `Discogs.API`, `Wikipedia.API`, `BraveSearch.API`
+- `OpenAI.API` — `gpt/2`, `get_embeddings/2`, and `chat_stream/6` now return `{:error, %OpenAI.API.ErrorResponse{}}` instead of `{:error, "OpenAI API error: " <> inspect(body)}` strings
+
+**Updated workers** to route through `ErrorHandler.to_oban_result/1`, preserving existing atom-cancel branches (`:no_english_wikipedia`, `:cover_not_available`, `:image_not_found`, `:no_discogs_data`):
+- `ArtistRefreshMusicBrainzData`, `ArtistRefreshDiscogsData`, `ArtistRefreshWikipediaData`
+- `FetchArtistInfo`, `FetchArtistImage`, `FetchArtistLastFmData`
+- `RefreshCover`, `RecordRefreshMusicBrainzData`
+- `ImportFromMusicbrainzRelease`, `ImportFromMusicbrainzReleaseGroup`
+- `PopulateGenres`, `GenerateRecordEmbedding`
+
+`RefreshScrobbles` unchanged (already had its own `ErrorResponse` routing).
+
+## Notable fixes along the way
+
+- Wikipedia silent bug (AC2): Action API returned `{:ok, %{"error" => ...}}` to callers when the body contained an error envelope. Now properly surfaced as `{:error, %Wikipedia.API.ErrorResponse{}}`.
+- `lib/music_library_web/components/chat.ex`: Logger interpolation of the error reason (`"Chat streaming error: #{reason}"`) broke on struct errors. Switched to `inspect(reason)`.
+
+## Tests
+
+- New: `test/music_library/worker/error_handler_test.exs`, `test/music_brainz/api_test.exs`, `test/last_fm/api/error_response_test.exs`
+- Added per-API error-classification assertions to existing `test/open_ai/api_test.exs`, `test/brave_search/api_test.exs`, `test/discogs_test.exs`, `test/wikipedia_test.exs`
+- Updated callers that previously asserted on raw error bodies / string errors (`records_test.exs`, `similarity_test.exs`, worker tests)
+
+Full verification: `mise run dev:precommit` — shellcheck, credo --strict, sobelow, gettext, format, unused deps, 871 tests pass (43 doctests). Dialyzer shows 2 pre-existing warnings unrelated to this change.
+
+## Out of scope (ML-146)
+
+Honouring `Retry-After` / `X-*-Reset` headers to derive precise snooze durations — each ErrorResponse module currently returns fixed per-kind defaults (30–60 s).
+<!-- SECTION:FINAL_SUMMARY:END -->

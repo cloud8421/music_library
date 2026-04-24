@@ -383,10 +383,15 @@ defmodule MusicLibrary.RecordsTest do
       record = record(%{genres: []})
 
       Req.Test.stub(OpenAI.API, fn conn ->
-        Plug.Conn.send_resp(conn, 500, JSON.encode!(%{"error" => "internal server error"}))
+        Plug.Conn.send_resp(
+          conn,
+          500,
+          JSON.encode!(%{"error" => %{"message" => "internal server error"}})
+        )
       end)
 
-      assert {:error, "OpenAI API error:" <> _} = Records.populate_genres(record)
+      assert {:error, %OpenAI.API.ErrorResponse{status: 500, kind: :server_error}} =
+               Records.populate_genres(record)
     end
   end
 end
