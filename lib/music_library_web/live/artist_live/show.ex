@@ -4,7 +4,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
   import MusicLibraryWeb.RecordComponents,
     only: [record_grid: 1, country_label: 1, artist_image: 1]
 
-  alias MusicLibrary.{Artists, Chats, ListeningStats, Records}
+  alias MusicLibrary.{Artists, Chats, Collection, ListeningStats, Records}
   alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibraryWeb.ArtistLive.Biography
   alias MusicLibraryWeb.ErrorMessages
@@ -659,7 +659,9 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
     |> assign(:country, ArtistInfo.country(artist_info))
     |> maybe_assign_lastfm_artist_info(artist)
     |> assign_async(:similar_artists, fn ->
-      with {:ok, similar_artists} <- Artists.get_similar_artists(artist) do
+      collected_artist_ids = Collection.collected_artist_ids()
+
+      with {:ok, similar_artists} <- Artists.get_similar_artists(artist, collected_artist_ids) do
         artist_image_hashes = Artists.get_image_hashes(similar_artists)
 
         similar_artists =

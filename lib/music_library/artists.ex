@@ -7,7 +7,6 @@ defmodule MusicLibrary.Artists do
 
   alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibrary.Assets
-  alias MusicLibrary.Collection
   alias MusicLibrary.Records.ArtistRecord
   alias MusicLibrary.{Repo, Worker}
 
@@ -22,12 +21,10 @@ defmodule MusicLibrary.Artists do
     Repo.one!(q)
   end
 
-  @spec get_similar_artists(map()) :: {:ok, [map()]} | {:error, term()}
-  def get_similar_artists(artist) do
+  @spec get_similar_artists(map(), MapSet.t(String.t())) :: {:ok, [map()]} | {:error, term()}
+  def get_similar_artists(artist, collected_artist_ids) do
     case LastFm.get_similar_artists(artist.musicbrainz_id, artist.name) do
       {:ok, artists} ->
-        collected_artist_ids = Collection.collected_artist_ids()
-
         {:ok,
          Enum.filter(artists, fn a ->
            MapSet.member?(collected_artist_ids, a.musicbrainz_id)
