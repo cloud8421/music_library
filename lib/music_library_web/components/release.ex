@@ -769,11 +769,9 @@ defmodule MusicLibraryWeb.Components.Release do
     end
   end
 
-  @spec header_title(AsyncResult.t() | term()) :: String.t()
   defp header_title(%AsyncResult{ok?: true, result: release}), do: release.title
   defp header_title(_), do: ""
 
-  @spec header_subtitle(AsyncResult.t() | term()) :: String.t() | nil
   defp header_subtitle(%AsyncResult{ok?: true, result: release}) do
     case release.artists do
       [] ->
