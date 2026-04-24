@@ -52,6 +52,10 @@ defmodule MusicLibraryWeb.Router do
     get "/login", SessionController, :new
     post "/sessions/create", SessionController, :create
 
+    # Deliberately outside the `:logged_in` pipeline: this is the OAuth
+    # callback from Last.fm and the third-party redirect can't carry our
+    # session cookie. See `MusicLibraryWeb.LastFmController` moduledoc for
+    # the full trust boundary.
     get "/auth/last_fm/callback", LastFmController, :callback
 
     get "/public/assets/:transform_payload", AssetController, :show
