@@ -80,6 +80,9 @@ jobs:
         run: mix credo --strict
       - name: 👮 Run Sobelow
         run: mix sobelow
+      - name: 🛡️ Audit dependencies for CVEs
+        run: mix deps.audit
+        continue-on-error: true
       - name: 🐚 Run Shellcheck
         run: |
           fd . 'scripts/' --exclude '*.hurl' -t file --exec shellcheck --color

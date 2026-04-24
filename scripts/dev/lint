@@ -14,6 +14,9 @@ mix format
 debug_msg "Running credo..."
 mix credo
 
+debug_msg "Auditing dependencies for CVEs (warn-only)..."
+mix deps.audit || true
+
 debug_msg "Extracting translations..."
 mix gettext.extract --merge
 
