@@ -77,6 +77,7 @@ Rules extracted from commit history that are specific to this project and not al
 - **Non-actionable errors use `ErrorTracker.Ignorer`** behaviour to filter (e.g., NoRouteError from bot scanners) rather than blocking paths in the endpoint.
 - **Muted errors skip notifications.** `ErrorTracker.ErrorNotifier` checks the `muted` flag before sending email notifications.
 - **Oban worker return values follow three states:** `:ok` for success; `{:error, reason}` for transient/retryable failures (Oban will retry); `{:cancel, reason}` (not the deprecated `{:discard, reason}`) for permanent termination when the job outcome is non-retryable (e.g., no Wikipedia entry exists).
+- **API failures flow through per-API `ErrorResponse` structs.** Each external API has a `<API>.API.ErrorResponse` struct implementing the `MusicLibrary.ErrorResponse` behaviour (`retryable?/1`, `retry_delay_seconds/1`). Workers match app-layer atom-cancel reasons first (e.g. `:no_english_wikipedia`, `:cover_not_available`), then forward the remaining `{:error, _}` to `MusicLibrary.Worker.ErrorHandler.to_oban_result/1`, which emits `{:snooze, seconds}` for transient errors and `{:cancel, reason}` for permanent ones.
 - **Non-fatal enrichment failures are best-effort.** Context functions that enrich records (colors, embeddings) use a private `best_effort_*` helper that logs a warning and returns the unchanged struct rather than surfacing `{:error, reason}` to callers. Business-logic failures (e.g., API calls in `populate_genres/1`) still return `{:error, reason}`.
 
 ## Testing
@@ -106,6 +107,7 @@ Rules extracted from commit history that are specific to this project and not al
 - **Alias nested modules at the top** rather than referencing them inline (e.g. `alias LastFm.Fixtures.RecentTracks` then `RecentTracks.get()`, not `LastFm.Fixtures.RecentTracks.get()`). Enforced by Credo's `AliasUsage` check.
 - **Markdown sanitization via MDEx (ammonia).** Use `Markdown.to_html/1` for user content. Annotate raw output with `# sobelow_skip ["XSS.Raw"]` and a comment explaining the sanitization.
 - **Sobelow runs on CI and pre-commit** in skip mode for security analysis.
+- **`mix deps.audit` runs on CI and pre-commit** (warn-only) via `mix_audit` for CVE scanning.
 - **ExSlop checks run via Credo** for code quality: no narrator/boilerplate docs (use `@moduledoc false` instead), no obvious/step/narrator comments, no identity `case`/`with` patterns, no `Repo.all` then filter, no `Enum.map` with inline queries, no unaliased nested module use (nested modules must be aliased at the top). Violations are caught by CI.
 - **All modules require `@moduledoc`.** The Credo `ModuleDoc` check is enforced in strict mode.
 - **Dialyzer is enabled via `dialyxir` (dev/test only) with the `:no_opaque` flag.** Specs are required and checked. Opaque type checking is disabled to tolerate third-party opaque types (e.g., `Ecto.Changeset`).
