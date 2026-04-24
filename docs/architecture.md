@@ -33,7 +33,7 @@ MusicLibrary.Application (one_for_one)
 ├── MusicLibrary.BackgroundRepo  # Oban SQLite repo (separate DB)
 ├── MusicLibrary.TelemetryRepo   # Telemetry metrics SQLite repo
 ├── MusicLibraryWeb.Telemetry    # Telemetry supervisor
-│   ├── Telemetry.Storage        # Metrics storage (SQLite-backed, persistent)
+│   ├── Telemetry.Storage        # Buffered metrics storage (in-memory, 5s flush to SQLite, force-flush on read)
 │   └── :telemetry_poller        # 30s periodic measurements
 ├── Oban                         # Background job engine
 ├── Ecto.Migrator                # Migrations (skipped in release; run by Coolify post-deploy)
@@ -420,3 +420,7 @@ All events are namespaced with `music_library:` prefix.
 - **`use MusicLibraryWeb, :live_view`** imports: Phoenix.LiveView, Fluxon, Gettext, LiveToast,
   CoreComponents, Phoenix.HTML, verified routes, JS alias
 - **`use MusicLibraryWeb, :live_component`** additionally imports `put_toast!/2`
+- **Telemetry buffering**: `Telemetry.Storage` keeps incoming datapoints in an in-memory map
+  keyed by metric and flushes to SQLite on a 5 s timer, on shutdown, and synchronously when
+  `metrics_history/1` is called (only for the requested metric). Keeps the cast path O(1) and
+  the dashboard read path consistent.

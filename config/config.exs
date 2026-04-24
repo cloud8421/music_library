@@ -122,7 +122,9 @@ config :music_library, MusicLibrary.BackgroundRepo, priv: "priv/background_repo"
 
 config :music_library, MusicLibrary.TelemetryRepo, priv: "priv/telemetry_repo", log: false
 
-config :music_library, MusicLibraryWeb.Telemetry.Storage, buffer_size: 32_768
+config :music_library, MusicLibraryWeb.Telemetry.Storage,
+  retention_limit: 32_768,
+  flush_interval_ms: 5_000
 
 config :swoosh, :api_client, Swoosh.ApiClient.Req
 

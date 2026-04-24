@@ -1,9 +1,10 @@
 ---
 id: ML-11
 title: Telemetry.Storage GenServer funnels synchronous SQLite writes
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-04-20 08:49'
+updated_date: '2026-04-24 09:29'
 labels: []
 dependencies: []
 references:
@@ -47,7 +48,7 @@ Whichever option is chosen, replace the bare `catch _, _` with either a targeted
 - Existing dashboard queries continue to work
 <!-- SECTION:DESCRIPTION:END -->
 
-- [ ] #1 Telemetry write path does not block on the GenServer mailbox
-- [ ] #2 Error path surfaces at least once per distinct failure (not silently swallowed)
-- [ ] #3 Existing dashboard queries continue to work
+- [x] #1 Telemetry write path does not block on the GenServer mailbox
+- [x] #2 Error path surfaces at least once per distinct failure (not silently swallowed)
+- [x] #3 Existing dashboard queries continue to work
 <!-- AC:END -->

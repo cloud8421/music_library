@@ -205,7 +205,12 @@ checks and post-deploy verification.
 ### Telemetry
 
 SQLite-backed persistent metrics (`MusicLibraryWeb.Telemetry.Storage`) with 30-second
-polling interval. Tracks:
+polling interval. Events are buffered in GenServer state keyed by metric and flushed to
+SQLite every 5 seconds inside a single transaction; reads via `metrics_history/1`
+force-flush only the requested metric so the dashboard sees fresh data without waiting
+for the next tick. Per-metric retention is capped at 32 768 rows
+(`:retention_limit`), pruned after each flush. Flush failures are logged at `:warning`
+and the offending batch is dropped. Tracks:
 
 - Database query times (total, query, queue)
 - External API request latency (Finch)
