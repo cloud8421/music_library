@@ -1,9 +1,10 @@
 ---
 id: ML-13
 title: Tighten ecto_sqlite3 version constraint in mix.exs
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-04-20 08:50'
+updated_date: '2026-04-24 08:53'
 labels: []
 dependencies: []
 references:

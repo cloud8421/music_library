@@ -95,7 +95,7 @@ defmodule MusicLibrary.MixProject do
       # Database
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
-      {:ecto_sqlite3, ">= 0.0.0"},
+      {:ecto_sqlite3, "~> 0.22.0"},
       {:cloak_ecto, "~> 1.3"},
 
       # UI
