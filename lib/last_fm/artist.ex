@@ -56,7 +56,7 @@ defmodule LastFm.Artist do
 
   defp get_image(api_response) do
     api_response["image"]
-    |> Enum.find(%{"#text" => nil}, fn i -> i["size"] == "medium" end)
+    |> Enum.find(%{"#text" => nil}, fn i -> i["size"] == "extralarge" end)
     |> Map.get("#text")
   end
 
