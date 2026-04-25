@@ -36,22 +36,18 @@ defmodule MusicLibrary.Assets.Asset do
   end
 
   defp generate_hash(changeset) do
-    case get_change(changeset, :content) do
-      nil ->
-        changeset
-
-      content ->
-        put_change(changeset, :hash, hash(content))
+    if content = get_change(changeset, :content) do
+      put_change(changeset, :hash, hash(content))
+    else
+      changeset
     end
   end
 
   defp generate_properties(changeset) do
-    case get_change(changeset, :content) do
-      nil ->
-        changeset
-
-      content ->
-        put_change(changeset, :properties, get_image_properties(content))
+    if content = get_change(changeset, :content) do
+      put_change(changeset, :properties, get_image_properties(content))
+    else
+      changeset
     end
   end
 
