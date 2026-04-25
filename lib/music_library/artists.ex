@@ -266,10 +266,10 @@ defmodule MusicLibrary.Artists do
     end
   end
 
-  @spec refresh_lastfm_data_async(String.t()) ::
+  @spec refresh_lastfm_data_async(ArtistInfo.t()) ::
           {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
-  def refresh_lastfm_data_async(artist_id) do
-    enqueue_worker(Worker.FetchArtistLastFmData, %{"id" => artist_id})
+  def refresh_lastfm_data_async(artist_info) do
+    enqueue_worker(Worker.FetchArtistLastFmData, %{"id" => artist_info.id})
   end
 
   @spec refresh_artist_info_async(String.t()) ::

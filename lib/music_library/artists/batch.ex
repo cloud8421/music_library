@@ -33,7 +33,7 @@ defmodule MusicLibrary.Artists.Batch do
   @spec refresh_lastfm_data() :: {:ok, [String.t()]}
   def refresh_lastfm_data do
     Batch.run_on_all(from(r in ArtistInfo), "artist_info", fn artist_info ->
-      Artists.refresh_lastfm_data_async(artist_info.id)
+      Artists.refresh_lastfm_data_async(artist_info)
     end)
   end
 end
