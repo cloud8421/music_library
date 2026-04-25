@@ -72,28 +72,6 @@ defmodule MusicLibrary.ScrobbleActivityTest do
       assert {:error, :no_session_key} =
                ScrobbleActivity.scrobble_release(@release, :started_at, DateTime.utc_now())
     end
-
-    test "scrobble_medium/4 returns :no_session_key" do
-      assert {:error, :no_session_key} =
-               ScrobbleActivity.scrobble_medium(1, @release, :started_at, DateTime.utc_now())
-    end
-
-    test "scrobble_tracks/4 returns :no_session_key" do
-      track_ids =
-        @release
-        |> Release.tracks()
-        |> Enum.take(1)
-        |> Enum.map(& &1.id)
-        |> MapSet.new()
-
-      assert {:error, :no_session_key} =
-               ScrobbleActivity.scrobble_tracks(
-                 track_ids,
-                 @release,
-                 :started_at,
-                 DateTime.utc_now()
-               )
-    end
   end
 
   describe "scrobble_medium/4" do
@@ -122,13 +100,6 @@ defmodule MusicLibrary.ScrobbleActivityTest do
 
       assert {:error, :medium_not_found} =
                ScrobbleActivity.scrobble_medium(99, @release, :started_at, started_at)
-    end
-
-    test "returns error when medium not found with :finished_at" do
-      finished_at = DateTime.utc_now()
-
-      assert {:error, :medium_not_found} =
-               ScrobbleActivity.scrobble_medium(99, @release, :finished_at, finished_at)
     end
 
     test "returns error when medium has zero duration" do

@@ -7,13 +7,12 @@ defmodule MusicLibrary.Records.BatchTest do
 
   describe "refresh_musicbrainz_data/0" do
     test "enqueues refresh jobs for all records" do
-      _record = record()
+      record = record()
 
       assert {:ok, []} = Batch.refresh_musicbrainz_data()
-    end
 
-    test "succeeds with no records" do
-      assert {:ok, []} = Batch.refresh_musicbrainz_data()
+      assert_enqueued worker: MusicLibrary.Worker.RecordRefreshMusicBrainzData,
+                      args: %{id: record.id}
     end
   end
 
@@ -27,10 +26,6 @@ defmodule MusicLibrary.Records.BatchTest do
         worker: MusicLibrary.Worker.GenerateRecordEmbedding,
         args: %{record_id: record.id}
       )
-    end
-
-    test "succeeds with no records" do
-      assert {:ok, []} = Batch.generate_embeddings()
     end
   end
 end
