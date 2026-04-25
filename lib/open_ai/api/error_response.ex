@@ -20,6 +20,7 @@ defmodule OpenAI.API.ErrorResponse do
   @behaviour MusicLibrary.ErrorResponse
 
   alias MusicLibrary.HttpError
+  alias MusicLibrary.RetryDelay
 
   @type t :: %__MODULE__{
           status: integer() | nil,
@@ -27,10 +28,11 @@ defmodule OpenAI.API.ErrorResponse do
           type: String.t() | nil,
           message: String.t() | nil,
           kind: HttpError.kind(),
-          body: term()
+          body: term(),
+          retry_delay_seconds: pos_integer() | nil
         }
 
-  defstruct [:status, :code, :type, :message, :kind, :body]
+  defstruct [:status, :code, :type, :message, :kind, :body, :retry_delay_seconds]
 
   @spec from_response(Req.Response.t() | map()) :: t()
   def from_response(%{status: 429, body: %{"error" => %{"code" => "insufficient_quota"} = e}} = r) do
@@ -40,11 +42,12 @@ defmodule OpenAI.API.ErrorResponse do
       type: e["type"],
       message: e["message"],
       kind: :auth_error,
-      body: r.body
+      body: r.body,
+      retry_delay_seconds: RetryDelay.openai_reset_seconds(r)
     }
   end
 
-  def from_response(%{status: status, body: %{"error" => err} = body} = _response)
+  def from_response(%{status: status, body: %{"error" => err} = body} = response)
       when is_map(err) do
     %__MODULE__{
       status: status,
@@ -52,18 +55,20 @@ defmodule OpenAI.API.ErrorResponse do
       type: err["type"],
       message: err["message"],
       kind: HttpError.default_kind(status),
-      body: body
+      body: body,
+      retry_delay_seconds: RetryDelay.openai_reset_seconds(response)
     }
   end
 
-  def from_response(%{status: status, body: body} = _response) do
+  def from_response(%{status: status, body: body} = response) do
     %__MODULE__{
       status: status,
       code: nil,
       type: nil,
       message: nil,
       kind: HttpError.default_kind(status),
-      body: body
+      body: body,
+      retry_delay_seconds: RetryDelay.openai_reset_seconds(response)
     }
   end
 
@@ -76,6 +81,9 @@ defmodule OpenAI.API.ErrorResponse do
 
   @impl MusicLibrary.ErrorResponse
   @spec retry_delay_seconds(t()) :: pos_integer()
+  def retry_delay_seconds(%__MODULE__{retry_delay_seconds: seconds}) when is_integer(seconds),
+    do: seconds
+
   def retry_delay_seconds(%__MODULE__{kind: :rate_limit}), do: 60
   def retry_delay_seconds(%__MODULE__{kind: :server_error}), do: 30
   def retry_delay_seconds(%__MODULE__{kind: :timeout}), do: 10

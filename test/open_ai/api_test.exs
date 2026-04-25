@@ -31,6 +31,9 @@ defmodule OpenAI.APITest do
       Req.Test.stub(__MODULE__, fn conn ->
         conn
         |> Plug.Conn.put_status(429)
+        |> Plug.Conn.put_resp_header("retry-after", "10")
+        |> Plug.Conn.put_resp_header("x-ratelimit-reset-requests", "20s")
+        |> Plug.Conn.put_resp_header("x-ratelimit-reset-tokens", "1m30s")
         |> Req.Test.json(%{
           "error" => %{
             "code" => "rate_limit_exceeded",
@@ -46,6 +49,8 @@ defmodule OpenAI.APITest do
       assert err.status == 429
       assert err.code == "rate_limit_exceeded"
       assert err.kind == :rate_limit
+      assert err.retry_delay_seconds == 90
+      assert ErrorResponse.retry_delay_seconds(err) == 90
       assert ErrorResponse.retryable?(err)
     end
 

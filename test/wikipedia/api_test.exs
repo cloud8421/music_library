@@ -14,7 +14,9 @@ defmodule Wikipedia.APITest do
     @tag :capture_log
     test "promotes ratelimited Action API error into a retryable ErrorResponse" do
       Req.Test.stub(API, fn conn ->
-        Req.Test.json(conn, %{
+        conn
+        |> Plug.Conn.put_resp_header("retry-after", "42")
+        |> Req.Test.json(%{
           "error" => %{"code" => "ratelimited", "info" => "You've exceeded your rate limit."}
         })
       end)
@@ -23,6 +25,8 @@ defmodule Wikipedia.APITest do
       assert err.status == 200
       assert err.code == "ratelimited"
       assert err.kind == :rate_limit
+      assert err.retry_delay_seconds == 42
+      assert ErrorResponse.retry_delay_seconds(err) == 42
       assert ErrorResponse.retryable?(err)
     end
 
@@ -148,6 +152,7 @@ defmodule Wikipedia.APITest do
       Req.Test.stub(API, fn conn ->
         conn
         |> Plug.Conn.put_status(429)
+        |> Plug.Conn.put_resp_header("retry-after", "25")
         |> Req.Test.json(%{
           "httpCode" => 429,
           "httpReason" => "Too Many Requests",
@@ -158,6 +163,8 @@ defmodule Wikipedia.APITest do
       assert {:error, %ErrorResponse{status: 429, kind: :rate_limit} = err} =
                API.get_article_summary("Steven%20Wilson", @config)
 
+      assert err.retry_delay_seconds == 25
+      assert ErrorResponse.retry_delay_seconds(err) == 25
       assert ErrorResponse.retryable?(err)
     end
   end

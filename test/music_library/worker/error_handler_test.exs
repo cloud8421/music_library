@@ -22,6 +22,19 @@ defmodule MusicLibrary.Worker.ErrorHandlerTest do
       assert ErrorHandler.to_oban_result({:error, err}) == {:snooze, 60}
     end
 
+    test "parsed retry headers determine the snooze duration" do
+      response =
+        Req.Response.new(
+          status: 503,
+          headers: %{"retry-after" => ["42"]},
+          body: %{"error" => "rate"}
+        )
+
+      err = MusicBrainz.API.ErrorResponse.from_response(response)
+
+      assert ErrorHandler.to_oban_result({:error, err}) == {:snooze, 42}
+    end
+
     test "Discogs 429 → {:snooze, 60}" do
       err = Discogs.API.ErrorResponse.from_response(%{status: 429, body: %{"message" => "rate"}})
       assert ErrorHandler.to_oban_result({:error, err}) == {:snooze, 60}

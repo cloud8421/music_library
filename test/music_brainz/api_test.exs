@@ -15,6 +15,7 @@ defmodule MusicBrainz.APITest do
       Req.Test.stub(__MODULE__, fn conn ->
         conn
         |> Plug.Conn.put_status(503)
+        |> Plug.Conn.put_resp_header("retry-after", "42")
         |> Req.Test.json(%{"error" => "Your requests are exceeding the allowable rate limit."})
       end)
 
@@ -23,6 +24,8 @@ defmodule MusicBrainz.APITest do
 
       assert err.status == 503
       assert err.kind == :rate_limit
+      assert err.retry_delay_seconds == 42
+      assert API.ErrorResponse.retry_delay_seconds(err) == 42
       assert API.ErrorResponse.retryable?(err)
     end
 

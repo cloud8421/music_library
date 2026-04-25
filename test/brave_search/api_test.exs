@@ -57,6 +57,7 @@ defmodule BraveSearch.APITest do
       Req.Test.stub(__MODULE__, fn conn ->
         conn
         |> Plug.Conn.put_status(429)
+        |> Plug.Conn.put_resp_header("x-ratelimit-reset", "12, 60")
         |> Req.Test.json(%{
           "type" => "ErrorResponse",
           "error" => %{"status" => 429, "code" => "RATE_LIMITED", "detail" => "Too many requests"}
@@ -69,6 +70,8 @@ defmodule BraveSearch.APITest do
       assert err.status == 429
       assert err.code == "RATE_LIMITED"
       assert err.kind == :rate_limit
+      assert err.retry_delay_seconds == 60
+      assert ErrorResponse.retry_delay_seconds(err) == 60
       assert ErrorResponse.retryable?(err)
     end
 

@@ -12,8 +12,8 @@ defmodule Wikipedia.API.ErrorResponse do
     * **REST v1 API** (`/api/rest_v1/page/summary/:title`, used by
       `get_article_summary/2`) uses classic HTTP status codes.
 
-  `from_response/1` handles both paths. `from_action_api_body/1` is a dedicated
-  entry point for the HTTP 200 + body-error case.
+  `from_response/1` handles classic HTTP errors. `from_action_api_body/2` is a
+  dedicated entry point for the HTTP 200 + body-error case.
 
   ## Non-error body shapes
 
@@ -32,36 +32,42 @@ defmodule Wikipedia.API.ErrorResponse do
   @behaviour MusicLibrary.ErrorResponse
 
   alias MusicLibrary.HttpError
+  alias MusicLibrary.RetryDelay
 
   @type t :: %__MODULE__{
           status: integer() | nil,
           code: String.t() | nil,
           message: String.t() | nil,
           kind: HttpError.kind(),
-          body: term()
+          body: term(),
+          retry_delay_seconds: pos_integer() | nil
         }
 
-  defstruct [:status, :code, :message, :kind, :body]
+  defstruct [:status, :code, :message, :kind, :body, :retry_delay_seconds]
 
   @spec from_response(Req.Response.t() | map()) :: t()
-  def from_response(%{status: status, body: body} = _response) do
+  def from_response(%{status: status, body: body} = response) do
     %__MODULE__{
       status: status,
       code: extract_rest_code(body),
       message: extract_rest_message(body),
       kind: HttpError.default_kind(status),
-      body: body
+      body: body,
+      retry_delay_seconds: RetryDelay.retry_after_seconds(response)
     }
   end
 
-  @spec from_action_api_body(map()) :: t()
-  def from_action_api_body(%{"error" => %{"code" => code, "info" => info}} = body) do
+  @spec from_action_api_body(map(), Req.Response.t() | map()) :: t()
+  def from_action_api_body(body, response \\ %{})
+
+  def from_action_api_body(%{"error" => %{"code" => code, "info" => info}} = body, response) do
     %__MODULE__{
       status: 200,
       code: code,
       message: info,
       kind: action_api_kind(code),
-      body: body
+      body: body,
+      retry_delay_seconds: RetryDelay.retry_after_seconds(response)
     }
   end
 
@@ -74,6 +80,9 @@ defmodule Wikipedia.API.ErrorResponse do
 
   @impl MusicLibrary.ErrorResponse
   @spec retry_delay_seconds(t()) :: pos_integer()
+  def retry_delay_seconds(%__MODULE__{retry_delay_seconds: seconds}) when is_integer(seconds),
+    do: seconds
+
   def retry_delay_seconds(%__MODULE__{kind: :rate_limit}), do: 30
   def retry_delay_seconds(%__MODULE__{kind: :server_error}), do: 30
   def retry_delay_seconds(%__MODULE__{kind: :timeout}), do: 10

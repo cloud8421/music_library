@@ -138,6 +138,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `ErrorIgnorer` | ErrorTracker.Ignorer implementation: filters non-actionable errors (e.g., NoRouteError from bot scanners) |
 | `MusicLibrary.ErrorResponse` | Behaviour for structured API error responses (`retryable?/1`, `retry_delay_seconds/1`) — per-API `ErrorResponse` modules implement this |
 | `MusicLibrary.HttpError` | Default HTTP status → kind mapping (`:rate_limit`, `:server_error`, `:timeout`, `:auth_error`, `:not_found`, `:client_error`, `:unknown`) used as baseline by per-API `ErrorResponse` modules |
+| `MusicLibrary.RetryDelay` | Parses and clamps provider retry/reset headers into Oban snooze delays for structured API errors |
 | `MusicLibrary.Worker.ErrorHandler` | Translates per-API `ErrorResponse` structs into Oban tuples — `{:snooze, seconds}` for retryable, `{:cancel, reason}` for permanent |
 | `MusicLibraryWeb.RecordsOnThisDayEmail` | Builds and sends daily "records on this day" email with cover images, anniversary styling |
 | `MusicLibrary.Mailer` | Swoosh mailer (Mailgun in prod, local adapter in dev) |
@@ -165,10 +166,11 @@ stubbed via `Req.Test` (configured in `config/test.exs`).
 Each API also has an `API.ErrorResponse` module (e.g. `MusicBrainz.API.ErrorResponse`,
 `OpenAI.API.ErrorResponse`) implementing the `MusicLibrary.ErrorResponse` behaviour,
 so workers can uniformly classify HTTP failures as transient (snooze) or permanent
-(cancel) via `MusicLibrary.Worker.ErrorHandler`. Per-API overrides capture
-API-specific quirks — e.g. MusicBrainz uses HTTP 503 as the rate-limit signal, and
-OpenAI splits HTTP 429 into `:rate_limit` vs `:auth_error` by reading the body
-`code` (`insufficient_quota` → permanent).
+(cancel) via `MusicLibrary.Worker.ErrorHandler`. Retry/reset headers are parsed into
+clamped snooze delays when providers expose them. Per-API overrides capture API-specific
+quirks — e.g. MusicBrainz uses HTTP 503 as the rate-limit signal, and OpenAI splits
+HTTP 429 into `:rate_limit` vs `:auth_error` by reading the body `code`
+(`insufficient_quota` → permanent).
 
 ---
 

@@ -16,25 +16,28 @@ defmodule BraveSearch.API.ErrorResponse do
   @behaviour MusicLibrary.ErrorResponse
 
   alias MusicLibrary.HttpError
+  alias MusicLibrary.RetryDelay
 
   @type t :: %__MODULE__{
           status: integer() | nil,
           code: String.t() | nil,
           message: String.t() | nil,
           kind: HttpError.kind(),
-          body: term()
+          body: term(),
+          retry_delay_seconds: pos_integer() | nil
         }
 
-  defstruct [:status, :code, :message, :kind, :body]
+  defstruct [:status, :code, :message, :kind, :body, :retry_delay_seconds]
 
   @spec from_response(Req.Response.t() | map()) :: t()
-  def from_response(%{status: status, body: body} = _response) do
+  def from_response(%{status: status, body: body} = response) do
     %__MODULE__{
       status: status,
       code: extract_code(body),
       message: extract_message(body),
       kind: HttpError.default_kind(status),
-      body: body
+      body: body,
+      retry_delay_seconds: RetryDelay.reset_seconds(response, "x-ratelimit-reset")
     }
   end
 
@@ -47,6 +50,9 @@ defmodule BraveSearch.API.ErrorResponse do
 
   @impl MusicLibrary.ErrorResponse
   @spec retry_delay_seconds(t()) :: pos_integer()
+  def retry_delay_seconds(%__MODULE__{retry_delay_seconds: seconds}) when is_integer(seconds),
+    do: seconds
+
   def retry_delay_seconds(%__MODULE__{kind: :rate_limit}), do: 60
   def retry_delay_seconds(%__MODULE__{kind: :server_error}), do: 30
   def retry_delay_seconds(%__MODULE__{kind: :timeout}), do: 10

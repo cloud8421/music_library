@@ -123,7 +123,7 @@ defmodule Wikipedia.API do
          {request,
           %{status: 200, body: %{"error" => %{"code" => _, "info" => _}} = body} = response}
        ) do
-    error = ErrorResponse.from_action_api_body(body)
+    error = ErrorResponse.from_action_api_body(body, response)
 
     Logger.error(fn ->
       url = URI.to_string(request.url)
