@@ -24,10 +24,7 @@ defmodule OpenAI do
     instructions = Keyword.get(opts, :instructions, "")
     on_chunk = Keyword.fetch!(opts, :on_chunk)
 
-    case API.chat_stream(messages, instructions, model, temperature, open_ai_config(), on_chunk) do
-      :ok -> :ok
-      {:error, _reason} = error -> error
-    end
+    API.chat_stream(messages, instructions, model, temperature, open_ai_config(), on_chunk)
   end
 
   @spec embeddings(String.t()) :: {:ok, [float()]} | {:error, term()}
