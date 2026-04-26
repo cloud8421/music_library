@@ -7,8 +7,7 @@ defmodule LastFm do
 
   @spec get_tracks(keyword()) :: {:ok, [Track.t()]} | {:error, term()}
   def get_tracks(opts) do
-    last_fm_config = last_fm_config()
-    API.get_recent_tracks(opts, last_fm_config)
+    API.get_recent_tracks(opts, last_fm_config())
   end
 
   @spec get_artist_info(String.t(), String.t()) :: {:ok, LastFm.Artist.t()} | {:error, term()}
@@ -69,24 +68,19 @@ defmodule LastFm do
 
   @spec get_session(String.t()) :: {:ok, LastFm.Session.t()} | {:error, term()}
   def get_session(token) do
-    last_fm_config = last_fm_config()
-
-    API.get_session(token, last_fm_config)
+    API.get_session(token, last_fm_config())
   end
 
   @spec scrobble([Scrobble.t()], String.t()) :: {:ok, map()} | {:error, term()}
   def scrobble(scrobbles, session_key) do
-    last_fm_config = last_fm_config()
-
     scrobbles
     |> Enum.map(&Scrobble.encode/1)
-    |> API.scrobble(session_key, last_fm_config)
+    |> API.scrobble(session_key, last_fm_config())
   end
 
   @spec get_profile(String.t()) :: {:ok, String.t()} | {:error, term()}
   def get_profile(session_key) do
-    last_fm_config = last_fm_config()
-    API.get_user_info(session_key, last_fm_config)
+    API.get_user_info(session_key, last_fm_config())
   end
 
   @spec auth_url() :: String.t()

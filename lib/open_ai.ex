@@ -14,7 +14,7 @@ defmodule OpenAI do
 
   @spec gpt(OpenAI.Completion.t()) :: {:ok, map()} | {:error, term()}
   def gpt(completion) do
-    API.gpt(completion, config())
+    API.gpt(completion, open_ai_config())
   end
 
   @spec chat_stream([map()], chat_stream_opts()) :: :ok | {:error, term()}
@@ -24,7 +24,7 @@ defmodule OpenAI do
     instructions = Keyword.get(opts, :instructions, "")
     on_chunk = Keyword.fetch!(opts, :on_chunk)
 
-    case API.chat_stream(messages, instructions, model, temperature, config(), on_chunk) do
+    case API.chat_stream(messages, instructions, model, temperature, open_ai_config(), on_chunk) do
       :ok -> :ok
       {:error, _reason} = error -> error
     end
@@ -32,8 +32,8 @@ defmodule OpenAI do
 
   @spec embeddings(String.t()) :: {:ok, [float()]} | {:error, term()}
   def embeddings(text) do
-    API.get_embeddings(text, config())
+    API.get_embeddings(text, open_ai_config())
   end
 
-  defp config, do: OpenAI.Config.resolve(:music_library)
+  defp open_ai_config, do: OpenAI.Config.resolve(:music_library)
 end
