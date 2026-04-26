@@ -148,7 +148,8 @@ defmodule MusicLibrary.Artists do
   @spec refresh_musicbrainz_data(String.t()) :: {:ok, ArtistInfo.t()} | {:error, term()}
   def refresh_musicbrainz_data(artist_id) do
     with {:ok, musicbrainz_artist} <- MusicBrainz.get_artist(artist_id) do
-      get_artist_info!(artist_id)
+      artist_id
+      |> get_artist_info!()
       |> ArtistInfo.changeset(%{musicbrainz_data: musicbrainz_artist.musicbrainz_data})
       |> Repo.update()
     end
