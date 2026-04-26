@@ -23,15 +23,8 @@ defmodule MusicLibrary.Artists do
 
   @spec get_similar_artists(map(), MapSet.t(String.t())) :: {:ok, [map()]} | {:error, term()}
   def get_similar_artists(artist, collected_artist_ids) do
-    case LastFm.get_similar_artists(artist.musicbrainz_id, artist.name) do
-      {:ok, artists} ->
-        {:ok,
-         Enum.filter(artists, fn a ->
-           MapSet.member?(collected_artist_ids, a.musicbrainz_id)
-         end)}
-
-      error ->
-        error
+    with {:ok, artists} <- LastFm.get_similar_artists(artist.musicbrainz_id, artist.name) do
+      {:ok, Enum.filter(artists, fn a -> a.musicbrainz_id in collected_artist_ids end)}
     end
   end
 
