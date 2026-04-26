@@ -215,7 +215,7 @@ defmodule MusicLibrary.Artists do
   def create_artist_info(attrs) do
     %ArtistInfo{}
     |> ArtistInfo.changeset(attrs)
-    |> Repo.insert(on_conflict: {:replace, [:musicbrainz_data, :discogs_data]})
+    |> Repo.insert(on_conflict: {:replace, [:musicbrainz_data, :discogs_data]}, returning: true)
   end
 
   @spec get_artist_info!(String.t()) :: ArtistInfo.t()
