@@ -166,7 +166,7 @@ defmodule MusicLibrary.MixProject do
       {:oban_web, "~> 2.12"},
 
       # Test tooling
-      {:phoenix_test, "~> 0.10.0", only: :test},
+      {:phoenix_test, "~> 0.11.0", only: :test},
       {:lazy_html, ">= 0.1.0", only: :test},
 
       # Prod error/perf tooling
