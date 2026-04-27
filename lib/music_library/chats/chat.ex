@@ -24,7 +24,7 @@ defmodule MusicLibrary.Chats.Chat do
   @spec changeset(t() | Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
   def changeset(chat, attrs) do
     chat
-    |> cast(attrs, [:entity, :musicbrainz_id, :topic])
+    |> cast(attrs, [:id, :entity, :musicbrainz_id, :topic])
     |> validate_required([:entity, :musicbrainz_id])
     |> validate_length(:topic, max: 200)
   end
