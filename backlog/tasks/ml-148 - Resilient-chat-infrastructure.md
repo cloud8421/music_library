@@ -1,12 +1,14 @@
 ---
 id: ML-148
 title: Resilient chat infrastructure
-status: To Do
+status: In Progress
 assignee: []
 created_date: '2026-04-27 09:04'
+updated_date: '2026-04-27 11:55'
 labels: []
 dependencies: []
 priority: medium
+ordinal: 1000
 ---
 
 ## Description
