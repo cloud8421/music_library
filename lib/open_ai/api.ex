@@ -9,6 +9,11 @@ defmodule OpenAI.API do
   Mid-stream failures in `chat_stream/6` come from parsed SSE event payloads
   rather than HTTP responses and remain as message strings passed through the
   stream callback plumbing.
+
+  `chat_stream/6` streams response chunks with `Req`'s `into: :self`, so the
+  calling process receives and consumes Req's async body messages while the
+  request is active. Call it from a short-lived worker/task process rather than
+  directly from a LiveView or GenServer that has unrelated mailbox traffic.
   """
 
   alias OpenAI.API.ErrorResponse
@@ -63,44 +68,55 @@ defmodule OpenAI.API do
         stream: true,
         temperature: temperature
       },
-      into: fn {:data, data}, {req, resp} ->
-        buffer = Request.get_private(req, :sse_buffer, "")
-        {events, buffer} = ServerSentEvents.parse(buffer <> data)
-        req = Request.put_private(req, :sse_buffer, buffer)
-
-        decode_events(events, cb, req, resp)
-      end
+      into: :self
     )
-    |> do_chat_stream()
+    |> do_chat_stream(cb)
   end
 
-  defp decode_events([], _cb, req, resp), do: {:cont, {req, resp}}
-
-  defp decode_events([%{data: json} | rest], cb, req, resp) do
-    case decode_responses_event(json, cb) do
-      {:error, message} ->
-        Logger.error(message)
-        {:halt, {req, Req.Response.put_private(resp, :error, message)}}
-
-      _ ->
-        decode_events(rest, cb, req, resp)
-    end
-  end
-
-  defp do_chat_stream(req) do
+  defp do_chat_stream(req, cb) do
     case Req.post(req) do
       {:ok, %{status: status} = resp} when status in 200..299 ->
-        if message = Req.Response.get_private(resp, :error) do
-          {:error, message}
-        else
-          :ok
-        end
+        decode_response_stream(resp.body, cb)
 
       {:ok, response} ->
+        response = decode_async_error_body(response)
         {:error, ErrorResponse.from_response(response)}
 
       {:error, exception} ->
         {:error, exception}
+    end
+  end
+
+  defp decode_response_stream(stream, cb) do
+    stream
+    |> ServerSentEvents.decode_stream()
+    |> Enum.reduce_while(:ok, fn %{data: json}, :ok ->
+      case decode_responses_event(json, cb) do
+        {:error, message} ->
+          Logger.error(message)
+          {:halt, {:error, message}}
+
+        _ ->
+          {:cont, :ok}
+      end
+    end)
+  end
+
+  defp decode_async_error_body(%{body: %Req.Response.Async{} = body} = response) do
+    body =
+      body
+      |> Enum.into("")
+      |> decode_error_body()
+
+    %{response | body: body}
+  end
+
+  defp decode_async_error_body(response), do: response
+
+  defp decode_error_body(body) when is_binary(body) do
+    case JSON.decode(body) do
+      {:ok, decoded} -> decoded
+      {:error, _reason} -> body
     end
   end
 

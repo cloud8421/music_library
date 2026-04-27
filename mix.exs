@@ -129,7 +129,7 @@ defmodule MusicLibrary.MixProject do
       # HTTP Clients
       {:finch, "~> 0.21.0"},
       {:req, "~> 0.5.8"},
-      {:server_sent_events, "~> 0.2"},
+      {:server_sent_events, "~> 1.0"},
 
       # Mailers
       {:idna, "~> 7.1", override: true},

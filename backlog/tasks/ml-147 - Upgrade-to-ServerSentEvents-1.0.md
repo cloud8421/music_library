@@ -1,12 +1,14 @@
 ---
 id: ML-147
 title: Upgrade to ServerSentEvents 1.0
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-04-25 21:26'
+updated_date: '2026-04-27 21:02'
 labels: []
 dependencies: []
 priority: medium
+ordinal: 2000
 ---
 
 ## Description
