@@ -19,6 +19,7 @@ defmodule MusicLibrary.Application do
       MusicLibrary.BackgroundRepo,
       MusicLibrary.TelemetryRepo,
       MusicLibraryWeb.Telemetry,
+      MusicLibrary.Chats.Supervisor,
       {Phoenix.PubSub, name: MusicLibrary.PubSub},
       {Oban, Application.fetch_env!(:music_library, Oban)},
       {Ecto.Migrator,
