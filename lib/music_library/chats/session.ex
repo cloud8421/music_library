@@ -5,11 +5,14 @@ defmodule MusicLibrary.Chats.Session do
 
   alias MusicLibrary.{Chats, Chats.SessionRegistry}
 
-  defstruct chat_params: %{},
-            chat: nil
+  defstruct new_chat_params: %{},
+            chat_id: nil,
+            chat: nil,
+            instructions: "",
+            current_chunk: ""
 
-  def start_link(chat_params) do
-    GenServer.start_link(__MODULE__, chat_params, name: via(chat_params.chat_id))
+  def start_link(params) do
+    GenServer.start_link(__MODULE__, params, name: via(params.chat_id))
   end
 
   def get_history(chat_id) do
@@ -21,8 +24,19 @@ defmodule MusicLibrary.Chats.Session do
   end
 
   @impl true
-  def init(chat_params) do
-    {:ok, %__MODULE__{chat_params: chat_params}, {:continue, :load_existing_chat}}
+  def init(params) do
+    chat_id = Map.fetch!(params, :chat_id)
+    instructions = Map.fetch!(params, :instructions)
+    new_chat_params = Map.get(params, :new_chat_params, %{})
+
+    state = %__MODULE__{
+      new_chat_params: new_chat_params,
+      chat_id: chat_id,
+      chat: Chats.get_chat(chat_id),
+      instructions: instructions
+    }
+
+    {:ok, state}
   end
 
   @impl true
@@ -39,7 +53,8 @@ defmodule MusicLibrary.Chats.Session do
 
     case Chats.add_message(state.chat, message_attrs) do
       {:ok, message} ->
-        {:reply, {:ok, message}, state, {:continue, :load_existing_chat}}
+        state = %{state | chat: Chats.get_chat(state.chat_id)}
+        {:reply, {:ok, message}, state, {:continue, :ask_llm}}
 
       error ->
         {:reply, error, state}
@@ -54,15 +69,15 @@ defmodule MusicLibrary.Chats.Session do
     }
 
     chat_attrs = %{
-      id: state.chat_params.chat_id,
-      entity: state.chat_params.entity,
-      musicbrainz_id: state.chat_params.musicbrainz_id
+      id: state.chat_id,
+      entity: state.new_chat_params.entity,
+      musicbrainz_id: state.new_chat_params.musicbrainz_id
     }
 
     case Chats.create_chat_with_message(chat_attrs, message_attrs) do
       {:ok, chat} ->
         [message] = chat.messages
-        {:reply, {:ok, message}, %{state | chat: chat}}
+        {:reply, {:ok, message}, %{state | chat: chat}, {:continue, :ask_llm}}
 
       error ->
         {:reply, error, state}
@@ -70,8 +85,37 @@ defmodule MusicLibrary.Chats.Session do
   end
 
   @impl true
-  def handle_continue(:load_existing_chat, state) do
-    {:noreply, %{state | chat: Chats.get_chat(state.chat_params.chat_id)}}
+  def handle_continue(:ask_llm, state) do
+    stream_messages = Enum.map(state.chat.messages, &%{role: &1.role, content: &1.content})
+
+    # We get fragments for every on_chunk call
+    # When the function returns, it's done
+    OpenAI.chat_stream(stream_messages,
+      on_chunk: fn chunk -> send(self(), {:message_chunk, chunk}) end,
+      instructions: state.instructions
+    )
+
+    send(self(), :message_done)
+
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_info({:message_chunk, chunk}, state) do
+    state = %{state | current_chunk: state.current_chunk <> chunk}
+    {:noreply, state}
+  end
+
+  def handle_info(:message_done, state) do
+    message_attrs = %{
+      role: "assistant",
+      content: state.current_chunk
+    }
+
+    Chats.add_message(state.chat, message_attrs)
+
+    state = %{state | current_chunk: "", chat: Chats.get_chat(state.chat_id)}
+    {:noreply, state}
   end
 
   defp via(chat_id) do
