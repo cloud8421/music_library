@@ -285,10 +285,7 @@ defmodule MusicLibraryWeb.Components.Release do
 
   def medium(assigns) do
     ~H"""
-    <div
-      :if={@media_count > 1}
-      class="flex items-center justify-between gap-3"
-    >
+    <div class="flex items-center justify-between gap-3">
       <label class="md:text-md flex min-w-0 cursor-pointer items-center gap-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300">
         <input
           :if={@can_scrobble?}
@@ -304,7 +301,10 @@ defmodule MusicLibraryWeb.Components.Release do
           {@medium.format}
         </.badge>
       </label>
-      <div class="flex items-center gap-2">
+      <div
+        :if={@media_count > 1}
+        class="flex items-center gap-2"
+      >
         <.button
           :if={@can_scrobble?}
           type="button"
