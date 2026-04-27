@@ -53,6 +53,13 @@ defmodule MusicLibrary.Chats do
     |> Repo.preload(:messages)
   end
 
+  @spec get_chat(String.t()) :: nil | Chat.t()
+  def get_chat(id) do
+    Chat
+    |> Repo.get(id)
+    |> Repo.preload(:messages)
+  end
+
   @spec create_chat_with_message(map(), map()) ::
           {:ok, Chat.t()} | {:error, Ecto.Changeset.t()}
   def create_chat_with_message(chat_attrs, message_attrs) do

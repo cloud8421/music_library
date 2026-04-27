@@ -3,7 +3,7 @@ defmodule MusicLibrary.Chats.Session do
 
   use GenServer
 
-  alias MusicLibrary.{Chats, Chats.Chat, Chats.SessionRegistry, Repo}
+  alias MusicLibrary.{Chats, Chats.SessionRegistry}
 
   defstruct chat_params: %{},
             chat: nil
@@ -71,13 +71,7 @@ defmodule MusicLibrary.Chats.Session do
 
   @impl true
   def handle_continue(:load_existing_chat, state) do
-    {:noreply, %{state | chat: load_chat(state.chat_params.chat_id)}}
-  end
-
-  defp load_chat(chat_id) do
-    Chat
-    |> Repo.get(chat_id)
-    |> Repo.preload(:messages)
+    {:noreply, %{state | chat: Chats.get_chat(state.chat_params.chat_id)}}
   end
 
   defp via(chat_id) do
