@@ -158,16 +158,18 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: gacts/install-hurl@v1
+        with:
+          version: 8.0.0
       - name: 🚀 Deploy to production
         run: hurl --test --report-tap deploy.tap scripts/prod/deploy.hurl
         env:
-          HURL_coolify_token: ${{ secrets.COOLIFY_TOKEN }}
-          HURL_coolify_host: ${{ vars.COOLIFY_HOST }}
-          HURL_coolify_app_uuid: ${{ vars.COOLIFY_APP_UUID }}
+          HURL_VARIABLE_coolify_token: ${{ secrets.COOLIFY_TOKEN }}
+          HURL_VARIABLE_coolify_host: ${{ vars.COOLIFY_HOST }}
+          HURL_VARIABLE_coolify_app_uuid: ${{ vars.COOLIFY_APP_UUID }}
       - name: ⏳ Wait for container to start
         run: hurl --test --report-tap healthcheck.tap test/healthcheck.hurl
       - name: ✅ Run verification tests
         run: hurl --test --report-tap verification.tap test/prod.hurl
         env:
-          HURL_api_token: ${{ secrets.API_TOKEN }}
+          HURL_VARIABLE_api_token: ${{ secrets.API_TOKEN }}
       - uses: pcolby/tap-summary@v1

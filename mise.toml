@@ -12,16 +12,16 @@ OPENAI_KEY = 'change-me'
 DISCOGS_PERSONAL_ACCESS_TOKEN = 'change-me'
 
 # DEPLOYMENT
-HURL_api_token = 'change-me'
-HURL_coolify_app_uuid = 'change-me'
-HURL_coolify_host = 'https://<fqdn>'
-HURL_coolify_token = 'change-me'
+HURL_VARIABLE_api_token = 'change-me'
+HURL_VARIABLE_coolify_app_uuid = 'change-me'
+HURL_VARIABLE_coolify_host = 'https://<fqdn>'
+HURL_VARIABLE_coolify_token = 'change-me'
 
 [tools]
 elixir = "1.20.0-rc.4-otp-28"
 erlang = "28.5"
 node = "25.9.0"
-hurl = 'latest'
+hurl = '8.0.0'
 sqlite = 'latest'
 gh = 'latest'
 shellcheck = 'latest'
