@@ -9,6 +9,7 @@ Rules extracted from commit history that are specific to this project and not al
 - Reverts use `Revert "Original message"` convention
 - NEVER ADD a "Co-Authored-By" reference in the message body
 - **When the work maps to a Backlog.md task, prefix the commit subject with the task identifier**, e.g. `ML-3: fix scrobble rule ordering`. The prefix counts toward the 60-character limit.
+- **Dependency updates use `Update dependencies` for mix and `Update npm dependencies` for npm.** The subject describes the intent, not the mechanics — never use "bump". List each specific version change in the commit body as `package_name from => to`.
 
 ## Workflow
 
