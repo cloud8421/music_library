@@ -91,7 +91,11 @@ defmodule OpenAI.API do
     stream
     |> ServerSentEvents.decode_stream()
     |> Enum.reduce_while(:ok, fn %{data: json}, :ok ->
-      case decode_responses_event(json, cb) do
+      case decode_responses_event(json) do
+        {:ok, delta} ->
+          cb.(delta)
+          {:cont, :ok}
+
         {:error, message} ->
           Logger.error(message)
           {:halt, {:error, message}}
@@ -155,11 +159,10 @@ defmodule OpenAI.API do
     |> Request.append_response_steps(log_error: &log_error/1)
   end
 
-  defp decode_responses_event(json, cb) do
+  defp decode_responses_event(json) do
     case JSON.decode!(json) do
       %{"type" => "response.output_text.delta", "delta" => delta} ->
-        cb.(delta)
-        :ok
+        {:ok, delta}
 
       %{"type" => "error", "error" => %{"message" => message}} ->
         {:error, message}
