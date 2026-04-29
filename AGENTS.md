@@ -16,6 +16,13 @@ The project uses [mise](https://mise.jdx.dev/) to manage high level configuratio
 
 @docs/available-tasks.md
 
+## When to read each reference
+
+- **Read `docs/architecture.md`** before adding/removing modules, schemas, contexts, workers, routes, or external API integrations. Also read it when asked about the supervision tree, database layout, PubSub topics, or how any two parts of the system connect.
+- **Read `docs/project-conventions.md`** before writing or refactoring code. Also read it when asked about project style, testing patterns, error handling, SQL optimization, commit messages, or JavaScript conventions.
+- **Read `docs/production-infrastructure.md`** before changing deployment config, CI/CD, environment variables, Dockerfiles, or backup strategy. Also read it when asked about hosting, Litestream, Coolify, or production monitoring.
+- **Read `docs/available-tasks.md`** before running mise tasks. Read the file to see available tasks, then run `mise run <task> --help` for task-specific options.
+
 <!-- usage-rules-start -->
 <!-- usage_rules-start -->
 ## usage_rules usage
