@@ -57,6 +57,7 @@ defmodule MusicLibrary.Chats.Session do
 
   alias MusicLibrary.{Chats, Chats.SessionRegistry}
   alias OpenAI.API.ErrorResponse
+  alias Phoenix.PubSub
 
   require Logger
 
@@ -85,7 +86,7 @@ defmodule MusicLibrary.Chats.Session do
   end
 
   @impl :gen_statem
-  def callback_mode, do: :state_functions
+  def callback_mode, do: [:state_functions, :state_enter]
 
   @impl :gen_statem
   def init(params) do
@@ -102,6 +103,11 @@ defmodule MusicLibrary.Chats.Session do
     }
 
     {:ok, :idle, data}
+  end
+
+  def idle(:enter, _old_state, data) do
+    broadcast(data.chat_id, %{status: :idle})
+    :keep_state_and_data
   end
 
   def idle({:call, from}, :get_history, data) do
@@ -152,6 +158,11 @@ defmodule MusicLibrary.Chats.Session do
     :keep_state_and_data
   end
 
+  def streaming(:enter, _old_state, data) do
+    broadcast(data.chat_id, %{status: :streaming})
+    :keep_state_and_data
+  end
+
   def streaming({:call, from}, :get_history, data) do
     {:keep_state, data, [{:reply, from, data.chat}]}
   end
@@ -189,6 +200,11 @@ defmodule MusicLibrary.Chats.Session do
   end
 
   def streaming(_event_type, _event_content, _data) do
+    :keep_state_and_data
+  end
+
+  def failed(:enter, _old_state, data) do
+    broadcast(data.chat_id, %{status: :failed})
     :keep_state_and_data
   end
 
@@ -239,5 +255,13 @@ defmodule MusicLibrary.Chats.Session do
 
   defp via(chat_id) do
     {:via, Registry, {SessionRegistry, chat_id}}
+  end
+
+  def subscribe(chat_id) do
+    PubSub.subscribe(MusicLibrary.PubSub, "chats:#{chat_id}")
+  end
+
+  defp broadcast(chat_id, event) do
+    PubSub.broadcast(MusicLibrary.PubSub, "chats:#{chat_id}", event)
   end
 end
