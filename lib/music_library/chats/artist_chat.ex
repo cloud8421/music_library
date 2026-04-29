@@ -10,7 +10,7 @@ defmodule MusicLibrary.Chats.ArtistChat do
 
   @impl true
   @spec stream_response([map()], {map(), ArtistInfo.t()}, (String.t() -> any())) ::
-          :ok | {:error, term()}
+          {:ok, String.t()} | {:error, term()}
   def stream_response(messages, {artist, artist_info}, callback) do
     instructions = build_instructions(artist, artist_info)
 

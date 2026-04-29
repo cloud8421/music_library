@@ -7,5 +7,5 @@ defmodule MusicLibrary.Chats.StreamProvider do
               messages :: list(map()),
               context :: term(),
               callback :: (String.t() -> any())
-            ) :: :ok | {:error, term()}
+            ) :: {:ok, String.t()} | {:error, term()}
 end

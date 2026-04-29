@@ -392,7 +392,7 @@ defmodule MusicLibraryWeb.Components.Chat do
                chunk: chunk
              )
            end) do
-        :ok ->
+        {:ok, _response} ->
           LiveView.send_update(parent_pid, __MODULE__,
             id: component_id,
             done: true

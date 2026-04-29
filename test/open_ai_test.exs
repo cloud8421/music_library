@@ -50,7 +50,7 @@ defmodule OpenAITest do
         |> Plug.Conn.send_resp(200, body)
       end)
 
-      assert :ok =
+      assert {:ok, "Hi"} =
                OpenAI.chat_stream(
                  [%{role: "user", content: "hello"}],
                  on_chunk: fn chunk -> send(test_pid, {:chunk, chunk}) end

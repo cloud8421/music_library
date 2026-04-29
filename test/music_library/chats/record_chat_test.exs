@@ -53,7 +53,8 @@ defmodule MusicLibrary.Chats.RecordChatTest do
     record = build_record()
     embedding_text = "Radiohead - OK Computer (1997). Alternative rock masterpiece."
 
-    assert :ok = RecordChat.stream_response([], {record, embedding_text}, fn _chunk -> :ok end)
+    assert {:ok, _} =
+             RecordChat.stream_response([], {record, embedding_text}, fn _chunk -> :ok end)
 
     assert_receive {:captured_instructions, instructions}
     assert instructions =~ embedding_text
@@ -65,7 +66,7 @@ defmodule MusicLibrary.Chats.RecordChatTest do
 
     record = build_record()
 
-    assert :ok = RecordChat.stream_response([], {record, nil}, fn _chunk -> :ok end)
+    assert {:ok, _} = RecordChat.stream_response([], {record, nil}, fn _chunk -> :ok end)
 
     assert_receive {:captured_instructions, instructions}
     assert instructions =~ "Album: OK Computer"
@@ -81,7 +82,7 @@ defmodule MusicLibrary.Chats.RecordChatTest do
 
     record = build_record()
 
-    assert :ok = RecordChat.stream_response([], {record, ""}, fn _chunk -> :ok end)
+    assert {:ok, _} = RecordChat.stream_response([], {record, ""}, fn _chunk -> :ok end)
 
     assert_receive {:captured_instructions, instructions}
     assert instructions =~ "Album: OK Computer"
@@ -93,7 +94,7 @@ defmodule MusicLibrary.Chats.RecordChatTest do
 
     record = build_record(%{genres: nil, release_date: nil})
 
-    assert :ok = RecordChat.stream_response([], {record, nil}, fn _chunk -> :ok end)
+    assert {:ok, _} = RecordChat.stream_response([], {record, nil}, fn _chunk -> :ok end)
 
     assert_receive {:captured_instructions, instructions}
     assert instructions =~ "Genres: \n"

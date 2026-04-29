@@ -61,7 +61,7 @@ defmodule MusicLibrary.Chats.ArtistChatTest do
     artist = build_artist()
     artist_info = build_artist_info()
 
-    assert :ok = ArtistChat.stream_response([], {artist, artist_info}, fn _chunk -> :ok end)
+    assert {:ok, _} = ArtistChat.stream_response([], {artist, artist_info}, fn _chunk -> :ok end)
 
     assert_receive {:captured_instructions, instructions}
     assert instructions =~ "Name: Radiohead"
@@ -76,7 +76,7 @@ defmodule MusicLibrary.Chats.ArtistChatTest do
     artist = build_artist()
     artist_info = build_artist_info(%{wikipedia_data: %{}})
 
-    assert :ok = ArtistChat.stream_response([], {artist, artist_info}, fn _chunk -> :ok end)
+    assert {:ok, _} = ArtistChat.stream_response([], {artist, artist_info}, fn _chunk -> :ok end)
 
     assert_receive {:captured_instructions, instructions}
     assert instructions =~ "Name: Radiohead"
@@ -99,7 +99,7 @@ defmodule MusicLibrary.Chats.ArtistChatTest do
         wikipedia_data: %{}
       })
 
-    assert :ok = ArtistChat.stream_response([], {artist, artist_info}, fn _chunk -> :ok end)
+    assert {:ok, _} = ArtistChat.stream_response([], {artist, artist_info}, fn _chunk -> :ok end)
 
     assert_receive {:captured_instructions, instructions}
     assert instructions =~ "Name: Radiohead"

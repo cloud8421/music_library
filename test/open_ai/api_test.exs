@@ -149,7 +149,9 @@ defmodule OpenAI.APITest do
 
       cb = fn chunk -> send(test_pid, {:chunk, chunk}) end
 
-      assert :ok = API.chat_stream([], "instructions", "gpt-4.1", 0.7, @config, cb)
+      assert {:ok, "Hello world"} =
+               API.chat_stream([], "instructions", "gpt-4.1", 0.7, @config, cb)
+
       assert_received {:chunk, "Hello"}
       assert_received {:chunk, " world"}
     end
@@ -173,7 +175,9 @@ defmodule OpenAI.APITest do
         {:error, "callback error"}
       end
 
-      assert :ok = API.chat_stream([], "instructions", "gpt-4.1", 0.7, @config, cb)
+      assert {:ok, "Hello world"} =
+               API.chat_stream([], "instructions", "gpt-4.1", 0.7, @config, cb)
+
       assert_received {:chunk, "Hello"}
       assert_received {:chunk, " world"}
     end
@@ -276,7 +280,7 @@ defmodule OpenAI.APITest do
 
       cb = fn _chunk -> :ok end
 
-      assert :ok = API.chat_stream([], "instructions", "gpt-4.1", 0.7, @config, cb)
+      assert {:ok, ""} = API.chat_stream([], "instructions", "gpt-4.1", 0.7, @config, cb)
     end
   end
 end

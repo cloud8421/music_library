@@ -90,20 +90,24 @@ defmodule OpenAI.API do
   defp decode_response_stream(stream, cb) do
     stream
     |> ServerSentEvents.decode_stream()
-    |> Enum.reduce_while(:ok, fn %{data: json}, :ok ->
+    |> Enum.reduce_while("", fn %{data: json}, acc ->
       case decode_responses_event(json) do
         {:ok, delta} ->
           cb.(delta)
-          {:cont, :ok}
+          {:cont, acc <> delta}
 
         {:error, message} ->
           Logger.error(message)
           {:halt, {:error, message}}
 
         _ ->
-          {:cont, :ok}
+          {:cont, acc}
       end
     end)
+    |> case do
+      {:error, _reason} = error -> error
+      response -> {:ok, response}
+    end
   end
 
   defp decode_async_error_body(%{body: %Req.Response.Async{} = body} = response) do

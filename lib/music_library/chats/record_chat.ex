@@ -10,7 +10,7 @@ defmodule MusicLibrary.Chats.RecordChat do
 
   @impl true
   @spec stream_response([map()], {Record.t(), String.t() | nil}, (String.t() -> any())) ::
-          :ok | {:error, term()}
+          {:ok, String.t()} | {:error, term()}
   def stream_response(messages, {record, embedding_text}, callback) do
     instructions = build_instructions(record, embedding_text)
 
