@@ -170,7 +170,7 @@ defmodule MusicLibrary.Chats.SessionTest do
 
       new_chat = Session.get_history(chat.id)
 
-      assert 3 == length(new_chat.messages)
+      assert 3 == Enum.count(new_chat.messages)
     end
   end
 
@@ -232,6 +232,49 @@ defmodule MusicLibrary.Chats.SessionTest do
       # SSE errors are non-retryable — session is back in :idle
       stub_default_reply(pid)
       assert {:ok, _message} = Session.send_message(chat.id, "try again")
+    end
+  end
+
+  describe "broadcasted events" do
+    test "sends events for the entire state lifecycle" do
+      chat = chat_fixture()
+
+      params = %{
+        chat_id: chat.id,
+        instructions: @instructions
+      }
+
+      assert {:ok, pid} = Session.start_link(params)
+
+      stub_and_allow(pid, fn conn ->
+        assert conn.request_path == "/v1/responses"
+        assert conn.params["instructions"] == @instructions
+
+        assert conn.params["input"] == [
+                 %{"content" => "message content", "role" => "user"},
+                 %{"content" => "is this really a masterpiece?", "role" => "user"}
+               ]
+
+        body = delta_chunk("yes it is, ") <> delta_chunk("i love it") <> completed_chunk()
+
+        conn
+        |> Plug.Conn.put_resp_content_type("text/event-stream")
+        |> Plug.Conn.send_resp(200, body)
+      end)
+
+      Session.subscribe(chat.id)
+
+      assert {:ok, message} = Session.send_message(chat.id, "is this really a masterpiece?")
+      chat = %{chat | messages: chat.messages ++ [message]}
+
+      assert :idle == Session.status(chat.id)
+
+      chat_with_llm_response = Session.get_history(chat.id)
+
+      assert_received {Session, %{status: :streaming, chat: ^chat}}
+      assert_received {Session, %{status: :chunk_received, chunk: "yes it is, "}}
+      assert_received {Session, %{status: :chunk_received, chunk: "i love it"}}
+      assert_received {Session, %{status: :idle, chat: ^chat_with_llm_response}}
     end
   end
 

@@ -636,6 +636,11 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
      )}
   end
 
+  def handle_info({MusicLibrary.Chats.Session, event}, socket) do
+    send_update(MusicLibraryWeb.Components.Chat, id: "artist-chat", event: event)
+    {:noreply, socket}
+  end
+
   def handle_info({MusicLibraryWeb.ArtistLive.Form, {:saved, artist_info}}, socket) do
     {:noreply,
      socket

@@ -498,6 +498,11 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     end
   end
 
+  def handle_info({MusicLibrary.Chats.Session, event}, socket) do
+    send_update(MusicLibraryWeb.Components.Chat, id: "record-chat", event: event)
+    {:noreply, socket}
+  end
+
   defp page_title(action, record) do
     Enum.join(
       [

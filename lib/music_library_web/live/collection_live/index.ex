@@ -315,6 +315,11 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
     {:noreply, socket}
   end
 
+  def handle_info({MusicLibrary.Chats.Session, event}, socket) do
+    send_update(MusicLibraryWeb.Components.Chat, id: "collection-chat", event: event)
+    {:noreply, socket}
+  end
+
   @impl true
   def handle_async(:collection_summary, {:ok, summary}, socket) do
     {:noreply, assign(socket, :collection_summary, summary)}

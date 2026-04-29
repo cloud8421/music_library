@@ -1765,11 +1765,6 @@ msgstr ""
 msgid "Thinking..."
 msgstr ""
 
-#: lib/music_library_web/components/chat.ex
-#, elixir-autogen, elixir-format
-msgid "Something went wrong. Please try again."
-msgstr ""
-
 #: lib/music_library_web/live/artist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Ask about this artist..."

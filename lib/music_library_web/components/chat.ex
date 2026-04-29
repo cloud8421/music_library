@@ -1,11 +1,8 @@
 defmodule MusicLibraryWeb.Components.Chat do
   use MusicLibraryWeb, :live_component
 
-  require Logger
-
   alias MusicLibrary.Chats
   alias MusicLibraryWeb.Markdown
-  alias Phoenix.LiveView
 
   def open(id), do: Fluxon.open_dialog(id)
 
@@ -15,35 +12,35 @@ defmodule MusicLibraryWeb.Components.Chat do
   end
 
   @impl true
-  def update(%{chunk: chunk}, socket) do
-    doc = socket.assigns.streaming_doc || Markdown.new_streaming_doc(link_target: "_blank")
+  def update(%{event: %{status: :streaming, chat: chat}}, socket) do
+    doc = Markdown.new_streaming_doc(link_target: "_blank")
 
     {:ok,
      socket
-     |> update(:current_response, &(&1 <> chunk))
-     |> assign(:streaming_doc, MDEx.Document.put_markdown(doc, chunk))}
+     |> assign(:chat, chat)
+     |> assign(:loading, true)
+     |> assign(:streaming_doc, doc)}
   end
 
-  def update(%{done: true}, socket) do
-    completed_message = %{role: "assistant", content: socket.assigns.current_response}
-
-    save_assistant_message(socket.assigns.chat, completed_message.content)
+  def update(%{event: %{status: :chunk_received, chunk: chunk}}, socket) do
+    doc = MDEx.Document.put_markdown(socket.assigns.streaming_doc, chunk)
 
     {:ok,
      socket
-     |> update(:messages, &(&1 ++ [completed_message]))
-     |> assign(:current_response, "")
+     |> assign(:loading, false)
+     |> assign(:streaming_doc, doc)}
+  end
+
+  def update(%{event: %{status: :idle, chat: chat}}, socket) do
+    send(self(), {__MODULE__, :chats_changed})
+
+    {:ok,
+     socket
      |> assign(:streaming_doc, nil)
-     |> assign(:loading, false)}
+     |> assign(:chat, chat)}
   end
 
-  def update(%{error: error}, socket) do
-    {:ok,
-     socket
-     |> assign(:error, error)
-     |> assign(:loading, false)}
-  end
-
+  @impl true
   def update(assigns, socket) do
     socket = assign(socket, assigns)
 
@@ -56,6 +53,9 @@ defmodule MusicLibraryWeb.Components.Chat do
 
   @impl true
   def render(assigns) do
+    messages = if assigns.chat, do: assigns.chat.messages, else: []
+    assigns = assign(assigns, :messages, messages)
+
     ~H"""
     <div>
       <.sheet
@@ -202,7 +202,7 @@ defmodule MusicLibraryWeb.Components.Chat do
       phx-hook=".ScrollBottom"
     >
       <div
-        :if={@messages == [] and @streaming_doc == nil}
+        :if={@messages == []}
         class="flex h-full flex-col items-center justify-center text-center text-zinc-500 dark:text-zinc-400"
       >
         <.icon
@@ -236,7 +236,7 @@ defmodule MusicLibraryWeb.Components.Chat do
       </div>
 
       <div
-        :if={@streaming_doc != nil}
+        :if={@streaming_doc != nil && !@loading}
         class="max-w-[85%] rounded-lg bg-zinc-100 px-4 py-2 text-sm text-zinc-900 dark:bg-zinc-700 dark:text-zinc-100"
       >
         <div class="dark:prose-invert prose prose-sm">
@@ -245,7 +245,7 @@ defmodule MusicLibraryWeb.Components.Chat do
       </div>
 
       <div
-        :if={@loading and @streaming_doc == nil}
+        :if={@loading}
         class="flex items-center gap-2 text-zinc-500 dark:text-zinc-400"
       >
         <.loading class="size-4" />
@@ -306,31 +306,7 @@ defmodule MusicLibraryWeb.Components.Chat do
     do: do_send_message(socket, text)
 
   def handle_event("new_chat", _params, socket) do
-    chat_id = Ecto.UUID.generate()
-    chat_module = socket.assigns.chat_module
-
-    {record, embedding_text} = socket.assigns.chat_context
-    instructions = chat_module.build_instructions(record, embedding_text)
-
-    params = %{
-      chat_id: chat_id,
-      instructions: instructions,
-      new_chat_params: %{
-        entity: socket.assigns.entity,
-        musicbrainz_id: socket.assigns.musicbrainz_id
-      }
-    }
-
-    :ok = Chats.ensure_session(params)
-
-    {:noreply,
-     socket
-     |> assign(:messages, [])
-     |> assign(:current_response, "")
-     |> assign(:streaming_doc, nil)
-     |> assign(:error, nil)
-     |> assign(:chat, nil)
-     |> assign(:view, :active)}
+    {:noreply, do_new_chat(socket)}
   end
 
   def handle_event("show_chat_list", _params, socket) do
@@ -342,27 +318,25 @@ defmodule MusicLibraryWeb.Components.Chat do
      |> assign(:view, :list)}
   end
 
-  def handle_event("select_chat", %{"id" => id}, socket) do
-    chat = Chats.get_chat!(id)
-
+  def handle_event("select_chat", %{"id" => chat_id}, socket) do
     chat_module = socket.assigns.chat_module
 
     {record, embedding_text} = socket.assigns.chat_context
     instructions = chat_module.build_instructions(record, embedding_text)
 
     params = %{
-      chat_id: chat.id,
+      chat_id: chat_id,
       instructions: instructions
     }
 
     :ok = Chats.ensure_session(params)
+    :ok = Chats.subscribe(chat_id)
+    chat = Chats.Session.get_history(chat_id)
 
     {:noreply,
      socket
      |> assign(:chat, chat)
-     |> assign(:messages, chat.messages)
-     |> assign(:current_response, "")
-     |> assign(:streaming_doc, nil)
+     |> assign(:chat_id, chat.id)
      |> assign(:error, nil)
      |> assign(:view, :active)}
   end
@@ -378,9 +352,6 @@ defmodule MusicLibraryWeb.Components.Chat do
       if socket.assigns.chat && socket.assigns.chat.id == id do
         socket
         |> assign(:chat, nil)
-        |> assign(:messages, [])
-        |> assign(:current_response, "")
-        |> assign(:streaming_doc, nil)
         |> assign(:error, nil)
       else
         socket
@@ -402,94 +373,23 @@ defmodule MusicLibraryWeb.Components.Chat do
   end
 
   defp do_send_message(socket, text) do
-    parent_pid = self()
-    component_id = socket.assigns.id
-    user_message = %{role: "user", content: String.trim(text)}
-
-    messages = socket.assigns.messages ++ [user_message]
-    chat_module = socket.assigns.chat_module
-    chat_context = socket.assigns.chat_context
-
-    chat = persist_user_message(socket, user_message)
-
-    stream_messages = Enum.map(messages, &%{role: &1.role, content: &1.content})
-
-    Task.Supervisor.start_child(MusicLibrary.TaskSupervisor, fn ->
-      case chat_module.stream_response(stream_messages, chat_context, fn chunk ->
-             LiveView.send_update(parent_pid, __MODULE__,
-               id: component_id,
-               chunk: chunk
-             )
-           end) do
-        {:ok, _response} ->
-          LiveView.send_update(parent_pid, __MODULE__,
-            id: component_id,
-            done: true
-          )
-
-        {:error, reason} ->
-          Logger.error("Chat streaming error: #{inspect(reason)}")
-
-          LiveView.send_update(parent_pid, __MODULE__,
-            id: component_id,
-            error: gettext("Something went wrong. Please try again.")
-          )
-      end
-    end)
+    Chats.Session.send_message(socket.assigns.chat_id, String.trim(text))
 
     {:noreply,
      socket
-     |> assign(:messages, messages)
-     |> assign(:chat, chat)
      |> assign(:has_history, true)
-     |> assign(:loading, true)
-     |> assign(:current_response, "")
-     |> assign(:streaming_doc, nil)
      |> assign(:error, nil)}
-  end
-
-  defp persist_user_message(socket, user_message) do
-    case socket.assigns.chat do
-      nil ->
-        {:ok, chat} =
-          Chats.create_chat_with_message(
-            %{entity: socket.assigns.entity, musicbrainz_id: socket.assigns.musicbrainz_id},
-            %{role: user_message.role, content: user_message.content}
-          )
-
-        send(self(), {__MODULE__, :chats_changed})
-        chat
-
-      chat ->
-        {:ok, _message} =
-          Chats.add_message(chat, %{role: user_message.role, content: user_message.content})
-
-        chat
-    end
-  end
-
-  defp save_assistant_message(nil, _content), do: :ok
-
-  defp save_assistant_message(chat, content) do
-    case Chats.add_message(chat, %{role: "assistant", content: content}) do
-      {:ok, _message} ->
-        :ok
-
-      {:error, reason} ->
-        Logger.warning("Failed to persist assistant message: #{inspect(reason)}")
-    end
   end
 
   defp reset_chat_state(socket) do
     socket
-    |> assign(:messages, [])
-    |> assign(:current_response, "")
+    |> assign(:streaming_doc, nil)
     |> assign(:loading, false)
     |> assign(:error, nil)
     |> assign(:view, :active)
+    |> assign(:chat_id, Ecto.UUID.generate())
     |> assign(:chat, nil)
     |> assign(:chats, [])
-    |> assign(:streaming_doc, nil)
     |> assign(:has_history, false)
   end
 
@@ -504,8 +404,35 @@ defmodule MusicLibraryWeb.Components.Chat do
       |> assign(:chats, chats)
       |> assign(:view, :list)
     else
-      socket
+      do_new_chat(socket)
     end
+  end
+
+  defp do_new_chat(socket) do
+    chat_id = Ecto.UUID.generate()
+    chat_module = socket.assigns.chat_module
+
+    {record, embedding_text} = socket.assigns.chat_context
+    instructions = chat_module.build_instructions(record, embedding_text)
+
+    params = %{
+      chat_id: chat_id,
+      instructions: instructions,
+      new_chat_params: %{
+        entity: socket.assigns.entity,
+        musicbrainz_id: socket.assigns.musicbrainz_id
+      }
+    }
+
+    :ok = Chats.ensure_session(params)
+    :ok = Chats.subscribe(chat_id)
+    chat = Chats.Session.get_history(chat_id)
+
+    socket
+    |> assign(:error, nil)
+    |> assign(:chat_id, chat_id)
+    |> assign(:chat, chat)
+    |> assign(:view, :active)
   end
 
   defp message_classes("user") do

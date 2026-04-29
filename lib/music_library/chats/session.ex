@@ -85,6 +85,10 @@ defmodule MusicLibrary.Chats.Session do
     :gen_statem.call(via(chat_id), :status)
   end
 
+  def subscribe(chat_id) do
+    PubSub.subscribe(MusicLibrary.PubSub, "chats:#{chat_id}")
+  end
+
   def child_spec(params) do
     Supervisor.child_spec(
       %{id: __MODULE__, start: {__MODULE__, :start_link, [params]}},
@@ -113,7 +117,7 @@ defmodule MusicLibrary.Chats.Session do
   end
 
   def idle(:enter, _old_state, data) do
-    broadcast(data.chat_id, %{status: :idle})
+    broadcast(data.chat_id, %{status: :idle, chat: data.chat})
     :keep_state_and_data
   end
 
@@ -166,7 +170,7 @@ defmodule MusicLibrary.Chats.Session do
   end
 
   def streaming(:enter, _old_state, data) do
-    broadcast(data.chat_id, %{status: :streaming})
+    broadcast(data.chat_id, %{status: :streaming, chat: data.chat})
     :keep_state_and_data
   end
 
@@ -182,7 +186,9 @@ defmodule MusicLibrary.Chats.Session do
     stream_messages = Enum.map(data.chat.messages, &%{role: &1.role, content: &1.content})
 
     case OpenAI.chat_stream(stream_messages,
-           on_chunk: fn _chunk -> :ok end,
+           on_chunk: fn chunk ->
+             broadcast(data.chat.id, %{status: :chunk_received, chunk: chunk})
+           end,
            instructions: data.instructions
          ) do
       {:ok, response} ->
@@ -197,8 +203,9 @@ defmodule MusicLibrary.Chats.Session do
     message_attrs = %{role: "assistant", content: response}
 
     Chats.add_message(data.chat, message_attrs)
+    chat = Chats.get_chat(data.chat_id)
 
-    data = %{data | chat: Chats.get_chat(data.chat_id), retry_count: 0}
+    data = %{data | chat: chat, retry_count: 0}
     {:next_state, :idle, data}
   end
 
@@ -264,11 +271,7 @@ defmodule MusicLibrary.Chats.Session do
     {:via, Registry, {SessionRegistry, chat_id}}
   end
 
-  def subscribe(chat_id) do
-    PubSub.subscribe(MusicLibrary.PubSub, "chats:#{chat_id}")
-  end
-
   defp broadcast(chat_id, event) do
-    PubSub.broadcast(MusicLibrary.PubSub, "chats:#{chat_id}", event)
+    PubSub.broadcast(MusicLibrary.PubSub, "chats:#{chat_id}", {__MODULE__, event})
   end
 end

@@ -6,7 +6,7 @@ defmodule MusicLibrary.Chats do
   import Ecto.Query, warn: false
 
   alias MusicLibrary.Chats
-  alias MusicLibrary.Chats.{Chat, Message}
+  alias MusicLibrary.Chats.{Chat, Message, Session}
   alias MusicLibrary.Repo
 
   @collection_musicbrainz_id "00000000-0000-0000-0000-000000000000"
@@ -120,6 +120,10 @@ defmodule MusicLibrary.Chats do
 
   def ensure_session(params) do
     Chats.Supervisor.ensure_session(params)
+  end
+
+  def subscribe(chat_id) do
+    Session.subscribe(chat_id)
   end
 
   defp touch_chat(chat) do

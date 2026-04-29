@@ -363,6 +363,11 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
     RecordActions.handle_chats_changed(socket)
   end
 
+  def handle_info({MusicLibrary.Chats.Session, event}, socket) do
+    send_update(MusicLibraryWeb.Components.Chat, id: "record-chat", event: event)
+    {:noreply, socket}
+  end
+
   @impl true
   def handle_info({:update, record}, socket) do
     cond do
