@@ -85,6 +85,13 @@ defmodule MusicLibrary.Chats.Session do
     :gen_statem.call(via(chat_id), :status)
   end
 
+  def child_spec(params) do
+    Supervisor.child_spec(
+      %{id: __MODULE__, start: {__MODULE__, :start_link, [params]}},
+      restart: :transient
+    )
+  end
+
   @impl :gen_statem
   def callback_mode, do: [:state_functions, :state_enter]
 

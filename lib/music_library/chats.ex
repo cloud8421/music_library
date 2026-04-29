@@ -5,6 +5,7 @@ defmodule MusicLibrary.Chats do
 
   import Ecto.Query, warn: false
 
+  alias MusicLibrary.Chats
   alias MusicLibrary.Chats.{Chat, Message}
   alias MusicLibrary.Repo
 
@@ -115,6 +116,10 @@ defmodule MusicLibrary.Chats do
   @spec delete_chat(Chat.t()) :: {:ok, Chat.t()} | {:error, Ecto.Changeset.t()}
   def delete_chat(%Chat{} = chat) do
     Repo.delete(chat)
+  end
+
+  def ensure_session(params) do
+    Chats.Supervisor.ensure_session(params)
   end
 
   defp touch_chat(chat) do
