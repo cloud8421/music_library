@@ -96,6 +96,7 @@ defmodule MusicLibrary.Chats.SessionTest do
       stub_default_reply(pid)
 
       assert {:ok, message} = Session.send_message(chat_id, "some message")
+      assert :idle == Session.status(chat_id)
 
       assert message.content == "some message"
       assert message.chat_id == chat_id
@@ -133,6 +134,8 @@ defmodule MusicLibrary.Chats.SessionTest do
       end)
 
       assert {:ok, _message} = Session.send_message(chat.id, "is this really a masterpiece?")
+
+      assert :idle == Session.status(chat.id)
     end
 
     test "writes the received message to the database" do
@@ -163,6 +166,8 @@ defmodule MusicLibrary.Chats.SessionTest do
 
       assert {:ok, _message} = Session.send_message(chat.id, "is this really a masterpiece?")
 
+      assert :idle == Session.status(chat.id)
+
       new_chat = Session.get_history(chat.id)
 
       assert 3 == length(new_chat.messages)
@@ -181,6 +186,8 @@ defmodule MusicLibrary.Chats.SessionTest do
 
       assert {:ok, message} = Session.send_message(chat.id, "hello")
 
+      assert :failed == Session.status(chat.id)
+
       # While recovering, send_message is rejected
       assert {:error, :busy} = Session.send_message(chat.id, "are you there?")
 
@@ -196,6 +203,8 @@ defmodule MusicLibrary.Chats.SessionTest do
       assert {:ok, pid} = Session.start_link(params)
 
       stub_http_error(pid, 401)
+
+      assert :idle == Session.status(chat.id)
 
       assert {:ok, _message} = Session.send_message(chat.id, "hello")
 
@@ -215,6 +224,8 @@ defmodule MusicLibrary.Chats.SessionTest do
         |> Plug.Conn.put_resp_content_type("text/event-stream")
         |> Plug.Conn.send_resp(200, sse_error_chunk())
       end)
+
+      assert :idle == Session.status(chat.id)
 
       assert {:ok, _message} = Session.send_message(chat.id, "hello")
 

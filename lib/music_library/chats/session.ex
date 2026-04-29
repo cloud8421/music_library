@@ -80,6 +80,10 @@ defmodule MusicLibrary.Chats.Session do
     :gen_statem.call(via(chat_id), {:send_message, message_text})
   end
 
+  def status(chat_id) do
+    :gen_statem.call(via(chat_id), :status)
+  end
+
   @impl :gen_statem
   def callback_mode, do: :state_functions
 
@@ -140,8 +144,12 @@ defmodule MusicLibrary.Chats.Session do
     end
   end
 
-  def idle(_event_type, _event_content, data) do
-    {:keep_state, data}
+  def idle({:call, from}, :status, _data) do
+    {:keep_state_and_data, [{:reply, from, :idle}]}
+  end
+
+  def idle(_event_type, _event_content, _data) do
+    :keep_state_and_data
   end
 
   def streaming({:call, from}, :get_history, data) do
@@ -176,8 +184,12 @@ defmodule MusicLibrary.Chats.Session do
     {:next_state, :idle, data}
   end
 
-  def streaming(_event_type, _event_content, data) do
-    {:keep_state, data}
+  def streaming({:call, from}, :status, _data) do
+    {:keep_state_and_data, [{:reply, from, :streaming}]}
+  end
+
+  def streaming(_event_type, _event_content, _data) do
+    :keep_state_and_data
   end
 
   def failed(:state_timeout, :retry, data) do
@@ -192,8 +204,12 @@ defmodule MusicLibrary.Chats.Session do
     {:keep_state, data, [{:reply, from, {:error, :busy}}]}
   end
 
-  def failed(_event_type, _event_content, data) do
-    {:keep_state, data}
+  def failed({:call, from}, :status, _data) do
+    {:keep_state_and_data, [{:reply, from, :failed}]}
+  end
+
+  def failed(_event_type, _event_content, _data) do
+    :keep_state_and_data
   end
 
   defp handle_stream_error(reason, data) do
