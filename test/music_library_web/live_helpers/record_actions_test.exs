@@ -1,5 +1,5 @@
 defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
-  use MusicLibraryWeb.ConnCase, async: true
+  use MusicLibraryWeb.ConnCase, async: false
   use Oban.Testing, repo: MusicLibrary.BackgroundRepo
 
   import MusicLibrary.Fixtures.Records
