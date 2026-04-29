@@ -169,6 +169,61 @@ defmodule MusicLibrary.Chats.SessionTest do
     end
   end
 
+  describe "stream error handling" do
+    @tag :capture_log
+    test "retryable HTTP error enters :failed state" do
+      chat = chat_fixture()
+
+      params = %{chat_id: chat.id, instructions: @instructions}
+      assert {:ok, pid} = Session.start_link(params)
+
+      stub_http_error(pid, 500)
+
+      assert {:ok, message} = Session.send_message(chat.id, "hello")
+
+      # While recovering, send_message is rejected
+      assert {:error, :busy} = Session.send_message(chat.id, "are you there?")
+
+      # get_history still works
+      chat = Session.get_history(chat.id)
+      assert [_message2, ^message] = chat.messages
+    end
+
+    test "non-retryable HTTP error returns to :idle state" do
+      chat = chat_fixture()
+
+      params = %{chat_id: chat.id, instructions: @instructions}
+      assert {:ok, pid} = Session.start_link(params)
+
+      stub_http_error(pid, 401)
+
+      assert {:ok, _message} = Session.send_message(chat.id, "hello")
+
+      # After non-retryable error, session is immediately usable again
+      stub_default_reply(pid)
+      assert {:ok, _message} = Session.send_message(chat.id, "try again")
+    end
+
+    test "SSE mid-stream error returns to :idle state" do
+      chat = chat_fixture()
+
+      params = %{chat_id: chat.id, instructions: @instructions}
+      assert {:ok, pid} = Session.start_link(params)
+
+      stub_and_allow(pid, fn conn ->
+        conn
+        |> Plug.Conn.put_resp_content_type("text/event-stream")
+        |> Plug.Conn.send_resp(200, sse_error_chunk())
+      end)
+
+      assert {:ok, _message} = Session.send_message(chat.id, "hello")
+
+      # SSE errors are non-retryable — session is back in :idle
+      stub_default_reply(pid)
+      assert {:ok, _message} = Session.send_message(chat.id, "try again")
+    end
+  end
+
   defp stub_and_allow(pid, callback) do
     Req.Test.stub(OpenAI.API, callback)
     Req.Test.allow(OpenAI.API, self(), pid)
@@ -184,11 +239,23 @@ defmodule MusicLibrary.Chats.SessionTest do
     end)
   end
 
+  defp stub_http_error(pid, status) do
+    stub_and_allow(pid, fn conn ->
+      conn
+      |> Plug.Conn.put_resp_content_type("application/json")
+      |> Plug.Conn.send_resp(status, Jason.encode!(%{error: %{message: "error"}}))
+    end)
+  end
+
   defp delta_chunk(message) do
     "data: #{JSON.encode!(%{"type" => "response.output_text.delta", "delta" => message})}\n\n"
   end
 
   defp completed_chunk do
     "data: #{JSON.encode!(%{"type" => "response.completed"})}\n\n"
+  end
+
+  defp sse_error_chunk do
+    "data: #{JSON.encode!(%{"type" => "response.failed", "response" => %{"error" => %{"message" => "something went wrong"}}})}\n\n"
   end
 end
