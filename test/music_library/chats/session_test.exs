@@ -101,7 +101,7 @@ defmodule MusicLibrary.Chats.SessionTest do
       assert message.chat_id == chat_id
 
       chat = Session.get_history(chat_id)
-      assert [message] == chat.messages
+      assert [^message | _reply] = chat.messages
     end
   end
 
@@ -133,8 +133,6 @@ defmodule MusicLibrary.Chats.SessionTest do
       end)
 
       assert {:ok, _message} = Session.send_message(chat.id, "is this really a masterpiece?")
-
-      _ = :sys.get_state(pid)
     end
 
     test "writes the received message to the database" do
@@ -156,7 +154,7 @@ defmodule MusicLibrary.Chats.SessionTest do
                  %{"content" => "is this really a masterpiece?", "role" => "user"}
                ]
 
-        body = delta_chunk("yes it is") <> completed_chunk()
+        body = delta_chunk("yes it is, ") <> delta_chunk("i love it") <> completed_chunk()
 
         conn
         |> Plug.Conn.put_resp_content_type("text/event-stream")
@@ -164,8 +162,6 @@ defmodule MusicLibrary.Chats.SessionTest do
       end)
 
       assert {:ok, _message} = Session.send_message(chat.id, "is this really a masterpiece?")
-
-      Process.sleep(50)
 
       new_chat = Session.get_history(chat.id)
 

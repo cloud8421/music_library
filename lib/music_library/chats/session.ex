@@ -1,121 +1,127 @@
 defmodule MusicLibrary.Chats.Session do
   @moduledoc false
 
-  use GenServer
+  @behaviour :gen_statem
 
   alias MusicLibrary.{Chats, Chats.SessionRegistry}
 
   defstruct new_chat_params: %{},
             chat_id: nil,
             chat: nil,
-            instructions: "",
-            current_chunk: ""
+            instructions: ""
 
   def start_link(params) do
-    GenServer.start_link(__MODULE__, params, name: via(params.chat_id))
+    :gen_statem.start_link(via(params.chat_id), __MODULE__, params, [])
   end
 
   def get_history(chat_id) do
-    GenServer.call(via(chat_id), :get_history)
+    :gen_statem.call(via(chat_id), :get_history)
   end
 
   def send_message(chat_id, message_text) do
-    GenServer.call(via(chat_id), {:send_message, message_text})
+    :gen_statem.call(via(chat_id), {:send_message, message_text})
   end
 
-  @impl true
+  @impl :gen_statem
+  def callback_mode, do: :state_functions
+
+  @impl :gen_statem
   def init(params) do
     chat_id = Map.fetch!(params, :chat_id)
     instructions = Map.fetch!(params, :instructions)
     new_chat_params = Map.get(params, :new_chat_params, %{})
 
-    state = %__MODULE__{
+    data = %__MODULE__{
       new_chat_params: new_chat_params,
       chat_id: chat_id,
       chat: Chats.get_chat(chat_id),
       instructions: instructions
     }
 
-    {:ok, state}
+    {:ok, :idle, data}
   end
 
-  @impl true
-  def handle_call(:get_history, _from, state) do
-    {:reply, state.chat, state}
+  def idle({:call, from}, :get_history, data) do
+    {:keep_state, data, [{:reply, from, data.chat}]}
   end
 
-  @impl true
-  def handle_call({:send_message, message_text}, _from, state) when is_struct(state.chat) do
-    message_attrs = %{
-      role: "user",
-      content: message_text
-    }
+  def idle({:call, from}, {:send_message, message_text}, data) when is_struct(data.chat) do
+    message_attrs = %{role: "user", content: message_text}
 
-    case Chats.add_message(state.chat, message_attrs) do
+    case Chats.add_message(data.chat, message_attrs) do
       {:ok, message} ->
-        state = %{state | chat: Chats.get_chat(state.chat_id)}
-        {:reply, {:ok, message}, state, {:continue, :ask_llm}}
+        data = %{data | chat: Chats.get_chat(data.chat_id)}
+
+        {:next_state, :streaming, data,
+         [{:reply, from, {:ok, message}}, {:next_event, :internal, :start_stream}]}
 
       error ->
-        {:reply, error, state}
+        {:keep_state, data, [{:reply, from, error}]}
     end
   end
 
-  @impl true
-  def handle_call({:send_message, message_text}, _from, state) when is_nil(state.chat) do
-    message_attrs = %{
-      role: "user",
-      content: message_text
-    }
+  def idle({:call, from}, {:send_message, message_text}, data) when is_nil(data.chat) do
+    message_attrs = %{role: "user", content: message_text}
 
     chat_attrs = %{
-      id: state.chat_id,
-      entity: state.new_chat_params.entity,
-      musicbrainz_id: state.new_chat_params.musicbrainz_id
+      id: data.chat_id,
+      entity: data.new_chat_params.entity,
+      musicbrainz_id: data.new_chat_params.musicbrainz_id
     }
 
     case Chats.create_chat_with_message(chat_attrs, message_attrs) do
       {:ok, chat} ->
         [message] = chat.messages
-        {:reply, {:ok, message}, %{state | chat: chat}, {:continue, :ask_llm}}
+
+        {:next_state, :streaming, %{data | chat: chat},
+         [{:reply, from, {:ok, message}}, {:next_event, :internal, :start_stream}]}
 
       error ->
-        {:reply, error, state}
+        {:keep_state, data, [{:reply, from, error}]}
     end
   end
 
-  @impl true
-  def handle_continue(:ask_llm, state) do
-    stream_messages = Enum.map(state.chat.messages, &%{role: &1.role, content: &1.content})
-
-    # We get fragments for every on_chunk call
-    # When the function returns, it's done
-    OpenAI.chat_stream(stream_messages,
-      on_chunk: fn chunk -> send(self(), {:message_chunk, chunk}) end,
-      instructions: state.instructions
-    )
-
-    send(self(), :message_done)
-
-    {:noreply, state}
+  def idle(_event_type, _event_content, data) do
+    {:keep_state, data}
   end
 
-  @impl true
-  def handle_info({:message_chunk, chunk}, state) do
-    state = %{state | current_chunk: state.current_chunk <> chunk}
-    {:noreply, state}
+  def streaming({:call, from}, :get_history, data) do
+    {:keep_state, data, [{:reply, from, data.chat}]}
   end
 
-  def handle_info(:message_done, state) do
-    message_attrs = %{
-      role: "assistant",
-      content: state.current_chunk
-    }
+  def streaming({:call, from}, {:send_message, _message_text}, data) do
+    {:keep_state, data, [{:reply, from, {:error, :busy}}]}
+  end
 
-    Chats.add_message(state.chat, message_attrs)
+  def streaming(:internal, :start_stream, data) do
+    stream_messages = Enum.map(data.chat.messages, &%{role: &1.role, content: &1.content})
 
-    state = %{state | current_chunk: "", chat: Chats.get_chat(state.chat_id)}
-    {:noreply, state}
+    case OpenAI.chat_stream(stream_messages,
+           on_chunk: fn _chunk -> :ok end,
+           instructions: data.instructions
+         ) do
+      {:ok, response} ->
+        {:keep_state, data, {:next_event, :internal, {:response_end, response}}}
+
+      {:error, _reason} ->
+        # The stream has failed. An improvement here is to look at the failure
+        # reason, determine if it's possible to retry (and when), switch to a
+        # "failed" state and then if possible retry automatically.
+        {:next_state, :idle, data}
+    end
+  end
+
+  def streaming(:internal, {:response_end, response}, data) do
+    message_attrs = %{role: "assistant", content: response}
+
+    Chats.add_message(data.chat, message_attrs)
+
+    data = %{data | chat: Chats.get_chat(data.chat_id)}
+    {:next_state, :idle, data}
+  end
+
+  def streaming(_event_type, _event_content, data) do
+    {:keep_state, data}
   end
 
   defp via(chat_id) do
