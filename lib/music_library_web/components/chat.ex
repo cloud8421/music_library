@@ -306,6 +306,23 @@ defmodule MusicLibraryWeb.Components.Chat do
     do: do_send_message(socket, text)
 
   def handle_event("new_chat", _params, socket) do
+    chat_id = Ecto.UUID.generate()
+    chat_module = socket.assigns.chat_module
+
+    {record, embedding_text} = socket.assigns.chat_context
+    instructions = chat_module.build_instructions(record, embedding_text)
+
+    params = %{
+      chat_id: chat_id,
+      instructions: instructions,
+      new_chat_params: %{
+        entity: socket.assigns.entity,
+        musicbrainz_id: socket.assigns.musicbrainz_id
+      }
+    }
+
+    :ok = Chats.ensure_session(params)
+
     {:noreply,
      socket
      |> assign(:messages, [])
@@ -327,6 +344,18 @@ defmodule MusicLibraryWeb.Components.Chat do
 
   def handle_event("select_chat", %{"id" => id}, socket) do
     chat = Chats.get_chat!(id)
+
+    chat_module = socket.assigns.chat_module
+
+    {record, embedding_text} = socket.assigns.chat_context
+    instructions = chat_module.build_instructions(record, embedding_text)
+
+    params = %{
+      chat_id: chat.id,
+      instructions: instructions
+    }
+
+    :ok = Chats.ensure_session(params)
 
     {:noreply,
      socket

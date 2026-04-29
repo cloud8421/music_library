@@ -17,7 +17,7 @@ defmodule MusicLibrary.Chats.RecordChat do
     OpenAI.chat_stream(messages, on_chunk: callback, instructions: instructions)
   end
 
-  defp build_instructions(%Record{} = record, embedding_text) do
+  def build_instructions(%Record{} = record, embedding_text) do
     context =
       case embedding_text do
         nil -> basic_context(record)

@@ -17,7 +17,7 @@ defmodule MusicLibrary.Chats.ArtistChat do
     OpenAI.chat_stream(messages, on_chunk: callback, instructions: instructions)
   end
 
-  defp build_instructions(artist, artist_info) do
+  def build_instructions(artist, artist_info) do
     context = build_context(artist, artist_info)
 
     Prompt.build("""

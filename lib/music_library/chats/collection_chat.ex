@@ -16,7 +16,7 @@ defmodule MusicLibrary.Chats.CollectionChat do
     OpenAI.chat_stream(messages, on_chunk: callback, instructions: instructions, model: "gpt-5.1")
   end
 
-  defp build_instructions(collection_summary, record_count) do
+  def build_instructions(collection_summary, record_count) do
     Prompt.build("""
     Answer questions about the user's music collection.
     Use the provided collection catalog as your primary reference.
