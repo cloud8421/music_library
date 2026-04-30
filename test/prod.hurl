@@ -7,11 +7,11 @@ Location: https://music-library.claudio-ortolina.org/
 # API requires a valid token
 
 # GET latest record
-GET https://music-library.claudio-ortolina.org/api/collection/latest
+GET https://music-library.claudio-ortolina.org/api/v1/collection/latest
 Content-Type: application/json
 HTTP 401
 
-GET https://music-library.claudio-ortolina.org/api/collection/latest
+GET https://music-library.claudio-ortolina.org/api/v1/collection/latest
 Content-Type: application/json
 Authorization: Bearer {{api_token}}
 HTTP 200

@@ -33,8 +33,8 @@ defmodule MusicLibraryWeb.CollectionJSON do
       purchased_at: record.purchased_at,
       artists: Enum.map(record.artists, & &1.name),
       title: record.title,
-      cover_url: url(~p"/api/assets/#{Transform.new(hash: record.cover_hash)}"),
-      thumb_url: url(~p"/api/assets/#{Transform.new(hash: record.cover_hash, width: 480)}")
+      cover_url: url(~p"/api/v1/assets/#{Transform.new(hash: record.cover_hash)}"),
+      thumb_url: url(~p"/api/v1/assets/#{Transform.new(hash: record.cover_hash, width: 480)}")
     }
   end
 end

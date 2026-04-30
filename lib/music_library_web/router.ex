@@ -123,7 +123,7 @@ defmodule MusicLibraryWeb.Router do
     end
   end
 
-  scope "/api", MusicLibraryWeb do
+  scope "/api/v1", MusicLibraryWeb do
     pipe_through :api
 
     get "/collection/latest", CollectionController, :latest

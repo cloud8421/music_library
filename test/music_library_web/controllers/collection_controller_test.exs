@@ -15,10 +15,10 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
   describe "authentication" do
     test "all API endpoints require a bearer token", %{conn: conn} do
       for path <- [
-            ~p"/api/collection/latest",
-            ~p"/api/collection/random",
-            ~p"/api/collection",
-            ~p"/api/collection/on_this_day"
+            ~p"/api/v1/collection/latest",
+            ~p"/api/v1/collection/random",
+            ~p"/api/v1/collection",
+            ~p"/api/v1/collection/on_this_day"
           ] do
         assert get(conn, path).status == 401,
                "expected 401 for unauthenticated GET #{path}"
@@ -26,20 +26,20 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
     end
   end
 
-  describe "GET /api/collection/latest" do
+  describe "GET /api/v1/collection/latest" do
     setup [:create_record]
 
     test "returns the latest record", %{conn: conn, record: record} do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{api_token()}")
-        |> get(~p"/api/collection/latest")
+        |> get(~p"/api/v1/collection/latest")
 
       assert json_response(conn, 200) == expected_record_json(record)
     end
   end
 
-  describe "GET /api/collection/random" do
+  describe "GET /api/v1/collection/random" do
     setup [:create_record]
 
     # We're not testing random here - the query is solid enough
@@ -47,20 +47,20 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{api_token()}")
-        |> get(~p"/api/collection/random")
+        |> get(~p"/api/v1/collection/random")
 
       assert json_response(conn, 200) == expected_record_json(record)
     end
   end
 
-  describe "GET /api/collection" do
+  describe "GET /api/v1/collection" do
     setup [:create_record]
 
     test "returns a paginated list of records", %{conn: conn, record: record} do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{api_token()}")
-        |> get(~p"/api/collection")
+        |> get(~p"/api/v1/collection")
 
       assert json_response(conn, 200) == %{
                "total" => 1,
@@ -71,14 +71,14 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
     end
   end
 
-  describe "GET /api/collection/on_this_day" do
+  describe "GET /api/v1/collection/on_this_day" do
     setup [:create_record]
 
     test "returns a list of records", %{conn: conn, record: record} do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{api_token()}")
-        |> get(~p"/api/collection/on_this_day?date=2025-06-21")
+        |> get(~p"/api/v1/collection/on_this_day?date=2025-06-21")
 
       assert json_response(conn, 200) == %{
                "records" => [expected_record_json(record)]
@@ -98,9 +98,9 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
       "artists" => Enum.map(record.artists, & &1.name),
       "title" => record.title,
       "cover_url" =>
-        "http://localhost:4002/api/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjpudWxsfQ",
+        "http://localhost:4002/api/v1/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjpudWxsfQ",
       "thumb_url" =>
-        "http://localhost:4002/api/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjo0ODB9"
+        "http://localhost:4002/api/v1/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjo0ODB9"
     }
   end
 end
