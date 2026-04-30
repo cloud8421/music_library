@@ -7,9 +7,9 @@ jobs:
     runs-on: ubuntu-24.04
     environment: production
     steps:
-      - uses: actions/checkout@v6
-      - uses: gacts/install-hurl@v1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
+      - uses: gacts/install-hurl@45ddf125aa95f3b3f2fc4a75c6625ce7739fec50  # v1
       - run: hurl --test --report-tap verification.tap test/prod.hurl
         env:
           HURL_api_token: ${{ secrets.API_TOKEN }}
-      - uses: pcolby/tap-summary@v1
+      - uses: pcolby/tap-summary@ccdf184636a1a57277bbccbe3480bc021207e2d8  # v1
