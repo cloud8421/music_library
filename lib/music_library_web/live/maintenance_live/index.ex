@@ -305,30 +305,32 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
   end
 
   defp assign_job_counts(socket) do
+    counts = Maintenance.count_active_jobs_by_worker()
+
     socket
     |> assign(
       :refresh_records_musicbrainz_jobs,
-      Maintenance.count_active_jobs("MusicLibrary.Worker.RecordRefreshMusicBrainzData")
+      Map.get(counts, "MusicLibrary.Worker.RecordRefreshMusicBrainzData", 0)
     )
     |> assign(
       :generate_record_embeddings_jobs,
-      Maintenance.count_active_jobs("MusicLibrary.Worker.GenerateRecordEmbedding")
+      Map.get(counts, "MusicLibrary.Worker.GenerateRecordEmbedding", 0)
     )
     |> assign(
       :refresh_artists_musicbrainz_jobs,
-      Maintenance.count_active_jobs("MusicLibrary.Worker.ArtistRefreshMusicBrainzData")
+      Map.get(counts, "MusicLibrary.Worker.ArtistRefreshMusicBrainzData", 0)
     )
     |> assign(
       :refresh_artists_discogs_jobs,
-      Maintenance.count_active_jobs("MusicLibrary.Worker.ArtistRefreshDiscogsData")
+      Map.get(counts, "MusicLibrary.Worker.ArtistRefreshDiscogsData", 0)
     )
     |> assign(
       :refresh_artists_wikipedia_jobs,
-      Maintenance.count_active_jobs("MusicLibrary.Worker.ArtistRefreshWikipediaData")
+      Map.get(counts, "MusicLibrary.Worker.ArtistRefreshWikipediaData", 0)
     )
     |> assign(
       :refresh_artists_lastfm_jobs,
-      Maintenance.count_active_jobs("MusicLibrary.Worker.FetchArtistLastFmData")
+      Map.get(counts, "MusicLibrary.Worker.FetchArtistLastFmData", 0)
     )
   end
 

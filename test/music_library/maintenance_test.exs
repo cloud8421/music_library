@@ -3,6 +3,7 @@ defmodule MusicLibrary.MaintenanceTest do
 
   import MusicLibrary.ScrobbledTracksFixtures
 
+  alias MusicLibrary.BackgroundRepo
   alias MusicLibrary.Maintenance
 
   describe "optimize/0" do
@@ -11,9 +12,47 @@ defmodule MusicLibrary.MaintenanceTest do
     end
   end
 
-  describe "count_active_jobs/1" do
-    test "returns 0 for a worker with no jobs" do
-      assert Maintenance.count_active_jobs("MusicLibrary.Worker.NonExistent") == 0
+  describe "count_active_jobs_by_worker/0" do
+    @worker_a "Test.Worker.Alpha"
+    @worker_b "Test.Worker.Beta"
+
+    test "returns an empty map when there are no jobs" do
+      assert Maintenance.count_active_jobs_by_worker() == %{}
+    end
+
+    test "returns counts grouped by worker for active jobs" do
+      %{id: "1"}
+      |> Oban.Job.new(worker: @worker_a)
+      |> Oban.insert!()
+
+      %{id: "2"}
+      |> Oban.Job.new(worker: @worker_a)
+      |> Oban.insert!()
+
+      %{id: "3"}
+      |> Oban.Job.new(worker: @worker_b)
+      |> Oban.insert!()
+
+      counts = Maintenance.count_active_jobs_by_worker()
+
+      assert counts[@worker_a] == 2
+      assert counts[@worker_b] == 1
+    end
+
+    test "only counts jobs in active states" do
+      %{id: "1"}
+      |> Oban.Job.new(worker: @worker_a)
+      |> Oban.insert!()
+      |> then(fn job ->
+        BackgroundRepo.update_all(
+          from(j in Oban.Job, where: j.id == ^job.id),
+          set: [state: "completed"]
+        )
+      end)
+
+      counts = Maintenance.count_active_jobs_by_worker()
+
+      assert Map.get(counts, @worker_a, 0) == 0
     end
   end
 

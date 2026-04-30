@@ -10,20 +10,23 @@ defmodule MusicLibrary.Maintenance do
   alias MusicLibrary.BackgroundRepo
   alias MusicLibrary.Repo
 
+  @active_states ~w(available scheduled executing retryable)
+
   @doc """
-  Counts active Oban jobs for the given worker module name.
+  Returns a map of worker module names to their count of active Oban jobs.
 
   Active jobs are those in "available", "scheduled", "executing", or "retryable" states.
   """
-  @spec count_active_jobs(String.t()) :: non_neg_integer() | nil
-  def count_active_jobs(worker) do
-    query =
-      from j in Oban.Job,
-        where: j.worker == ^worker,
-        where: j.state in ["available", "scheduled", "executing", "retryable"],
-        select: count(j.id)
+  @spec count_active_jobs_by_worker() :: %{String.t() => non_neg_integer()}
+  def count_active_jobs_by_worker do
+    q =
+      from j in subquery(Oban.Job.query(state: @active_states)),
+        group_by: j.worker,
+        select: {j.worker, count(j.id)}
 
-    BackgroundRepo.one(query)
+    q
+    |> BackgroundRepo.all()
+    |> Map.new()
   end
 
   @doc """
