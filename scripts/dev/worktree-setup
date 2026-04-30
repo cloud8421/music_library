@@ -61,18 +61,10 @@ for db in music_library_dev.db music_library_background_dev.db music_library_tel
   fi
 done
 
-# Generate .mcp.json for Claude Code / Tidewave
-debug_msg "Generating .mcp.json (Tidewave on port $new_port)"
-cat > "$current_dir/.mcp.json" <<EOF
-{
-  "mcpServers": {
-    "tidewave": {
-      "type": "http",
-      "url": "http://127.0.0.1:${new_port}/tidewave/mcp"
-    }
-  }
-}
-EOF
+# Copy .mcp.json from main worktree and update Tidewave port
+debug_msg "Copying .mcp.json and updating Tidewave port to $new_port"
+cp "$main_worktree/.mcp.json" "$current_dir/.mcp.json"
+sed -i '' "s|http://127.0.0.1:[0-9]*/tidewave/mcp|http://127.0.0.1:${new_port}/tidewave/mcp|" "$current_dir/.mcp.json"
 
 # Run standard dev setup
 debug_msg "Running dev:setup"
