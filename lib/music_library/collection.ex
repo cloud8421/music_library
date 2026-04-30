@@ -4,7 +4,7 @@ defmodule MusicLibrary.Collection do
   """
 
   import Ecto.Query, warn: false
-  import MusicLibrary.Records, only: [order_alphabetically: 0]
+  import MusicLibrary.Records.Query
 
   alias MusicLibrary.Records
   alias MusicLibrary.Records.{ArtistRecord, Record, SearchIndex}
@@ -66,7 +66,7 @@ defmodule MusicLibrary.Collection do
             ^month_day
           ),
         order_by: [{:desc, r.release_date}, order_alphabetically()],
-        select: ^Records.essential_fields()
+        select: ^essential_fields()
 
     Repo.all(q)
   end
@@ -103,7 +103,7 @@ defmodule MusicLibrary.Collection do
         where: not is_nil(r.purchased_at),
         order_by: [{:desc, r.purchased_at}, order_alphabetically()],
         limit: 1,
-        select: ^Records.essential_fields()
+        select: ^essential_fields()
 
     Repo.one(q)
   end
@@ -115,7 +115,7 @@ defmodule MusicLibrary.Collection do
         where: not is_nil(r.purchased_at),
         order_by: [{:desc, r.purchased_at}, order_alphabetically()],
         limit: 1,
-        select: ^Records.essential_fields()
+        select: ^essential_fields()
 
     Repo.one!(q)
   end
@@ -127,7 +127,7 @@ defmodule MusicLibrary.Collection do
         where: not is_nil(r.purchased_at),
         order_by: fragment("RANDOM()"),
         limit: 1,
-        select: ^Records.essential_fields()
+        select: ^essential_fields()
 
     Repo.one!(q)
   end
@@ -205,7 +205,7 @@ defmodule MusicLibrary.Collection do
       from(r in Record,
         where: not is_nil(r.purchased_at),
         order_by: [order_alphabetically()],
-        select: ^Records.essential_fields()
+        select: ^essential_fields()
       )
       |> Repo.all()
 
