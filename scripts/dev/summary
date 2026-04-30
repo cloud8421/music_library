@@ -284,10 +284,11 @@ if command -v backlog >/dev/null 2>&1; then
   backlog_todo=$(printf "%s\n" "$backlog_raw" | awk 'BEGIN{p=0} /^To Do:/{p=1;next} /^[A-Z][A-Za-z ]*:$/{p=0} p && /^  \[/{c++} END{print c+0}')
   backlog_in_progress=$(printf "%s\n" "$backlog_raw" | awk 'BEGIN{p=0} /^In Progress:/{p=1;next} /^[A-Z][A-Za-z ]*:$/{p=0} p && /^  \[/{c++} END{print c+0}')
   backlog_done=$(printf "%s\n" "$backlog_raw" | awk 'BEGIN{p=0} /^Done:/{p=1;next} /^[A-Z][A-Za-z ]*:$/{p=0} p && /^  \[/{c++} END{print c+0}')
+  backlog_completed=$(fd --type file --extension md . backlog/completed 2>/dev/null | wc -l | tr -d ' ')
   backlog_total=$((backlog_todo + backlog_in_progress + backlog_done))
 
   backlog_max=$(max_of "$backlog_todo" "$backlog_in_progress" "$backlog_done")
-  render_section_header "backlog/" "$backlog_total" "tasks"
+  render_section_header "backlog/" "$backlog_total" "tasks ($backlog_completed completed)"
   render_row "To Do"       "$backlog_todo"        "$backlog_max" "$backlog_total" "${PALETTE[2]}"
   render_row "In Progress" "$backlog_in_progress" "$backlog_max" "$backlog_total" "${PALETTE[0]}"
   render_row "Done"        "$backlog_done"        "$backlog_max" "$backlog_total" "${PALETTE[3]}"
