@@ -207,7 +207,7 @@ defmodule MusicLibrary.Records.Record do
         changeset
 
       musicbrainz_data ->
-        put_change(changeset, :artists, parse_artists(musicbrainz_data))
+        put_change(changeset, :artists, ReleaseGroup.parse_artist_credits(musicbrainz_data))
     end
   end
 
@@ -244,8 +244,7 @@ defmodule MusicLibrary.Records.Record do
   @spec attrs_from_release_group(map()) :: map()
   def attrs_from_release_group(release_group) do
     musicbrainz_id = release_group["id"]
-
-    artists_attrs = parse_artists(release_group)
+    artists_attrs = ReleaseGroup.parse_artist_credits(release_group)
 
     %{
       "musicbrainz_id" => musicbrainz_id,
@@ -253,38 +252,15 @@ defmodule MusicLibrary.Records.Record do
       "title" => release_group["title"],
       "artists" => artists_attrs,
       "release_date" => release_group["first-release-date"],
-      "type" => parse_subtype(release_group["primary-type"], release_group["secondary-types"]),
+      "type" =>
+        ReleaseGroup.parse_record_type(
+          release_group["primary-type"],
+          release_group["secondary-types"]
+        ),
       "genres" => Enum.map(release_group["genres"], fn g -> g["name"] end),
       "release_ids" => Enum.map(release_group["releases"], fn r -> r["id"] end),
       "cover_url" => "https://coverartarchive.org/release-group/#{musicbrainz_id}/front"
     }
-  end
-
-  defp parse_artists(musicbrainz_data) do
-    musicbrainz_data
-    |> get_in(["artist-credit", Access.all()])
-    |> Enum.map(fn artist_credit ->
-      %{
-        name: artist_credit["artist"]["name"],
-        musicbrainz_id: artist_credit["artist"]["id"],
-        sort_name: artist_credit["artist"]["sort-name"],
-        disambiguation: artist_credit["artist"]["disambiguation"],
-        joinphrase: artist_credit["joinphrase"]
-      }
-    end)
-  end
-
-  defp parse_subtype("Album", secondary_types), do: parse_secondary_types(secondary_types)
-  defp parse_subtype("EP", _secondary_types), do: :ep
-  defp parse_subtype("Single", _secondary_types), do: :single
-  defp parse_subtype(_primary_type, _secondary_types), do: :other
-
-  defp parse_secondary_types(secondary_types) do
-    cond do
-      "Live" in secondary_types -> :live
-      "Compilation" in secondary_types -> :compilation
-      true -> :album
-    end
   end
 
   @doc """
