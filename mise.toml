@@ -1,3 +1,6 @@
+[settings]
+lockfile = true
+
 [env]
 # BUILD
 FLUXON_KEY_FINGERPRINT = 'change-me'
