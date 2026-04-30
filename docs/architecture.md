@@ -123,7 +123,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Req.RateLimiter` | ETS-backed Req request step enforcing per-API minimum intervals between requests |
 | `Req.RateLimiter.Clock` | Behaviour for time operations (allows test clock injection) |
 | `Req.RateLimiter.SystemClock` | Real clock implementation using System.monotonic_time |
-| `Assets.Cache` | ETS-based asset cache with TTL |
+| `Assets.Cache` | ETS-based asset cache with TTL (7-day TTL, TTL-only invalidation since assets are content-addressable and immutable) |
 | `Assets.Image` / `Assets.Transform` | Image processing via Vix (libvips) |
 | `Colors.Extractor` | Behaviour for dominant color extraction (configurable, allows test stubbing) |
 | `Colors.KMeansExtractor` | Color extraction via K-Means clustering (dominant_colors library), implements `Colors.Extractor` |

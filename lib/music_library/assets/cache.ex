@@ -1,6 +1,37 @@
 defmodule MusicLibrary.Assets.Cache do
   @moduledoc """
   ETS-based asset cache with TTL for serving frequently accessed images.
+
+  ## Cache key
+
+  Each entry is keyed by `{payload, format}` where `payload` is a transform
+  parameter string (encoding width and asset hash) and `format` is the output
+  MIME type (e.g. `"image/webp"`).
+
+  ## TTL and pruning
+
+  The TTL is configured via the `@one_week_seconds` module attribute
+  (`60 * 60 * 24 * 7` = 7 days). The `prune/0` function deletes all entries
+  whose `inserted_at` timestamp is older than this threshold.
+
+  Pruning runs automatically every 12 hours via the `PruneAssetCache` Oban
+  cron worker.
+
+  ## Invalidation strategy
+
+  This cache uses **TTL-based expiry only** — there is no explicit
+  invalidation. This is sufficient because:
+
+  1. Assets are content-addressable (SHA256 hashes) and immutable once
+     written. When an image is replaced (e.g. a new cover is uploaded),
+     the new asset gets a new hash, producing a different cache key. The
+     old entry is never requested again and naturally expires.
+
+  2. The ETS table is in-memory and cleared on application restart.
+
+  Explicit invalidation would add complexity (tracking which cache entries
+  derive from which original asset hash) with no practical benefit given
+  the above properties.
   """
 
   @spec new() :: :ets.table()
