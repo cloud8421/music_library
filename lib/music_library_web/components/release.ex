@@ -440,7 +440,7 @@ defmodule MusicLibraryWeb.Components.Release do
 
     ~H"""
     <div class="sticky bottom-0 z-10 flex flex-wrap items-center justify-between gap-3 border-t border-zinc-200 bg-white px-6 py-3 shadow-[0_-4px_14px_rgba(0,0,0,0.06)] dark:border-zinc-700 dark:bg-zinc-900">
-      <div class="min-w-0 flex-1 leading-tight">
+      <div class="relative min-w-0 flex-1 leading-tight">
         <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
           {ngettext("%{count} track selected", "%{count} tracks selected", @count, count: @count)}
         </p>
