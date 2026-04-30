@@ -36,6 +36,8 @@ if default_timezone = System.get_env("DEFAULT_TIMEZONE") do
   config :music_library, :default_timezone, default_timezone
 end
 
+MusicLibrary.Repo.ensure_supported_platform!()
+
 config :music_library, MusicLibrary.Repo,
   auto_vacuum: :incremental,
   load_extensions: [
