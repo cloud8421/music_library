@@ -163,10 +163,6 @@ url = "https://nodejs.org/dist/v25.9.0/node-v25.9.0-darwin-x64.tar.gz"
 checksum = "sha256:929552b8305effac843ba7b4270c437aefb702fc3fbd73fcd1bffd35d4ac284e"
 url = "https://nodejs.org/dist/v25.9.0/node-v25.9.0-win-x64.zip"
 
-[[tools."npm:@mariozechner/pi-coding-agent"]]
-version = "0.71.0"
-backend = "npm:@mariozechner/pi-coding-agent"
-
 [[tools."npm:backlog.md"]]
 version = "1.44.0"
 backend = "npm:backlog.md"

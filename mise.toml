@@ -31,7 +31,6 @@ shellcheck = 'latest'
 fd = 'latest'
 litestream = 'latest'
 "npm:backlog.md" = 'latest'
-"npm:@mariozechner/pi-coding-agent" = 'latest'
 
 [task_config]
 includes = ["scripts"]
