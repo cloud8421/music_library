@@ -8,8 +8,8 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
-      - uses: gacts/install-hurl@45ddf125aa95f3b3f2fc4a75c6625ce7739fec50  # v1
+      - uses: gacts/install-hurl@4e426ea8f8626b6f9e87f473751d8a0572370ba3  # v1.3.3
       - run: hurl --test --report-tap verification.tap test/prod.hurl
         env:
           HURL_api_token: ${{ secrets.API_TOKEN }}
-      - uses: pcolby/tap-summary@ccdf184636a1a57277bbccbe3480bc021207e2d8  # v1
+      - uses: pcolby/tap-summary@ec9de3f6393083dd89052d519a23b2999a75be9b  # v1
