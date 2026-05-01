@@ -107,8 +107,8 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
             const constraints = {
               audio: false,
               video: {
-                width: 800,
-                height: 600,
+                width: 512,
+                height: 384,
                 facingMode: {
                   ideal: "environment",
                 },
@@ -195,7 +195,7 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
         |> JS.dispatch("camera_request", to: "#barcode-scanner")
         |> JS.hide(to: "#camera-button")
       }
-      class="relative block h-96 w-full rounded-lg border-2 border-dashed border-zinc-300 p-12 text-center outline-hidden hover:border-zinc-400"
+      class="relative block h-96 w-full md:w-[512px] rounded-lg border-2 border-dashed border-zinc-300 p-12 text-center outline-hidden hover:border-zinc-400"
     >
       <svg
         class="mx-auto size-12 text-zinc-400"
