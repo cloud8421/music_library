@@ -12,4 +12,4 @@ jobs:
       - run: hurl --test --report-tap verification.tap test/prod.hurl
         env:
           HURL_api_token: ${{ secrets.API_TOKEN }}
-      - uses: pcolby/tap-summary@ec9de3f6393083dd89052d519a23b2999a75be9b  # v1
+      - uses: pcolby/tap-summary@3f74dc3bad1d527b8c1d5fa88e2f72a3adb2d9e6  # v1.2.0
