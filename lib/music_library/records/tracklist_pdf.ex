@@ -7,6 +7,8 @@ defmodule MusicLibrary.Records.TracklistPdf do
   alias MusicLibraryWeb.Duration
   alias Typst.Format
 
+  @fallback_config {4, 5, false}
+
   @layout_configs [
     {1, 8, true},
     {2, 8, true},
@@ -14,7 +16,7 @@ defmodule MusicLibrary.Records.TracklistPdf do
     {3, 7, true},
     {3, 6, true},
     {4, 6, false},
-    {4, 5, false}
+    @fallback_config
   ]
 
   # Empirically measured per-column capacities at block(spacing: 3pt),
@@ -127,7 +129,7 @@ defmodule MusicLibrary.Records.TracklistPdf do
 
   @doc false
   def layout_params(total_items, _media_count) do
-    Enum.find(@layout_configs, List.last(@layout_configs), fn {columns, font_size, _} ->
+    Enum.find(@layout_configs, @fallback_config, fn {columns, font_size, _} ->
       capacity(columns, font_size) >= total_items
     end)
   end

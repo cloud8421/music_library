@@ -96,45 +96,41 @@ defmodule MusicLibrary.ListeningStatsTest do
           scrobbled_at_uts: System.system_time(:second)
         })
 
-      tracks = list_tracks(%{order: :scrobbled_at})
+      assert [track1, track2] = list_tracks(%{order: :scrobbled_at})
 
-      assert length(tracks) == 2
       # Should be ordered by scrobbled_at_uts descending (newest first)
-      assert List.first(tracks).title == "Newer Track"
-      assert List.last(tracks).title == "Older Track"
+      assert track1.title == "Newer Track"
+      assert track2.title == "Older Track"
     end
 
     test "returns tracks ordered by title" do
       track_fixture(%{title: "Zebra Track"})
       track_fixture(%{title: "Alpha Track"})
 
-      tracks = list_tracks(%{order: :title})
+      assert [track1, track2] = list_tracks(%{order: :title})
 
-      assert length(tracks) == 2
-      assert List.first(tracks).title == "Alpha Track"
-      assert List.last(tracks).title == "Zebra Track"
+      assert track1.title == "Alpha Track"
+      assert track2.title == "Zebra Track"
     end
 
     test "returns tracks ordered by artist name" do
       track_fixture(%{artist_name: "Zebra Artist", title: "Track 1"})
       track_fixture(%{artist_name: "Alpha Artist", title: "Track 2"})
 
-      tracks = list_tracks(%{order: :artist})
+      assert [track1, track2] = list_tracks(%{order: :artist})
 
-      assert length(tracks) == 2
-      assert List.first(tracks).artist.name == "Alpha Artist"
-      assert List.last(tracks).artist.name == "Zebra Artist"
+      assert track1.artist.name == "Alpha Artist"
+      assert track2.artist.name == "Zebra Artist"
     end
 
     test "returns tracks ordered by album title" do
       track_fixture(%{album_title: "Zebra Album", title: "Track 1"})
       track_fixture(%{album_title: "Alpha Album", title: "Track 2"})
 
-      tracks = list_tracks(%{order: :album})
+      assert [track1, track2] = list_tracks(%{order: :album})
 
-      assert length(tracks) == 2
-      assert List.first(tracks).album.title == "Alpha Album"
-      assert List.last(tracks).album.title == "Zebra Album"
+      assert track1.album.title == "Alpha Album"
+      assert track2.album.title == "Zebra Album"
     end
 
     test "filters tracks by search query matching track title" do
