@@ -16,5 +16,5 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
       - uses: erlef/mix-dependency-submission@e182baa684c14cd34b84da828143cfc18a96c37e  # v1.3.2
-      - uses: actions/dependency-review-action@da24556b548a50705dd671f47852072ea4c105d9  # v4.7.1
+      - uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48  # v4.9.0
         if: "${{ github.event_name == 'pull_request' }}"
