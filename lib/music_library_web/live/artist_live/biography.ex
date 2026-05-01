@@ -32,31 +32,25 @@ defmodule MusicLibraryWeb.ArtistLive.Biography do
     case String.split(bio, last_fm_link_regex, include_captures: true) do
       [text, link, ""] ->
         reformatted_bio =
-          Enum.join(
-            [
-              text,
-              ~s(<p class="mt-4 font-semibold text-zinc-700 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200">#{link}</p>)
-            ],
-            ""
-          )
+          Enum.join([
+            text,
+            ~s(<p class="mt-4 font-semibold text-zinc-700 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200">#{link}</p>)
+          ])
 
         render_content(reformatted_bio)
 
       [text, link, license] ->
         reformatted_bio =
-          Enum.join(
-            [
-              text,
-              ~s(<p class="mt-4 font-semibold text-zinc-700 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200">#{link}</p>),
-              ~s(<p class="mt-4 italic block">#{license}</p>)
-            ],
-            ""
-          )
+          Enum.join([
+            text,
+            ~s(<p class="mt-4 font-semibold text-zinc-700 hover:text-zinc-500 dark:text-zinc-300 dark:hover:text-zinc-200">#{link}</p>),
+            ~s(<p class="mt-4 italic block">#{license}</p>)
+          ])
 
         render_content(reformatted_bio)
 
       other ->
-        render_content(Enum.join(other, ""))
+        render_content(Enum.join(other))
     end
   end
 
