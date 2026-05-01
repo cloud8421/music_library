@@ -197,7 +197,8 @@ defmodule MusicLibrary.Collection do
     |> MapSet.new()
   end
 
-  @max_genres_per_record 3
+  @max_genres_per_record 2
+  @stats_limit 10
 
   @spec collection_summary() :: {String.t(), non_neg_integer()}
   def collection_summary do
@@ -215,15 +216,92 @@ defmodule MusicLibrary.Collection do
       |> Enum.map(fn {_id, group} -> format_group(group) end)
       |> Enum.sort()
 
-    summary = Enum.join(groups, "\n")
+    catalog = Enum.join(groups, "\n")
+    stats = build_stats(records, length(groups))
+
+    summary =
+      cond do
+        stats == "" and catalog == "" -> ""
+        stats == "" -> catalog
+        catalog == "" -> stats
+        true -> stats <> "\n\n" <> catalog
+      end
 
     {summary, length(groups)}
+  end
+
+  defp build_stats([], _group_count), do: ""
+
+  defp build_stats(records, group_count) do
+    genre_counts = compute_genre_counts(records)
+    format_counts = compute_format_counts(records)
+    decade_counts = compute_decade_counts(records)
+
+    artist_count =
+      records
+      |> Enum.flat_map(& &1.artists)
+      |> Enum.uniq_by(& &1.musicbrainz_id)
+      |> length()
+
+    [
+      "# Stats: #{group_count} releases, #{artist_count} artists",
+      genres_line(genre_counts),
+      formats_line(format_counts),
+      eras_line(decade_counts)
+    ]
+    |> Enum.join("\n")
+  end
+
+  defp compute_genre_counts(records) do
+    records
+    |> Enum.flat_map(&(&1.genres || []))
+    |> Enum.reject(&(&1 in @excluded_genres))
+    |> Enum.frequencies()
+    |> Enum.sort_by(&elem(&1, 1), :desc)
+    |> Enum.take(@stats_limit)
+  end
+
+  defp compute_format_counts(records) do
+    records
+    |> Enum.map(& &1.format)
+    |> Enum.frequencies()
+    |> Enum.sort_by(&elem(&1, 1), :desc)
+  end
+
+  defp compute_decade_counts(records) do
+    records
+    |> Enum.map(&extract_decade(&1.release_date))
+    |> Enum.reject(&is_nil/1)
+    |> Enum.frequencies()
+    |> Enum.sort_by(&elem(&1, 1), :desc)
+  end
+
+  defp genres_line([]), do: ""
+
+  defp genres_line(counts) do
+    items = Enum.map(counts, fn {genre, count} -> "#{genre} #{count}" end)
+    "Genres: " <> Enum.join(items, ", ")
+  end
+
+  defp formats_line([]), do: ""
+
+  defp formats_line(counts) do
+    items = Enum.map(counts, fn {format, count} -> "#{format} #{count}" end)
+    "Formats: " <> Enum.join(items, ", ")
+  end
+
+  defp eras_line([]), do: ""
+
+  defp eras_line(counts) do
+    items = Enum.map(counts, fn {decade, count} -> "#{decade} #{count}" end)
+    "Eras: " <> Enum.join(items, ", ")
   end
 
   defp format_group(records) do
     record = hd(records)
     artist_names = Record.artist_names(record)
     formats = records |> Enum.map(& &1.format) |> Enum.uniq() |> Enum.join("/")
+    year = extract_year(record.release_date)
 
     genres =
       records
@@ -231,13 +309,31 @@ defmodule MusicLibrary.Collection do
       |> Enum.uniq()
       |> Enum.take(@max_genres_per_record)
 
-    base =
-      "#{artist_names} - #{record.title} (#{record.release_date || "Unknown"}, #{formats}, #{record.type})"
+    base = "#{artist_names} - #{record.title} (#{year}, #{formats})"
 
     if genres == [] do
       base
     else
       base <> " [#{Enum.join(genres, ", ")}]"
+    end
+  end
+
+  defp extract_year(nil), do: "Unknown"
+
+  defp extract_year(date_str) when is_binary(date_str) do
+    if String.length(date_str) >= 4 do
+      String.slice(date_str, 0, 4)
+    else
+      date_str
+    end
+  end
+
+  defp extract_decade(nil), do: nil
+
+  defp extract_decade(date_str) when is_binary(date_str) do
+    case Integer.parse(String.slice(date_str, 0, 4)) do
+      {year, _} -> "#{div(year, 10) * 10}s"
+      :error -> nil
     end
   end
 

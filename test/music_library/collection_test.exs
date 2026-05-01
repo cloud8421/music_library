@@ -372,7 +372,7 @@ defmodule MusicLibrary.CollectionTest do
       assert Collection.collection_summary() == {"", 0}
     end
 
-    test "returns one line per collected record with record count" do
+    test "returns stats preamble and one catalog line per collected record" do
       record_with_artist("Radiohead", %{
         title: "OK Computer",
         format: :cd,
@@ -392,20 +392,28 @@ defmodule MusicLibrary.CollectionTest do
       })
 
       {summary, record_count} = Collection.collection_summary()
-      lines = String.split(summary, "\n")
+      [stats, catalog] = String.split(summary, "\n\n")
+      lines = String.split(catalog, "\n")
 
       assert record_count == 2
       assert length(lines) == 2
 
+      # Stats section
+      assert stats =~ "# Stats: 2 releases"
+      assert stats =~ "Genres:"
+      assert stats =~ "Formats:"
+      assert stats =~ "Eras:"
+
+      # Catalog lines use year-only dates and exclude type field
       assert Enum.any?(lines, fn line ->
                line =~ "Radiohead" and line =~ "OK Computer" and
-                 line =~ "1997-06-16" and line =~ "cd" and line =~ "album" and
+                 line =~ "(1997, cd)" and
                  line =~ "alternative rock, art rock"
              end)
 
       assert Enum.any?(lines, fn line ->
                line =~ "Pink Floyd" and line =~ "The Dark Side of the Moon" and
-                 line =~ "1973-03-01" and line =~ "vinyl" and line =~ "album" and
+                 line =~ "(1973, vinyl)" and
                  line =~ "progressive rock"
              end)
     end
@@ -434,7 +442,8 @@ defmodule MusicLibrary.CollectionTest do
       })
 
       {summary, record_count} = Collection.collection_summary()
-      lines = String.split(summary, "\n")
+      catalog = String.split(summary, "\n\n") |> List.last()
+      lines = String.split(catalog, "\n")
 
       assert record_count == 1
       assert length(lines) == 1
@@ -444,7 +453,7 @@ defmodule MusicLibrary.CollectionTest do
       assert line =~ "vinyl"
     end
 
-    test "caps genres to 3 per record" do
+    test "caps genres to 2 per record" do
       record_with_artist("ABC", %{
         title: "The Lexicon of Love",
         format: :vinyl,
@@ -455,10 +464,11 @@ defmodule MusicLibrary.CollectionTest do
       })
 
       {summary, _count} = Collection.collection_summary()
-      [genres_str] = Regex.run(~r/\[(.+)\]/, summary, capture: :all_but_first)
+      catalog = String.split(summary, "\n\n") |> List.last()
+      [genres_str] = Regex.run(~r/\[(.+)\]/, catalog, capture: :all_but_first)
       genre_count = genres_str |> String.split(", ") |> length()
 
-      assert genre_count == 3
+      assert genre_count == 2
     end
 
     test "omits genre brackets when genres are empty" do
@@ -472,8 +482,9 @@ defmodule MusicLibrary.CollectionTest do
       })
 
       {summary, _count} = Collection.collection_summary()
-      refute summary =~ "["
-      refute summary =~ "]"
+      catalog = String.split(summary, "\n\n") |> List.last()
+      refute catalog =~ "["
+      refute catalog =~ "]"
     end
 
     test "excludes wishlist records" do
@@ -489,8 +500,11 @@ defmodule MusicLibrary.CollectionTest do
 
       {summary, record_count} = Collection.collection_summary()
       assert record_count == 1
-      assert summary =~ "OK Computer"
-      refute summary =~ "Wish You Were Here"
+
+      # Catalog portion should contain the purchased record but not the wishlist one
+      catalog = String.split(summary, "\n\n") |> List.last()
+      assert catalog =~ "OK Computer"
+      refute catalog =~ "Wish You Were Here"
     end
   end
 end
