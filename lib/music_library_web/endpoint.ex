@@ -16,7 +16,10 @@ defmodule MusicLibraryWeb.Endpoint do
   ]
 
   socket "/live", Phoenix.LiveView.Socket,
-    websocket: [connect_info: [session: @session_options]],
+    # max_frame_size defaults to 10MB starting from websock_adapter 0.6.0,
+    # which we transitively depend on.
+    # See: https://github.com/phoenixframework/websock_adapter/pull/22
+    websocket: [max_frame_size: 10_000_000, connect_info: [session: @session_options]],
     longpoll: [connect_info: [session: @session_options]]
 
   # Serve at "/" the static files from "priv/static" directory.
