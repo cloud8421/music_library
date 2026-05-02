@@ -15,6 +15,8 @@ Rules extracted from commit history that are specific to this project and not al
 
 - **Backlog.md is the source of truth for task management.** The project has the Backlog.md MCP server configured; use it (via the MCP tools) for creating, viewing, and updating tasks. Do not invent a parallel tracking system.
 - **All work that maps to a Backlog.md task must reference the task identifier in the commit subject** (see Commit Messages above). One commit can reference one task; if a single change spans multiple tasks, that is a signal to split the commit.
+- When creating a Backlog.md task, **make sure you fill all task sections of the task**. It's critical you write an implementation plan in the task.
+- When working on a Backlog.md task, **make sure to read the implementation plan included in the task, and follow it**. If the plan is outdated compared to the conditions of the codebase, notify the user.
 - **GitHub issues are legacy and read-only for the agent.** Never create, comment on, close, or reopen GitHub issues — only the user does that. When asked about "the issue tracker" or "open issues", reach for Backlog.md, not `gh issue`.
 
 ## Architecture
