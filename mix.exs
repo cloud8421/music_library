@@ -91,6 +91,7 @@ defmodule MusicLibrary.MixProject do
       # Web Server
       {:bandit, "~> 1.5"},
       {:phoenix, "~> 1.8.0"},
+      {:websock_adapter, "~> 0.6.0", override: true},
 
       # Database
       {:phoenix_ecto, "~> 4.5"},
