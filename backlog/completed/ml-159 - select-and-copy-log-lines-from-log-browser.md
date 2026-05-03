@@ -1,10 +1,10 @@
 ---
 id: ML-159
 title: select and copy log lines from log browser
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-05-03 21:05'
-updated_date: '2026-05-03 21:20'
+updated_date: '2026-05-03 21:34'
 labels:
   - enhancement
   - pi-extension
@@ -31,16 +31,16 @@ The log browser currently uses `ctx.ui.custom<void>`. To return copied text, the
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Cursor line is visually highlighted with accent color and `> ` prefix
-- [ ] #2 `v` enters visual mode; highlighted range extends as cursor moves
-- [ ] #3 `Escape` exits visual mode and clears selection
-- [ ] #4 `Enter` in normal mode copies the cursor line to editor and closes log browser
-- [ ] #5 `y` in visual mode copies the selected range (oldest-first order) to editor and closes log browser
-- [ ] #6 Copied text appears in the editor (via setEditorText) after log browser closes
-- [ ] #7 Pressing Escape (without copying) closes the log browser without changing editor content
-- [ ] #8 All existing key bindings (scroll, page, refresh, jump) continue to work in both normal and visual modes
-- [ ] #9 Help text updates to show visual mode key bindings when visual mode is active
-- [ ] #10 Empty or single-line log responses handle gracefully (no crash, sensible behavior)
+- [x] #1 Cursor line is visually highlighted with accent color and `> ` prefix
+- [x] #2 `v` enters visual mode; highlighted range extends as cursor moves
+- [x] #3 `Escape` exits visual mode and clears selection
+- [x] #4 `Enter` in normal mode copies the cursor line to editor and closes log browser
+- [x] #5 `y` in visual mode copies the selected range (oldest-first order) to editor and closes log browser
+- [x] #6 Copied text appears in the editor (via setEditorText) after log browser closes
+- [x] #7 Pressing Escape (without copying) closes the log browser without changing editor content
+- [x] #8 All existing key bindings (scroll, page, refresh, jump) continue to work in both normal and visual modes
+- [x] #9 Help text updates to show visual mode key bindings when visual mode is active
+- [x] #10 Empty or single-line log responses handle gracefully (no crash, sensible behavior)
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -182,3 +182,18 @@ None. Old behavior (scroll + refresh + close) is preserved and extended, not rep
 | `docs/available-tasks.md` | **No change** — no new mise tasks |
 | `.pi/extensions/prod-logs/index.ts` | **Inline comments** — add JSDoc on new fields (`cursorIndex`, `visualMode`, `visualAnchor`, `onCopy`) and new key binding branches |
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Added vim-style cursor navigation and visual mode to the prod-logs pi extension:
+
+- **Cursor**: `cursorIndex` tracks the highlighted line; all movement keys (j/k/PgUp/PgDn/Home/End/g/G) move the cursor with viewport auto-clamping via `clampViewport()`.
+- **Visual mode**: `v` enters range selection; movement keys extend the highlighted range (success color, `● ` prefix). Escape exits visual mode.
+- **Copy**: Enter copies the cursor line to the editor. `y` in visual mode copies the selected range in oldest-first order.
+- **Return type**: `ctx.ui.custom<void>` changed to `ctx.ui.custom<string | null>`; copied text placed via `ctx.ui.setEditorText()`.
+- **Edge cases**: Empty logs set cursorIndex to -1; visual mode guarded against empty state; `updateLines()` resets all navigation state on refresh.
+- **Help text**: Mode-aware — normal mode shows full key bindings, visual mode shows selection-specific keys.
+
+Single-file change to `.pi/extensions/prod-logs/index.ts`. No Elixir code, database, or infrastructure changes. All 890 tests pass.
+<!-- SECTION:FINAL_SUMMARY:END -->
