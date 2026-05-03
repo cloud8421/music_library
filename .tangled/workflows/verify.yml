@@ -21,25 +21,5 @@ dependencies:
 
 steps:
   - name: "Run hurl tests"
-    command: "hurl --test --report-tap verification.tap test/prod.hurl"
+    command: "hurl --test test/prod.hurl"
     # HURL_api_token is injected from repository secrets (configured separately).
-
-  - name: "Show TAP summary"
-    command: |
-      echo "=== TAP Test Results ==="
-      if [ -f verification.tap ]; then
-        passed=$(grep -c '^ok' verification.tap || true)
-        failed=$(grep -c '^not ok' verification.tap || true)
-        total=$((passed + failed))
-        echo "Total: $total | Passed: $passed | Failed: $failed"
-        echo ""
-        cat verification.tap
-        if [ "$failed" -gt 0 ]; then
-          echo ""
-          echo ":: FAILURES DETECTED ::"
-          exit 1
-        fi
-      else
-        echo "ERROR: verification.tap not found"
-        exit 1
-      fi
