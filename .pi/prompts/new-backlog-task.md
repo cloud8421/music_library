@@ -46,3 +46,5 @@ rules) are documented in a dedicated "Production Changes" section, separate from
 
 10. **Documentation updates** — The plan enumerates which project documentation files must be created or updated as part of the implementation (e.g., `docs/architecture.md`,
 `docs/project-conventions.md`, README, API docs), with a summary of what changes each file needs.
+
+At the end, do not offer to start implementation. Instead, offer to start a new session so that I can review the plan via `/review-task-plan`.
