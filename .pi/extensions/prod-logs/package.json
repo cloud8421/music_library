@@ -1,0 +1,5 @@
+{
+  "name": "prod-logs",
+  "private": true,
+  "description": "View production application logs via Coolify API"
+}
