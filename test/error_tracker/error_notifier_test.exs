@@ -119,7 +119,7 @@ defmodule ErrorTracker.ErrorNotifierTest do
       SwooshSandbox.allow(self(), pid)
 
       :telemetry.execute([:error_tracker, :error, :new], %{}, %{
-        error: %ErrorTracker.Error{id: 1},
+        error: %ErrorTracker.Error{id: 1, muted: false},
         occurrence: occurrence(%{error_id: 1})
       })
 
@@ -148,7 +148,7 @@ defmodule ErrorTracker.ErrorNotifierTest do
       SwooshSandbox.allow(self(), pid)
 
       :telemetry.execute([:error_tracker, :error, :new], %{}, %{
-        error: %Error{id: 1},
+        error: %Error{id: 1, muted: false},
         occurrence: occurrence(%{error_id: 1})
       })
 
@@ -176,12 +176,82 @@ defmodule ErrorTracker.ErrorNotifierTest do
       SwooshSandbox.allow(self(), pid)
 
       :telemetry.execute([:error_tracker, :error, :new], %{}, %{
-        error: %Error{id: 99},
+        error: %Error{id: 99, muted: false},
         occurrence: occurrence(%{error_id: 99})
       })
 
       :sys.get_state(ErrorNotifier)
       assert_email_sent(subject: ~r/MusicLibrary/)
+
+      GenServer.stop(pid)
+    end
+
+    test "sends regression email on :error_tracker :error :unresolved event" do
+      Application.put_env(:music_library, ErrorNotifier, @config)
+
+      {:ok, pid} = ErrorNotifier.start_link([])
+      SwooshSandbox.allow(self(), pid)
+
+      :telemetry.execute([:error_tracker, :error, :unresolved], %{}, %{
+        error: %Error{id: 1, muted: false},
+        occurrence: occurrence(%{error_id: 1})
+      })
+
+      :sys.get_state(ErrorNotifier)
+      assert_email_sent(subject: ~r/MusicLibrary/)
+
+      GenServer.stop(pid)
+    end
+
+    test "skips when unresolved has nil occurrence (manual UI unresolve)" do
+      Application.put_env(:music_library, ErrorNotifier, @config)
+
+      {:ok, pid} = ErrorNotifier.start_link([])
+      SwooshSandbox.allow(self(), pid)
+
+      :telemetry.execute([:error_tracker, :error, :unresolved], %{}, %{
+        error: %Error{id: 1, muted: false},
+        occurrence: nil
+      })
+
+      :sys.get_state(ErrorNotifier)
+      refute_email_sent()
+
+      GenServer.stop(pid)
+    end
+
+    test "skips regression email when error is muted" do
+      Application.put_env(:music_library, ErrorNotifier, @config)
+
+      {:ok, pid} = ErrorNotifier.start_link([])
+      SwooshSandbox.allow(self(), pid)
+
+      :telemetry.execute([:error_tracker, :error, :unresolved], %{}, %{
+        error: %Error{id: 1, muted: true},
+        occurrence: occurrence(%{error_id: 1})
+      })
+
+      :sys.get_state(ErrorNotifier)
+      refute_email_sent()
+
+      GenServer.stop(pid)
+    end
+
+    test "skips notification for :new event when error struct is muted" do
+      Application.put_env(:music_library, ErrorNotifier, @config)
+
+      {:ok, pid} = ErrorNotifier.start_link([])
+      SwooshSandbox.allow(self(), pid)
+
+      # Defensive: new errors are never muted in practice (PR #174),
+      # but the handler reads metadata.error.muted so we verify it is respected.
+      :telemetry.execute([:error_tracker, :error, :new], %{}, %{
+        error: %Error{id: 3, muted: true},
+        occurrence: occurrence(%{error_id: 3})
+      })
+
+      :sys.get_state(ErrorNotifier)
+      refute_email_sent()
 
       GenServer.stop(pid)
     end

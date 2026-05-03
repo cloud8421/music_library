@@ -30,9 +30,31 @@ defmodule ErrorTracker.ErrorNotifier do
         reason = truncate_reason(metadata.occurrence.reason)
 
         {_result, new_state} =
-          maybe_notify(metadata.occurrence, false, "New Error! (#{reason})", state)
+          maybe_notify(
+            metadata.occurrence,
+            metadata.error.muted,
+            "New Error! (#{reason})",
+            state
+          )
 
         {:noreply, new_state}
+
+      [:error_tracker, :error, :unresolved] ->
+        if metadata.occurrence do
+          reason = truncate_reason(metadata.occurrence.reason)
+
+          {_result, new_state} =
+            maybe_notify(
+              metadata.occurrence,
+              metadata.error.muted,
+              "Regression! (#{reason})",
+              state
+            )
+
+          {:noreply, new_state}
+        else
+          {:noreply, state}
+        end
 
       [:error_tracker, :occurrence, :new] ->
         reason = truncate_reason(metadata.occurrence.reason)
@@ -67,6 +89,7 @@ defmodule ErrorTracker.ErrorNotifier do
   defp attach_telemetry do
     events = [
       [:error_tracker, :error, :new],
+      [:error_tracker, :error, :unresolved],
       [:error_tracker, :occurrence, :new]
     ]
 
