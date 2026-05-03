@@ -4,7 +4,7 @@ title: select and copy log lines from log browser
 status: To Do
 assignee: []
 created_date: '2026-05-03 21:05'
-updated_date: '2026-05-03 21:10'
+updated_date: '2026-05-03 21:20'
 labels:
   - enhancement
   - pi-extension
@@ -50,15 +50,26 @@ The log browser currently uses `ctx.ui.custom<void>`. To return copied text, the
 
 ### 1. Add cursor state to LogViewer
 
-Add `cursorIndex` (absolute index into `this.lines`) and initialize to `0`. The cursor tracks which line is highlighted. When lines are refreshed, reset cursor to 0.
+Add `cursorIndex` (absolute index into `this.lines`) and initialize to `0`. The cursor tracks which line is highlighted.
 
-**Verification**: After opening log browser, the first visible line should be highlighted with `> ` prefix and accent color. Scrolling should move the cursor with the viewport — cursor should remain on the top visible line after a page-down scroll (i.e., cursor should auto-clamp into the visible range).
+**Navigation model (vim-style):** All movement keys (`j`, `k`, `PgUp`, `PgDn`, `Home`, `End`, `g`, `G`) move `cursorIndex`. The `scrollOffset` auto-adjusts via a `clampViewport()` helper to keep the cursor within the visible range `[scrollOffset, scrollOffset + visibleHeight)`. This unifies normal and visual mode key handling — in visual mode, the same keys extend the selection by moving `cursorIndex` while `visualAnchor` stays fixed.
+
+Add a `clampViewport()` private method:
+- If `cursorIndex < scrollOffset`, set `scrollOffset = cursorIndex`
+- If `cursorIndex >= scrollOffset + visibleHeight`, set `scrollOffset = cursorIndex - visibleHeight + 1`
+- Call `clampViewport()` after every cursor movement and after `updateLines()`
+
+When lines are refreshed via `updateLines()`, reset `cursorIndex = 0`, `visualMode = false`, and `visualAnchor = 0`, then call `clampViewport()` and `invalidate()`.
+
+**Verification**: After opening log browser, the first visible line should be highlighted with `> ` prefix and accent color. Press `j` — cursor moves to line 2, viewport unchanged. Press `G` — cursor jumps to last line, viewport shifts to show it. Press `g` twice — cursor jumps to line 1, viewport shifts back to top. Refresh logs — cursor resets to 0, visual mode cleared.
 
 ### 2. Add visual mode state to LogViewer
 
-Add `visualMode: boolean` and `visualAnchor: number`. `v` key enters visual mode at current cursor position. `Escape` exits visual mode (returns to normal mode). Normal scroll keys (`j`, `k`, `PgUp`, `PgDn`, etc.) continue to work in visual mode but also extend the selection range.
+Add `visualMode: boolean` and `visualAnchor: number`. `v` key enters visual mode, setting `visualAnchor = cursorIndex`. `Escape` exits visual mode (clears `visualMode` and resets `visualAnchor`).
 
-**Verification**: Press `v` — visual mode indicator appears in help bar. Selection range highlights between anchor and cursor. Press Escape — visual mode clears, selection disappears.
+In visual mode, all movement keys (`j`, `k`, `PgUp`, `PgDn`, `Home`, `End`, `g`, `G`) extend the selection range by moving `cursorIndex` while `visualAnchor` stays fixed. The selected range is `[min(anchor, cursor), max(anchor, cursor)]`.
+
+**Verification**: Press `v` — visual mode indicator appears in help bar. Selection range highlights between anchor and cursor. Move with `j`/`k` — selection expands/shrinks. Press Escape — visual mode clears, selection disappears, cursor stays at current position.
 
 ### 3. Update render to show cursor highlight and selection range
 
@@ -74,10 +85,8 @@ The line number column must shift right by 2 characters to accommodate the new p
 ### 4. Add copy key bindings
 
 - `Enter` (normal mode): Copy cursor line → `done(line)` (single line as string)
-- `y` (visual mode): Copy range [min(anchor, cursor)..max(anchor, cursor)] joined with `\n` → `done(text)`
-- Copied text must be in **ascending order** (oldest first). Since `this.lines` is already reversed before display, ascending means: take lines in range from `this.lines` in their stored order (which is reverse of visual order). Wait — check: `logLines.reverse()` is called before creating LogViewer, so `this.lines[0]` = newest, `this.lines[last]` = oldest. When we copy a range [a..b] where a < b, we get newest-first. To get oldest-first, we need to iterate `for (let i = end; i >= start; i--)` and join.
-
-Actually, confirm: `this.lines` has newest first (index 0 = newest). Visual order shows index 0 at top. So `this.lines[i]` with i ascending = newest to oldest. To get oldest-first: `this.lines.slice(start, end + 1).reverse().join("\n")`.
+- `y` (visual mode): Copy range `[min(anchor, cursor)..max(anchor, cursor)]` joined with `\n` → `done(text)`
+- Copied text must be in **ascending order** (oldest first). Since `this.lines` is already reversed before display (index 0 = newest, last index = oldest), use `this.lines.slice(start, end + 1).reverse().join("\n")` to get oldest-first ordering.
 
 **Verification**: Copy a range of lines. The resulting text should have oldest timestamp first, newest last. Use manual testing with logs that have visible timestamps.
 
@@ -107,12 +116,13 @@ Visual mode: `VISUAL: j/k extend · y copy · Esc cancel · Enter copy line`
 
 ### 7. Handle edge cases
 
-- **Empty log**: No copy operations allowed (cursor at -1 or lines.length === 0). Show "(no logs)".
+- **Empty log**: No copy operations allowed (`cursorIndex = -1` when `lines.length === 0`). Show "(no logs)".
 - **Single line logs**: Visual mode works (range = just that one line). Enter copies it.
-- **Cursor clamping**: After refresh, if cursor >= lines.length, clamp to lines.length - 1.
-- **Visual mode across refresh**: Exit visual mode on refresh (lines change, anchor becomes stale).
+- **Cursor clamping on update**: After refresh, `updateLines()` resets `cursorIndex = 0`, `visualMode = false`, `visualAnchor = 0`, then calls `clampViewport()`.
+- **Visual mode across refresh**: `updateLines()` exits visual mode (lines change, anchor becomes stale).
+- **Cursor out of bounds after delete-like operations**: N/A — log lines are append-only; `updateLines()` always handles the reset.
 
-**Verification**: Test with empty API response, single-line response, and normal multi-line response.
+**Verification**: Test with empty API response, single-line response, and normal multi-line response. Refresh during visual mode — confirm mode exits.
 
 ## Architecture Impact Analysis
 
@@ -122,12 +132,12 @@ This is a **single-file, frontend-only change** to `.pi/extensions/prod-logs/ind
 
 | Component | Impact |
 |-----------|--------|
-| `LogViewer` class | **Modified** — adds `cursorIndex`, `visualMode`, `visualAnchor`, `onCopy` callback. `handleInput` routing restructured for mode awareness |
+| `LogViewer` class | **Modified** — adds `cursorIndex`, `visualMode`, `visualAnchor`, `onCopy` callback, `clampViewport()` private method. Movement keys refactored to move `cursorIndex` with viewport auto-clamping. `handleInput` routing restructured for mode awareness |
 | `LogViewer.render()` | **Modified** — adds cursor prefix (`> `) and selection prefix (`● `). Line number column padding widened by 2 chars |
+| `LogViewer.updateLines()` | **Modified** — resets `cursorIndex = 0`, `visualMode = false`, `visualAnchor = 0`, calls `clampViewport()` |
 | Extension handler function | **Modified** — `ctx.ui.custom<void>` → `ctx.ui.custom<string \| null>`. Adds `onCopy` handler. Adds `ctx.ui.setEditorText()` on copy |
 | Help text strings | **Modified** — split into normal-mode and visual-mode variants |
-| `fetchLogs` / `updateLines` | **No change** — data fetching unchanged |
-| Coolify API | **No change** — same endpoint, same auth |
+| `fetchLogs` / Coolify API | **No change** — data fetching unchanged |
 
 ### Deprecation/Migration
 None. Old behavior (scroll + refresh + close) is preserved and extended, not replaced.
