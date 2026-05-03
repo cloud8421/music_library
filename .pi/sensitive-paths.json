@@ -1,0 +1,21 @@
+{
+  "_comment": "Blocked paths for pi. Glob-like patterns, matched case-insensitively against absolute paths.",
+  "blocked_paths": [
+    "mise.local.toml",
+    "*.pem",
+    "*.key",
+    "*.key.pub",
+    "*secret*",
+    "*credential*",
+    "*credentials*",
+    ".ssh/",
+    ".aws/",
+    ".gnupg/",
+    "~/.pi/agent/sessions/"
+  ],
+  "blocked_commands": [
+    "printenv",
+    "\\benv\\b",
+    "\\bset\\b"
+  ]
+}

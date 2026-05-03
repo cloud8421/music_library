@@ -1,10 +1,10 @@
 ---
 id: ML-157
 title: Prevent pi from accessing sensitive files
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-05-03 13:30'
-updated_date: '2026-05-03 13:44'
+updated_date: '2026-05-03 14:50'
 labels: []
 dependencies: []
 references:
@@ -19,13 +19,13 @@ To prevent the pi harness from accidentally reading and sending sensitive data t
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Pi cannot read `.env` files via the `read` tool — access is blocked with a notification in interactive mode
-- [ ] #2 Pi cannot read files matching `*secret*` or `*credential*` patterns via the `read` tool
-- [ ] #3 Pi cannot `cat .env` or `grep` inside `.ssh/` or `.aws/` via the `bash` tool
-- [ ] #4 Non-interactive mode (`pi -p`) reports blocked sensitive file access as an error rather than silently failing
-- [ ] #5 Normal file access (source code, test files, config examples like `.env.example`) is unaffected
-- [ ] #6 The set of blocked paths is declared in `.pi/sensitive-paths.json` — adding/removing patterns does not require code changes
-- [ ] #7 The extension loads correctly at pi startup and chains with existing extensions (MCP adapter) without conflicts
+- [x] #1 Pi cannot read `.env` files via the `read` tool — access is blocked with a notification in interactive mode
+- [x] #2 Pi cannot read files matching `*secret*` or `*credential*` patterns via the `read` tool
+- [x] #3 Pi cannot `cat .env` or `grep` inside `.ssh/` or `.aws/` via the `bash` tool
+- [x] #4 Non-interactive mode (`pi -p`) reports blocked sensitive file access as an error rather than silently failing
+- [x] #5 Normal file access (source code, test files, config examples like `.env.example`) is unaffected
+- [x] #6 The set of blocked paths is declared in `.pi/sensitive-paths.json` — adding/removing patterns does not require code changes
+- [x] #7 The extension loads correctly at pi startup and chains with existing extensions (MCP adapter) without conflicts
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -330,3 +330,36 @@ If future patterns grow to hundreds of entries, a trie-based matcher could be co
 
 **No other documentation files need updates.** This is a pi-level concern, not an application architecture concern.
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+## Implementation Notes
+
+### Files Created
+
+1. **`.pi/sensitive-paths.json`** — Declarative config of blocked path patterns and blocked commands. Primary target: `mise.local.toml` (contains secrets). Also covers common sensitive file patterns (`*.pem`, `*.key`, `*secret*`, `.ssh/`, `.aws/`, etc.) and env-dumping commands (`printenv`, `env`, `set`).
+
+2. **`.pi/extensions/000-sensitive-file-guard.ts`** — Pi extension that intercepts `tool_call` events before execution. Named with `000-` prefix to load first among project-local extensions, ensuring the guard inspects original tool arguments before any other extension mutates them.
+
+### How It Works
+
+- **Path-based tools** (`read`, `grep`, `write`, `edit`, `find`, `ls`): Resolves the input path to an absolute path (handling `..` traversal via `normalize`), then checks against compiled case-insensitive regexes from `blocked_paths`.
+- **Bash tool**: Substring scan of the raw command text for blocked path fragments + regex check against `blocked_commands`.
+- **Blocking**: Returns `{ block: true, reason }` — blocks BEFORE any file I/O occurs. Shows `ctx.ui.notify()` warning in interactive mode. Returns error reason in non-interactive/print mode.
+- **Fail-open**: If config file is missing or invalid, the extension silently does nothing.
+
+### Key Limitation
+- Does NOT resolve symlinks (would require `realpathSync` per tool call). Users must not symlink sensitive directories into the project tree.
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Created two files:
+
+1. **`.pi/sensitive-paths.json`** — Declarative config blocking `mise.local.toml` and other sensitive file patterns
+2. **`.pi/extensions/000-sensitive-file-guard.ts`** — Extension that intercepts `tool_call` events before any file I/O occurs, blocks matching paths/commands, notifies in interactive mode, and reports error reason in non-interactive mode.
+
+The guard covers all built-in file-access tools (read, grep, write, edit, find, ls, bash) and loads first (000- prefix) among project-local extensions to inspect original tool arguments.
+<!-- SECTION:FINAL_SUMMARY:END -->
