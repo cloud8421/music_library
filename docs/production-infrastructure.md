@@ -3,6 +3,9 @@
 > **Maintenance rule**: Update this file when infrastructure changes (hosting, databases,
 > backups, monitoring, deployment pipeline, external services). Keep it factual and concise.
 
+**CRITICAL: under no circumstances you're allowed to interact directly with
+production infrastructure without asking the user first.**
+
 ## Overview
 
 Self-hosted Phoenix application running as a Docker container orchestrated by
