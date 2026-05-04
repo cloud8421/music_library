@@ -13,9 +13,5 @@
     ".gnupg/",
     "~/.pi/agent/sessions/"
   ],
-  "blocked_commands": [
-    "printenv",
-    "\\benv\\b",
-    "\\bset\\b"
-  ]
+  "blocked_commands": ["printenv", "\\benv\\b", "\\bset\\b"]
 }

@@ -21,11 +21,7 @@ import {
   DEFAULT_MAX_LINES,
 } from "@mariozechner/pi-coding-agent";
 import { Type } from "typebox";
-import {
-  matchesKey,
-  Key,
-  truncateToWidth,
-} from "@mariozechner/pi-tui";
+import { matchesKey, Key, truncateToWidth } from "@mariozechner/pi-tui";
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -80,7 +76,10 @@ class LogViewer {
     this.visualMode = false;
     this.visualAnchor = 0;
     this.scrollOffset = 0;
-    this.visibleHeight = Math.min(lines.length, Math.max(10, process.stdout.rows - chromeHeight));
+    this.visibleHeight = Math.min(
+      lines.length,
+      Math.max(10, process.stdout.rows - chromeHeight),
+    );
     this.clampCursor();
     this.clampViewport();
     this.invalidate();
@@ -101,7 +100,10 @@ class LogViewer {
     if (this.lines.length === 0) {
       this.cursorIndex = -1;
     } else {
-      this.cursorIndex = Math.max(0, Math.min(this.cursorIndex, this.lines.length - 1));
+      this.cursorIndex = Math.max(
+        0,
+        Math.min(this.cursorIndex, this.lines.length - 1),
+      );
     }
   }
 
@@ -129,7 +131,10 @@ class LogViewer {
     }
 
     // Escape or q in normal mode closes the viewer
-    if (!this.visualMode && (matchesKey(data, Key.escape) || matchesKey(data, "q"))) {
+    if (
+      !this.visualMode &&
+      (matchesKey(data, Key.escape) || matchesKey(data, "q"))
+    ) {
       this.onClose?.();
       return;
     }
@@ -156,7 +161,10 @@ class LogViewer {
         const start = Math.min(this.visualAnchor, this.cursorIndex);
         const end = Math.max(this.visualAnchor, this.cursorIndex);
         // this.lines[0] = newest, so reverse the slice for oldest-first
-        const text = this.lines.slice(start, end + 1).reverse().join("\n");
+        const text = this.lines
+          .slice(start, end + 1)
+          .reverse()
+          .join("\n");
         this.onCopy?.(text);
       }
       return;
@@ -184,7 +192,10 @@ class LogViewer {
     } else if (matchesKey(data, Key.pageUp)) {
       this.cursorIndex -= this.visibleHeight;
       moved = true;
-    } else if (matchesKey(data, Key.pageDown) || matchesKey(data, Key.ctrl("f"))) {
+    } else if (
+      matchesKey(data, Key.pageDown) ||
+      matchesKey(data, Key.ctrl("f"))
+    ) {
       this.cursorIndex += this.visibleHeight;
       moved = true;
     } else if (matchesKey(data, Key.ctrl("b"))) {
@@ -237,9 +248,8 @@ class LogViewer {
       const basePrefix = `  ${numStr} │ `;
 
       const isCursor = absIdx === this.cursorIndex;
-      const isSelected = this.visualMode
-        && absIdx >= selStart
-        && absIdx <= selEnd;
+      const isSelected =
+        this.visualMode && absIdx >= selStart && absIdx <= selEnd;
 
       if (isCursor) {
         // Cursor takes priority over selection highlight
@@ -349,13 +359,7 @@ export default function prodLogsExtension(pi: ExtensionAPI) {
         }),
       ),
     }),
-    async execute(
-      _toolCallId,
-      params,
-      signal,
-      _onUpdate,
-      _ctx,
-    ) {
+    async execute(_toolCallId, params, signal, _onUpdate, _ctx) {
       // Early abort check
       if (signal?.aborted) {
         return { content: [{ type: "text", text: "Cancelled" }] };
@@ -498,7 +502,10 @@ export default function prodLogsExtension(pi: ExtensionAPI) {
       );
 
       if (logLines === null) {
-        ctx.ui.notify("Cancelled or fetch failed — check logs for details", "info");
+        ctx.ui.notify(
+          "Cancelled or fetch failed — check logs for details",
+          "info",
+        );
         return;
       }
 
@@ -519,7 +526,10 @@ export default function prodLogsExtension(pi: ExtensionAPI) {
       let loading = false;
 
       const visibleLogLines = () =>
-        Math.min(logLinesMut.length, Math.max(10, process.stdout.rows - chromeHeight));
+        Math.min(
+          logLinesMut.length,
+          Math.max(10, process.stdout.rows - chromeHeight),
+        );
 
       const viewer = new LogViewer(logLinesMut, visibleLogLines());
 
@@ -553,9 +563,10 @@ export default function prodLogsExtension(pi: ExtensionAPI) {
 
           return {
             render(width: number) {
-              const pct = viewer.total > 0
-                ? Math.round((viewer.offset / viewer.total) * 100)
-                : 0;
+              const pct =
+                viewer.total > 0
+                  ? Math.round((viewer.offset / viewer.total) * 100)
+                  : 0;
               const from = viewer.offset + 1;
               const to = Math.min(
                 viewer.offset + visibleLogLines(),
@@ -565,20 +576,28 @@ export default function prodLogsExtension(pi: ExtensionAPI) {
               const result: string[] = [];
               const border = theme.fg("accent", "─".repeat(width));
               result.push(border);
-              result.push(truncateToWidth(
-                theme.fg("accent", theme.bold(" Production Logs")),
-                width,
-                "",
-              ));
+              result.push(
+                truncateToWidth(
+                  theme.fg("accent", theme.bold(" Production Logs")),
+                  width,
+                  "",
+                ),
+              );
 
               const countText = loading
                 ? " Refreshing..."
                 : ` ${logLinesMut.length} lines`;
-              result.push(truncateToWidth(theme.fg("muted", countText), width, ""));
-              result.push(truncateToWidth(theme.fg("dim", "─".repeat(40)), width, ""));
+              result.push(
+                truncateToWidth(theme.fg("muted", countText), width, ""),
+              );
+              result.push(
+                truncateToWidth(theme.fg("dim", "─".repeat(40)), width, ""),
+              );
 
               const infoText = ` Lines ${from}-${to} of ${logLinesMut.length} (${pct}%)`;
-              result.push(truncateToWidth(theme.fg("dim", infoText), width, ""));
+              result.push(
+                truncateToWidth(theme.fg("dim", infoText), width, ""),
+              );
 
               // Log lines
               const logRendered = viewer.render(width, theme);
@@ -590,11 +609,9 @@ export default function prodLogsExtension(pi: ExtensionAPI) {
                 : viewer.visualMode
                   ? " VISUAL: j/k extend  ·  y copy  ·  Esc cancel  ·  Enter copy line"
                   : " ↑↓/jk scroll  ·  PgUp/PgDn page  ·  Home/End jump  ·  v visual  ·  Enter copy line  ·  r refresh  ·  Esc close";
-              result.push(truncateToWidth(
-                theme.fg("dim", helpLine),
-                width,
-                "",
-              ));
+              result.push(
+                truncateToWidth(theme.fg("dim", helpLine), width, ""),
+              );
               result.push(border);
 
               return result;

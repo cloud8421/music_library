@@ -17,7 +17,7 @@ function loadConfig(cwd: string): Config {
 function patternToRegex(pattern: string): RegExp {
   let escaped = pattern
     .replace(/[.+^${}()|[\]\\]/g, "\\$&") // Escape regex specials except *
-    .replace(/\*/g, ".*");                  // * → .*
+    .replace(/\*/g, ".*"); // * → .*
   return new RegExp(escaped, "i");
 }
 
@@ -35,7 +35,7 @@ export default function (pi: ExtensionAPI) {
   // Proactively tell the agent which paths are off-limits so it doesn't try in the first place
   pi.on("before_agent_start", async (event, _ctx) => {
     if (config.blocked_paths.length === 0) return;
-    const pathList = config.blocked_paths.map((p) => `  - \`${p}\``).join('\n');
+    const pathList = config.blocked_paths.map((p) => `  - \`${p}\``).join("\n");
     return {
       systemPrompt:
         event.systemPrompt +
@@ -63,7 +63,8 @@ export default function (pi: ExtensionAPI) {
           `🚫 ACCESS DENIED by sensitive-file-guard: paths matching "${match}" are permanently protected. ` +
           `DO NOT retry with other tools (bash, find, ls, grep, etc.). ` +
           `Tell the user the file is protected and STOP.`;
-        if (ctx.hasUI) ctx.ui.notify(`Blocked sensitive path: ${path}`, "warning");
+        if (ctx.hasUI)
+          ctx.ui.notify(`Blocked sensitive path: ${path}`, "warning");
         return { block: true, reason };
       }
       return;
@@ -79,14 +80,21 @@ export default function (pi: ExtensionAPI) {
         // Rough substring match: does the pattern text (with glob stripped)
         // appear in the command?
         const literal = p.replace(/[*?]/g, "");
-        return literal.length > 0 && command.toLowerCase().includes(literal.toLowerCase());
+        return (
+          literal.length > 0 &&
+          command.toLowerCase().includes(literal.toLowerCase())
+        );
       });
 
       if (pathHit) {
         const reason =
           `🚫 ACCESS DENIED by sensitive-file-guard: commands targeting "${pathHit}" are permanently blocked. ` +
           `DO NOT retry with alternative commands. Tell the user the path is protected and STOP.`;
-        if (ctx.hasUI) ctx.ui.notify(`Blocked sensitive path in bash: ${pathHit}`, "warning");
+        if (ctx.hasUI)
+          ctx.ui.notify(
+            `Blocked sensitive path in bash: ${pathHit}`,
+            "warning",
+          );
         return { block: true, reason };
       }
 

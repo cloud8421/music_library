@@ -1,8 +1,4 @@
 {
-  "skills": [
-    "../.claude/skills"
-  ],
-  "packages": [
-    "npm:pi-mcp-adapter"
-  ]
+  "skills": ["../.claude/skills"],
+  "packages": ["npm:pi-mcp-adapter"]
 }

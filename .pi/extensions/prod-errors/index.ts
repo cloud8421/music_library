@@ -23,11 +23,7 @@ import {
   DEFAULT_MAX_LINES,
 } from "@mariozechner/pi-coding-agent";
 import { BorderedLoader } from "@mariozechner/pi-coding-agent";
-import {
-  matchesKey,
-  Key,
-  truncateToWidth,
-} from "@mariozechner/pi-tui";
+import { matchesKey, Key, truncateToWidth } from "@mariozechner/pi-tui";
 import { Type } from "typebox";
 
 // ── Types ───────────────────────────────────────────────────────────────────
@@ -275,17 +271,22 @@ async function fetchErrors(
   token: string,
   signal?: AbortSignal,
 ): Promise<ErrorListResponse> {
-  return fetchApi(url, token, (data) => {
-    const obj = data as Record<string, unknown>;
-    if (!obj.errors || !Array.isArray(obj.errors)) {
-      throw new Error(
-        `Unexpected API response: 'errors' field is missing or not an array. Got: ${
-          obj.errors === null ? "null" : typeof obj.errors
-        }.`,
-      );
-    }
-    return data as ErrorListResponse;
-  }, signal);
+  return fetchApi(
+    url,
+    token,
+    (data) => {
+      const obj = data as Record<string, unknown>;
+      if (!obj.errors || !Array.isArray(obj.errors)) {
+        throw new Error(
+          `Unexpected API response: 'errors' field is missing or not an array. Got: ${
+            obj.errors === null ? "null" : typeof obj.errors
+          }.`,
+        );
+      }
+      return data as ErrorListResponse;
+    },
+    signal,
+  );
 }
 
 async function fetchError(
@@ -293,17 +294,22 @@ async function fetchError(
   token: string,
   signal?: AbortSignal,
 ): Promise<ErrorDetailResponse> {
-  return fetchApi(url, token, (data) => {
-    const obj = data as Record<string, unknown>;
-    if (!obj.error || typeof obj.error !== "object") {
-      throw new Error(
-        `Unexpected API response: 'error' field is missing or not an object. Got: ${
-          obj.error === null ? "null" : typeof obj.error
-        }.`,
-      );
-    }
-    return data as ErrorDetailResponse;
-  }, signal);
+  return fetchApi(
+    url,
+    token,
+    (data) => {
+      const obj = data as Record<string, unknown>;
+      if (!obj.error || typeof obj.error !== "object") {
+        throw new Error(
+          `Unexpected API response: 'error' field is missing or not an object. Got: ${
+            obj.error === null ? "null" : typeof obj.error
+          }.`,
+        );
+      }
+      return data as ErrorDetailResponse;
+    },
+    signal,
+  );
 }
 
 // ── TUI Theme ───────────────────────────────────────────────────────────────
@@ -378,7 +384,10 @@ class ErrorBrowser {
   private readonly baseUrl: string;
   private readonly token: string;
   private readonly requestRender: () => void;
-  private readonly notify: (msg: string, level: "error" | "info" | "warning") => void;
+  private readonly notify: (
+    msg: string,
+    level: "error" | "info" | "warning",
+  ) => void;
 
   constructor(
     errors: ErrorListItem[],
@@ -411,7 +420,10 @@ class ErrorBrowser {
     if (this.errors.length === 0) {
       this.cursorIndex = -1;
     } else {
-      this.cursorIndex = Math.max(0, Math.min(this.cursorIndex, this.errors.length - 1));
+      this.cursorIndex = Math.max(
+        0,
+        Math.min(this.cursorIndex, this.errors.length - 1),
+      );
     }
   }
 
@@ -423,7 +435,10 @@ class ErrorBrowser {
     } else if (this.cursorIndex >= this.scrollOffset + maxEntries) {
       this.scrollOffset = this.cursorIndex - maxEntries + 1;
     }
-    this.scrollOffset = Math.max(0, Math.min(this.scrollOffset, this.errors.length - 1));
+    this.scrollOffset = Math.max(
+      0,
+      Math.min(this.scrollOffset, this.errors.length - 1),
+    );
   }
 
   // ── HTTP helpers ───────────────────────────────────────────────────────
@@ -471,7 +486,11 @@ class ErrorBrowser {
     this.invalidate();
     this.requestRender();
 
-    const url = buildUrl(this.baseUrl, "/api/v1/errors", this.buildQueryParams());
+    const url = buildUrl(
+      this.baseUrl,
+      "/api/v1/errors",
+      this.buildQueryParams(),
+    );
     const controller = new AbortController();
     this.currentAbortController = controller;
 
@@ -508,7 +527,11 @@ class ErrorBrowser {
     this.invalidate();
     this.requestRender();
 
-    const url = buildUrl(this.baseUrl, "/api/v1/errors", this.buildQueryParams());
+    const url = buildUrl(
+      this.baseUrl,
+      "/api/v1/errors",
+      this.buildQueryParams(),
+    );
     const controller = new AbortController();
     this.currentAbortController = controller;
 
@@ -638,7 +661,10 @@ class ErrorBrowser {
         const pageSize = Math.floor(this.visibleHeight / this.errorEntryLines);
         this.cursorIndex -= pageSize;
         moved = true;
-      } else if (matchesKey(data, Key.pageDown) || matchesKey(data, Key.ctrl("f"))) {
+      } else if (
+        matchesKey(data, Key.pageDown) ||
+        matchesKey(data, Key.ctrl("f"))
+      ) {
         const pageSize = Math.floor(this.visibleHeight / this.errorEntryLines);
         this.cursorIndex += pageSize;
         moved = true;
@@ -689,7 +715,10 @@ class ErrorBrowser {
       } else if (matchesKey(data, Key.pageUp)) {
         this.detailScrollOffset -= this.visibleHeight;
         moved = true;
-      } else if (matchesKey(data, Key.pageDown) || matchesKey(data, Key.ctrl("f"))) {
+      } else if (
+        matchesKey(data, Key.pageDown) ||
+        matchesKey(data, Key.ctrl("f"))
+      ) {
         this.detailScrollOffset += this.visibleHeight;
         moved = true;
       } else if (matchesKey(data, Key.ctrl("b"))) {
@@ -699,13 +728,19 @@ class ErrorBrowser {
         this.detailScrollOffset = 0;
         moved = true;
       } else if (matchesKey(data, Key.end) || matchesKey(data, "G")) {
-        this.detailScrollOffset = Math.max(0, this.buildDetailLines().length - 1);
+        this.detailScrollOffset = Math.max(
+          0,
+          this.buildDetailLines().length - 1,
+        );
         moved = true;
       }
 
       if (moved) {
         const maxOffset = Math.max(0, this.buildDetailLines().length - 1);
-        this.detailScrollOffset = Math.max(0, Math.min(this.detailScrollOffset, maxOffset));
+        this.detailScrollOffset = Math.max(
+          0,
+          Math.min(this.detailScrollOffset, maxOffset),
+        );
         this.invalidate();
       }
 
@@ -746,7 +781,9 @@ class ErrorBrowser {
 
     for (let i = 1; i < viewportRows - 1; i++) {
       if (i === mid) {
-        result.push(truncateToWidth(theme.fg("muted", "  Loading…"), width, ""));
+        result.push(
+          truncateToWidth(theme.fg("muted", "  Loading…"), width, ""),
+        );
       } else {
         result.push("");
       }
@@ -809,12 +846,24 @@ class ErrorBrowser {
         else if (error.status === "resolved") statusColor = "success";
 
         const mutedLabel = error.muted ? " [MUTED]" : "";
-        const statusBadge = theme.fg(statusColor, `[${error.status.toUpperCase()}]`);
+        const statusBadge = theme.fg(
+          statusColor,
+          `[${error.status.toUpperCase()}]`,
+        );
 
         // Line 1: cursor + status badge + kind + truncated reason
-        const reasonText = truncateReason(error.reason, Math.max(30, width - 25));
+        const reasonText = truncateReason(
+          error.reason,
+          Math.max(30, width - 25),
+        );
         const line1 = `${cursor} ${statusBadge}${mutedLabel} ${error.kind}: ${reasonText}`;
-        result.push(truncateToWidth(isCursor ? theme.fg("accent", line1) : line1, width, ""));
+        result.push(
+          truncateToWidth(
+            isCursor ? theme.fg("accent", line1) : line1,
+            width,
+            "",
+          ),
+        );
 
         // Line 2: source info
         const sourceInfo = error.source_function
@@ -857,9 +906,7 @@ class ErrorBrowser {
       truncateToWidth(
         theme.fg(
           "dim",
-          hasMore
-            ? ` l load more  q quit`
-            : ` — end of results —  q quit`,
+          hasMore ? ` l load more  q quit` : ` — end of results —  q quit`,
         ),
         width,
         "",
@@ -972,13 +1019,13 @@ export default function prodErrorsExtension(pi: ExtensionAPI) {
     parameters: Type.Object({
       status: Type.Optional(
         Type.Union([Type.Literal("resolved"), Type.Literal("unresolved")], {
-          description:
-            "Filter by error status: 'resolved' or 'unresolved'.",
+          description: "Filter by error status: 'resolved' or 'unresolved'.",
         }),
       ),
       muted: Type.Optional(
         Type.Boolean({
-          description: "Filter by muted state. true = only muted, false = only unmuted.",
+          description:
+            "Filter by muted state. true = only muted, false = only unmuted.",
         }),
       ),
       search: Type.Optional(
@@ -1000,13 +1047,7 @@ export default function prodErrorsExtension(pi: ExtensionAPI) {
         }),
       ),
     }),
-    async execute(
-      _toolCallId,
-      params,
-      signal,
-      _onUpdate,
-      _ctx,
-    ) {
+    async execute(_toolCallId, params, signal, _onUpdate, _ctx) {
       // Early abort check
       if (signal?.aborted) {
         return { content: [{ type: "text", text: "Cancelled" }] };
@@ -1043,7 +1084,11 @@ export default function prodErrorsExtension(pi: ExtensionAPI) {
       if (params.muted !== undefined && params.muted !== null) {
         queryParams.muted = String(params.muted);
       }
-      if (params.search !== undefined && params.search !== null && params.search !== "") {
+      if (
+        params.search !== undefined &&
+        params.search !== null &&
+        params.search !== ""
+      ) {
         queryParams.search = params.search;
       }
       if (params.limit !== undefined && params.limit !== null) {
@@ -1075,8 +1120,18 @@ export default function prodErrorsExtension(pi: ExtensionAPI) {
       // Handle empty results
       if (data.errors.length === 0) {
         return {
-          content: [{ type: "text", text: "No errors found matching the given filters." }],
-          details: { total: data.total, count: 0, offset: data.offset, limit: data.limit },
+          content: [
+            {
+              type: "text",
+              text: "No errors found matching the given filters.",
+            },
+          ],
+          details: {
+            total: data.total,
+            count: 0,
+            offset: data.offset,
+            limit: data.limit,
+          },
         };
       }
 
@@ -1126,13 +1181,7 @@ export default function prodErrorsExtension(pi: ExtensionAPI) {
           "The error ID (integer) to fetch full details for. Get this from fetch_production_errors.",
       }),
     }),
-    async execute(
-      _toolCallId,
-      params,
-      signal,
-      _onUpdate,
-      _ctx,
-    ) {
+    async execute(_toolCallId, params, signal, _onUpdate, _ctx) {
       // Early abort check
       if (signal?.aborted) {
         return { content: [{ type: "text", text: "Cancelled" }] };
@@ -1256,7 +1305,10 @@ export default function prodErrorsExtension(pi: ExtensionAPI) {
       );
 
       if (errorsData === null) {
-        ctx.ui.notify("Cancelled or fetch failed — check logs for details", "info");
+        ctx.ui.notify(
+          "Cancelled or fetch failed — check logs for details",
+          "info",
+        );
         return;
       }
 

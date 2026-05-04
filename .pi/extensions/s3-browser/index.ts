@@ -33,7 +33,10 @@ const S3_REGION = "nbg1";
 function humanSize(bytes: number): string {
   if (bytes === 0) return "0 B";
   const units = ["B", "KB", "MB", "GB", "TB"];
-  const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+  const i = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+    units.length - 1,
+  );
   return `${(bytes / 1024 ** i).toFixed(1)} ${units[i]}`;
 }
 
@@ -152,7 +155,10 @@ export default function s3BrowserExtension(pi: ExtensionAPI) {
       );
 
       if (objects === null) {
-        ctx.ui.notify("Cancelled or fetch failed — check logs for details", "info");
+        ctx.ui.notify(
+          "Cancelled or fetch failed — check logs for details",
+          "info",
+        );
         return;
       }
 
@@ -174,66 +180,71 @@ export default function s3BrowserExtension(pi: ExtensionAPI) {
       // Summary header line
       const summary = `${objects.length} files  ·  ${humanSize(totalSize)} total`;
 
-      const selectedKey = await ctx.ui.custom<string | null>((tui, theme, _kb, done) => {
-        const container = new Container();
+      const selectedKey = await ctx.ui.custom<string | null>(
+        (tui, theme, _kb, done) => {
+          const container = new Container();
 
-        // Top border
-        container.addChild(
-          new DynamicBorder((s: string) => theme.fg("accent", s)),
-        );
+          // Top border
+          container.addChild(
+            new DynamicBorder((s: string) => theme.fg("accent", s)),
+          );
 
-        // Header
-        container.addChild(
-          new Text(theme.fg("accent", theme.bold("S3 Backups — ffmusiclibrary/prod/")), 1, 0),
-        );
-        container.addChild(
-          new Text(theme.fg("muted", summary), 1, 0),
-        );
+          // Header
+          container.addChild(
+            new Text(
+              theme.fg(
+                "accent",
+                theme.bold("S3 Backups — ffmusiclibrary/prod/"),
+              ),
+              1,
+              0,
+            ),
+          );
+          container.addChild(new Text(theme.fg("muted", summary), 1, 0));
 
-        // Spacer before list
-        container.addChild(
-          new Text(theme.fg("dim", "─".repeat(40)), 1, 0),
-        );
+          // Spacer before list
+          container.addChild(new Text(theme.fg("dim", "─".repeat(40)), 1, 0));
 
-        // SelectList
-        const selectList = new SelectList(items, Math.min(items.length, 20), {
-          selectedPrefix: (t: string) => theme.fg("accent", t),
-          selectedText: (t: string) => theme.fg("accent", t),
-          description: (t: string) => theme.fg("muted", t),
-          scrollInfo: (t: string) => theme.fg("dim", t),
-          noMatch: (t: string) => theme.fg("warning", t),
-        });
-        selectList.onSelect = (item) => done(item.value);
-        selectList.onCancel = () => done(null);
-        container.addChild(selectList);
+          // SelectList
+          const selectList = new SelectList(items, Math.min(items.length, 20), {
+            selectedPrefix: (t: string) => theme.fg("accent", t),
+            selectedText: (t: string) => theme.fg("accent", t),
+            description: (t: string) => theme.fg("muted", t),
+            scrollInfo: (t: string) => theme.fg("dim", t),
+            noMatch: (t: string) => theme.fg("warning", t),
+          });
+          selectList.onSelect = (item) => done(item.value);
+          selectList.onCancel = () => done(null);
+          container.addChild(selectList);
 
-        // Footer hint
-        container.addChild(
-          new Text(
-            theme.fg("dim", "↑↓ navigate  ·  enter select  ·  esc close"),
-            1,
-            0,
-          ),
-        );
+          // Footer hint
+          container.addChild(
+            new Text(
+              theme.fg("dim", "↑↓ navigate  ·  enter select  ·  esc close"),
+              1,
+              0,
+            ),
+          );
 
-        // Bottom border
-        container.addChild(
-          new DynamicBorder((s: string) => theme.fg("accent", s)),
-        );
+          // Bottom border
+          container.addChild(
+            new DynamicBorder((s: string) => theme.fg("accent", s)),
+          );
 
-        return {
-          render(width: number) {
-            return container.render(width);
-          },
-          invalidate() {
-            container.invalidate();
-          },
-          handleInput(data: string) {
-            selectList.handleInput(data);
-            tui.requestRender();
-          },
-        };
-      });
+          return {
+            render(width: number) {
+              return container.render(width);
+            },
+            invalidate() {
+              container.invalidate();
+            },
+            handleInput(data: string) {
+              selectList.handleInput(data);
+              tui.requestRender();
+            },
+          };
+        },
+      );
 
       if (selectedKey) {
         const obj = objects.find((o) => o.key === selectedKey);
