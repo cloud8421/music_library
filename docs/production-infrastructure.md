@@ -196,6 +196,47 @@ ERL_FLAGS: `+JPperf true` (JIT performance monitoring).
 `GET /health` — queries the main database, returns 200 or 500. Used by Docker health
 checks and post-deploy verification.
 
+### Logging
+
+Production logs are configured for single-line output so every physical log line
+corresponds to exactly one log event. This makes log files reliably filterable with
+line-oriented tools (grep, tail, sort) and enables deterministic reverse-order reading.
+
+Three layers work together:
+
+1. **Logster v2** — Replaces `Phoenix.Logger` for HTTP request and LiveView socket
+   telemetry. Merges `GET + Sent` into a single logfmt line with `method`, `path`,
+   `status`, `duration`, and `request_id` fields. Handles `[:phoenix, :socket_connected]`
+   telemetry, flattening the multi-line handshake output into one line.
+
+2. **Custom formatter** (`MusicLibrary.Logger.SingleLineFormatter`) — Safety net that
+   replaces any remaining embedded newlines (`\n`) with escaped `\\n` in ALL log
+   messages. Catches stack traces, Erlang runtime messages, and any multi-line strings
+   that Logster does not cover. Configured in `config/prod.exs`.
+
+3. **Config flag** (`single_line_logging`) — Boolean in `config/config.exs` (default
+   `false`) and overridden to `true` in `config/prod.exs`. Controls `Logster.attach_phoenix_logger()`
+   in `application.ex`. Dev/test environments keep the default multi-line format for readability.
+
+Configuration summary:
+
+```elixir
+# config/prod.exs
+config :phoenix, :logger, false
+config :music_library, :single_line_logging, true
+
+config :logster,
+  extra_fields: [:request_id],
+  filter_parameters: Application.get_env(:phoenix, :filter_parameters, ["password"])
+
+config :logger, :default_formatter,
+  format: {MusicLibrary.Logger.SingleLineFormatter, :format},
+  metadata: [:request_id, :pid]
+```
+
+Dev environment retains the default `"$time $metadata[$level] $message\n"` format with
+`Phoenix.Logger` active.
+
 ### Error tracking
 
 `ErrorTracker` with email notifications via Mailgun:

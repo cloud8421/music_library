@@ -11,6 +11,19 @@ config :music_library, MusicLibraryWeb.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
+# Force single-line log output
+config :phoenix, :logger, false
+
+config :music_library, :single_line_logging, true
+
+config :logster,
+  extra_fields: [:request_id],
+  filter_parameters: Application.get_env(:phoenix, :filter_parameters, ["password"])
+
+config :logger, :default_formatter,
+  format: {MusicLibrary.Logger.SingleLineFormatter, :format},
+  metadata: [:request_id, :pid]
+
 config :music_library, monitoring_routes: true
 
 config :error_tracker, enabled: true

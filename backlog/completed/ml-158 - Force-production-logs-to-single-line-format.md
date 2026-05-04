@@ -1,15 +1,24 @@
 ---
 id: ML-158
 title: Force production logs to single-line format
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-05-03 13:51'
-updated_date: '2026-05-04 08:18'
+updated_date: '2026-05-04 13:43'
 labels:
   - ready
 dependencies: []
 references:
   - 'backlog://documents/doc-3'
+modified_files:
+  - mix.exs
+  - config/config.exs
+  - config/prod.exs
+  - lib/music_library/application.ex
+  - lib/music_library/logger/single_line_formatter.ex
+  - test/music_library/logger/single_line_formatter_test.exs
+  - docs/production-infrastructure.md
+  - docs/architecture.md
 priority: medium
 ---
 
@@ -21,12 +30,12 @@ When running in production, logs spanning multiple lines create issues — they 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 HTTP request logs (GET /path + Sent 200) appear as a single logfmt line in production
-- [ ] #2 LiveView socket connection logs (CONNECTED TO Phoenix.LiveView.Socket) appear as a single line
-- [ ] #3 No log message in production output spans multiple physical lines — all newlines are escaped as \\n
-- [ ] #4 Existing metadata (request_id, etc.) is preserved in log output
-- [ ] #5 Stack traces from errors/exceptions are escaped to single line
-- [ ] #6 Dev environment logging is unchanged and still uses multi-line format for readability
+- [x] #1 HTTP request logs (GET /path + Sent 200) appear as a single logfmt line in production
+- [x] #2 LiveView socket connection logs (CONNECTED TO Phoenix.LiveView.Socket) appear as a single line
+- [x] #3 No log message in production output spans multiple physical lines — all newlines are escaped as \\n
+- [x] #4 Existing metadata (request_id, etc.) is preserved in log output
+- [x] #5 Stack traces from errors/exceptions are escaped to single line
+- [x] #6 Dev environment logging is unchanged and still uses multi-line format for readability
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -306,3 +315,60 @@ No manual production changes required. All configuration is in `config/prod.exs`
 
 **Rollback**: Revert to previous commit. No data migration needed.
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+## Implementation Summary
+
+### What was done
+
+#### Step 0: Pre-implementation verification
+- Confirmed Phoenix.Logger fires 4 events at `:info`+ level (endpoint start/stop, socket_connected, error_rendered) — matches plan assumptions
+- Confirmed Logster v2 handles `[:phoenix, :socket_connected]` — **skipped Step 4** (custom telemetry handler unnecessary)
+
+#### Step 1: Added Logster dependency
+- `mix.exs`: `{:logster, "~> 2.0.0-rc.5"}`
+
+#### Step 2: Disabled Phoenix.Logger in prod
+- `config/prod.exs`: `config :phoenix, :logger, false`
+
+#### Step 3: Configured Logster with environment-conditional attach
+- `config/config.exs`: `config :music_library, :single_line_logging, false`
+- `config/prod.exs`: `config :music_library, :single_line_logging, true`
+- `config/prod.exs`: Logster config with `extra_fields: [:request_id]` and parameter filtering
+- `lib/music_library/application.ex`: conditional `Logster.attach_phoenix_logger()` when `single_line_logging` is true
+
+#### Step 4: Skipped (Logster v2 handles `[:phoenix, :socket_connected]`)
+
+#### Step 5-6: Created custom Logger.Formatter as safety net
+- `lib/music_library/logger/single_line_formatter.ex`: Implements `format/4` callback, replaces embedded `\n` with escaped `\\n`, handles string/iolist/report messages, preserves metadata
+- `config/prod.exs`: formatter configured as `{MusicLibrary.Logger.SingleLineFormatter, :format}` with `metadata: [:request_id]`
+
+#### Step 7: Codebase audit
+- Searched for Logger calls with embedded `\n` — none found
+- Multi-line Logger calls in source all produce single-line output (string concatenation without actual newlines)
+- Custom formatter handles any remaining cases from OTP/Elixir internals
+
+#### Step 8: Tests
+- `test/music_library/logger/single_line_formatter_test.exs`: 13 tests covering newline replacement, iolist handling, metadata preservation, single-line output, dev/test config verification
+- All 931 project tests pass
+
+#### Step 9: OTP release verification
+- `MIX_ENV=prod mix release` builds successfully
+- sys.config confirms: `phoenix logger: false`, `single_line_logging: true`, Logster config, custom formatter tuple, logster application included
+
+#### Step 10: Documentation
+- `docs/production-infrastructure.md`: Added "Logging" section under Monitoring & Observability
+- `docs/architecture.md`: Added `MusicLibrary.Logger.SingleLineFormatter` to Business Logic Modules, Logster note under Supervision Tree, and Web Utility Modules note
+
+### Files changed
+- `mix.exs` — added logster dependency
+- `config/config.exs` — added `single_line_logging: false`
+- `config/prod.exs` — 4 config additions (phoenix logger disable, flag, logster, formatter)
+- `lib/music_library/application.ex` — conditional Logster attach
+- `lib/music_library/logger/single_line_formatter.ex` — new module
+- `test/music_library/logger/single_line_formatter_test.exs` — new test file
+- `docs/production-infrastructure.md` — Logging section
+- `docs/architecture.md` — module entries
+<!-- SECTION:FINAL_SUMMARY:END -->

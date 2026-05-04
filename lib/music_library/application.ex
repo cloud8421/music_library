@@ -30,6 +30,10 @@ defmodule MusicLibrary.Application do
       MusicLibraryWeb.Endpoint
     ]
 
+    if Application.fetch_env!(:music_library, :single_line_logging) do
+      Logster.attach_phoenix_logger()
+    end
+
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: MusicLibrary.Supervisor]

@@ -42,6 +42,9 @@ MusicLibrary.Application (one_for_one)
 └── MusicLibraryWeb.Endpoint
 ```
 
+Logster v2 (production-only) is attached as a telemetry handler via `application.ex`
+when `single_line_logging` is `true` — not a supervised process.
+
 ---
 
 ## Database & Repos
@@ -145,6 +148,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `MusicLibrary.Mailer` | Swoosh mailer (Mailgun in prod, local adapter in dev) |
 | `FormatNumber` | Number formatting utility |
 | `QueryReporter` | Dev-only Ecto telemetry reporter: captures executed SQL to a log file with interpolated params, source locations, and timing. Activated at runtime via `start/1` / `stop/0` |
+| `MusicLibrary.Logger.SingleLineFormatter` | Production-only Logger.Formatter safety net: replaces embedded newlines (`\n`) with escaped `\\n` in all log messages, ensuring every physical log line is exactly one log event |
 
 ---
 
@@ -327,6 +331,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `LiveHelpers.Params` | URL query param parsing: pagination, search query, sort order, display mode, fallback index |
 | `LiveHelpers.IndexActions` | Shared index page logic (search, pagination, import, delete, display mode) for Collection/Wishlist index pages, parameterized by config map |
 | `LiveHelpers.RecordActions` | Shared record action handlers (refresh cover, genres, embeddings, MusicBrainz data) for Collection/Wishlist show pages |
+| — | Logster v2 handles `[:phoenix, :socket_connected]` telemetry — not a custom module |
 
 ### Controllers
 
