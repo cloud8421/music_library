@@ -56,11 +56,7 @@ Run these checks after updating:
 
 ### 5. Commit
 
-Follow the project's commit conventions:
-
-- **Bulk update**: a single commit with message `Update dependencies`
-- **Individual updates**: one commit per dependency, message format
-  `Update <package> from <old> to <new>` (e.g., `Update esbuild from 0.27.7 to 0.28.0`)
+Follow the project's commit conventions.
 
 If a major version bump required code changes, those changes belong in the same commit
 as the dependency bump — not in a separate commit.
