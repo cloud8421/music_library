@@ -1,10 +1,10 @@
 ---
 id: ML-160
 title: Programmatic access to production logs
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-05-04 06:42'
-updated_date: '2026-05-04 06:52'
+updated_date: '2026-05-04 07:33'
 labels: []
 dependencies: []
 references:
@@ -20,13 +20,13 @@ Evaluate and implement the best approach for the LLM to access production logs. 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 The LLM can fetch production logs without user intervention by calling the fetch_production_logs tool
-- [ ] #2 The tool supports a `tail` parameter to limit the number of log lines returned (default: 200)
-- [ ] #3 The tool supports a `grep` parameter for case-insensitive filtering of log lines
-- [ ] #4 The tool returns log lines as text the LLM can read and analyze directly in context
-- [ ] #5 When Coolify credentials are missing, the tool returns a clear error message listing which environment variables are not set
-- [ ] #6 The existing /prod-logs interactive command continues to work unchanged
-- [ ] #7 The tool description and guidelines teach the LLM when and how to use it effectively
+- [x] #1 The LLM can fetch production logs without user intervention by calling the fetch_production_logs tool
+- [x] #2 The tool supports a `tail` parameter to limit the number of log lines returned (default: 200)
+- [x] #3 The tool supports a `grep` parameter for case-insensitive filtering of log lines
+- [x] #4 The tool returns log lines as text the LLM can read and analyze directly in context
+- [x] #5 When Coolify credentials are missing, the tool returns a clear error message listing which environment variables are not set
+- [x] #6 The existing /prod-logs interactive command continues to work unchanged
+- [x] #7 The tool description and guidelines teach the LLM when and how to use it effectively
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -143,3 +143,39 @@ The implementation is self-documenting: the tool's `description`, `promptSnippet
 - `truncateTail`, `formatSize`, `DEFAULT_MAX_BYTES`, `DEFAULT_MAX_LINES` — all from `@mariozechner/pi-coding-agent`, a pi built-in
 - No new npm dependencies needed
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Added `fetch_production_logs` tool to the existing `.pi/extensions/prod-logs/index.ts` extension. The tool reuses the existing `fetchLogs()` and `resolveVar()` helper functions. Implementation follows the plan exactly:
+
+- Added imports for `Type` (typebox) and `truncateTail`, `formatSize`, `DEFAULT_MAX_BYTES`, `DEFAULT_MAX_LINES` (@mariozechner/pi-coding-agent)
+- Registered tool before the existing `pi.registerCommand("prod-logs", ...)` call
+- Tool supports `tail` (default 200) and `grep` parameters
+- Handler: credential check → fetch → error handling → empty check → reverse → grep → tail → join → truncate → return
+- Truncation via `truncateTail` with 50KB/2000-line limit, with clear truncation note in output
+- Existing `/prod-logs` command code is completely untouched
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Added a `fetch_production_logs` tool to `.pi/extensions/prod-logs/index.ts` using `pi.registerTool()`. The tool gives the LLM programmatic access to production logs without user intervention.
+
+**What changed:**
+- Added imports for `Type` (typebox) and `truncateTail`, `formatSize`, `DEFAULT_MAX_BYTES`, `DEFAULT_MAX_LINES` from `@mariozechner/pi-coding-agent`
+- Registered `fetch_production_logs` tool with `tail` (default 200) and `grep` parameters
+- Tool reuses the existing `fetchLogs()` and `resolveVar()` module-scope functions from the `/prod-logs` extension
+- Handler: credential validation → fetch → error handling → empty check → reverse (newest first) → grep filter → tail slice → join → `truncateTail` truncation with clear truncation note
+- On missing credentials, returns a clear error listing which env vars are not set
+
+**What didn't change:**
+- The existing `/prod-logs` interactive command code is completely untouched
+- No new dependencies, env vars, infrastructure changes, or Elixir module changes
+
+**Verification (requires `/reload` in pi):**
+1. Ask the LLM about available tools for production logs — should describe `fetch_production_logs`
+2. Ask the LLM to fetch logs with `tail: 50` or `grep: "error"` — should work
+3. Unset a credential and try — should get clear error message
+4. Run `/prod-logs` — should still work unchanged
+<!-- SECTION:FINAL_SUMMARY:END -->

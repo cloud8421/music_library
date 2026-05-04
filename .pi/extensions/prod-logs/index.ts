@@ -15,6 +15,13 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { BorderedLoader, DynamicBorder } from "@mariozechner/pi-coding-agent";
 import {
+  truncateTail,
+  formatSize,
+  DEFAULT_MAX_BYTES,
+  DEFAULT_MAX_LINES,
+} from "@mariozechner/pi-coding-agent";
+import { Type } from "typebox";
+import {
   matchesKey,
   Key,
   truncateToWidth,
@@ -309,6 +316,143 @@ async function fetchLogs(
 // ── Extension ───────────────────────────────────────────────────────────────
 
 export default function prodLogsExtension(pi: ExtensionAPI) {
+  // ── fetch_production_logs tool ─────────────────────────────────────────
+
+  pi.registerTool({
+    name: "fetch_production_logs",
+    label: "Fetch Production Logs",
+    description:
+      "Fetch recent production logs from the deployed application via the Coolify API. " +
+      "Use this tool when investigating production errors, checking server behavior, " +
+      "debugging deployed issues, or when the user asks about production status, " +
+      "logs, errors, or application behavior in the deployed environment. " +
+      "Output is truncated at 50KB / 2000 lines — use a smaller 'tail' value or " +
+      "a narrower 'grep' pattern to reduce output if truncation occurs.",
+    promptSnippet:
+      "Fetch recent production logs from deployed app (param: tail, grep)",
+    promptGuidelines: [
+      "Use fetch_production_logs when investigating production errors, checking deployed application behavior, or when the user asks about production status or recent activity.",
+      "Use the 'grep' parameter to filter logs by a case-insensitive substring (e.g., grep: 'error', grep: 'timeout'). This reduces output size and helps find relevant entries.",
+      "Start with a small 'tail' value (e.g., tail: 50) and increase only if needed. Large tail values may hit the 50KB/2000-line truncation limit.",
+    ],
+    parameters: Type.Object({
+      tail: Type.Optional(
+        Type.Number({
+          description:
+            "Number of most recent log lines to return. Default: 200. Use a smaller value to reduce output size.",
+        }),
+      ),
+      grep: Type.Optional(
+        Type.String({
+          description:
+            "Case-insensitive substring filter for log lines. Only lines containing this string are returned. Use to narrow results to relevant entries.",
+        }),
+      ),
+    }),
+    async execute(
+      _toolCallId,
+      params,
+      signal,
+      _onUpdate,
+      _ctx,
+    ) {
+      // Early abort check
+      if (signal?.aborted) {
+        return { content: [{ type: "text", text: "Cancelled" }] };
+      }
+
+      // Validate credentials
+      const host = resolveVar("coolify_host");
+      const appUuid = resolveVar("coolify_app_uuid");
+      const token = resolveVar("coolify_token");
+
+      const missing: string[] = [];
+      if (!host) missing.push("HURL_VARIABLE_coolify_host");
+      if (!appUuid) missing.push("HURL_VARIABLE_coolify_app_uuid");
+      if (!token) missing.push("HURL_VARIABLE_coolify_token");
+
+      if (missing.length > 0) {
+        return {
+          content: [
+            {
+              type: "text",
+              text:
+                `Cannot fetch production logs: the following environment variables are not set:\n` +
+                missing.map((v) => `  - ${v}`).join("\n") +
+                `\n\nEnsure these are configured in your pi environment.`,
+            },
+          ],
+          isError: true,
+        };
+      }
+
+      // Fetch logs
+      let lines: string[];
+      try {
+        lines = await fetchLogs(host!, appUuid!, token!, signal);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Failed to fetch production logs: ${message}`,
+            },
+          ],
+          isError: true,
+        };
+      }
+
+      // Handle empty logs
+      if (lines.length === 0) {
+        return {
+          content: [{ type: "text", text: "No log entries found." }],
+        };
+      }
+
+      // Recent entries first (consistent with the /prod-logs viewer)
+      lines.reverse();
+
+      // Apply grep filter if provided
+      if (params.grep) {
+        const pattern = params.grep.toLowerCase();
+        lines = lines.filter((line) => line.toLowerCase().includes(pattern));
+      }
+
+      // Record pre-tail line count for details
+      const lineCount = lines.length;
+
+      // Apply tail limit
+      const tail = params.tail ?? 200;
+      lines = lines.slice(0, tail);
+
+      // Join into a single string
+      let output = lines.join("\n");
+
+      // Apply output truncation
+      const truncation = truncateTail(output, {
+        maxLines: DEFAULT_MAX_LINES,
+        maxBytes: DEFAULT_MAX_BYTES,
+      });
+
+      if (truncation.truncated) {
+        output =
+          truncation.content +
+          `\n\n[Output truncated: ${truncation.outputLines} of ${truncation.totalLines} lines (${formatSize(truncation.outputBytes)} of ${formatSize(truncation.totalBytes)}). ` +
+          `Use a smaller 'tail' value or narrower 'grep' pattern to reduce output.]`;
+      } else {
+        output = truncation.content;
+      }
+
+      return {
+        content: [{ type: "text", text: output }],
+        details: { lineCount },
+      };
+    },
+  });
+
+  // ── /prod-logs interactive command ─────────────────────────────────────
+
   pi.registerCommand("prod-logs", {
     description: "View production application logs via Coolify API",
     handler: async (_args, ctx) => {
