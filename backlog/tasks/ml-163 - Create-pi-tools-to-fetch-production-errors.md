@@ -4,11 +4,12 @@ title: Create pi tools to fetch production errors
 status: To Do
 assignee: []
 created_date: '2026-05-04 08:08'
-updated_date: '2026-05-04 09:26'
+updated_date: '2026-05-04 09:34'
 labels:
   - pi
+  - ready
 dependencies: []
-parent_task_id: DRAFT-1
+parent_task_id: ML-161
 priority: medium
 ordinal: 5000
 ---
