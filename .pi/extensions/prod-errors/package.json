@@ -1,5 +1,5 @@
 {
   "name": "prod-errors",
   "private": true,
-  "description": "Fetch production errors via the JSON API for LLM analysis"
+  "description": "Fetch production errors via JSON API for LLM analysis, with interactive /prod-errors TUI"
 }

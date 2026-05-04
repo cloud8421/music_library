@@ -238,12 +238,17 @@ runtime environment (not server-side config).
 | Extension | Tools | Env vars |
 |-----------|-------|----------|
 | `prod-logs` | `fetch_production_logs` | `PI_COOLIFY_HOST`, `PI_COOLIFY_APP_UUID`, `PI_COOLIFY_TOKEN` |
-| `prod-errors` | `fetch_production_errors`, `fetch_production_error` | `PI_API_TOKEN`, `PI_SERVICE_FQDN_WEB` |
+| `prod-errors` | `fetch_production_errors`, `fetch_production_error`, `/prod-errors` | `PI_API_TOKEN`, `PI_SERVICE_FQDN_WEB` |
 
 **`prod-logs` env vars:**
 - `PI_COOLIFY_HOST` — Coolify server base URL (e.g., `https://coolify.example.com`)
 - `PI_COOLIFY_APP_UUID` — Application UUID in Coolify
 - `PI_COOLIFY_TOKEN` — Coolify API Bearer token
+
+**`prod-errors` tools and command:**
+- `fetch_production_errors` — List/filter errors via LLM tool
+- `fetch_production_error` — Single error detail via LLM tool
+- `/prod-errors` — Interactive TUI for browsing errors (list, detail, filter toggles)
 
 **`prod-errors` env vars:**
 - `PI_API_TOKEN` — Must match the `API_TOKEN` env var on the production server (used for Bearer auth on `/api/v1/*`)

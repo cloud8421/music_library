@@ -1,13 +1,18 @@
 ---
 id: ML-164
 title: Create pi extension for interactive error browsing
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-05-04 08:08'
-updated_date: '2026-05-04 10:03'
+updated_date: '2026-05-04 12:44'
 labels:
   - pi
+  - ready
 dependencies: []
+modified_files:
+  - .pi/extensions/prod-errors/index.ts
+  - .pi/extensions/prod-errors/package.json
+  - docs/production-infrastructure.md
 parent_task_id: ML-161
 priority: medium
 ordinal: 6000
@@ -282,3 +287,28 @@ No new changes beyond ML-162/ML-163: `PI_API_TOKEN` and `PI_SERVICE_FQDN_WEB` ar
 - `@mariozechner/pi-coding-agent` and `@mariozechner/pi-tui`: Already available.
 - No new npm dependencies.
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+## Implementation Notes
+
+### What was built
+
+Added the `/prod-errors` interactive TUI command to the existing `.pi/extensions/prod-errors/` extension (which already contained the `fetch_production_errors` and `fetch_production_error` LLM tools from ML-163).
+
+### Files changed
+
+- `.pi/extensions/prod-errors/index.ts` — Added ErrorBrowser class (~540 lines), Theme interface, formatRelativeTime/truncateReason helpers, and `/prod-errors` command registration. Total file grew from ~360 to ~1396 lines.
+- `.pi/extensions/prod-errors/package.json` — Updated description to mention TUI command.
+- `docs/production-infrastructure.md` — Added `/prod-errors` to the pi coding agent tools table and added command description.
+
+### Key design decisions
+
+1. **Reuses existing HTTP functions** — `fetchErrors()` and `fetchError()` from ML-163 are reused directly by the ErrorBrowser class. The class builds URLs via the existing `buildUrl()` helper.
+2. **Flat rendering (not Container/Text)** — Follows the prod-logs pattern of building arrays of styled strings, not the component-based approach using Container/Text/Box. This is simpler and directly compatible with the `ctx.ui.custom()` API.
+3. **Self-contained class** — ErrorBrowser manages all state, navigation, rendering, and async operations internally. It receives `requestRender` and `notify` callbacks from the command handler for I/O.
+4. **Occurrence count omission** — The list endpoint doesn't include `occurrence_count` (per ML-162 spec), so the list view shows relative timestamps instead.
+5. **No collapsible stacktraces** — Deferred per implementation plan. Initial version shows all stacktraces inline with scrolling.
+6. **Explicit load-more** — No auto-load on scroll-to-bottom. Uses `l` key for user-controlled pagination.
+<!-- SECTION:NOTES:END -->
