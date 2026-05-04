@@ -133,6 +133,25 @@ defmodule MusicLibraryWeb.ErrorControllerTest do
 
       assert %{"errors" => [], "total" => 0} = json_response(conn, 200)
     end
+
+    test "clamps negative limit to 1", %{conn: conn} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{api_token()}")
+        |> get(~p"/api/v1/errors?limit=-1")
+
+      assert %{"errors" => returned, "limit" => 1} = json_response(conn, 200)
+      assert returned != []
+    end
+
+    test "clamps negative offset to 0", %{conn: conn} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{api_token()}")
+        |> get(~p"/api/v1/errors?offset=-5")
+
+      assert %{"offset" => 0} = json_response(conn, 200)
+    end
   end
 
   describe "GET /api/v1/errors/:id" do
@@ -223,6 +242,15 @@ defmodule MusicLibraryWeb.ErrorControllerTest do
         conn
         |> put_req_header("authorization", "Bearer #{api_token()}")
         |> get(~p"/api/v1/errors/99999")
+
+      assert json_response(conn, 404) == %{"error" => "Not Found"}
+    end
+
+    test "returns 404 for non-integer id instead of crashing", %{conn: conn} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{api_token()}")
+        |> get(~p"/api/v1/errors/not-an-id")
 
       assert json_response(conn, 404) == %{"error" => "Not Found"}
     end

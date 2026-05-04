@@ -7,8 +7,8 @@ defmodule MusicLibraryWeb.ErrorController do
     status = parse_status(params["status"])
     muted = parse_muted(params["muted"])
     search = params["search"]
-    limit = parse_int(params["limit"], 50)
-    offset = parse_int(params["offset"], 0)
+    limit = max(1, parse_int(params["limit"], 50))
+    offset = max(0, parse_int(params["offset"], 0))
 
     opts =
       []
@@ -24,13 +24,19 @@ defmodule MusicLibraryWeb.ErrorController do
   end
 
   def show(conn, %{"id" => id}) do
-    {id_int, ""} = Integer.parse(id)
+    case Integer.parse(id) do
+      {id_int, ""} when id_int > 0 ->
+        case Errors.get_error(id_int) do
+          {:ok, error} ->
+            render(conn, :show, error: error)
 
-    case Errors.get_error(id_int) do
-      {:ok, error} ->
-        render(conn, :show, error: error)
+          {:error, :not_found} ->
+            conn
+            |> put_status(:not_found)
+            |> json(%{error: "Not Found"})
+        end
 
-      {:error, :not_found} ->
+      _ ->
         conn
         |> put_status(:not_found)
         |> json(%{error: "Not Found"})
