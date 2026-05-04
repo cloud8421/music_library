@@ -104,10 +104,16 @@ function buildUrl(
   path: string,
   params?: Record<string, string>,
 ): string {
-  // Strip trailing slash and ensure protocol
+  // Strip trailing slash and ensure protocol.
+  // Default to https:// unless the host looks like a local/dev address.
   let url = base.replace(/\/+$/, "");
   if (!/^https?:\/\//i.test(url)) {
-    url = `https://${url}`;
+    const isLocal =
+      url.startsWith("localhost") ||
+      url.startsWith("127.") ||
+      url.startsWith("0.0.0.0") ||
+      url.startsWith("[::1]");
+    url = `${isLocal ? "http" : "https"}://${url}`;
   }
   url = `${url}${path}`;
 
@@ -140,7 +146,7 @@ function formatErrorListItem(error: ErrorListItem, index: number): string {
   ].join("\n");
 }
 
-function formatErrorDetail(error: ErrorDetail): string {
+function formatDetailLines(error: ErrorDetail): string[] {
   const lines: string[] = [];
   const sep = "─".repeat(44);
 
@@ -160,48 +166,56 @@ function formatErrorDetail(error: ErrorDetail): string {
   lines.push(`Occurrences (${occurrences.length}):`);
   lines.push(sep);
 
-  for (let i = 0; i < occurrences.length; i++) {
-    const occ = occurrences[i];
-    lines.push(`#${i + 1} ${occ.inserted_at}`);
-    lines.push(`   Reason: ${occ.reason}`);
+  if (occurrences.length === 0) {
+    lines.push("  No occurrences recorded");
+  } else {
+    for (let i = 0; i < occurrences.length; i++) {
+      const occ = occurrences[i]!;
+      lines.push(`#${i + 1} ${occ.inserted_at}`);
+      lines.push(`   Reason: ${occ.reason}`);
 
-    // Context as key-value pairs
-    if (occ.context && Object.keys(occ.context).length > 0) {
-      const ctxLines = Object.entries(occ.context).map(
-        ([k, v]) => `     ${k}: ${JSON.stringify(v)}`,
-      );
-      lines.push(`   Context:`);
-      lines.push(...ctxLines);
-    }
-
-    // Breadcrumbs as bullet list
-    if (occ.breadcrumbs && occ.breadcrumbs.length > 0) {
-      lines.push(`   Breadcrumbs:`);
-      for (const crumb of occ.breadcrumbs) {
-        lines.push(`     • ${crumb}`);
-      }
-    }
-
-    // Stacktrace
-    if (occ.stacktrace?.lines && occ.stacktrace.lines.length > 0) {
-      lines.push(`   Stacktrace:`);
-      for (const sl of occ.stacktrace.lines) {
-        const app = sl.application || "—";
-        const loc = sl.file
-          ? `${sl.file}${sl.line != null ? `:${sl.line}` : ""}`
-          : "(nofile)";
-        lines.push(
-          `     ${app} / ${sl.module}.${sl.function}/${sl.arity}  ${loc}`,
+      // Context as key-value pairs
+      if (occ.context && Object.keys(occ.context).length > 0) {
+        const ctxLines = Object.entries(occ.context).map(
+          ([k, v]) => `     ${k}: ${JSON.stringify(v)}`,
         );
+        lines.push(`   Context:`);
+        lines.push(...ctxLines);
       }
-    }
 
-    if (i < occurrences.length - 1) {
-      lines.push("");
+      // Breadcrumbs as bullet list
+      if (occ.breadcrumbs && occ.breadcrumbs.length > 0) {
+        lines.push(`   Breadcrumbs:`);
+        for (const crumb of occ.breadcrumbs) {
+          lines.push(`     • ${crumb}`);
+        }
+      }
+
+      // Stacktrace
+      if (occ.stacktrace?.lines && occ.stacktrace.lines.length > 0) {
+        lines.push(`   Stacktrace:`);
+        for (const sl of occ.stacktrace.lines) {
+          const app = sl.application || "—";
+          const loc = sl.file
+            ? `${sl.file}${sl.line != null ? `:${sl.line}` : ""}`
+            : "(nofile)";
+          lines.push(
+            `     ${app} / ${sl.module}.${sl.function}/${sl.arity}  ${loc}`,
+          );
+        }
+      }
+
+      if (i < occurrences.length - 1) {
+        lines.push("");
+      }
     }
   }
 
-  return lines.join("\n");
+  return lines;
+}
+
+function formatErrorDetail(error: ErrorDetail): string {
+  return formatDetailLines(error).join("\n");
 }
 
 function applyOutputTruncation(output: string): string {
@@ -224,11 +238,12 @@ function applyOutputTruncation(output: string): string {
 
 // ── HTTP helpers ────────────────────────────────────────────────────────────
 
-async function fetchErrors(
+async function fetchApi<T>(
   url: string,
   token: string,
+  validate: (data: unknown) => T,
   signal?: AbortSignal,
-): Promise<ErrorListResponse> {
+): Promise<T> {
   const response = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` },
     signal,
@@ -252,16 +267,25 @@ async function fetchErrors(
     );
   }
 
-  const obj = data as Record<string, unknown>;
-  if (!obj.errors || !Array.isArray(obj.errors)) {
-    throw new Error(
-      `Unexpected API response: 'errors' field is missing or not an array. Got: ${
-        obj.errors === null ? "null" : typeof obj.errors
-      }.`,
-    );
-  }
+  return validate(data);
+}
 
-  return data as ErrorListResponse;
+async function fetchErrors(
+  url: string,
+  token: string,
+  signal?: AbortSignal,
+): Promise<ErrorListResponse> {
+  return fetchApi(url, token, (data) => {
+    const obj = data as Record<string, unknown>;
+    if (!obj.errors || !Array.isArray(obj.errors)) {
+      throw new Error(
+        `Unexpected API response: 'errors' field is missing or not an array. Got: ${
+          obj.errors === null ? "null" : typeof obj.errors
+        }.`,
+      );
+    }
+    return data as ErrorListResponse;
+  }, signal);
 }
 
 async function fetchError(
@@ -269,39 +293,17 @@ async function fetchError(
   token: string,
   signal?: AbortSignal,
 ): Promise<ErrorDetailResponse> {
-  const response = await fetch(url, {
-    headers: { Authorization: `Bearer ${token}` },
-    signal,
-  });
-
-  if (!response.ok) {
-    const body = await response.text().catch(() => "(unable to read body)");
-    const truncated = body.length > 500 ? body.slice(0, 500) + "..." : body;
-    throw new Error(
-      `API returned ${response.status} ${response.statusText}\n${truncated}`,
-    );
-  }
-
-  let data: unknown;
-  try {
-    data = await response.json();
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    throw new Error(
-      `Failed to parse API response: ${message}. Status: ${response.status}.`,
-    );
-  }
-
-  const obj = data as Record<string, unknown>;
-  if (!obj.error || typeof obj.error !== "object") {
-    throw new Error(
-      `Unexpected API response: 'error' field is missing or not an object. Got: ${
-        obj.error === null ? "null" : typeof obj.error
-      }.`,
-    );
-  }
-
-  return data as ErrorDetailResponse;
+  return fetchApi(url, token, (data) => {
+    const obj = data as Record<string, unknown>;
+    if (!obj.error || typeof obj.error !== "object") {
+      throw new Error(
+        `Unexpected API response: 'error' field is missing or not an object. Got: ${
+          obj.error === null ? "null" : typeof obj.error
+        }.`,
+      );
+    }
+    return data as ErrorDetailResponse;
+  }, signal);
 }
 
 // ── TUI Theme ───────────────────────────────────────────────────────────────
@@ -316,6 +318,8 @@ interface Theme {
 
 function formatRelativeTime(iso8601: string): string {
   const then = new Date(iso8601).getTime();
+  if (isNaN(then)) return "unknown";
+
   const now = Date.now();
   const diffSec = Math.floor((now - then) / 1000);
 
@@ -443,47 +447,23 @@ class ErrorBrowser {
   // ── Async operations ───────────────────────────────────────────────────
 
   toggleResolved(): void {
-    if (this.mode === "loading") return;
-    this.abortInFlight();
-    this.showResolved = !this.showResolved;
-    this.offset = 0;
-    this.cursorIndex = 0;
-    this.scrollOffset = 0;
-    this.mode = "loading";
-    this.invalidate();
-    this.requestRender();
-
-    const url = buildUrl(this.baseUrl, "/api/v1/errors", this.buildQueryParams());
-    const controller = new AbortController();
-    this.currentAbortController = controller;
-
-    fetchErrors(url, this.token, controller.signal)
-      .then((data) => {
-        this.errors = data.errors;
-        this.total = data.total;
-        this.offset = data.offset ?? 0;
-        this.cursorIndex = 0;
-        this.scrollOffset = 0;
-        this.clampCursor();
-        this.clampViewport();
-        this.mode = "list";
-        this.invalidate();
-        this.requestRender();
-      })
-      .catch((err) => {
-        if (err instanceof Error && err.name === "AbortError") return;
-        this.mode = "list";
-        const msg = err instanceof Error ? err.message : String(err);
-        this.notify(`Filter toggle failed: ${msg}`, "error");
-        this.invalidate();
-        this.requestRender();
-      });
+    this.retoggleFilter("resolved");
   }
 
   toggleMuted(): void {
+    this.retoggleFilter("muted");
+  }
+
+  private retoggleFilter(filter: "resolved" | "muted"): void {
     if (this.mode === "loading") return;
     this.abortInFlight();
-    this.showMuted = !this.showMuted;
+
+    if (filter === "resolved") {
+      this.showResolved = !this.showResolved;
+    } else {
+      this.showMuted = !this.showMuted;
+    }
+
     this.offset = 0;
     this.cursorIndex = 0;
     this.scrollOffset = 0;
@@ -512,7 +492,7 @@ class ErrorBrowser {
         if (err instanceof Error && err.name === "AbortError") return;
         this.mode = "list";
         const msg = err instanceof Error ? err.message : String(err);
-        this.notify(`Filter toggle failed: ${msg}`, "error");
+        this.notify(`Filter toggle (${filter}) failed: ${msg}`, "error");
         this.invalidate();
         this.requestRender();
       });
@@ -611,10 +591,8 @@ class ErrorBrowser {
     }
 
     if (matchesKey(data, "q")) {
-      if (this.mode !== "detail") {
-        this.onClose?.();
-        return;
-      }
+      this.onClose?.();
+      return;
     }
 
     // ── List mode keys ────────────────────────────────────────────────
@@ -726,10 +704,8 @@ class ErrorBrowser {
       }
 
       if (moved) {
-        this.detailScrollOffset = Math.max(
-          0,
-          Math.min(this.detailScrollOffset, Math.max(0, this.buildDetailLines().length - 1)),
-        );
+        const maxOffset = Math.max(0, this.buildDetailLines().length - 1);
+        this.detailScrollOffset = Math.max(0, Math.min(this.detailScrollOffset, maxOffset));
         this.invalidate();
       }
 
@@ -764,11 +740,11 @@ class ErrorBrowser {
 
   private renderLoading(width: number, theme: Theme): string[] {
     const border = theme.fg("accent", "─".repeat(width));
-    const rows = process.stdout.rows;
+    const viewportRows = this.visibleHeight + 3; // +3 for chrome lines
+    const mid = Math.floor(viewportRows / 2);
     const result: string[] = [border];
-    const mid = Math.floor((rows - 1) / 2);
 
-    for (let i = 1; i < rows - 1; i++) {
+    for (let i = 1; i < viewportRows - 1; i++) {
       if (i === mid) {
         result.push(truncateToWidth(theme.fg("muted", "  Loading…"), width, ""));
       } else {
@@ -806,8 +782,9 @@ class ErrorBrowser {
           ? "No errors match the current filters"
           : "No production errors found";
       result.push(truncateToWidth(theme.fg("muted", `  ${msg}`), width, ""));
-      // Pad remaining viewport
-      while (result.length < this.visibleHeight + 3) {
+      // Pad remaining viewport (3 chrome lines: border + header + divider)
+      const chromeLines = 3;
+      while (result.length < this.visibleHeight + chromeLines) {
         result.push("");
       }
     } else {
@@ -898,69 +875,7 @@ class ErrorBrowser {
   private buildDetailLines(): string[] {
     const error = this.selectedError;
     if (!error) return ["(no error selected)"];
-
-    const lines: string[] = [];
-    const sep = "─".repeat(40);
-
-    lines.push(`Error #${error.id}: ${error.kind}`);
-    lines.push(sep);
-    lines.push(`Reason: ${error.reason}`);
-    lines.push(`Status: ${error.status} | Muted: ${error.muted}`);
-    lines.push(
-      `Source: ${error.source_line || "—"} — ${error.source_function || "—"}`,
-    );
-    lines.push(`Fingerprint: ${error.fingerprint || "—"}`);
-    lines.push(`First occurrence: ${error.first_occurrence_at ?? "N/A"}`);
-    lines.push(`Last occurrence: ${error.last_occurrence_at}`);
-    lines.push(`Total occurrences: ${error.occurrence_count}`);
-    lines.push("");
-
-    const occurrences = error.occurrences ?? [];
-    lines.push(`Occurrences (${occurrences.length}):`);
-    lines.push(sep);
-
-    if (occurrences.length === 0) {
-      lines.push("  No occurrences recorded");
-    } else {
-      for (let i = 0; i < occurrences.length; i++) {
-        const occ = occurrences[i]!;
-        lines.push(`#${i + 1} ${occ.inserted_at}`);
-        lines.push(`   Reason: ${occ.reason}`);
-
-        if (occ.context && Object.keys(occ.context).length > 0) {
-          lines.push(`   Context:`);
-          for (const [k, v] of Object.entries(occ.context)) {
-            lines.push(`     ${k}: ${JSON.stringify(v)}`);
-          }
-        }
-
-        if (occ.breadcrumbs && occ.breadcrumbs.length > 0) {
-          lines.push(`   Breadcrumbs:`);
-          for (const crumb of occ.breadcrumbs) {
-            lines.push(`     • ${crumb}`);
-          }
-        }
-
-        if (occ.stacktrace?.lines && occ.stacktrace.lines.length > 0) {
-          lines.push(`   Stacktrace:`);
-          for (const sl of occ.stacktrace.lines) {
-            const app = sl.application || "—";
-            const loc = sl.file
-              ? `${sl.file}${sl.line != null ? `:${sl.line}` : ""}`
-              : "(nofile)";
-            lines.push(
-              `     ${app} / ${sl.module}.${sl.function}/${sl.arity}  ${loc}`,
-            );
-          }
-        }
-
-        if (i < occurrences.length - 1) {
-          lines.push("");
-        }
-      }
-    }
-
-    return lines;
+    return formatDetailLines(error);
   }
 
   private renderDetail(width: number, theme: Theme): string[] {
