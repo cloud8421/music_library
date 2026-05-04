@@ -4,8 +4,9 @@ title: Force production logs to single-line format
 status: To Do
 assignee: []
 created_date: '2026-05-03 13:51'
-updated_date: '2026-05-03 14:39'
-labels: []
+updated_date: '2026-05-04 08:18'
+labels:
+  - ready
 dependencies: []
 references:
   - 'backlog://documents/doc-3'

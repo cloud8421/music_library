@@ -4,13 +4,8 @@ title: Implement magazine issue ingestion pipeline
 status: To Do
 assignee: []
 created_date: '2026-04-22 15:38'
-updated_date: '2026-04-24 06:51'
-labels:
-  - feature
-  - magazines
-  - ai
-  - oban
-  - pipeline
+updated_date: '2026-05-04 08:19'
+labels: []
 dependencies: []
 priority: medium
 ---

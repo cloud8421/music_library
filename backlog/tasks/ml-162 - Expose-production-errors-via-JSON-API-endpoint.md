@@ -4,11 +4,9 @@ title: Expose production errors via JSON API endpoint
 status: To Do
 assignee: []
 created_date: '2026-05-04 08:08'
-updated_date: '2026-05-04 08:10'
+updated_date: '2026-05-04 08:19'
 labels:
   - api
-  - elixir
-  - backend
 dependencies: []
 parent_task_id: DRAFT-1
 priority: medium

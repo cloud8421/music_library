@@ -4,11 +4,10 @@ title: pi access to production errors
 status: To Do
 assignee: []
 created_date: '2026-05-04 08:06'
-updated_date: '2026-05-04 08:10'
+updated_date: '2026-05-04 08:19'
 labels:
   - pi
   - api
-  - observability
 dependencies:
   - ML-162
   - ML-163

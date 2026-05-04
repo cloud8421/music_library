@@ -6,12 +6,9 @@ title: >-
 status: To Do
 assignee: []
 created_date: '2026-05-02 16:02'
-updated_date: '2026-05-02 18:10'
+updated_date: '2026-05-04 08:19'
 labels:
-  - chat
-  - collection
-  - openai
-  - token-optimization
+  - ready
 dependencies: []
 references:
   - 'backlog://document/doc-1'
