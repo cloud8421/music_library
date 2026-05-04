@@ -31,6 +31,7 @@ shellcheck = 'latest'
 fd = 'latest'
 litestream = 'latest'
 "npm:backlog.md" = 'latest'
+"npm:prettier" = 'latest'
 
 [task_config]
 includes = ["scripts"]
