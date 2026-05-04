@@ -1,10 +1,10 @@
 ---
 id: ML-161
 title: pi access to production errors
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-05-04 08:06'
-updated_date: '2026-05-04 08:19'
+updated_date: '2026-05-04 13:18'
 labels:
   - pi
   - api
@@ -15,7 +15,7 @@ dependencies:
 references:
   - 'backlog://document/doc-7'
 priority: medium
-ordinal: 4000
+ordinal: 9000
 ---
 
 ## Description
