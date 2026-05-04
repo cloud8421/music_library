@@ -3,10 +3,10 @@
  *
  * Fetches and displays application logs from the Coolify API.
  *
- * Credentials are read from environment variables following Hurl conventions:
- *   HURL_VARIABLE_coolify_host
- *   HURL_VARIABLE_coolify_app_uuid
- *   HURL_VARIABLE_coolify_token
+ * Credentials are read from environment variables:
+ *   PI_COOLIFY_HOST
+ *   PI_COOLIFY_APP_UUID
+ *   PI_COOLIFY_TOKEN
  *
  * Usage:
  *   /prod-logs
@@ -275,7 +275,7 @@ class LogViewer {
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
 function resolveVar(name: string): string | undefined {
-  return process.env[`HURL_VARIABLE_${name}`];
+  return process.env[`PI_${name.toUpperCase()}`];
 }
 
 async function fetchLogs(
@@ -367,9 +367,9 @@ export default function prodLogsExtension(pi: ExtensionAPI) {
       const token = resolveVar("coolify_token");
 
       const missing: string[] = [];
-      if (!host) missing.push("HURL_VARIABLE_coolify_host");
-      if (!appUuid) missing.push("HURL_VARIABLE_coolify_app_uuid");
-      if (!token) missing.push("HURL_VARIABLE_coolify_token");
+      if (!host) missing.push("PI_COOLIFY_HOST");
+      if (!appUuid) missing.push("PI_COOLIFY_APP_UUID");
+      if (!token) missing.push("PI_COOLIFY_TOKEN");
 
       if (missing.length > 0) {
         return {
@@ -463,9 +463,9 @@ export default function prodLogsExtension(pi: ExtensionAPI) {
       const token = resolveVar("coolify_token");
 
       const missing: string[] = [];
-      if (!host) missing.push("HURL_VARIABLE_coolify_host");
-      if (!appUuid) missing.push("HURL_VARIABLE_coolify_app_uuid");
-      if (!token) missing.push("HURL_VARIABLE_coolify_token");
+      if (!host) missing.push("PI_COOLIFY_HOST");
+      if (!appUuid) missing.push("PI_COOLIFY_APP_UUID");
+      if (!token) missing.push("PI_COOLIFY_TOKEN");
 
       if (missing.length > 0) {
         ctx.ui.notify(
