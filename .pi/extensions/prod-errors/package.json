@@ -1,0 +1,5 @@
+{
+  "name": "prod-errors",
+  "private": true,
+  "description": "Fetch production errors via the JSON API for LLM analysis"
+}

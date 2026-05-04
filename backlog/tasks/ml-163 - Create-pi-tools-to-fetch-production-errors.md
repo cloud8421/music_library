@@ -1,10 +1,10 @@
 ---
 id: ML-163
 title: Create pi tools to fetch production errors
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-05-04 08:08'
-updated_date: '2026-05-04 09:34'
+updated_date: '2026-05-04 12:22'
 labels:
   - pi
   - ready
@@ -348,3 +348,37 @@ To verify locally without the production server:
 4. Set `PI_SERVICE_FQDN_WEB=http://localhost:4000` and `PI_API_TOKEN` to match the local API token.
 5. Call the tools via the LLM.
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+## Summary
+
+Created `fetch_production_errors` and `fetch_production_error` pi tools in a new `.pi/extensions/prod-errors/` extension. The tools call the `/api/v1/errors` JSON API (built in ML-162) with Bearer token authentication, using the same env-var pattern established by `fetch_production_logs` (ML-160).
+
+### What changed
+
+**New files:**
+- `.pi/extensions/prod-errors/package.json` — Minimal extension package
+- `.pi/extensions/prod-errors/index.ts` — ~330 lines: two tool registrations, HTTP helpers, formatting functions
+
+**Modified files:**
+- `docs/production-infrastructure.md` — Added pi coding agent tools section with env var documentation
+
+### Tools
+
+- **`fetch_production_errors`** — Lists/filters production errors with `status`, `muted`, `search`, `limit`, `offset` params. Returns formatted error list with IDs, status, kind, reason, source info, fingerprint, and timestamps. 50KB/2000-line truncation limit.
+- **`fetch_production_error`** — Gets full detail for a single error by ID, including all occurrences with stacktraces, context, and breadcrumbs. Same truncation limits.
+
+### Key decisions
+
+- Separate extension from `prod-logs` — keeps each extension focused (~330 lines vs mixing with 550-line Coolify code)
+- `resolveVar()` reads `PI_API_TOKEN` and `PI_SERVICE_FQDN_WEB` using same pattern as `prod-logs` (`PI_COOLIFY_*`)
+- Formatted human-readable text output (not raw JSON) — reduces token consumption, follows `fetch_production_logs` precedent
+- Robust error handling: early abort, credential validation, HTTP error handling, JSON parse safety, response shape validation
+- Uses TypeBox for parameter schemas matching ML-162 API design
+
+### Test results
+
+All 900 Elixir tests pass (no regressions). Pi tools verified by `/reload` in pi.
+<!-- SECTION:FINAL_SUMMARY:END -->
