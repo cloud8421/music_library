@@ -62,8 +62,13 @@ defmodule MusicLibrary.Errors do
           )
           |> Repo.all()
 
-        occurrence_count = length(occurrences)
-        first_occurrence_at = get_first_occurrence_at(occurrences)
+        occurrence_count =
+          from(o in Occurrence, where: o.error_id == ^id)
+          |> Repo.aggregate(:count, :id)
+
+        first_occurrence_at =
+          from(o in Occurrence, where: o.error_id == ^id)
+          |> Repo.aggregate(:min, :inserted_at)
 
         result =
           %{error | occurrences: occurrences}
@@ -93,9 +98,15 @@ defmodule MusicLibrary.Errors do
   defp maybe_filter_search(query, ""), do: query
 
   defp maybe_filter_search(query, search) do
-    where(query, [e], like(e.reason, ^"%#{search}%"))
+    escaped = escape_like_wildcards(search)
+    where(query, [e], fragment("? LIKE ? ESCAPE '\\'", e.reason, ^"%#{escaped}%"))
   end
 
-  defp get_first_occurrence_at([]), do: nil
-  defp get_first_occurrence_at(occurrences), do: List.last(occurrences).inserted_at
+  @doc false
+  def escape_like_wildcards(search) when is_binary(search) do
+    search
+    |> String.replace("\\", "\\\\")
+    |> String.replace("%", "\\%")
+    |> String.replace("_", "\\_")
+  end
 end
