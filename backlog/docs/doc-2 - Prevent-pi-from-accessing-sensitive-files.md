@@ -1,8 +1,9 @@
 ---
 id: doc-2
-title: 'Implementation Analysis: Prevent pi from accessing sensitive files'
+title: Prevent pi from accessing sensitive files
 type: other
 created_date: '2026-05-03 13:32'
+updated_date: '2026-05-04 06:55'
 ---
 # Implementation Analysis: Prevent pi from accessing sensitive files
 

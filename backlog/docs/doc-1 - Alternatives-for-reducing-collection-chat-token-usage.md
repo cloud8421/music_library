@@ -1,8 +1,9 @@
 ---
 id: doc-1
-title: 'ML-156 Research: Alternatives for reducing collection chat token usage'
+title: Alternatives for reducing collection chat token usage
 type: other
 created_date: '2026-05-02 16:12'
+updated_date: '2026-05-04 06:55'
 ---
 # ML-156 Research: Alternatives for reducing collection chat token usage
 

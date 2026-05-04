@@ -1,9 +1,9 @@
 ---
 id: doc-4
-title: 'CI Pipeline Porting Analysis: GitHub Actions → Tangled Spindles'
+title: GitHub Actions → Tangled Spindles
 type: other
 created_date: '2026-05-03 16:57'
-updated_date: '2026-05-03 17:07'
+updated_date: '2026-05-04 06:54'
 ---
 # CI Pipeline Porting Analysis: GitHub Actions → Tangled Spindles
 

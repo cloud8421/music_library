@@ -1,9 +1,9 @@
 ---
 id: doc-3
-title: 'Research: Force production logs to single-line format'
+title: Force production logs to single-line format
 type: other
 created_date: '2026-05-03 13:53'
-updated_date: '2026-05-03 14:23'
+updated_date: '2026-05-04 06:55'
 ---
 # Research: Force production logs to single-line format
 
