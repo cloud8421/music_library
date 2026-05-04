@@ -3,17 +3,18 @@ id: ML-140
 title: Get artist images
 status: Done
 assignee: []
-created_date: '2026-04-20 09:00'
+created_date: "2026-04-20 09:00"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/23'
+  - "https://github.com/cloud8421/music_library/issues/23"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2025-04-22 · updated 2025-04-29 · closed 2025-04-29_
 
 Fetch artist images via MusicBrainz url-rels → Discogs artist endpoint. Implementation checklist (all completed):

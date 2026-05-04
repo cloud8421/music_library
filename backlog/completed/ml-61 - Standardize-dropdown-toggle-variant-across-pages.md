@@ -3,17 +3,18 @@ id: ML-61
 title: Standardize dropdown toggle variant across pages
 status: Done
 assignee: []
-created_date: '2026-04-20 08:54'
+created_date: "2026-04-20 08:54"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/114'
+  - "https://github.com/cloud8421/music_library/issues/114"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-03-16 · updated 2026-03-16 · closed 2026-03-16_
 
 ## Problem
@@ -27,4 +28,5 @@ Show pages use `variant="soft"` for dropdown toggle buttons while index pages us
 ## Decision needed
 
 Pick one variant for all action dropdown toggles, or document the show/index distinction as intentional.
+
 <!-- SECTION:DESCRIPTION:END -->

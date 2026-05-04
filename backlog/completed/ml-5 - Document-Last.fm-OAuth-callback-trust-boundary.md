@@ -4,18 +4,19 @@ title: Document Last.fm OAuth callback trust boundary
 status: Done
 assignee:
   - Claudio Ortolina
-created_date: '2026-04-20 08:48'
-updated_date: '2026-04-24 07:04'
+created_date: "2026-04-20 08:48"
+updated_date: "2026-04-24 07:04"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/178'
+  - "https://github.com/cloud8421/music_library/issues/178"
 priority: low
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-16 · updated 2026-04-16_
 
 ## Summary
@@ -38,10 +39,13 @@ Add a short `@moduledoc` or inline comment in `last_fm_controller.ex` explaining
 3. What the failure modes look like (invalid token → store nothing, error logged)
 
 Similarly in `router.ex:55`, a brief comment noting the deliberate exception from `:logged_in`.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - [x] #1 last_fm_controller.ex has a comment documenting the trust boundary
 - [x] #2 router.ex:55 notes the deliberate pipeline exemption
 <!-- AC:END -->
@@ -49,6 +53,7 @@ Similarly in `router.ex:55`, a brief comment noting the deliberate exception fro
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
+
 ## Implementation Plan
 
 1. **`lib/music_library_web/controllers/last_fm_controller.ex`** — add `@moduledoc` covering:
@@ -69,6 +74,7 @@ Similarly in `router.ex:55`, a brief comment noting the deliberate exception fro
 ## Final Summary
 
 <!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
 ## Summary
 
 Documented the Last.fm OAuth callback trust boundary in two places:
@@ -83,4 +89,5 @@ Documented the Last.fm OAuth callback trust boundary in two places:
 ## Notes
 
 Controllers are excluded from the `Credo.Check.Readability.ModuleDoc` regex in `.credo.exs`, so the `@moduledoc` here is a deliberate choice for a security-sensitive module, not a lint requirement.
+
 <!-- SECTION:FINAL_SUMMARY:END -->

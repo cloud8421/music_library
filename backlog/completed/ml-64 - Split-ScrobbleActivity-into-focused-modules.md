@@ -3,17 +3,18 @@ id: ML-64
 title: Split ScrobbleActivity into focused modules
 status: Done
 assignee: []
-created_date: '2026-04-20 08:54'
+created_date: "2026-04-20 08:54"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/111'
+  - "https://github.com/cloud8421/music_library/issues/111"
 priority: low
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-03-12 · updated 2026-03-12 · closed 2026-03-12_
 
 ## Problem

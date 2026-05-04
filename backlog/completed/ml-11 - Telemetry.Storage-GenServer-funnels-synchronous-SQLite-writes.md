@@ -3,18 +3,19 @@ id: ML-11
 title: Telemetry.Storage GenServer funnels synchronous SQLite writes
 status: Done
 assignee: []
-created_date: '2026-04-20 08:49'
-updated_date: '2026-04-24 09:29'
+created_date: "2026-04-20 08:49"
+updated_date: "2026-04-24 09:29"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/172'
+  - "https://github.com/cloud8421/music_library/issues/172"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-16 · updated 2026-04-16_
 
 ## Summary
@@ -42,7 +43,9 @@ Issue #105 was closed as NOT_PLANNED with the rationale that bare catches are "r
 Whichever option is chosen, replace the bare `catch _, _` with either a targeted `rescue` or `Logger.debug` so failures become observable.
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - Telemetry write path does not block on the GenServer mailbox
 - Error path surfaces at least once per distinct failure (not silently swallowed)
 - Existing dashboard queries continue to work

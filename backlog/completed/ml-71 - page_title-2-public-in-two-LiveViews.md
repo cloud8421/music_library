@@ -3,17 +3,18 @@ id: ML-71
 title: page_title/2 public in two LiveViews
 status: Done
 assignee: []
-created_date: '2026-04-20 08:55'
+created_date: "2026-04-20 08:55"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/104'
+  - "https://github.com/cloud8421/music_library/issues/104"
 priority: low
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-03-12 · updated 2026-03-12 · closed 2026-03-12_
 
 ## Description
@@ -32,4 +33,5 @@ Change `def page_title` to `defp page_title` in both files.
 ## Source
 
 From technical debt audit (2026-03-12).
+
 <!-- SECTION:DESCRIPTION:END -->

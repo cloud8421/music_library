@@ -3,17 +3,18 @@ id: ML-2
 title: Verify or drop multipart hex dependency
 status: Done
 assignee: []
-created_date: '2026-04-20 08:44'
+created_date: "2026-04-20 08:44"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/182'
+  - "https://github.com/cloud8421/music_library/issues/182"
 priority: low
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-16 · updated 2026-04-16 · closed 2026-04-16_
 
 ## Summary
@@ -36,6 +37,8 @@ _GitHub: created 2026-04-16 · updated 2026-04-16 · closed 2026-04-16_
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - [ ] #1 Decision recorded: either dep removed, or dep retained with comment explaining transitive need
 <!-- AC:END -->

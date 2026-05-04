@@ -3,8 +3,8 @@ id: ML-163
 title: Create pi tools to fetch production errors
 status: Done
 assignee: []
-created_date: '2026-05-04 08:08'
-updated_date: '2026-05-04 12:22'
+created_date: "2026-05-04 08:08"
+updated_date: "2026-05-04 12:22"
 labels:
   - pi
   - ready
@@ -17,6 +17,7 @@ ordinal: 5000
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 Create `fetch_production_errors` and `fetch_production_error` pi tools that call the `/api/v1/errors` JSON API endpoint.
 
 These tools are registered via `pi.registerTool()` in a pi extension. They make authenticated HTTP requests to the production server using the same HURL variable pattern established by `fetch_production_logs` (ML-160).
@@ -24,18 +25,21 @@ These tools are registered via `pi.registerTool()` in a pi extension. They make 
 ### Tools
 
 **`fetch_production_errors`** — List/filter production errors
+
 - Parameters: `status` (optional: "resolved" | "unresolved"), `muted` (optional: boolean), `search` (optional: string, substring match on reason), `limit` (optional: number, default 50), `offset` (optional: number, default 0)
 - Calls `GET /api/v1/errors` with query params
 - Returns: formatted list of errors with counts and timestamps
 - Truncates output with `truncateTail` (50KB / 2000 lines)
 
 **`fetch_production_error`** — Get a single error with full details
+
 - Parameters: `id` (required: integer)
 - Calls `GET /api/v1/errors/:id`
 - Returns: error details with all occurrences, stacktraces, and context
 - Truncates output with `truncateTail`
 
 ### Tool guidelines (promptGuidelines)
+
 - Use fetch_production_errors when investigating what errors are occurring in production
 - Use fetch_production_error when you need full details on a specific error, including stacktraces and context
 - Start with a small limit (e.g., 20) and filter by status or search before fetching large result sets
@@ -43,15 +47,18 @@ These tools are registered via `pi.registerTool()` in a pi extension. They make 
 ### Auth
 
 Uses the same HURL variable pattern as `fetch_production_logs`:
+
 - `PI_API_TOKEN` — Bearer token for API auth
 - `PI_SERVICE_FQDN_WEB` — Production domain
 
 They need to be configured in the pi environment as local secrets.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
+
 ## Implementation Plan
 
 ### Objective alignment
@@ -80,27 +87,27 @@ Create two pi tools — `fetch_production_errors` and `fetch_production_error` �
 
 ### Architecture impact analysis
 
-| Touchpoint | Impact |
-|---|---|
-| `.pi/extensions/prod-errors/index.ts` | **New file** — ~200 lines: two tool registrations, `resolveVar()` helper, `fetchErrors()` and `fetchError()` HTTP helpers, formatting functions |
-| `.pi/extensions/prod-errors/package.json` | **New file** — minimal `{ name, private, description }` for extension directory scope |
-| `.pi/extensions/prod-logs/index.ts` | **No change** — error tools live in their own extension |
-| Elixir modules, schemas, controllers | **No change** — these are the responsibility of ML-162 |
-| Router, PubSub, supervision tree | **No change** |
-| Config / env vars | **Two new env vars required in pi's environment**: `PI_API_TOKEN` (Bearer token, must match production's `API_TOKEN`), `PI_SERVICE_FQDN_WEB` (production domain, e.g., `https://musiclibrary.example.com`). These are pi-local secrets, not server-side config. |
-| Existing pi tools | **No change** — `fetch_production_logs` continues to use `PI_COOLIFY_*` vars, no overlap |
+| Touchpoint                                | Impact                                                                                                                                                                                                                                                          |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.pi/extensions/prod-errors/index.ts`     | **New file** — ~200 lines: two tool registrations, `resolveVar()` helper, `fetchErrors()` and `fetchError()` HTTP helpers, formatting functions                                                                                                                 |
+| `.pi/extensions/prod-errors/package.json` | **New file** — minimal `{ name, private, description }` for extension directory scope                                                                                                                                                                           |
+| `.pi/extensions/prod-logs/index.ts`       | **No change** — error tools live in their own extension                                                                                                                                                                                                         |
+| Elixir modules, schemas, controllers      | **No change** — these are the responsibility of ML-162                                                                                                                                                                                                          |
+| Router, PubSub, supervision tree          | **No change**                                                                                                                                                                                                                                                   |
+| Config / env vars                         | **Two new env vars required in pi's environment**: `PI_API_TOKEN` (Bearer token, must match production's `API_TOKEN`), `PI_SERVICE_FQDN_WEB` (production domain, e.g., `https://musiclibrary.example.com`). These are pi-local secrets, not server-side config. |
+| Existing pi tools                         | **No change** — `fetch_production_logs` continues to use `PI_COOLIFY_*` vars, no overlap                                                                                                                                                                        |
 
 ### Performance profile
 
-| Aspect | Characteristic |
-|---|---|
-| **Runtime complexity** | O(n) for formatting error list output (one pass over error array). O(n + m) for formatting single error detail (one pass over occurrences + stacktrace lines). Truncation is O(bytes) for byte counting. |
-| **Network** | One HTTP GET per tool call. No retries in the tool handler (the LLM can retry by calling the tool again). |
-| **Memory** | Response JSON is parsed in memory. For a list of 50 errors, response size is ~5-20KB. For a single error with 100 occurrences each with full stacktraces, response could reach ~100-500KB. Truncation via `truncateTail` caps output at 50KB/2000 lines. If a noisy error generates thousands of occurrences, the API response could be megabytes — this is accepted per the ML-162 spec (all occurrences returned). A future follow-up could add `limit`/`offset` params for occurrences in the single-error endpoint. |
-| **Latency** | Dominated by network round-trip to production server (typically 50-500ms). Local JSON parsing and formatting is negligible. |
-| **Database** | No direct database access — all queries are on the server side (ML-162). |
-| **N+1 risk** | None — a single API call per tool invocation. The server-side API (ML-162) handles preloading/prevention of N+1 queries. |
-| **Abort support** | Both tools pass `signal` to `fetch()`, so the LLM can cancel in-flight requests. |
+| Aspect                 | Characteristic                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Runtime complexity** | O(n) for formatting error list output (one pass over error array). O(n + m) for formatting single error detail (one pass over occurrences + stacktrace lines). Truncation is O(bytes) for byte counting.                                                                                                                                                                                                                                                                                                                |
+| **Network**            | One HTTP GET per tool call. No retries in the tool handler (the LLM can retry by calling the tool again).                                                                                                                                                                                                                                                                                                                                                                                                               |
+| **Memory**             | Response JSON is parsed in memory. For a list of 50 errors, response size is ~5-20KB. For a single error with 100 occurrences each with full stacktraces, response could reach ~100-500KB. Truncation via `truncateTail` caps output at 50KB/2000 lines. If a noisy error generates thousands of occurrences, the API response could be megabytes — this is accepted per the ML-162 spec (all occurrences returned). A future follow-up could add `limit`/`offset` params for occurrences in the single-error endpoint. |
+| **Latency**            | Dominated by network round-trip to production server (typically 50-500ms). Local JSON parsing and formatting is negligible.                                                                                                                                                                                                                                                                                                                                                                                             |
+| **Database**           | No direct database access — all queries are on the server side (ML-162).                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| **N+1 risk**           | None — a single API call per tool invocation. The server-side API (ML-162) handles preloading/prevention of N+1 queries.                                                                                                                                                                                                                                                                                                                                                                                                |
+| **Abort support**      | Both tools pass `signal` to `fetch()`, so the LLM can cancel in-flight requests.                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 
 ### Benchmarking requirements
 
@@ -131,9 +138,11 @@ No paid resources consumed. The tools make HTTP requests to the project's own pr
 ```
 
 **Verification**:
+
 ```bash
 ls -la .pi/extensions/prod-errors/package.json
 ```
+
 File must exist with valid JSON.
 
 ---
@@ -144,11 +153,12 @@ File must exist with valid JSON.
 
 1. **Imports**: `ExtensionAPI`, `truncateTail`, `formatSize`, `DEFAULT_MAX_BYTES`, `DEFAULT_MAX_LINES` from `@mariozechner/pi-coding-agent`; `Type` from `typebox`.
 
-2. **`resolveVar(name: string): string | undefined`** — Reads `process.env[`PI_${name.toUpperCase()}`]`. Identical to the helper in `prod-logs/index.ts`. Shared between both tools for reading `api_token` and `service_fqdn_web`.
+2. **`resolveVar(name: string): string | undefined`** — Reads `process.env[`PI\_${name.toUpperCase()}`]`. Identical to the helper in `prod-logs/index.ts`. Shared between both tools for reading `api_token` and `service_fqdn_web`.
 
 3. **`buildUrl(base: string, path: string, params?: Record<string, string>): string`** — Constructs the full API URL. Strips trailing slash from base, prepends `https://` if no protocol present, appends path and query params.
 
 4. **`formatErrorListItem(error: object, index: number): string`** — Formats a single error from the list endpoint into a human-readable block. Uses only fields returned by the list endpoint (note: `occurrence_count` and `first_occurrence_at` are intentionally absent — they are not included in the list endpoint per ML-162 to avoid correlated subqueries):
+
    ```
    #{index} [{status}] {kind}: {reason}
       Source: {source_line} — {source_function}
@@ -158,6 +168,7 @@ File must exist with valid JSON.
    ```
 
 5. **`formatErrorDetail(error: object): string`** — Formats a single error with all occurrences into a detailed block:
+
    ```
    Error #{id}: {kind}
    ────────────────────────────────────────────
@@ -183,6 +194,7 @@ File must exist with valid JSON.
 6. **`applyOutputTruncation(output: string): string`** — Wraps `truncateTail` with `DEFAULT_MAX_BYTES` and `DEFAULT_MAX_LINES`. Appends truncation note if truncated, matching the `fetch_production_logs` format. Note: truncation may cut mid-line in long stacktraces — this is acceptable for a 50KB output cap; the truncation note guides the LLM to use more specific filters if needed.
 
 **Verification**:
+
 - No verification at this step — functions are tested implicitly in Steps 3 and 4 when the tools are called. To unit-test in isolation, import and call helpers from the pi eval REPL after `/reload`.
 
 ---
@@ -192,6 +204,7 @@ File must exist with valid JSON.
 **What**: Register a `pi.registerTool()` call in the extension's default export function. The tool calls `GET /api/v1/errors` with query parameters and returns formatted text.
 
 **Tool specification**:
+
 - `name`: `"fetch_production_errors"`
 - `label`: `"Fetch Production Errors"`
 - `description`: Explains when to use this tool (investigating production errors, understanding error frequency, filtering by status/muted/search). Mentions the 50KB/2000-line truncation limit.
@@ -209,6 +222,7 @@ File must exist with valid JSON.
   - `offset` — `Type.Optional(Type.Number())`, default 0, pagination offset
 
 **Execute handler logic**:
+
 1. **Early abort check**: If `signal?.aborted`, return `{ content: [{ type: "text", text: "Cancelled" }] }`.
 2. **Validate credentials**: Read `PI_API_TOKEN` and `PI_SERVICE_FQDN_WEB` via `resolveVar()`. If either is missing, return an error listing which env vars are not set.
 3. **Build URL**: Construct `{base}/api/v1/errors` with query params for all non-nil parameters (`status`, `muted`, `search`, `limit`, `offset`).
@@ -222,6 +236,7 @@ File must exist with valid JSON.
 11. **Return**: `{ content: [{ type: "text", text: output }], details: { total, count, offset, limit } }`.
 
 **Verification**:
+
 1. Run `/reload` in pi to hot-reload the extension.
 2. Ask the LLM: "What tools are available for production errors?" — it should describe `fetch_production_errors` and `fetch_production_error`.
 3. With a locally running Phoenix server (ML-162 prerequisite), ask the LLM: "List the 5 most recent unresolved production errors" — verify the tool is called and returns formatted error list.
@@ -239,6 +254,7 @@ File must exist with valid JSON.
 **What**: Register a second `pi.registerTool()` call. The tool calls `GET /api/v1/errors/:id` and returns formatted detail text.
 
 **Tool specification**:
+
 - `name`: `"fetch_production_error"`
 - `label`: `"Fetch Production Error Detail"`
 - `description`: Explains when to use this tool (getting full details on a specific error, including all occurrences, stacktraces, context, and breadcrumbs). Says to get the error ID from `fetch_production_errors` first.
@@ -251,6 +267,7 @@ File must exist with valid JSON.
   - `id` — `Type.Number()`, required, the error ID (integer) from the list endpoint
 
 **Execute handler logic**:
+
 1. **Early abort check**: Same as Step 3.
 2. **Validate credentials**: Same as Step 3.
 3. **Build URL**: `{base}/api/v1/errors/{id}` (no query params).
@@ -263,6 +280,7 @@ File must exist with valid JSON.
 10. **Return**: `{ content: [{ type: "text", text: output }], details: { errorId: id, occurrenceCount: data.error.occurrence_count } }`.
 
 **Verification**:
+
 1. Get an error ID from the list tool (Step 3 verification #3).
 2. Ask the LLM: "Show me full details for error ID X" — verify the tool returns formatted detail with occurrences, stacktraces, context, and breadcrumbs.
 3. Ask the LLM for a non-existent error ID (e.g., 99999) — verify the tool returns a "not found" message.
@@ -275,14 +293,17 @@ File must exist with valid JSON.
 **What**: Set `PI_API_TOKEN` and `PI_SERVICE_FQDN_WEB` in pi's environment. These are pi-local secrets — they are read by the extension at runtime via `resolveVar()`.
 
 **Production values**:
+
 - `PI_API_TOKEN` — must match the `API_TOKEN` environment variable configured on the production server (set in Coolify or `runtime.exs`)
 - `PI_SERVICE_FQDN_WEB` — the production domain, e.g., `https://musiclibrary.example.com` (no trailing slash)
 
 **Development values** (for local testing):
+
 - `PI_API_TOKEN` — match the `API_TOKEN` set in `config/runtime.exs` or `dev.exs`
 - `PI_SERVICE_FQDN_WEB` — `http://localhost:4000`
 
 **Verification**:
+
 1. Verify the env vars are set: `echo $PI_API_TOKEN` and `echo $PI_SERVICE_FQDN_WEB` in a shell where pi runs.
 2. Run the extension tool and confirm it authenticates successfully (no 401 errors).
 3. Verify that calling the tool without the env vars set produces the clear "missing environment variables" error from Step 3.
@@ -294,6 +315,7 @@ File must exist with valid JSON.
 **What**: End-to-end test of both tools with the production (or local) API.
 
 **Verification**:
+
 1. Run `/reload` in pi.
 2. Ask the LLM: "What production errors exist?" — it should call `fetch_production_errors` with default parameters.
 3. Ask the LLM: "Show me details for the most recent unresolved error." — it should chain: call `fetch_production_errors` with `status: "unresolved"` and `limit: 1`, extract the ID, then call `fetch_production_error` with that ID.
@@ -305,11 +327,11 @@ File must exist with valid JSON.
 
 ### Production Changes
 
-| Change | Detail | Rollout | Rollback |
-|---|---|---|---|
-| **New env var: `PI_API_TOKEN`** | Must be set in pi's runtime environment. Value must match the `API_TOKEN` env var on the production server (configured in `runtime.exs`). This is a pi-local secret — it does not change any server configuration. | Set in the shell/process that runs pi. If using a `.env` file or pi's settings, add it there. | Unset or change the env var. No server-side change needed. |
-| **New env var: `PI_SERVICE_FQDN_WEB`** | Must be set in pi's runtime environment. The production domain (with `https://` prefix, no trailing slash). This is a pi-local configuration value. | Set alongside `PI_API_TOKEN`. | Unset or change the env var. No server-side change needed. |
-| **ML-162 prerequisite** | The `/api/v1/errors` and `/api/v1/errors/:id` endpoints must exist on the production server. ML-162 is a prerequisite task. | Deploy ML-162 first. | Roll back ML-162 deployment (revert routes). |
+| Change                                 | Detail                                                                                                                                                                                                             | Rollout                                                                                       | Rollback                                                   |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| **New env var: `PI_API_TOKEN`**        | Must be set in pi's runtime environment. Value must match the `API_TOKEN` env var on the production server (configured in `runtime.exs`). This is a pi-local secret — it does not change any server configuration. | Set in the shell/process that runs pi. If using a `.env` file or pi's settings, add it there. | Unset or change the env var. No server-side change needed. |
+| **New env var: `PI_SERVICE_FQDN_WEB`** | Must be set in pi's runtime environment. The production domain (with `https://` prefix, no trailing slash). This is a pi-local configuration value.                                                                | Set alongside `PI_API_TOKEN`.                                                                 | Unset or change the env var. No server-side change needed. |
+| **ML-162 prerequisite**                | The `/api/v1/errors` and `/api/v1/errors/:id` endpoints must exist on the production server. ML-162 is a prerequisite task.                                                                                        | Deploy ML-162 first.                                                                          | Roll back ML-162 deployment (revert routes).               |
 
 No database migrations, DNS changes, firewall rules, or service provisioning are needed for this task.
 
@@ -328,12 +350,12 @@ The tool descriptions, `promptSnippet`, and `promptGuidelines` are the primary d
 
 ### Dependencies
 
-| Dependency | Status |
-|---|---|
+| Dependency                            | Status                                                                                                                                                                                                                                         |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **ML-162** (server-side API endpoint) | **Required.** The tools cannot function without the `/api/v1/errors` endpoints. ML-162 must be complete and deployed before ML-163 can be verified against production. For development, run the Phoenix server locally with the ML-162 routes. |
-| `typebox` | Already available as a pi built-in import. |
-| `@mariozechner/pi-coding-agent` | Already available. Provides `truncateTail`, `formatSize`, `DEFAULT_MAX_BYTES`, `DEFAULT_MAX_LINES`, `ExtensionAPI` type. |
-| No new npm dependencies | The extension uses only `fetch()` (Node.js built-in) and pi built-ins. |
+| `typebox`                             | Already available as a pi built-in import.                                                                                                                                                                                                     |
+| `@mariozechner/pi-coding-agent`       | Already available. Provides `truncateTail`, `formatSize`, `DEFAULT_MAX_BYTES`, `DEFAULT_MAX_LINES`, `ExtensionAPI` type.                                                                                                                       |
+| No new npm dependencies               | The extension uses only `fetch()` (Node.js built-in) and pi built-ins.                                                                                                                                                                         |
 
 ---
 
@@ -342,6 +364,7 @@ The tool descriptions, `promptSnippet`, and `promptGuidelines` are the primary d
 To test the tools locally, seed error data via the ML-162 test fixtures (`test/support/fixtures/errors_fixtures.ex`), or use the production server if ML-162 is deployed. The tools themselves are stateless HTTP clients — they don't need their own test data.
 
 To verify locally without the production server:
+
 1. Complete ML-162 (API endpoint + fixtures).
 2. Run `mix test` to populate test errors (or manually insert via `MusicLibrary.Repo`).
 3. Start the Phoenix server: `mix phx.server`.
@@ -352,6 +375,7 @@ To verify locally without the production server:
 ## Final Summary
 
 <!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
 ## Summary
 
 Created `fetch_production_errors` and `fetch_production_error` pi tools in a new `.pi/extensions/prod-errors/` extension. The tools call the `/api/v1/errors` JSON API (built in ML-162) with Bearer token authentication, using the same env-var pattern established by `fetch_production_logs` (ML-160).
@@ -359,10 +383,12 @@ Created `fetch_production_errors` and `fetch_production_error` pi tools in a new
 ### What changed
 
 **New files:**
+
 - `.pi/extensions/prod-errors/package.json` — Minimal extension package
 - `.pi/extensions/prod-errors/index.ts` — ~330 lines: two tool registrations, HTTP helpers, formatting functions
 
 **Modified files:**
+
 - `docs/production-infrastructure.md` — Added pi coding agent tools section with env var documentation
 
 ### Tools
@@ -381,4 +407,5 @@ Created `fetch_production_errors` and `fetch_production_error` pi tools in a new
 ### Test results
 
 All 900 Elixir tests pass (no regressions). Pi tools verified by `/reload` in pi.
+
 <!-- SECTION:FINAL_SUMMARY:END -->

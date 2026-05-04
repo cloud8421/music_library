@@ -3,23 +3,27 @@ id: ML-160
 title: Programmatic access to production logs
 status: Done
 assignee: []
-created_date: '2026-05-04 06:42'
-updated_date: '2026-05-04 07:33'
+created_date: "2026-05-04 06:42"
+updated_date: "2026-05-04 07:33"
 labels: []
 dependencies: []
 references:
-  - 'backlog://document/doc-6'
+  - "backlog://document/doc-6"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 Evaluate and implement the best approach for the LLM to access production logs. The /prod-logs pi extension lets the user see production logs via an interactive TUI, but the LLM has no access beyond the user selecting lines and pasting. The goal is to produce an extension/skill/tool that the LLM can use automatically when it needs to pull production logs. Reading logs from production is already implemented in /prod-logs as a `fetchLogs` function that hits the Coolify API — that code should be reused/shared where possible.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - [x] #1 The LLM can fetch production logs without user intervention by calling the fetch_production_logs tool
 - [x] #2 The tool supports a `tail` parameter to limit the number of log lines returned (default: 200)
 - [x] #3 The tool supports a `grep` parameter for case-insensitive filtering of log lines
@@ -32,6 +36,7 @@ Evaluate and implement the best approach for the LLM to access production logs. 
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
+
 # Implementation Plan
 
 ## Route: Pi Tool via `pi.registerTool()` (Route B)
@@ -45,11 +50,13 @@ Add a `fetch_production_logs` tool to the existing `prod-logs` pi extension usin
 **File**: `.pi/extensions/prod-logs/index.ts`
 
 **Changes**:
+
 1. Add `import { Type } from "typebox";` to the existing imports block
 2. Add `import { truncateTail, formatSize, DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES } from "@mariozechner/pi-coding-agent";` to the imports block
 3. Inside the `prodLogsExtension()` default export function, add a `pi.registerTool()` call (before or after the existing `pi.registerCommand()` call)
 
 **Tool specification**:
+
 - `name`: `"fetch_production_logs"`
 - `description`: Explains when the LLM should use this tool (investigating production errors, checking server behavior, debugging deployed issues). Mentions the 50KB/2000-line truncation limit.
 - `promptSnippet`: `"Fetch recent production logs from Coolify (param: tail, grep)"`
@@ -59,6 +66,7 @@ Add a `fetch_production_logs` tool to the existing `prod-logs` pi extension usin
   - `grep` — `Type.Optional(Type.String())`, case-insensitive filter pattern
 
 **Execute handler logic**:
+
 1. Check `signal?.aborted` early — if aborted, return `{ content: [{ type: "text", text: "Cancelled" }] }`
 2. Read Coolify credentials via `resolveVar("coolify_host")`, `resolveVar("coolify_app_uuid")`, `resolveVar("coolify_token")`
 3. If any credential is missing, return an error message listing which env vars are missing
@@ -73,6 +81,7 @@ Add a `fetch_production_logs` tool to the existing `prod-logs` pi extension usin
 12. Return as text content, with `details: { lineCount }` (the pre-truncation line count)
 
 ### Verification
+
 1. Run `/reload` in pi to hot-reload the extension
 2. Ask the LLM: "What tools are available for fetching production logs?" — it should describe `fetch_production_logs`
 3. Ask the LLM: "Fetch the last 50 lines of production logs" — verify it calls the tool and returns log text
@@ -85,27 +94,27 @@ Add a `fetch_production_logs` tool to the existing `prod-logs` pi extension usin
 
 ## Architecture Impact Analysis
 
-| Touchpoint | Impact |
-|------------|--------|
-| `.pi/extensions/prod-logs/index.ts` | **Modified** — ~70 lines added (imports + tool registration + truncation) |
-| Elixir modules | **None** — no changes |
-| Schemas, PubSub, routes, UI | **None** — pi-only change |
-| Config / env vars | **None** — same `HURL_VARIABLE_coolify_*` vars already in use |
-| Existing `/prod-logs` command | **Unchanged** — tool registration is additive, independent of command registration |
+| Touchpoint                          | Impact                                                                             |
+| ----------------------------------- | ---------------------------------------------------------------------------------- |
+| `.pi/extensions/prod-logs/index.ts` | **Modified** — ~70 lines added (imports + tool registration + truncation)          |
+| Elixir modules                      | **None** — no changes                                                              |
+| Schemas, PubSub, routes, UI         | **None** — pi-only change                                                          |
+| Config / env vars                   | **None** — same `HURL_VARIABLE_coolify_*` vars already in use                      |
+| Existing `/prod-logs` command       | **Unchanged** — tool registration is additive, independent of command registration |
 
 ---
 
 ## Performance Profile
 
-| Aspect | Characteristic |
-|--------|---------------|
-| **Runtime complexity** | O(n) for grep filtering (single pass over log lines), O(1) for tail slice, O(n) for truncation byte counting |
-| **Network** | Single HTTP GET to Coolify API; no retries in tool handler |
-| **Memory** | Log response held in memory as string array; typically < 1MB for a few thousand lines; truncation caps return value at 50KB |
-| **Latency** | Dominated by Coolify API response time (typically 1-5 seconds); local filtering negligible |
-| **Database** | No database queries |
-| **State** | Stateless — no caching, no persistence |
-| **N+1 risk** | None — single API call |
+| Aspect                 | Characteristic                                                                                                              |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **Runtime complexity** | O(n) for grep filtering (single pass over log lines), O(1) for tail slice, O(n) for truncation byte counting                |
+| **Network**            | Single HTTP GET to Coolify API; no retries in tool handler                                                                  |
+| **Memory**             | Log response held in memory as string array; typically < 1MB for a few thousand lines; truncation caps return value at 50KB |
+| **Latency**            | Dominated by Coolify API response time (typically 1-5 seconds); local filtering negligible                                  |
+| **Database**           | No database queries                                                                                                         |
+| **State**              | Stateless — no caching, no persistence                                                                                      |
+| **N+1 risk**           | None — single API call                                                                                                      |
 
 ---
 
@@ -118,6 +127,7 @@ No paid resources consumed. The Coolify API is self-hosted as part of the deploy
 ## Production Infrastructure Steps
 
 No production changes required:
+
 - The `HURL_VARIABLE_coolify_*` environment variables are already configured in the pi runtime environment (the existing `/prod-logs` command already depends on them)
 - No new environment variables, service provisioning, DNS changes, or firewall rules
 - No database migrations
@@ -128,6 +138,7 @@ No production changes required:
 ## Documentation Updates
 
 No project documentation files need updating:
+
 - `docs/architecture.md` — already covers pi extensions generically; no new Elixir modules or architectural patterns introduced
 - `docs/project-conventions.md` — no new conventions introduced
 - `docs/production-infrastructure.md` — no infrastructure changes
@@ -147,6 +158,7 @@ The implementation is self-documenting: the tool's `description`, `promptSnippet
 ## Implementation Notes
 
 <!-- SECTION:NOTES:BEGIN -->
+
 Added `fetch_production_logs` tool to the existing `.pi/extensions/prod-logs/index.ts` extension. The tool reuses the existing `fetchLogs()` and `resolveVar()` helper functions. Implementation follows the plan exactly:
 
 - Added imports for `Type` (typebox) and `truncateTail`, `formatSize`, `DEFAULT_MAX_BYTES`, `DEFAULT_MAX_LINES` (@mariozechner/pi-coding-agent)
@@ -160,9 +172,11 @@ Added `fetch_production_logs` tool to the existing `.pi/extensions/prod-logs/ind
 ## Final Summary
 
 <!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
 Added a `fetch_production_logs` tool to `.pi/extensions/prod-logs/index.ts` using `pi.registerTool()`. The tool gives the LLM programmatic access to production logs without user intervention.
 
 **What changed:**
+
 - Added imports for `Type` (typebox) and `truncateTail`, `formatSize`, `DEFAULT_MAX_BYTES`, `DEFAULT_MAX_LINES` from `@mariozechner/pi-coding-agent`
 - Registered `fetch_production_logs` tool with `tail` (default 200) and `grep` parameters
 - Tool reuses the existing `fetchLogs()` and `resolveVar()` module-scope functions from the `/prod-logs` extension
@@ -170,10 +184,12 @@ Added a `fetch_production_logs` tool to `.pi/extensions/prod-logs/index.ts` usin
 - On missing credentials, returns a clear error listing which env vars are not set
 
 **What didn't change:**
+
 - The existing `/prod-logs` interactive command code is completely untouched
 - No new dependencies, env vars, infrastructure changes, or Elixir module changes
 
 **Verification (requires `/reload` in pi):**
+
 1. Ask the LLM about available tools for production logs — should describe `fetch_production_logs`
 2. Ask the LLM to fetch logs with `tail: 50` or `grep: "error"` — should work
 3. Unset a credential and try — should get clear error message

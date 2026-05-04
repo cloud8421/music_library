@@ -3,17 +3,18 @@ id: ML-92
 title: Heavy duplication in ScrobbleRules context (819 lines)
 status: Done
 assignee: []
-created_date: '2026-04-20 08:57'
+created_date: "2026-04-20 08:57"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/82'
+  - "https://github.com/cloud8421/music_library/issues/82"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-02-17 · updated 2026-03-02 · closed 2026-03-02_
 
 ## Priority: Medium
@@ -35,4 +36,5 @@ Consolidate with optional track-filtering parameters to reduce duplication.
 ## Source
 
 From technical debt audit (2026-02-17), item #9.
+
 <!-- SECTION:DESCRIPTION:END -->

@@ -3,17 +3,18 @@ id: ML-59
 title: Standardize list separation pattern (divide-y vs space-y)
 status: Done
 assignee: []
-created_date: '2026-04-20 08:54'
+created_date: "2026-04-20 08:54"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/116'
+  - "https://github.com/cloud8421/music_library/issues/116"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-03-16 · updated 2026-03-16 · closed 2026-03-16_
 
 ## Problem
@@ -26,4 +27,5 @@ Lists use two different separation approaches:
 ## Decision needed
 
 Should all lists use `divide-y` for consistency, or is `space-y` acceptable for card-style list items where dividers would feel heavy?
+
 <!-- SECTION:DESCRIPTION:END -->

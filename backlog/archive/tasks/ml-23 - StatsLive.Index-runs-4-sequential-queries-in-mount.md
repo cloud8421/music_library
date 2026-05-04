@@ -3,17 +3,18 @@ id: ML-23
 title: StatsLive.Index runs 4+ sequential queries in mount
 status: To Do
 assignee: []
-created_date: '2026-04-20 08:51'
+created_date: "2026-04-20 08:51"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/156'
+  - "https://github.com/cloud8421/music_library/issues/156"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-05 · updated 2026-04-09 · closed 2026-04-09 · not planned_
 
 ## Summary
@@ -35,7 +36,9 @@ _GitHub: created 2026-04-05 · updated 2026-04-09 · closed 2026-04-09 · not pl
 Use `start_async` or `assign_async` to load stats data concurrently after mount, showing placeholder/loading states for each section.
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - Stats page initial render is faster
 - Data loads concurrently where possible
 - Loading states are shown while data is fetched

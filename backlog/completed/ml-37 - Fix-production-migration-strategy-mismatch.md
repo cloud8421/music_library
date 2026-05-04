@@ -3,17 +3,18 @@ id: ML-37
 title: Fix production migration strategy mismatch
 status: Done
 assignee: []
-created_date: '2026-04-20 08:53'
+created_date: "2026-04-20 08:53"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/141'
+  - "https://github.com/cloud8421/music_library/issues/141"
 priority: high
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-03-30 · updated 2026-03-30 · closed 2026-03-30_
 
 ## Summary
@@ -41,7 +42,9 @@ A deploy can start successfully against an outdated schema, creating a real risk
 - `docs/production-infrastructure.md`
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - Production deploys cannot start on an unmigrated schema.
 - The documented migration strategy matches the implemented one.
 - There is at least one automated check covering the chosen behavior.

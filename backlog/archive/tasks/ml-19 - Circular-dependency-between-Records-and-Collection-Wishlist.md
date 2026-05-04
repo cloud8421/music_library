@@ -3,17 +3,18 @@ id: ML-19
 title: Circular dependency between Records and Collection/Wishlist
 status: To Do
 assignee: []
-created_date: '2026-04-20 08:50'
+created_date: "2026-04-20 08:50"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/160'
+  - "https://github.com/cloud8421/music_library/issues/160"
 priority: low
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-05 · updated 2026-04-09 · closed 2026-04-06 · not planned_
 
 ## Summary
@@ -37,7 +38,9 @@ _GitHub: created 2026-04-05 · updated 2026-04-09 · closed 2026-04-06 · not pl
 Make Collection and Wishlist sub-modules of Records (`Records.Collection`, `Records.Wishlist`) or simple functions within Records that accept a filter parameter.
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - No circular dependency between context modules
 - Collection/Wishlist filtering remains functional
 <!-- SECTION:DESCRIPTION:END -->

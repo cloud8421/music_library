@@ -3,8 +3,8 @@ id: ML-159
 title: select and copy log lines from log browser
 status: Done
 assignee: []
-created_date: '2026-05-03 21:05'
-updated_date: '2026-05-03 21:34'
+created_date: "2026-05-03 21:05"
+updated_date: "2026-05-03 21:34"
 labels:
   - enhancement
   - pi-extension
@@ -20,6 +20,7 @@ priority: medium
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 When using the `/prod-logs` extension (`.pi/extensions/prod-logs/index.ts`), add the ability to select and copy log lines:
 
 1. **Copy line under cursor** — The log browser currently has a scroll offset but no cursor concept. Add a visual cursor (highlighted line). On a keypress (e.g., Enter), copy that line, exit the log browser, and place the copied text where the user can paste it.
@@ -27,10 +28,13 @@ When using the `/prod-logs` extension (`.pi/extensions/prod-logs/index.ts`), add
 2. **Select and copy multiple contiguous lines** — Add a selection mechanism. The user starts a selection, toggles lines on/off, then completes the selection. Copied lines should be in ascending order (oldest first — reversed compared to the visual display which shows newest first). Exit the log browser afterward so the copied lines can be pasted.
 
 The log browser currently uses `ctx.ui.custom<void>`. To return copied text, the return type should change to `string | null` (null = cancelled/closed without copy). After the custom UI resolves, the copied text should be placed somewhere the user can immediately use (e.g., set in the editor, or copied to system clipboard).
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - [x] #1 Cursor line is visually highlighted with accent color and `> ` prefix
 - [x] #2 `v` enters visual mode; highlighted range extends as cursor moves
 - [x] #3 `Escape` exits visual mode and clears selection
@@ -46,6 +50,7 @@ The log browser currently uses `ctx.ui.custom<void>`. To return copied text, the
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
+
 ## Implementation Plan: Vim-style Visual Mode + setEditorText
 
 ### 1. Add cursor state to LogViewer
@@ -55,6 +60,7 @@ Add `cursorIndex` (absolute index into `this.lines`) and initialize to `0`. The 
 **Navigation model (vim-style):** All movement keys (`j`, `k`, `PgUp`, `PgDn`, `Home`, `End`, `g`, `G`) move `cursorIndex`. The `scrollOffset` auto-adjusts via a `clampViewport()` helper to keep the cursor within the visible range `[scrollOffset, scrollOffset + visibleHeight)`. This unifies normal and visual mode key handling — in visual mode, the same keys extend the selection by moving `cursorIndex` while `visualAnchor` stays fixed.
 
 Add a `clampViewport()` private method:
+
 - If `cursorIndex < scrollOffset`, set `scrollOffset = cursorIndex`
 - If `cursorIndex >= scrollOffset + visibleHeight`, set `scrollOffset = cursorIndex - visibleHeight + 1`
 - Call `clampViewport()` after every cursor movement and after `updateLines()`
@@ -74,9 +80,9 @@ In visual mode, all movement keys (`j`, `k`, `PgUp`, `PgDn`, `Home`, `End`, `g`,
 ### 3. Update render to show cursor highlight and selection range
 
 - Cursor line: `> ` prefix with `theme.fg("accent", ...)`
-- Selected lines (in range): `● ` prefix with `theme.fg("success", ...)`  
+- Selected lines (in range): `● ` prefix with `theme.fg("success", ...)`
 - Lines that are both cursor AND in selection: `> ` prefix takes priority (cursor indicator)
-- Non-cursor, non-selected: keep existing ` NNN │ ` prefix
+- Non-cursor, non-selected: keep existing `NNN │` prefix
 
 The line number column must shift right by 2 characters to accommodate the new prefix: `  NNN │ > text` instead of ` NNN │ text`.
 
@@ -93,11 +99,13 @@ The line number column must shift right by 2 characters to accommodate the new p
 ### 5. Change ctx.ui.custom return type from void to string | null
 
 ```typescript
-const copiedText = await ctx.ui.custom<string | null>((tui, theme, _kb, done) => {
-  viewer.onCopy = (text: string) => done(text);
-  viewer.onClose = () => done(null);
-  // ...
-});
+const copiedText = await ctx.ui.custom<string | null>(
+  (tui, theme, _kb, done) => {
+    viewer.onCopy = (text: string) => done(text);
+    viewer.onClose = () => done(null);
+    // ...
+  },
+);
 
 if (copiedText !== null) {
   ctx.ui.setEditorText(copiedText);
@@ -130,16 +138,17 @@ This is a **single-file, frontend-only change** to `.pi/extensions/prod-logs/ind
 
 ### Touchpoints
 
-| Component | Impact |
-|-----------|--------|
-| `LogViewer` class | **Modified** — adds `cursorIndex`, `visualMode`, `visualAnchor`, `onCopy` callback, `clampViewport()` private method. Movement keys refactored to move `cursorIndex` with viewport auto-clamping. `handleInput` routing restructured for mode awareness |
-| `LogViewer.render()` | **Modified** — adds cursor prefix (`> `) and selection prefix (`● `). Line number column padding widened by 2 chars |
-| `LogViewer.updateLines()` | **Modified** — resets `cursorIndex = 0`, `visualMode = false`, `visualAnchor = 0`, calls `clampViewport()` |
-| Extension handler function | **Modified** — `ctx.ui.custom<void>` → `ctx.ui.custom<string \| null>`. Adds `onCopy` handler. Adds `ctx.ui.setEditorText()` on copy |
-| Help text strings | **Modified** — split into normal-mode and visual-mode variants |
-| `fetchLogs` / Coolify API | **No change** — data fetching unchanged |
+| Component                  | Impact                                                                                                                                                                                                                                                  |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `LogViewer` class          | **Modified** — adds `cursorIndex`, `visualMode`, `visualAnchor`, `onCopy` callback, `clampViewport()` private method. Movement keys refactored to move `cursorIndex` with viewport auto-clamping. `handleInput` routing restructured for mode awareness |
+| `LogViewer.render()`       | **Modified** — adds cursor prefix (`> `) and selection prefix (`● `). Line number column padding widened by 2 chars                                                                                                                                     |
+| `LogViewer.updateLines()`  | **Modified** — resets `cursorIndex = 0`, `visualMode = false`, `visualAnchor = 0`, calls `clampViewport()`                                                                                                                                              |
+| Extension handler function | **Modified** — `ctx.ui.custom<void>` → `ctx.ui.custom<string \| null>`. Adds `onCopy` handler. Adds `ctx.ui.setEditorText()` on copy                                                                                                                    |
+| Help text strings          | **Modified** — split into normal-mode and visual-mode variants                                                                                                                                                                                          |
+| `fetchLogs` / Coolify API  | **No change** — data fetching unchanged                                                                                                                                                                                                                 |
 
 ### Deprecation/Migration
+
 None. Old behavior (scroll + refresh + close) is preserved and extended, not replaced.
 
 ---
@@ -174,18 +183,20 @@ None. Old behavior (scroll + refresh + close) is preserved and extended, not rep
 
 ## Documentation Updates
 
-| File | Change Needed |
-|------|--------------|
-| `docs/architecture.md` | **No change** — this is a pi extension, not part of the Elixir application architecture |
-| `docs/project-conventions.md` | **No change** — TypeScript conventions are pi's domain, not the project's |
-| `docs/production-infrastructure.md` | **No change** — no infra changes |
-| `docs/available-tasks.md` | **No change** — no new mise tasks |
+| File                                | Change Needed                                                                                                                      |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/architecture.md`              | **No change** — this is a pi extension, not part of the Elixir application architecture                                            |
+| `docs/project-conventions.md`       | **No change** — TypeScript conventions are pi's domain, not the project's                                                          |
+| `docs/production-infrastructure.md` | **No change** — no infra changes                                                                                                   |
+| `docs/available-tasks.md`           | **No change** — no new mise tasks                                                                                                  |
 | `.pi/extensions/prod-logs/index.ts` | **Inline comments** — add JSDoc on new fields (`cursorIndex`, `visualMode`, `visualAnchor`, `onCopy`) and new key binding branches |
+
 <!-- SECTION:PLAN:END -->
 
 ## Final Summary
 
 <!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
 Added vim-style cursor navigation and visual mode to the prod-logs pi extension:
 
 - **Cursor**: `cursorIndex` tracks the highlighted line; all movement keys (j/k/PgUp/PgDn/Home/End/g/G) move the cursor with viewport auto-clamping via `clampViewport()`.
@@ -196,4 +207,5 @@ Added vim-style cursor navigation and visual mode to the prod-logs pi extension:
 - **Help text**: Mode-aware — normal mode shows full key bindings, visual mode shows selection-specific keys.
 
 Single-file change to `.pi/extensions/prod-logs/index.ts`. No Elixir code, database, or infrastructure changes. All 890 tests pass.
+
 <!-- SECTION:FINAL_SUMMARY:END -->

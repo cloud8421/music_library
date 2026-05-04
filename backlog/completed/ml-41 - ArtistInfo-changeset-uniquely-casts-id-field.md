@@ -1,19 +1,20 @@
 ---
 id: ML-41
-title: 'ArtistInfo changeset uniquely casts :id field'
+title: "ArtistInfo changeset uniquely casts :id field"
 status: Done
 assignee: []
-created_date: '2026-04-20 08:53'
+created_date: "2026-04-20 08:53"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/136'
+  - "https://github.com/cloud8421/music_library/issues/136"
 priority: low
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-03-25 · updated 2026-03-25 · closed 2026-03-25_
 
 ## Description
@@ -25,4 +26,5 @@ This is likely intentional since artist IDs come from MusicBrainz, but the patte
 ## Found during
 
 Codebase consistency audit (2026-03-25)
+
 <!-- SECTION:DESCRIPTION:END -->

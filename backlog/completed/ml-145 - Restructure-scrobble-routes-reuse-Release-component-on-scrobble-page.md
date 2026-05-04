@@ -3,8 +3,8 @@ id: ML-145
 title: Restructure /scrobble routes; reuse Release component on scrobble page
 status: Done
 assignee: []
-created_date: '2026-04-23 06:11'
-updated_date: '2026-04-23 14:15'
+created_date: "2026-04-23 06:11"
+updated_date: "2026-04-23 14:15"
 labels:
   - ui
   - scrobble
@@ -28,6 +28,7 @@ priority: medium
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 ## Why
 
 `/scrobble/:release_id` (`MusicLibraryWeb.ScrobbleLive.Show`) re-implements scrobbling UI that already exists as a LiveComponent used by collection/wishlist show pages (`MusicLibraryWeb.Components.Release`). Today the scrobble page imports `medium/1` and `scrobble_button_label/1` from that component but reimplements `scrobble_release` / `scrobble_medium` / `scrobble_selected_tracks` with hard-coded `DateTime.utc_now/0`, no `Finished at` picker, and no selection bar. ML-142.1 proposed porting those affordances into `ScrobbleLive.Show` in parallel — which would leave two drifting implementations.
@@ -67,7 +68,9 @@ Old `/scrobble/:release_id` → 404 (personal app; bookmark churn is acceptable,
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - [x] #1 /scrobble/:rg_id renders a release-group header (cover, release-group title, primary artist, type badge, first-release date, release count) and the full list of releases returned by MusicBrainz for that group.
 - [x] #2 Each release in the /scrobble/:rg_id list is a navigate link to /scrobble/:rg_id/releases/:release_id.
 - [x] #3 /scrobble/:rg_id shows an error toast and redirects to /scrobble if fetching the release group or its releases fails.
@@ -90,6 +93,7 @@ Old `/scrobble/:release_id` → 404 (personal app; bookmark churn is acceptable,
 ## Final Summary
 
 <!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
 ## Summary
 
 Restructured `/scrobble` into a three-level URL hierarchy (`/scrobble` → `/scrobble/:rg_id` → `/scrobble/:rg_id/releases/:release_id`) and eliminated the duplicated scrobble UI by making the Release LiveComponent reusable on a standalone page.
@@ -136,6 +140,7 @@ Two bugs surfaced during Phase 8 verification:
 - `mise run dev:precommit`: clean (shellcheck, credo, sobelow, translations, formatting, unused deps, full test run).
 
 New coverage:
+
 - `test/music_library_web/live/scrobble_live/release_group_show_test.exs` — happy path (header + release links) and fetch failure (toast + redirect to `/scrobble`).
 - `test/music_library_web/live/scrobble_live/release_show_test.exs` — smoke (mount + component render + back link target).
 - `show_print?={true|false}` verified via `Phoenix.LiveViewTest.live_isolated/3` in `release_test.exs`.
@@ -145,6 +150,7 @@ Deleted: `test/music_library_web/live/scrobble_live/show_test.exs` (replaced by 
 ## Manual UI verification (Phase 8 AC#17)
 
 Confirmed by user in dev server:
+
 - Navigation loop `/scrobble` → `/scrobble/:rg_id` → `/scrobble/:rg_id/releases/:release_id` works; `?query=X` survives browser back.
 - Scrobble release page: picker, per-release/medium/track scrobble, and selection bar sticky at viewport bottom.
 - Collection show sheet: selection bar pins to sheet bottom while tracks scroll.

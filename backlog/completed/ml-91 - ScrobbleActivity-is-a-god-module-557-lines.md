@@ -3,17 +3,18 @@ id: ML-91
 title: ScrobbleActivity is a god module (557 lines)
 status: Done
 assignee: []
-created_date: '2026-04-20 08:57'
+created_date: "2026-04-20 08:57"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/83'
+  - "https://github.com/cloud8421/music_library/issues/83"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-02-17 · updated 2026-03-02 · closed 2026-03-02_
 
 ## Priority: Medium
@@ -29,4 +30,5 @@ Extract cohesive groups of functions into focused modules (e.g., stats, search, 
 ## Source
 
 From technical debt audit (2026-02-17), item #10.
+
 <!-- SECTION:DESCRIPTION:END -->

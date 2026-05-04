@@ -2,9 +2,10 @@
 id: doc-7
 title: Pi access to production errors
 type: other
-created_date: '2026-05-04 08:07'
-updated_date: '2026-05-04 08:13'
+created_date: "2026-05-04 08:07"
+updated_date: "2026-05-04 08:13"
 ---
+
 # Implementation Routes: pi access to production errors
 
 ## Problem
@@ -12,6 +13,7 @@ updated_date: '2026-05-04 08:13'
 The project captures production errors via the `error_tracker` Elixir dependency (stored in `MusicLibrary.TelemetryRepo` SQLite database). Errors can currently only be viewed through the built-in web dashboard at `/dev/errors` (behind login auth, only with `:monitoring_routes` enabled). There is no programmatic access — no API, no tooling, no pi extension.
 
 The goal is to enable pi (the coding agent) to fetch and browse production errors. This requires three layers:
+
 1. A programmatic API to expose error data (behind auth)
 2. Pi tools the LLM can call to fetch errors
 3. A pi extension for interactive browsing
@@ -22,6 +24,7 @@ The goal is to enable pi (the coding agent) to fetch and browse production error
 
 **How it works:**
 Add a new API controller (`MusicLibraryWeb.ErrorsController`) with two endpoints under `/api/v1/errors`:
+
 - `GET /api/v1/errors` — list errors with optional filtering (status, muted, search) and pagination
 - `GET /api/v1/errors/:id` — single error detail with its occurrences and stacktraces
 
@@ -30,6 +33,7 @@ The controller queries the `error_tracker_errors` and `error_tracker_occurrences
 Pi tools (`fetch_production_errors` and `fetch_production_error`) make HTTP requests to this API using `fetch()` or `pi.exec("curl", ...)`. The pi extension builds on these tools for an interactive TUI.
 
 **Pros:**
+
 - Follows existing patterns exactly (see `CollectionController`, `require_api_token`)
 - Clean separation of concerns: API layer, tool layer, extension layer
 - Pi tools work remotely — no need for SSH or filesystem access to the production server
@@ -40,6 +44,7 @@ Pi tools (`fetch_production_errors` and `fetch_production_error`) make HTTP requ
 - The TelemetryRepo already exists and has the tables — no new database work
 
 **Cons:**
+
 - Requires a server code change and deployment
 - Adds two new routes
 
@@ -62,11 +67,13 @@ Pi tools execute SQL queries directly against the TelemetryRepo SQLite database 
 No server-side API changes needed. The pi tools would use `pi.exec("sqlite3", ...)` or read the database file directly.
 
 **Pros:**
+
 - Zero server code changes
 - Immediate access to ALL data — no API shape limitations
 - Can run complex ad-hoc queries without API changes
 
 **Cons:**
+
 - **Production access requires SSH or filesystem access** — violates the project's existing API-based pattern for pi access (cf. `fetch_production_logs` which uses Coolify API, not SSH)
 - No auth layer — tools have full read access to the entire database
 - Tightly couples pi tools to the error_tracker schema — any migration could break tools
@@ -86,10 +93,12 @@ The direct-access approach introduces deployment friction (SSH key management, f
 Use the existing Tidewave MCP tools (`tidewave_execute_sql_query`) to query the error_tracker tables directly. This is available in dev but would need the Tidewave MCP server to be accessible in production (e.g., via SSH tunnel or a production-side MCP server).
 
 **Pros:**
+
 - No new code at all — uses what's already there
 - `tidewave_execute_sql_query` already understands the repo structure
 
 **Cons:**
+
 - **Tidewave MCP server does not run in production** — it's a development-only tool
 - Even if it did, running a dev tool against production is architecturally wrong
 - No browsing UX, no filtering, no pagination — basic SQL results only
@@ -106,9 +115,11 @@ Tidewave is a development tool. Exposing it to production would be an architectu
 Add an endpoint to the existing Coolify-like API pattern used by `fetch_production_logs`. This would require Coolify to expose error_tracker data, which it doesn't natively support. Could potentially parse production logs for error patterns, but that's unstructured and duplicative.
 
 **Pros:**
+
 - Consistent with the existing `fetch_production_logs` pattern
 
 **Cons:**
+
 - Coolify doesn't expose error_tracker data
 - ErrorTracker already has structured data — parsing it from raw logs is backwards and lossy
 - Would require Coolify API changes or custom Coolify plugin

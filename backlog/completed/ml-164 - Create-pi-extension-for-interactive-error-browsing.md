@@ -3,8 +3,8 @@ id: ML-164
 title: Create pi extension for interactive error browsing
 status: Done
 assignee: []
-created_date: '2026-05-04 08:08'
-updated_date: '2026-05-04 12:44'
+created_date: "2026-05-04 08:08"
+updated_date: "2026-05-04 12:44"
 labels:
   - pi
   - ready
@@ -21,6 +21,7 @@ ordinal: 6000
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 Build a pi extension that provides an interactive TUI for browsing production errors, using the `fetch_production_errors` and `fetch_production_error` tools from the parent task.
 
 This extension gives the user (and LLM) a browseable interface for production errors, accessible via a slash command like `/prod-errors`.
@@ -78,11 +79,13 @@ This extension gives the user (and LLM) a browseable interface for production er
 `.pi/extensions/prod-errors/index.ts` (new extension, separate from `prod-logs`)
 
 The prod-logs extension already provides the `resolveVar` pattern and `fetchLogs` function. This extension follows the same conventions but for error_tracker data.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
+
 ## Implementation Plan
 
 ### Objective alignment
@@ -106,14 +109,14 @@ Key fields used by the list view: `id`, `kind`, `reason`, `source_line`, `source
 
 ### Architecture impact analysis
 
-| Touchpoint | Impact |
-|---|---|
-| `.pi/extensions/prod-errors/index.ts` | **New file** — ~400 lines: `ErrorBrowser` class, helpers, command registration |
-| `.pi/extensions/prod-errors/package.json` | **New file** — minimal `{ name, private, description }` |
-| `.pi/extensions/prod-logs/index.ts` | **No change** |
-| All Elixir modules, router, PubSub, supervision tree | **No change** — purely a pi extension |
-| Pi env vars | Reuses `PI_API_TOKEN` and `PI_SERVICE_FQDN_WEB` from ML-163 |
-| Existing pi extensions | **No change** — `/prod-errors` is a new command |
+| Touchpoint                                           | Impact                                                                         |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `.pi/extensions/prod-errors/index.ts`                | **New file** — ~400 lines: `ErrorBrowser` class, helpers, command registration |
+| `.pi/extensions/prod-errors/package.json`            | **New file** — minimal `{ name, private, description }`                        |
+| `.pi/extensions/prod-logs/index.ts`                  | **No change**                                                                  |
+| All Elixir modules, router, PubSub, supervision tree | **No change** — purely a pi extension                                          |
+| Pi env vars                                          | Reuses `PI_API_TOKEN` and `PI_SERVICE_FQDN_WEB` from ML-163                    |
+| Existing pi extensions                               | **No change** — `/prod-errors` is a new command                                |
 
 ### Performance profile
 
@@ -141,8 +144,13 @@ No paid resources. Makes HTTP requests to the project's own server. No third-par
 #### Step 1: Create `.pi/extensions/prod-errors/package.json`
 
 Minimal `package.json` matching the prod-logs pattern:
+
 ```json
-{ "name": "prod-errors", "private": true, "description": "Interactive TUI for browsing production errors" }
+{
+  "name": "prod-errors",
+  "private": true,
+  "description": "Interactive TUI for browsing production errors"
+}
 ```
 
 **Verification**: `ls -la .pi/extensions/prod-errors/package.json` — file must exist with valid JSON.
@@ -192,6 +200,7 @@ A class managing list view state and rendering, following the `LogViewer` patter
 **Caching**: Cache rendered lines when `width` and state unchanged. Invalidate on any state mutation.
 
 **Verification** (requires ML-162 API running locally):
+
 1. `/reload` → `/prod-errors` → TUI opens with error list (or empty state).
 2. `j`/`k` moves cursor. `r` toggles resolved. `m` toggles muted. `l` loads next page.
 3. `Enter` triggers detail fetch. `q`/`Escape` closes TUI.
@@ -210,6 +219,7 @@ Extend `ErrorBrowser` with detail rendering. On Enter in list: set `mode = "load
 **Loading state**: Inline "Loading…" overlay centered in viewport when `mode === "loading"`.
 
 **Verification**:
+
 1. Enter on error → detail shows all sections + occurrences with stacktraces.
 2. `j`/`k` scrolls detail. `PgUp`/`PgDn` pages. `Escape` returns to list with cursor preserved.
 3. Enter on detail line → line copied to editor (prod-logs pattern).
@@ -220,6 +230,7 @@ Extend `ErrorBrowser` with detail rendering. On Enter in list: set `mode = "load
 #### Step 5: Register the `/prod-errors` command
 
 Register via `pi.registerCommand("prod-errors", ...)`. Handler flow:
+
 1. Validate `PI_SERVICE_FQDN_WEB` and `PI_API_TOKEN` — notify and return if missing.
 2. Show `BorderedLoader` while calling `fetchErrors({ limit: 50, offset: 0 })`.
 3. On null/empty: notify and return.
@@ -229,6 +240,7 @@ Register via `pi.registerCommand("prod-errors", ...)`. Handler flow:
 In-browser fetches (filter toggles, load more, detail) use an inline loading indicator, not nested `BorderedLoader`.
 
 **Verification**:
+
 1. `/prod-errors` → loader → browser. Toggle filters → inline loading. Load more → inline loading. Detail → inline loading.
 2. Bad `PI_SERVICE_FQDN_WEB` → useful error notification. All keyboard shortcuts work.
 
@@ -236,25 +248,26 @@ In-browser fetches (filter toggles, load more, detail) use an inline loading ind
 
 #### Step 6: Edge cases and error handling
 
-| Scenario | Handling |
-|---|---|
-| Empty list (API returned zero errors) | "No production errors found" in TUI |
+| Scenario                                   | Handling                                                                                                                                                 |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Empty list (API returned zero errors)      | "No production errors found" in TUI                                                                                                                      |
 | All errors filtered out by current toggles | "No errors match the current filters" (only shown when the unfiltered list was non-empty; track with a `totalUnfiltered` field set on the initial fetch) |
-| API non-2xx | Error notification with status code; keep TUI open |
-| Unexpected JSON shape | Catch TypeError, "Unexpected API response format" notification |
-| Network timeout/refused | Catch fetch error, show notification |
-| Double Enter while loading | Ignore (`mode === "loading"` guard) |
-| Rapid filter toggles | Abort in-flight request via AbortController before new fetch |
-| Filter changes invalidate pages | Reset offset to 0, replace errors with first page |
-| Load more at end | Show "— end of results —", ignore `l` |
-| Zero occurrences | "No occurrences recorded" |
-| Empty context/breadcrumbs | Omit those sections |
-| Missing stacktrace fields | Show "—" |
-| Narrow terminal (< 40 cols) | Render with heavy truncation (acceptable) |
+| API non-2xx                                | Error notification with status code; keep TUI open                                                                                                       |
+| Unexpected JSON shape                      | Catch TypeError, "Unexpected API response format" notification                                                                                           |
+| Network timeout/refused                    | Catch fetch error, show notification                                                                                                                     |
+| Double Enter while loading                 | Ignore (`mode === "loading"` guard)                                                                                                                      |
+| Rapid filter toggles                       | Abort in-flight request via AbortController before new fetch                                                                                             |
+| Filter changes invalidate pages            | Reset offset to 0, replace errors with first page                                                                                                        |
+| Load more at end                           | Show "— end of results —", ignore `l`                                                                                                                    |
+| Zero occurrences                           | "No occurrences recorded"                                                                                                                                |
+| Empty context/breadcrumbs                  | Omit those sections                                                                                                                                      |
+| Missing stacktrace fields                  | Show "—"                                                                                                                                                 |
+| Narrow terminal (< 40 cols)                | Render with heavy truncation (acceptable)                                                                                                                |
 
 **Abort pattern**: Store `currentAbortController` reference; call `.abort()` before each new fetch; catch `AbortError` and return null.
 
 **Verification**:
+
 1. **Rapid filter toggle**: Press `r` 5 times rapidly → observe only the last fetch's results are displayed (previous requests were aborted). Requests aborted via `AbortController` should not update state.
 2. **End-of-results**: Navigate to the last page with `l`, then press `l` again → observe "— end of results —" divider and subsequent `l` presses are ignored.
 3. **Empty context/breadcrumbs**: View a detail for an error that has occurrences with `context: {}` and `breadcrumbs: []` → observe those section headings are entirely omitted from the detail rendering.
@@ -291,6 +304,7 @@ No new changes beyond ML-162/ML-163: `PI_API_TOKEN` and `PI_SERVICE_FQDN_WEB` ar
 ## Implementation Notes
 
 <!-- SECTION:NOTES:BEGIN -->
+
 ## Implementation Notes
 
 ### What was built

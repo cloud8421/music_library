@@ -3,17 +3,18 @@ id: ML-72
 title: TopAlbums/TopArtists structural duplication
 status: Done
 assignee: []
-created_date: '2026-04-20 08:55'
+created_date: "2026-04-20 08:55"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/103'
+  - "https://github.com/cloud8421/music_library/issues/103"
 priority: low
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-03-12 · updated 2026-03-12 · closed 2026-03-12_
 
 ## Description
@@ -29,4 +30,5 @@ Consider extracting a parameterized `TopByPeriod` component that accepts data-fe
 ## Source
 
 From technical debt audit (2026-03-12).
+
 <!-- SECTION:DESCRIPTION:END -->

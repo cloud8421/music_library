@@ -5,13 +5,13 @@ title: >-
   to LLM for collection chat
 status: To Do
 assignee: []
-created_date: '2026-05-02 16:02'
-updated_date: '2026-05-04 08:19'
+created_date: "2026-05-02 16:02"
+updated_date: "2026-05-04 08:19"
 labels:
   - ready
 dependencies: []
 references:
-  - 'backlog://document/doc-1'
+  - "backlog://document/doc-1"
 documentation:
   - lib/music_library/chats/collection_chat.ex
   - lib/music_library/collection.ex
@@ -26,18 +26,23 @@ priority: high
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 Currently, every new collection chat sends the ENTIRE collection catalog (all records formatted as "Artist - Title (year, format) [genres]") plus aggregated stats as the `instructions` parameter to the OpenAI Responses API. For a collection of 500+ records, this burns ~9,000+ input tokens on EVERY new chat start — regardless of what the user asks.
 
 The goal of this task is to analyze alternatives, pick the best one, and implement it. The selected approach should:
+
 - Significantly reduce per-chat token usage
 - Preserve or improve the quality of LLM responses about the collection
 - Not require architectural overhauls beyond the chat/streaming layer
 
 The `Collection.collection_summary/0` function loads ALL records from the DB, formats them, and returns `{summary, count}`. This is computed asynchronously in `CollectionLive.Index.mount/3` and passed to the Chat component as `chat_context`. `CollectionChat.build_instructions/2` then embeds the full summary into the instructions string sent to OpenAI.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - [ ] #1 `CollectionChat.build_instructions/2` no longer interpolates the full collection catalog into the instructions sent to OpenAI — only aggregated stats and a record count are included
 - [ ] #2 A `file_search` tool with the collection's vector store ID is included in every collection chat request to the OpenAI Responses API
 - [ ] #3 A `CollectionChat.FileStore` module manages the collection file lifecycle: upload to OpenAI Files API, vector store creation, and file-to-store attachment, persisting IDs via `Secrets`
@@ -51,6 +56,7 @@ The `Collection.collection_summary/0` function loads ALL records from the DB, fo
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
+
 ## Approach: OpenAI `file_search` tool + Oban-managed file lifecycle
 
 Upload the collection catalog as a file to OpenAI, create a vector store, and use the Responses API's built-in `file_search` tool. OpenAI automatically performs semantic search over the file and includes relevant results inline in the response stream — no SSE event handling changes, no orchestration loop.
@@ -93,7 +99,7 @@ defmodule MusicLibrary.Chats.CollectionChat.FileStore do
   @moduledoc """
   Manages the collection catalog file lifecycle at OpenAI.
   Persists file_id and vector_store_id via Secrets.
-  
+
   All OpenAI API calls happen inside Oban workers — never from chat
   sessions or LiveViews. The chat session path only calls get_vector_store_id/0.
   """
@@ -139,6 +145,7 @@ end
 ```
 
 Key design properties:
+
 - `upload_or_refresh/0` is the single entry point called by the Oban worker — never by chat sessions
 - `get_vector_store_id/0` is the single entry point called by chat sessions — read-only, no side effects
 - `cleanup_orphaned_files/0` is a safety net for edge cases (e.g., Secrets write failed after OpenAI upload succeeded)
@@ -175,6 +182,7 @@ end
 - Queue `:default` (concurrency 10) — the worker is fast (a few API calls), no need for a dedicated queue.
 
 Enqueued from two places:
+
 1. **Record mutations** — `Records.create_record/1`, `update_record/2`, `delete_record/1` (see Phase 4)
 2. **Cron** — every hour in both dev and prod, to handle initial upload after deploy and recovery after failures:
 
@@ -414,6 +422,7 @@ end
 ```
 
 Key changes from current code:
+
 - `stream_response/3` keeps the `{tuple, count}` signature shape — the stats string replaces the catalog text
 - `build_instructions/2` interpolates aggregated stats (~200 tokens) instead of the full catalog (~9,000 tokens)
 - `FileStore.get_vector_store_id/0` is the only FileStore function called from the chat path
@@ -430,6 +439,7 @@ Key changes from current code:
 #### 6a. OpenAI.API endpoint tests (`test/open_ai/api_test.exs`)
 
 Add test blocks for the 7 new endpoints, following existing `Req.Test.stub` patterns:
+
 - `upload_file/3` — verify multipart body includes `purpose: "assistants"` and file content; test success (200 + file JSON) and error (500) responses
 - `create_vector_store/2` — verify request body has `name` field; test success and error
 - `add_file_to_vector_store/3` — verify URL path includes store_id; test success and error
@@ -444,6 +454,7 @@ Add test blocks for the 7 new endpoints, following existing `Req.Test.stub` patt
 #### 6b. FileStore tests (`test/music_library/chats/collection_chat/file_store_test.exs`)
 
 Test `FileStore` functions with `Req.Test` stubs and direct `Secrets` manipulation:
+
 - `upload_or_refresh/0` — first-time upload (no secrets → creates file + store + attaches → secrets populated)
 - `upload_or_refresh/0` — refresh (secrets present → uploads new file → attaches → detaches old → deletes old → updates file_id in secrets)
 - `upload_or_refresh/0` — handles file still "uploaded" (polls until "processed")
@@ -457,6 +468,7 @@ Test `FileStore` functions with `Req.Test` stubs and direct `Secrets` manipulati
 #### 6c. CollectionChat tests (`test/music_library/chats/collection_chat_test.exs`)
 
 Update existing tests and add new ones:
+
 - Verify instructions **no longer** contain the per-record catalog lines (the key regression test)
 - Verify instructions **do** contain the aggregated stats string and record count
 - Verify `file_search` tool is included in the API request body when vector store is available (stub `FileStore.get_vector_store_id/0` → `{:ok, "vs_test"}` and assert `tools` array in the JSON body contains `%{"type" => "file_search", "vector_store_ids" => ["vs_test"]}`)
@@ -478,6 +490,7 @@ Update existing tests and add new ones:
 #### 6e. Records context integration tests
 
 In existing `test/music_library/records_test.exs` (or equivalent):
+
 - `create_record/1` enqueues `RefreshCollectionFile` worker
 - `update_record/2` enqueues `RefreshCollectionFile` worker
 - `delete_record/1` enqueues `RefreshCollectionFile` worker
@@ -488,6 +501,7 @@ In existing `test/music_library/records_test.exs` (or equivalent):
 #### 6f. LiveView test
 
 In `test/music_library_web/live/collection_live/index_test.exs` (or equivalent):
+
 - Verify `@collection_stats` is set after mount (not `@collection_summary`)
 - Verify Chat component receives `{stats_string, count}` tuple as `chat_context`
 
@@ -496,6 +510,7 @@ In `test/music_library_web/live/collection_live/index_test.exs` (or equivalent):
 #### 6g. Collection context tests
 
 In existing `test/music_library/collection_test.exs` (or equivalent):
+
 - `stats_summary/0` returns stats string with genre/format/era breakdowns and correct group count
 - `stats_summary/0` returns `{"", 0}` for empty collection
 - `count_records/0` returns correct count
@@ -504,10 +519,13 @@ In existing `test/music_library/collection_test.exs` (or equivalent):
 ~20 lines.
 
 Estimated total: ~510 lines across 13-15 files. Risk: low/medium — the core streaming infrastructure (`decode_responses_event/2`, Chat component `do_send_message/2`, SSE event loop) is untouched. New code is additive (API endpoints, Oban worker, FileStore module) and follows existing patterns.
+
 <!-- SECTION:PLAN:END -->
 
 ## Definition of Done
+
 <!-- DOD:BEGIN -->
+
 - [ ] #1 All new and modified modules have @moduledoc
 - [ ] #2 All public functions have @spec and @doc
 - [ ] #3 Mix compile --warnings-as-errors passes

@@ -3,17 +3,18 @@ id: ML-26
 title: No retry/backoff strategy for non-Last.fm APIs
 status: To Do
 assignee: []
-created_date: '2026-04-20 08:51'
+created_date: "2026-04-20 08:51"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/153'
+  - "https://github.com/cloud8421/music_library/issues/153"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-05 · updated 2026-04-09 · closed 2026-04-08 · not planned_
 
 ## Summary
@@ -39,7 +40,9 @@ Only the Last.fm integration has structured error responses with retry classific
 3. Classify rate-limit responses separately from transient errors
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - API-specific workers handle rate-limit responses with appropriate snooze durations
 - Transient errors use exponential backoff rather than immediate retry
 <!-- SECTION:DESCRIPTION:END -->

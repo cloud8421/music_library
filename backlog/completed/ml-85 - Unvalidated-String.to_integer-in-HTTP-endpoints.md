@@ -3,17 +3,18 @@ id: ML-85
 title: Unvalidated String.to_integer() in HTTP endpoints
 status: Done
 assignee: []
-created_date: '2026-04-20 08:57'
+created_date: "2026-04-20 08:57"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/90'
+  - "https://github.com/cloud8421/music_library/issues/90"
 priority: high
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-03-05 · updated 2026-03-05 · closed 2026-03-05_
 
 ## Priority: Critical
@@ -37,4 +38,5 @@ Use `Integer.parse/1` with proper error handling, similar to `MusicLibraryWeb.Li
 ## Source
 
 From technical debt audit (2026-03-05).
+
 <!-- SECTION:DESCRIPTION:END -->

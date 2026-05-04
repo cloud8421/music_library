@@ -3,17 +3,18 @@ id: ML-32
 title: OpenAI API uses unsafe bang methods and lacks rate limiting
 status: Done
 assignee: []
-created_date: '2026-04-20 08:52'
+created_date: "2026-04-20 08:52"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/147'
+  - "https://github.com/cloud8421/music_library/issues/147"
 priority: high
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-05 · updated 2026-04-05 · closed 2026-04-05_
 
 ## Summary
@@ -39,7 +40,9 @@ The OpenAI API client is the only integration that uses `Req.post!()` (bang meth
 3. Attach `Req.RateLimiter` in the request pipeline
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - OpenAI API calls return `{:ok, _}` / `{:error, _}` tuples like all other integrations
 - Rate limiter is attached with a configurable cooldown
 - `OpenAI.Config` follows the same structure as other API Config modules

@@ -2,9 +2,10 @@
 id: doc-1
 title: Alternatives for reducing collection chat token usage
 type: other
-created_date: '2026-05-02 16:12'
-updated_date: '2026-05-04 06:55'
+created_date: "2026-05-02 16:12"
+updated_date: "2026-05-04 06:55"
 ---
+
 # ML-156 Research: Alternatives for reducing collection chat token usage
 
 Research document for [ML-156 - Explore alternatives to reduce token usage when providing collection context to LLM for collection chat](backlog://task/ML-156).
@@ -14,11 +15,12 @@ Research document for [ML-156 - Explore alternatives to reduce token usage when 
 ## Current state
 
 **Token flow per new collection chat:**
+
 1. `Collection.collection_summary/0` runs on mount via `start_async`
 2. Loads ALL records: `from(r in Record, where: not is_nil(r.purchased_at), order_by: [order_alphabetically()], select: ^essential_fields())`
 3. Groups by `musicbrainz_id`, formats each group as `"Artist - Title (year, formats) [genre1, genre2]"`
 4. Builds stats header: `"# Stats: N releases, M artists\nGenres: ...\nFormats: ...\nEras: ..."`
-5. Returns `{stats + "\n\n" + catalog, group_count}` 
+5. Returns `{stats + "\n\n" + catalog, group_count}`
 6. Stored in `@collection_summary` assign on the LiveView
 7. Passed to Chat component as `chat_context={@collection_summary}`
 8. When user sends first message, `do_send_message` calls `chat_module.stream_response(messages, chat_context, callback)`
@@ -30,6 +32,7 @@ Research document for [ML-156 - Explore alternatives to reduce token usage when 
 **For 500 releases:** ~9,000 input tokens for catalog alone + ~100 tokens for stats + ~500 tokens for prompt template = ~9,600 tokens
 
 **Key files:**
+
 - `lib/music_library/collection.ex:203-235` — `collection_summary/0` (loads and formats all records)
 - `lib/music_library/chats/collection_chat.ex:18-31` — `build_instructions/2` (embeds summary in prompt)
 - `lib/music_library/chats/prompt.ex` — `Prompt.build/2` (wraps in identity + approach)
@@ -41,6 +44,7 @@ Research document for [ML-156 - Explore alternatives to reduce token usage when 
 ### Streaming architecture constraints
 
 The Chat component dispatches streaming to a `Task.Supervisor` child:
+
 ```elixir
 Task.Supervisor.start_child(MusicLibrary.TaskSupervisor, fn ->
   case chat_module.stream_response(stream_messages, chat_context, fn chunk ->
@@ -65,17 +69,20 @@ The callback sends `[chunk: chunk]` updates; `update/2` in the Chat component ac
 **Token savings:** ~9,000 → ~100 input tokens (~99% reduction)
 
 **Pros:**
+
 - Simplest possible change; < 10 lines of code
 - No architectural changes needed
 - No streaming infrastructure changes
 - The LLM can still answer statistical questions ("what's my most common genre?", "how many jazz records do I have?")
 
 **Cons:**
+
 - LLM loses ability to answer specific questions ("do I have Kid A?", "which Radiohead albums do I own?", "show me my 90s electronic albums")
 - User experience degrades for record-specific queries
 - The LLM will hallucinate or say "I don't have access to your specific collection" frequently
 
 **Impact on code:**
+
 1. `CollectionChat.build_instructions/2` — remove `#{collection_summary}` interpolation, keep only stats
 2. `Collection.collection_summary/0` — could be simplified to return only stats (or keep as-is, the function is also tested independently)
 
@@ -88,7 +95,9 @@ The callback sends `[chunk: chunk]` updates; `update/2` in the Chat component ac
 **Token savings:** ~9,000 → ~100 input tokens base + tool call overhead + tool results (~200-500 tokens when actually searching)
 
 **How it works:**
+
 1. Add a tool definition to the Responses API request:
+
 ```json
 {
   "type": "function",
@@ -97,7 +106,7 @@ The callback sends `[chunk: chunk]` updates; `update/2` in the Chat component ac
   "parameters": {
     "type": "object",
     "properties": {
-      "query": {"type": "string", "description": "Search query"}
+      "query": { "type": "string", "description": "Search query" }
     },
     "required": ["query"]
   }
@@ -114,6 +123,7 @@ The callback sends `[chunk: chunk]` updates; `update/2` in the Chat component ac
 3. The Chat component's streaming architecture needs to handle this multi-turn flow.
 
 **Pros:**
+
 - Maximal token efficiency — only pay for what's actually needed
 - LLM can answer arbitrary specific questions with real data
 - Scales to any collection size
@@ -121,6 +131,7 @@ The callback sends `[chunk: chunk]` updates; `update/2` in the Chat component ac
 - Leverages the existing `tools` infrastructure in the Responses API request
 
 **Cons:**
+
 - **Significantly more complex** — requires:
   - Changes to `OpenAI.API.chat_stream/6` to support function calls in streaming mode
   - Changes to `decode_responses_event/2` to handle function call SSE events
@@ -132,6 +143,7 @@ The callback sends `[chunk: chunk]` updates; `update/2` in the Chat component ac
 - More error states to handle (function execution failures, parse errors)
 
 **Implementation scope:**
+
 1. **Tool definition module** — New module ~30 lines defining the OpenAI function tool schema
 2. **Function executor** — New module or function in `CollectionChat` that executes the tool call (~20 lines)
 3. **Streaming changes in `OpenAI.API`** — New `chat_stream_with_tools/7` or modify `chat_stream/6` to accept tools and handle function call events (~80 lines)
@@ -150,12 +162,14 @@ The callback sends `[chunk: chunk]` updates; `update/2` in the Chat component ac
 **Token savings:** ~9,000 → ~400 tokens (summary text + stats)
 
 **Pros:**
+
 - Good middle ground — compact but informative
 - The LLM has a narrative understanding of the collection
 - No streaming architecture changes needed
 - Single one-time cost to generate (amortized across many chats)
 
 **Cons:**
+
 - Still doesn't give the LLM ability to answer specific queries ("do I have Kid A?")
 - Summary can go stale if not regenerated on collection changes
 - Requires an initial LLM call to generate the summary (token cost + latency)
@@ -164,6 +178,7 @@ The callback sends `[chunk: chunk]` updates; `update/2` in the Chat component ac
 - Adds a new background job / async concern
 
 **Implementation scope:**
+
 1. Store the cached summary (new DB field on a canonical collection `Chat` record, or a new schema)
 2. A function/worker to generate the LLM summary (calls OpenAI, stores result)
 3. Invalidation triggers (PubSub on record add/edit/delete, regenerate async)
@@ -179,11 +194,13 @@ The callback sends `[chunk: chunk]` updates; `update/2` in the Chat component ac
 **Token savings:** ~9,000 → ~100 tokens base + tool results (0-500 tokens per use)
 
 **Pros:**
+
 - Best of both worlds: statistical awareness always available, specific lookup on demand
 - Token-efficient — base cost is minimal
 - LLM knows to reach for the tool when appropriate
 
 **Cons:**
+
 - Same implementation complexity as Alternative B for the tool infrastructure
 - Slightly more prompt engineering to ensure the model uses the tool appropriately
 
@@ -198,6 +215,7 @@ Upload the collection catalog as a file to OpenAI, create a vector store, and us
 **Token savings:** ~9,000 → ~100 tokens base + retrieval overhead (~200-500 when model searches)
 
 **How it works:**
+
 1. Format collection catalog as text (same as current `collection_summary/0` output)
 2. Upload to OpenAI: `POST /v1/files` with `purpose: "assistants"` → `file_id`
 3. Create vector store: `POST /v1/vector_stores` → `vector_store_id`
@@ -208,6 +226,7 @@ Upload the collection catalog as a file to OpenAI, create a vector store, and us
 **Critical difference from Alt B:** No SSE event handling changes, no orchestration loop, no custom tool execution. `file_search` works exactly like `web_search_preview` (already in use) — OpenAI handles retrieval automatically.
 
 **Pros:**
+
 - ~150 lines vs ~250 for Alt B
 - No changes to `decode_responses_event/2` or Chat streaming loop
 - Semantic search (finds "upbeat 80s rock" not just keywords)
@@ -215,6 +234,7 @@ Upload the collection catalog as a file to OpenAI, create a vector store, and us
 - Reusable for artist bios, notes, etc.
 
 **Cons:**
+
 - File can go stale if not updated on collection change
 - 2-3 new API endpoints needed (Files API, Vector Stores API)
 - Vector store indexing is async (may need brief poll)
@@ -226,13 +246,13 @@ Upload the collection catalog as a file to OpenAI, create a vector store, and us
 
 ## Comparison
 
-| Criterion | A (stats-only) | B (custom func) | C (cached) | E (file_search) |
-|---|---|---|---|---|
-| Implementation complexity | ★☆☆☆☆ | ★★★★☆ | ★★★☆☆ | ★★☆☆☆ |
-| Response quality | ★★☆☆☆ | ★★★★★ | ★★★☆☆ | ★★★★★ |
-| Token efficiency | ★★★★★ | ★★★★★ | ★★★★☆ | ★★★★★ |
-| Infrastructure risk | ★★★★★ | ★★★☆☆ | ★★★★☆ | ★★★★☆ |
-| Reusability | ★☆☆☆☆ | ★★★★☆ | ★★☆☆☆ | ★★★☆☆ |
+| Criterion                 | A (stats-only) | B (custom func) | C (cached) | E (file_search) |
+| ------------------------- | -------------- | --------------- | ---------- | --------------- |
+| Implementation complexity | ★☆☆☆☆          | ★★★★☆           | ★★★☆☆      | ★★☆☆☆           |
+| Response quality          | ★★☆☆☆          | ★★★★★           | ★★★☆☆      | ★★★★★           |
+| Token efficiency          | ★★★★★          | ★★★★★           | ★★★★☆      | ★★★★★           |
+| Infrastructure risk       | ★★★★★          | ★★★☆☆           | ★★★★☆      | ★★★★☆           |
+| Reusability               | ★☆☆☆☆          | ★★★★☆           | ★★☆☆☆      | ★★★☆☆           |
 
 ---
 

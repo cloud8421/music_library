@@ -3,12 +3,12 @@ id: ML-10
 title: Break Records → Artists → Collection → Records static alias cycle
 status: Done
 assignee: []
-created_date: '2026-04-20 08:49'
-updated_date: '2026-04-24 09:49'
+created_date: "2026-04-20 08:49"
+updated_date: "2026-04-24 09:49"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/173'
+  - "https://github.com/cloud8421/music_library/issues/173"
 priority: low
 ordinal: 1000
 ---
@@ -17,6 +17,7 @@ ordinal: 1000
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-16 · updated 2026-04-16_
 
 ## Summary
@@ -62,10 +63,13 @@ similar = Artists.get_similar_artists(artist, collected)
 ```
 
 This removes the `Artists → Collection` edge without moving any behaviour. Within `lib/music_library/`, only `Artists` aliases `Collection` — everything else referencing `Collection` lives in `lib/music_library_web/` (outside the cycle), so this single change is sufficient to break the cycle.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - `mix xref graph --format cycles --label compile` reports no cycle involving Records/Artists/Collection
 - `ArtistLive.Show` tests still pass
 
@@ -76,9 +80,11 @@ This removes the `Artists → Collection` edge without moving any behaviour. Wit
 ## Final Summary
 
 <!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
 Removed `alias MusicLibrary.Collection` from `MusicLibrary.Artists` and changed `get_similar_artists/1` to `get_similar_artists/2`, taking the collected artist id set as an argument instead of fetching it inline. The only caller (`ArtistLive.Show`) now computes the set via `Collection.collected_artist_ids()` and passes it in.
 
 `mix xref graph --format cycles --label compile` now reports **no cycles**. The 3-way cycle is gone, and the 15-module compile-connected cycle that previously forced recompilation cascades is broken. A 14-module runtime-only cycle (Records ↔ Artists via Oban-async edges + workers) remains as expected and does not trigger recompilation.
 
 Full test suite (836 tests including 10 in `ArtistLive.ShowTest`) passes. Format and Credo clean.
+
 <!-- SECTION:FINAL_SUMMARY:END -->

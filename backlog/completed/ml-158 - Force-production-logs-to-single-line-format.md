@@ -3,13 +3,13 @@ id: ML-158
 title: Force production logs to single-line format
 status: Done
 assignee: []
-created_date: '2026-05-03 13:51'
-updated_date: '2026-05-04 13:43'
+created_date: "2026-05-03 13:51"
+updated_date: "2026-05-04 13:43"
 labels:
   - ready
 dependencies: []
 references:
-  - 'backlog://documents/doc-3'
+  - "backlog://documents/doc-3"
 modified_files:
   - mix.exs
   - config/config.exs
@@ -25,11 +25,15 @@ priority: medium
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 When running in production, logs spanning multiple lines create issues — they cannot be easily filtered, and log output cannot be reversed reliably. We need to configure the `prod` environment to output logs on one line with appropriate metadata.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - [x] #1 HTTP request logs (GET /path + Sent 200) appear as a single logfmt line in production
 - [x] #2 LiveView socket connection logs (CONNECTED TO Phoenix.LiveView.Socket) appear as a single line
 - [x] #3 No log message in production output spans multiple physical lines — all newlines are escaped as \\n
@@ -41,6 +45,7 @@ When running in production, logs spanning multiple lines create issues — they 
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
+
 ## Implementation Plan: Force production logs to single-line format
 
 ### Objective alignment
@@ -48,6 +53,7 @@ When running in production, logs spanning multiple lines create issues — they 
 The problem: multi-line log output in production prevents reliable line-based filtering and makes log output impossible to reverse. Log sources include HTTP request logs (two separate `Logger.info` calls from `Phoenix.Logger`), LiveView handshake logs (single `Logger.info` with embedded newlines), and any custom `Logger` calls that pass multi-line strings.
 
 The solution has three layers:
+
 1. **Logster** replaces `Phoenix.Logger` for HTTP request logging — merges `GET + Sent` into one logfmt line
 2. **Custom telemetry handler** replaces `Phoenix.Logger`'s `[:phoenix, :socket_connected]` handler — flattens LiveView handshake into one line
 3. **Custom Logger.Formatter** acts as a universal safety net — replaces any remaining embedded newlines with escaped `\n` in ALL log messages
@@ -72,16 +78,16 @@ Before writing code, verify two assumptions:
 
 `Phoenix.Logger` auto-attaches to 8 telemetry events. With production log level `:info`, only these produce visible output:
 
-| Event | Level | Multi-line? | Covered by |
-|---|---|---|---|
-| `[:phoenix, :endpoint, :start]` | `:info` | No (one line) | Logster v2 |
-| `[:phoenix, :endpoint, :stop]` | `:info` | No (one line) | Logster v2 |
-| `[:phoenix, :socket_connected]` | `:info` | **Yes** (4+ lines) | Custom handler (Step 4) |
-| `[:phoenix, :error_rendered]` | `:error` | No (one line) | Silenced — acceptable (ErrorTracker already captures errors) |
-| `[:phoenix, :router_dispatch, :start]` | `:debug` | Yes | Already filtered at `:info` level — no action needed |
-| `[:phoenix, :socket_drain]` | `:debug` | No | Already filtered |
-| `[:phoenix, :channel_joined]` | `:debug` | Yes | Already filtered (LiveView uses `"lv:"` topics not `"phoenix"` internal topics, but default log_join level is `:debug`) |
-| `[:phoenix, :channel_handled_in]` | `:debug` | Yes | Already filtered |
+| Event                                  | Level    | Multi-line?        | Covered by                                                                                                              |
+| -------------------------------------- | -------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| `[:phoenix, :endpoint, :start]`        | `:info`  | No (one line)      | Logster v2                                                                                                              |
+| `[:phoenix, :endpoint, :stop]`         | `:info`  | No (one line)      | Logster v2                                                                                                              |
+| `[:phoenix, :socket_connected]`        | `:info`  | **Yes** (4+ lines) | Custom handler (Step 4)                                                                                                 |
+| `[:phoenix, :error_rendered]`          | `:error` | No (one line)      | Silenced — acceptable (ErrorTracker already captures errors)                                                            |
+| `[:phoenix, :router_dispatch, :start]` | `:debug` | Yes                | Already filtered at `:info` level — no action needed                                                                    |
+| `[:phoenix, :socket_drain]`            | `:debug` | No                 | Already filtered                                                                                                        |
+| `[:phoenix, :channel_joined]`          | `:debug` | Yes                | Already filtered (LiveView uses `"lv:"` topics not `"phoenix"` internal topics, but default log_join level is `:debug`) |
+| `[:phoenix, :channel_handled_in]`      | `:debug` | Yes                | Already filtered                                                                                                        |
 
 **Verdict**: The only events that produce visible output at `:info`+ are endpoint start/stop, socket_connected, and error_rendered. Disabling Phoenix.Logger is safe — the first two are replaced by Logster, socket_connected is replaced by the custom handler, and losing error_rendered is acceptable because ErrorTracker already captures all errors via its own telemetry listener.
 
@@ -94,6 +100,7 @@ After adding the Logster dependency (Step 1), inspect `Logster`'s telemetry atta
 **Verify**: In an IEx session: `Logster.__info__(:functions)` or check the Logster source to see which events it attaches to. If it covers `socket_connected`, **skip Step 4** — the custom telemetry handler is unnecessary.
 
 #### Step 1: Add Logster dependency
+
 - Add `{:logster, "~> 2.0.0-rc.5"}` to `mix.exs` deps
 - Run `mix deps.get`
 - **Verify**: `mix compile` succeeds, `Logster` module is available
@@ -222,18 +229,18 @@ After adding the Logster dependency (Step 1), inspect `Logster`'s telemetry atta
 
 ### Verifiability
 
-| Step | Verification |
-|---|---|
-| 0a | Inspect stdout with `MIX_ENV=prod mix phx.server` before any changes — confirm only endpoint start/stop, socket_connected, and error_rendered appear at `:info`+ |
-| 0b | Inspect Logster source in `deps/logster/` — check if `socket_connected` is handled; if yes, skip Step 4 |
-| 1 | `mix compile` passes, `Logster` module is available in IEx |
-| 2-6 | Start app with `MIX_ENV=prod mix phx.server`, hit endpoints, inspect stdout — all logs on one line |
-| 4 | Visit a LiveView page (`/collection`) in prod mode, verify single-line output in stdout |
-| 5 | `mix test test/music_library/logger/single_line_formatter_test.exs` — all tests pass |
-| 7 | Both `rg` searches (escaped `\n` and multi-line Logger calls) return empty for `lib/` |
-| 8 | `mix test` passes with ≥75% coverage; dev env test confirms multi-line output unchanged |
-| 9 | `MIX_ENV=prod mix release` succeeds; release binary starts without errors; log output is single-line |
-| 10 | Read both docs, confirm accuracy against implemented config and modules |
+| Step | Verification                                                                                                                                                     |
+| ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0a   | Inspect stdout with `MIX_ENV=prod mix phx.server` before any changes — confirm only endpoint start/stop, socket_connected, and error_rendered appear at `:info`+ |
+| 0b   | Inspect Logster source in `deps/logster/` — check if `socket_connected` is handled; if yes, skip Step 4                                                          |
+| 1    | `mix compile` passes, `Logster` module is available in IEx                                                                                                       |
+| 2-6  | Start app with `MIX_ENV=prod mix phx.server`, hit endpoints, inspect stdout — all logs on one line                                                               |
+| 4    | Visit a LiveView page (`/collection`) in prod mode, verify single-line output in stdout                                                                          |
+| 5    | `mix test test/music_library/logger/single_line_formatter_test.exs` — all tests pass                                                                             |
+| 7    | Both `rg` searches (escaped `\n` and multi-line Logger calls) return empty for `lib/`                                                                            |
+| 8    | `mix test` passes with ≥75% coverage; dev env test confirms multi-line output unchanged                                                                          |
+| 9    | `MIX_ENV=prod mix release` succeeds; release binary starts without errors; log output is single-line                                                             |
+| 10   | Read both docs, confirm accuracy against implemented config and modules                                                                                          |
 
 ### Architecture impact analysis
 
@@ -252,16 +259,19 @@ After adding the Logster dependency (Step 1), inspect `Logster`'s telemetry atta
 **UI components**: None affected.
 
 **Config changes**:
+
 - `config/config.exs`: add `config :music_library, :single_line_logging, false`
 - `mix.exs`: new dependency `{:logster, "~> 2.0.0-rc.5"}`
 - `config/prod.exs`: 4 additions (phoenix logger disable, single_line_logging flag, logster config, formatter config)
 - `lib/music_library/application.ex`: 1 conditional block (Logster attach + optional telemetry handler attach)
 
 **New modules**:
+
 - `lib/music_library/logger/single_line_formatter.ex` — Logger.Formatter format/4 function; requires `@moduledoc` (Credo strict mode)
 - `lib/music_library_web/telemetry/log_handler.ex` — Phoenix socket telemetry handler (conditional on Step 0b); requires `@moduledoc`
 
 **New tests**:
+
 - `test/music_library/logger/single_line_formatter_test.exs` — unit tests for the formatter (newline replacement, iolist handling, metadata preservation)
 - `test/music_library_web/telemetry/log_handler_test.exs` — unit tests for the telemetry handler (single-line output, param filtering)
 - Integration assertions in existing or new test files for dev config unchanged
@@ -273,6 +283,7 @@ After adding the Logster dependency (Step 1), inspect `Logster`'s telemetry atta
 ### Performance profile
 
 **Runtime complexity**: O(1) per log event.
+
 - Logster: string interpolation from telemetry metadata per HTTP request
 - Custom telemetry: same — one function call per socket connection
 - Custom formatter: one `IO.chardata_to_string/1` + `String.replace/3` per log event (message size bounded by Logger truncation)
@@ -288,13 +299,15 @@ After adding the Logster dependency (Step 1), inspect `Logster`'s telemetry atta
 ### Benchmarking requirements
 
 None needed. The operations are:
+
 - String replacement on logger-truncated messages (bounded by default 4KB or configurable)
 - String interpolation from telemetry metadata (no IO, no computation)
-These are trivially fast. If future log volume increases by orders of magnitude, the `Logger` overload protection (message dropping at >500/sec) will engage before our formatter becomes a bottleneck.
+  These are trivially fast. If future log volume increases by orders of magnitude, the `Logger` overload protection (message dropping at >500/sec) will engage before our formatter becomes a bottleneck.
 
 ### Cost profile
 
 No paid resources consumed.
+
 - Logster: MIT license, free
 - No API calls, no compute, no storage costs
 - No third-party services
@@ -314,26 +327,32 @@ No manual production changes required. All configuration is in `config/prod.exs`
 **Rollout**: Standard deploy (push to main → GitHub Actions → Coolify). First deploy will be slower due to new dependency compilation (Logster). Subsequent deploys use cached Docker layer.
 
 **Rollback**: Revert to previous commit. No data migration needed.
+
 <!-- SECTION:PLAN:END -->
 
 ## Final Summary
 
 <!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
 ## Implementation Summary
 
 ### What was done
 
 #### Step 0: Pre-implementation verification
+
 - Confirmed Phoenix.Logger fires 4 events at `:info`+ level (endpoint start/stop, socket_connected, error_rendered) — matches plan assumptions
 - Confirmed Logster v2 handles `[:phoenix, :socket_connected]` — **skipped Step 4** (custom telemetry handler unnecessary)
 
 #### Step 1: Added Logster dependency
+
 - `mix.exs`: `{:logster, "~> 2.0.0-rc.5"}`
 
 #### Step 2: Disabled Phoenix.Logger in prod
+
 - `config/prod.exs`: `config :phoenix, :logger, false`
 
 #### Step 3: Configured Logster with environment-conditional attach
+
 - `config/config.exs`: `config :music_library, :single_line_logging, false`
 - `config/prod.exs`: `config :music_library, :single_line_logging, true`
 - `config/prod.exs`: Logster config with `extra_fields: [:request_id]` and parameter filtering
@@ -342,27 +361,33 @@ No manual production changes required. All configuration is in `config/prod.exs`
 #### Step 4: Skipped (Logster v2 handles `[:phoenix, :socket_connected]`)
 
 #### Step 5-6: Created custom Logger.Formatter as safety net
+
 - `lib/music_library/logger/single_line_formatter.ex`: Implements `format/4` callback, replaces embedded `\n` with escaped `\\n`, handles string/iolist/report messages, preserves metadata
 - `config/prod.exs`: formatter configured as `{MusicLibrary.Logger.SingleLineFormatter, :format}` with `metadata: [:request_id]`
 
 #### Step 7: Codebase audit
+
 - Searched for Logger calls with embedded `\n` — none found
 - Multi-line Logger calls in source all produce single-line output (string concatenation without actual newlines)
 - Custom formatter handles any remaining cases from OTP/Elixir internals
 
 #### Step 8: Tests
+
 - `test/music_library/logger/single_line_formatter_test.exs`: 13 tests covering newline replacement, iolist handling, metadata preservation, single-line output, dev/test config verification
 - All 931 project tests pass
 
 #### Step 9: OTP release verification
+
 - `MIX_ENV=prod mix release` builds successfully
 - sys.config confirms: `phoenix logger: false`, `single_line_logging: true`, Logster config, custom formatter tuple, logster application included
 
 #### Step 10: Documentation
+
 - `docs/production-infrastructure.md`: Added "Logging" section under Monitoring & Observability
 - `docs/architecture.md`: Added `MusicLibrary.Logger.SingleLineFormatter` to Business Logic Modules, Logster note under Supervision Tree, and Web Utility Modules note
 
 ### Files changed
+
 - `mix.exs` — added logster dependency
 - `config/config.exs` — added `single_line_logging: false`
 - `config/prod.exs` — 4 config additions (phoenix logger disable, flag, logster, formatter)

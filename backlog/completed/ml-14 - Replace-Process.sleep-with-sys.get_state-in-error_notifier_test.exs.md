@@ -1,19 +1,20 @@
 ---
 id: ML-14
-title: 'Replace Process.sleep with :sys.get_state in error_notifier_test.exs'
+title: "Replace Process.sleep with :sys.get_state in error_notifier_test.exs"
 status: Done
 assignee: []
-created_date: '2026-04-20 08:50'
+created_date: "2026-04-20 08:50"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/169'
+  - "https://github.com/cloud8421/music_library/issues/169"
 priority: low
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-16 · updated 2026-04-17 · closed 2026-04-17_
 
 ## Summary
@@ -31,7 +32,9 @@ Each call is after `:telemetry.execute/3`, waiting for the `ErrorTracker.ErrorNo
 Replace each `Process.sleep(50)` with `:sys.get_state(ErrorTracker.ErrorNotifier)` — a synchronous probe that blocks until the GenServer has drained its mailbox up to the current message. Deterministic and faster.
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - Zero `Process.sleep` occurrences in `test/`
 - Tests remain deterministic and pass under repeated runs
 <!-- SECTION:DESCRIPTION:END -->

@@ -11,18 +11,21 @@ Goal: reduce repetitive clicking when adding multiple records from the same sear
 ## Scope
 
 UI direction (already agreed):
+
 - Mockup **B** (bottom tray) on small viewports (default / `sm:`).
 - Mockup **A** (side-by-side: search left, cart right) on `md:` and up — the import modal widens to fit.
 - Empty cart state shown in-place (not hidden).
 - Format picker keeps the existing `dropdown` + `dropdown_link` UI; the click adds to the cart rather than importing.
 
 Batch size behaviour (mirrors `BarcodeScan`):
+
 - **1 item**: sync via `start_async`. Spinner in the "Import 1 record" button; modal stays open during the call; on success parent does `push_navigate` to the new record + toast; on error the modal stays open and shows an error toast.
 - **2+ items**: enqueue one `ImportFromMusicbrainzReleaseGroup` Oban job per cart item via `Oban.insert_all/1`; parent toasts "Importing N records in the background..." and `push_patch`es back to the base index (modal closes).
 
 Duplicate cart entries: deduped by `{release_group_id, format}`. Adding the same pair twice is a no-op; adding the same release group with a different format creates a second cart row (users can own multiple formats of a release — consistent with the existing "allow duplicate imports" stance).
 
 Out of scope:
+
 - Persisted cart (explicitly ephemeral).
 - Stats page `handle_event("import", ...)` at `lib/music_library_web/live/stats_live/index.ex:113` — different flow (`import_from_musicbrainz_release`, singular), untouched.
 - Barcode scanner flow — already batches; no change.
@@ -54,12 +57,14 @@ Mirror the structure of `lib/music_library/worker/import_from_musicbrainz_releas
 `lib/music_library_web/components/add_record.ex`.
 
 #### Assigns (added to `mount/1`)
+
 - `cart :: [%{cart_item_id, release_group_id, title, artists, release_date, thumb_url, format}]` — ordered list, newest first. `cart_item_id` via `System.unique_integer([:positive])`.
 - `cart_pairs :: MapSet.t({binary, atom})` — set of `{release_group_id, format}` for O(1) "already in cart" and dedup checks.
 - `cart_expanded? :: boolean` — mobile tray collapse; defaults to `true`. Always-expanded on `md:` via Tailwind `md:!block`.
 - `importing? :: boolean` — single-item sync spinner flag.
 
 #### Events (all `phx-target={@myself}`)
+
 - `"add_to_cart"` — payload `%{"id" => rg_id, "format" => format_str, "title" => ..., "artists" => ..., "release_date" => ..., "thumb_url" => ...}`. Display fields come from `JS.push` values on the dropdown link so we don't need a parallel `release_groups_by_id` map. Validates `format_str` against `Records.Record.formats()`. If `{rg_id, format_atom}` already in `cart_pairs`, no-op.
 - `"remove_from_cart"` — `%{"cart_item_id" => id}`. Updates `cart` + `cart_pairs`.
 - `"change_format"` — `%{"cart_item_id" => id, "format" => format_str}`. Whitelists format. No-op if the new `{rg_id, format_atom}` would collide with another cart row.
@@ -71,14 +76,17 @@ Mirror the structure of `lib/music_library/worker/import_from_musicbrainz_releas
   - `[_, _ | _]`: builds a list of `ImportFromMusicbrainzReleaseGroup.new/1` changesets, single `Oban.insert_all/1` call (atomic — no partial enqueue on failure), then `notify_parent({:imported_async, count})`.
 
 #### `handle_async(:import_cart, ...)`
+
 - `{:ok, {:ok, record}}` → `notify_parent({:imported_single, record})`. Parent handles navigation + toast + modal close; no local reset needed since the component is about to unmount.
 - `{:ok, {:error, reason}}` → `put_toast!(:error, gettext("Error importing record") <> ": " <> ErrorMessages.friendly_message(reason))`, `assign(:importing?, false)`. Modal stays open so the user can adjust the cart.
 - `{:exit, reason}` → `Logger.warning(inspect(reason))` + generic error toast, reset `importing?`.
 
 #### `notify_parent/1`
+
 Private helper: `defp notify_parent(msg), do: send(self(), {__MODULE__, msg})`. Matches the convention used in `record_form.ex:646`, `online_store_template_live/form.ex:140`, etc.
 
 #### Render structure
+
 Root becomes a responsive grid:
 
 ```
@@ -91,6 +99,7 @@ Root becomes a responsive grid:
 Results column keeps the existing search input + stream + `max-h-125 overflow-y-auto` + `phx-viewport-bottom` load-more. Each result row gets an "In cart" chip when `MapSet.member?(@cart_pairs, {rg_id, any_format})` — a cheap helper `in_cart?/2`. The `+ icon → dropdown` loop unchanged; only the `phx-click` target becomes `JS.push("add_to_cart", value: %{id:, format:, title:, artists:, release_date:, thumb_url:}, target: "##{@id}")` with `page_loading: false` removed (cart-add is instant).
 
 Cart column:
+
 - Header: cart count, "Clear all" link (both gettext'd), mobile chevron (`phx-click="toggle_cart"`) hidden on `md:+`.
 - Body wrapped in `<div class={["md:!block", not @cart_expanded? and "hidden"]}>` so mobile collapse doesn't leak past `md:` (`md:!block` is the important-override).
   - Empty state when `@cart == []`: music icon + short gettext'd hint.
@@ -106,6 +115,7 @@ Dropdown placement on `md:col-span-3` may need `placement="left-start"` at `md:`
 
 - Remove the `handle_event("import", ...)` clause and its call to `IndexActions.handle_import/3` (not dropping `IndexActions.handle_import/3` itself yet — see step 6).
 - Add:
+
   ```elixir
   def handle_info({AddRecord, {:imported_single, record}}, socket),
     do: IndexActions.handle_cart_imported_single(socket, record)
@@ -113,6 +123,7 @@ Dropdown placement on `md:col-span-3` may need `placement="left-start"` at `md:`
   def handle_info({AddRecord, {:imported_async, count}}, socket),
     do: IndexActions.handle_cart_imported_async(socket, count)
   ```
+
 - Update the `structured_modal` call for `live_action == :import` to pass `width_class="md:max-w-4xl lg:max-w-5xl"`. The other `structured_modal` calls (edit, barcode scan) keep the default width.
 - Pass `on_close={nil}` (or a no-op) on the import modal while `@importing?`. Simplest: pass the close handler only when not importing — but `@importing?` is a component assign, not exposed to the parent. Alternative: the component's `toggle_cart` / close button is a no-op while importing; the outer Fluxon modal close still works. Accept this: if the user closes the modal mid-import, the `handle_async` callback lands on a detached component and is silently dropped by Phoenix — no user-visible bug. Add a short comment in the component pointing this out.
 
@@ -121,6 +132,7 @@ Dropdown placement on `md:col-span-3` may need `placement="left-start"` at `md:`
 `lib/music_library_web/live_helpers/index_actions.ex`.
 
 - `handle_cart_imported_single(socket, record)`:
+
   ```elixir
   config = socket.assigns.index_config
 
@@ -129,8 +141,11 @@ Dropdown placement on `md:col-span-3` may need `placement="left-start"` at `md:`
    |> put_toast(:info, config.import_success_toast)
    |> push_navigate(to: config.record_path_fn.(record.id))}
   ```
+
   Reuses `config.import_success_toast` and `config.record_path_fn` that already exist.
+
 - `handle_cart_imported_async(socket, count)`:
+
   ```elixir
   config = socket.assigns.index_config
 
@@ -147,17 +162,20 @@ Dropdown placement on `md:col-span-3` may need `placement="left-start"` at `md:`
    |> put_toast(:info, msg)
    |> push_patch(to: config.base_index_path)}
   ```
+
   The `push_patch` back to `base_index_path` closes the modal because `@live_action` resets.
 
 ### 6. Remove dead code
 
 Once steps 3–5 are in place:
+
 - `IndexActions.handle_import/3` is no longer called (verified earlier: only collection + wishlist called it; stats does not). Remove it.
 - The old `handle_event("import", ...)` in both collection and wishlist LiveViews is gone (step 4).
 
 ### 7. Gettext
 
 After implementation, run `mix gettext.extract` and `mix gettext.merge priv/gettext` to regenerate `.pot` / `.po` files. New strings to cover:
+
 - "In cart"
 - "Import %{count} record" / "Import %{count} records" (ngettext)
 - "Your cart is empty"

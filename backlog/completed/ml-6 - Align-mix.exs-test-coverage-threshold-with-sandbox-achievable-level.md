@@ -3,17 +3,18 @@ id: ML-6
 title: Align mix.exs test coverage threshold with sandbox-achievable level
 status: Done
 assignee: []
-created_date: '2026-04-20 08:48'
+created_date: "2026-04-20 08:48"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/177'
+  - "https://github.com/cloud8421/music_library/issues/177"
 priority: low
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-16 · updated 2026-04-17 · closed 2026-04-17_
 
 ## Summary
@@ -25,6 +26,7 @@ _GitHub: created 2026-04-16 · updated 2026-04-17 · closed 2026-04-17_
 Current coverage output: 75.77 % (720 tests, `mix test --cover`).
 
 0 % modules that cannot be covered under the sandbox convention:
+
 - `MusicLibrary.Worker.RepoVacuum`
 - `MusicLibrary.Worker.RepoOptimize`
 - `MusicLibrary.Worker.SendRecordsOnThisDayEmail`
@@ -44,7 +46,9 @@ A red coverage check on `mix test --cover` that is structurally unachievable tra
 Option 2 is preferable because it keeps the threshold aspirational and surfaces the exclusion list.
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - `mix test --cover` passes under its configured threshold
 - Untestable modules are explicitly enumerated somewhere (config, moduledoc, or both)
 <!-- SECTION:DESCRIPTION:END -->

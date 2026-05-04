@@ -3,17 +3,18 @@ id: ML-52
 title: Collection/Wishlist Show LiveViews duplication
 status: Done
 assignee: []
-created_date: '2026-04-20 08:53'
+created_date: "2026-04-20 08:53"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/123'
+  - "https://github.com/cloud8421/music_library/issues/123"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-03-22 · updated 2026-03-22 · closed 2026-03-22_
 
 ## Description
@@ -28,4 +29,5 @@ _GitHub: created 2026-03-22 · updated 2026-03-22 · closed 2026-03-22_
 ## Suggested approach
 
 Extract shared record action handlers into a helper module that both LiveViews can delegate to.
+
 <!-- SECTION:DESCRIPTION:END -->

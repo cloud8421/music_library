@@ -3,17 +3,18 @@ id: ML-58
 title: Standardize page header top margin
 status: Done
 assignee: []
-created_date: '2026-04-20 08:54'
+created_date: "2026-04-20 08:54"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/117'
+  - "https://github.com/cloud8421/music_library/issues/117"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-03-16 · updated 2026-03-16 · closed 2026-03-16_
 
 ## Problem
@@ -27,4 +28,5 @@ Page-level section headers use inconsistent top margins:
 ## Suggestion
 
 Pick a standard margin (e.g. `mt-5`) for all page-level h1 section headers.
+
 <!-- SECTION:DESCRIPTION:END -->

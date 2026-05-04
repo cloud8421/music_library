@@ -3,17 +3,18 @@ id: ML-76
 title: Large modules approaching refactoring threshold
 status: To Do
 assignee: []
-created_date: '2026-04-20 08:57'
+created_date: "2026-04-20 08:57"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/99'
+  - "https://github.com/cloud8421/music_library/issues/99"
 priority: low
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-03-05 · updated 2026-03-06 · closed 2026-03-06 · not planned_
 
 ## Priority: Low
@@ -36,4 +37,5 @@ Monitor these modules and consider extraction when adding new features touches t
 ## Source
 
 From technical debt audit (2026-03-05), updated 2026-03-06.
+
 <!-- SECTION:DESCRIPTION:END -->

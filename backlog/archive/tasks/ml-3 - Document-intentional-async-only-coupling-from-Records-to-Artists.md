@@ -3,18 +3,19 @@ id: ML-3
 title: Document intentional async-only coupling from Records to Artists
 status: To Do
 assignee: []
-created_date: '2026-04-20 08:44'
-updated_date: '2026-04-20 08:44'
+created_date: "2026-04-20 08:44"
+updated_date: "2026-04-20 08:44"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/181'
+  - "https://github.com/cloud8421/music_library/issues/181"
 priority: low
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-16 · updated 2026-04-19 · closed 2026-04-19 · not planned_
 
 ## Summary
@@ -37,10 +38,13 @@ Add a short inline comment above each call site explaining:
 # Records.create/delete -> Artists.refresh/prune (sync) -> Records (embedding regeneration)
 Artists.refresh_artist_info_async(artist)
 ```
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - [ ] #1 Inline comments added at records.ex:385 and :415
 - [ ] #2 Comments explain the runtime-cycle motivation, not just "it's async"
 <!-- AC:END -->

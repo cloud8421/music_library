@@ -3,17 +3,18 @@ id: ML-44
 title: Wikipedia and BraveSearch APIs missing rate limiting
 status: Done
 assignee: []
-created_date: '2026-04-20 08:53'
+created_date: "2026-04-20 08:53"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/133'
+  - "https://github.com/cloud8421/music_library/issues/133"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-03-25 · updated 2026-03-25 · closed 2026-03-25_
 
 ## Description
@@ -29,4 +30,5 @@ Attach `Req.RateLimiter` with appropriate cooldown values to both Wikipedia.API 
 ## Found during
 
 Codebase consistency audit (2026-03-25)
+
 <!-- SECTION:DESCRIPTION:END -->

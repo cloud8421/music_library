@@ -3,17 +3,18 @@ id: ML-16
 title: Inconsistent HTTP timeout configuration across API clients
 status: To Do
 assignee: []
-created_date: '2026-04-20 08:50'
+created_date: "2026-04-20 08:50"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/163'
+  - "https://github.com/cloud8421/music_library/issues/163"
 priority: low
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-05 · updated 2026-04-09 · closed 2026-04-08 · not planned_
 
 ## Summary
@@ -40,7 +41,9 @@ HTTP timeout configuration varies significantly across API integrations with no 
 3. Consider making timeouts configurable via each API's Config module
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - All API clients have explicit, intentional timeout configuration
 - Timeout choices are documented (e.g., in Config module comments)
 <!-- SECTION:DESCRIPTION:END -->

@@ -3,17 +3,18 @@ id: ML-99
 title: Raw SQL with string concatenation in ScrobbleRules
 status: Done
 assignee: []
-created_date: '2026-04-20 08:58'
+created_date: "2026-04-20 08:58"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/75'
+  - "https://github.com/cloud8421/music_library/issues/75"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-02-17 · updated 2026-03-05 · closed 2026-03-05_
 
 ## Priority: Medium
@@ -29,4 +30,5 @@ Use Ecto query builders or a safer SQL construction approach to improve maintain
 ## Source
 
 From technical debt audit (2026-02-17), item #2.
+
 <!-- SECTION:DESCRIPTION:END -->

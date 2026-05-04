@@ -3,17 +3,18 @@ id: ML-36
 title: Return controlled errors from genre population
 status: Done
 assignee: []
-created_date: '2026-04-20 08:52'
+created_date: "2026-04-20 08:52"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/142'
+  - "https://github.com/cloud8421/music_library/issues/142"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-03-30 · updated 2026-03-30 · closed 2026-03-30_
 
 ## Summary
@@ -40,7 +41,9 @@ A transient OpenAI failure becomes an exception path instead of a controlled dom
 Make `populate_genres/1` consistently return tagged tuples using `with {:ok, response} <- OpenAI.gpt(completion), {:ok, updated_record} <- Repo.update(...) do ... end`, mapping external API failures into a domain error shape the worker can handle intentionally.
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - OpenAI/API failures do not raise from `populate_genres/1`.
 - The worker behavior is explicit for retryable vs non-retryable failures.
 - Tests cover an API failure path.

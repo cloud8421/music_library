@@ -3,17 +3,18 @@ id: ML-15
 title: Sanitize Wikipedia bio_html in ArtistLive.Show
 status: Done
 assignee: []
-created_date: '2026-04-20 08:50'
+created_date: "2026-04-20 08:50"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/168'
+  - "https://github.com/cloud8421/music_library/issues/168"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-16 · updated 2026-04-16 · closed 2026-04-16_
 
 ## Summary
@@ -34,11 +35,14 @@ Low under the single-user threat model (Wikipedia's REST API returns sanitized H
 ## Fix
 
 Either:
+
 1. Pipe `bio_html` through `MDEx.safe_html/2` with `MDEx.Document.default_sanitize_options()` (strongest), or
 2. Add `# sobelow_skip ["XSS.Raw"]` at `show.ex:298` with a comment explaining Wikipedia is a trusted third-party HTML source (consistent with the other 7 annotation sites).
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - Either HTML sanitization applied, or annotation + justification added
 - Sobelow scan stays clean at `--exit high`
 <!-- SECTION:DESCRIPTION:END -->

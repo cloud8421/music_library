@@ -3,17 +3,18 @@ id: ML-4
 title: Improve test coverage for LiveHelpers.RecordActions and Components.Chat
 status: Done
 assignee: []
-created_date: '2026-04-20 08:48'
+created_date: "2026-04-20 08:48"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/179'
+  - "https://github.com/cloud8421/music_library/issues/179"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-16 · updated 2026-04-17 · closed 2026-04-17_
 
 ## Summary
@@ -40,7 +41,9 @@ Both `LiveHelpers.RecordActions` and `Components.Chat` contain branches for erro
 - For `Components.Chat`: test the streaming state transitions (starting, receiving chunks, error, completed) and the message submission path. Streaming can be faked via `Req.Test` or behaviour stubs.
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - `LiveHelpers.RecordActions` reaches at least 70 % line coverage
 - `Components.Chat` reaches at least 60 % line coverage
 - Both happy and error paths covered

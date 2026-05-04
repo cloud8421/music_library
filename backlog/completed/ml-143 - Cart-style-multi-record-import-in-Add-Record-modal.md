@@ -3,8 +3,8 @@ id: ML-143
 title: Cart-style multi-record import in Add Record modal
 status: Done
 assignee: []
-created_date: '2026-04-20 10:00'
-updated_date: '2026-04-20 12:34'
+created_date: "2026-04-20 10:00"
+updated_date: "2026-04-20 12:34"
 labels:
   - ui
   - liveview
@@ -23,9 +23,11 @@ ordinal: 1000
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 Replace the one-record-at-a-time import in the Add Record modal with a shopping-cart staging flow. Users build an ephemeral cart of `{release_group, format}` items from MusicBrainz search results, then import them all at once.
 
 Batch-size behaviour mirrors the existing `BarcodeScan` split:
+
 - 1 item → sync `start_async` with a spinner in the "Import 1 record" button; on success the modal closes and navigates to the new record.
 - 2+ items → one Oban job per item via a new `ImportFromMusicbrainzReleaseGroup` worker; modal closes immediately and toasts "Importing N records in the background..."
 
@@ -34,10 +36,13 @@ Layout: mockup B (bottom tray) as baseline, mockup A (search left, cart right) o
 Full technical plan and visual mockups are in the task folder — see References.
 
 Affects both `CollectionLive.Index` and `WishlistLive.Index`. Barcode scanner flow and `StatsLive` single-record import are untouched.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - [ ] #1 From the Collection or Wishlist index, clicking a format in the result dropdown adds a `{release_group, format}` item to the cart instead of importing immediately
 - [ ] #2 The cart renders as a collapsible bottom tray on small viewports and as a right-hand panel on `md:` and up
 - [ ] #3 The import modal widens on `md:` and up to fit the side-by-side layout

@@ -3,17 +3,18 @@ id: ML-55
 title: Standardize stats dashboard gap sizes
 status: Done
 assignee: []
-created_date: '2026-04-20 08:54'
+created_date: "2026-04-20 08:54"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/120'
+  - "https://github.com/cloud8421/music_library/issues/120"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-03-16 · updated 2026-03-16 · closed 2026-03-16_
 
 ## Problem
@@ -28,4 +29,5 @@ Within the stats dashboard (`stats_live/index.ex`), multiple gap sizes are used 
 ## Suggestion
 
 Use a single gap value (e.g. `gap-5`) across all stats grid sections for visual consistency.
+
 <!-- SECTION:DESCRIPTION:END -->

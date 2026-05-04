@@ -2,14 +2,16 @@
 id: doc-3
 title: Force production logs to single-line format
 type: other
-created_date: '2026-05-03 13:53'
-updated_date: '2026-05-04 06:55'
+created_date: "2026-05-03 13:53"
+updated_date: "2026-05-04 06:55"
 ---
+
 # Research: Force production logs to single-line format
 
 ## Current state
 
 **Config** (`config/config.exs`):
+
 ```elixir
 config :logger, :default_formatter,
   format: "$time $metadata[$level] $message\n",
@@ -17,18 +19,19 @@ config :logger, :default_formatter,
 ```
 
 **Override** (`config/prod.exs`):
+
 ```elixir
 config :logger, level: :info
 ```
 
 **Log sources in prod**:
 
-| Source | Produces | Problem |
-|---|---|---|
-| `Phoenix.Logger` (telemetry) | `GET /health` + `Sent 200 in Xms` | Two separate lines for one request — can't reverse |
-| `Phoenix.Logger` (telemetry) | `CONNECTED TO Phoenix.LiveView.Socket...` | One event with embedded `\n` — 4+ lines |
-| Custom `Logger.info/error/...` | Varies | Some may be multi-line |
-| OTP / stack traces | Crash reports | Multi-line |
+| Source                         | Produces                                  | Problem                                            |
+| ------------------------------ | ----------------------------------------- | -------------------------------------------------- |
+| `Phoenix.Logger` (telemetry)   | `GET /health` + `Sent 200 in Xms`         | Two separate lines for one request — can't reverse |
+| `Phoenix.Logger` (telemetry)   | `CONNECTED TO Phoenix.LiveView.Socket...` | One event with embedded `\n` — 4+ lines            |
+| Custom `Logger.info/error/...` | Varies                                    | Some may be multi-line                             |
+| OTP / stack traces             | Crash reports                             | Multi-line                                         |
 
 `Phoenix.Logger` is auto-attached by Phoenix.Endpoint and handles telemetry events including `[:phoenix, :endpoint, :start]`, `[:phoenix, :endpoint, :stop]`, and `[:phoenix, :socket_connected]`.
 
@@ -46,14 +49,14 @@ v2 (`~> 2.0.0-rc.5`) uses `Logster.attach_phoenix_logger()` in `application.ex` 
 
 ### Architecture impact
 
-| Touchpoint | Change |
-|---|---|
-| `config/prod.exs` | Add `config :phoenix, :logger, false` + Logster config + formatter config |
-| `lib/music_library/application.ex` | Add conditional `Logster.attach_phoenix_logger()` |
-| `lib/music_library_web/telemetry_log_handler.ex` | **New module** — handles socket_connected telemetry |
-| `lib/music_library/logger/single_line_formatter.ex` | **New module** — Logger.Formatter format function |
-| `mix.exs` | Add `{:logster, "~> 2.0.0-rc.5"}` |
-| Docs | Update `docs/production-infrastructure.md` with logging config |
+| Touchpoint                                          | Change                                                                    |
+| --------------------------------------------------- | ------------------------------------------------------------------------- |
+| `config/prod.exs`                                   | Add `config :phoenix, :logger, false` + Logster config + formatter config |
+| `lib/music_library/application.ex`                  | Add conditional `Logster.attach_phoenix_logger()`                         |
+| `lib/music_library_web/telemetry_log_handler.ex`    | **New module** — handles socket_connected telemetry                       |
+| `lib/music_library/logger/single_line_formatter.ex` | **New module** — Logger.Formatter format function                         |
+| `mix.exs`                                           | Add `{:logster, "~> 2.0.0-rc.5"}`                                         |
+| Docs                                                | Update `docs/production-infrastructure.md` with logging config            |
 
 ### Performance
 

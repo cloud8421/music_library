@@ -3,17 +3,18 @@ id: ML-83
 title: Duplicated apply_fallback_index across 5 LiveViews
 status: Done
 assignee: []
-created_date: '2026-04-20 08:57'
+created_date: "2026-04-20 08:57"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/92'
+  - "https://github.com/cloud8421/music_library/issues/92"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-03-05 · updated 2026-03-05 · closed 2026-03-05_
 
 ## Priority: Medium
@@ -35,4 +36,5 @@ Extract to a shared helper, parameterizing the stream key name.
 ## Source
 
 From technical debt audit (2026-03-05).
+
 <!-- SECTION:DESCRIPTION:END -->

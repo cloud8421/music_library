@@ -9,11 +9,23 @@
       tailwind.config = { darkMode: "class" };
     </script>
     <style>
-      body { font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; }
-      .mockup-frame { box-shadow: 0 10px 30px rgba(0,0,0,0.18); }
+      body {
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          sans-serif;
+      }
+      .mockup-frame {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+      }
       /* simple ring to mimic modal shell */
-      .modal-shell { border: 1px solid rgb(228 228 231 / 1); }
-      .dark .modal-shell { border-color: rgb(63 63 70 / 1); }
+      .modal-shell {
+        border: 1px solid rgb(228 228 231 / 1);
+      }
+      .dark .modal-shell {
+        border-color: rgb(63 63 70 / 1);
+      }
       /* hero-plus like icon via unicode placeholders; SVGs inline below */
     </style>
   </head>
@@ -23,7 +35,8 @@
         <div>
           <h1 class="text-2xl font-semibold">Add Record — Cart UI Mockups</h1>
           <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Three directions for a multi-record import flow. Static HTML, not wired up.
+            Three directions for a multi-record import flow. Static HTML, not
+            wired up.
           </p>
         </div>
         <button
@@ -41,30 +54,58 @@
         <div class="mb-4">
           <h2 class="text-lg font-semibold">A — Side-by-side panel</h2>
           <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Cart lives as a right column inside the existing import modal. Everything on one screen.
-            Strongest when the user is actively curating a batch.
+            Cart lives as a right column inside the existing import modal.
+            Everything on one screen. Strongest when the user is actively
+            curating a batch.
           </p>
         </div>
 
-        <div class="mockup-frame modal-shell rounded-2xl overflow-hidden bg-white dark:bg-zinc-900">
+        <div
+          class="mockup-frame modal-shell rounded-2xl overflow-hidden bg-white dark:bg-zinc-900"
+        >
           <!-- modal header -->
-          <div class="flex items-center justify-between px-6 py-4 border-b border-zinc-200 dark:border-zinc-800">
+          <div
+            class="flex items-center justify-between px-6 py-4 border-b border-zinc-200 dark:border-zinc-800"
+          >
             <div>
-              <h3 class="text-base font-semibold">Import records into your collection</h3>
+              <h3 class="text-base font-semibold">
+                Import records into your collection
+              </h3>
               <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                Search MusicBrainz, add records to the cart, then import them all at once.
+                Search MusicBrainz, add records to the cart, then import them
+                all at once.
               </p>
             </div>
-            <button class="rounded-md p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Close">
-              <svg class="size-5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            <button
+              class="rounded-md p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              aria-label="Close"
+            >
+              <svg
+                class="size-5 text-zinc-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
             </button>
           </div>
 
           <!-- modal body -->
           <div class="grid grid-cols-5">
             <!-- search column -->
-            <div class="col-span-3 p-6 border-r border-zinc-200 dark:border-zinc-800">
-              <label class="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1" for="mb_query">
+            <div
+              class="col-span-3 p-6 border-r border-zinc-200 dark:border-zinc-800"
+            >
+              <label
+                class="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1"
+                for="mb_query"
+              >
                 Search for a record
               </label>
               <div class="relative">
@@ -73,128 +114,317 @@
                   value="steven wilson"
                   class="block w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 py-2 pl-3 pr-10 text-sm focus:border-zinc-900 dark:focus:border-zinc-100 focus:outline-none"
                 />
-                <svg class="absolute right-3 top-2.5 size-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"/></svg>
+                <svg
+                  class="absolute right-3 top-2.5 size-4 text-zinc-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"
+                  />
+                </svg>
               </div>
 
-              <ul role="list" class="mt-5 divide-y divide-zinc-100 dark:divide-slate-300/30 max-h-[22rem] overflow-y-auto pr-1">
+              <ul
+                role="list"
+                class="mt-5 divide-y divide-zinc-100 dark:divide-slate-300/30 max-h-[22rem] overflow-y-auto pr-1"
+              >
                 <!-- result row (in cart) -->
-                <li class="flex items-center gap-4 py-4 bg-emerald-50/40 dark:bg-emerald-500/5 rounded-md px-2">
-                  <img class="w-16 h-16 rounded-lg object-cover" src="https://coverartarchive.org/release-group/38ad9108-8f7b-4d0e-8efe-6015f3c3c921/front-250.jpg" alt=""/>
+                <li
+                  class="flex items-center gap-4 py-4 bg-emerald-50/40 dark:bg-emerald-500/5 rounded-md px-2"
+                >
+                  <img
+                    class="w-16 h-16 rounded-lg object-cover"
+                    src="https://coverartarchive.org/release-group/38ad9108-8f7b-4d0e-8efe-6015f3c3c921/front-250.jpg"
+                    alt=""
+                  />
                   <div class="min-w-0 flex-1">
-                    <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">Steven Wilson</p>
-                    <p class="truncate text-sm font-semibold">The Harmony Codex</p>
-                    <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">2023 · Album</p>
+                    <p
+                      class="truncate text-xs text-zinc-500 dark:text-zinc-400"
+                    >
+                      Steven Wilson
+                    </p>
+                    <p class="truncate text-sm font-semibold">
+                      The Harmony Codex
+                    </p>
+                    <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                      2023 · Album
+                    </p>
                   </div>
-                  <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-medium px-2 py-0.5">
-                    <svg class="size-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                  <span
+                    class="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-medium px-2 py-0.5"
+                  >
+                    <svg
+                      class="size-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="3"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
                     In cart · CD
                   </span>
                 </li>
 
                 <!-- result row with format dropdown -->
-                <li class="flex items-center gap-4 py-4 px-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 rounded-md">
-                  <img class="w-16 h-16 rounded-lg object-cover" src="https://coverartarchive.org/release-group/b6cf90a6-5ca4-45c5-92f9-3c729e81ee95/front-250.jpg" alt=""/>
+                <li
+                  class="flex items-center gap-4 py-4 px-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 rounded-md"
+                >
+                  <img
+                    class="w-16 h-16 rounded-lg object-cover"
+                    src="https://coverartarchive.org/release-group/b6cf90a6-5ca4-45c5-92f9-3c729e81ee95/front-250.jpg"
+                    alt=""
+                  />
                   <div class="min-w-0 flex-1">
-                    <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">Steven Wilson</p>
-                    <p class="truncate text-sm font-semibold">Hand. Cannot. Erase.</p>
-                    <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">2015 · Album</p>
+                    <p
+                      class="truncate text-xs text-zinc-500 dark:text-zinc-400"
+                    >
+                      Steven Wilson
+                    </p>
+                    <p class="truncate text-sm font-semibold">
+                      Hand. Cannot. Erase.
+                    </p>
+                    <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                      2015 · Album
+                    </p>
                   </div>
                   <div class="flex items-center gap-1">
-                    <select class="rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-xs px-2 py-1">
+                    <select
+                      class="rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-xs px-2 py-1"
+                    >
                       <option>CD</option>
                       <option>Vinyl</option>
                       <option>Cassette</option>
                       <option>Digital</option>
                     </select>
-                    <button class="rounded-md border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 p-1.5" title="Add to cart">
-                      <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    <button
+                      class="rounded-md border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 p-1.5"
+                      title="Add to cart"
+                    >
+                      <svg
+                        class="size-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 4v16m8-8H4"
+                        />
+                      </svg>
                     </button>
                   </div>
                 </li>
 
                 <!-- result row (in cart, vinyl) -->
-                <li class="flex items-center gap-4 py-4 bg-emerald-50/40 dark:bg-emerald-500/5 rounded-md px-2">
-                  <img class="w-16 h-16 rounded-lg object-cover" src="https://coverartarchive.org/release-group/3f57e8fe-4b39-4f50-a1eb-5d7b0dc8a4a2/front-250.jpg" alt=""/>
+                <li
+                  class="flex items-center gap-4 py-4 bg-emerald-50/40 dark:bg-emerald-500/5 rounded-md px-2"
+                >
+                  <img
+                    class="w-16 h-16 rounded-lg object-cover"
+                    src="https://coverartarchive.org/release-group/3f57e8fe-4b39-4f50-a1eb-5d7b0dc8a4a2/front-250.jpg"
+                    alt=""
+                  />
                   <div class="min-w-0 flex-1">
-                    <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">Steven Wilson</p>
-                    <p class="truncate text-sm font-semibold">The Raven That Refused to Sing</p>
-                    <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">2013 · Album</p>
+                    <p
+                      class="truncate text-xs text-zinc-500 dark:text-zinc-400"
+                    >
+                      Steven Wilson
+                    </p>
+                    <p class="truncate text-sm font-semibold">
+                      The Raven That Refused to Sing
+                    </p>
+                    <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                      2013 · Album
+                    </p>
                   </div>
-                  <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-medium px-2 py-0.5">
-                    <svg class="size-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                  <span
+                    class="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-medium px-2 py-0.5"
+                  >
+                    <svg
+                      class="size-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="3"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
                     In cart · Vinyl
                   </span>
                 </li>
 
-                <li class="flex items-center gap-4 py-4 px-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 rounded-md">
-                  <img class="w-16 h-16 rounded-lg object-cover" src="https://coverartarchive.org/release-group/5a8ab40e-8ccb-4d46-9d1e-7b9f60b76fa2/front-250.jpg" alt=""/>
+                <li
+                  class="flex items-center gap-4 py-4 px-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 rounded-md"
+                >
+                  <img
+                    class="w-16 h-16 rounded-lg object-cover"
+                    src="https://coverartarchive.org/release-group/5a8ab40e-8ccb-4d46-9d1e-7b9f60b76fa2/front-250.jpg"
+                    alt=""
+                  />
                   <div class="min-w-0 flex-1">
-                    <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">Steven Wilson</p>
+                    <p
+                      class="truncate text-xs text-zinc-500 dark:text-zinc-400"
+                    >
+                      Steven Wilson
+                    </p>
                     <p class="truncate text-sm font-semibold">To The Bone</p>
-                    <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">2017 · Album</p>
+                    <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                      2017 · Album
+                    </p>
                   </div>
                   <div class="flex items-center gap-1">
-                    <select class="rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-xs px-2 py-1">
+                    <select
+                      class="rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-xs px-2 py-1"
+                    >
                       <option>CD</option>
                       <option selected>Vinyl</option>
                       <option>Cassette</option>
                       <option>Digital</option>
                     </select>
-                    <button class="rounded-md border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 p-1.5">
-                      <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    <button
+                      class="rounded-md border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 p-1.5"
+                    >
+                      <svg
+                        class="size-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 4v16m8-8H4"
+                        />
+                      </svg>
                     </button>
                   </div>
                 </li>
               </ul>
 
-              <p class="mt-3 text-xs text-zinc-500 dark:text-zinc-400">Showing 4 of 38 results · scroll to load more</p>
+              <p class="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
+                Showing 4 of 38 results · scroll to load more
+              </p>
             </div>
 
             <!-- cart column -->
-            <aside class="col-span-2 bg-zinc-50 dark:bg-zinc-900/60 flex flex-col">
-              <div class="px-5 py-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+            <aside
+              class="col-span-2 bg-zinc-50 dark:bg-zinc-900/60 flex flex-col"
+            >
+              <div
+                class="px-5 py-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between"
+              >
                 <div>
                   <p class="text-sm font-semibold">Import cart</p>
-                  <p class="text-xs text-zinc-500 dark:text-zinc-400">2 records ready to import</p>
+                  <p class="text-xs text-zinc-500 dark:text-zinc-400">
+                    2 records ready to import
+                  </p>
                 </div>
-                <button class="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100">Clear all</button>
+                <button
+                  class="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+                >
+                  Clear all
+                </button>
               </div>
 
-              <ul class="flex-1 overflow-y-auto divide-y divide-zinc-200 dark:divide-zinc-800">
+              <ul
+                class="flex-1 overflow-y-auto divide-y divide-zinc-200 dark:divide-zinc-800"
+              >
                 <li class="flex gap-3 px-5 py-3">
-                  <img class="w-12 h-12 rounded-md object-cover" src="https://coverartarchive.org/release-group/38ad9108-8f7b-4d0e-8efe-6015f3c3c921/front-250.jpg" alt=""/>
+                  <img
+                    class="w-12 h-12 rounded-md object-cover"
+                    src="https://coverartarchive.org/release-group/38ad9108-8f7b-4d0e-8efe-6015f3c3c921/front-250.jpg"
+                    alt=""
+                  />
                   <div class="min-w-0 flex-1">
-                    <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">Steven Wilson</p>
-                    <p class="truncate text-sm font-medium">The Harmony Codex</p>
+                    <p
+                      class="truncate text-xs text-zinc-500 dark:text-zinc-400"
+                    >
+                      Steven Wilson
+                    </p>
+                    <p class="truncate text-sm font-medium">
+                      The Harmony Codex
+                    </p>
                     <div class="mt-1 flex items-center gap-2">
-                      <select class="rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-xs px-1.5 py-0.5">
-                        <option selected>CD</option><option>Vinyl</option><option>Cassette</option><option>Digital</option>
+                      <select
+                        class="rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-xs px-1.5 py-0.5"
+                      >
+                        <option selected>CD</option>
+                        <option>Vinyl</option>
+                        <option>Cassette</option>
+                        <option>Digital</option>
                       </select>
-                      <button class="text-xs text-zinc-500 hover:text-red-600 dark:hover:text-red-400">Remove</button>
+                      <button
+                        class="text-xs text-zinc-500 hover:text-red-600 dark:hover:text-red-400"
+                      >
+                        Remove
+                      </button>
                     </div>
                   </div>
                 </li>
                 <li class="flex gap-3 px-5 py-3">
-                  <img class="w-12 h-12 rounded-md object-cover" src="https://coverartarchive.org/release-group/3f57e8fe-4b39-4f50-a1eb-5d7b0dc8a4a2/front-250.jpg" alt=""/>
+                  <img
+                    class="w-12 h-12 rounded-md object-cover"
+                    src="https://coverartarchive.org/release-group/3f57e8fe-4b39-4f50-a1eb-5d7b0dc8a4a2/front-250.jpg"
+                    alt=""
+                  />
                   <div class="min-w-0 flex-1">
-                    <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">Steven Wilson</p>
-                    <p class="truncate text-sm font-medium">The Raven That Refused to Sing</p>
+                    <p
+                      class="truncate text-xs text-zinc-500 dark:text-zinc-400"
+                    >
+                      Steven Wilson
+                    </p>
+                    <p class="truncate text-sm font-medium">
+                      The Raven That Refused to Sing
+                    </p>
                     <div class="mt-1 flex items-center gap-2">
-                      <select class="rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-xs px-1.5 py-0.5">
-                        <option>CD</option><option selected>Vinyl</option><option>Cassette</option><option>Digital</option>
+                      <select
+                        class="rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-xs px-1.5 py-0.5"
+                      >
+                        <option>CD</option>
+                        <option selected>Vinyl</option>
+                        <option>Cassette</option>
+                        <option>Digital</option>
                       </select>
-                      <button class="text-xs text-zinc-500 hover:text-red-600 dark:hover:text-red-400">Remove</button>
+                      <button
+                        class="text-xs text-zinc-500 hover:text-red-600 dark:hover:text-red-400"
+                      >
+                        Remove
+                      </button>
                     </div>
                   </div>
                 </li>
               </ul>
 
-              <div class="border-t border-zinc-200 dark:border-zinc-800 px-5 py-4 space-y-2">
-                <button class="w-full rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold py-2 hover:opacity-90">
+              <div
+                class="border-t border-zinc-200 dark:border-zinc-800 px-5 py-4 space-y-2"
+              >
+                <button
+                  class="w-full rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold py-2 hover:opacity-90"
+                >
                   Import 2 records
                 </button>
-                <p class="text-[11px] text-zinc-500 dark:text-zinc-400 text-center">
-                  Each import runs as a background job, same pipeline as barcode scan batches.
+                <p
+                  class="text-[11px] text-zinc-500 dark:text-zinc-400 text-center"
+                >
+                  Each import runs as a background job, same pipeline as barcode
+                  scan batches.
                 </p>
               </div>
             </aside>
@@ -209,62 +439,149 @@
         <div class="mb-4">
           <h2 class="text-lg font-semibold">B — Bottom tray</h2>
           <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Search keeps the full width (closest to today's layout). Cart is a collapsible tray
-            pinned to the bottom. Shown here expanded — collapsed state is a slim bar with a count.
+            Search keeps the full width (closest to today's layout). Cart is a
+            collapsible tray pinned to the bottom. Shown here expanded —
+            collapsed state is a slim bar with a count.
           </p>
         </div>
 
-        <div class="mockup-frame modal-shell rounded-2xl overflow-hidden bg-white dark:bg-zinc-900">
-          <div class="flex items-center justify-between px-6 py-4 border-b border-zinc-200 dark:border-zinc-800">
-            <h3 class="text-base font-semibold">Import records into your collection</h3>
-            <button class="rounded-md p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Close">
-              <svg class="size-5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        <div
+          class="mockup-frame modal-shell rounded-2xl overflow-hidden bg-white dark:bg-zinc-900"
+        >
+          <div
+            class="flex items-center justify-between px-6 py-4 border-b border-zinc-200 dark:border-zinc-800"
+          >
+            <h3 class="text-base font-semibold">
+              Import records into your collection
+            </h3>
+            <button
+              class="rounded-md p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              aria-label="Close"
+            >
+              <svg
+                class="size-5 text-zinc-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
             </button>
           </div>
 
           <div class="p-6">
-            <label class="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1">Search for a record</label>
+            <label
+              class="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1"
+              >Search for a record</label
+            >
             <input
               value="steven wilson"
               class="block w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 py-2 px-3 text-sm"
             />
 
-            <ul role="list" class="mt-5 divide-y divide-zinc-100 dark:divide-slate-300/30 max-h-[20rem] overflow-y-auto">
-              <li class="flex items-center gap-4 py-4 px-2 bg-emerald-50/40 dark:bg-emerald-500/5 rounded-md">
-                <img class="w-16 h-16 rounded-lg object-cover" src="https://coverartarchive.org/release-group/38ad9108-8f7b-4d0e-8efe-6015f3c3c921/front-250.jpg" alt=""/>
+            <ul
+              role="list"
+              class="mt-5 divide-y divide-zinc-100 dark:divide-slate-300/30 max-h-[20rem] overflow-y-auto"
+            >
+              <li
+                class="flex items-center gap-4 py-4 px-2 bg-emerald-50/40 dark:bg-emerald-500/5 rounded-md"
+              >
+                <img
+                  class="w-16 h-16 rounded-lg object-cover"
+                  src="https://coverartarchive.org/release-group/38ad9108-8f7b-4d0e-8efe-6015f3c3c921/front-250.jpg"
+                  alt=""
+                />
                 <div class="min-w-0 flex-1">
-                  <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">Steven Wilson</p>
-                  <p class="truncate text-sm font-semibold">The Harmony Codex</p>
-                  <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">2023 · Album</p>
+                  <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                    Steven Wilson
+                  </p>
+                  <p class="truncate text-sm font-semibold">
+                    The Harmony Codex
+                  </p>
+                  <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                    2023 · Album
+                  </p>
                 </div>
-                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-medium px-2 py-0.5">
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-medium px-2 py-0.5"
+                >
                   In cart · CD
                 </span>
               </li>
-              <li class="flex items-center gap-4 py-4 px-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 rounded-md">
-                <img class="w-16 h-16 rounded-lg object-cover" src="https://coverartarchive.org/release-group/b6cf90a6-5ca4-45c5-92f9-3c729e81ee95/front-250.jpg" alt=""/>
+              <li
+                class="flex items-center gap-4 py-4 px-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 rounded-md"
+              >
+                <img
+                  class="w-16 h-16 rounded-lg object-cover"
+                  src="https://coverartarchive.org/release-group/b6cf90a6-5ca4-45c5-92f9-3c729e81ee95/front-250.jpg"
+                  alt=""
+                />
                 <div class="min-w-0 flex-1">
-                  <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">Steven Wilson</p>
-                  <p class="truncate text-sm font-semibold">Hand. Cannot. Erase.</p>
-                  <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">2015 · Album</p>
+                  <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                    Steven Wilson
+                  </p>
+                  <p class="truncate text-sm font-semibold">
+                    Hand. Cannot. Erase.
+                  </p>
+                  <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                    2015 · Album
+                  </p>
                 </div>
                 <div class="flex items-center gap-1">
-                  <select class="rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-xs px-2 py-1">
-                    <option>CD</option><option>Vinyl</option><option>Cassette</option><option>Digital</option>
+                  <select
+                    class="rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-xs px-2 py-1"
+                  >
+                    <option>CD</option>
+                    <option>Vinyl</option>
+                    <option>Cassette</option>
+                    <option>Digital</option>
                   </select>
-                  <button class="rounded-md border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 p-1.5">
-                    <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                  <button
+                    class="rounded-md border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 p-1.5"
+                  >
+                    <svg
+                      class="size-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
                   </button>
                 </div>
               </li>
-              <li class="flex items-center gap-4 py-4 px-2 bg-emerald-50/40 dark:bg-emerald-500/5 rounded-md">
-                <img class="w-16 h-16 rounded-lg object-cover" src="https://coverartarchive.org/release-group/3f57e8fe-4b39-4f50-a1eb-5d7b0dc8a4a2/front-250.jpg" alt=""/>
+              <li
+                class="flex items-center gap-4 py-4 px-2 bg-emerald-50/40 dark:bg-emerald-500/5 rounded-md"
+              >
+                <img
+                  class="w-16 h-16 rounded-lg object-cover"
+                  src="https://coverartarchive.org/release-group/3f57e8fe-4b39-4f50-a1eb-5d7b0dc8a4a2/front-250.jpg"
+                  alt=""
+                />
                 <div class="min-w-0 flex-1">
-                  <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">Steven Wilson</p>
-                  <p class="truncate text-sm font-semibold">The Raven That Refused to Sing</p>
-                  <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">2013 · Album</p>
+                  <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                    Steven Wilson
+                  </p>
+                  <p class="truncate text-sm font-semibold">
+                    The Raven That Refused to Sing
+                  </p>
+                  <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                    2013 · Album
+                  </p>
                 </div>
-                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-medium px-2 py-0.5">
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-medium px-2 py-0.5"
+                >
                   In cart · Vinyl
                 </span>
               </li>
@@ -272,44 +589,115 @@
           </div>
 
           <!-- expanded tray -->
-          <div class="border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60">
+          <div
+            class="border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60"
+          >
             <div class="px-6 py-3 flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <svg class="size-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <svg
+                  class="size-4 text-zinc-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
+                </svg>
                 <p class="text-sm font-semibold">Cart</p>
-                <span class="text-xs text-zinc-500 dark:text-zinc-400">2 records</span>
+                <span class="text-xs text-zinc-500 dark:text-zinc-400"
+                  >2 records</span
+                >
               </div>
               <div class="flex items-center gap-2">
-                <button class="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100">Clear</button>
-                <button class="rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold px-4 py-1.5 hover:opacity-90">
+                <button
+                  class="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+                >
+                  Clear
+                </button>
+                <button
+                  class="rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold px-4 py-1.5 hover:opacity-90"
+                >
                   Import 2 records
                 </button>
-                <button class="rounded-md p-1 hover:bg-zinc-200 dark:hover:bg-zinc-800" title="Collapse">
-                  <svg class="size-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                <button
+                  class="rounded-md p-1 hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                  title="Collapse"
+                >
+                  <svg
+                    class="size-4 text-zinc-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
                 </button>
               </div>
             </div>
             <div class="px-6 pb-4">
               <ul class="flex gap-3 overflow-x-auto pb-1">
-                <li class="flex-none w-56 rounded-lg bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 p-2 flex gap-2">
-                  <img class="w-10 h-10 rounded-md object-cover" src="https://coverartarchive.org/release-group/38ad9108-8f7b-4d0e-8efe-6015f3c3c921/front-250.jpg" alt=""/>
+                <li
+                  class="flex-none w-56 rounded-lg bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 p-2 flex gap-2"
+                >
+                  <img
+                    class="w-10 h-10 rounded-md object-cover"
+                    src="https://coverartarchive.org/release-group/38ad9108-8f7b-4d0e-8efe-6015f3c3c921/front-250.jpg"
+                    alt=""
+                  />
                   <div class="min-w-0 flex-1">
-                    <p class="truncate text-[11px] text-zinc-500">Steven Wilson</p>
-                    <p class="truncate text-xs font-medium">The Harmony Codex</p>
+                    <p class="truncate text-[11px] text-zinc-500">
+                      Steven Wilson
+                    </p>
+                    <p class="truncate text-xs font-medium">
+                      The Harmony Codex
+                    </p>
                     <div class="mt-1 flex items-center gap-1.5">
-                      <span class="text-[10px] rounded bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5">CD</span>
-                      <button class="text-[11px] text-zinc-500 hover:text-red-600 dark:hover:text-red-400">Remove</button>
+                      <span
+                        class="text-[10px] rounded bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5"
+                        >CD</span
+                      >
+                      <button
+                        class="text-[11px] text-zinc-500 hover:text-red-600 dark:hover:text-red-400"
+                      >
+                        Remove
+                      </button>
                     </div>
                   </div>
                 </li>
-                <li class="flex-none w-56 rounded-lg bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 p-2 flex gap-2">
-                  <img class="w-10 h-10 rounded-md object-cover" src="https://coverartarchive.org/release-group/3f57e8fe-4b39-4f50-a1eb-5d7b0dc8a4a2/front-250.jpg" alt=""/>
+                <li
+                  class="flex-none w-56 rounded-lg bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 p-2 flex gap-2"
+                >
+                  <img
+                    class="w-10 h-10 rounded-md object-cover"
+                    src="https://coverartarchive.org/release-group/3f57e8fe-4b39-4f50-a1eb-5d7b0dc8a4a2/front-250.jpg"
+                    alt=""
+                  />
                   <div class="min-w-0 flex-1">
-                    <p class="truncate text-[11px] text-zinc-500">Steven Wilson</p>
-                    <p class="truncate text-xs font-medium">The Raven That Refused to Sing</p>
+                    <p class="truncate text-[11px] text-zinc-500">
+                      Steven Wilson
+                    </p>
+                    <p class="truncate text-xs font-medium">
+                      The Raven That Refused to Sing
+                    </p>
                     <div class="mt-1 flex items-center gap-1.5">
-                      <span class="text-[10px] rounded bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5">Vinyl</span>
-                      <button class="text-[11px] text-zinc-500 hover:text-red-600 dark:hover:text-red-400">Remove</button>
+                      <span
+                        class="text-[10px] rounded bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5"
+                        >Vinyl</span
+                      >
+                      <button
+                        class="text-[11px] text-zinc-500 hover:text-red-600 dark:hover:text-red-400"
+                      >
+                        Remove
+                      </button>
                     </div>
                   </div>
                 </li>
@@ -319,19 +707,62 @@
         </div>
 
         <!-- collapsed state -->
-        <p class="mt-4 mb-2 text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Collapsed tray state</p>
-        <div class="mockup-frame modal-shell rounded-2xl overflow-hidden bg-white dark:bg-zinc-900">
-          <div class="px-6 py-8 text-center text-zinc-400 text-sm">(search area)</div>
-          <div class="border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 px-6 py-3 flex items-center justify-between">
+        <p
+          class="mt-4 mb-2 text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-400"
+        >
+          Collapsed tray state
+        </p>
+        <div
+          class="mockup-frame modal-shell rounded-2xl overflow-hidden bg-white dark:bg-zinc-900"
+        >
+          <div class="px-6 py-8 text-center text-zinc-400 text-sm">
+            (search area)
+          </div>
+          <div
+            class="border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 px-6 py-3 flex items-center justify-between"
+          >
             <div class="flex items-center gap-2">
-              <svg class="size-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17"/></svg>
+              <svg
+                class="size-4 text-zinc-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17"
+                />
+              </svg>
               <p class="text-sm font-semibold">Cart</p>
-              <span class="text-xs text-zinc-500 dark:text-zinc-400">2 records</span>
+              <span class="text-xs text-zinc-500 dark:text-zinc-400"
+                >2 records</span
+              >
             </div>
             <div class="flex items-center gap-2">
-              <button class="rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold px-4 py-1.5 hover:opacity-90">Import 2</button>
-              <button class="rounded-md p-1 hover:bg-zinc-200 dark:hover:bg-zinc-800" title="Expand">
-                <svg class="size-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+              <button
+                class="rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold px-4 py-1.5 hover:opacity-90"
+              >
+                Import 2
+              </button>
+              <button
+                class="rounded-md p-1 hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                title="Expand"
+              >
+                <svg
+                  class="size-4 text-zinc-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 15l7-7 7 7"
+                  />
+                </svg>
               </button>
             </div>
           </div>
@@ -343,62 +774,164 @@
       <!-- =========================================================== -->
       <section class="mb-16">
         <div class="mb-4">
-          <h2 class="text-lg font-semibold">C — Inline state + floating cart</h2>
+          <h2 class="text-lg font-semibold">
+            C — Inline state + floating cart
+          </h2>
           <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Smallest footprint: results list looks almost like today, added items flip to an "In cart"
-            chip. A floating badge in the corner opens a popover with the cart and import button.
+            Smallest footprint: results list looks almost like today, added
+            items flip to an "In cart" chip. A floating badge in the corner
+            opens a popover with the cart and import button.
           </p>
         </div>
 
-        <div class="mockup-frame modal-shell rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 relative">
-          <div class="flex items-center justify-between px-6 py-4 border-b border-zinc-200 dark:border-zinc-800">
-            <h3 class="text-base font-semibold">Import records into your collection</h3>
-            <button class="rounded-md p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Close">
-              <svg class="size-5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        <div
+          class="mockup-frame modal-shell rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 relative"
+        >
+          <div
+            class="flex items-center justify-between px-6 py-4 border-b border-zinc-200 dark:border-zinc-800"
+          >
+            <h3 class="text-base font-semibold">
+              Import records into your collection
+            </h3>
+            <button
+              class="rounded-md p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              aria-label="Close"
+            >
+              <svg
+                class="size-5 text-zinc-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
             </button>
           </div>
 
           <div class="p-6">
-            <label class="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1">Search for a record</label>
+            <label
+              class="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1"
+              >Search for a record</label
+            >
             <input
               value="steven wilson"
               class="block w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 py-2 px-3 text-sm"
             />
 
-            <ul role="list" class="mt-5 divide-y divide-zinc-100 dark:divide-slate-300/30 max-h-[22rem] overflow-y-auto">
+            <ul
+              role="list"
+              class="mt-5 divide-y divide-zinc-100 dark:divide-slate-300/30 max-h-[22rem] overflow-y-auto"
+            >
               <li class="flex items-center gap-4 py-4 px-2">
-                <img class="w-16 h-16 rounded-lg object-cover" src="https://coverartarchive.org/release-group/38ad9108-8f7b-4d0e-8efe-6015f3c3c921/front-250.jpg" alt=""/>
+                <img
+                  class="w-16 h-16 rounded-lg object-cover"
+                  src="https://coverartarchive.org/release-group/38ad9108-8f7b-4d0e-8efe-6015f3c3c921/front-250.jpg"
+                  alt=""
+                />
                 <div class="min-w-0 flex-1">
-                  <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">Steven Wilson</p>
-                  <p class="truncate text-sm font-semibold">The Harmony Codex</p>
-                  <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">2023 · Album</p>
+                  <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                    Steven Wilson
+                  </p>
+                  <p class="truncate text-sm font-semibold">
+                    The Harmony Codex
+                  </p>
+                  <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                    2023 · Album
+                  </p>
                 </div>
-                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-medium px-2 py-0.5">
-                  <svg class="size-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-medium px-2 py-0.5"
+                >
+                  <svg
+                    class="size-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="3"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
                   In cart · CD
                 </span>
               </li>
               <li class="flex items-center gap-4 py-4 px-2">
-                <img class="w-16 h-16 rounded-lg object-cover" src="https://coverartarchive.org/release-group/b6cf90a6-5ca4-45c5-92f9-3c729e81ee95/front-250.jpg" alt=""/>
+                <img
+                  class="w-16 h-16 rounded-lg object-cover"
+                  src="https://coverartarchive.org/release-group/b6cf90a6-5ca4-45c5-92f9-3c729e81ee95/front-250.jpg"
+                  alt=""
+                />
                 <div class="min-w-0 flex-1">
-                  <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">Steven Wilson</p>
-                  <p class="truncate text-sm font-semibold">Hand. Cannot. Erase.</p>
-                  <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">2015 · Album</p>
+                  <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                    Steven Wilson
+                  </p>
+                  <p class="truncate text-sm font-semibold">
+                    Hand. Cannot. Erase.
+                  </p>
+                  <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                    2015 · Album
+                  </p>
                 </div>
-                <button class="inline-flex items-center gap-1 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-xs px-2 py-1 hover:bg-zinc-50 dark:hover:bg-zinc-800">
-                  <svg class="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                <button
+                  class="inline-flex items-center gap-1 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-xs px-2 py-1 hover:bg-zinc-50 dark:hover:bg-zinc-800"
+                >
+                  <svg
+                    class="size-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
                   Add…
                 </button>
               </li>
               <li class="flex items-center gap-4 py-4 px-2">
-                <img class="w-16 h-16 rounded-lg object-cover" src="https://coverartarchive.org/release-group/3f57e8fe-4b39-4f50-a1eb-5d7b0dc8a4a2/front-250.jpg" alt=""/>
+                <img
+                  class="w-16 h-16 rounded-lg object-cover"
+                  src="https://coverartarchive.org/release-group/3f57e8fe-4b39-4f50-a1eb-5d7b0dc8a4a2/front-250.jpg"
+                  alt=""
+                />
                 <div class="min-w-0 flex-1">
-                  <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">Steven Wilson</p>
-                  <p class="truncate text-sm font-semibold">The Raven That Refused to Sing</p>
-                  <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">2013 · Album</p>
+                  <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                    Steven Wilson
+                  </p>
+                  <p class="truncate text-sm font-semibold">
+                    The Raven That Refused to Sing
+                  </p>
+                  <p class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                    2013 · Album
+                  </p>
                 </div>
-                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-medium px-2 py-0.5">
-                  <svg class="size-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                <span
+                  class="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-medium px-2 py-0.5"
+                >
+                  <svg
+                    class="size-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="3"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
                   In cart · Vinyl
                 </span>
               </li>
@@ -406,60 +939,139 @@
           </div>
 
           <!-- floating cart popover, shown open -->
-          <div class="absolute right-6 bottom-6 w-80 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-xl">
-            <div class="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+          <div
+            class="absolute right-6 bottom-6 w-80 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-xl"
+          >
+            <div
+              class="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between"
+            >
               <p class="text-sm font-semibold">Cart (2)</p>
-              <button class="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100">Clear</button>
+              <button
+                class="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+              >
+                Clear
+              </button>
             </div>
-            <ul class="divide-y divide-zinc-200 dark:divide-zinc-800 max-h-56 overflow-y-auto">
+            <ul
+              class="divide-y divide-zinc-200 dark:divide-zinc-800 max-h-56 overflow-y-auto"
+            >
               <li class="flex gap-3 px-4 py-3">
-                <img class="w-10 h-10 rounded-md object-cover" src="https://coverartarchive.org/release-group/38ad9108-8f7b-4d0e-8efe-6015f3c3c921/front-250.jpg" alt=""/>
+                <img
+                  class="w-10 h-10 rounded-md object-cover"
+                  src="https://coverartarchive.org/release-group/38ad9108-8f7b-4d0e-8efe-6015f3c3c921/front-250.jpg"
+                  alt=""
+                />
                 <div class="min-w-0 flex-1">
-                  <p class="truncate text-[11px] text-zinc-500">Steven Wilson</p>
+                  <p class="truncate text-[11px] text-zinc-500">
+                    Steven Wilson
+                  </p>
                   <p class="truncate text-xs font-medium">The Harmony Codex</p>
                   <div class="flex items-center gap-2 mt-0.5">
-                    <span class="text-[10px] rounded bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5">CD</span>
-                    <button class="text-[11px] text-zinc-500 hover:text-red-600 dark:hover:text-red-400">Remove</button>
+                    <span
+                      class="text-[10px] rounded bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5"
+                      >CD</span
+                    >
+                    <button
+                      class="text-[11px] text-zinc-500 hover:text-red-600 dark:hover:text-red-400"
+                    >
+                      Remove
+                    </button>
                   </div>
                 </div>
               </li>
               <li class="flex gap-3 px-4 py-3">
-                <img class="w-10 h-10 rounded-md object-cover" src="https://coverartarchive.org/release-group/3f57e8fe-4b39-4f50-a1eb-5d7b0dc8a4a2/front-250.jpg" alt=""/>
+                <img
+                  class="w-10 h-10 rounded-md object-cover"
+                  src="https://coverartarchive.org/release-group/3f57e8fe-4b39-4f50-a1eb-5d7b0dc8a4a2/front-250.jpg"
+                  alt=""
+                />
                 <div class="min-w-0 flex-1">
-                  <p class="truncate text-[11px] text-zinc-500">Steven Wilson</p>
-                  <p class="truncate text-xs font-medium">The Raven That Refused to Sing</p>
+                  <p class="truncate text-[11px] text-zinc-500">
+                    Steven Wilson
+                  </p>
+                  <p class="truncate text-xs font-medium">
+                    The Raven That Refused to Sing
+                  </p>
                   <div class="flex items-center gap-2 mt-0.5">
-                    <span class="text-[10px] rounded bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5">Vinyl</span>
-                    <button class="text-[11px] text-zinc-500 hover:text-red-600 dark:hover:text-red-400">Remove</button>
+                    <span
+                      class="text-[10px] rounded bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5"
+                      >Vinyl</span
+                    >
+                    <button
+                      class="text-[11px] text-zinc-500 hover:text-red-600 dark:hover:text-red-400"
+                    >
+                      Remove
+                    </button>
                   </div>
                 </div>
               </li>
             </ul>
             <div class="p-3 border-t border-zinc-200 dark:border-zinc-800">
-              <button class="w-full rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold py-2 hover:opacity-90">
+              <button
+                class="w-full rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold py-2 hover:opacity-90"
+              >
                 Import 2 records
               </button>
             </div>
           </div>
         </div>
 
-        <p class="mt-4 mb-2 text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Floating trigger (popover closed)</p>
-        <div class="mockup-frame modal-shell rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 relative">
-          <div class="px-6 py-8 text-center text-zinc-400 text-sm">(search + results)</div>
-          <button class="absolute right-6 bottom-6 inline-flex items-center gap-2 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold pl-3 pr-2 py-2 shadow-xl hover:opacity-90">
-            <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17"/></svg>
+        <p
+          class="mt-4 mb-2 text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-400"
+        >
+          Floating trigger (popover closed)
+        </p>
+        <div
+          class="mockup-frame modal-shell rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 relative"
+        >
+          <div class="px-6 py-8 text-center text-zinc-400 text-sm">
+            (search + results)
+          </div>
+          <button
+            class="absolute right-6 bottom-6 inline-flex items-center gap-2 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold pl-3 pr-2 py-2 shadow-xl hover:opacity-90"
+          >
+            <svg
+              class="size-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17"
+              />
+            </svg>
             Cart
-            <span class="inline-flex items-center justify-center rounded-full bg-emerald-500 text-white text-xs font-bold w-5 h-5">2</span>
+            <span
+              class="inline-flex items-center justify-center rounded-full bg-emerald-500 text-white text-xs font-bold w-5 h-5"
+              >2</span
+            >
           </button>
         </div>
       </section>
 
       <section class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-        <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">Quick tradeoffs</h2>
+        <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
+          Quick tradeoffs
+        </h2>
         <ul class="list-disc pl-5 space-y-1">
-          <li><strong>A (side-by-side)</strong>: best discoverability and clearest mental model, but modal needs to grow (cart column steals width from search). Cramped on narrower viewports.</li>
-          <li><strong>B (bottom tray)</strong>: closest to the current layout. Cheap to build on top of today's component. Tray is always reachable but eats vertical room when expanded.</li>
-          <li><strong>C (inline + floating)</strong>: smallest visual change; cart hidden behind a badge click. Adds a click between "I want to import" and the import button, but list view feels unchanged.</li>
+          <li>
+            <strong>A (side-by-side)</strong>: best discoverability and clearest
+            mental model, but modal needs to grow (cart column steals width from
+            search). Cramped on narrower viewports.
+          </li>
+          <li>
+            <strong>B (bottom tray)</strong>: closest to the current layout.
+            Cheap to build on top of today's component. Tray is always reachable
+            but eats vertical room when expanded.
+          </li>
+          <li>
+            <strong>C (inline + floating)</strong>: smallest visual change; cart
+            hidden behind a badge click. Adds a click between "I want to import"
+            and the import button, but list view feels unchanged.
+          </li>
         </ul>
       </section>
     </div>

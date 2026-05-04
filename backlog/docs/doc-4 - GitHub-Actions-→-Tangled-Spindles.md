@@ -2,9 +2,10 @@
 id: doc-4
 title: GitHub Actions → Tangled Spindles
 type: other
-created_date: '2026-05-03 16:57'
-updated_date: '2026-05-04 06:54'
+created_date: "2026-05-03 16:57"
+updated_date: "2026-05-04 06:54"
 ---
+
 # CI Pipeline Porting Analysis: GitHub Actions → Tangled Spindles
 
 ## Current State (GitHub Actions)
@@ -22,6 +23,7 @@ Key GHA features used: `jdx/mise-action`, `actions/cache`, concurrency control, 
 Tangled provides **Spindles** — a CI runner service. Workflows are YAML files in `.tangled/workflows/`.
 
 **Available features:**
+
 - Triggers: `push`, `pull_request`, `manual` — with branch/tag glob filtering
 - Engine: `nixery` (uses Nixpkgs packages via Nixery at `nixery.tangled.sh`)
 - Dependencies: declared from nixpkgs (or custom registries)
@@ -34,6 +36,7 @@ Tangled provides **Spindles** — a CI runner service. Workflows are YAML files 
 - Timeout: configurable via `SPINDLE_PIPELINES_WORKFLOW_TIMEOUT` (default 5m)
 
 **Missing features (vs GitHub Actions):**
+
 - ❌ No job dependencies (`needs`) — all steps in a workflow are strictly sequential
 - ❌ No parallel jobs — single linear pipeline per workflow file
 - ❌ No inter-run caching primitive — no equivalent to `actions/cache`
@@ -51,20 +54,20 @@ Tangled also provides **Webhooks** (push events, HMAC-signed, 3 retries with bac
 
 Nixery builds OCI images with each nixpkgs package in a **separate Docker layer**. Docker reuses pre-existing layers, so any nixpkgs dependency declared in the `dependencies` block — `mise`, `nodejs`, `shellcheck`, `hurl`, `sqlite` — is cached at the Docker level between runs.
 
-This is confirmed by the Tangled team: *"caching for commonly used packages is free thanks to Docker (pre-existing layers get reused)."* — [Introducing Spindle blog post](https://blog.tangled.org/ci/)
+This is confirmed by the Tangled team: _"caching for commonly used packages is free thanks to Docker (pre-existing layers get reused)."_ — [Introducing Spindle blog post](https://blog.tangled.org/ci/)
 
 ### What is NOT cached (fetched/compiled fresh every run)
 
-| Artifact | Reason |
-|----------|--------|
-| Elixir 1.20.0-rc.4, Erlang 28.5 | Not in nixpkgs; `mise install` downloads fresh each run |
-| `mix deps` + `_build` | No directory-level cache primitive in Spindle |
-| `npm` packages + asset builds | Same — no cache primitive |
-| Fluxon private Hex repo packages | Fetched each run |
+| Artifact                         | Reason                                                  |
+| -------------------------------- | ------------------------------------------------------- |
+| Elixir 1.20.0-rc.4, Erlang 28.5  | Not in nixpkgs; `mise install` downloads fresh each run |
+| `mix deps` + `_build`            | No directory-level cache primitive in Spindle           |
+| `npm` packages + asset builds    | Same — no cache primitive                               |
+| Fluxon private Hex repo packages | Fetched each run                                        |
 
 ### Within a run
 
-Per the blog post: *"the `/tangled/workspace` and `/nix` volumes persisted across steps."* So within a single workflow run, compiled artifacts are available to subsequent steps. But between runs, everything resets except the Nixery Docker layers.
+Per the blog post: _"the `/tangled/workspace` and `/nix` volumes persisted across steps."_ So within a single workflow run, compiled artifacts are available to subsequent steps. But between runs, everything resets except the Nixery Docker layers.
 
 ### Potential caching strategy: Custom Nix derivation for Elixir 1.20.0-rc.4
 
@@ -74,20 +77,21 @@ Similarly, Erlang 28.5 could be pinned via a custom derivation if not in nixpkgs
 
 ## Dependency Availability in Nixpkgs
 
-| Tool | In nixpkgs stable? | Version | Notes |
-|------|-------------------|---------|-------|
-| `elixir` | ✅ | 1.18.4 / 1.19.5 | **Not 1.20.0-rc.4** — must use mise or custom Nix derivation |
-| `erlang` | ✅ | via beam packages | OTP versions tied to package sets |
-| `nodejs` | ✅ | Yes | |
-| `mise` | ✅ | 2025.11.7 | Can install exact Elixir/Erlang/Node from mise.toml |
-| `shellcheck` | ✅ | Yes | |
-| `hurl` | ✅ (likely) | | |
-| `sqlite` | ✅ | Yes | |
-| `credo` | ❌ | Elixir mix task | Must install via mix after Elixir is available |
-| `sobelow` | ❌ | Elixir mix task | Same |
-| `mix_audit` | ❌ | Elixir mix task | Same |
+| Tool         | In nixpkgs stable? | Version           | Notes                                                        |
+| ------------ | ------------------ | ----------------- | ------------------------------------------------------------ |
+| `elixir`     | ✅                 | 1.18.4 / 1.19.5   | **Not 1.20.0-rc.4** — must use mise or custom Nix derivation |
+| `erlang`     | ✅                 | via beam packages | OTP versions tied to package sets                            |
+| `nodejs`     | ✅                 | Yes               |                                                              |
+| `mise`       | ✅                 | 2025.11.7         | Can install exact Elixir/Erlang/Node from mise.toml          |
+| `shellcheck` | ✅                 | Yes               |                                                              |
+| `hurl`       | ✅ (likely)        |                   |                                                              |
+| `sqlite`     | ✅                 | Yes               |                                                              |
+| `credo`      | ❌                 | Elixir mix task   | Must install via mix after Elixir is available               |
+| `sobelow`    | ❌                 | Elixir mix task   | Same                                                         |
+| `mix_audit`  | ❌                 | Elixir mix task   | Same                                                         |
 
 The workflow pattern with mise:
+
 1. Add `mise` as a nixpkgs dependency (cached via Docker layers ✅)
 2. `mise install` to fetch Elixir 1.20.0-rc.4, Erlang 28.5, Node 25.9.0 (NOT cached ❌)
 3. Run existing mise tasks
@@ -95,30 +99,35 @@ The workflow pattern with mise:
 ## Implementation Routes
 
 ### Route A: Pure Spindle — Single Linear Workflow
+
 One `.tangled/workflows/ci.yml` that runs lint → test → deploy sequentially.
 
 **Pros:** Simplest — one file, fully self-contained on Tangled.
 **Cons:** Slowest (no parallelism between lint+test), deploy runs on every PR push to main, no separation of concerns.
 
 ### Route B: Multiple Spindle Workflows — Split CI/CD
+
 Separate files: `lint.yml`, `test.yml`, `deploy.yml`. Deploy is manual-trigger only.
 
 **Pros:** Lint and test can trigger on PRs, deploy is intentional. Better separation of concerns.
 **Cons:** No enforcement that test passes before manual deploy. Lint and test still run sequentially within each workflow.
 
 ### Route C: Spindle for CI + Webhook for Deploy
+
 Spindle handles lint+test on PRs. A Tangled webhook on push to main triggers Coolify deployment via an external endpoint.
 
 **Pros:** Deploy runs independently. Can add gating logic in webhook receiver.
 **Cons:** Requires a webhook receiver (external service). More infrastructure.
 
 ### Route D: Spindle for All — Lean Pipeline (Accept Gaps)
+
 Full pipeline on Spindle but accept the missing features. Configure longer timeout, accept sequential runs, use manual deploy trigger.
 
 **Pros:** Fully native Tangled experience.
 **Cons:** All gaps accepted as-is. May frustrate PR workflow.
 
 ### Route E: Mirror to GitHub + Keep Actions
+
 Mirror the Tangled repo to GitHub (or use Tangled as a mirror of GitHub) and keep existing Actions.
 
 **Pros:** Zero CI changes. All existing features preserved.

@@ -3,17 +3,18 @@ id: ML-30
 title: Silent error suppression in Artists.refresh_lastfm_data/1
 status: Done
 assignee: []
-created_date: '2026-04-20 08:51'
+created_date: "2026-04-20 08:51"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/149'
+  - "https://github.com/cloud8421/music_library/issues/149"
 priority: high
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-05 · updated 2026-04-05 · closed 2026-04-05_
 
 ## Summary
@@ -36,7 +37,9 @@ _GitHub: created 2026-04-05 · updated 2026-04-05 · closed 2026-04-05_
 Follow the project's `best_effort_*` pattern: log a warning and return the unchanged struct, but make the suppression explicit and observable.
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - Last.fm API failures are logged as warnings
 - Callers can still proceed without the Last.fm data
 - Monitoring/logs reflect when Last.fm enrichment fails

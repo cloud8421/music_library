@@ -3,12 +3,12 @@ id: ML-21
 title: Classify API errors as transient vs permanent in workers
 status: Done
 assignee: []
-created_date: '2026-04-20 08:50'
-updated_date: '2026-04-24 11:59'
+created_date: "2026-04-20 08:50"
+updated_date: "2026-04-24 11:59"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/158'
+  - "https://github.com/cloud8421/music_library/issues/158"
 priority: medium
 ordinal: 1000
 ---
@@ -16,6 +16,7 @@ ordinal: 1000
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-05 · updated 2026-04-12 · re-scoped 2026-04-24 after per-API research_
 
 ## Summary
@@ -31,15 +32,15 @@ The original issue pointed at `LastFm.API.ErrorResponse` as the pattern to copy 
 
 ## What each API actually returns
 
-| API | Error channel | Rate limit status | Body shape | Retry hint |
-|-----|---------------|-------------------|------------|------------|
-| Last.fm | HTTP 200 + body | code `29` in body | `{"error": N, "message": "..."}` | none (already handled) |
-| MusicBrainz | HTTP status | **503** (not 429) | `{"error": "string"}` | `Retry-After` |
-| Discogs | HTTP status | 429 | `{"message": "..."}` | `X-Discogs-Ratelimit-*`, no `Retry-After` |
-| Wikipedia REST v1 | HTTP status | 429 | `{"httpCode", "messageTranslations"}` | `Retry-After` |
-| Wikipedia/Wikidata Action API | **HTTP 200 + body** (Last.fm-shaped) | 429 or 503 | `{"error": {"code", "info"}}` | `Retry-After` on 503 |
-| Brave Search | HTTP status | 429 | `{"type": "ErrorResponse", "error": {"status", "code", "detail"}}` | `X-RateLimit-Reset` (seconds) |
-| OpenAI | HTTP status + body `code` | 429 for **both** rate limit and quota | `{"error": {"type", "code", "message", "param"}}` | `x-ratelimit-reset-*` |
+| API                           | Error channel                        | Rate limit status                     | Body shape                                                         | Retry hint                                |
+| ----------------------------- | ------------------------------------ | ------------------------------------- | ------------------------------------------------------------------ | ----------------------------------------- |
+| Last.fm                       | HTTP 200 + body                      | code `29` in body                     | `{"error": N, "message": "..."}`                                   | none (already handled)                    |
+| MusicBrainz                   | HTTP status                          | **503** (not 429)                     | `{"error": "string"}`                                              | `Retry-After`                             |
+| Discogs                       | HTTP status                          | 429                                   | `{"message": "..."}`                                               | `X-Discogs-Ratelimit-*`, no `Retry-After` |
+| Wikipedia REST v1             | HTTP status                          | 429                                   | `{"httpCode", "messageTranslations"}`                              | `Retry-After`                             |
+| Wikipedia/Wikidata Action API | **HTTP 200 + body** (Last.fm-shaped) | 429 or 503                            | `{"error": {"code", "info"}}`                                      | `Retry-After` on 503                      |
+| Brave Search                  | HTTP status                          | 429                                   | `{"type": "ErrorResponse", "error": {"status", "code", "detail"}}` | `X-RateLimit-Reset` (seconds)             |
+| OpenAI                        | HTTP status + body `code`            | 429 for **both** rate limit and quota | `{"error": {"type", "code", "message", "param"}}`                  | `x-ratelimit-reset-*`                     |
 
 ## Real quirks to encode (not 14 error atoms)
 
@@ -69,7 +70,9 @@ Out of scope (tracked separately): honouring `Retry-After` / `X-*-Reset` headers
 <!-- AC:END -->
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - [x] #1 MusicBrainz, Discogs, Wikipedia REST v1, Brave Search, and OpenAI API modules expose a classifier that maps {status, body} to :retry or :cancel
 - [x] #2 Wikipedia Action API responses (wbgetentities, prop=extracts) decode HTTP 200 bodies containing {"error": ...} into {:error, reason} instead of {:ok, body}
 - [x] #3 OpenAI classifier distinguishes rate_limit_exceeded (retry) from insufficient_quota (cancel) despite both being HTTP 429
@@ -81,6 +84,7 @@ Out of scope (tracked separately): honouring `Retry-After` / `X-*-Reset` headers
 ## Final Summary
 
 <!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
 ## Summary
 
 Introduced structured per-API `ErrorResponse` modules for MusicBrainz, Discogs, Wikipedia, Brave Search, and OpenAI, so workers can now distinguish transient failures (rate limit, 5xx, timeout) from permanent ones (4xx, not found, auth, quota). Workers emit `{:snooze, seconds}` / `{:cancel, reason}` / `{:error, reason}` instead of bubbling raw bodies. Preserved the existing `LastFm.API.ErrorResponse` behaviour and added struct-based `retryable?/1` / `retry_delay_seconds/1` helpers so Last.fm plugs into the same handler.
@@ -88,10 +92,12 @@ Introduced structured per-API `ErrorResponse` modules for MusicBrainz, Discogs, 
 ## What changed
 
 **New shared modules**
+
 - `MusicLibrary.HttpError` — default HTTP status → kind mapping
 - `MusicLibrary.Worker.ErrorHandler.to_oban_result/1` — maps any known `ErrorResponse` struct to the correct Oban tuple; passes through `{:ok, _}`, `{:cancel, _}`, and atom-reason errors unchanged
 
 **New per-API `ErrorResponse` modules**
+
 - `MusicBrainz.API.ErrorResponse` — maps 503 to `:rate_limit` (MusicBrainz-specific; 429 is not used upstream)
 - `Discogs.API.ErrorResponse`
 - `Wikipedia.API.ErrorResponse` — has a dedicated `from_action_api_body/1` for HTTP 200 Action API error envelopes (AC2 silent-bug fix)
@@ -99,10 +105,12 @@ Introduced structured per-API `ErrorResponse` modules for MusicBrainz, Discogs, 
 - `OpenAI.API.ErrorResponse` — disambiguates HTTP 429 between `rate_limit_exceeded` (retry) and `insufficient_quota` (cancel) via body `code` (AC3)
 
 **Updated API modules** — each now attaches a `parse_error/1` Req response step that halts with the appropriate struct on failure:
+
 - `MusicBrainz.API`, `Discogs.API`, `Wikipedia.API`, `BraveSearch.API`
 - `OpenAI.API` — `gpt/2`, `get_embeddings/2`, and `chat_stream/6` now return `{:error, %OpenAI.API.ErrorResponse{}}` instead of `{:error, "OpenAI API error: " <> inspect(body)}` strings
 
 **Updated workers** to route through `ErrorHandler.to_oban_result/1`, preserving existing atom-cancel branches (`:no_english_wikipedia`, `:cover_not_available`, `:image_not_found`, `:no_discogs_data`):
+
 - `ArtistRefreshMusicBrainzData`, `ArtistRefreshDiscogsData`, `ArtistRefreshWikipediaData`
 - `FetchArtistInfo`, `FetchArtistImage`, `FetchArtistLastFmData`
 - `RefreshCover`, `RecordRefreshMusicBrainzData`
@@ -127,4 +135,5 @@ Full verification: `mise run dev:precommit` — shellcheck, credo --strict, sobe
 ## Out of scope (ML-146)
 
 Honouring `Retry-After` / `X-*-Reset` headers to derive precise snooze durations — each ErrorResponse module currently returns fixed per-kind defaults (30–60 s).
+
 <!-- SECTION:FINAL_SUMMARY:END -->

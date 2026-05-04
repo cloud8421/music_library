@@ -6,7 +6,7 @@ The Release sheet's scrobble controls have three concrete friction points, confi
 
 1. **Navigation.** On a multi-medium release, the only way to scrobble a cross-medium selection is the top-level button — users have to scroll all the way back up after picking tracks on disc 3.
 2. **No picker for `finished_at`.** The timestamp is always `DateTime.utc_now()`; there is no UI to backfill a listening session. `ScrobbleActivity.scrobble_release/3`, `scrobble_medium/4`, and `scrobble_tracks/4` already accept a `DateTime`, so this is purely a UI gap.
-3. **Disabled buttons aren't visually distinct.** All scrobble buttons use `variant="soft"` with only `opacity-70` for disabled — hard to tell state apart. The per-medium button is *always* disabled when any track is selected anywhere, which is surprising.
+3. **Disabled buttons aren't visually distinct.** All scrobble buttons use `variant="soft"` with only `opacity-70` for disabled — hard to tell state apart. The per-medium button is _always_ disabled when any track is selected anywhere, which is surprising.
 
 A fourth issue surfaced in review: the **print** icon is omnipresent (release + every medium) but rarely used, taking up valuable primary-action space.
 
@@ -118,13 +118,13 @@ A **Reset to now** affordance: if Fluxon's picker exposes a clear action (likely
 
 ### 5. Event handlers — summary of changes
 
-| Event | Before | After |
-|---|---|---|
-| `scrobble_release` | `DateTime.utc_now()` hardcoded | `@finished_at || DateTime.utc_now()` |
-| `scrobble_medium` | disabled when selection present; always `utc_now()` | always enabled; uses `@finished_at || utc_now()` |
-| `scrobble_selected_tracks` | `DateTime.utc_now()` hardcoded | `@finished_at || DateTime.utc_now()` |
-| `clear_finished_at` | — | new; resets form field + assign |
-| `validate` | parses `selected_tracks` + `toggle_medium` | also parses `finished_at` |
+| Event                      | Before                                              | After                              |
+| -------------------------- | --------------------------------------------------- | ---------------------------------- | --- | ------------------- |
+| `scrobble_release`         | `DateTime.utc_now()` hardcoded                      | `@finished_at                      |     | DateTime.utc_now()` |
+| `scrobble_medium`          | disabled when selection present; always `utc_now()` | always enabled; uses `@finished_at |     | utc_now()`          |
+| `scrobble_selected_tracks` | `DateTime.utc_now()` hardcoded                      | `@finished_at                      |     | DateTime.utc_now()` |
+| `clear_finished_at`        | —                                                   | new; resets form field + assign    |
+| `validate`                 | parses `selected_tracks` + `toggle_medium`          | also parses `finished_at`          |
 
 The `already_scrobbled` 3-second lockout stays as-is.
 

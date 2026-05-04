@@ -3,8 +3,8 @@ id: ML-162
 title: Expose production errors via JSON API endpoint
 status: Done
 assignee: []
-created_date: '2026-05-04 08:08'
-updated_date: '2026-05-04 12:11'
+created_date: "2026-05-04 08:08"
+updated_date: "2026-05-04 12:11"
 labels:
   - api
   - ready
@@ -17,6 +17,7 @@ ordinal: 7000
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 Add an API controller and routes under `/api/v1/errors` to expose ErrorTracker data as JSON, behind the existing Bearer token auth.
 
 This subtask covers the server-side work only: controller, JSON serialization, context queries, and routes. The pi tooling and extensions are covered by separate subtasks.
@@ -24,11 +25,13 @@ This subtask covers the server-side work only: controller, JSON serialization, c
 ### API design
 
 **`GET /api/v1/errors`** — List errors
+
 - Query params: `status` (resolved/unresolved), `muted` (true/false), `search` (substring match on reason), `limit` (default 50), `offset` (default 0)
 - Returns: `{ errors: [...], total: n, limit: n, offset: n }`
 - Each error includes: id, kind, reason, source_line, source_function, status, fingerprint, last_occurrence_at, muted, inserted_at, updated_at, occurrence_count, first_occurrence_at
 
 **`GET /api/v1/errors/:id`** — Single error detail
+
 - Returns the error with all its occurrences (with stacktraces), sorted by inserted_at desc
 - Each occurrence includes: id, reason, context, breadcrumbs, stacktrace (lines), inserted_at
 
@@ -48,6 +51,7 @@ This subtask covers the server-side work only: controller, JSON serialization, c
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
+
 ## Implementation Plan
 
 ### Objective alignment
@@ -72,27 +76,29 @@ Add two JSON API endpoints under `/api/v1/errors` (already behind the existing B
 
 ### Architecture impact analysis
 
-| Touchpoint | Impact |
-|---|---|
-| **New context: `lib/music_library/errors.ex`** | New module. Two public functions: `list_errors/1` (filtered + paginated list with counts) and `get_error!/1` (single error with occurrences). |
-| **New controller: `lib/music_library_web/controllers/error_controller.ex`** | New module. Two actions: `index/2`, `show/2`. Parses query params with `parse_int` helper. |
-| **New JSON view: `lib/music_library_web/controllers/error_json.ex`** | New module. Two render functions: `index/1`, `show/1`. Serializes errors and occurrences. |
-| **Router: `lib/music_library_web/router.ex`** | Add two new routes under the existing `scope "/api/v1"` block (`GET /api/v1/errors`, `GET /api/v1/errors/:id`). No new pipeline or scope. |
-| **No PubSub impact** | These are read-only endpoints. No real-time updates needed. |
-| **No supervision tree impact** | The context is stateless. No new processes. |
-| **No external API impact** | Internal API only. |
-| **No migration needed** | Tables already exist (created by error_tracker's own migrations in `20260226212444_add_error_tracker.exs`). |
-| **No deprecation path** | Net-new addition. |
+| Touchpoint                                                                  | Impact                                                                                                                                        |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **New context: `lib/music_library/errors.ex`**                              | New module. Two public functions: `list_errors/1` (filtered + paginated list with counts) and `get_error!/1` (single error with occurrences). |
+| **New controller: `lib/music_library_web/controllers/error_controller.ex`** | New module. Two actions: `index/2`, `show/2`. Parses query params with `parse_int` helper.                                                    |
+| **New JSON view: `lib/music_library_web/controllers/error_json.ex`**        | New module. Two render functions: `index/1`, `show/1`. Serializes errors and occurrences.                                                     |
+| **Router: `lib/music_library_web/router.ex`**                               | Add two new routes under the existing `scope "/api/v1"` block (`GET /api/v1/errors`, `GET /api/v1/errors/:id`). No new pipeline or scope.     |
+| **No PubSub impact**                                                        | These are read-only endpoints. No real-time updates needed.                                                                                   |
+| **No supervision tree impact**                                              | The context is stateless. No new processes.                                                                                                   |
+| **No external API impact**                                                  | Internal API only.                                                                                                                            |
+| **No migration needed**                                                     | Tables already exist (created by error_tracker's own migrations in `20260226212444_add_error_tracker.exs`).                                   |
+| **No deprecation path**                                                     | Net-new addition.                                                                                                                             |
 
 ### Performance profile
 
 **List endpoint (`GET /api/v1/errors`)**: Two queries.
+
 1. COUNT query with same filters (no OFFSET/LIMIT). Complexity: O(n) scan of filtered rows on `error_tracker_errors` table. With typical production volumes (hundreds of unique errors), this is trivially fast.
 2. SELECT with filters + ORDER BY + LIMIT + OFFSET. Same O(n) scan profile. No joins — all data is in the single table for the list view.
 
 No N+1 risk in the list endpoint: we return error-level data only, no occurrence preloading.
 
 **Single error endpoint (`GET /api/v1/errors/:id`)**: Three queries.
+
 1. `Repo.get!` on `error_tracker_errors` by ID. PK lookup is O(1).
 2. `Repo.preload` occurrences sorted by `inserted_at DESC`. This produces a single LEFT JOIN or an IN query (depends on preload strategy). For errors with hundreds of occurrences, the preload could return substantial data.
 3. A subquery COUNT on occurrences for `occurrence_count` (if not already preloaded). Can be merged with the preload.
@@ -122,17 +128,20 @@ No paid resources consumed. The endpoints are internal HTTP handlers that only q
 **What**: New `lib/music_library/errors.ex` with two public functions and private query helpers.
 
 **Functions**:
+
 - `list_errors(opts)` — accepts keyword list: `[status: :unresolved, muted: false, search: "syntax error", limit: 50, offset: 0]`. Returns `%{errors: [...], total: n}`.
   - Filters: `status` → `where(status: ^status)`, `muted` → `where(muted: ^muted)` (boolean), `search` → `where(ilike(e.reason, ^"%#{search}%"))`
   - Count query: `Repo.aggregate/3` with same filters
-  - List query: `order_by(desc: :last_occurrence_at)` + `limit/offset`  
+  - List query: `order_by(desc: :last_occurrence_at)` + `limit/offset`
   - Computed fields `occurrence_count` and `first_occurrence_at` are omitted from the list endpoint to keep queries simple. They are computed only in the single-error endpoint. This avoids a correlated subquery per row in the list.
 - `get_error!(id)` — fetches single error, preloads all occurrences sorted `desc: inserted_at`, computes `occurrence_count` and `first_occurrence_at`.
 
 **Verification**:
+
 ```bash
 mix test test/music_library/errors_test.exs
 ```
+
 Write tests for: empty list, filtering by status, filtering by muted, search by reason substring, pagination (limit + offset), error not found raises, single error includes occurrence_count and occurrences.
 
 ---
@@ -142,15 +151,18 @@ Write tests for: empty list, filtering by status, filtering by muted, search by 
 **What**: New `lib/music_library_web/controllers/error_controller.ex` following `CollectionController` patterns.
 
 **Actions**:
+
 - `index(conn, params)` — parses `status`, `muted`, `search`, `limit`, `offset` from query params; calls `Errs.list_errors(opts)`; renders `:index`.
 - `show(conn, %{"id" => id})` — fetches error by integer ID; renders `:show`.
 
 Use `parse_int/2` helper (same pattern as `CollectionController`).
 
 **Verification**:
+
 ```bash
 mix test test/music_library_web/controllers/error_controller_test.exs
 ```
+
 Write tests for: auth required (401 without Bearer token), list returns JSON structure, filter params applied, single error returns JSON with occurrences.
 
 ---
@@ -160,10 +172,12 @@ Write tests for: auth required (401 without Bearer token), list returns JSON str
 **What**: New `lib/music_library_web/controllers/error_json.ex` following `CollectionJSON` patterns.
 
 **Render functions**:
+
 - `index(%{errors: errors, total: total, limit: limit, offset: offset})` → `%{errors: [...], total: n, limit: n, offset: n}`
 - `show(%{error: error})` → single error with nested occurrences
 
 **Serialization details**:
+
 - `id` → integer
 - `status` → atom-to-string (`"resolved"` / `"unresolved"`)
 - `fingerprint` → hex string (already stored as hex string in SQLite TEXT column)
@@ -175,9 +189,11 @@ Write tests for: auth required (401 without Bearer token), list returns JSON str
 - `occurrence_count` → integer
 
 **Verification**:
+
 ```bash
 mix test test/music_library_web/controllers/error_controller_test.exs
 ```
+
 Tests from Step 2 already validate the JSON structure via `json_response/2`. Verify serialization of all fields including nested stacktrace lines.
 
 ---
@@ -194,10 +210,13 @@ get "/errors/:id", ErrorController, :show
 Place after existing collection routes, before `assets` and `backup`.
 
 **Verification**:
+
 ```bash
 mix phx.routes | grep errors
 ```
+
 Should show the two new API routes under `/api/v1/errors`. Also run existing tests to ensure no route conflicts:
+
 ```bash
 mix test
 ```
@@ -209,11 +228,14 @@ mix test
 **What**: Run the full test suite, update architecture docs.
 
 **Verification**:
+
 ```bash
 mix test
 mix test test/music_library_web/controllers/error_controller_test.exs
 ```
+
 All tests pass including existing tests. Update `docs/architecture.md`:
+
 - Add `Errors` context to the Contexts table
 - Add `ErrorController` to the Controllers table
 
@@ -222,6 +244,7 @@ All tests pass including existing tests. Update `docs/architecture.md`:
 ### Production Changes
 
 No manual production infrastructure changes required. The endpoints use:
+
 - Existing `error_tracker_errors` and `error_tracker_occurrences` tables (already migrated)
 - Existing `require_api_token` plug (already configured with `API_TOKEN` env var)
 - Existing `MusicLibrary.Repo` (already configured)
@@ -294,6 +317,7 @@ end
 ```
 
 **Notes:**
+
 - `fingerprint` is stored as TEXT in SQLite (the hex string from `Base.encode16/1`), despite the Ecto schema declaring `:binary`. Use hex strings when inserting.
 - `status` is an `Ecto.Enum` — pass atoms (`:resolved` / `:unresolved`).
 - `muted` is INTEGER in SQLite (`0`/`1`), but the Ecto schema accepts booleans.
@@ -306,6 +330,7 @@ end
 ## Implementation Notes
 
 <!-- SECTION:NOTES:BEGIN -->
+
 Implementation completed. All 5 steps executed:
 
 1. **Context** (`lib/music_library/errors.ex`): Created `MusicLibrary.Errors` with `list_errors/1` (filtered + paginated) and `get_error/1` (returns `{:ok, error}` or `{:error, :not_found}`). Uses `MusicLibrary.Repo` (where error_tracker tables actually live, not TelemetryRepo). Private query helpers for status/muted/search filtering.
@@ -330,6 +355,7 @@ Implementation completed. All 5 steps executed:
 ## Final Summary
 
 <!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
 ## Summary
 
 Added two JSON API endpoints under `/api/v1/errors` to expose production error data from ErrorTracker, behind the existing Bearer token authentication.
@@ -337,6 +363,7 @@ Added two JSON API endpoints under `/api/v1/errors` to expose production error d
 ### What changed
 
 **New files:**
+
 - `lib/music_library/errors.ex` — Context with `list_errors/1` (filtered, paginated listing) and `get_error/1` (single error with preloaded occurrences, computed counts)
 - `lib/music_library_web/controllers/error_controller.ex` — Controller with `index/2` and `show/2` actions, following CollectionController patterns
 - `lib/music_library_web/controllers/error_json.ex` — JSON serializer for errors and occurrences, including stacktrace lines; also serves as Phoenix error renderer (404/500 JSON responses)
@@ -344,6 +371,7 @@ Added two JSON API endpoints under `/api/v1/errors` to expose production error d
 - `test/music_library_web/controllers/error_controller_test.exs` — 10 tests: auth required (2), list/pagination/filter/search (6), single error with occurrences (1), 404 handling (1)
 
 **Modified files:**
+
 - `lib/music_library_web/router.ex` — Added `GET /api/v1/errors` and `GET /api/v1/errors/:id` routes
 - `docs/architecture.md` — Added Errors context and ErrorController entries
 
@@ -362,4 +390,5 @@ Added two JSON API endpoints under `/api/v1/errors` to expose production error d
 ### Test results
 
 All 900 tests pass (43 doctests, 857 existing + 10 new).
+
 <!-- SECTION:FINAL_SUMMARY:END -->

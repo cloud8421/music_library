@@ -3,17 +3,18 @@ id: ML-8
 title: Add docker ecosystem to Dependabot for Dockerfile base images
 status: Done
 assignee: []
-created_date: '2026-04-20 08:49'
+created_date: "2026-04-20 08:49"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/175'
+  - "https://github.com/cloud8421/music_library/issues/175"
 priority: low
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-16 · updated 2026-04-17 · closed 2026-04-17_
 
 ## Summary
@@ -40,7 +41,9 @@ Add to `.github/dependabot.yml`:
 Dependabot will open PRs bumping the base image ARGs; the `mise run dev:validate-docker-image` task (already in the project) will need to be run on those PRs to confirm `hexpm/elixir` tag availability on both `linux/amd64` and `linux/arm64`.
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - Docker base-image updates surface as Dependabot PRs
 - Existing `validate-docker-image` task runs in CI to gate them
 <!-- SECTION:DESCRIPTION:END -->

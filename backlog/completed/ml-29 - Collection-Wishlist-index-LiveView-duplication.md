@@ -3,17 +3,18 @@ id: ML-29
 title: Collection/Wishlist index LiveView duplication
 status: Done
 assignee: []
-created_date: '2026-04-20 08:51'
+created_date: "2026-04-20 08:51"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/150'
+  - "https://github.com/cloud8421/music_library/issues/150"
 priority: high
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-05 · updated 2026-04-13 · closed 2026-04-13_
 
 ## Summary
@@ -36,7 +37,9 @@ _GitHub: created 2026-04-05 · updated 2026-04-13 · closed 2026-04-13_
 Extract shared index behaviour into a `LiveHelpers` module or use a shared base pattern that both LiveViews delegate to, parameterizing only the differences (base query filter, routes, section name).
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - Shared logic lives in one place
 - Both index pages retain their current functionality
 - Adding a new shared feature (e.g., new sort option) requires changes in one location

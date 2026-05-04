@@ -3,17 +3,18 @@ id: ML-80
 title: ScrobbleLive has zero test coverage
 status: Done
 assignee: []
-created_date: '2026-04-20 08:57'
+created_date: "2026-04-20 08:57"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/95'
+  - "https://github.com/cloud8421/music_library/issues/95"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-03-05 · updated 2026-03-05 · closed 2026-03-05_
 
 ## Priority: Medium
@@ -34,4 +35,5 @@ Add test files covering at least the happy paths for search, selection, and scro
 ## Source
 
 From technical debt audit (2026-03-05).
+
 <!-- SECTION:DESCRIPTION:END -->

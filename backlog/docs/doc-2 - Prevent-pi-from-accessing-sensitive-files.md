@@ -2,9 +2,10 @@
 id: doc-2
 title: Prevent pi from accessing sensitive files
 type: other
-created_date: '2026-05-03 13:32'
-updated_date: '2026-05-04 06:55'
+created_date: "2026-05-03 13:32"
+updated_date: "2026-05-04 06:55"
 ---
+
 # Implementation Analysis: Prevent pi from accessing sensitive files
 
 ## Summary
@@ -13,14 +14,14 @@ The task requires a **declarative** way to intercept pi tool calls that would ac
 
 ## Sensitive File Categories (for this project)
 
-| Category | Patterns | Examples |
-|----------|----------|----------|
-| Environment secrets | `.env`, `.env.*`, `.envrc` | `.env`, `.env.production` |
-| Key files | `*.pem`, `*.key`, `*.key.pub` | SSH keys |
-| Secret/credential files | `*secret*`, `*credential*`, `*credentials*` | `secrets.yml`, `credentials.json` |
-| Config dirs | `.ssh/`, `.aws/`, `.gnupg/` | SSH config, AWS credentials |
-| Production config | Any path known to contain secrets | `rel/`, production env vars |
-| Pi session files | `~/.pi/agent/sessions/` | Session JSONL files (contain tool outputs) |
+| Category                | Patterns                                    | Examples                                   |
+| ----------------------- | ------------------------------------------- | ------------------------------------------ |
+| Environment secrets     | `.env`, `.env.*`, `.envrc`                  | `.env`, `.env.production`                  |
+| Key files               | `*.pem`, `*.key`, `*.key.pub`               | SSH keys                                   |
+| Secret/credential files | `*secret*`, `*credential*`, `*credentials*` | `secrets.yml`, `credentials.json`          |
+| Config dirs             | `.ssh/`, `.aws/`, `.gnupg/`                 | SSH config, AWS credentials                |
+| Production config       | Any path known to contain secrets           | `rel/`, production env vars                |
+| Pi session files        | `~/.pi/agent/sessions/`                     | Session JSONL files (contain tool outputs) |
 
 ## Available Pi Extension Mechanisms
 
@@ -37,6 +38,7 @@ pi.on("tool_call", async (event, ctx) => {
 ```
 
 **Key capabilities:**
+
 - `event.toolName` — identifies the tool (`read`, `bash`, `grep`, `find`, `ls`, `write`, `edit`)
 - `event.input` — tool parameters (mutable, can be patched)
 - `isToolCallEventType("read", event)` — type-narrows for specific tools
@@ -46,15 +48,15 @@ pi.on("tool_call", async (event, ctx) => {
 
 ### Tools that can access sensitive files
 
-| Tool | Danger | Input fields to check |
-|------|--------|----------------------|
-| `read` | **High** — reads file content into LLM context | `input.path` |
-| `bash` | **High** — can `cat`, `grep`, `curl` any file | `input.command` (regex match) |
-| `grep` | **High** — searches file contents | `input.path` |
-| `find` | **Low** — lists filenames only | `input.path` (directory listing) |
-| `ls` | **Low** — lists directory contents | `input.path` |
-| `write` | **Medium** — could overwrite sensitive files | `input.path` |
-| `edit` | **Medium** — could modify sensitive files | `input.path` |
+| Tool    | Danger                                         | Input fields to check            |
+| ------- | ---------------------------------------------- | -------------------------------- |
+| `read`  | **High** — reads file content into LLM context | `input.path`                     |
+| `bash`  | **High** — can `cat`, `grep`, `curl` any file  | `input.command` (regex match)    |
+| `grep`  | **High** — searches file contents              | `input.path`                     |
+| `find`  | **Low** — lists filenames only                 | `input.path` (directory listing) |
+| `ls`    | **Low** — lists directory contents             | `input.path`                     |
+| `write` | **Medium** — could overwrite sensitive files   | `input.path`                     |
+| `edit`  | **Medium** — could modify sensitive files      | `input.path`                     |
 
 ### `tool_result` event (secondary approach)
 
@@ -85,6 +87,7 @@ pi.registerTool({
 **Description:** Single extension listening on `tool_call`, checking paths/commands against a configuration file of protected patterns. Blocks matching calls.
 
 **Implementation:**
+
 1. Create `.pi/extensions/sensitive-file-guard.ts` (or `index.ts` in a directory)
 2. Create `.pi/sensitive-paths.json` — declarative config listing protected patterns
 3. In `tool_call` handler:
@@ -94,6 +97,7 @@ pi.registerTool({
    - Block if match, notify in UI
 
 **Sample config file (`.pi/sensitive-paths.json`):**
+
 ```json
 {
   "blocked_paths": [
@@ -109,16 +113,12 @@ pi.registerTool({
     ".gnupg/",
     "config/*.secret.exs"
   ],
-  "blocked_commands": [
-    "cat .env",
-    "cat ~/.ssh",
-    "printenv",
-    "cat ~/.aws"
-  ]
+  "blocked_commands": ["cat .env", "cat ~/.ssh", "printenv", "cat ~/.aws"]
 }
 ```
 
 **Pros:**
+
 - Minimal code (~60 lines of TypeScript)
 - Declarative configuration file (easy to audit and update)
 - Works with ALL tools (read, bash, grep, find, ls, write, edit)
@@ -128,6 +128,7 @@ pi.registerTool({
 - Fails safe (blocks before any file access)
 
 **Cons:**
+
 - Can't sanitize partial output (but blocking prevents all access)
 - Regex-based command scanning for bash has edge cases
 - `find`/`ls` only blocked at directory level, not per-file
@@ -141,17 +142,20 @@ pi.registerTool({
 **Description:** Override the `read` and `bash` tools with custom implementations that include path checking. Delegates to original implementation for allowed paths.
 
 **Implementation:**
+
 1. Create `.pi/extensions/sensitive-file-guard/` directory
 2. Override `read` tool: check paths, delegate allowed reads to original implementation
 3. Override `bash` tool: scan commands, delegate allowed commands to original implementation
 4. Optionally override `grep`, `find`, `ls`, `write`, `edit`
 
 **Pros:**
+
 - Full control (can log, can sanitize output, can modify behavior)
 - No event overhead per tool call
 - Can add audit logging
 
 **Cons:**
+
 - Must reimplement or re-wrap built-in tool logic (~200+ lines)
 - Must maintain compatibility with pi updates
 - More complex testing
@@ -170,10 +174,12 @@ pi.registerTool({
 Same as Route A, plus a `tool_result` handler that scans output for sensitive patterns and redacts them.
 
 **Pros:**
+
 - Most comprehensive protection
 - Can allow partial access with sanitization
 
 **Cons:**
+
 - Most complex
 - `tool_result` sanitization is error-prone (false positives/negatives)
 - Redacted content still consumes context tokens
@@ -195,14 +201,14 @@ Route A (pure `tool_call` event interception with declarative config) is the **s
 
 ## Architectural Impact
 
-| Touchpoint | Impact |
-|------------|--------|
-| `.pi/extensions/` | New extension file added |
-| `.pi/sensitive-paths.json` | New config file (declarative rules) |
-| `tool_call` event | New subscriber, no breaking changes |
-| Built-in tools | Unchanged (event interception is non-invasive) |
-| `ctx.ui` | Used for notification only (no blocking dependency) |
-| Other extensions | Compatible — tool_call handlers chain in load order |
+| Touchpoint                 | Impact                                              |
+| -------------------------- | --------------------------------------------------- |
+| `.pi/extensions/`          | New extension file added                            |
+| `.pi/sensitive-paths.json` | New config file (declarative rules)                 |
+| `tool_call` event          | New subscriber, no breaking changes                 |
+| Built-in tools             | Unchanged (event interception is non-invasive)      |
+| `ctx.ui`                   | Used for notification only (no blocking dependency) |
+| Other extensions           | Compatible — tool_call handlers chain in load order |
 
 ## Open Questions
 

@@ -51,8 +51,14 @@
     overflow: hidden;
     font-size: 0.82rem;
     color: var(--text);
-    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
+    font-family:
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      sans-serif;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 8px 24px rgba(0, 0, 0, 0.06);
   }
   .ml-sheet-header {
     padding: 0.9rem 1rem;
@@ -66,9 +72,23 @@
     gap: 0.75rem;
     margin-bottom: 0.75rem;
   }
-  .ml-title { font-weight: 600; font-size: 0.98rem; color: var(--text); line-height: 1.2; }
-  .ml-subtitle { color: var(--text-muted); font-size: 0.75rem; margin-top: 0.15rem; }
-  .ml-actions { display: flex; align-items: center; gap: 0.4rem; flex-wrap: nowrap; }
+  .ml-title {
+    font-weight: 600;
+    font-size: 0.98rem;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .ml-subtitle {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    margin-top: 0.15rem;
+  }
+  .ml-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: nowrap;
+  }
 
   .ml-picker {
     display: inline-flex;
@@ -83,10 +103,22 @@
     cursor: default;
     white-space: nowrap;
   }
-  .ml-picker svg { color: var(--text-muted); flex-shrink: 0; }
-  .ml-picker-label { color: var(--text-muted); font-size: 0.7rem; }
-  .ml-picker-value { font-weight: 500; font-variant-numeric: tabular-nums; }
-  .ml-picker-caret { color: var(--text-subtle); margin-left: 0.1rem; }
+  .ml-picker svg {
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+  .ml-picker-label {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+  }
+  .ml-picker-value {
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .ml-picker-caret {
+    color: var(--text-subtle);
+    margin-left: 0.1rem;
+  }
 
   .ml-btn {
     display: inline-flex;
@@ -102,15 +134,42 @@
     white-space: nowrap;
     font-family: inherit;
   }
-  .ml-btn svg { width: 14px; height: 14px; }
-  .ml-btn-solid { background: var(--primary); color: white; border-color: var(--primary); }
-  .ml-btn-soft   { background: var(--primary-soft-bg); color: var(--primary-soft-text); border-color: transparent; }
-  .ml-btn-outline{ background: var(--surface); color: var(--text); border-color: var(--border-c); }
-  .ml-btn-ghost  { background: transparent; color: var(--text-muted); }
-  .ml-btn.icon-only { padding: 0; width: 30px; height: 30px; }
-  .ml-btn.disabled { opacity: 0.45; }
+  .ml-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+  .ml-btn-solid {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  .ml-btn-soft {
+    background: var(--primary-soft-bg);
+    color: var(--primary-soft-text);
+    border-color: transparent;
+  }
+  .ml-btn-outline {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border-c);
+  }
+  .ml-btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+  }
+  .ml-btn.icon-only {
+    padding: 0;
+    width: 30px;
+    height: 30px;
+  }
+  .ml-btn.disabled {
+    opacity: 0.45;
+  }
 
-  .ml-btn-group { display: inline-flex; gap: 0.35rem; }
+  .ml-btn-group {
+    display: inline-flex;
+    gap: 0.35rem;
+  }
 
   /* Medium header */
   .ml-medium-header {
@@ -122,7 +181,13 @@
     background: var(--surface-muted);
     border-bottom: 1px solid var(--border-c);
   }
-  .ml-medium-title { display: flex; align-items: center; gap: 0.55rem; font-weight: 600; font-size: 0.82rem; }
+  .ml-medium-title {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-weight: 600;
+    font-size: 0.82rem;
+  }
   .ml-badge {
     display: inline-flex;
     align-items: center;
@@ -140,7 +205,8 @@
   /* Checkbox */
   .ml-chk {
     appearance: none;
-    width: 15px; height: 15px;
+    width: 15px;
+    height: 15px;
     border: 1.5px solid var(--z-400);
     border-radius: 4px;
     position: relative;
@@ -149,12 +215,17 @@
     background: var(--surface);
     flex-shrink: 0;
   }
-  .ml-chk.checked { background: var(--primary); border-color: var(--primary); }
+  .ml-chk.checked {
+    background: var(--primary);
+    border-color: var(--primary);
+  }
   .ml-chk.checked::after {
-    content: '';
+    content: "";
     position: absolute;
-    left: 3px; top: 0px;
-    width: 5px; height: 9px;
+    left: 3px;
+    top: 0px;
+    width: 5px;
+    height: 9px;
     border: solid white;
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
@@ -170,11 +241,26 @@
     align-items: center;
     font-size: 0.8rem;
   }
-  .ml-track:last-child { border-bottom: none; }
-  .ml-track.selected { background: var(--accent-row); }
-  .ml-track-num { color: var(--text-subtle); font-size: 0.72rem; text-align: right; font-variant-numeric: tabular-nums; }
-  .ml-track-title { color: var(--text); }
-  .ml-track-dur { color: var(--text-muted); font-size: 0.72rem; font-variant-numeric: tabular-nums; }
+  .ml-track:last-child {
+    border-bottom: none;
+  }
+  .ml-track.selected {
+    background: var(--accent-row);
+  }
+  .ml-track-num {
+    color: var(--text-subtle);
+    font-size: 0.72rem;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .ml-track-title {
+    color: var(--text);
+  }
+  .ml-track-dur {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-variant-numeric: tabular-nums;
+  }
 
   /* Sticky selection bar */
   .ml-sticky {
@@ -182,18 +268,33 @@
     bottom: 0;
     background: var(--surface);
     border-top: 1px solid var(--border-c);
-    box-shadow: 0 -6px 18px rgba(0,0,0,0.08);
+    box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.08);
     padding: 0.65rem 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
   }
-  .ml-sticky-info { display: flex; flex-direction: column; line-height: 1.2; }
-  .ml-sticky-count { font-size: 0.82rem; font-weight: 600; color: var(--text); }
-  .ml-sticky-meta { font-size: 0.7rem; color: var(--text-muted); }
+  .ml-sticky-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+  .ml-sticky-count {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .ml-sticky-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
 
-  .ml-body { max-height: 520px; overflow-y: auto; scrollbar-width: thin; }
+  .ml-body {
+    max-height: 520px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
 
   /* Viewport frames */
   .viewport-frame {
@@ -208,9 +309,13 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 0.5rem;
-    display: flex; justify-content: space-between;
+    display: flex;
+    justify-content: space-between;
   }
-  .viewport-label .dim { color: var(--text-subtle); font-variant-numeric: tabular-nums; }
+  .viewport-label .dim {
+    color: var(--text-subtle);
+    font-variant-numeric: tabular-nums;
+  }
 
   .grid-two {
     display: grid;
@@ -219,7 +324,9 @@
     align-items: start;
   }
   @media (max-width: 1000px) {
-    .grid-two { grid-template-columns: 1fr; }
+    .grid-two {
+      grid-template-columns: 1fr;
+    }
   }
 
   .annotation {
@@ -231,7 +338,9 @@
     margin-top: 0.75rem;
     border-radius: 4px;
   }
-  .annotation strong { font-weight: 600; }
+  .annotation strong {
+    font-weight: 600;
+  }
 
   .hierarchy-diagram {
     background: var(--surface);
@@ -241,56 +350,113 @@
     margin-top: 1rem;
     font-size: 0.82rem;
   }
-  .h-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0; }
-  .h-label { font-weight: 600; width: 130px; color: var(--text); }
-  .h-arrow { color: var(--text-subtle); }
-  .h-scope { color: var(--text-muted); }
+  .h-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0;
+  }
+  .h-label {
+    font-weight: 600;
+    width: 130px;
+    color: var(--text);
+  }
+  .h-arrow {
+    color: var(--text-subtle);
+  }
+  .h-scope {
+    color: var(--text-muted);
+  }
 
   /* Mobile-specific overrides on narrow viewport mock */
-  .m-narrow .ml-title-row { flex-direction: column; align-items: stretch; }
-  .m-narrow .ml-title-row .ml-actions-top { justify-content: space-between; }
-  .m-narrow .ml-picker { flex: 1; justify-content: flex-start; }
+  .m-narrow .ml-title-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .m-narrow .ml-title-row .ml-actions-top {
+    justify-content: space-between;
+  }
+  .m-narrow .ml-picker {
+    flex: 1;
+    justify-content: flex-start;
+  }
   .m-narrow .ml-btn-row {
     display: flex;
     gap: 0.4rem;
     margin-top: 0.5rem;
   }
-  .m-narrow .ml-btn-row .ml-picker { flex: 1; }
-  .m-narrow .ml-btn-row .ml-btn-solid { flex: 0 0 auto; }
+  .m-narrow .ml-btn-row .ml-picker {
+    flex: 1;
+  }
+  .m-narrow .ml-btn-row .ml-btn-solid {
+    flex: 0 0 auto;
+  }
 </style>
 
 <h2>Option A — v2, app-styled + mobile layout + explicit "Scrobble release"</h2>
-<p class="subtitle">Addresses the three iteration asks: using the app's zinc/blue palette and Fluxon button variants, dedicated mobile layout, and a clear top-level "Scrobble release" action.</p>
+<p class="subtitle">
+  Addresses the three iteration asks: using the app's zinc/blue palette and
+  Fluxon button variants, dedicated mobile layout, and a clear top-level
+  "Scrobble release" action.
+</p>
 
 <div class="hierarchy-diagram">
-  <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem;">Action hierarchy</div>
+  <div
+    style="
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.4rem;
+    "
+  >
+    Action hierarchy
+  </div>
   <div class="h-row">
     <span class="h-label">Header action</span>
     <span class="h-arrow">→</span>
-    <span class="ml-btn ml-btn-solid" style="padding: 0.2rem 0.5rem;"><svg viewBox="0 0 20 20" fill="currentColor" width="12" height="12"><path d="M6 4l10 6-10 6V4z"/></svg> Scrobble release</span>
+    <span class="ml-btn ml-btn-solid" style="padding: 0.2rem 0.5rem"
+      ><svg viewBox="0 0 20 20" fill="currentColor" width="12" height="12">
+        <path d="M6 4l10 6-10 6V4z" />
+      </svg>
+      Scrobble release</span
+    >
     <span class="h-scope">all tracks, one submission</span>
   </div>
   <div class="h-row">
     <span class="h-label">Per-medium action</span>
     <span class="h-arrow">→</span>
-    <span class="ml-btn ml-btn-soft" style="padding: 0.2rem 0.5rem;"><svg viewBox="0 0 20 20" fill="currentColor" width="12" height="12"><path d="M6 4l10 6-10 6V4z"/></svg> Scrobble disc</span>
+    <span class="ml-btn ml-btn-soft" style="padding: 0.2rem 0.5rem"
+      ><svg viewBox="0 0 20 20" fill="currentColor" width="12" height="12">
+        <path d="M6 4l10 6-10 6V4z" />
+      </svg>
+      Scrobble disc</span
+    >
     <span class="h-scope">tracks of that medium</span>
   </div>
   <div class="h-row">
     <span class="h-label">Selection action</span>
     <span class="h-arrow">→</span>
-    <span class="ml-btn ml-btn-solid" style="padding: 0.2rem 0.5rem;"><svg viewBox="0 0 20 20" fill="currentColor" width="12" height="12"><path d="M6 4l10 6-10 6V4z"/></svg> Scrobble selected</span>
-    <span class="h-scope">only ticked rows — appears only when something is ticked</span>
+    <span class="ml-btn ml-btn-solid" style="padding: 0.2rem 0.5rem"
+      ><svg viewBox="0 0 20 20" fill="currentColor" width="12" height="12">
+        <path d="M6 4l10 6-10 6V4z" />
+      </svg>
+      Scrobble selected</span
+    >
+    <span class="h-scope"
+      >only ticked rows — appears only when something is ticked</span
+    >
   </div>
 </div>
 
-<div class="grid-two" style="margin-top: 1.5rem;">
-
+<div class="grid-two" style="margin-top: 1.5rem">
   <!-- DESKTOP -->
   <div>
     <div class="viewport-label">
       <span>Desktop · sheet width ~520px</span>
-      <span class="dim">Fluxon variants: solid primary / soft primary / outline</span>
+      <span class="dim"
+        >Fluxon variants: solid primary / soft primary / outline</span
+      >
     </div>
     <div class="viewport-frame">
       <div class="ml-sheet">
@@ -302,17 +468,39 @@
             </div>
             <div class="ml-actions">
               <span class="ml-picker" title="Click to change">
-                <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .2.08.39.22.53l3 3a.75.75 0 101.06-1.06l-2.78-2.78V5z" clip-rule="evenodd"/></svg>
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  width="14"
+                  height="14"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .2.08.39.22.53l3 3a.75.75 0 101.06-1.06l-2.78-2.78V5z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
                 <span class="ml-picker-label">Finished at</span>
                 <span class="ml-picker-value">Now · Apr 22, 14:30</span>
                 <span class="ml-picker-caret">▾</span>
               </span>
               <button class="ml-btn ml-btn-solid">
-                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M6 4l10 6-10 6V4z"/></svg>
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M6 4l10 6-10 6V4z" />
+                </svg>
                 Scrobble release
               </button>
               <button class="ml-btn ml-btn-outline icon-only" title="More">
-                <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><circle cx="10" cy="4" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="10" cy="16" r="1.5"/></svg>
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  width="14"
+                  height="14"
+                >
+                  <circle cx="10" cy="4" r="1.5" />
+                  <circle cx="10" cy="10" r="1.5" />
+                  <circle cx="10" cy="16" r="1.5" />
+                </svg>
               </button>
             </div>
           </div>
@@ -327,11 +515,22 @@
             </div>
             <div class="ml-btn-group">
               <button class="ml-btn ml-btn-soft">
-                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M6 4l10 6-10 6V4z"/></svg>
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M6 4l10 6-10 6V4z" />
+                </svg>
                 Scrobble disc
               </button>
               <button class="ml-btn ml-btn-outline icon-only">
-                <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><circle cx="10" cy="4" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="10" cy="16" r="1.5"/></svg>
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  width="14"
+                  height="14"
+                >
+                  <circle cx="10" cy="4" r="1.5" />
+                  <circle cx="10" cy="10" r="1.5" />
+                  <circle cx="10" cy="16" r="1.5" />
+                </svg>
               </button>
             </div>
           </div>
@@ -363,11 +562,22 @@
             </div>
             <div class="ml-btn-group">
               <button class="ml-btn ml-btn-soft">
-                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M6 4l10 6-10 6V4z"/></svg>
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M6 4l10 6-10 6V4z" />
+                </svg>
                 Scrobble disc
               </button>
               <button class="ml-btn ml-btn-outline icon-only">
-                <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><circle cx="10" cy="4" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="10" cy="16" r="1.5"/></svg>
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  width="14"
+                  height="14"
+                >
+                  <circle cx="10" cy="4" r="1.5" />
+                  <circle cx="10" cy="10" r="1.5" />
+                  <circle cx="10" cy="16" r="1.5" />
+                </svg>
               </button>
             </div>
           </div>
@@ -397,7 +607,9 @@
               <span class="ml-sticky-meta">across 2 discs · 10:45</span>
             </div>
             <button class="ml-btn ml-btn-solid">
-              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M6 4l10 6-10 6V4z"/></svg>
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path d="M6 4l10 6-10 6V4z" />
+              </svg>
               Scrobble selected
             </button>
           </div>
@@ -406,7 +618,10 @@
     </div>
 
     <div class="annotation">
-      <strong>Scrobble release</strong> sits in the header beside the "Finished at" picker. Solid primary to mark the default action. Per-medium <strong>Scrobble disc</strong> uses the soft variant to stay a visible shortcut without competing with the primary.
+      <strong>Scrobble release</strong> sits in the header beside the "Finished
+      at" picker. Solid primary to mark the default action. Per-medium
+      <strong>Scrobble disc</strong> uses the soft variant to stay a visible
+      shortcut without competing with the primary.
     </div>
   </div>
 
@@ -416,99 +631,201 @@
       <span>Mobile · 360px width</span>
       <span class="dim">iPhone SE class</span>
     </div>
-    <div class="viewport-frame" style="padding: 0.5rem;">
-      <div class="ml-sheet m-narrow" style="font-size: 0.8rem;">
-        <div class="ml-sheet-header" style="padding: 0.8rem 0.75rem;">
+    <div class="viewport-frame" style="padding: 0.5rem">
+      <div class="ml-sheet m-narrow" style="font-size: 0.8rem">
+        <div class="ml-sheet-header" style="padding: 0.8rem 0.75rem">
           <div class="ml-title-row">
-            <div class="ml-actions-top" style="display: flex; justify-content: space-between; align-items: start; gap: 0.5rem;">
+            <div
+              class="ml-actions-top"
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: start;
+                gap: 0.5rem;
+              "
+            >
               <div>
-                <div class="ml-title" style="font-size: 0.92rem;">Kid A Mnesia</div>
+                <div class="ml-title" style="font-size: 0.92rem">
+                  Kid A Mnesia
+                </div>
                 <div class="ml-subtitle">Radiohead · 2 CDs</div>
               </div>
               <button class="ml-btn ml-btn-outline icon-only" title="More">
-                <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><circle cx="10" cy="4" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="10" cy="16" r="1.5"/></svg>
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  width="14"
+                  height="14"
+                >
+                  <circle cx="10" cy="4" r="1.5" />
+                  <circle cx="10" cy="10" r="1.5" />
+                  <circle cx="10" cy="16" r="1.5" />
+                </svg>
               </button>
             </div>
 
             <div class="ml-btn-row">
-              <span class="ml-picker" style="flex: 1; justify-content: space-between;">
-                <span style="display: inline-flex; align-items: center; gap: 0.4rem;">
-                  <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .2.08.39.22.53l3 3a.75.75 0 101.06-1.06l-2.78-2.78V5z" clip-rule="evenodd"/></svg>
+              <span
+                class="ml-picker"
+                style="flex: 1; justify-content: space-between"
+              >
+                <span
+                  style="display: inline-flex; align-items: center; gap: 0.4rem"
+                >
+                  <svg
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    width="14"
+                    height="14"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .2.08.39.22.53l3 3a.75.75 0 101.06-1.06l-2.78-2.78V5z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
                   <span>
                     <span class="ml-picker-label">Finished at</span>
-                    <span class="ml-picker-value" style="margin-left: 0.25rem;">Now</span>
+                    <span class="ml-picker-value" style="margin-left: 0.25rem"
+                      >Now</span
+                    >
                   </span>
                 </span>
                 <span class="ml-picker-caret">▾</span>
               </span>
-              <button class="ml-btn ml-btn-solid" style="padding: 0.4rem 0.65rem;">
-                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M6 4l10 6-10 6V4z"/></svg>
+              <button
+                class="ml-btn ml-btn-solid"
+                style="padding: 0.4rem 0.65rem"
+              >
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M6 4l10 6-10 6V4z" />
+                </svg>
                 Release
               </button>
             </div>
           </div>
         </div>
 
-        <div class="ml-body" style="max-height: 360px;">
-          <div class="ml-medium-header" style="padding: 0.55rem 0.75rem;">
-            <div class="ml-medium-title" style="font-size: 0.78rem;">
+        <div class="ml-body" style="max-height: 360px">
+          <div class="ml-medium-header" style="padding: 0.55rem 0.75rem">
+            <div class="ml-medium-title" style="font-size: 0.78rem">
               <span class="ml-chk"></span>
               Disc 1
               <span class="ml-badge">CD</span>
             </div>
             <div class="ml-btn-group">
-              <button class="ml-btn ml-btn-soft icon-only" title="Scrobble disc">
-                <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path d="M6 4l10 6-10 6V4z"/></svg>
+              <button
+                class="ml-btn ml-btn-soft icon-only"
+                title="Scrobble disc"
+              >
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  width="14"
+                  height="14"
+                >
+                  <path d="M6 4l10 6-10 6V4z" />
+                </svg>
               </button>
               <button class="ml-btn ml-btn-outline icon-only">
-                <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><circle cx="10" cy="4" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="10" cy="16" r="1.5"/></svg>
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  width="14"
+                  height="14"
+                >
+                  <circle cx="10" cy="4" r="1.5" />
+                  <circle cx="10" cy="10" r="1.5" />
+                  <circle cx="10" cy="16" r="1.5" />
+                </svg>
               </button>
             </div>
           </div>
 
-          <div class="ml-track selected" style="padding: 0.5rem 0.75rem; grid-template-columns: 15px 20px 1fr auto;">
+          <div
+            class="ml-track selected"
+            style="
+              padding: 0.5rem 0.75rem;
+              grid-template-columns: 15px 20px 1fr auto;
+            "
+          >
             <span class="ml-chk checked"></span>
             <span class="ml-track-num">1</span>
             <span class="ml-track-title">How to Disappear Completely</span>
             <span class="ml-track-dur">5:56</span>
           </div>
-          <div class="ml-track" style="padding: 0.5rem 0.75rem; grid-template-columns: 15px 20px 1fr auto;">
+          <div
+            class="ml-track"
+            style="
+              padding: 0.5rem 0.75rem;
+              grid-template-columns: 15px 20px 1fr auto;
+            "
+          >
             <span class="ml-chk"></span>
             <span class="ml-track-num">2</span>
             <span class="ml-track-title">The National Anthem</span>
             <span class="ml-track-dur">5:51</span>
           </div>
 
-          <div class="ml-medium-header" style="padding: 0.55rem 0.75rem;">
-            <div class="ml-medium-title" style="font-size: 0.78rem;">
+          <div class="ml-medium-header" style="padding: 0.55rem 0.75rem">
+            <div class="ml-medium-title" style="font-size: 0.78rem">
               <span class="ml-chk"></span>
               Disc 2
               <span class="ml-badge">CD</span>
             </div>
             <div class="ml-btn-group">
-              <button class="ml-btn ml-btn-soft icon-only" title="Scrobble disc">
-                <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path d="M6 4l10 6-10 6V4z"/></svg>
+              <button
+                class="ml-btn ml-btn-soft icon-only"
+                title="Scrobble disc"
+              >
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  width="14"
+                  height="14"
+                >
+                  <path d="M6 4l10 6-10 6V4z" />
+                </svg>
               </button>
               <button class="ml-btn ml-btn-outline icon-only">
-                <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><circle cx="10" cy="4" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="10" cy="16" r="1.5"/></svg>
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  width="14"
+                  height="14"
+                >
+                  <circle cx="10" cy="4" r="1.5" />
+                  <circle cx="10" cy="10" r="1.5" />
+                  <circle cx="10" cy="16" r="1.5" />
+                </svg>
               </button>
             </div>
           </div>
 
-          <div class="ml-track selected" style="padding: 0.5rem 0.75rem; grid-template-columns: 15px 20px 1fr auto;">
+          <div
+            class="ml-track selected"
+            style="
+              padding: 0.5rem 0.75rem;
+              grid-template-columns: 15px 20px 1fr auto;
+            "
+          >
             <span class="ml-chk checked"></span>
             <span class="ml-track-num">1</span>
             <span class="ml-track-title">Pyramid Song</span>
             <span class="ml-track-dur">4:49</span>
           </div>
 
-          <div class="ml-sticky" style="padding: 0.55rem 0.75rem;">
+          <div class="ml-sticky" style="padding: 0.55rem 0.75rem">
             <div class="ml-sticky-info">
-              <span class="ml-sticky-count" style="font-size: 0.78rem;">2 selected</span>
+              <span class="ml-sticky-count" style="font-size: 0.78rem"
+                >2 selected</span
+              >
               <span class="ml-sticky-meta">10:45</span>
             </div>
-            <button class="ml-btn ml-btn-solid" style="padding: 0.4rem 0.65rem;">
-              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M6 4l10 6-10 6V4z"/></svg>
+            <button class="ml-btn ml-btn-solid" style="padding: 0.4rem 0.65rem">
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path d="M6 4l10 6-10 6V4z" />
+              </svg>
               Scrobble
             </button>
           </div>
@@ -517,18 +834,46 @@
     </div>
 
     <div class="annotation">
-      <strong>Mobile reflow:</strong> title row stacks title + ⋯; the picker and "Release" button share a full-width row (picker grows, button hugs). Per-medium scrobble becomes icon-only to fit. Sticky bar label shortens to "Scrobble" + count + duration.
+      <strong>Mobile reflow:</strong> title row stacks title + ⋯; the picker and
+      "Release" button share a full-width row (picker grows, button hugs).
+      Per-medium scrobble becomes icon-only to fit. Sticky bar label shortens to
+      "Scrobble" + count + duration.
     </div>
   </div>
 </div>
 
-<div style="margin-top: 1.5rem; padding: 0.9rem 1rem; background: var(--surface); border-radius: 10px; border: 1px solid var(--border-c); font-size: 0.8rem; color: var(--text);">
-  <strong>Design language notes</strong><br>
-  <ul style="margin-top: 0.4rem; padding-left: 1.2rem; line-height: 1.6;">
-    <li>Surfaces use the zinc palette (zinc-50 / zinc-200 / zinc-800) seen across the app.</li>
-    <li>Buttons use Fluxon variants: solid primary (release + selection), soft primary (per-medium shortcut), outline (menu &amp; picker).</li>
-    <li>Icons are hero-style (outline-filled), matching existing `hero-play`, `hero-ellipsis-vertical`, `hero-clock`.</li>
-    <li>Selected rows use a subtle blue-tinted background — matches the dimmed-accent pattern already in the Collection list.</li>
-    <li>Dark mode swaps to zinc-900/800/700 and a lighter blue-400 primary; the mockup honours `prefers-color-scheme`.</li>
+<div
+  style="
+    margin-top: 1.5rem;
+    padding: 0.9rem 1rem;
+    background: var(--surface);
+    border-radius: 10px;
+    border: 1px solid var(--border-c);
+    font-size: 0.8rem;
+    color: var(--text);
+  "
+>
+  <strong>Design language notes</strong><br />
+  <ul style="margin-top: 0.4rem; padding-left: 1.2rem; line-height: 1.6">
+    <li>
+      Surfaces use the zinc palette (zinc-50 / zinc-200 / zinc-800) seen across
+      the app.
+    </li>
+    <li>
+      Buttons use Fluxon variants: solid primary (release + selection), soft
+      primary (per-medium shortcut), outline (menu &amp; picker).
+    </li>
+    <li>
+      Icons are hero-style (outline-filled), matching existing `hero-play`,
+      `hero-ellipsis-vertical`, `hero-clock`.
+    </li>
+    <li>
+      Selected rows use a subtle blue-tinted background — matches the
+      dimmed-accent pattern already in the Collection list.
+    </li>
+    <li>
+      Dark mode swaps to zinc-900/800/700 and a lighter blue-400 primary; the
+      mockup honours `prefers-color-scheme`.
+    </li>
   </ul>
 </div>

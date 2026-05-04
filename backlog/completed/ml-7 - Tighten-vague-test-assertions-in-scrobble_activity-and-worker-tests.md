@@ -3,17 +3,18 @@ id: ML-7
 title: Tighten vague test assertions in scrobble_activity and worker tests
 status: Done
 assignee: []
-created_date: '2026-04-20 08:49'
+created_date: "2026-04-20 08:49"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/176'
+  - "https://github.com/cloud8421/music_library/issues/176"
 priority: low
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-16 · updated 2026-04-20 · closed 2026-04-20_
 
 ## Summary
@@ -46,7 +47,9 @@ The context's entire job is to shape Last.fm payloads correctly, yet the tests d
 For each site, replace with an assertion that pins a specific value the function is responsible for producing.
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - `scrobble_activity_test.exs` tests assert specific struct fields on each `{:ok, _}` site
 - No `assert X != nil` in worker test files (replace with value assertion)
 - Suite still passes

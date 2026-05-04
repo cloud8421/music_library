@@ -3,17 +3,18 @@ id: ML-63
 title: Break bidirectional dependency between Records and Artists
 status: Done
 assignee: []
-created_date: '2026-04-20 08:54'
+created_date: "2026-04-20 08:54"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/112'
+  - "https://github.com/cloud8421/music_library/issues/112"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-03-12 · updated 2026-03-12 · closed 2026-03-12_
 
 ## Problem

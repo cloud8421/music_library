@@ -3,17 +3,18 @@ id: ML-12
 title: Use Notes.change_note/2 instead of Note.changeset/2 in notes component
 status: Done
 assignee: []
-created_date: '2026-04-20 08:49'
+created_date: "2026-04-20 08:49"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/171'
+  - "https://github.com/cloud8421/music_library/issues/171"
 priority: low
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-04-16 · updated 2026-04-17 · closed 2026-04-17_
 
 ## Summary
@@ -37,7 +38,9 @@ The "LiveViews / LiveComponents call the context, not schema modules" boundary i
 Mechanical find-and-replace. Three one-line edits.
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
+
 - Tests still pass
 - No direct `Note.changeset` references in `lib/music_library_web/components/notes.ex`
 <!-- SECTION:DESCRIPTION:END -->

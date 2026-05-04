@@ -3,17 +3,18 @@ id: ML-39
 title: Missing dark mode class in search_components.ex
 status: Done
 assignee: []
-created_date: '2026-04-20 08:53'
+created_date: "2026-04-20 08:53"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/138'
+  - "https://github.com/cloud8421/music_library/issues/138"
 priority: low
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-03-25 · updated 2026-03-25 · closed 2026-03-25_
 
 ## Description
@@ -27,4 +28,5 @@ Add `dark:text-zinc-400` to the class list at line 51, consistent with the proje
 ## Found during
 
 Codebase consistency audit (2026-03-25)
+
 <!-- SECTION:DESCRIPTION:END -->

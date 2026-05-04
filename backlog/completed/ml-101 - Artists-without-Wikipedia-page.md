@@ -3,17 +3,18 @@ id: ML-101
 title: Artists without Wikipedia page
 status: Done
 assignee: []
-created_date: '2026-04-20 08:58'
+created_date: "2026-04-20 08:58"
 labels: []
 dependencies: []
 references:
-  - 'https://github.com/cloud8421/music_library/issues/73'
+  - "https://github.com/cloud8421/music_library/issues/73"
 priority: medium
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 _GitHub: created 2026-02-11 · updated 2026-03-21 · closed 2026-03-21_
 
 ```
@@ -69,4 +70,5 @@ bb00ff20-4f89-407f-8207-28d75145a432|Trojka
 e1bfa520-8fad-46de-9678-10912cb26e7f|Overhead
 0152651e-5928-47ec-be9c-e4d81c143c67|Retrospective
 ```
+
 <!-- SECTION:DESCRIPTION:END -->
