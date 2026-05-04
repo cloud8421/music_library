@@ -1,10 +1,10 @@
 ---
 id: ML-162
 title: Expose production errors via JSON API endpoint
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-05-04 08:08'
-updated_date: '2026-05-04 09:12'
+updated_date: '2026-05-04 12:11'
 labels:
   - api
   - ready
@@ -302,3 +302,64 @@ end
 - The fixture module follows the existing pattern (`RecordsFixtures`, `RecordSetsFixtures`, etc.) — helper functions that return inserted structs via `MusicLibrary.Repo`.
 - Include a variant fixture that produces multiple errors with different status/fingerprint/muted values to exercise filtering and pagination in tests.
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Implementation completed. All 5 steps executed:
+
+1. **Context** (`lib/music_library/errors.ex`): Created `MusicLibrary.Errors` with `list_errors/1` (filtered + paginated) and `get_error/1` (returns `{:ok, error}` or `{:error, :not_found}`). Uses `MusicLibrary.Repo` (where error_tracker tables actually live, not TelemetryRepo). Private query helpers for status/muted/search filtering.
+
+2. **Controller** (`lib/music_library_web/controllers/error_controller.ex`): `index/2` and `show/2` actions. Parses query params (status→atom, muted→bool, limit/offset→int) following CollectionController patterns. Handles 404 for missing errors explicitly with `put_status/2` + `json/2`.
+
+3. **JSON view** (`lib/music_library_web/controllers/error_json.ex`): Serializes errors (list) and error-with-occurrences (show). Includes catch-all `render/2` for Phoenix error templates (404, 500) since this module name collides with the configured render_errors view. Fingerprint comes as hex string from SQLite TEXT column. Stacktrace lines rendered as array of maps.
+
+4. **Router**: Two routes added under `scope "/api/v1"`: `GET /errors` and `GET /errors/:id`.
+
+5. **Tests + docs**: Created `test/support/fixtures/errors_fixtures.ex` (direct Ecto inserts since ErrorTracker disabled in test) and `test/music_library_web/controllers/error_controller_test.exs` (10 tests: auth required ×2, list/pagination/filter/search ×6, show/occurrences ×1, 404 ×1). All 900 tests pass. Updated `docs/architecture.md` with Errors context and ErrorController.
+
+**Deviations from original plan:**
+
+- Changed `get_error!/1` → `get_error/1` returning `{:ok, error} | {:error, :not_found}` instead of raising. This avoids relying on Phoenix's automatic Ecto.NoResultsError→404 conversion (which didn't work in tests).
+
+- Added `render/2` catch-all to ErrorJSON for Phoenix error template rendering (404, 500) - module name collides with configured render_errors view.
+
+- List endpoint omits `occurrence_count` and `first_occurrence_at` per plan decision (computed only in single-error endpoint).
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+## Summary
+
+Added two JSON API endpoints under `/api/v1/errors` to expose production error data from ErrorTracker, behind the existing Bearer token authentication.
+
+### What changed
+
+**New files:**
+- `lib/music_library/errors.ex` — Context with `list_errors/1` (filtered, paginated listing) and `get_error/1` (single error with preloaded occurrences, computed counts)
+- `lib/music_library_web/controllers/error_controller.ex` — Controller with `index/2` and `show/2` actions, following CollectionController patterns
+- `lib/music_library_web/controllers/error_json.ex` — JSON serializer for errors and occurrences, including stacktrace lines; also serves as Phoenix error renderer (404/500 JSON responses)
+- `test/support/fixtures/errors_fixtures.ex` — Test fixture helpers using direct Ecto inserts (ErrorTracker is disabled in test)
+- `test/music_library_web/controllers/error_controller_test.exs` — 10 tests: auth required (2), list/pagination/filter/search (6), single error with occurrences (1), 404 handling (1)
+
+**Modified files:**
+- `lib/music_library_web/router.ex` — Added `GET /api/v1/errors` and `GET /api/v1/errors/:id` routes
+- `docs/architecture.md` — Added Errors context and ErrorController entries
+
+### API design
+
+- `GET /api/v1/errors` — List errors with filters (`status`, `muted`, `search`), pagination (`limit` default 50, `offset` default 0), ordered by `last_occurrence_at DESC`
+- `GET /api/v1/errors/:id` — Single error detail with all occurrences (including stacktraces), `occurrence_count`, and `first_occurrence_at`
+
+### Key decisions
+
+- Uses `MusicLibrary.Repo` (not TelemetryRepo) — error_tracker tables live in the main database per `config/config.exs`
+- Returns integer IDs (error_tracker uses auto-increment PKs, not UUIDs)
+- List endpoint omits `occurrence_count`/`first_occurrence_at` to avoid correlated subqueries per row
+- Context returns `{:ok, error} | {:error, :not_found}` instead of raising — explicit 404 handling more reliable than relying on Phoenix's Ecto.NoResultsError→404 conversion
+
+### Test results
+
+All 900 tests pass (43 doctests, 857 existing + 10 new).
+<!-- SECTION:FINAL_SUMMARY:END -->

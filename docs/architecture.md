@@ -102,6 +102,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `ScrobbleActivity` | — | Scrobbling releases/media/tracks to Last.fm |
 | `ListeningStats` | (LastFm.Track, RecordRelease, ArtistRecord, ArtistInfo) | Scrobble persistence, refresh scheduling, listening analytics, track CRUD, search, listing: scrobble counts, artist play counts (from DB), recent activity, top albums/artists by period |
 | `OnlineStoreTemplates` | OnlineStoreTemplate | URL templates for buying records online; searchable by name/description |
+| `Errors` | ErrorTracker.Error, ErrorTracker.Occurrence | Read-only queries for production error data tracked by ErrorTracker; filtered listing with pagination, single error with preloaded occurrences and computed counts |
 | `Search` | (cross-context) | Universal search dispatcher across collection, wishlist, artists, record sets (delegates to domain contexts) |
 | `Secrets` | Secret | Encrypted key-value storage (CRUD + delete) |
 | `BarcodeScan` | (Result struct) | Barcode → MusicBrainz lookup workflow, async batch import for multiple new records |
@@ -337,6 +338,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `ArchiveController` | `/backup`, `/api/v1/backup` | Database backup download (API route requires token) |
 | `AssetController` | `/assets/:transform_payload`, `/public/assets/:transform_payload`, `/api/v1/assets/:transform_payload` | Serve images with transforms (public route for emails, API route requires token) |
 | `CollectionController` | `/api/v1/collection/*` | JSON API for collection queries |
+| `ErrorController` | `/api/v1/errors`, `/api/v1/errors/:id` | JSON API for production error queries (requires Bearer token) |
 
 ---
 
