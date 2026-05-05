@@ -224,7 +224,7 @@ defmodule MusicLibrary.MixProject do
         {:mdex, link: :at}
       ],
       skills: [
-        location: ".claude/skills",
+        location: ".agents/skills",
         build: [
           "ui-framework": [
             description:

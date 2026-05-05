@@ -1,10 +1,10 @@
 # Project Conventions
 
-Rules extracted from commit history that are specific to this project and not already covered by `CLAUDE.md` usage rules.
+Rules extracted from commit history that are specific to this project and not already covered by `AGENTS.md` usage rules.
 
 ## Commit Messages
 
-→ See `.claude/skills/git-commit/SKILL.md` for full conventions, checklist, and examples.
+→ See `.agents/skills/git-commit/SKILL.md` for full conventions, checklist, and examples.
 
 Key rules: imperative present tense, single-line under 60 characters, task ID prefix when the work maps to a Backlog.md task, "Update dependencies" for mix and "Update npm dependencies" for npm, never "Co-Authored-By".
 
@@ -41,25 +41,25 @@ Key rules: imperative present tense, single-line under 60 characters, task ID pr
 
 ## Template / UI
 
-→ See `.claude/skills/ui-framework/SKILL.md` for full conventions, component patterns, and Fluxon reference.
+→ See `.agents/skills/ui-framework/SKILL.md` for full conventions, component patterns, and Fluxon reference.
 
 Key rules: Gettext wraps ALL user-facing strings, dark mode always paired (`text-zinc-900 dark:text-zinc-100`), wishlisted items dimmed (`opacity-60`), icons use `icon` class, artist names use MusicBrainz `joinphrase`, charts use CSS Grid (not SVG).
 
 ## Routes / Navigation
 
-→ See `.claude/skills/ui-framework/SKILL.md` for full route patterns.
+→ See `.agents/skills/ui-framework/SKILL.md` for full route patterns.
 
 Key rules: three routes per resource with show modals, modals close via `JS.patch`, search state in URL query params, empty params filtered from URLs, conditional links based on `purchased_at`, `/dev/` namespace for developer tooling only.
 
 ## Database
 
-→ See `.claude/skills/sqlite-optimization/SKILL.md` for full query patterns, index rules, FTS5 conventions, and migration requirements.
+→ See `.agents/skills/sqlite-optimization/SKILL.md` for full query patterns, index rules, FTS5 conventions, and migration requirements.
 
 Key rules: `json_extract()` must match expression index text exactly, subquery materialization via `limit: -1`, correlated scalar subqueries beat `LEFT JOIN` for small-LIMIT enrichment, every migration provides both `up` and `down` SQL, config-driven constants in `config/config.exs`.
 
 ## Error Handling
 
-→ See `.claude/skills/error-investigation/SKILL.md` for production error triage, `.claude/skills/external-api-integration/SKILL.md` for ErrorResponse/ErrorHandler patterns, and `.claude/skills/oban-worker/SKILL.md` for worker return values.
+→ See `.agents/skills/error-investigation/SKILL.md` for production error triage, `.agents/skills/external-api-integration/SKILL.md` for ErrorResponse/ErrorHandler patterns, and `.agents/skills/oban-worker/SKILL.md` for worker return values.
 
 - **Toast notifications:** `put_toast/3` (arity 3) in LiveViews, `put_toast!/2` (arity 2) in LiveComponents. `:info` for success, `:error` for failures.
 - **User-facing error reasons use `ErrorMessages.friendly_message/1`** — never `inspect(reason)`. Call sites keep their contextual prefix and append `": " <> ErrorMessages.friendly_message(reason)`. `Logger.error` calls keep `inspect` for debugging.
@@ -69,7 +69,7 @@ Key rules: `json_extract()` must match expression index text exactly, subquery m
 
 ## Testing
 
-→ See `.claude/skills/testing/SKILL.md` for full conventions, fixture modules, and SQLite/Swoosh/Worker test patterns.
+→ See `.agents/skills/testing/SKILL.md` for full conventions, fixture modules, and SQLite/Swoosh/Worker test patterns.
 
 Key rules: feature setup stays in test modules that need it, fixture modules use `System.unique_integer([:positive])`, assert specific values not just shapes, error assertions match specific error types, worker tests must `assert_enqueued`, no boilerplate-only tests.
 
