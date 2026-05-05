@@ -9,5 +9,5 @@ export default createNavigationHook({
     } else {
       hook.navigateUp();
     }
-  }
+  },
 });

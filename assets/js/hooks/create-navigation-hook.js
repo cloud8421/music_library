@@ -1,4 +1,8 @@
-export default function createNavigationHook({ getContainer, inputId, onSelect }) {
+export default function createNavigationHook({
+  getContainer,
+  inputId,
+  onSelect,
+}) {
   return {
     mounted() {
       this.selectedIndex = -1;
@@ -89,13 +93,16 @@ export default function createNavigationHook({ getContainer, inputId, onSelect }
         if (searchInput) {
           searchInput.focus();
         }
-      } else if (this.selectedIndex >= 0 && this.selectedIndex < results.length) {
+      } else if (
+        this.selectedIndex >= 0 &&
+        this.selectedIndex < results.length
+      ) {
         const selectedResult = results[this.selectedIndex];
         selectedResult.setAttribute("aria-selected", "true");
 
         selectedResult.scrollIntoView({
           block: "nearest",
-          behavior: "smooth"
+          behavior: "smooth",
         });
       }
     },
@@ -105,6 +112,6 @@ export default function createNavigationHook({ getContainer, inputId, onSelect }
       if (!container) return [];
 
       return Array.from(container.querySelectorAll('[role="option"]'));
-    }
+    },
   };
 }

@@ -19,12 +19,12 @@ push via GitHub Actions.
 
 ## Hosting
 
-| Component | Technology |
-|-----------|-----------|
-| Orchestration | Coolify (self-hosted) |
-| Container runtime | Docker |
-| SSL termination | Coolify reverse proxy |
-| HTTP redirect | HTTP 301 → HTTPS (enforced by app config) |
+| Component         | Technology                                |
+| ----------------- | ----------------------------------------- |
+| Orchestration     | Coolify (self-hosted)                     |
+| Container runtime | Docker                                    |
+| SSL termination   | Coolify reverse proxy                     |
+| HTTP redirect     | HTTP 301 → HTTPS (enforced by app config) |
 
 The Docker image is a multi-stage build:
 
@@ -42,11 +42,11 @@ Fluxon UI (licensed dependency) is fetched during build via Docker build secrets
 
 Three separate SQLite databases, each managed by its own Ecto repo:
 
-| Repo | Purpose | Cache size | Pool size |
-|------|---------|------------|-----------|
-| `MusicLibrary.Repo` | Application data | 128 MB | `$POOL_SIZE` (default 5) |
-| `MusicLibrary.BackgroundRepo` | Oban job queue | 16 MB | `$POOL_SIZE` (default 5) |
-| `MusicLibrary.TelemetryRepo` | Persistent telemetry metrics | 4 MB | 2 |
+| Repo                          | Purpose                      | Cache size | Pool size                |
+| ----------------------------- | ---------------------------- | ---------- | ------------------------ |
+| `MusicLibrary.Repo`           | Application data             | 128 MB     | `$POOL_SIZE` (default 5) |
+| `MusicLibrary.BackgroundRepo` | Oban job queue               | 16 MB      | `$POOL_SIZE` (default 5) |
+| `MusicLibrary.TelemetryRepo`  | Persistent telemetry metrics | 4 MB       | 2                        |
 
 All databases use incremental auto-vacuum. Paths are configured via environment variables
 (`DATABASE_PATH`, `BACKGROUND_DATABASE_PATH`, `TELEMETRY_DATABASE_PATH`).
@@ -60,13 +60,13 @@ All databases use incremental auto-vacuum. Paths are configured via environment 
 Configured inline in `compose.yaml`. Runs as a separate Docker Compose service
 (`litestream/litestream:0.5.11-scratch`) sharing the database volume.
 
-| Setting | Value |
-|---------|-------|
-| S3 endpoint | `https://nbg1.your-objectstorage.com` |
-| Bucket | `ffmusiclibrary` |
-| Sync interval | 60 minutes |
-| Retention | 672 hours (28 days) |
-| Healthcheck | `litestream databases` every 30s (timeout 10s, 3 retries) |
+| Setting       | Value                                                     |
+| ------------- | --------------------------------------------------------- |
+| S3 endpoint   | `https://nbg1.your-objectstorage.com`                     |
+| Bucket        | `ffmusiclibrary`                                          |
+| Sync interval | 60 minutes                                                |
+| Retention     | 672 hours (28 days)                                       |
+| Healthcheck   | `litestream databases` every 30s (timeout 10s, 3 retries) |
 
 Credentials via environment: `LITESTREAM_ACCESS_KEY_ID`, `LITESTREAM_SECRET_ACCESS_KEY`.
 
@@ -132,10 +132,10 @@ Fluxon (private dependency) is configured with a dedicated registry entry.
 
 ### Deployment credentials
 
-| Secret/Variable | Purpose |
-|-----------------|---------|
-| `COOLIFY_TOKEN` | API authentication (GitHub secret) |
-| `COOLIFY_HOST` | Coolify server address (GitHub variable) |
+| Secret/Variable    | Purpose                                  |
+| ------------------ | ---------------------------------------- |
+| `COOLIFY_TOKEN`    | API authentication (GitHub secret)       |
+| `COOLIFY_HOST`     | Coolify server address (GitHub variable) |
 | `COOLIFY_APP_UUID` | Application identifier (GitHub variable) |
 
 ---
@@ -144,32 +144,32 @@ Fluxon (private dependency) is configured with a dedicated registry entry.
 
 ### Required
 
-| Variable | Purpose |
-|----------|---------|
-| `DATABASE_PATH` | Absolute path to main SQLite database |
-| `BACKGROUND_DATABASE_PATH` | Absolute path to background jobs database |
-| `TELEMETRY_DATABASE_PATH` | Absolute path to telemetry database |
-| `SECRET_KEY_BASE` | Phoenix secret (`mix phx.gen.secret`) |
-| `CLOAK_ENCRYPTION_KEY` | Base64-encoded 32-byte AES key for encrypted secrets |
-| `LOGIN_PASSWORD` | Web login password |
-| `API_TOKEN` | Bearer token for API endpoints |
-| `MAILGUN_API_KEY` | Mailgun API key |
+| Variable                   | Purpose                                              |
+| -------------------------- | ---------------------------------------------------- |
+| `DATABASE_PATH`            | Absolute path to main SQLite database                |
+| `BACKGROUND_DATABASE_PATH` | Absolute path to background jobs database            |
+| `TELEMETRY_DATABASE_PATH`  | Absolute path to telemetry database                  |
+| `SECRET_KEY_BASE`          | Phoenix secret (`mix phx.gen.secret`)                |
+| `CLOAK_ENCRYPTION_KEY`     | Base64-encoded 32-byte AES key for encrypted secrets |
+| `LOGIN_PASSWORD`           | Web login password                                   |
+| `API_TOKEN`                | Bearer token for API endpoints                       |
+| `MAILGUN_API_KEY`          | Mailgun API key                                      |
 
 ### Optional
 
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `SERVICE_FQDN_WEB` | `example.com` | Application domain |
-| `PORT` | `4000` | HTTP listen port |
-| `POOL_SIZE` | `5` | Database connection pool size |
-| `MAILGUN_DOMAIN` | `mailgun.fullyforged.com` | Mailgun sending domain |
-| `DEFAULT_TIMEZONE` | `Europe/London` | Application timezone |
-| `OPENAI_KEY` | — | OpenAI API (embeddings, chat) |
-| `DISCOGS_PERSONAL_ACCESS_TOKEN` | — | Discogs API |
-| `BRAVE_SEARCH_API_KEY` | — | Brave Search API |
-| `LAST_FM_API_KEY` | — | Last.fm API |
-| `LAST_FM_SHARED_SECRET` | — | Last.fm scrobbling auth |
-| `LAST_FM_USER` | — | Last.fm username |
+| Variable                        | Default                   | Purpose                       |
+| ------------------------------- | ------------------------- | ----------------------------- |
+| `SERVICE_FQDN_WEB`              | `example.com`             | Application domain            |
+| `PORT`                          | `4000`                    | HTTP listen port              |
+| `POOL_SIZE`                     | `5`                       | Database connection pool size |
+| `MAILGUN_DOMAIN`                | `mailgun.fullyforged.com` | Mailgun sending domain        |
+| `DEFAULT_TIMEZONE`              | `Europe/London`           | Application timezone          |
+| `OPENAI_KEY`                    | —                         | OpenAI API (embeddings, chat) |
+| `DISCOGS_PERSONAL_ACCESS_TOKEN` | —                         | Discogs API                   |
+| `BRAVE_SEARCH_API_KEY`          | —                         | Brave Search API              |
+| `LAST_FM_API_KEY`               | —                         | Last.fm API                   |
+| `LAST_FM_SHARED_SECRET`         | —                         | Last.fm scrobbling auth       |
+| `LAST_FM_USER`                  | —                         | Last.fm username              |
 
 ---
 
@@ -276,22 +276,25 @@ Pi extensions provide additional tools for production observability without manu
 or browser access. Each extension reads its own environment variables from the pi
 runtime environment (not server-side config).
 
-| Extension | Tools | Env vars |
-|-----------|-------|----------|
-| `prod-logs` | `fetch_production_logs` | `PI_COOLIFY_HOST`, `PI_COOLIFY_APP_UUID`, `PI_COOLIFY_TOKEN` |
-| `prod-errors` | `fetch_production_errors`, `fetch_production_error`, `/prod-errors` | `PI_API_TOKEN`, `PI_SERVICE_FQDN_WEB` |
+| Extension     | Tools                                                               | Env vars                                                     |
+| ------------- | ------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `prod-logs`   | `fetch_production_logs`                                             | `PI_COOLIFY_HOST`, `PI_COOLIFY_APP_UUID`, `PI_COOLIFY_TOKEN` |
+| `prod-errors` | `fetch_production_errors`, `fetch_production_error`, `/prod-errors` | `PI_API_TOKEN`, `PI_SERVICE_FQDN_WEB`                        |
 
 **`prod-logs` env vars:**
+
 - `PI_COOLIFY_HOST` — Coolify server base URL (e.g., `https://coolify.example.com`)
 - `PI_COOLIFY_APP_UUID` — Application UUID in Coolify
 - `PI_COOLIFY_TOKEN` — Coolify API Bearer token
 
 **`prod-errors` tools and command:**
+
 - `fetch_production_errors` — List/filter errors via LLM tool
 - `fetch_production_error` — Single error detail via LLM tool
 - `/prod-errors` — Interactive TUI for browsing errors (list, detail, filter toggles)
 
 **`prod-errors` env vars:**
+
 - `PI_API_TOKEN` — Must match the `API_TOKEN` env var on the production server (used for Bearer auth on `/api/v1/*`)
 - `PI_SERVICE_FQDN_WEB` — Production domain with protocol (e.g., `https://musiclibrary.claudio-ortolina.org`, no trailing slash)
 
@@ -301,10 +304,10 @@ runtime environment (not server-side config).
 
 Mailgun via Swoosh (`Swoosh.Adapters.Mailgun`).
 
-| Setting | Value |
-|---------|-------|
-| From | `postmaster@mailgun.fullyforged.com` |
-| To | `claudio@fullyforged.com` |
+| Setting | Value                                |
+| ------- | ------------------------------------ |
+| From    | `postmaster@mailgun.fullyforged.com` |
+| To      | `claudio@fullyforged.com`            |
 
 Used for error notifications and the daily "records on this day" digest email.
 

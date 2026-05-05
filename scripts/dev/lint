@@ -22,3 +22,9 @@ mix gettext.extract --merge
 
 debug_msg "Running shellcheck..."
 fd . 'scripts/' --exclude '*.hurl' -t file --exec shellcheck --color
+
+debug_msg "Running prettier..."
+prettier --write '.pi/extensions/**/*.{ts,js,json}'
+prettier --write 'assets/css/**/*.css' 'assets/js/**/*.js'
+prettier --write 'docs/**/*.md' 'docs/**/*.livemd' 'README.md'
+prettier --write 'backlog/archive/**/*.md' 'backlog/completed/**/*.md' 'backlog/tasks/**/*.md' 'backlog/docs/**/*.md'

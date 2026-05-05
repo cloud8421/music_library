@@ -28,7 +28,7 @@ export default {
       onEnd: () => {
         const items = this.el.querySelectorAll("[data-sortable-item]");
         const recordIds = Array.from(items).map(
-          (item) => item.dataset.recordId
+          (item) => item.dataset.recordId,
         );
 
         const payload = { record_ids: recordIds };

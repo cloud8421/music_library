@@ -33,12 +33,12 @@ import { createLiveToastHook } from "live_toast";
 import banner from "./banner";
 
 // the duration for each toast to stay on screen in ms
-const duration = 4000
+const duration = 4000;
 
 // how many toasts to show on screen at once
-const maxItems = 3
+const maxItems = 3;
 
-const liveToastHook = createLiveToastHook(duration, maxItems)
+const liveToastHook = createLiveToastHook(duration, maxItems);
 
 let Hooks = FluxonHooks;
 Hooks.FormatNumber = FormatNumberHook;
@@ -56,8 +56,8 @@ const liveSocket = new LiveSocket("/live", Socket, {
   params: (view) => {
     return {
       _csrf_token: csrfToken,
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-    }
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
   },
   hooks: { ...Hooks, ...colocatedHooks },
   dom: {
@@ -121,32 +121,39 @@ window.liveSocket = liveSocket;
 //     2. click on elements to jump to their definitions in your code editor
 //
 if (process.env.NODE_ENV === "development") {
-  window.addEventListener("phx:live_reload:attached", ({ detail: reloader }) => {
-    // Enable server log streaming to client.
-    // Disable with reloader.disableServerLogs()
-    reloader.enableServerLogs()
+  window.addEventListener(
+    "phx:live_reload:attached",
+    ({ detail: reloader }) => {
+      // Enable server log streaming to client.
+      // Disable with reloader.disableServerLogs()
+      reloader.enableServerLogs();
 
-    // Open configured PLUG_EDITOR at file:line of the clicked element's HEEx component
-    //
-    //   * click with "c" key pressed to open at caller location
-    //   * click with "d" key pressed to open at function component definition location
-    let keyDown
-    window.addEventListener("keydown", e => keyDown = e.key)
-    window.addEventListener("keyup", e => keyDown = null)
-    window.addEventListener("click", e => {
-      if (keyDown === "c") {
-        e.preventDefault()
-        e.stopImmediatePropagation()
-        reloader.openEditorAtCaller(e.target)
-      } else if (keyDown === "d") {
-        e.preventDefault()
-        e.stopImmediatePropagation()
-        reloader.openEditorAtDef(e.target)
-      }
-    }, true)
+      // Open configured PLUG_EDITOR at file:line of the clicked element's HEEx component
+      //
+      //   * click with "c" key pressed to open at caller location
+      //   * click with "d" key pressed to open at function component definition location
+      let keyDown;
+      window.addEventListener("keydown", (e) => (keyDown = e.key));
+      window.addEventListener("keyup", (e) => (keyDown = null));
+      window.addEventListener(
+        "click",
+        (e) => {
+          if (keyDown === "c") {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            reloader.openEditorAtCaller(e.target);
+          } else if (keyDown === "d") {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            reloader.openEditorAtDef(e.target);
+          }
+        },
+        true,
+      );
 
-    window.liveReloader = reloader
-  })
+      window.liveReloader = reloader;
+    },
+  );
 }
 
 // Credit: https://andrewtimberlake.com/blog/2025/03/see-what-liveview-changes-are-being-made

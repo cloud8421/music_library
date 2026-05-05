@@ -1,9 +1,10 @@
 ---
 id: doc-9
-title: 'GPT 5.5, high analysis'
+title: "GPT 5.5, high analysis"
 type: other
-created_date: '2026-05-04 15:11'
+created_date: "2026-05-04 15:11"
 ---
+
 # Nerves Deployment Research Report
 
 Date: 2026-05-04

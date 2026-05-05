@@ -154,6 +154,7 @@ mix scrobble.audit --format json
 ### Understanding the Audit Report
 
 The audit report shows:
+
 - Total number of scrobbled tracks
 - Artists with missing MusicBrainz IDs (grouped by artist name)
 - Albums with missing MusicBrainz IDs (grouped by album title and artist)
@@ -166,6 +167,7 @@ After identifying issues, you can:
 1. **Create Scrobble Rules**: Navigate to the Scrobble Rules page in the web interface and add rules to map artist or album names to their correct MusicBrainz IDs.
 
 2. **Apply Rules**: Use the "Apply Rules" button in the Scrobble Rules page to update existing tracks, or run in IEx:
+
    ```elixir
    MusicLibrary.ScrobbleRules.apply_all_rules()
    ```
@@ -173,11 +175,11 @@ After identifying issues, you can:
 3. **Re-audit**: Run the audit again to verify the fixes worked.
 
 The application also provides helper functions in the `MusicLibrary.ScrobbleActivity` context:
+
 - `count_tracks_missing_artist_musicbrainz_id/0`
 - `count_tracks_missing_album_musicbrainz_id/0`
 - `get_artists_missing_musicbrainz_id/1`
 - `get_albums_missing_musicbrainz_id/1`
-
 
 ## Deployment
 

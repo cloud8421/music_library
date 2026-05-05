@@ -2,8 +2,9 @@
 id: doc-11
 title: Nerves Deployment Research — Consolidated Summary
 type: other
-created_date: '2026-05-04 15:25'
+created_date: "2026-05-04 15:25"
 ---
+
 # Nerves Deployment Research — Consolidated Summary
 
 > Synthesized from three parallel research reports (Opus 4.7 xhigh, GPT 5.5 high, Deepseek v4 Pro xhigh) on 2026-05-04.
@@ -113,6 +114,7 @@ Litestream is asynchronous backup and disaster recovery. It streams WAL pages to
 #### D. Offline-Capable Writes (Most Complex)
 
 Options if offline writes are required:
+
 - **Application-level outbox**: Local command log + idempotency keys + push to production on reconnect.
 - **CRDTs** (Automerge, Yjs): True offline-first, no Elixir/SQLite bridge exists.
 - **Event sourcing**: Append-only mutation log, replay to reconstruct state. Complex.
@@ -149,18 +151,18 @@ Options if offline writes are required:
 
 ## 5. Risk Summary
 
-| Risk | Severity | Mitigation |
-|---|---|---|
-| vix / libvips on Nerves | 🔴 High | Offload image processing to production API, or build custom Nerves system |
-| Data-sync strategy | 🔴 High | Start read-only, iterate toward write-through API |
-| typst on embedded | 🟡 Medium | Server-side PDF generation |
-| Rust NIF cross-compilation | 🟡 Medium | Set up Nerves Rust cross-compilation; test each library |
-| ARMv7 (RPi 3) vs AArch64 | 🟡 Medium | Target RPi 4/5 (64-bit) only |
-| Buildroot deps (libvips, ICU) | 🟡 Medium | Custom Nerves system; ~15-30 min Buildroot rebuild |
-| Firmware size | 🟡 Medium | libvips + typst + extensions could exceed 200 MB; set 120 MB budget |
-| sqlite-vec / unicode on ARM | 🟢 Low | Pure C, no deps. Cross-compile in Buildroot |
-| exqlite on Nerves | 🟢 Low | Designed for embedded; source compilation documented |
-| dominant_colors | 🟢 Low | Tiny Rust NIF, straightforward |
+| Risk                          | Severity  | Mitigation                                                                |
+| ----------------------------- | --------- | ------------------------------------------------------------------------- |
+| vix / libvips on Nerves       | 🔴 High   | Offload image processing to production API, or build custom Nerves system |
+| Data-sync strategy            | 🔴 High   | Start read-only, iterate toward write-through API                         |
+| typst on embedded             | 🟡 Medium | Server-side PDF generation                                                |
+| Rust NIF cross-compilation    | 🟡 Medium | Set up Nerves Rust cross-compilation; test each library                   |
+| ARMv7 (RPi 3) vs AArch64      | 🟡 Medium | Target RPi 4/5 (64-bit) only                                              |
+| Buildroot deps (libvips, ICU) | 🟡 Medium | Custom Nerves system; ~15-30 min Buildroot rebuild                        |
+| Firmware size                 | 🟡 Medium | libvips + typst + extensions could exceed 200 MB; set 120 MB budget       |
+| sqlite-vec / unicode on ARM   | 🟢 Low    | Pure C, no deps. Cross-compile in Buildroot                               |
+| exqlite on Nerves             | 🟢 Low    | Designed for embedded; source compilation documented                      |
+| dominant_colors               | 🟢 Low    | Tiny Rust NIF, straightforward                                            |
 
 ---
 
@@ -188,6 +190,7 @@ All three reports collapse into a single question:
 ## Sources
 
 All three reports include extensive source references. See individual documents for full citation lists:
+
 - `doc-8 - Opus-4.7-xhigh-analysis.md`
 - `doc-9 - GPT-5.5-high-analysis.md`
 - `doc-10 - Deepseek-v4-Pro-xhigh-analysis.md`

@@ -4,5 +4,5 @@ export default {
   },
   updated() {
     this.el.innerText = parseInt(this.el.innerText).toLocaleString();
-  }
-}
+  },
+};

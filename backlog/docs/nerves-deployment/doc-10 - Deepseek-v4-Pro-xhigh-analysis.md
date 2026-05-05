@@ -1,9 +1,10 @@
 ---
 id: doc-10
-title: 'Deepseek v4 Pro, xhigh analysis'
+title: "Deepseek v4 Pro, xhigh analysis"
 type: other
-created_date: '2026-05-04 15:11'
+created_date: "2026-05-04 15:11"
 ---
+
 # Nerves Deployment Feasibility Analysis for Music Library
 
 > Research report — do not implement. May 2026.
@@ -29,26 +30,26 @@ steps.
 ## 1. Native-extensions audit
 
 Every dependency that ships a NIF or binary artefact was reviewed for ARM /
-Nerves compatibility.  Dev‑only tools (esbuild, tailwind, credo, etc.) are
+Nerves compatibility. Dev‑only tools (esbuild, tailwind, credo, etc.) are
 excluded — they never reach the firmware.
 
-| Dependency | Purpose | NIF type | Precompiled ARM? | Nerves feasibility |
-|---|---|---|---|---|
-| **exqlite** → `ecto_sqlite3` | SQLite driver | C NIF (`cc_precompiler`) | ✅ `aarch64-linux-gnu/musl` (no `armv7-*`) | **🟢 Good** — `force_build: true` compiles from source inside the Nerves toolchain. Explicitly mentioned in Exqlite’s README as an embedded use-case. |
-| **vix** → libvips | Image processing (covers, thumbnails) | C NIF (`elixir_make`) | ❌ No ARM binaries advertised | **🔴 High risk** — libvips is ~30 MB with transitive deps (libjpeg, libpng, libwebp, etc.). Each needs Buildroot integration or cross‑compilation. Biggest blocker for a lean firmware. |
-| **mdex** → comrak + ammonia | Markdown → HTML | Rust NIF (RustlerPrecompiled) | ⚠️ Standard Rustler targets (`aarch64-unknown-linux-gnu`, possibly `arm-*`) | **🟡 Needs cross‑compilation** — RustlerPrecompiled targets use different triples than Nerves (`aarch64-nerves-linux-gnu`). Precompiled `.so` likely won’t load. Cross‑compile from source with a Nerves‑aware Rust toolchain. |
-| **lumis** → tree‑sitter | Syntax highlighting (in mdex) | Rust NIF (RustlerPrecompiled) | Same as mdex | **🟡 Same situation** — part of the mdex stack. Tree‑sitter grammars add per‑language compilation but the NIF itself is manageable. |
-| **typst** | PDF generation (tracklists) | Rust NIF (RustlerPrecompiled) | Same as mdex | **🔴 Heavy** — a full typesetting engine. Large binary, plus the same target‑triple mismatch. Likely overkill for embedded PDFs. |
-| **dominant_colors** → kmeans_colors | Colour extraction from covers | Rust NIF (`rustler_precompiled ~> 0.7`) | Same as mdex | **🟢 Small** — trivial NIF. Cross‑compilation is straightforward. Low risk. |
-| **esbuild** | JS bundling | Go binary | — | **N/A** — dev only, never deployed. |
-| **tailwind** | CSS generation | Go binary | — | **N/A** — dev only, never deployed. |
+| Dependency                          | Purpose                               | NIF type                                | Precompiled ARM?                                                            | Nerves feasibility                                                                                                                                                                                                             |
+| ----------------------------------- | ------------------------------------- | --------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **exqlite** → `ecto_sqlite3`        | SQLite driver                         | C NIF (`cc_precompiler`)                | ✅ `aarch64-linux-gnu/musl` (no `armv7-*`)                                  | **🟢 Good** — `force_build: true` compiles from source inside the Nerves toolchain. Explicitly mentioned in Exqlite’s README as an embedded use-case.                                                                          |
+| **vix** → libvips                   | Image processing (covers, thumbnails) | C NIF (`elixir_make`)                   | ❌ No ARM binaries advertised                                               | **🔴 High risk** — libvips is ~30 MB with transitive deps (libjpeg, libpng, libwebp, etc.). Each needs Buildroot integration or cross‑compilation. Biggest blocker for a lean firmware.                                        |
+| **mdex** → comrak + ammonia         | Markdown → HTML                       | Rust NIF (RustlerPrecompiled)           | ⚠️ Standard Rustler targets (`aarch64-unknown-linux-gnu`, possibly `arm-*`) | **🟡 Needs cross‑compilation** — RustlerPrecompiled targets use different triples than Nerves (`aarch64-nerves-linux-gnu`). Precompiled `.so` likely won’t load. Cross‑compile from source with a Nerves‑aware Rust toolchain. |
+| **lumis** → tree‑sitter             | Syntax highlighting (in mdex)         | Rust NIF (RustlerPrecompiled)           | Same as mdex                                                                | **🟡 Same situation** — part of the mdex stack. Tree‑sitter grammars add per‑language compilation but the NIF itself is manageable.                                                                                            |
+| **typst**                           | PDF generation (tracklists)           | Rust NIF (RustlerPrecompiled)           | Same as mdex                                                                | **🔴 Heavy** — a full typesetting engine. Large binary, plus the same target‑triple mismatch. Likely overkill for embedded PDFs.                                                                                               |
+| **dominant_colors** → kmeans_colors | Colour extraction from covers         | Rust NIF (`rustler_precompiled ~> 0.7`) | Same as mdex                                                                | **🟢 Small** — trivial NIF. Cross‑compilation is straightforward. Low risk.                                                                                                                                                    |
+| **esbuild**                         | JS bundling                           | Go binary                               | —                                                                           | **N/A** — dev only, never deployed.                                                                                                                                                                                            |
+| **tailwind**                        | CSS generation                        | Go binary                               | —                                                                           | **N/A** — dev only, never deployed.                                                                                                                                                                                            |
 
 ### Target‑architecture specifics
 
-| Target | CPU | Nerves toolchain triple | Precompiled‑binary match? |
-|---|---|---|---|
-| RPi 4 / 5 | Cortex‑A72 / A76 (64‑bit) | `aarch64-nerves-linux-gnu` | ⚠️ `aarch64-linux-gnu` *may* be ABI‑compatible (exqlite). Rust NIFs need rebuild. |
-| RPi 3 | Cortex‑A53 (32‑bit) | `armv7-nerves-linux-gnueabihf` | ❌ No precompiled binaries match. Everything must be compiled from source. |
+| Target    | CPU                       | Nerves toolchain triple        | Precompiled‑binary match?                                                         |
+| --------- | ------------------------- | ------------------------------ | --------------------------------------------------------------------------------- |
+| RPi 4 / 5 | Cortex‑A72 / A76 (64‑bit) | `aarch64-nerves-linux-gnu`     | ⚠️ `aarch64-linux-gnu` _may_ be ABI‑compatible (exqlite). Rust NIFs need rebuild. |
+| RPi 3     | Cortex‑A53 (32‑bit)       | `armv7-nerves-linux-gnueabihf` | ❌ No precompiled binaries match. Everything must be compiled from source.        |
 
 **Recommendation**: Target RPi 4 or 5 (64‑bit) first — the precompiled ecosystem is
 far better and the 32‑bit path adds unnecessary friction.
@@ -60,10 +61,10 @@ far better and the 32‑bit path adds unnecessary friction.
 The application loads two run‑time extensions via Exqlite’s `load_extensions`
 config:
 
-| Extension | Source | ARM status | Notes |
-|---|---|---|---|
-| **vec0** | [sqlite-vec](https://github.com/asg017/sqlite-vec) | ✅ **Good** | “Written in pure C, no dependencies, runs anywhere SQLite runs (… Raspberry Pis, etc.)” — explicitly tested on ARM. Compilable for any Nerves target. |
-| **unicode** | likely [sqlean](https://github.com/nalgeon/sqlean) (`text` module or bundle) | ✅ **ARM64 available** | Sqlean ships `sqlean-linux-arm64.zip`. For ARMv7, compile from C source. |
+| Extension   | Source                                                                       | ARM status             | Notes                                                                                                                                                 |
+| ----------- | ---------------------------------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **vec0**    | [sqlite-vec](https://github.com/asg017/sqlite-vec)                           | ✅ **Good**            | “Written in pure C, no dependencies, runs anywhere SQLite runs (… Raspberry Pis, etc.)” — explicitly tested on ARM. Compilable for any Nerves target. |
+| **unicode** | likely [sqlean](https://github.com/nalgeon/sqlean) (`text` module or bundle) | ✅ **ARM64 available** | Sqlean ships `sqlean-linux-arm64.zip`. For ARMv7, compile from C source.                                                                              |
 
 ### Loading mechanism
 
@@ -79,7 +80,7 @@ cross‑compiler, place them in the appropriate arch subdirectory, and Exqlite w
 load them at connection time.
 
 **Unknown**: Whether the `unicode` extension is built from the exact same sqlean
-release as production, or compiled independently.  Sync the build flags and version
+release as production, or compiled independently. Sync the build flags and version
 to avoid subtle behavioural differences.
 
 ---
@@ -90,13 +91,13 @@ This is the **hardest problem** and the most architecturally open of the three.
 
 ### What Litestream does (and doesn’t)
 
-| Capability | Litestream | Needed for device ↔ cloud sync |
-|---|---|---|
-| Unidirectional backup (app → S3) | ✅ | ❌ |
-| Disaster recovery (restore from S3) | ✅ | ❌ |
-| Bidirectional sync | ❌ | ✅ |
-| Conflict detection / resolution | ❌ | ✅ |
-| Multi‑writer support | ❌ | ✅ |
+| Capability                          | Litestream | Needed for device ↔ cloud sync |
+| ----------------------------------- | ---------- | ------------------------------ |
+| Unidirectional backup (app → S3)    | ✅         | ❌                             |
+| Disaster recovery (restore from S3) | ✅         | ❌                             |
+| Bidirectional sync                  | ❌         | ✅                             |
+| Conflict detection / resolution     | ❌         | ✅                             |
+| Multi‑writer support                | ❌         | ✅                             |
 
 Litestream is purely an asynchronous backup tool. It continuously streams WAL pages
 to S3. It has **no mechanism** for a second instance to push writes back, no merge
@@ -141,7 +142,7 @@ Never write the same record type from both sides:
 
 - **Production server**: records, embeddings, notes, record sets, artist info.
 - **Nerves device**: scrobbles, listening stats, playback logs.
-- Each instance has its own SQLite database.  They sync via API calls (e.g., device
+- Each instance has its own SQLite database. They sync via API calls (e.g., device
   pushes scrobbles to production, production pushes new records to device).
 
 - **Pros**: No database‑level conflicts. Clear ownership boundaries.
@@ -184,24 +185,24 @@ Define a custom sync protocol with:
 
 Even with a sync strategy in place, Litestream could still run on the Nerves device
 for **local disaster recovery** — streaming the device’s own WAL to a separate S3
-path.  This is independent from the production Litestream instance.
+path. This is independent from the production Litestream instance.
 
 ---
 
 ## Summary of risks
 
-| Risk | Severity | Mitigation |
-|---|---|---|
-| **vix / libvips on Nerves** | 🔴 High | Replace image processing with a lighter alternative, or offload to the production server via API. |
-| **Data‑sync strategy** | 🔴 High | No off‑the‑shelf solution. Start with read‑only replica (option A), iterate toward separate write domains (option B). |
-| **typst on embedded** | 🟡 Medium | Switch to server‑side PDF generation; client downloads the result. |
-| **Rust NIF cross‑compilation** | 🟡 Medium | Set up Nerves Rust cross‑compilation. Works but adds build complexity. Each library needs individual testing. |
-| **ARMv7 (RPi 3) vs AArch64 (RPi 4/5)** | 🟡 Medium | RPi 4/5 (64‑bit) has much better precompiled‑binary support. RPi 3 requires everything compiled from source. |
-| **Buildroot package deps (libvips)** | 🟡 Medium | Each transitive C library needs a Buildroot package definition or a custom cross‑compile step. |
-| **Firmware size** | 🟡 Medium | libvips + typst + sqlite extensions → image could exceed 200 MB. Typical Nerves firmware is 20–80 MB. |
-| **sqlite‑vec on ARM** | 🟢 Low | Explicitly supported. Pure C, no deps. Compiles trivially with the Nerves toolchain. |
-| **exqlite on Nerves** | 🟢 Low | Designed for embedded use. Source compilation well‑supported and documented. |
-| **dominant\_colors** | 🟢 Low | Tiny Rust NIF. Straightforward cross‑compilation. |
+| Risk                                   | Severity  | Mitigation                                                                                                            |
+| -------------------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------- |
+| **vix / libvips on Nerves**            | 🔴 High   | Replace image processing with a lighter alternative, or offload to the production server via API.                     |
+| **Data‑sync strategy**                 | 🔴 High   | No off‑the‑shelf solution. Start with read‑only replica (option A), iterate toward separate write domains (option B). |
+| **typst on embedded**                  | 🟡 Medium | Switch to server‑side PDF generation; client downloads the result.                                                    |
+| **Rust NIF cross‑compilation**         | 🟡 Medium | Set up Nerves Rust cross‑compilation. Works but adds build complexity. Each library needs individual testing.         |
+| **ARMv7 (RPi 3) vs AArch64 (RPi 4/5)** | 🟡 Medium | RPi 4/5 (64‑bit) has much better precompiled‑binary support. RPi 3 requires everything compiled from source.          |
+| **Buildroot package deps (libvips)**   | 🟡 Medium | Each transitive C library needs a Buildroot package definition or a custom cross‑compile step.                        |
+| **Firmware size**                      | 🟡 Medium | libvips + typst + sqlite extensions → image could exceed 200 MB. Typical Nerves firmware is 20–80 MB.                 |
+| **sqlite‑vec on ARM**                  | 🟢 Low    | Explicitly supported. Pure C, no deps. Compiles trivially with the Nerves toolchain.                                  |
+| **exqlite on Nerves**                  | 🟢 Low    | Designed for embedded use. Source compilation well‑supported and documented.                                          |
+| **dominant_colors**                    | 🟢 Low    | Tiny Rust NIF. Straightforward cross‑compilation.                                                                     |
 
 ---
 
