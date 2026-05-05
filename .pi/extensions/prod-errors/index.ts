@@ -312,6 +312,39 @@ async function fetchError(
   );
 }
 
+async function postApi<T>(
+  url: string,
+  token: string,
+  validate: (data: unknown) => T,
+  signal?: AbortSignal,
+): Promise<T> {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    signal,
+  });
+
+  if (!response.ok) {
+    const body = await response.text().catch(() => "(unable to read body)");
+    const truncated = body.length > 500 ? body.slice(0, 500) + "..." : body;
+    throw new Error(
+      `API returned ${response.status} ${response.statusText}\n${truncated}`,
+    );
+  }
+
+  let data: unknown;
+  try {
+    data = await response.json();
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    throw new Error(
+      `Failed to parse API response: ${message}. Status: ${response.status}.`,
+    );
+  }
+
+  return validate(data);
+}
+
 // ── TUI Theme ───────────────────────────────────────────────────────────────
 
 /** Minimal theme interface for color application in the ErrorBrowser. */
@@ -596,6 +629,112 @@ class ErrorBrowser {
       });
   }
 
+  toggleMute(id: number, currentMuted: boolean): void {
+    if (this.mode === "loading") return;
+
+    this.abortInFlight();
+    this.mode = "loading";
+    this.invalidate();
+    this.requestRender();
+
+    const action = currentMuted ? "unmute" : "mute";
+    const url = buildUrl(this.baseUrl, `/api/v1/errors/${id}/${action}`);
+    const controller = new AbortController();
+    this.currentAbortController = controller;
+
+    postApi<ErrorDetailResponse>(
+      url,
+      this.token,
+      (data) => data as ErrorDetailResponse,
+      controller.signal,
+    )
+      .then((data) => {
+        // Update local error state in the list
+        const idx = this.errors.findIndex((e) => e.id === id);
+        if (idx !== -1) {
+          const updated = data.error;
+          this.errors[idx] = {
+            ...this.errors[idx]!,
+            muted: updated.muted,
+          };
+        }
+
+        // Update detail view if viewing this error
+        if (this.selectedError && this.selectedError.id === id) {
+          this.selectedError = {
+            ...this.selectedError,
+            muted: data.error.muted,
+          };
+        }
+
+        this.mode = this.selectedError ? "detail" : "list";
+        this.notify(`Error #${id} ${action}d successfully`, "info");
+        this.invalidate();
+        this.requestRender();
+      })
+      .catch((err) => {
+        if (err instanceof Error && err.name === "AbortError") return;
+        this.mode = this.selectedError ? "detail" : "list";
+        const msg = err instanceof Error ? err.message : String(err);
+        this.notify(`Toggle mute failed: ${msg}`, "error");
+        this.invalidate();
+        this.requestRender();
+      });
+  }
+
+  toggleResolve(id: number, currentStatus: string): void {
+    if (this.mode === "loading") return;
+
+    this.abortInFlight();
+    this.mode = "loading";
+    this.invalidate();
+    this.requestRender();
+
+    const action = currentStatus === "resolved" ? "unresolve" : "resolve";
+    const url = buildUrl(this.baseUrl, `/api/v1/errors/${id}/${action}`);
+    const controller = new AbortController();
+    this.currentAbortController = controller;
+
+    postApi<ErrorDetailResponse>(
+      url,
+      this.token,
+      (data) => data as ErrorDetailResponse,
+      controller.signal,
+    )
+      .then((data) => {
+        // Update local error state in the list
+        const idx = this.errors.findIndex((e) => e.id === id);
+        if (idx !== -1) {
+          const updated = data.error;
+          this.errors[idx] = {
+            ...this.errors[idx]!,
+            status: updated.status,
+          };
+        }
+
+        // Update detail view if viewing this error
+        if (this.selectedError && this.selectedError.id === id) {
+          this.selectedError = {
+            ...this.selectedError,
+            status: data.error.status,
+          };
+        }
+
+        this.mode = this.selectedError ? "detail" : "list";
+        this.notify(`Error #${id} ${action}d successfully`, "info");
+        this.invalidate();
+        this.requestRender();
+      })
+      .catch((err) => {
+        if (err instanceof Error && err.name === "AbortError") return;
+        this.mode = this.selectedError ? "detail" : "list";
+        const msg = err instanceof Error ? err.message : String(err);
+        this.notify(`Toggle resolve failed: ${msg}`, "error");
+        this.invalidate();
+        this.requestRender();
+      });
+  }
+
   // ── Input handling ─────────────────────────────────────────────────────
 
   handleInput(data: string): void {
@@ -628,6 +767,26 @@ class ErrorBrowser {
 
       if (matchesKey(data, "m")) {
         this.toggleMuted();
+        return;
+      }
+
+      if (matchesKey(data, "R")) {
+        if (this.errors.length > 0 && this.cursorIndex >= 0) {
+          const error = this.errors[this.cursorIndex];
+          if (error) {
+            this.toggleResolve(error.id, error.status);
+          }
+        }
+        return;
+      }
+
+      if (matchesKey(data, "M")) {
+        if (this.errors.length > 0 && this.cursorIndex >= 0) {
+          const error = this.errors[this.cursorIndex];
+          if (error) {
+            this.toggleMute(error.id, error.muted);
+          }
+        }
         return;
       }
 
@@ -692,6 +851,20 @@ class ErrorBrowser {
     // ── Detail mode keys ───────────────────────────────────────────────
 
     if (this.mode === "detail") {
+      if (matchesKey(data, "R")) {
+        if (this.selectedError) {
+          this.toggleResolve(this.selectedError.id, this.selectedError.status);
+        }
+        return;
+      }
+
+      if (matchesKey(data, "M")) {
+        if (this.selectedError) {
+          this.toggleMute(this.selectedError.id, this.selectedError.muted);
+        }
+        return;
+      }
+
       if (matchesKey(data, Key.enter)) {
         // Copy current line to editor (prod-logs pattern)
         if (this.selectedError) {
@@ -896,7 +1069,7 @@ class ErrorBrowser {
       truncateToWidth(
         theme.fg(
           "dim",
-          ` ↑↓/jk navigate  ↵ details  r ${resolvedLabel} resolved  m ${mutedLabel} muted`,
+          ` ↑↓/jk navigate  ↵ details  r ${resolvedLabel} resolved  m ${mutedLabel} muted  M toggle mute  R toggle resolve`,
         ),
         width,
         "",
@@ -975,7 +1148,7 @@ class ErrorBrowser {
       truncateToWidth(
         theme.fg(
           "dim",
-          ` Lines ${fromLine}-${toLine} of ${detailLines.length} (${pct}%)  ↑↓/jk scroll  Enter copy  Escape back`,
+          ` Lines ${fromLine}-${toLine} of ${detailLines.length} (${pct}%)  ↑↓/jk scroll  Enter copy  M mute  R resolve  Escape back`,
         ),
         width,
         "",
@@ -1251,6 +1424,374 @@ export default function prodErrorsExtension(pi: ExtensionAPI) {
           occurrenceCount: data.error.occurrence_count,
         },
       };
+    },
+  });
+
+  // ── mute_production_error tool ─────────────────────────────────────────
+
+  pi.registerTool({
+    name: "mute_production_error",
+    label: "Mute Production Error",
+    description:
+      "Mute a production error by ID. Muted errors will not trigger email " +
+      "notifications. Use this tool to silence noisy or already-addressed errors.",
+    promptSnippet:
+      "Mute a production error by ID to suppress email notifications",
+    promptGuidelines: [
+      "Use mute_production_error to silence notifications for a noisy or already-addressed production error.",
+      "Get the error ID from fetch_production_errors first. Muted errors still appear in listings but show a [MUTED] label.",
+    ],
+    parameters: Type.Object({
+      id: Type.Number({
+        description:
+          "The error ID (integer) to mute. Get this from fetch_production_errors.",
+      }),
+    }),
+    async execute(_toolCallId, params, signal, _onUpdate, _ctx) {
+      if (signal?.aborted) {
+        return { content: [{ type: "text", text: "Cancelled" }] };
+      }
+
+      const token = resolveVar("api_token");
+      const fqdn = resolveVar("service_fqdn_web");
+
+      const missing: string[] = [];
+      if (!token) missing.push("PI_API_TOKEN");
+      if (!fqdn) missing.push("PI_SERVICE_FQDN_WEB");
+
+      if (missing.length > 0) {
+        return {
+          content: [
+            {
+              type: "text",
+              text:
+                `Cannot mute production error: the following environment variables are not set:\n` +
+                missing.map((v) => `  - ${v}`).join("\n") +
+                `\n\nEnsure these are configured in your pi environment.`,
+            },
+          ],
+          isError: true,
+        };
+      }
+
+      try {
+        const data = await postApi<ErrorDetailResponse>(
+          buildUrl(fqdn!, `/api/v1/errors/${params.id}/mute`),
+          token!,
+          (data) => data as ErrorDetailResponse,
+          signal,
+        );
+
+        return {
+          content: [
+            {
+              type: "text",
+              text:
+                `Error #${params.id} muted successfully.` +
+                (data.error?.muted
+                  ? ""
+                  : " (Warning: muted field not reflected in response)"),
+            },
+          ],
+          details: { errorId: params.id, muted: data.error?.muted },
+        };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (message.includes("404")) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Error with ID ${params.id} not found.`,
+              },
+            ],
+            isError: true,
+          };
+        }
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Failed to mute production error: ${message}`,
+            },
+          ],
+          isError: true,
+        };
+      }
+    },
+  });
+
+  // ── unmute_production_error tool ───────────────────────────────────────
+
+  pi.registerTool({
+    name: "unmute_production_error",
+    label: "Unmute Production Error",
+    description:
+      "Unmute a previously muted production error by ID, re-enabling email " +
+      "notifications for new occurrences.",
+    promptSnippet:
+      "Unmute a production error by ID to re-enable email notifications",
+    promptGuidelines: [
+      "Use unmute_production_error to re-enable notifications for a previously muted error.",
+      "Get the error ID from fetch_production_errors first.",
+    ],
+    parameters: Type.Object({
+      id: Type.Number({
+        description:
+          "The error ID (integer) to unmute. Get this from fetch_production_errors.",
+      }),
+    }),
+    async execute(_toolCallId, params, signal, _onUpdate, _ctx) {
+      if (signal?.aborted) {
+        return { content: [{ type: "text", text: "Cancelled" }] };
+      }
+
+      const token = resolveVar("api_token");
+      const fqdn = resolveVar("service_fqdn_web");
+
+      const missing: string[] = [];
+      if (!token) missing.push("PI_API_TOKEN");
+      if (!fqdn) missing.push("PI_SERVICE_FQDN_WEB");
+
+      if (missing.length > 0) {
+        return {
+          content: [
+            {
+              type: "text",
+              text:
+                `Cannot unmute production error: the following environment variables are not set:\n` +
+                missing.map((v) => `  - ${v}`).join("\n") +
+                `\n\nEnsure these are configured in your pi environment.`,
+            },
+          ],
+          isError: true,
+        };
+      }
+
+      try {
+        const data = await postApi<ErrorDetailResponse>(
+          buildUrl(fqdn!, `/api/v1/errors/${params.id}/unmute`),
+          token!,
+          (data) => data as ErrorDetailResponse,
+          signal,
+        );
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error #${params.id} unmuted successfully. Email notifications will resume for new occurrences.`,
+            },
+          ],
+          details: { errorId: params.id, muted: data.error?.muted },
+        };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (message.includes("404")) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Error with ID ${params.id} not found.`,
+              },
+            ],
+            isError: true,
+          };
+        }
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Failed to unmute production error: ${message}`,
+            },
+          ],
+          isError: true,
+        };
+      }
+    },
+  });
+
+  // ── resolve_production_error tool ───────────────────────────────────────
+
+  pi.registerTool({
+    name: "resolve_production_error",
+    label: "Resolve Production Error",
+    description:
+      "Mark a production error as resolved by ID. Resolved errors are filtered " +
+      "out of the default unresolved view.",
+    promptSnippet:
+      "Mark a production error as resolved when the underlying issue has been fixed",
+    promptGuidelines: [
+      "Use resolve_production_error to mark a production error as resolved when the underlying issue has been fixed.",
+      "Get the error ID from fetch_production_errors first.",
+    ],
+    parameters: Type.Object({
+      id: Type.Number({
+        description:
+          "The error ID (integer) to resolve. Get this from fetch_production_errors.",
+      }),
+    }),
+    async execute(_toolCallId, params, signal, _onUpdate, _ctx) {
+      if (signal?.aborted) {
+        return { content: [{ type: "text", text: "Cancelled" }] };
+      }
+
+      const token = resolveVar("api_token");
+      const fqdn = resolveVar("service_fqdn_web");
+
+      const missing: string[] = [];
+      if (!token) missing.push("PI_API_TOKEN");
+      if (!fqdn) missing.push("PI_SERVICE_FQDN_WEB");
+
+      if (missing.length > 0) {
+        return {
+          content: [
+            {
+              type: "text",
+              text:
+                `Cannot resolve production error: the following environment variables are not set:\n` +
+                missing.map((v) => `  - ${v}`).join("\n") +
+                `\n\nEnsure these are configured in your pi environment.`,
+            },
+          ],
+          isError: true,
+        };
+      }
+
+      try {
+        const data = await postApi<ErrorDetailResponse>(
+          buildUrl(fqdn!, `/api/v1/errors/${params.id}/resolve`),
+          token!,
+          (data) => data as ErrorDetailResponse,
+          signal,
+        );
+
+        return {
+          content: [
+            {
+              type: "text",
+              text:
+                `Error #${params.id} resolved successfully.` +
+                (data.error?.status === "resolved"
+                  ? ""
+                  : " (Warning: status field not reflected in response)"),
+            },
+          ],
+          details: { errorId: params.id, status: data.error?.status },
+        };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (message.includes("404")) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Error with ID ${params.id} not found.`,
+              },
+            ],
+            isError: true,
+          };
+        }
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Failed to resolve production error: ${message}`,
+            },
+          ],
+          isError: true,
+        };
+      }
+    },
+  });
+
+  // ── unresolve_production_error tool ─────────────────────────────────────
+
+  pi.registerTool({
+    name: "unresolve_production_error",
+    label: "Unresolve Production Error",
+    description:
+      "Reopen a previously resolved production error by ID. Use when an error " +
+      "reoccurs after being marked as resolved.",
+    promptSnippet:
+      "Reopen a production error when it reoccurs after being resolved",
+    promptGuidelines: [
+      "Use unresolve_production_error to reopen a production error when it reoccurs after being resolved.",
+      "Get the error ID from fetch_production_errors first.",
+    ],
+    parameters: Type.Object({
+      id: Type.Number({
+        description:
+          "The error ID (integer) to unresolve. Get this from fetch_production_errors.",
+      }),
+    }),
+    async execute(_toolCallId, params, signal, _onUpdate, _ctx) {
+      if (signal?.aborted) {
+        return { content: [{ type: "text", text: "Cancelled" }] };
+      }
+
+      const token = resolveVar("api_token");
+      const fqdn = resolveVar("service_fqdn_web");
+
+      const missing: string[] = [];
+      if (!token) missing.push("PI_API_TOKEN");
+      if (!fqdn) missing.push("PI_SERVICE_FQDN_WEB");
+
+      if (missing.length > 0) {
+        return {
+          content: [
+            {
+              type: "text",
+              text:
+                `Cannot unresolve production error: the following environment variables are not set:\n` +
+                missing.map((v) => `  - ${v}`).join("\n") +
+                `\n\nEnsure these are configured in your pi environment.`,
+            },
+          ],
+          isError: true,
+        };
+      }
+
+      try {
+        const data = await postApi<ErrorDetailResponse>(
+          buildUrl(fqdn!, `/api/v1/errors/${params.id}/unresolve`),
+          token!,
+          (data) => data as ErrorDetailResponse,
+          signal,
+        );
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error #${params.id} reopened (unresolved) successfully.`,
+            },
+          ],
+          details: { errorId: params.id, status: data.error?.status },
+        };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (message.includes("404")) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Error with ID ${params.id} not found.`,
+              },
+            ],
+            isError: true,
+          };
+        }
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Failed to unresolve production error: ${message}`,
+            },
+          ],
+          isError: true,
+        };
+      }
     },
   });
 

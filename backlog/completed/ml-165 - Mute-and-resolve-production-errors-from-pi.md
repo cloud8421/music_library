@@ -1,16 +1,25 @@
 ---
 id: ML-165
 title: Mute and resolve production errors from pi
-status: To Do
+status: Done
 assignee: []
-created_date: '2026-05-05 11:20'
-updated_date: '2026-05-05 12:10'
+created_date: "2026-05-05 11:20"
+updated_date: "2026-05-05 12:27"
 labels: []
 dependencies: []
 references:
   - >-
     doc-12 -
     Research-Mute-and-Resolve-Production-Errors-Implementation-Routes.md
+modified_files:
+  - lib/music_library/errors.ex
+  - lib/music_library_web/controllers/error_controller.ex
+  - lib/music_library_web/controllers/error_json.ex
+  - lib/music_library_web/router.ex
+  - test/music_library/errors_test.exs
+  - test/music_library_web/controllers/error_controller_test.exs
+  - .pi/extensions/prod-errors/index.ts
+  - docs/architecture.md
 priority: medium
 ordinal: 10000
 ---
@@ -18,35 +27,40 @@ ordinal: 10000
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
+
 Extend the production error tooling in pi so that it's possible to:
 
 1. Mute and resolve issues from the `prod-errors` TUI (user action)
 2. Mute and resolve issues via a tool (pi action)
 
 There are no endpoints for these two actions, so we would need to extend the application's v1/api/ endpoints to support them.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
+
 <!-- AC:BEGIN -->
-- [ ] #1 POST /api/v1/errors/:id/mute sets muted=true and returns 200 with updated error
-- [ ] #2 POST /api/v1/errors/:id/unmute sets muted=false and returns 200 with updated error
-- [ ] #3 POST /api/v1/errors/:id/resolve sets status=:resolved and returns 200 with updated error
-- [ ] #4 POST /api/v1/errors/:id/unresolve sets status=:unresolved and returns 200 with updated error
-- [ ] #5 All four POST endpoints return 401 without Bearer token
-- [ ] #6 All four POST endpoints return 404 for non-existent error ID
-- [ ] #7 All four POST endpoints return 404 for non-integer ID
-- [ ] #8 pi tools (mute_production_error, unmute_production_error, resolve_production_error, unresolve_production_error) work correctly
-- [ ] #9 /prod-errors TUI: M key toggles mute state on selected error with visual feedback
-- [ ] #10 /prod-errors TUI: R key toggles resolve/unresolve status on selected error with visual feedback
-- [ ] #11 /prod-errors TUI help text shows new M and R keybindings
-- [ ] #12 All context function tests pass
-- [ ] #13 All controller tests pass
-- [ ] #14 Documentation updated: docs/architecture.md reflects new endpoints and context description
+
+- [x] #1 POST /api/v1/errors/:id/mute sets muted=true and returns 200 with updated error
+- [x] #2 POST /api/v1/errors/:id/unmute sets muted=false and returns 200 with updated error
+- [x] #3 POST /api/v1/errors/:id/resolve sets status=:resolved and returns 200 with updated error
+- [x] #4 POST /api/v1/errors/:id/unresolve sets status=:unresolved and returns 200 with updated error
+- [x] #5 All four POST endpoints return 401 without Bearer token
+- [x] #6 All four POST endpoints return 404 for non-existent error ID
+- [x] #7 All four POST endpoints return 404 for non-integer ID
+- [x] #8 pi tools (mute_production_error, unmute_production_error, resolve_production_error, unresolve_production_error) work correctly
+- [x] #9 /prod-errors TUI: M key toggles mute state on selected error with visual feedback
+- [x] #10 /prod-errors TUI: R key toggles resolve/unresolve status on selected error with visual feedback
+- [x] #11 /prod-errors TUI help text shows new M and R keybindings
+- [x] #12 All context function tests pass
+- [x] #13 All controller tests pass
+- [x] #14 Documentation updated: docs/architecture.md reflects new endpoints and context description
 <!-- AC:END -->
 
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
+
 ## Implementation Plan: Route A — Four dedicated POST endpoints
 
 ### Overview
@@ -158,6 +172,7 @@ post "/errors/:id/unresolve", ErrorController, :unresolve
 **File:** `test/music_library/errors_test.exs`
 
 Add a `describe "mute_error/1, unmute_error/1, resolve_error/1, unresolve_error/1"` block with tests for:
+
 - `mute_error/1` sets `muted` to `true`
 - `unmute_error/1` sets `muted` to `false`
 - `resolve_error/1` sets `status` to `:resolved`
@@ -168,6 +183,7 @@ Add a `describe "mute_error/1, unmute_error/1, resolve_error/1, unresolve_error/
 **File:** `test/music_library_web/controllers/error_controller_test.exs`
 
 Add a `describe "POST /api/v1/errors/:id/mute|unmute|resolve|unresolve"` block with tests for:
+
 - Each endpoint returns 401 without Bearer token
 - Each endpoint returns 200 with updated error on success
 - Each endpoint returns 404 for non-existent ID
@@ -187,6 +203,7 @@ Register four new tools after the existing `fetch_production_error` tool:
 4. **`unresolve_production_error`** — POSTs to `/api/v1/errors/:id/unresolve`
 
 Each tool:
+
 - Takes a single `id` (number) parameter
 - Validates env vars (`PI_API_TOKEN`, `PI_SERVICE_FQDN_WEB`) like existing tools
 - Makes a POST request with Bearer auth
@@ -196,6 +213,7 @@ Each tool:
 Add a shared helper `postApi<T>` for POST requests (similar to the existing `fetchApi<T>` for GET, adding `method: "POST"`).
 
 Add prompt guidelines:
+
 - `mute_production_error`: "Use mute_production_error to silence notifications for a noisy or already-addressed production error."
 - `unmute_production_error`: "Use unmute_production_error to re-enable notifications for a previously muted error."
 - `resolve_production_error`: "Use resolve_production_error to mark a production error as resolved when the underlying issue has been fixed."
@@ -224,6 +242,7 @@ Add to the `ErrorBrowser` class:
 3. **Update help text** in `renderList` and `renderDetail` to show the new keys.
 
 Keybinding logic (list mode):
+
 ```
 M → if error.muted → POST /unmute; else → POST /mute
 R → if error.status === "resolved" → POST /unresolve; else → POST /resolve
@@ -232,6 +251,7 @@ R → if error.status === "resolved" → POST /unresolve; else → POST /resolve
 After a successful API call, update the local `ErrorListItem` in `this.errors` and call `this.invalidate()`.
 
 **Visual feedback on success:**
+
 - The error's list entry re-renders immediately: the `[MUTED]` label appears/disappears, and the status badge (`[RESOLVED]` / `[UNRESOLVED]`) updates.
 - In detail mode, the header line (`Status: … | Muted: …`) updates on next render.
 - On failure: a toast notification via `this.notify()` displays the error message.
@@ -245,6 +265,7 @@ After a successful API call, update the local `ErrorListItem` in `this.errors` a
 Update the `@moduledoc` to reflect that the module now handles both queries and mutations. The current text describes it as read-only — add a line noting that it also provides `mute_error/1`, `unmute_error/1`, `resolve_error/1`, and `unresolve_error/1` for mutating error state.
 
 **File:** `docs/architecture.md`
+
 - Under the Routes section (if it enumerates API routes), add the four new POST endpoints: `/api/v1/errors/:id/mute`, `/api/v1/errors/:id/unmute`, `/api/v1/errors/:id/resolve`, `/api/v1/errors/:id/unresolve`.
 - Under Contexts → `Errors`, update the description from "Read-only queries" to "Queries and mutations for production error data". Note that muting an error suppresses future email notifications via `ErrorTracker.ErrorNotifier` (which checks the `muted` field before dispatching).
 - Under the Controller table, update the `ErrorController` row to include the four new action routes.
@@ -253,16 +274,16 @@ Update the `@moduledoc` to reflect that the module now handles both queries and 
 
 ## Architecture Impact Summary
 
-| Component | Change |
-|---|---|
-| `MusicLibrary.Errors` | +4 public functions, +1 private helper, updated moduledoc |
-| `MusicLibraryWeb.ErrorController` | +4 actions, +1 private helper |
-| `MusicLibraryWeb.ErrorJSON` | +1 render function |
-| `MusicLibraryWeb.Router` | +4 POST routes |
-| `.pi/extensions/prod-errors/index.ts` | +4 tools, +2 TUI methods, +2 keybindings, updated help text |
-| `test/music_library/errors_test.exs` | +~8 tests (including idempotency for all four actions) |
-| `test/music_library_web/controllers/error_controller_test.exs` | +~12 tests |
-| `docs/architecture.md` | Update errors context description, add routes, update controller table |
+| Component                                                      | Change                                                                 |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `MusicLibrary.Errors`                                          | +4 public functions, +1 private helper, updated moduledoc              |
+| `MusicLibraryWeb.ErrorController`                              | +4 actions, +1 private helper                                          |
+| `MusicLibraryWeb.ErrorJSON`                                    | +1 render function                                                     |
+| `MusicLibraryWeb.Router`                                       | +4 POST routes                                                         |
+| `.pi/extensions/prod-errors/index.ts`                          | +4 tools, +2 TUI methods, +2 keybindings, updated help text            |
+| `test/music_library/errors_test.exs`                           | +~8 tests (including idempotency for all four actions)                 |
+| `test/music_library_web/controllers/error_controller_test.exs` | +~12 tests                                                             |
+| `docs/architecture.md`                                         | Update errors context description, add routes, update controller table |
 
 **No changes:** supervision tree, PubSub, schemas, migrations, Oban workers, LiveViews, external APIs, production infrastructure.
 
@@ -282,4 +303,44 @@ Zero incremental cost. No external API calls.
 ## Production Infrastructure
 
 No changes needed (no new env vars, no DNS, no firewall, no special migration handling).
+
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
+## Summary
+
+Added mute/unmute/resolve/unresolve capability for production errors across the full stack:
+
+### Backend (Elixir/Phoenix)
+
+- **`MusicLibrary.Errors`**: Added 4 public functions (`mute_error/1`, `unmute_error/1`, `resolve_error/1`, `unresolve_error/1`) that delegate to `ErrorTracker`'s built-in mutation functions. `resolve/1` and `unresolve/1` handle the idempotent case (already-resolved/already-unresolved) gracefully.
+- **`MusicLibraryWeb.ErrorController`**: Added 4 POST actions (`mute/2`, `unmute/2`, `resolve/2`, `unresolve/2`) with a shared `perform_action/3` helper that parses integer IDs, delegates to context, and returns proper JSON responses (200, 404, 422).
+- **`MusicLibraryWeb.ErrorJSON`**: Added `update/1` render function for the `:update` template atom.
+- **`MusicLibraryWeb.Router`**: Added 4 POST routes under the authenticated `/api/v1` scope.
+
+### Tests
+
+- **Context tests** (9 new): Test all four functions on success, not_found, and idempotency for each.
+- **Controller tests** (6 auth + 6 functional): Test 401 without token, 200 with updated state, 404 for non-existent/non-integer IDs.
+
+### Pi Extension (TypeScript)
+
+- **`postApi<T>` helper**: Shared POST request helper with Bearer auth and validation.
+- **4 new tools**: `mute_production_error`, `unmute_production_error`, `resolve_production_error`, `unresolve_production_error` — each takes an error ID, POSTs to the corresponding endpoint, and returns success/error.
+- **TUI keybindings**: `M` (Shift+M) toggles mute, `R` (Shift+R) toggles resolve/unresolve on the selected error in both list and detail modes. Local state updates immediately on success with toast notifications.
+- **Help text**: Updated in both list and detail modes to show the new keys.
+
+### Documentation
+
+- `docs/architecture.md`: Updated Errors context description from "Read-only" to "Queries and mutations", added new POST routes to ErrorController table.
+- `lib/music_library/errors.ex`: Updated `@moduledoc` to reflect mutation capabilities.
+
+### Design decisions
+
+- Used `ErrorTracker.mute/1`, `unmute/1`, `resolve/1`, `unresolve/1` (which emit telemetry events) rather than raw `Ecto.Changeset.change/2`
+- `resolve_error/1` and `unresolve_error/1` handle the already-resolved/unresolved case explicitly (ErrorTracker's functions pattern-match on current state and would crash otherwise)
+- POST endpoints return the updated error as JSON (consistent with GET responses), using the same `error/1` render helper
+<!-- SECTION:FINAL_SUMMARY:END -->

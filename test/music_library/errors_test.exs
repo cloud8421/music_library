@@ -160,6 +160,63 @@ defmodule MusicLibrary.ErrorsTest do
     end
   end
 
+  describe "mute_error/1, unmute_error/1, resolve_error/1, unresolve_error/1" do
+    test "mute_error/1 sets muted to true" do
+      error = unique_error("mute", %{muted: false})
+      assert {:ok, updated} = Errors.mute_error(error.id)
+      assert updated.muted == true
+    end
+
+    test "unmute_error/1 sets muted to false" do
+      error = unique_error("unmute", %{muted: true})
+      assert {:ok, updated} = Errors.unmute_error(error.id)
+      assert updated.muted == false
+    end
+
+    test "resolve_error/1 sets status to :resolved" do
+      error = unique_error("res", %{status: :unresolved})
+      assert {:ok, updated} = Errors.resolve_error(error.id)
+      assert updated.status == :resolved
+    end
+
+    test "unresolve_error/1 sets status to :unresolved" do
+      error = unique_error("unres", %{status: :resolved})
+      assert {:ok, updated} = Errors.unresolve_error(error.id)
+      assert updated.status == :unresolved
+    end
+
+    test "returns {:error, :not_found} for non-existent id" do
+      assert Errors.mute_error(99_999) == {:error, :not_found}
+      assert Errors.unmute_error(99_999) == {:error, :not_found}
+      assert Errors.resolve_error(99_999) == {:error, :not_found}
+      assert Errors.unresolve_error(99_999) == {:error, :not_found}
+    end
+
+    test "mute_error/1 on already-muted error succeeds (idempotent)" do
+      error = unique_error("mute_idem", %{muted: true})
+      assert {:ok, updated} = Errors.mute_error(error.id)
+      assert updated.muted == true
+    end
+
+    test "unmute_error/1 on already-unmuted error succeeds (idempotent)" do
+      error = unique_error("unmute_idem", %{muted: false})
+      assert {:ok, updated} = Errors.unmute_error(error.id)
+      assert updated.muted == false
+    end
+
+    test "resolve_error/1 on already-resolved error succeeds (idempotent)" do
+      error = unique_error("res_idem", %{status: :resolved})
+      assert {:ok, updated} = Errors.resolve_error(error.id)
+      assert updated.status == :resolved
+    end
+
+    test "unresolve_error/1 on already-unresolved error succeeds (idempotent)" do
+      error = unique_error("unres_idem", %{status: :unresolved})
+      assert {:ok, updated} = Errors.unresolve_error(error.id)
+      assert updated.status == :unresolved
+    end
+  end
+
   describe "escape_like_wildcards/1" do
     test "escapes % and _ characters" do
       assert Errors.escape_like_wildcards("100%") == "100\\%"

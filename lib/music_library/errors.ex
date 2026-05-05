@@ -1,11 +1,17 @@
 defmodule MusicLibrary.Errors do
   @moduledoc """
-  Queries for production errors tracked via ErrorTracker.
+  Queries and mutations for production errors tracked via ErrorTracker.
 
   Reads from the error_tracker_errors and error_tracker_occurrences tables
   (owned by the `ErrorTracker` library) through `MusicLibrary.Repo`. The
   tables are created by ErrorTracker's own migrations and do not require
   any additional schema work.
+
+  Provides `mute_error/1`, `unmute_error/1`, `resolve_error/1`, and
+  `unresolve_error/1` for mutating error state (muted flag and status).
+  Muting an error suppresses future email notifications via
+  `ErrorTracker.ErrorNotifier`, which checks the `muted` field before
+  dispatching.
   """
 
   import Ecto.Query, warn: false
@@ -79,7 +85,44 @@ defmodule MusicLibrary.Errors do
     end
   end
 
-  # -- private helpers --
+  @spec mute_error(pos_integer()) :: {:ok, Error.t()} | {:error, :not_found | Ecto.Changeset.t()}
+  def mute_error(id) do
+    case Repo.get(Error, id) do
+      nil -> {:error, :not_found}
+      %{muted: true} = error -> {:ok, error}
+      error -> ErrorTracker.mute(error)
+    end
+  end
+
+  @spec unmute_error(pos_integer()) ::
+          {:ok, Error.t()} | {:error, :not_found | Ecto.Changeset.t()}
+  def unmute_error(id) do
+    case Repo.get(Error, id) do
+      nil -> {:error, :not_found}
+      %{muted: false} = error -> {:ok, error}
+      error -> ErrorTracker.unmute(error)
+    end
+  end
+
+  @spec resolve_error(pos_integer()) ::
+          {:ok, Error.t()} | {:error, :not_found | Ecto.Changeset.t()}
+  def resolve_error(id) do
+    case Repo.get(Error, id) do
+      nil -> {:error, :not_found}
+      %{status: :resolved} = error -> {:ok, error}
+      error -> ErrorTracker.resolve(error)
+    end
+  end
+
+  @spec unresolve_error(pos_integer()) ::
+          {:ok, Error.t()} | {:error, :not_found | Ecto.Changeset.t()}
+  def unresolve_error(id) do
+    case Repo.get(Error, id) do
+      nil -> {:error, :not_found}
+      %{status: :unresolved} = error -> {:ok, error}
+      error -> ErrorTracker.unresolve(error)
+    end
+  end
 
   defp base_query(filters) do
     Error

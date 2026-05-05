@@ -29,6 +29,10 @@ defmodule MusicLibraryWeb.ErrorJSON do
     }
   end
 
+  def update(%{error: error}) do
+    %{error: error(error)}
+  end
+
   defp error(e) do
     %{
       id: e.id,

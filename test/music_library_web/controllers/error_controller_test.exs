@@ -16,6 +16,22 @@ defmodule MusicLibraryWeb.ErrorControllerTest do
     test "GET /api/v1/errors/:id requires a bearer token", %{conn: conn} do
       assert get(conn, ~p"/api/v1/errors/1").status == 401
     end
+
+    test "POST /api/v1/errors/:id/mute requires a bearer token", %{conn: conn} do
+      assert post(conn, ~p"/api/v1/errors/1/mute").status == 401
+    end
+
+    test "POST /api/v1/errors/:id/unmute requires a bearer token", %{conn: conn} do
+      assert post(conn, ~p"/api/v1/errors/1/unmute").status == 401
+    end
+
+    test "POST /api/v1/errors/:id/resolve requires a bearer token", %{conn: conn} do
+      assert post(conn, ~p"/api/v1/errors/1/resolve").status == 401
+    end
+
+    test "POST /api/v1/errors/:id/unresolve requires a bearer token", %{conn: conn} do
+      assert post(conn, ~p"/api/v1/errors/1/unresolve").status == 401
+    end
   end
 
   describe "GET /api/v1/errors" do
@@ -253,6 +269,245 @@ defmodule MusicLibraryWeb.ErrorControllerTest do
         |> get(~p"/api/v1/errors/not-an-id")
 
       assert json_response(conn, 404) == %{"error" => "Not Found"}
+    end
+  end
+
+  describe "POST /api/v1/errors/:id/mute|unmute|resolve|unresolve" do
+    setup do
+      error = error_fixture(%{reason: "Test error", muted: false, status: :unresolved})
+      %{error: error}
+    end
+
+    test "POST mute sets muted to true", %{conn: conn, error: error} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{api_token()}")
+        |> post(~p"/api/v1/errors/#{error.id}/mute")
+
+      assert %{"error" => returned} = json_response(conn, 200)
+      assert returned["muted"] == true
+      assert returned["id"] == error.id
+    end
+
+    test "POST unmute sets muted to false", %{conn: conn} do
+      error =
+        error_fixture(%{
+          reason: "Muted error",
+          muted: true,
+          status: :unresolved,
+          source_line: "lib/muted.ex:1",
+          source_function: "MutedModule.muted/0",
+          fingerprint: error_fingerprint(:runtime_error, "lib/muted.ex:1", "MutedModule.muted/0")
+        })
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{api_token()}")
+        |> post(~p"/api/v1/errors/#{error.id}/unmute")
+
+      assert %{"error" => returned} = json_response(conn, 200)
+      assert returned["muted"] == false
+    end
+
+    test "POST resolve sets status to resolved", %{conn: conn, error: error} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{api_token()}")
+        |> post(~p"/api/v1/errors/#{error.id}/resolve")
+
+      assert %{"error" => returned} = json_response(conn, 200)
+      assert returned["status"] == "resolved"
+    end
+
+    test "POST unresolve sets status to unresolved", %{conn: conn} do
+      error =
+        error_fixture(%{
+          reason: "Resolved error",
+          muted: false,
+          status: :resolved,
+          source_line: "lib/resolved.ex:1",
+          source_function: "ResolvedModule.resolved/0",
+          fingerprint:
+            error_fingerprint(:runtime_error, "lib/resolved.ex:1", "ResolvedModule.resolved/0")
+        })
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{api_token()}")
+        |> post(~p"/api/v1/errors/#{error.id}/unresolve")
+
+      assert %{"error" => returned} = json_response(conn, 200)
+      assert returned["status"] == "unresolved"
+    end
+
+    test "all four endpoints return 404 for non-existent ID", %{conn: conn} do
+      conn = put_req_header(conn, "authorization", "Bearer #{api_token()}")
+
+      assert post(conn, ~p"/api/v1/errors/99999/mute") |> json_response(404) == %{
+               "error" => "Not Found"
+             }
+
+      assert post(conn, ~p"/api/v1/errors/99999/unmute") |> json_response(404) == %{
+               "error" => "Not Found"
+             }
+
+      assert post(conn, ~p"/api/v1/errors/99999/resolve") |> json_response(404) == %{
+               "error" => "Not Found"
+             }
+
+      assert post(conn, ~p"/api/v1/errors/99999/unresolve") |> json_response(404) == %{
+               "error" => "Not Found"
+             }
+    end
+
+    test "all four endpoints return 404 for non-integer ID", %{conn: conn} do
+      conn = put_req_header(conn, "authorization", "Bearer #{api_token()}")
+
+      assert post(conn, ~p"/api/v1/errors/not-an-id/mute") |> json_response(404) == %{
+               "error" => "Not Found"
+             }
+
+      assert post(conn, ~p"/api/v1/errors/not-an-id/unmute") |> json_response(404) == %{
+               "error" => "Not Found"
+             }
+
+      assert post(conn, ~p"/api/v1/errors/not-an-id/resolve") |> json_response(404) == %{
+               "error" => "Not Found"
+             }
+
+      assert post(conn, ~p"/api/v1/errors/not-an-id/unresolve") |> json_response(404) == %{
+               "error" => "Not Found"
+             }
+    end
+
+    test "all four endpoints return 404 for zero ID", %{conn: conn} do
+      conn = put_req_header(conn, "authorization", "Bearer #{api_token()}")
+
+      assert post(conn, ~p"/api/v1/errors/0/mute") |> json_response(404) == %{
+               "error" => "Not Found"
+             }
+
+      assert post(conn, ~p"/api/v1/errors/0/unmute") |> json_response(404) == %{
+               "error" => "Not Found"
+             }
+
+      assert post(conn, ~p"/api/v1/errors/0/resolve") |> json_response(404) == %{
+               "error" => "Not Found"
+             }
+
+      assert post(conn, ~p"/api/v1/errors/0/unresolve") |> json_response(404) == %{
+               "error" => "Not Found"
+             }
+    end
+
+    test "all four endpoints return 404 for negative ID", %{conn: conn} do
+      conn = put_req_header(conn, "authorization", "Bearer #{api_token()}")
+
+      assert post(conn, ~p"/api/v1/errors/-1/mute") |> json_response(404) == %{
+               "error" => "Not Found"
+             }
+
+      assert post(conn, ~p"/api/v1/errors/-1/unmute") |> json_response(404) == %{
+               "error" => "Not Found"
+             }
+
+      assert post(conn, ~p"/api/v1/errors/-1/resolve") |> json_response(404) == %{
+               "error" => "Not Found"
+             }
+
+      assert post(conn, ~p"/api/v1/errors/-1/unresolve") |> json_response(404) == %{
+               "error" => "Not Found"
+             }
+    end
+
+    test "POST mute on already-muted error succeeds (controller idempotency)", %{conn: conn} do
+      error =
+        error_fixture(%{
+          reason: "Already muted",
+          muted: true,
+          status: :unresolved,
+          source_line: "lib/muted2.ex:1",
+          source_function: "MutedModule.muted2/0",
+          fingerprint:
+            error_fingerprint(:runtime_error, "lib/muted2.ex:1", "MutedModule.muted2/0")
+        })
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{api_token()}")
+        |> post(~p"/api/v1/errors/#{error.id}/mute")
+
+      assert %{"error" => returned} = json_response(conn, 200)
+      assert returned["muted"] == true
+    end
+
+    test "POST unmute on already-unmuted error succeeds (controller idempotency)", %{conn: conn} do
+      error =
+        error_fixture(%{
+          reason: "Already unmuted",
+          muted: false,
+          status: :unresolved,
+          source_line: "lib/unmuted2.ex:1",
+          source_function: "UnmutedModule.unmuted2/0",
+          fingerprint:
+            error_fingerprint(:runtime_error, "lib/unmuted2.ex:1", "UnmutedModule.unmuted2/0")
+        })
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{api_token()}")
+        |> post(~p"/api/v1/errors/#{error.id}/unmute")
+
+      assert %{"error" => returned} = json_response(conn, 200)
+      assert returned["muted"] == false
+    end
+
+    test "POST resolve on already-resolved error succeeds (controller idempotency)", %{conn: conn} do
+      error =
+        error_fixture(%{
+          reason: "Already resolved",
+          muted: false,
+          status: :resolved,
+          source_line: "lib/resolved2.ex:1",
+          source_function: "ResolvedModule.resolved2/0",
+          fingerprint:
+            error_fingerprint(:runtime_error, "lib/resolved2.ex:1", "ResolvedModule.resolved2/0")
+        })
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{api_token()}")
+        |> post(~p"/api/v1/errors/#{error.id}/resolve")
+
+      assert %{"error" => returned} = json_response(conn, 200)
+      assert returned["status"] == "resolved"
+    end
+
+    test "POST unresolve on already-unresolved error succeeds (controller idempotency)", %{
+      conn: conn
+    } do
+      error =
+        error_fixture(%{
+          reason: "Already unresolved",
+          muted: false,
+          status: :unresolved,
+          source_line: "lib/unresolved2.ex:1",
+          source_function: "UnresolvedModule.unresolved2/0",
+          fingerprint:
+            error_fingerprint(
+              :runtime_error,
+              "lib/unresolved2.ex:1",
+              "UnresolvedModule.unresolved2/0"
+            )
+        })
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{api_token()}")
+        |> post(~p"/api/v1/errors/#{error.id}/unresolve")
+
+      assert %{"error" => returned} = json_response(conn, 200)
+      assert returned["status"] == "unresolved"
     end
   end
 end

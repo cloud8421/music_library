@@ -43,7 +43,31 @@ defmodule MusicLibraryWeb.ErrorController do
     end
   end
 
+  def mute(conn, %{"id" => id}), do: perform_action(conn, id, &Errors.mute_error/1)
+  def unmute(conn, %{"id" => id}), do: perform_action(conn, id, &Errors.unmute_error/1)
+  def resolve(conn, %{"id" => id}), do: perform_action(conn, id, &Errors.resolve_error/1)
+  def unresolve(conn, %{"id" => id}), do: perform_action(conn, id, &Errors.unresolve_error/1)
+
   # -- private helpers --
+
+  defp perform_action(conn, id, action_fn) do
+    case Integer.parse(id) do
+      {id_int, ""} when id_int > 0 ->
+        case action_fn.(id_int) do
+          {:ok, error} ->
+            render(conn, :update, error: error)
+
+          {:error, :not_found} ->
+            conn |> put_status(:not_found) |> json(%{error: "Not Found"})
+
+          {:error, _changeset} ->
+            conn |> put_status(:unprocessable_entity) |> json(%{error: "Update failed"})
+        end
+
+      _ ->
+        conn |> put_status(:not_found) |> json(%{error: "Not Found"})
+    end
+  end
 
   defp parse_status(nil), do: nil
   defp parse_status("resolved"), do: :resolved

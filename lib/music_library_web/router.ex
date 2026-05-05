@@ -132,6 +132,10 @@ defmodule MusicLibraryWeb.Router do
     get "/collection", CollectionController, :index
     get "/errors", ErrorController, :index
     get "/errors/:id", ErrorController, :show
+    post "/errors/:id/mute", ErrorController, :mute
+    post "/errors/:id/unmute", ErrorController, :unmute
+    post "/errors/:id/resolve", ErrorController, :resolve
+    post "/errors/:id/unresolve", ErrorController, :unresolve
     get "/assets/:transform_payload", AssetController, :show
     get "/backup", ArchiveController, :backup
   end
