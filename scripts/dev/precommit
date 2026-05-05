@@ -22,6 +22,10 @@ mix gettext.extract --check-up-to-date
 
 debug_msg "Checking formatting..."
 mix format --check-formatted
+prettier --check '.pi/extensions/**/*.{ts,js,json}'
+prettier --check 'assets/css/**/*.css' 'assets/js/**/*.js'
+prettier --check 'docs/**/*.md' 'docs/**/*.livemd' 'README.md'
+prettier --check 'backlog/archive/**/*.md' 'backlog/completed/**/*.md' 'backlog/tasks/**/*.md' 'backlog/docs/**/*.md'
 
 debug_msg "Checking unused deps..."
 mix deps.unlock --unused
