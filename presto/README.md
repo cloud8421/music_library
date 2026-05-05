@@ -5,8 +5,11 @@ A MicroPython application for the [Pimoroni Presto](https://shop.pimoroni.com/pr
 ## Features
 
 - **Month calendar** — 7×6 grid with day-of-week headers, today highlight
-- **Tap a day** — see records released on that date with cover art, titles, and artist names
+- **Today's records on boot** — opens directly to records released on today's date
+- **Tap a day** — see records released on that date with cover art, titles, artist names, format, and release year
 - **Month navigation** — arrow buttons to browse previous/future months
+- **Touch scrolling** — drag the day view to scroll through longer record lists
+- **Display sleep** — turns the backlight off after 1 minute of inactivity and wakes on touch
 - **WiFi auto-connect** — connects on boot with retry logic
 - **NTP time sync** — calendar always shows the correct date
 - **Error handling** — graceful messages when the server is unreachable or images fail to load
@@ -46,18 +49,24 @@ Copy the files to the root of your Presto's flash storage. You can use Thonny, `
 pip install mpremote
 
 # Copy files to the Presto
-mpremote fs cp main.py :main.py
+mpremote fs cp records_on_the_day.py :main.py
 mpremote fs cp secrets.py :secrets.py
 
 # Reset the device to start the app
 mpremote reset
 ```
 
+You can also deploy with the project task:
+
+```bash
+mise run presto
+```
+
 **Using Thonny:**
 
 1. Open Thonny and select "MicroPython (Raspberry Pi Pico)" as the interpreter
-2. Open `main.py` and `secrets.py` in Thonny
-3. Use File → Save Copy → Raspberry Pi Pico to save each file to the device
+2. Open `records_on_the_day.py` and `secrets.py` in Thonny
+3. Use File → Save Copy → Raspberry Pi Pico to save `records_on_the_day.py` as `main.py` and `secrets.py` as `secrets.py`
 4. Press the reset button on the Presto, or use Run → Send EOF / Soft Reboot
 
 ### 3. The app starts automatically
@@ -66,7 +75,7 @@ The Presto runs `main.py` on boot. The app will:
 1. Show a startup screen
 2. Connect to WiFi (showing progress)
 3. Sync time via NTP
-4. Display the current month calendar
+4. Load and display today's records
 
 ## Usage
 
@@ -78,9 +87,16 @@ The Presto runs `main.py` on boot. The app will:
 
 ### Day view
 
-- Shows up to 4 records per screen with **cover art**, **title**, and **artists**
+- Shows records with **cover art**, **title**, **artists**, **format**, and **release year**
 - Tap **< Back** to return to the month view
-- If there are more than 4 records, use **^ v** arrows to scroll
+- Drag vertically to scroll through longer lists
+- During drag scrolling, cover art is temporarily shown as lightweight placeholders and redrawn when you lift your finger
+
+### Display sleep
+
+- After 1 minute with no touch input, the display backlight turns off
+- Touch the screen once to wake it; the wake touch is ignored so it will not also press a button or scroll
+- WiFi is left enabled while the display sleeps. If it drops while idle, the app reconnects on wake
 
 ### Error states
 
@@ -92,10 +108,10 @@ The Presto runs `main.py` on boot. The app will:
 
 ```
 presto/
-  main.py              # Application entry point (auto-runs on boot)
-  config.example.py    # Template for secrets.py
-  secrets.py           # Your credentials (git-ignored, create from example)
-  README.md            # This file
+  records_on_the_day.py # Application source, deployed to the device as main.py
+  config.example.py     # Template for secrets.py
+  secrets.py            # Your credentials (git-ignored, create from example)
+  README.md             # This file
 ```
 
 ## Troubleshooting
@@ -107,6 +123,7 @@ presto/
 | "Could not reach server" on day tap | API token invalid, or server down | Check `API_TOKEN` in `secrets.py`; verify the server is running |
 | Images show as grey rectangles | JPEG decoder not available, or image URLs unreachable | Check firmware version; ensure Presto has internet access |
 | Touch not responding | Firmware touch API mismatch | Try updating Presto firmware to the latest version |
+| Display is black after idle | Backlight sleep is active | Touch once to wake the display |
 
 ## API Endpoint
 
@@ -126,6 +143,8 @@ Response format:
       "id": "...",
       "title": "Album Title",
       "artists": ["Artist Name"],
+      "micro_cover_url": "https://.../api/v1/assets/thumb.jpg?width=40",
+      "mini_cover_url": "https://.../api/v1/assets/thumb.jpg?width=150",
       "thumb_url": "https://.../api/v1/assets/thumb.jpg?width=480",
       "release_date": "1973-03-01",
       "genres": ["Rock"],
@@ -134,6 +153,8 @@ Response format:
   ]
 }
 ```
+
+The Presto client prefers `micro_cover_url` for the 40×40 row thumbnail, then falls back to `mini_cover_url` and `thumb_url`.
 
 ## License
 
