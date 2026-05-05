@@ -66,6 +66,8 @@ README.md
 AGENTS.md
 CLAUDE.md
 *.livemd
+/.agents/
+/.pi/
 
 # Dev tooling and environment
 /mise.toml
