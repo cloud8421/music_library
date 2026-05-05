@@ -27,7 +27,6 @@ Setup:
 # ============================================================================
 
 import gc
-import json
 import time
 import network
 import ntptime
@@ -66,9 +65,13 @@ MAX_ROWS = 6
 # Header
 HEADER_Y = 0
 HEADER_H = 46
-MONTH_Y = HEADER_Y + 6
-ARROW_W = 48
-ARROW_H = 34
+HEADER_TEXT_H = 14
+HEADER_SIDE_MARGIN = 8
+HEADER_BUTTON_W = 44
+HEADER_BUTTON_H = 32
+HEADER_BUTTON_Y = HEADER_Y + (HEADER_H - HEADER_BUTTON_H) // 2
+ARROW_W = HEADER_BUTTON_W
+ARROW_H = HEADER_BUTTON_H
 
 # Day-of-week labels
 DOW_Y = HEADER_Y + HEADER_H + 2
@@ -84,12 +87,16 @@ GRID_LEFT = (WIDTH - (CELLS_PER_ROW * CELL_SIZE + (CELLS_PER_ROW - 1) * CELL_GAP
 CALENDAR_TOP = DOW_Y + DOW_H + 6
 
 # Day view (proportional to cell size)
-BACK_X = 8
-BACK_Y = 8
-BACK_W = 44
-BACK_H = 32
-RECORD_START_Y = BACK_Y + BACK_H + 12
-THUMB_SIZE = 75
+BACK_X = HEADER_SIDE_MARGIN
+BACK_Y = HEADER_BUTTON_Y
+BACK_W = HEADER_BUTTON_W
+BACK_H = HEADER_BUTTON_H
+DAY_HEADER_Y = HEADER_Y
+DAY_HEADER_H = HEADER_H
+DAY_HEADER_TEXT_H = HEADER_TEXT_H
+DAY_COUNT_TEXT_H = 8
+RECORD_START_Y = DAY_HEADER_Y + DAY_HEADER_H + 8
+THUMB_SIZE = 40
 THUMB_MARGIN = 8
 TEXT_X = THUMB_MARGIN + THUMB_SIZE + 12
 TEXT_W = WIDTH - TEXT_X - 12
@@ -149,8 +156,9 @@ selected_day = 0           # 1-based day of month
 records = []               # List of record dicts from API
 records_error = False      # True if API call failed
 # Scroll state
-scroll_offset = 0          # Scroll position for day view
+scroll_offset = 0          # Pixel scroll position for day view
 _visible_count = 1         # How many records fit on screen (set during draw)
+_dragging = False          # True while fast scroll redraws are active
 
 # Touch debounce
 _last_touch = 0
@@ -244,6 +252,32 @@ def draw_wrapped(text, x, y, max_width, pen, scale=1):
         cy += line_height
 
     return cy
+
+
+def _wrapped_line_count(text, max_width, scale=1):
+    """Return how many wrapped lines the text will occupy."""
+    words = text.split(" ")
+    lines = 0
+    current_line = ""
+
+    for word in words:
+        test_line = current_line + (" " if current_line else "") + word
+        w = display.measure_text(test_line, scale=scale)
+        if w <= max_width:
+            current_line = test_line
+        else:
+            if current_line:
+                lines += 1
+            if display.measure_text(word, scale=scale) > max_width:
+                lines += 1
+                current_line = ""
+            else:
+                current_line = word
+
+    if current_line:
+        lines += 1
+
+    return max(1, lines)
 
 
 # ============================================================================
@@ -425,6 +459,15 @@ def fetch_thumbnail(url):
 # JPEG RENDERING
 # ============================================================================
 
+def _jpeg_scale_options():
+    """Return JPEG scale flags paired with their output-size divisors."""
+    full = getattr(_jpegdec_lib, "JPEG_SCALE_FULL", 0)
+    half = getattr(_jpegdec_lib, "JPEG_SCALE_HALF", 1)
+    quarter = getattr(_jpegdec_lib, "JPEG_SCALE_QUARTER", 2)
+    eighth = getattr(_jpegdec_lib, "JPEG_SCALE_EIGHTH", 3)
+    return ((full, 1), (half, 2), (quarter, 4), (eighth, 8))
+
+
 def draw_jpeg(data, x, y, max_w, max_h):
     """Decode and draw a JPEG image, scaled to fit within max_w x max_h
     and centered in the bounding box.
@@ -449,16 +492,18 @@ def draw_jpeg(data, x, y, max_w, max_h):
             try:
                 img_h = jpeg.get_height()
                 img_w = jpeg.get_width()
-                # Try scales from largest to smallest; use first that fits
-                # (0=full, 2=half, 4=quarter, 8=eighth)
-                for s in (2, 4, 8):
-                    if img_w // s <= max_w and img_h // s <= max_h:
-                        scale = s
+                # Try scales from largest to smallest; use the first that fits.
+                scale = None
+                divisor = 1
+                for scale_flag, scale_divisor in _jpeg_scale_options():
+                    if img_w // scale_divisor <= max_w and img_h // scale_divisor <= max_h:
+                        scale = scale_flag
+                        divisor = scale_divisor
                         break
-                else:
-                    scale = 0
-                sw = img_w // max(1, scale)
-                sh = img_h // max(1, scale)
+                if scale is None:
+                    scale, divisor = _jpeg_scale_options()[-1]
+                sw = img_w // divisor
+                sh = img_h // divisor
                 ox = x + (max_w - sw) // 2
                 oy = y + (max_h - sh) // 2
                 jpeg.decode(ox, oy, scale)
@@ -467,10 +512,7 @@ def draw_jpeg(data, x, y, max_w, max_h):
                 pass
 
             # Fallback: decode at quarter scale (works for most cover art)
-            jpeg.decode(x, y, 4)
-            return
-        except Exception:
-            pass
+            jpeg.decode(x, y, getattr(_jpegdec_lib, "JPEG_SCALE_QUARTER", 2))
             return
         except Exception:
             pass
@@ -559,25 +601,34 @@ def _draw_month_header():
     title = "{} {}".format(MONTH_NAMES[view_month - 1], view_year)
     tw = display.measure_text(title, scale=1)
     tx = (WIDTH - tw) // 2
-    ty = MONTH_Y
+    ty = HEADER_Y + (HEADER_H - HEADER_TEXT_H) // 2
     display.text(title, tx, ty, scale=1)
 
     # Left arrow
-    lx = 12
-    ly = HEADER_Y + (HEADER_H - ARROW_H) // 2
-    display.set_pen(_pen_cell_bg)  # Match header bg
+    lx = HEADER_SIDE_MARGIN
+    ly = HEADER_BUTTON_Y
+    display.set_pen(_pen_placeholder)
     display.rectangle(lx, ly, ARROW_W, ARROW_H)
-    display.set_pen(_pen_arrow)
-    display.set_font("bitmap14_outline")
-    display.text("<", lx + 14, ly + 8, scale=1)
+    display.set_pen(_pen_back)
+    display.set_font("bitmap8")
+    _draw_centered_text("<", lx, ly, ARROW_W, ARROW_H, 8)
 
     # Right arrow
-    rx = WIDTH - ARROW_W - 12
-    ry = HEADER_Y + (HEADER_H - ARROW_H) // 2
-    display.set_pen(_pen_cell_bg)
+    rx = WIDTH - ARROW_W - HEADER_SIDE_MARGIN
+    ry = HEADER_BUTTON_Y
+    display.set_pen(_pen_placeholder)
     display.rectangle(rx, ry, ARROW_W, ARROW_H)
-    display.set_pen(_pen_arrow)
-    display.text(">", rx + 12, ry + 8, scale=1)
+    display.set_pen(_pen_back)
+    display.set_font("bitmap8")
+    _draw_centered_text(">", rx, ry, ARROW_W, ARROW_H, 8)
+
+
+def _draw_centered_text(text, x, y, w, h, text_h, scale=1):
+    """Draw text centered inside a rectangular area."""
+    tw = display.measure_text(text, scale=scale)
+    tx = x + (w - tw) // 2
+    ty = y + (h - text_h) // 2
+    display.text(text, tx, ty, scale=scale)
 
 
 def _draw_day_labels():
@@ -682,19 +733,20 @@ def draw_day_view():
     display.set_pen(_pen_bg)
     display.clear()
 
-    _draw_day_header()
-
     if records_error:
         _draw_day_error()
+        _draw_day_header()
         presto.update()
         return
 
     if not records:
         _draw_day_empty()
+        _draw_day_header()
         presto.update()
         return
 
     _draw_record_list()
+    _draw_day_header()
     presto.update()
 
 
@@ -702,7 +754,7 @@ def _draw_day_header():
     """Draw the header with formatted date and back button."""
     # Background bar
     display.set_pen(_pen_cell_bg)
-    display.rectangle(0, BACK_Y - 4, WIDTH, BACK_H + 8)
+    display.rectangle(0, DAY_HEADER_Y, WIDTH, DAY_HEADER_H)
 
     # Back button
     bx, by = BACK_X, BACK_Y
@@ -710,7 +762,7 @@ def _draw_day_header():
     display.rectangle(bx, by, BACK_W, BACK_H)
     display.set_pen(_pen_back)
     display.set_font("bitmap8")
-    display.text("< Back", bx + 10, by + 14, scale=1)
+    _draw_centered_text("<", bx, by, BACK_W, BACK_H, DAY_COUNT_TEXT_H)
 
     # Formatted date
     date_str = "{} {}, {}".format(
@@ -719,15 +771,24 @@ def _draw_day_header():
     display.set_pen(_pen_header_text)
     display.set_font("bitmap14_outline")
     tw = display.measure_text(date_str, scale=1)
-    display.text(date_str, (WIDTH - tw) // 2, BACK_Y + 8, scale=1)
+    display.text(
+        date_str,
+        (WIDTH - tw) // 2,
+        DAY_HEADER_Y + (DAY_HEADER_H - DAY_HEADER_TEXT_H) // 2,
+        scale=1
+    )
 
     # Record count
     count_str = "{} record{}".format(len(records), "s" if len(records) != 1 else "")
     display.set_pen(_pen_dim_text)
     display.set_font("bitmap8")
     cw = display.measure_text(count_str, scale=1)
-    # display.text(count_str, WIDTH - cw - 16, BACK_Y + BACK_H - 4, scale=1)
-    display.text(count_str, WIDTH - cw - 16, BACK_Y + 14, scale=1)
+    display.text(
+        count_str,
+        WIDTH - cw - 16,
+        DAY_HEADER_Y + (DAY_HEADER_H - DAY_COUNT_TEXT_H) // 2,
+        scale=1
+    )
 
 
 def _draw_day_error():
@@ -756,8 +817,10 @@ def _draw_day_empty():
 def _draw_record_list():
     """Draw the scrollable list of record rows with cover thumbnails.
     Uses dynamic row heights so wrapped text doesn't break layout."""
-    start_idx = scroll_offset
-    total = len(records)
+    global scroll_offset, _visible_count
+
+    max_offset = _max_scroll_offset()
+    scroll_offset = min(max(0, scroll_offset), max_offset)
 
     # Up arrow if scrolled down
     if scroll_offset > 0:
@@ -765,27 +828,81 @@ def _draw_record_list():
         display.set_font("bitmap14_outline")
         display.text("^", WIDTH // 2 - 8, RECORD_START_Y - 28, scale=1)
 
-    # Draw rows with dynamic heights
-    cy = RECORD_START_Y
+    cy = RECORD_START_Y - scroll_offset
     visible_count = 0
-    for i in range(start_idx, total):
-        rec = records[i]
-        row_bottom = _draw_record_row(rec, cy)
-        # Stop if the row would overflow the display
-        if row_bottom > HEIGHT - 28:
+
+    for rec in records:
+        row_h = _record_row_height(rec)
+        row_bottom = cy + row_h
+
+        if row_bottom <= RECORD_START_Y:
+            cy = row_bottom
+            continue
+
+        if cy >= HEIGHT - 28:
             break
-        cy = row_bottom
+
+        _draw_record_row(rec, cy)
         visible_count += 1
+        cy = row_bottom
 
     # Down arrow if more records below
-    if start_idx + visible_count < total:
+    if scroll_offset < max_offset:
         display.set_pen(_pen_arrow)
         display.set_font("bitmap14_outline")
-        display.text("v", WIDTH // 2 - 8, cy + 4, scale=1)
+        display.text("v", WIDTH // 2 - 8, HEIGHT - 24, scale=1)
 
     # Store how many fit for scroll logic
-    global _visible_count
     _visible_count = max(1, visible_count)
+
+
+def _max_scroll_offset():
+    """Return the maximum pixel scroll offset for the current records."""
+    viewport_h = HEIGHT - RECORD_START_Y - 28
+    content_h = 0
+
+    display.set_font("bitmap8")
+    for rec in records:
+        content_h += _record_row_height(rec)
+
+    return max(0, content_h - viewport_h)
+
+
+def _record_row_height(rec):
+    """Calculate a record row height without drawing it."""
+    display.set_font("bitmap8")
+    min_h = THUMB_SIZE + 8
+    title = rec.get("title", "Unknown Title")
+    ty = _wrapped_line_count(title, TEXT_W, scale=1) * 12
+
+    artists = rec.get("artists", [])
+    if artists:
+        ty += 2 + _wrapped_line_count(", ".join(artists), TEXT_W, scale=1) * 12
+
+    content_h = max(THUMB_SIZE, ty) + 10
+    return max(min_h, content_h)
+
+
+def _record_thumbnail_data(rec):
+    """Fetch thumbnail bytes once per record and reuse them on redraw."""
+    if rec.get("_thumb_failed", False):
+        return None
+
+    cached = rec.get("_thumb_data", None)
+    if cached is not None:
+        return cached
+
+    thumb_url = rec.get("mini_cover_url", "") or rec.get("thumb_url", "")
+    if not thumb_url:
+        return None
+
+    data = fetch_thumbnail(thumb_url)
+    if data is None:
+        rec["_thumb_failed"] = True
+    else:
+        rec["_thumb_data"] = data
+
+    return data
 
 
 def _draw_record_row(rec, y):
@@ -795,14 +912,16 @@ def _draw_record_row(rec, y):
     min_h = THUMB_SIZE + 8  # Minimum row height (thumbnail + padding)
 
     # Fetch and draw thumbnail (top-aligned in row)
-    thumb_url = rec.get("mini_cover_url", "")
     thumb_y = y + 4
-    if thumb_url:
-        jpeg_data = fetch_thumbnail(thumb_url)
-        draw_jpeg(jpeg_data, THUMB_MARGIN, thumb_y, THUMB_SIZE, THUMB_SIZE)
-        gc.collect()
-    else:
+    if _dragging:
         _draw_placeholder(THUMB_MARGIN, thumb_y, THUMB_SIZE, THUMB_SIZE)
+    else:
+        jpeg_data = _record_thumbnail_data(rec)
+        if jpeg_data is not None:
+            draw_jpeg(jpeg_data, THUMB_MARGIN, thumb_y, THUMB_SIZE, THUMB_SIZE)
+            gc.collect()
+        else:
+            _draw_placeholder(THUMB_MARGIN, thumb_y, THUMB_SIZE, THUMB_SIZE)
 
     # Title (starts at same height as thumbnail)
     title = rec.get("title", "Unknown Title")
@@ -831,6 +950,62 @@ def _draw_record_row(rec, y):
 # ============================================================================
 # TOUCH HANDLING
 # ============================================================================
+def read_touch():
+    """Return the current touch as (x, y), or None when not pressed."""
+    try:
+        touch.poll()
+    except Exception:
+        pass
+
+    try:
+        if touch.state:
+            return int(touch.x), int(touch.y)
+    except Exception:
+        pass
+
+    for method_name in ("read", "get_touch"):
+        method = getattr(touch, method_name, None)
+        if method is None:
+            continue
+
+        try:
+            point = method()
+        except Exception:
+            continue
+
+        normalised = _normalise_touch(point)
+        if normalised is not None:
+            return normalised
+
+    return None
+
+
+def _normalise_touch(point):
+    """Convert common touch return shapes to (x, y)."""
+    if not point:
+        return None
+
+    if isinstance(point, (tuple, list)):
+        if len(point) == 2:
+            return int(point[0]), int(point[1])
+        if len(point) >= 3 and point[0]:
+            return int(point[1]), int(point[2])
+        return None
+
+    try:
+        if hasattr(point, "state") and not point.state:
+            return None
+        return int(point.x), int(point.y)
+    except Exception:
+        return None
+
+
+def wait_for_touch_release():
+    """Block until the active touch is released."""
+    while read_touch() is not None:
+        time.sleep(0.02)
+
+
 def touch_to_calendar_cell(x, y):
     """Map a touch (x, y) to (row, col) in the calendar grid, or None
     if the touch is outside the grid."""
@@ -866,14 +1041,14 @@ def handle_month_touch(x, y):
     global view_year, view_month, selected_day, state, records, records_error, scroll_offset
 
     # Check left arrow
-    lx, ly = 12, HEADER_Y + (HEADER_H - ARROW_H) // 2
+    lx, ly = HEADER_SIDE_MARGIN, HEADER_BUTTON_Y
     if lx <= x <= lx + ARROW_W and ly <= y <= ly + ARROW_H:
         view_year, view_month = previous_month(view_year, view_month)
         draw_month_view()
         return
 
     # Check right arrow
-    rx, ry = WIDTH - ARROW_W - 12, HEADER_Y + (HEADER_H - ARROW_H) // 2
+    rx, ry = WIDTH - ARROW_W - HEADER_SIDE_MARGIN, HEADER_BUTTON_Y
     if rx <= x <= rx + ARROW_W and ry <= y <= ry + ARROW_H:
         view_year, view_month = next_month(view_year, view_month)
         draw_month_view()
@@ -942,6 +1117,7 @@ def main():
     main event loop."""
     global state, view_year, view_month, _last_touch
     global selected_day, records, records_error, scroll_offset
+    global _dragging
 
     # -- Init display --
     init_display()
@@ -959,14 +1135,14 @@ def main():
     sync_time()
     set_today()
 
-    # Start at current month and today's day view
+    # Start on today's records.
     view_year = today_year
     view_month = today_month
     selected_day = today_day
     state = STATE_DAY
     records_error = False
+    scroll_offset = 0
 
-    # Fetch today's records
     draw_status("Loading records for\n{} {}, {}...".format(
         MONTH_NAMES[view_month - 1], today_day, view_year
     ))
@@ -974,58 +1150,64 @@ def main():
     records = recs
     records_error = had_error
 
-    # Enter main loop
     draw_day_view()
 
     while True:
-        touch.poll()
-
-        if not touch.state:
+        touch_point = read_touch()
+        if touch_point is None:
             time.sleep(0.03)
             continue
 
-        x, y = int(touch.x), int(touch.y)
+        x, y = touch_point
         now = time.ticks_ms()
         if time.ticks_diff(now, _last_touch) < DEBOUNCE_MS:
+            time.sleep(0.02)
             continue
         _last_touch = now
 
         if state == STATE_MONTH:
             handle_month_touch(x, y)
-            # Wait for release to avoid re-triggering
-            while touch.state:
-                touch.poll()
-                time.sleep(0.02)
+            wait_for_touch_release()
 
         elif state == STATE_DAY:
             # Check back button immediately (no drag needed)
             if BACK_X <= x <= BACK_X + BACK_W and BACK_Y <= y <= BACK_Y + BACK_H:
                 state = STATE_MONTH
                 draw_month_view()
-                while touch.state:
-                    touch.poll()
-                    time.sleep(0.02)
+                wait_for_touch_release()
                 continue
 
             # Track vertical drag for scrolling
             drag_start_y = y
+            last_drag_y = y
+            pending_delta = 0
             dragged = False
-            while touch.state:
-                touch.poll()
-                time.sleep(0.02)
-                if touch.state:
-                    dy = drag_start_y - int(touch.y)
-                    if abs(dy) > 5:
-                        dragged = True
-                    # Every ~50px of drag = one record scroll
-                    if abs(dy) >= 50:
-                        total = len(records)
-                        if dy > 0:
-                            scroll_offset = min(total - _visible_count, scroll_offset + 1)
-                        else:
-                            scroll_offset = max(0, scroll_offset - 1)
+            _dragging = False
+            while True:
+                touch_point = read_touch()
+                if touch_point is None:
+                    break
+
+                current_y = touch_point[1]
+                if abs(current_y - drag_start_y) > 5:
+                    dragged = True
+
+                pending_delta += last_drag_y - current_y
+                if abs(pending_delta) >= 3:
+                    max_offset = _max_scroll_offset()
+                    new_offset = min(max(0, scroll_offset + pending_delta), max_offset)
+                    if new_offset != scroll_offset:
+                        scroll_offset = new_offset
+                        _dragging = True
                         draw_day_view()
-                        drag_start_y = int(touch.y)
+                    pending_delta = 0
+
+                last_drag_y = current_y
+                time.sleep(0.01)
+
+            if _dragging:
+                _dragging = False
+                draw_day_view()
 
             if not dragged:
                 # It was a tap — handle normally
@@ -1037,4 +1219,3 @@ def main():
 # ============================================================================
 
 main()
-
