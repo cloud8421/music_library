@@ -204,5 +204,5 @@ checksum = "sha256:8a4e35ab0b331c85d73567b12f2a444df187f483e5079ceffa6bda1faa2e7
 url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.zip"
 
 [[tools.sqlite]]
-version = "3.53.0"
+version = "3.53.1"
 backend = "asdf:sqlite"
