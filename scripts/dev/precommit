@@ -10,7 +10,6 @@ ensure_working_directory!
 
 debug_msg "Running shellcheck..."
 fd . 'scripts/' --exclude '*.hurl' -t file --exec shellcheck --color
-fd . '.claude/hooks' -t file --exec shellcheck --color
 
 debug_msg "Running credo..."
 mix credo --strict

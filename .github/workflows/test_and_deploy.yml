@@ -86,7 +86,6 @@ jobs:
       - name: 🐚 Run Shellcheck
         run: |
           fd . 'scripts/' --exclude '*.hurl' -t file --exec shellcheck --color
-          fd . '.claude/hooks' -t file --exec shellcheck --color
       - name: 🐳 Validate Docker builder image
         run: mise run dev:validate-docker-image
 

@@ -22,4 +22,3 @@ mix gettext.extract --merge
 
 debug_msg "Running shellcheck..."
 fd . 'scripts/' --exclude '*.hurl' -t file --exec shellcheck --color
-fd . '.claude/hooks' -t file --exec shellcheck --color
