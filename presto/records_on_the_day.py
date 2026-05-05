@@ -879,8 +879,30 @@ def _record_row_height(rec):
     if artists:
         ty += 2 + _wrapped_line_count(", ".join(artists), TEXT_W, scale=1) * 12
 
+    if _record_meta_text(rec):
+        ty += 2 + 12
+
     content_h = max(THUMB_SIZE, ty) + 10
     return max(min_h, content_h)
+
+
+def _record_meta_text(rec):
+    """Return compact format/date metadata for a record row."""
+    record_format = rec.get("format", "")
+    release_year = _release_year(rec.get("release_date", ""))
+
+    if record_format and release_year:
+        return "{} | {}".format(record_format, release_year)
+    if record_format:
+        return record_format
+    return release_year
+
+
+def _release_year(release_date):
+    """Extract a display year from an API release_date value."""
+    if not release_date:
+        return ""
+    return str(release_date)[:4]
 
 
 def _record_thumbnail_data(rec):
@@ -935,6 +957,11 @@ def _draw_record_row(rec, y):
         artist_str = ", ".join(artists)
         ty += 2
         ty = draw_wrapped(artist_str, TEXT_X, ty, TEXT_W, _pen_artist, scale=1)
+
+    meta_text = _record_meta_text(rec)
+    if meta_text:
+        ty += 2
+        ty = draw_wrapped(meta_text, TEXT_X, ty, TEXT_W, _pen_dim_text, scale=1)
 
     # Bottom of content: at least thumbnail bottom, at least min_h
     content_bottom = max(thumb_y + THUMB_SIZE, ty) + 6
