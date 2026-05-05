@@ -131,6 +131,11 @@ DEBOUNCE_MS = 300
 # WiFi connection timeout (seconds)
 WIFI_TIMEOUT = 30
 
+# Display sleep
+DISPLAY_SLEEP_MS = 60_000
+DISPLAY_BRIGHTNESS = 1.0
+DISPLAY_SLEEP_BRIGHTNESS = 0.0
+
 # ============================================================================
 # GLOBAL STATE
 # ============================================================================
@@ -162,6 +167,10 @@ _dragging = False          # True while fast scroll redraws are active
 
 # Touch debounce
 _last_touch = 0
+
+# Display sleep state
+_last_activity = 0
+_display_awake = True
 
 # ============================================================================
 # HELPER: PEN CREATION
@@ -399,6 +408,63 @@ def set_today():
 def make_date_string(year, month, day):
     """Format a date as YYYY-MM-DD for the API."""
     return "{:04d}-{:02d}-{:02d}".format(year, month, day)
+
+
+# ============================================================================
+# DISPLAY SLEEP
+# ============================================================================
+
+def sleep_display():
+    """Turn off the display backlight while keeping the app running."""
+    global _display_awake
+
+    try:
+        presto.set_backlight(DISPLAY_SLEEP_BRIGHTNESS)
+    except Exception:
+        pass
+
+    _display_awake = False
+
+
+def wake_display():
+    """Restore the display backlight and reconnect WiFi if needed."""
+    global _display_awake
+
+    try:
+        presto.set_backlight(DISPLAY_BRIGHTNESS)
+    except Exception:
+        pass
+
+    _display_awake = True
+    if not wifi_connected():
+        ensure_wifi_connected()
+        redraw_current_view()
+
+
+def wifi_connected():
+    """Return True if the WLAN interface is currently connected."""
+    try:
+        wlan = network.WLAN(network.STA_IF)
+        wlan.active(True)
+        return wlan.isconnected()
+    except Exception:
+        return False
+
+
+def ensure_wifi_connected():
+    """Reconnect WiFi if it dropped while the display was asleep."""
+    if wifi_connected():
+        return True
+
+    return connect_wifi()
+
+
+def redraw_current_view():
+    """Redraw the active view after wake-time status messages."""
+    if state == STATE_MONTH:
+        draw_month_view()
+    elif state == STATE_DAY:
+        draw_day_view()
 
 
 # ============================================================================
@@ -1145,9 +1211,14 @@ def main():
     global state, view_year, view_month, _last_touch
     global selected_day, records, records_error, scroll_offset
     global _dragging
+    global _last_activity
 
     # -- Init display --
     init_display()
+    try:
+        presto.set_backlight(DISPLAY_BRIGHTNESS)
+    except Exception:
+        pass
     draw_status("Music Library\nStarting up...")
     time.sleep(0.5)
 
@@ -1178,19 +1249,32 @@ def main():
     records_error = had_error
 
     draw_day_view()
+    _last_activity = time.ticks_ms()
 
     while True:
         touch_point = read_touch()
+        now = time.ticks_ms()
+
+        if _display_awake and time.ticks_diff(now, _last_activity) >= DISPLAY_SLEEP_MS:
+            sleep_display()
+
         if touch_point is None:
             time.sleep(0.03)
             continue
 
+        if not _display_awake:
+            wake_display()
+            _last_activity = now
+            _last_touch = now
+            wait_for_touch_release()
+            continue
+
         x, y = touch_point
-        now = time.ticks_ms()
         if time.ticks_diff(now, _last_touch) < DEBOUNCE_MS:
             time.sleep(0.02)
             continue
         _last_touch = now
+        _last_activity = now
 
         if state == STATE_MONTH:
             handle_month_touch(x, y)
