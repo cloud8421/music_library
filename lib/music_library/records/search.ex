@@ -47,12 +47,8 @@ defmodule MusicLibrary.Records.Search do
   end
 
   defp fts_escape(term) do
-    if String.contains?(term, ["'", " ", "\"", "(", ")", "^", "-", ":", "?", ".", "&"]) do
-      escaped = String.replace(term, "\"", "\"\"")
-      "\"#{escaped}\"*"
-    else
-      "#{term}*"
-    end
+    escaped = String.replace(term, "\"", "\"\"")
+    "\"#{escaped}\"*"
   end
 
   defp fts_query_escape(query) do

@@ -59,6 +59,17 @@ defmodule MusicLibrary.Records.SearchTest do
       assert [greatest_show_on_earth.id] == search("mbid:#{airbag_mbid}", 10, 0)
       assert [libertad.id] == search("mbid:#{airbag_au_mbid}", 10, 0)
     end
+
+    test "bare special characters return empty results without crashing" do
+      for char <- ["|", ";", "&", "+", "#", "@"] do
+        assert [] == search(char, 10, 0)
+      end
+    end
+
+    test "special characters mixed with normal words return matching results" do
+      assert [] == search("brave &", 10, 0)
+      assert [] == search("hello ;", 10, 0)
+    end
   end
 
   describe "search_records_count/2" do
@@ -93,6 +104,17 @@ defmodule MusicLibrary.Records.SearchTest do
                Search.search_records_count(SearchIndex, "mbid:#{airbag_mbid}")
 
       assert 1 == Search.search_records_count(SearchIndex, "mbid:#{airbag_au_mbid}")
+    end
+
+    test "bare special characters do not crash and return zero" do
+      for char <- ["|", ";", "&", "+", "#", "@"] do
+        assert 0 == Search.search_records_count(SearchIndex, char)
+      end
+    end
+
+    test "special characters mixed with normal words do not crash" do
+      assert 0 == Search.search_records_count(SearchIndex, "brave &")
+      assert 0 == Search.search_records_count(SearchIndex, "hello ;")
     end
   end
 end
