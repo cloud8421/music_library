@@ -1,0 +1,10 @@
+[tools]
+"uv" = "latest"
+"pipx:mpremote" = "latest"
+
+[tasks.presto]
+run = '''
+mpremote fs cp records_on_the_day.py :main.py
+mpremote reset
+'''
+dir = "{{cwd}}"

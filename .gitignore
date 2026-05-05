@@ -50,6 +50,9 @@ npm-debug.log
 /.claude/plans
 /.claude/settings.local.json
 
+# Presto device secrets (never commit)
+/presto/secrets.py
+
 # Superpowers brainstorming mockups
 /.superpowers/
 /.pi/extensions/s3-browser/node_modules
