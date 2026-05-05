@@ -1016,7 +1016,11 @@ def _record_thumbnail_data(rec):
     if cached is not None:
         return cached
 
-    thumb_url = rec.get("mini_cover_url", "") or rec.get("thumb_url", "")
+    thumb_url = (
+        rec.get("micro_cover_url", "")
+        or rec.get("mini_cover_url", "")
+        or rec.get("thumb_url", "")
+    )
     if not thumb_url:
         return None
 
