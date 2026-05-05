@@ -263,6 +263,41 @@ def draw_wrapped(text, x, y, max_width, pen, scale=1):
     return cy
 
 
+def display_text(text):
+    """Replace characters not available in the bitmap font."""
+    replacements = (
+        ("–", "-"),
+        ("—", "-"),
+        ("−", "-"),
+        ("‐", "-"),
+        ("‑", "-"),
+        ("‒", "-"),
+        ("“", '"'),
+        ("”", '"'),
+        ("„", '"'),
+        ("«", '"'),
+        ("»", '"'),
+        ("‘", "'"),
+        ("’", "'"),
+        ("‚", "'"),
+        ("′", "'"),
+        ("…", "..."),
+        ("•", "*"),
+        ("·", "-"),
+        ("\u00a0", " "),
+        ("\u202f", " "),
+        ("\u2009", " "),
+        ("\u200a", " "),
+        ("\u200b", ""),
+    )
+
+    rendered = str(text)
+    for original, replacement in replacements:
+        rendered = rendered.replace(original, replacement)
+
+    return rendered
+
+
 def _wrapped_line_count(text, max_width, scale=1):
     """Return how many wrapped lines the text will occupy."""
     words = text.split(" ")
@@ -938,12 +973,13 @@ def _record_row_height(rec):
     """Calculate a record row height without drawing it."""
     display.set_font("bitmap8")
     min_h = THUMB_SIZE + 8
-    title = rec.get("title", "Unknown Title")
+    title = display_text(rec.get("title", "Unknown Title"))
     ty = _wrapped_line_count(title, TEXT_W, scale=1) * 12
 
     artists = rec.get("artists", [])
     if artists:
-        ty += 2 + _wrapped_line_count(", ".join(artists), TEXT_W, scale=1) * 12
+        artist_str = display_text(", ".join(artists))
+        ty += 2 + _wrapped_line_count(artist_str, TEXT_W, scale=1) * 12
 
     if _record_meta_text(rec):
         ty += 2 + 12
@@ -1012,7 +1048,7 @@ def _draw_record_row(rec, y):
             _draw_placeholder(THUMB_MARGIN, thumb_y, THUMB_SIZE, THUMB_SIZE)
 
     # Title (starts at same height as thumbnail)
-    title = rec.get("title", "Unknown Title")
+    title = display_text(rec.get("title", "Unknown Title"))
     display.set_font("bitmap8")
     ty = y + 4
     ty = draw_wrapped(title, TEXT_X, ty, TEXT_W, _pen_title, scale=1)
@@ -1020,7 +1056,7 @@ def _draw_record_row(rec, y):
     # Artists
     artists = rec.get("artists", [])
     if artists:
-        artist_str = ", ".join(artists)
+        artist_str = display_text(", ".join(artists))
         ty += 2
         ty = draw_wrapped(artist_str, TEXT_X, ty, TEXT_W, _pen_artist, scale=1)
 
