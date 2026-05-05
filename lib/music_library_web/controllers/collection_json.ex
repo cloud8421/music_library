@@ -36,7 +36,9 @@ defmodule MusicLibraryWeb.CollectionJSON do
       cover_url: url(~p"/api/v1/assets/#{Transform.new(hash: record.cover_hash)}"),
       thumb_url: url(~p"/api/v1/assets/#{Transform.new(hash: record.cover_hash, width: 480)}"),
       mini_cover_url:
-        url(~p"/api/v1/assets/#{Transform.new(hash: record.cover_hash, width: 150)}")
+        url(~p"/api/v1/assets/#{Transform.new(hash: record.cover_hash, width: 150)}"),
+      micro_cover_url:
+        url(~p"/api/v1/assets/#{Transform.new(hash: record.cover_hash, width: 40)}")
     }
   end
 end

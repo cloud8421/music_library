@@ -102,7 +102,9 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
       "thumb_url" =>
         "http://localhost:4002/api/v1/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjo0ODB9",
       "mini_cover_url" =>
-        "http://localhost:4002/api/v1/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjoxNTB9"
+        "http://localhost:4002/api/v1/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjoxNTB9",
+      "micro_cover_url" =>
+        "http://localhost:4002/api/v1/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjo0MH0"
     }
   end
 end
