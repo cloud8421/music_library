@@ -770,7 +770,7 @@ class ErrorBrowser {
         return;
       }
 
-      if (matchesKey(data, "R")) {
+      if (matchesKey(data, Key.shift("r"))) {
         if (this.errors.length > 0 && this.cursorIndex >= 0) {
           const error = this.errors[this.cursorIndex];
           if (error) {
@@ -780,7 +780,7 @@ class ErrorBrowser {
         return;
       }
 
-      if (matchesKey(data, "M")) {
+      if (matchesKey(data, Key.shift("m"))) {
         if (this.errors.length > 0 && this.cursorIndex >= 0) {
           const error = this.errors[this.cursorIndex];
           if (error) {
@@ -834,7 +834,10 @@ class ErrorBrowser {
       } else if (matchesKey(data, Key.home) || matchesKey(data, "g")) {
         this.cursorIndex = 0;
         moved = true;
-      } else if (matchesKey(data, Key.end) || matchesKey(data, "G")) {
+      } else if (
+        matchesKey(data, Key.end) ||
+        matchesKey(data, Key.shift("g"))
+      ) {
         this.cursorIndex = this.errors.length - 1;
         moved = true;
       }
@@ -851,14 +854,14 @@ class ErrorBrowser {
     // ── Detail mode keys ───────────────────────────────────────────────
 
     if (this.mode === "detail") {
-      if (matchesKey(data, "R")) {
+      if (matchesKey(data, Key.shift("r"))) {
         if (this.selectedError) {
           this.toggleResolve(this.selectedError.id, this.selectedError.status);
         }
         return;
       }
 
-      if (matchesKey(data, "M")) {
+      if (matchesKey(data, Key.shift("m"))) {
         if (this.selectedError) {
           this.toggleMute(this.selectedError.id, this.selectedError.muted);
         }
@@ -900,7 +903,10 @@ class ErrorBrowser {
       } else if (matchesKey(data, Key.home) || matchesKey(data, "g")) {
         this.detailScrollOffset = 0;
         moved = true;
-      } else if (matchesKey(data, Key.end) || matchesKey(data, "G")) {
+      } else if (
+        matchesKey(data, Key.end) ||
+        matchesKey(data, Key.shift("g"))
+      ) {
         this.detailScrollOffset = Math.max(
           0,
           this.buildDetailLines().length - 1,
