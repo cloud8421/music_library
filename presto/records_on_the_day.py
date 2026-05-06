@@ -131,6 +131,7 @@ MONTH_NAMES = [
 DEBOUNCE_MS = 300
 DRAG_REDRAW_MS = 40
 DRAG_REDRAW_PX = 8
+TOUCH_RELEASE_TIMEOUT_MS = 3_000
 
 # WiFi connection timeout (seconds)
 WIFI_TIMEOUT = 30
@@ -157,7 +158,6 @@ view_month = 5
 STATE_STARTUP = 0
 STATE_MONTH = 1
 STATE_DAY = 2
-STATE_ERROR = 3
 state = STATE_STARTUP
 
 # Day view state
@@ -166,7 +166,6 @@ records = []               # List of record dicts from API
 records_error = False      # True if API call failed
 # Scroll state
 scroll_offset = 0          # Pixel scroll position for day view
-_visible_count = 1         # How many records fit on screen (set during draw)
 _dragging = False          # True while fast scroll redraws are active
 _content_height = 0        # Cached total record list height
 
@@ -236,28 +235,7 @@ def draw_wrapped(text, x, y, max_width, pen, scale=1):
     PicoGraphics doesn't support automatic wrapping, so we manually break
     long strings. Returns the Y position after the last line drawn.
     """
-    words = text.split(" ")
-    lines = []
-    current_line = ""
-
-    for word in words:
-        test_line = current_line + (" " if current_line else "") + word
-        w = display.measure_text(test_line, scale=scale)
-        if w <= max_width:
-            current_line = test_line
-        else:
-            if current_line:
-                lines.append(current_line)
-            # If a single word is too long, we draw it anyway (truncation
-            # would hide information).
-            if display.measure_text(word, scale=scale) > max_width:
-                lines.append(word)
-                current_line = ""
-            else:
-                current_line = word
-
-    if current_line:
-        lines.append(current_line)
+    lines = _wrapped_lines(text, max_width, scale=scale)
 
     line_height = 8 * scale + 4  # bitmap8 is 8px tall, plus spacing
     cy = y
@@ -306,9 +284,17 @@ def display_text(text):
 
 def _wrapped_line_count(text, max_width, scale=1):
     """Return how many wrapped lines the text will occupy."""
-    words = text.split(" ")
-    lines = 0
+    return max(1, len(_wrapped_lines(text, max_width, scale=scale)))
+
+
+def _wrapped_lines(text, max_width, scale=1):
+    """Return wrapped lines for text using the display font metrics."""
+    words = str(text).split()
+    lines = []
     current_line = ""
+
+    if not words:
+        return lines
 
     for word in words:
         test_line = current_line + (" " if current_line else "") + word
@@ -317,17 +303,17 @@ def _wrapped_line_count(text, max_width, scale=1):
             current_line = test_line
         else:
             if current_line:
-                lines += 1
+                lines.append(current_line)
             if display.measure_text(word, scale=scale) > max_width:
-                lines += 1
+                lines.append(word)
                 current_line = ""
             else:
                 current_line = word
 
     if current_line:
-        lines += 1
+        lines.append(current_line)
 
-    return max(1, lines)
+    return lines
 
 
 # ============================================================================
@@ -478,8 +464,8 @@ def wake_display():
 
     _display_awake = True
     if not wifi_connected():
-        ensure_wifi_connected()
-        redraw_current_view()
+        if ensure_wifi_connected():
+            redraw_current_view()
 
 
 def wifi_connected():
@@ -590,6 +576,17 @@ def _jpeg_scale_options():
     return ((full, 1), (half, 2), (quarter, 4), (eighth, 8))
 
 
+def _close_jpeg(jpeg):
+    """Release a jpegdec object if the firmware exposes close()."""
+    if jpeg is None:
+        return
+
+    try:
+        jpeg.close()
+    except Exception:
+        pass
+
+
 def draw_jpeg(data, x, y, max_w, max_h):
     """Decode and draw a JPEG image, scaled to fit within max_w x max_h
     and centered in the bounding box.
@@ -603,6 +600,7 @@ def draw_jpeg(data, x, y, max_w, max_h):
 
     # Try jpegdec module with smart scaling
     if _HAS_JPEGDEC:
+        jpeg = None
         try:
             jpeg = _jpegdec_lib.JPEG(display)
             try:
@@ -629,14 +627,17 @@ def draw_jpeg(data, x, y, max_w, max_h):
                 ox = x + (max_w - sw) // 2
                 oy = y + (max_h - sh) // 2
                 jpeg.decode(ox, oy, scale)
+                _close_jpeg(jpeg)
                 return
             except Exception:
                 pass
 
             # Fallback: decode at quarter scale (works for most cover art)
             jpeg.decode(x, y, getattr(_jpegdec_lib, "JPEG_SCALE_QUARTER", 2))
+            _close_jpeg(jpeg)
             return
         except Exception:
+            _close_jpeg(jpeg)
             pass
 
     # Method 2: PicoGraphics built-in JPEG support
@@ -939,7 +940,7 @@ def _draw_day_empty():
 def _draw_record_list():
     """Draw the scrollable list of record rows with cover thumbnails.
     Uses dynamic row heights so wrapped text doesn't break layout."""
-    global scroll_offset, _visible_count
+    global scroll_offset
 
     max_offset = _max_scroll_offset()
     scroll_offset = min(max(0, scroll_offset), max_offset)
@@ -951,7 +952,6 @@ def _draw_record_list():
         display.text("^", WIDTH // 2 - 8, RECORD_START_Y - 28, scale=1)
 
     cy = RECORD_START_Y - scroll_offset
-    visible_count = 0
 
     for rec in records:
         row_h = rec.get("_row_height", THUMB_SIZE + 8)
@@ -965,7 +965,6 @@ def _draw_record_list():
             break
 
         _draw_record_row(rec, cy)
-        visible_count += 1
         cy = row_bottom
 
     # Down arrow if more records below
@@ -973,10 +972,6 @@ def _draw_record_list():
         display.set_pen(_pen_arrow)
         display.set_font("bitmap14_outline")
         display.text("v", WIDTH // 2 - 8, HEIGHT - 24, scale=1)
-
-    # Store how many fit for scroll logic
-    _visible_count = max(1, visible_count)
-
 
 def _max_scroll_offset():
     """Return the maximum pixel scroll offset for the current records."""
@@ -1088,10 +1083,11 @@ def _record_thumbnail_url(rec):
 
 
 def _draw_record_row(rec, y):
-    """Draw a single record row. Returns the Y position after the row
-    (including separator), so the next row can be positioned correctly
-    even when title/artist text wraps to multiple lines."""
-    min_h = THUMB_SIZE + ROW_PAD_Y * 2 + ROW_SEPARATOR_H
+    """Draw a single record row using its cached layout height."""
+    row_h = rec.get("_row_height", None)
+    if row_h is None:
+        row_h = _record_row_height(rec)
+    row_bottom = y + row_h
 
     # Fetch and draw thumbnail (top-aligned in row)
     thumb_y = y + ROW_PAD_Y
@@ -1121,10 +1117,6 @@ def _draw_record_row(rec, y):
         ty += 2
         ty = draw_wrapped(meta_text, TEXT_X, ty, TEXT_W, _pen_dim_text, scale=1)
 
-    # Bottom of content: at least thumbnail bottom, at least min_h
-    content_bottom = max(thumb_y + THUMB_SIZE, ty) + ROW_PAD_Y + ROW_SEPARATOR_H
-    row_bottom = max(y + min_h, content_bottom)
-
     # Separator line at the computed bottom
     display.set_pen(_pen_cell_other)
     display.line(
@@ -1133,8 +1125,6 @@ def _draw_record_row(rec, y):
         WIDTH - THUMB_MARGIN,
         row_bottom - ROW_SEPARATOR_H
     )
-
-    return row_bottom
 
 
 # ============================================================================
@@ -1178,7 +1168,7 @@ def _normalise_touch(point):
     if isinstance(point, (tuple, list)):
         if len(point) == 2:
             return int(point[0]), int(point[1])
-        if len(point) >= 3 and point[0]:
+        if len(point) >= 3 and point[0] is not None:
             return int(point[1]), int(point[2])
         return None
 
@@ -1192,8 +1182,12 @@ def _normalise_touch(point):
 
 def wait_for_touch_release():
     """Block until the active touch is released."""
+    start = time.ticks_ms()
     while read_touch() is not None:
+        if time.ticks_diff(time.ticks_ms(), start) >= TOUCH_RELEASE_TIMEOUT_MS:
+            return False
         time.sleep(0.02)
+    return True
 
 
 def touch_to_calendar_cell(x, y):
@@ -1282,9 +1276,17 @@ def handle_day_touch(x, y):
     # Tap in error state: retry fetching records
     if records_error:
         draw_status("Retrying...")
+        if not ensure_wifi_connected():
+            set_day_records([], True)
+            draw_day_view()
+            return
+
         recs, had_error = fetch_records(view_year, view_month, selected_day)
         set_day_records(recs, had_error)
         draw_day_view()
+        return
+
+    # Non-error row taps are intentionally ignored; there is no detail view.
 
 
 # ============================================================================
@@ -1395,7 +1397,7 @@ def main():
                     break
 
                 current_y = touch_point[1]
-                if abs(current_y - drag_start_y) > 5:
+                if abs(current_y - drag_start_y) >= DRAG_REDRAW_PX:
                     dragged = True
 
                 pending_delta += last_drag_y - current_y
@@ -1414,7 +1416,7 @@ def main():
                 last_drag_y = current_y
                 time.sleep(0.01)
 
-            if pending_delta:
+            if dragged and pending_delta:
                 max_offset = _max_scroll_offset()
                 new_offset = min(max(0, scroll_offset + pending_delta), max_offset)
                 if new_offset != scroll_offset:
