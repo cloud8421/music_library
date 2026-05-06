@@ -1221,7 +1221,7 @@ def _measure_detail_content(rec):
     # Purchased at
     purchased_at = rec.get("purchased_at", "")
     if purchased_at:
-        purch_str = "Purchased: " + display_text(str(purchased_at))
+        purch_str = "Purchased: " + display_text(str(purchased_at)[:10])
         h += _measure_detail_text_height(purch_str)
 
     _detail_content_height = h
@@ -1413,7 +1413,7 @@ def _draw_detail_info_below_cover(rec, y):
     # Purchased at
     purchased_at = rec.get("purchased_at", "")
     if purchased_at:
-        purch_str = "Purchased: " + display_text(str(purchased_at))
+        purch_str = "Purchased: " + display_text(str(purchased_at)[:10])
         y = _draw_detail_text_line(purch_str, y, _pen_dim_text)
 
     return y
