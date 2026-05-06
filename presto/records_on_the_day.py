@@ -127,6 +127,8 @@ MONTH_NAMES = [
 
 # Touch debounce (milliseconds)
 DEBOUNCE_MS = 300
+DRAG_REDRAW_MS = 40
+DRAG_REDRAW_PX = 8
 
 # WiFi connection timeout (seconds)
 WIFI_TIMEOUT = 30
@@ -164,9 +166,11 @@ records_error = False      # True if API call failed
 scroll_offset = 0          # Pixel scroll position for day view
 _visible_count = 1         # How many records fit on screen (set during draw)
 _dragging = False          # True while fast scroll redraws are active
+_content_height = 0        # Cached total record list height
 
 # Touch debounce
 _last_touch = 0
+_last_drag_redraw = 0
 
 # Display sleep state
 _last_activity = 0
@@ -537,6 +541,21 @@ def fetch_records(year, month, day):
         # OSError for network failures, ValueError for JSON parse errors
         gc.collect()
         return [], True
+
+
+def set_day_records(recs, had_error):
+    """Set day-view records and prepare display caches."""
+    global records, records_error, scroll_offset, _content_height
+
+    records = recs
+    records_error = had_error
+    scroll_offset = 0
+
+    if had_error:
+        _content_height = 0
+        return
+
+    prepare_records_for_display()
 
 
 def fetch_thumbnail(url):
@@ -933,7 +952,7 @@ def _draw_record_list():
     visible_count = 0
 
     for rec in records:
-        row_h = _record_row_height(rec)
+        row_h = rec.get("_row_height", THUMB_SIZE + 8)
         row_bottom = cy + row_h
 
         if row_bottom <= RECORD_START_Y:
@@ -960,28 +979,56 @@ def _draw_record_list():
 def _max_scroll_offset():
     """Return the maximum pixel scroll offset for the current records."""
     viewport_h = HEIGHT - RECORD_START_Y - 28
-    content_h = 0
+    return max(0, _content_height - viewport_h)
+
+
+def prepare_records_for_display():
+    """Cache display fields, row heights, and thumbnails for current records."""
+    global _content_height
 
     display.set_font("bitmap8")
-    for rec in records:
-        content_h += _record_row_height(rec)
+    _content_height = 0
 
-    return max(0, content_h - viewport_h)
+    for rec in records:
+        _prepare_record_for_display(rec)
+        _content_height += rec.get("_row_height", THUMB_SIZE + 8)
+
+    preload_record_thumbnails()
+    gc.collect()
+
+
+def _prepare_record_for_display(rec):
+    """Prepare one record's display text and row height."""
+    title = display_text(rec.get("title", "Unknown Title"))
+    artists = rec.get("artists", [])
+    artist_str = display_text(", ".join(artists)) if artists else ""
+    meta_text = _record_meta_text(rec)
+
+    rec["_display_title"] = title
+    rec["_display_artists"] = artist_str
+    rec["_display_meta"] = meta_text
+    rec["_thumb_url"] = _record_thumbnail_url(rec)
+    rec["_row_height"] = _record_row_height(rec)
+
+
+def preload_record_thumbnails():
+    """Fetch thumbnail bytes before the first day-view draw."""
+    for rec in records:
+        if rec.get("micro_cover_url", ""):
+            _record_thumbnail_data(rec)
 
 
 def _record_row_height(rec):
     """Calculate a record row height without drawing it."""
-    display.set_font("bitmap8")
     min_h = THUMB_SIZE + 8
-    title = display_text(rec.get("title", "Unknown Title"))
+    title = rec.get("_display_title", display_text(rec.get("title", "Unknown Title")))
     ty = _wrapped_line_count(title, TEXT_W, scale=1) * 12
 
-    artists = rec.get("artists", [])
-    if artists:
-        artist_str = display_text(", ".join(artists))
+    artist_str = rec.get("_display_artists", "")
+    if artist_str:
         ty += 2 + _wrapped_line_count(artist_str, TEXT_W, scale=1) * 12
 
-    if _record_meta_text(rec):
+    if rec.get("_display_meta", _record_meta_text(rec)):
         ty += 2 + 12
 
     content_h = max(THUMB_SIZE, ty) + 10
@@ -1016,11 +1063,7 @@ def _record_thumbnail_data(rec):
     if cached is not None:
         return cached
 
-    thumb_url = (
-        rec.get("micro_cover_url", "")
-        or rec.get("mini_cover_url", "")
-        or rec.get("thumb_url", "")
-    )
+    thumb_url = rec.get("_thumb_url", "") or _record_thumbnail_url(rec)
     if not thumb_url:
         return None
 
@@ -1031,6 +1074,15 @@ def _record_thumbnail_data(rec):
         rec["_thumb_data"] = data
 
     return data
+
+
+def _record_thumbnail_url(rec):
+    """Return the preferred cover URL for a record row."""
+    return (
+        rec.get("micro_cover_url", "")
+        or rec.get("mini_cover_url", "")
+        or rec.get("thumb_url", "")
+    )
 
 
 def _draw_record_row(rec, y):
@@ -1047,24 +1099,22 @@ def _draw_record_row(rec, y):
         jpeg_data = _record_thumbnail_data(rec)
         if jpeg_data is not None:
             draw_jpeg(jpeg_data, THUMB_MARGIN, thumb_y, THUMB_SIZE, THUMB_SIZE)
-            gc.collect()
         else:
             _draw_placeholder(THUMB_MARGIN, thumb_y, THUMB_SIZE, THUMB_SIZE)
 
     # Title (starts at same height as thumbnail)
-    title = display_text(rec.get("title", "Unknown Title"))
+    title = rec.get("_display_title", display_text(rec.get("title", "Unknown Title")))
     display.set_font("bitmap8")
     ty = y + 4
     ty = draw_wrapped(title, TEXT_X, ty, TEXT_W, _pen_title, scale=1)
 
     # Artists
-    artists = rec.get("artists", [])
-    if artists:
-        artist_str = display_text(", ".join(artists))
+    artist_str = rec.get("_display_artists", "")
+    if artist_str:
         ty += 2
         ty = draw_wrapped(artist_str, TEXT_X, ty, TEXT_W, _pen_artist, scale=1)
 
-    meta_text = _record_meta_text(rec)
+    meta_text = rec.get("_display_meta", _record_meta_text(rec))
     if meta_text:
         ty += 2
         ty = draw_wrapped(meta_text, TEXT_X, ty, TEXT_W, _pen_dim_text, scale=1)
@@ -1211,8 +1261,7 @@ def handle_month_touch(x, y):
 
     # Fetch from API
     recs, had_error = fetch_records(view_year, view_month, day_num)
-    records = recs
-    records_error = had_error
+    set_day_records(recs, had_error)
 
     # Render day view
     draw_day_view()
@@ -1227,8 +1276,7 @@ def handle_day_touch(x, y):
     if records_error:
         draw_status("Retrying...")
         recs, had_error = fetch_records(view_year, view_month, selected_day)
-        records = recs
-        records_error = had_error
+        set_day_records(recs, had_error)
         draw_day_view()
 
 
@@ -1251,7 +1299,7 @@ def main():
     global state, view_year, view_month, _last_touch
     global selected_day, records, records_error, scroll_offset
     global _dragging
-    global _last_activity
+    global _last_activity, _last_drag_redraw
 
     # -- Init display --
     init_display()
@@ -1285,8 +1333,7 @@ def main():
         MONTH_NAMES[view_month - 1], today_day, view_year
     ))
     recs, had_error = fetch_records(view_year, view_month, today_day)
-    records = recs
-    records_error = had_error
+    set_day_records(recs, had_error)
 
     draw_day_view()
     _last_activity = time.ticks_ms()
@@ -1334,6 +1381,7 @@ def main():
             pending_delta = 0
             dragged = False
             _dragging = False
+            _last_drag_redraw = time.ticks_ms()
             while True:
                 touch_point = read_touch()
                 if touch_point is None:
@@ -1344,17 +1392,27 @@ def main():
                     dragged = True
 
                 pending_delta += last_drag_y - current_y
-                if abs(pending_delta) >= 3:
+                now = time.ticks_ms()
+                redraw_due = time.ticks_diff(now, _last_drag_redraw) >= DRAG_REDRAW_MS
+                if abs(pending_delta) >= DRAG_REDRAW_PX and redraw_due:
                     max_offset = _max_scroll_offset()
                     new_offset = min(max(0, scroll_offset + pending_delta), max_offset)
                     if new_offset != scroll_offset:
                         scroll_offset = new_offset
                         _dragging = True
                         draw_day_view()
+                        _last_drag_redraw = now
                     pending_delta = 0
 
                 last_drag_y = current_y
                 time.sleep(0.01)
+
+            if pending_delta:
+                max_offset = _max_scroll_offset()
+                new_offset = min(max(0, scroll_offset + pending_delta), max_offset)
+                if new_offset != scroll_offset:
+                    scroll_offset = new_offset
+                    _dragging = True
 
             if _dragging:
                 _dragging = False
