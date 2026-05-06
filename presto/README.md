@@ -56,11 +56,13 @@ mpremote fs cp secrets.py :secrets.py
 mpremote reset
 ```
 
-You can also deploy with the project task:
+After `secrets.py` has been copied to the device once, you can redeploy the app with the project task:
 
 ```bash
 mise run presto
 ```
+
+This copies `records_on_the_day.py` to `:main.py` and resets the device; it does not copy `secrets.py`.
 
 **Using Thonny:**
 
