@@ -100,7 +100,7 @@ DAY_COUNT_TEXT_H = 8
 DETAIL_COVER_SIZE = 150
 DETAIL_COVER_X = (WIDTH - DETAIL_COVER_SIZE) // 2
 DETAIL_COVER_Y = DAY_HEADER_Y + DAY_HEADER_H + 12
-DETAIL_INFO_GAP = 16
+DETAIL_INFO_GAP = 4
 DETAIL_TEXT_X = 40
 DETAIL_TEXT_W = WIDTH - (2 * DETAIL_TEXT_X)
 
@@ -1186,7 +1186,7 @@ def _measure_detail_content(rec):
         h += _measure_detail_text_height(artist_str)
         h += 4
 
-    h += 8  # gap before cover
+    h += DETAIL_INFO_GAP  # gap before cover
 
     # Cover
     h += DETAIL_COVER_SIZE
@@ -1276,7 +1276,7 @@ def draw_record_detail():
 
     # Title and artists (above cover)
     y = _draw_detail_title_artists(rec, y)
-    y += 8  # gap before cover
+    y += DETAIL_INFO_GAP  # gap before cover
 
     # Cover image
     _draw_detail_cover(rec, y)
