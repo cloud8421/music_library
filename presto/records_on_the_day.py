@@ -1376,7 +1376,7 @@ def _draw_detail_info(rec, offset_y=0):
 
     info_y += 6
 
-    # Metadata: record_type | format | year
+    # Metadata: record_type | format | release date
     meta_parts = []
     record_type = rec.get("record_type", "")
     if record_type:
@@ -1386,7 +1386,7 @@ def _draw_detail_info(rec, offset_y=0):
         meta_parts.append(display_text(record_format))
     release_date = rec.get("release_date", "")
     if release_date:
-        meta_parts.append(str(release_date)[:4])
+        meta_parts.append(str(release_date))
 
     if meta_parts:
         meta_str = " | ".join(meta_parts)
