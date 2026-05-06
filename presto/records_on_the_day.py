@@ -95,6 +95,15 @@ DAY_HEADER_Y = HEADER_Y
 DAY_HEADER_H = HEADER_H
 DAY_HEADER_TEXT_H = HEADER_TEXT_H
 DAY_COUNT_TEXT_H = 8
+
+# Detail view
+DETAIL_COVER_SIZE = 150
+DETAIL_COVER_X = (WIDTH - DETAIL_COVER_SIZE) // 2
+DETAIL_COVER_Y = DAY_HEADER_Y + DAY_HEADER_H + 12
+DETAIL_INFO_GAP = 16
+DETAIL_TEXT_X = 40
+DETAIL_TEXT_W = WIDTH - (2 * DETAIL_TEXT_X)
+
 RECORD_START_Y = DAY_HEADER_Y + DAY_HEADER_H + 8
 THUMB_SIZE = 40
 THUMB_MARGIN = 8
@@ -158,16 +167,22 @@ view_month = 5
 STATE_STARTUP = 0
 STATE_MONTH = 1
 STATE_DAY = 2
+STATE_RECORD = 3
 state = STATE_STARTUP
 
 # Day view state
 selected_day = 0           # 1-based day of month
+selected_record_idx = None # Index into records[] for detail view
 records = []               # List of record dicts from API
 records_error = False      # True if API call failed
 # Scroll state
 scroll_offset = 0          # Pixel scroll position for day view
 _dragging = False          # True while fast scroll redraws are active
 _content_height = 0        # Cached total record list height
+
+# Detail view scroll
+detail_scroll_offset = 0   # Pixel scroll position for detail view
+_detail_content_height = 0 # Cached total detail content height
 
 # Touch debounce
 _last_touch = 0
@@ -492,6 +507,8 @@ def redraw_current_view():
         draw_month_view()
     elif state == STATE_DAY:
         draw_day_view()
+    elif state == STATE_RECORD:
+        draw_record_detail()
 
 
 # ============================================================================
@@ -1128,6 +1145,280 @@ def _draw_record_row(rec, y):
 
 
 # ============================================================================
+# DRAWING: RECORD DETAIL
+# ============================================================================
+
+def _max_detail_scroll_offset():
+    """Return the maximum pixel scroll offset for the detail view."""
+    if _detail_content_height == 0:
+        return 0
+    content_bottom = DETAIL_COVER_Y + _detail_content_height
+    return max(0, content_bottom - HEIGHT)
+
+
+def _measure_detail_text_height(text, font="bitmap8", scale=1, max_w=None):
+    """Return the pixel height that text would occupy when drawn wrapped."""
+    if max_w is None:
+        max_w = DETAIL_TEXT_W
+    lines = _wrapped_lines(text, max_w, scale=scale)
+    line_height = 8 * scale + 4
+    return len(lines) * line_height
+
+
+def _measure_detail_content(rec):
+    """Compute and cache the total height of the scrollable detail content."""
+    global _detail_content_height
+
+    h = 0
+
+    # Title
+    title = rec.get("_display_title",
+                    display_text(rec.get("title", "Unknown Title")))
+    h += _measure_detail_text_height(title, font="bitmap14_outline", scale=1)
+    h += 6
+
+    # Artists
+    artist_str = rec.get("_display_artists", "")
+    if not artist_str:
+        artists = rec.get("artists", [])
+        artist_str = display_text(", ".join(artists)) if artists else ""
+    if artist_str:
+        h += _measure_detail_text_height(artist_str)
+        h += 4
+
+    # Genres
+    genres = rec.get("genres", [])
+    if genres:
+        genre_str = display_text(", ".join(genres))
+        h += _measure_detail_text_height(genre_str)
+        h += 4
+
+    h += 6
+
+    # Metadata line: record_type | format | year
+    meta_parts = []
+    record_type = rec.get("record_type", "")
+    if record_type:
+        meta_parts.append(display_text(record_type))
+    record_format = rec.get("format", "")
+    if record_format:
+        meta_parts.append(display_text(record_format))
+    release_date = rec.get("release_date", "")
+    if release_date:
+        meta_parts.append(str(release_date)[:4])
+
+    if meta_parts:
+        meta_str = " | ".join(meta_parts)
+        h += _measure_detail_text_height(meta_str)
+        h += 4
+
+    # Purchased at
+    purchased_at = rec.get("purchased_at", "")
+    if purchased_at:
+        purch_str = "Purchased: " + display_text(str(purchased_at))
+        h += _measure_detail_text_height(purch_str)
+
+    # Total content height: cover + gap + info
+    _detail_content_height = DETAIL_COVER_SIZE + DETAIL_INFO_GAP + h
+
+
+def _set_clip_below_header():
+    """Restrict drawing to the area below the fixed header."""
+    try:
+        display.set_clip(0, DAY_HEADER_Y + DAY_HEADER_H,
+                         WIDTH, HEIGHT - (DAY_HEADER_Y + DAY_HEADER_H))
+    except Exception:
+        pass
+
+
+def _remove_clip():
+    """Remove any active clip rectangle."""
+    try:
+        display.remove_clip()
+    except Exception:
+        pass
+
+
+def draw_record_detail():
+    """Render the individual record detail view with large cover art
+    and extended metadata. Supports vertical scrolling."""
+    global detail_scroll_offset
+
+    display.set_pen(_pen_bg)
+    display.clear()
+
+    rec = records[selected_record_idx]
+
+    # Measure content height so scroll bounds are known
+    _measure_detail_content(rec)
+
+    # Clamp scroll offset
+    max_off = _max_detail_scroll_offset()
+    if detail_scroll_offset > max_off:
+        detail_scroll_offset = max_off
+    if detail_scroll_offset < 0:
+        detail_scroll_offset = 0
+
+    offset = detail_scroll_offset
+
+    _draw_detail_header()
+
+    # Clip scrolling content below the header
+    _set_clip_below_header()
+
+    _draw_detail_cover(rec, offset_y=offset)
+    _draw_detail_info(rec, offset_y=offset)
+
+    # Scroll indicators (inside clip, below header)
+    display.set_font("bitmap14_outline")
+    if offset > 0:
+        display.set_pen(_pen_arrow)
+        display.text("^", WIDTH // 2 - 8, DAY_HEADER_H + 4, scale=1)
+    if offset < max_off:
+        display.set_pen(_pen_arrow)
+        display.text("v", WIDTH // 2 - 8, HEIGHT - 24, scale=1)
+
+    _remove_clip()
+
+    presto.update()
+
+
+def _draw_detail_header():
+    """Draw the record detail header with back button."""
+    display.set_pen(_pen_cell_bg)
+    display.rectangle(0, DAY_HEADER_Y, WIDTH, DAY_HEADER_H)
+
+    # Back button
+    bx, by = BACK_X, BACK_Y
+    display.set_pen(_pen_placeholder)
+    display.rectangle(bx, by, BACK_W, BACK_H)
+    display.set_pen(_pen_back)
+    display.set_font("bitmap8")
+    _draw_centered_text("<", bx, by, BACK_W, BACK_H, DAY_COUNT_TEXT_H)
+
+    # Title label
+    display.set_pen(_pen_header_text)
+    display.set_font("bitmap14_outline")
+    label = "Record"
+    tw = display.measure_text(label, scale=1)
+    display.text(
+        label,
+        (WIDTH - tw) // 2,
+        DAY_HEADER_Y + (DAY_HEADER_H - DAY_HEADER_TEXT_H) // 2,
+        scale=1
+    )
+
+
+def _draw_detail_cover(rec, offset_y=0):
+    """Fetch and draw the large cover art (prefers thumb_url)."""
+    cy = DETAIL_COVER_Y - offset_y
+
+    # Skip if entirely outside viewport
+    if cy + DETAIL_COVER_SIZE <= DAY_HEADER_Y + DAY_HEADER_H:
+        return
+    if cy >= HEIGHT:
+        return
+
+    thumb_url = (
+        rec.get("thumb_url", "")
+        or rec.get("mini_cover_url", "")
+        or rec.get("micro_cover_url", "")
+    )
+
+    if not thumb_url:
+        _draw_placeholder(DETAIL_COVER_X, cy,
+                          DETAIL_COVER_SIZE, DETAIL_COVER_SIZE)
+        return
+
+    # Use cached data or fetch
+    data = rec.get("_detail_thumb_data", None)
+    if data is None and not rec.get("_detail_thumb_failed", False):
+        data = fetch_thumbnail(thumb_url)
+        if data is None:
+            rec["_detail_thumb_failed"] = True
+        else:
+            rec["_detail_thumb_data"] = data
+
+    if data is not None:
+        draw_jpeg(data, DETAIL_COVER_X, cy,
+                  DETAIL_COVER_SIZE, DETAIL_COVER_SIZE)
+    else:
+        _draw_placeholder(DETAIL_COVER_X, cy,
+                          DETAIL_COVER_SIZE, DETAIL_COVER_SIZE)
+
+
+def _draw_detail_info(rec, offset_y=0):
+    """Draw the extended record metadata below the cover image."""
+    info_y = DETAIL_COVER_Y + DETAIL_COVER_SIZE + DETAIL_INFO_GAP - offset_y
+
+    # Title (larger, bold-style font)
+    title = rec.get("_display_title",
+                    display_text(rec.get("title", "Unknown Title")))
+    info_y = _draw_detail_text_line(title, info_y, _pen_title,
+                                    font="bitmap14_outline", scale=1)
+    info_y += 6
+
+    # Artists
+    artist_str = rec.get("_display_artists", "")
+    if not artist_str:
+        artists = rec.get("artists", [])
+        artist_str = display_text(", ".join(artists)) if artists else ""
+    if artist_str:
+        info_y = _draw_detail_text_line(artist_str, info_y, _pen_artist)
+        info_y += 4
+
+    # Genres
+    genres = rec.get("genres", [])
+    if genres:
+        genre_str = display_text(", ".join(genres))
+        info_y = _draw_detail_text_line(genre_str, info_y, _pen_dim_text)
+        info_y += 4
+
+    info_y += 6
+
+    # Metadata: record_type | format | year
+    meta_parts = []
+    record_type = rec.get("record_type", "")
+    if record_type:
+        meta_parts.append(display_text(record_type))
+    record_format = rec.get("format", "")
+    if record_format:
+        meta_parts.append(display_text(record_format))
+    release_date = rec.get("release_date", "")
+    if release_date:
+        meta_parts.append(str(release_date)[:4])
+
+    if meta_parts:
+        meta_str = " | ".join(meta_parts)
+        info_y = _draw_detail_text_line(meta_str, info_y, _pen_dim_text)
+        info_y += 4
+
+    # Purchased at (full date)
+    purchased_at = rec.get("purchased_at", "")
+    if purchased_at:
+        purch_str = "Purchased: " + display_text(str(purchased_at))
+        info_y = _draw_detail_text_line(purch_str, info_y, _pen_dim_text)
+
+
+def _draw_detail_text_line(text, y, pen, font="bitmap8", scale=1):
+    """Draw text centered horizontally at y, wrapping if needed.
+    Returns the y-position after drawing (including wrapped lines)."""
+    max_w = DETAIL_TEXT_W
+    display.set_pen(pen)
+    display.set_font(font)
+
+    lines = _wrapped_lines(text, max_w, scale=scale)
+    line_height = 8 * scale + 4
+    cy = y
+    for line in lines:
+        tw = display.measure_text(line, scale=scale)
+        display.text(line, (WIDTH - tw) // 2, cy, scale=scale)
+        cy += line_height
+
+    return cy
+
+
+# ============================================================================
 # TOUCH HANDLING
 # ============================================================================
 def read_touch():
@@ -1220,6 +1511,21 @@ def cell_to_day(row, col):
     return None
 
 
+def touch_to_record_index(y):
+    """Map a touch y-coordinate to a record list index, accounting for
+    scroll offset. Returns None if the touch doesn't hit a record row."""
+    if not records:
+        return None
+
+    cy = RECORD_START_Y - scroll_offset
+    for i, rec in enumerate(records):
+        row_h = rec.get("_row_height", THUMB_SIZE + 8)
+        if cy <= y < cy + row_h:
+            return i
+        cy += row_h
+    return None
+
+
 def handle_month_touch(x, y):
     """Process a touch event in month view state."""
     global view_year, view_month, selected_day, state, records, records_error, scroll_offset
@@ -1286,7 +1592,7 @@ def handle_day_touch(x, y):
         draw_day_view()
         return
 
-    # Non-error row taps are intentionally ignored; there is no detail view.
+    # Row taps are handled by the main loop before this function is called.
 
 
 # ============================================================================
@@ -1306,7 +1612,8 @@ def main():
     """Application entry point. Runs the boot sequence then enters the
     main event loop."""
     global state, view_year, view_month, _last_touch
-    global selected_day, records, records_error, scroll_offset
+    global selected_day, selected_record_idx, records, records_error
+    global scroll_offset, detail_scroll_offset
     global _dragging
     global _last_activity, _last_drag_redraw
 
@@ -1428,8 +1735,64 @@ def main():
                 draw_day_view()
 
             if not dragged:
-                # It was a tap — handle normally
+                # Check for record row tap -> detail view
+                if not records_error and records:
+                    rec_idx = touch_to_record_index(y)
+                    if rec_idx is not None:
+                        selected_record_idx = rec_idx
+                        detail_scroll_offset = 0
+                        state = STATE_RECORD
+                        draw_record_detail()
+                        continue
+
+                # Otherwise handle as normal tap
                 handle_day_touch(x, y)
+
+        elif state == STATE_RECORD:
+            # Check back button immediately (no drag needed)
+            if BACK_X <= x <= BACK_X + BACK_W and BACK_Y <= y <= BACK_Y + BACK_H:
+                state = STATE_DAY
+                detail_scroll_offset = 0
+                draw_day_view()
+                wait_for_touch_release()
+                continue
+
+            # Track vertical drag for scrolling detail view
+            drag_start_y = y
+            last_drag_y = y
+            pending_delta = 0
+            dragged = False
+            _last_drag_redraw = time.ticks_ms()
+            while True:
+                touch_point = read_touch()
+                if touch_point is None:
+                    break
+
+                current_y = touch_point[1]
+                if abs(current_y - drag_start_y) >= DRAG_REDRAW_PX:
+                    dragged = True
+
+                pending_delta += last_drag_y - current_y
+                now = time.ticks_ms()
+                redraw_due = time.ticks_diff(now, _last_drag_redraw) >= DRAG_REDRAW_MS
+                if abs(pending_delta) >= DRAG_REDRAW_PX and redraw_due:
+                    max_offset = _max_detail_scroll_offset()
+                    new_offset = min(max(0, detail_scroll_offset + pending_delta), max_offset)
+                    if new_offset != detail_scroll_offset:
+                        detail_scroll_offset = new_offset
+                        draw_record_detail()
+                        _last_drag_redraw = now
+                    pending_delta = 0
+
+                last_drag_y = current_y
+                time.sleep(0.01)
+
+            if dragged and pending_delta:
+                max_offset = _max_detail_scroll_offset()
+                new_offset = min(max(0, detail_scroll_offset + pending_delta), max_offset)
+                if new_offset != detail_scroll_offset:
+                    detail_scroll_offset = new_offset
+                    draw_record_detail()
 
 
 # ============================================================================
