@@ -19,7 +19,7 @@ config :music_library, :single_line_logging, true
 config :logster,
   excludes: [:state, :params],
   extra_fields: [:request_id],
-  filter_parameters: Application.get_env(:phoenix, :filter_parameters, ["password"])
+  filter_parameters: Application.get_env(:phoenix, :filter_parameters, ["password", "token"])
 
 config :logger, :default_formatter,
   format: {MusicLibrary.Logger.SingleLineFormatter, :format},
