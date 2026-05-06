@@ -1171,13 +1171,13 @@ def _measure_detail_content(rec):
 
     h = 0
 
-    # Title
+    # Title (above cover)
     title = rec.get("_display_title",
                     display_text(rec.get("title", "Unknown Title")))
     h += _measure_detail_text_height(title, font="bitmap14_outline", scale=1)
     h += 6
 
-    # Artists
+    # Artists (above cover)
     artist_str = rec.get("_display_artists", "")
     if not artist_str:
         artists = rec.get("artists", [])
@@ -1186,7 +1186,13 @@ def _measure_detail_content(rec):
         h += _measure_detail_text_height(artist_str)
         h += 4
 
-    # Genres
+    h += 8  # gap before cover
+
+    # Cover
+    h += DETAIL_COVER_SIZE
+    h += DETAIL_INFO_GAP
+
+    # Genres (below cover)
     genres = rec.get("genres", [])
     if genres:
         genre_str = display_text(", ".join(genres))
@@ -1218,8 +1224,7 @@ def _measure_detail_content(rec):
         purch_str = "Purchased: " + display_text(str(purchased_at))
         h += _measure_detail_text_height(purch_str)
 
-    # Total content height: cover + gap + info
-    _detail_content_height = DETAIL_COVER_SIZE + DETAIL_INFO_GAP + h
+    _detail_content_height = h
 
 
 def _set_clip_below_header():
@@ -1240,8 +1245,8 @@ def _remove_clip():
 
 
 def draw_record_detail():
-    """Render the individual record detail view with large cover art
-    and extended metadata. Supports vertical scrolling."""
+    """Render the individual record detail view. Layout order:
+    title, artists, large cover, genres, metadata, purchased at."""
     global detail_scroll_offset
 
     display.set_pen(_pen_bg)
@@ -1266,10 +1271,21 @@ def draw_record_detail():
     # Clip scrolling content below the header
     _set_clip_below_header()
 
-    _draw_detail_cover(rec, offset_y=offset)
-    _draw_detail_info(rec, offset_y=offset)
+    # Start drawing below the header
+    y = DETAIL_COVER_Y - offset
 
-    # Scroll indicators (inside clip, below header)
+    # Title and artists (above cover)
+    y = _draw_detail_title_artists(rec, y)
+    y += 8  # gap before cover
+
+    # Cover image
+    _draw_detail_cover(rec, y)
+
+    # Genres, metadata, purchased at (below cover)
+    y = y + DETAIL_COVER_SIZE + DETAIL_INFO_GAP
+    _draw_detail_info_below_cover(rec, y)
+
+    # Scroll indicators
     display.set_font("bitmap14_outline")
     if offset > 0:
         display.set_pen(_pen_arrow)
@@ -1309,14 +1325,33 @@ def _draw_detail_header():
     )
 
 
-def _draw_detail_cover(rec, offset_y=0):
-    """Fetch and draw the large cover art (prefers thumb_url)."""
-    cy = DETAIL_COVER_Y - offset_y
+def _draw_detail_title_artists(rec, y):
+    """Draw title and artists above the cover. Returns y after drawing."""
+    # Title
+    title = rec.get("_display_title",
+                    display_text(rec.get("title", "Unknown Title")))
+    y = _draw_detail_text_line(title, y, _pen_title,
+                               font="bitmap14_outline", scale=1)
+    y += 6
 
+    # Artists
+    artist_str = rec.get("_display_artists", "")
+    if not artist_str:
+        artists = rec.get("artists", [])
+        artist_str = display_text(", ".join(artists)) if artists else ""
+    if artist_str:
+        y = _draw_detail_text_line(artist_str, y, _pen_artist)
+        y += 4
+
+    return y
+
+
+def _draw_detail_cover(rec, y):
+    """Fetch and draw the cover art at the given y position."""
     # Skip if entirely outside viewport
-    if cy + DETAIL_COVER_SIZE <= DAY_HEADER_Y + DAY_HEADER_H:
+    if y + DETAIL_COVER_SIZE <= DAY_HEADER_Y + DAY_HEADER_H:
         return
-    if cy >= HEIGHT:
+    if y >= HEIGHT:
         return
 
     thumb_url = (
@@ -1326,7 +1361,7 @@ def _draw_detail_cover(rec, offset_y=0):
     )
 
     if not thumb_url:
-        _draw_placeholder(DETAIL_COVER_X, cy,
+        _draw_placeholder(DETAIL_COVER_X, y,
                           DETAIL_COVER_SIZE, DETAIL_COVER_SIZE)
         return
 
@@ -1340,43 +1375,25 @@ def _draw_detail_cover(rec, offset_y=0):
             rec["_detail_thumb_data"] = data
 
     if data is not None:
-        draw_jpeg(data, DETAIL_COVER_X, cy,
+        draw_jpeg(data, DETAIL_COVER_X, y,
                   DETAIL_COVER_SIZE, DETAIL_COVER_SIZE)
     else:
-        _draw_placeholder(DETAIL_COVER_X, cy,
+        _draw_placeholder(DETAIL_COVER_X, y,
                           DETAIL_COVER_SIZE, DETAIL_COVER_SIZE)
 
 
-def _draw_detail_info(rec, offset_y=0):
-    """Draw the extended record metadata below the cover image."""
-    info_y = DETAIL_COVER_Y + DETAIL_COVER_SIZE + DETAIL_INFO_GAP - offset_y
-
-    # Title (larger, bold-style font)
-    title = rec.get("_display_title",
-                    display_text(rec.get("title", "Unknown Title")))
-    info_y = _draw_detail_text_line(title, info_y, _pen_title,
-                                    font="bitmap14_outline", scale=1)
-    info_y += 6
-
-    # Artists
-    artist_str = rec.get("_display_artists", "")
-    if not artist_str:
-        artists = rec.get("artists", [])
-        artist_str = display_text(", ".join(artists)) if artists else ""
-    if artist_str:
-        info_y = _draw_detail_text_line(artist_str, info_y, _pen_artist)
-        info_y += 4
-
+def _draw_detail_info_below_cover(rec, y):
+    """Draw genres, metadata line, and purchased-at below the cover."""
     # Genres
     genres = rec.get("genres", [])
     if genres:
         genre_str = display_text(", ".join(genres))
-        info_y = _draw_detail_text_line(genre_str, info_y, _pen_dim_text)
-        info_y += 4
+        y = _draw_detail_text_line(genre_str, y, _pen_dim_text)
+        y += 4
 
-    info_y += 6
+    y += 6
 
-    # Metadata: record_type | format | release date
+    # Metadata: record_type | format | year
     meta_parts = []
     record_type = rec.get("record_type", "")
     if record_type:
@@ -1386,18 +1403,20 @@ def _draw_detail_info(rec, offset_y=0):
         meta_parts.append(display_text(record_format))
     release_date = rec.get("release_date", "")
     if release_date:
-        meta_parts.append(str(release_date))
+        meta_parts.append(str(release_date)[:4])
 
     if meta_parts:
         meta_str = " | ".join(meta_parts)
-        info_y = _draw_detail_text_line(meta_str, info_y, _pen_dim_text)
-        info_y += 4
+        y = _draw_detail_text_line(meta_str, y, _pen_dim_text)
+        y += 4
 
-    # Purchased at (full date)
+    # Purchased at
     purchased_at = rec.get("purchased_at", "")
     if purchased_at:
         purch_str = "Purchased: " + display_text(str(purchased_at))
-        info_y = _draw_detail_text_line(purch_str, info_y, _pen_dim_text)
+        y = _draw_detail_text_line(purch_str, y, _pen_dim_text)
+
+    return y
 
 
 def _draw_detail_text_line(text, y, pen, font="bitmap8", scale=1):
