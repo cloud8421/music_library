@@ -7,6 +7,7 @@ A MicroPython application for the [Pimoroni Presto](https://shop.pimoroni.com/pr
 - **Month calendar** — 7×6 grid with day-of-week headers, today highlight
 - **Today's records on boot** — opens directly to records released on today's date
 - **Tap a day** — see records released on that date with cover art, titles, artist names, format, and release year
+- **Record detail view** — tap any record row to see large cover art, genres, record type, and purchase date
 - **Month navigation** — arrow buttons to browse previous/future months
 - **Touch scrolling** — drag the day view to scroll through longer record lists
 - **Display sleep** — turns the backlight off after 1 minute of inactivity and wakes on touch
@@ -94,6 +95,14 @@ The Presto runs `main.py` on boot. The app will:
 - Drag vertically to scroll through longer lists
 - During drag scrolling, cover art is temporarily shown as lightweight placeholders and redrawn when you lift your finger
 
+### Record detail view
+
+- Tap any **record row** in the day view to open its detail page
+- Shows a **larger cover image** (uses `thumb_url`, 480px source), the full title, artists, genres, record type, format, release year, and purchase date
+- Drag vertically to scroll if the content is taller than the screen
+- The header bar stays fixed at the top while the cover and info scroll underneath
+- Tap **< Back** to return to the day view
+
 ### Display sleep
 
 - After 1 minute with no touch input, the display backlight turns off
@@ -150,13 +159,16 @@ Response format:
       "thumb_url": "https://.../api/v1/assets/thumb.jpg?width=480",
       "release_date": "1973-03-01",
       "genres": ["Rock"],
-      "format": "Vinyl"
+      "format": "Vinyl",
+      "record_type": "LP",
+      "purchased_at": "2024-11-15"
     }
   ]
 }
 ```
 
 The Presto client prefers `micro_cover_url` for the 40×40 row thumbnail, then falls back to `mini_cover_url` and `thumb_url`.
+The detail view prefers `thumb_url` for the full-size cover, falling back to `mini_cover_url` and `micro_cover_url`.
 
 ## License
 

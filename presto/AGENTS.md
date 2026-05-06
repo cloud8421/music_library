@@ -11,99 +11,78 @@ This directory contains MicroPython apps for the Pimoroni Presto. The main app i
 
 ## Deployment And Verification
 
-- The project task deploys the records app:
+```bash
+mise run presto                     # deploy and reset
+```
 
-  ```bash
-  mise run presto
-  ```
+Manual deployment:
 
-- Manual deployment copies `records_on_the_day.py` to the device as `main.py`:
+```bash
+mpremote fs cp records_on_the_day.py :main.py
+mpremote fs cp secrets.py :secrets.py
+mpremote reset
+```
 
-  ```bash
-  mpremote fs cp records_on_the_day.py :main.py
-  mpremote fs cp secrets.py :secrets.py
-  mpremote reset
-  ```
+Syntax check (no `__pycache__`):
 
-- Before finishing Python edits, run a syntax-only check that does not leave `__pycache__` behind:
+```bash
+python3 -c "import py_compile; py_compile.compile('records_on_the_day.py', cfile='/tmp/records_on_the_day.pyc', doraise=True)"
+```
 
-  ```bash
-  python3 -c "import py_compile; py_compile.compile('records_on_the_day.py', cfile='/tmp/records_on_the_day.pyc', doraise=True)"
-  ```
-
-- Do not claim device behavior is verified unless it was tested on the physical Presto.
+Do not claim device behavior is verified unless it was tested on the physical Presto.
 
 ## Hardware And Runtime Constraints
 
-- Target stock Pimoroni Presto firmware: MicroPython, PicoGraphics, touch driver, `urequests`, `ntptime`, and usually `jpegdec`.
-- Presto hardware is RP2350B, but stock firmware should be treated as a single Python runtime. Do not assume `_thread` or user-accessible multicore support.
-- Keep memory pressure low. Avoid large in-memory image buffers, aggressive caching of large responses, and repeated `gc.collect()` in hot render paths.
-- Network calls are blocking. Avoid doing HTTP requests during drag scrolling or repeated redraw loops.
+- Stock Presto firmware: MicroPython, PicoGraphics, touch driver, `urequests`, `ntptime`, usually `jpegdec`.
+- Treat as single-threaded. Do not assume `_thread` or user-accessible multicore.
+- Keep memory pressure low: no large in-memory buffers, no aggressive response caching, no `gc.collect()` in hot render paths.
+- Network calls (`urequests`) are blocking. Never make HTTP requests during drag scrolling or inside repeated redraw loops.
 
-## Records App Behavior
+## State Management
 
-- Boot should land on today's records, not the month calendar.
-- The Back button returns from day view to month view.
-- Month and day headers should share the same header geometry: height, button dimensions, side margins, and centered title/date positioning.
-- Day rows show cover art, title, artists, and a dim metadata line of `format | year`.
-- `release_date` is displayed as year only.
-- Text shown with bitmap fonts should pass through `display_text()` to replace unsupported punctuation such as smart dashes and quotes. Do not strip diacritics; the font can render them.
-
-## Image Handling
-
-- Prefer `micro_cover_url`, then `mini_cover_url`, then `thumb_url`.
-- Keep `THUMB_SIZE` aligned with the micro image size when possible.
-- Cache downloaded thumbnail bytes on the record dict as `_thumb_data`.
-- Keep the placeholder-while-dragging behavior. Decoding JPEGs during drag was too slow on device, even with micro covers.
-- Repaint real covers after the finger is released.
-- Do not call `gc.collect()` per row draw. Collect after record preparation, after API fetches, or at other non-hot-path points.
-- JPEG is the practical default on stock firmware. PNG generally has worse memory characteristics, and raw/RGB565 should only be attempted after confirming a stable on-device blit API.
+- Every view state (`STATE_STARTUP`, `STATE_MONTH`, `STATE_DAY`, `STATE_RECORD`) must be handled in `redraw_current_view()` for correct display sleep/wake.
+- When transitioning into a view, reset its scroll offset to 0 so it always starts at the top.
+- When adding a new state, update `main()` globals, `redraw_current_view()`, the main loop dispatch, and any related state cleanup on navigation.
 
 ## Scroll Performance
 
-- The scroll hot path must not measure text, join artist lists, sanitize strings, calculate full content height, or fetch images.
-- After fetching records, call the preparation path that caches:
-  - `_display_title`
-  - `_display_artists`
-  - `_display_meta`
-  - `_thumb_url`
-  - `_row_height`
-  - total `_content_height`
-- Preload only `micro_cover_url` thumbnails before the first day-view draw. Do not eagerly fetch larger fallback images.
-- Drag scrolling should remain pixel-based, but redraws should be throttled by both time and pixel delta (`DRAG_REDRAW_MS`, `DRAG_REDRAW_PX`).
-- Preserve any pending drag delta on touch release and redraw once with real covers if the view moved.
+_These rules apply to any scrollable view (day list, detail page, or future additions)._
 
-## Layout Details
+- The scroll hot path must not: measure text, join strings, sanitize text, compute layout heights, or fetch images over the network.
+- Pre-compute and cache all display strings and dimensions after data arrives and before the first draw.
+- Throttle drag redraws by both time (`DRAG_REDRAW_MS`) and pixel delta (`DRAG_REDRAW_PX`). Preserve pending delta on touch release and redraw once.
+- Each scrollable view gets its own offset variable and its own content-height cache. Never reuse one view's scroll state for another.
+- If the view has a fixed header, use `display.set_clip()` / `display.remove_clip()` to prevent scrollable content from drawing over it.
 
-- Use named constants for pixel geometry instead of scattered literals.
-- For record rows, keep cover top and bottom spacing visually symmetric:
-  - `ROW_PAD_Y` is the padding above and below the cover.
-  - `ROW_SEPARATOR_H` is the separator line height after the bottom padding.
-- If row spacing looks wrong on device, reason in terms of inclusive pixel drawing: a separator drawn inside the padding visually consumes that padding.
+## Image Handling
+
+- Row thumbnails prefer `micro_cover_url` → `mini_cover_url` → `thumb_url`. Detail/large cover prefers `thumb_url` → `mini_cover_url` → `micro_cover_url`.
+- Cache downloaded image bytes on the record dict. Use separate cache keys for different sizes (e.g., `_thumb_data` for rows, `_detail_thumb_data` for detail view). Never fetch images during drag — show placeholders instead and repaint real covers on release.
+- JPEG is the practical default. PNG has worse memory characteristics; raw/RGB565 needs a confirmed stable blit API on the target firmware.
+
+## Text Rendering
+
+- All user-visible text shown with bitmap fonts must pass through `display_text()` to replace unsupported punctuation (smart quotes, dashes, ellipsis). Do not strip diacritics — the font can render them.
+- `release_date` is displayed as year only (first 4 characters).
+
+## Layout
+
+- Use named constants for all pixel geometry. No scattered literals.
+- Keep header geometry consistent across views: same height, button dimensions, and side margins.
 
 ## Display Sleep
 
-- The display sleeps by setting the backlight to `0.0`; the app and WiFi stay running.
-- The first touch after sleep should wake the backlight and be consumed so it does not also activate a control.
-- On wake, check WiFi and reconnect only if it dropped.
+- Sleep by setting backlight to `0.0`. WiFi stays enabled.
+- The first touch after sleep must wake the backlight and be consumed — it must not also activate a button or trigger a scroll.
+- On wake, only reconnect WiFi if the connection dropped.
 
 ## API Contract
 
-The records endpoint is:
-
-```text
+```
 GET https://music-library.claudio-ortolina.org/api/v1/collection/on_this_day?date=YYYY-MM-DD
 Authorization: Bearer <API_TOKEN>
 ```
 
-Expected record fields used by the app:
-
-- `title`
-- `artists`
-- `format`
-- `release_date`
-- `micro_cover_url`
-- `mini_cover_url`
-- `thumb_url`
+Fields used by the app: `title`, `artists`, `format`, `release_date`, `genres`, `record_type`, `purchased_at`, `micro_cover_url`, `mini_cover_url`, `thumb_url`.
 
 When adding or changing API assumptions, update `README.md`.
