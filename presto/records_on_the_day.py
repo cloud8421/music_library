@@ -98,6 +98,8 @@ DAY_COUNT_TEXT_H = 8
 RECORD_START_Y = DAY_HEADER_Y + DAY_HEADER_H + 8
 THUMB_SIZE = 40
 THUMB_MARGIN = 8
+ROW_PAD_Y = 4
+ROW_SEPARATOR_H = 1
 TEXT_X = THUMB_MARGIN + THUMB_SIZE + 12
 TEXT_W = WIDTH - TEXT_X - 12
 
@@ -1020,7 +1022,7 @@ def preload_record_thumbnails():
 
 def _record_row_height(rec):
     """Calculate a record row height without drawing it."""
-    min_h = THUMB_SIZE + 8
+    min_h = THUMB_SIZE + ROW_PAD_Y * 2 + ROW_SEPARATOR_H
     title = rec.get("_display_title", display_text(rec.get("title", "Unknown Title")))
     ty = _wrapped_line_count(title, TEXT_W, scale=1) * 12
 
@@ -1031,7 +1033,7 @@ def _record_row_height(rec):
     if rec.get("_display_meta", _record_meta_text(rec)):
         ty += 2 + 12
 
-    content_h = max(THUMB_SIZE, ty) + 10
+    content_h = max(THUMB_SIZE, ty) + ROW_PAD_Y * 2 + ROW_SEPARATOR_H
     return max(min_h, content_h)
 
 
@@ -1089,10 +1091,10 @@ def _draw_record_row(rec, y):
     """Draw a single record row. Returns the Y position after the row
     (including separator), so the next row can be positioned correctly
     even when title/artist text wraps to multiple lines."""
-    min_h = THUMB_SIZE + 8  # Minimum row height (thumbnail + padding)
+    min_h = THUMB_SIZE + ROW_PAD_Y * 2 + ROW_SEPARATOR_H
 
     # Fetch and draw thumbnail (top-aligned in row)
-    thumb_y = y + 4
+    thumb_y = y + ROW_PAD_Y
     if _dragging:
         _draw_placeholder(THUMB_MARGIN, thumb_y, THUMB_SIZE, THUMB_SIZE)
     else:
@@ -1105,7 +1107,7 @@ def _draw_record_row(rec, y):
     # Title (starts at same height as thumbnail)
     title = rec.get("_display_title", display_text(rec.get("title", "Unknown Title")))
     display.set_font("bitmap8")
-    ty = y + 4
+    ty = y + ROW_PAD_Y
     ty = draw_wrapped(title, TEXT_X, ty, TEXT_W, _pen_title, scale=1)
 
     # Artists
@@ -1120,12 +1122,17 @@ def _draw_record_row(rec, y):
         ty = draw_wrapped(meta_text, TEXT_X, ty, TEXT_W, _pen_dim_text, scale=1)
 
     # Bottom of content: at least thumbnail bottom, at least min_h
-    content_bottom = max(thumb_y + THUMB_SIZE, ty) + 6
+    content_bottom = max(thumb_y + THUMB_SIZE, ty) + ROW_PAD_Y + ROW_SEPARATOR_H
     row_bottom = max(y + min_h, content_bottom)
 
     # Separator line at the computed bottom
     display.set_pen(_pen_cell_other)
-    display.line(THUMB_MARGIN, row_bottom - 2, WIDTH - THUMB_MARGIN, row_bottom - 2)
+    display.line(
+        THUMB_MARGIN,
+        row_bottom - ROW_SEPARATOR_H,
+        WIDTH - THUMB_MARGIN,
+        row_bottom - ROW_SEPARATOR_H
+    )
 
     return row_bottom
 
