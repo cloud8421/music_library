@@ -110,6 +110,14 @@ defmodule MusicLibrary.Records do
     Phoenix.PubSub.subscribe(MusicLibrary.PubSub, "records:#{record_id}")
   end
 
+  @doc """
+  Unsubscribes the calling process from updates for a given record.
+  """
+  @spec unsubscribe(String.t()) :: :ok | {:error, term()}
+  def unsubscribe(record_id) do
+    Phoenix.PubSub.unsubscribe(MusicLibrary.PubSub, "records:#{record_id}")
+  end
+
   @spec notify_update(Record.t()) :: :ok | {:error, term()}
   def notify_update(record) do
     Phoenix.PubSub.broadcast(

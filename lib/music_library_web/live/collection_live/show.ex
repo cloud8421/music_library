@@ -348,11 +348,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
   end
 
   @impl true
-  def mount(%{"id" => record_id}, _session, socket) do
-    if connected?(socket) do
-      Records.subscribe(record_id)
-    end
-
+  def mount(_params, _session, socket) do
     {:ok,
      socket
      |> assign(:current_section, :collection)
@@ -362,6 +358,8 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
+    RecordActions.manage_subscription(socket, id)
+
     record = Records.get_record!(id)
     last_listened_track = ListeningStats.get_last_listened_track(record)
     play_count = ListeningStats.play_count(record)
@@ -474,10 +472,14 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
   @impl true
   def handle_info({:update, record}, socket) do
-    {:noreply,
-     socket
-     |> RecordActions.handle_record_updated(record)
-     |> assign_similar_records()}
+    if record.id == socket.assigns.record.id do
+      {:noreply,
+       socket
+       |> RecordActions.handle_record_updated(record)
+       |> assign_similar_records()}
+    else
+      {:noreply, socket}
+    end
   end
 
   defp page_title(action, record) do

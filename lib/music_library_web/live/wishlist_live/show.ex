@@ -284,12 +284,8 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
   end
 
   @impl true
-  def mount(%{"id" => record_id}, _session, socket) do
+  def mount(_params, _session, socket) do
     current_date = DateTime.utc_now() |> DateTime.to_date()
-
-    if connected?(socket) do
-      Records.subscribe(record_id)
-    end
 
     {:ok,
      socket
@@ -299,6 +295,8 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
+    RecordActions.manage_subscription(socket, id)
+
     record = Records.get_record!(id)
     online_store_templates = OnlineStoreTemplates.list_enabled_templates()
 
@@ -367,7 +365,11 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
   @impl true
   def handle_info({:update, record}, socket) do
-    {:noreply, RecordActions.handle_record_updated(socket, record)}
+    if record.id == socket.assigns.record.id do
+      {:noreply, RecordActions.handle_record_updated(socket, record)}
+    else
+      {:noreply, socket}
+    end
   end
 
   defp page_title(action, record) do
