@@ -74,7 +74,7 @@ _These rules apply to any scrollable view (day list, detail page, or future addi
 
 - Sleep by setting backlight to `0.0`. WiFi stays enabled.
 - The first touch after sleep must wake the backlight and be consumed — it must not also activate a button or trigger a scroll.
-- On wake, only reconnect WiFi if the connection dropped.
+- On wake, `set_today()` refreshes the global date from the system clock, WiFi is reconnected if it dropped, and the current view is always redrawn so the today-highlight stays current across midnight.
 
 ## API Contract
 

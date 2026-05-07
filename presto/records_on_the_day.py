@@ -469,7 +469,8 @@ def sleep_display():
 
 
 def wake_display():
-    """Restore the display backlight and reconnect WiFi if needed."""
+    """Restore the display backlight, refresh the clock, reconnect WiFi if
+    needed, and redraw so the today-highlight stays current."""
     global _display_awake
 
     try:
@@ -478,9 +479,14 @@ def wake_display():
         pass
 
     _display_awake = True
+
+    # Refresh today's date from the system clock (may have crossed midnight).
+    set_today()
+
     if not wifi_connected():
-        if ensure_wifi_connected():
-            redraw_current_view()
+        ensure_wifi_connected()
+
+    redraw_current_view()
 
 
 def wifi_connected():
