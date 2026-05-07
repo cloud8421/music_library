@@ -300,7 +300,7 @@ defmodule MusicLibraryWeb.StatsComponents do
       :if={@years && same_year?(@years)}
       class={[
         "text-xs/5",
-        "animate-shine bg-linear-to-br from-red-700 via-red-300 to-red-700 bg-clip-text font-semibold text-transparent bg-[length:200%_100%]"
+        "animate-shine bg-linear-to-r from-red-700 via-red-300 to-red-700 bg-clip-text font-semibold text-transparent bg-[length:200%_100%]"
       ]}
     >
       {gettext("Today")}
@@ -311,9 +311,9 @@ defmodule MusicLibraryWeb.StatsComponents do
         "text-xs/5",
         normal_year?(@years) && "text-zinc-500 dark:text-zinc-400",
         gold_year?(@years) &&
-          "animate-shine bg-linear-to-br from-yellow-700 via-yellow-300 to-yellow-700 bg-clip-text font-semibold text-transparent bg-[length:200%_100%]",
+          "animate-shine bg-linear-to-r from-yellow-700 via-yellow-300 to-yellow-700 bg-clip-text font-semibold text-transparent bg-[length:200%_100%]",
         silver_year?(@years) &&
-          "animate-shine bg-linear-to-br from-gray-600 via-gray-300 to-gray-600 bg-clip-text font-semibold text-transparent bg-[length:200%_100%]"
+          "animate-shine bg-linear-to-r from-gray-600 via-gray-300 to-gray-600 bg-clip-text font-semibold text-transparent bg-[length:200%_100%]"
       ]}
     >
       {ngettext(

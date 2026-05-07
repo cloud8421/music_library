@@ -42,7 +42,7 @@
   --font-sans: "InterVariable", sans-serif;
   --font-sans--font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   --animate-shake: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-  --animate-shine: shine 3s linear infinite;
+  --animate-shine: shine 10s linear infinite;
   --animate-equalizer-bar: equalizer-bar 1.2s ease-in-out infinite;
 
   @keyframes shake {
