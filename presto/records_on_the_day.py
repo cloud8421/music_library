@@ -149,6 +149,8 @@ WIFI_TIMEOUT = 30
 DISPLAY_SLEEP_MS = 60_000
 DISPLAY_BRIGHTNESS = 1.0
 DISPLAY_SLEEP_BRIGHTNESS = 0.0
+DISPLAY_FADE_MS = 500
+DISPLAY_FADE_STEPS = 20
 
 # ============================================================================
 # GLOBAL STATE
@@ -456,28 +458,31 @@ def make_date_string(year, month, day):
 # DISPLAY SLEEP
 # ============================================================================
 
+def _fade_backlight(start, end, duration_ms=DISPLAY_FADE_MS, steps=DISPLAY_FADE_STEPS):
+    """Gradually fade backlight from start to end brightness."""
+    step_delay = duration_ms / 1000.0 / steps
+    for i in range(steps + 1):
+        t = i / steps
+        brightness = start + (end - start) * t
+        try:
+            presto.set_backlight(brightness)
+        except Exception:
+            return
+        time.sleep(step_delay)
+
+
 def sleep_display():
-    """Turn off the display backlight while keeping the app running."""
+    """Turn off the display backlight with a gradual fade."""
     global _display_awake
-
-    try:
-        presto.set_backlight(DISPLAY_SLEEP_BRIGHTNESS)
-    except Exception:
-        pass
-
+    _fade_backlight(DISPLAY_BRIGHTNESS, DISPLAY_SLEEP_BRIGHTNESS)
     _display_awake = False
 
 
 def wake_display():
-    """Restore the display backlight, refresh the clock, reconnect WiFi if
+    """Fade the backlight in, then refresh the clock, reconnect WiFi if
     needed, and redraw so the today-highlight stays current."""
     global _display_awake
-
-    try:
-        presto.set_backlight(DISPLAY_BRIGHTNESS)
-    except Exception:
-        pass
-
+    _fade_backlight(DISPLAY_SLEEP_BRIGHTNESS, DISPLAY_BRIGHTNESS)
     _display_awake = True
 
     # Refresh today's date from the system clock (may have crossed midnight).
