@@ -18,7 +18,7 @@ ARG DEBIAN_VERSION=trixie-20260421-slim
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
 ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 
-FROM node:25-slim AS node
+FROM node:26-slim AS node
 
 FROM ${BUILDER_IMAGE} AS builder
 
