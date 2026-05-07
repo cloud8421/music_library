@@ -19,6 +19,7 @@ Key capabilities:
 - AI-powered record chat via OpenAI streaming with web search
 - Barcode scanning for quick imports
 - Encrypted secret storage (Cloak)
+- Presto companion display (MicroPython, 4" IPS LCD, "Records on this day")
 
 **Elixir ~> 1.14, Phoenix ~> 1.8, LiveView ~> 1.1, SQLite3**
 
@@ -249,10 +250,10 @@ HTTP 429 into `:rate_limit` vs `:auth_error` by reading the body `code`
 
 ## PubSub Topics
 
-| PubSub           | Topic Pattern              | Message             | Used By                                                            |
-| ---------------- | -------------------------- | ------------------- | ------------------------------------------------------------------ |
-| `:music_library` | `"records:#{id}"`          | `{:update, record}` | CollectionLive.Show, WishlistLive.Show — real-time record updates  |
-| `:music_library` | `"listening_stats:update"` | `%{track_count: n}` | StatsLive.Index, ScrobbledTracksLive.Index — new scrobbles arrived |
+| PubSub           | Topic Pattern              | Message             | Used By                                                                                        |
+| ---------------- | -------------------------- | ------------------- | ---------------------------------------------------------------------------------------------- |
+| `:music_library` | `"records:#{id}"`          | `{:update, record}` | CollectionLive.Show, WishlistLive.Show — subscribe in handle_params, unsubscribe on navigation |
+| `:music_library` | `"listening_stats:update"` | `%{track_count: n}` | StatsLive.Index, ScrobbledTracksLive.Index — new scrobbles arrived                             |
 
 ---
 
@@ -345,7 +346,7 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `LastFmController`     | `/auth/last_fm/callback`                                                                                                                                     | Last.fm OAuth                                                                                                                 |
 | `ArchiveController`    | `/backup`, `/api/v1/backup`                                                                                                                                  | Database backup download (API route requires token)                                                                           |
 | `AssetController`      | `/assets/:transform_payload`, `/public/assets/:transform_payload`, `/api/v1/assets/:transform_payload`                                                       | Serve images with transforms (public route for emails, API route requires token)                                              |
-| `CollectionController` | `/api/v1/collection/*`                                                                                                                                       | JSON API for collection queries                                                                                               |
+| `CollectionController` | `/api/v1/collection/*`                                                                                                                                       | JSON API for collection queries (returns 4 cover sizes: cover, thumb/480px, mini/150px, micro/40px)                           |
 | `ErrorController`      | `/api/v1/errors`, `/api/v1/errors/:id`, `/api/v1/errors/:id/mute`, `/api/v1/errors/:id/unmute`, `/api/v1/errors/:id/resolve`, `/api/v1/errors/:id/unresolve` | JSON API for production error queries and mutations (requires Bearer token); POST endpoints for mute/unmute/resolve/unresolve |
 
 ---

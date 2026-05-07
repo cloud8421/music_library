@@ -20,7 +20,7 @@ Key rules: imperative present tense, single-line under 60 characters, task ID pr
 
 - **Context modules own all queries.** LiveViews never query the database directly -- they call context functions.
 - **Schemas hold pure accessor/helper functions** on the struct (e.g., `RecordSet.count_by_status/1`). No side effects in schemas.
-- **LiveView standard structure:** `mount/3` sets `@current_section`, `handle_params/3` loads data and sets `@page_title` (via pattern-matched private `page_title/2`), `handle_info/2` receives LiveComponent messages.
+- **LiveView standard structure:** `mount/3` sets `@current_section`, `handle_params/3` loads data, sets `@page_title` (via pattern-matched private `page_title/2`), and manages PubSub subscriptions via `LiveHelpers.RecordActions.manage_subscription/2` (unsubscribing from the previous record and subscribing to the new one). `handle_info/2` receives LiveComponent messages and validates inbound record updates against `socket.assigns.record.id` to discard stale messages.
 - **LiveComponents communicate with parent** via `send(self(), {__MODULE__, msg})`.
 - **Function components go in domain-specific modules:** `CoreComponents` for generic UI, `RecordComponents` for records, `ScrobbleComponents` for scrobbles, `SearchComponents` for search.
 - **External API integrations** follow a three-module pattern: Facade (public API), API (Req HTTP client), Config (NimbleOptions).
