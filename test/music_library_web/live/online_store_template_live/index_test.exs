@@ -25,7 +25,7 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.IndexTest do
       assert has_element?(view, "p", "Bandcamp")
 
       view
-      |> form("form", query: "Amazon")
+      |> form("form:not([phx-target])", query: "Amazon")
       |> render_change()
 
       assert_patch(view, ~p"/online-store-templates?page=1&page_size=50&query=Amazon")

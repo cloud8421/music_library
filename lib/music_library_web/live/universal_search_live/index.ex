@@ -11,7 +11,6 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
     ~H"""
     <div id={@id} phx-hook="UniversalSearchNavigation">
       <.structured_modal
-        :if={@show_modal}
         id="universal-search-root"
         open={@show_modal}
         on_close={JS.push("close_modal", value: %{}, target: "#universal-search")}
@@ -184,8 +183,10 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
       id="universal-search-button"
       variant="soft"
       title={gettext("Search (Cmd/Ctrl+K)")}
-      phx-click="open_modal"
-      phx-target="#universal-search"
+      phx-click={
+        Fluxon.open_dialog("universal-search-root")
+        |> JS.push("open_modal", target: "#universal-search")
+      }
       phx-hook=".SearchGlobalShortcut"
     >
       <span class="sr-only">{gettext("Search (Cmd/Ctrl+K)")}</span>

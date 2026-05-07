@@ -23,7 +23,7 @@ defmodule MusicLibraryWeb.UniversalSearchLive.IndexTest do
     test "modal is hidden by default", %{conn: conn} do
       conn
       |> visit(~p"/collection")
-      |> refute_has("#universal-search-root")
+      |> assert_has("#universal-search-root[hidden]")
     end
 
     test "modal opens when search button is clicked", %{conn: conn} do

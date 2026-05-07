@@ -140,7 +140,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
       {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
 
       index_live
-      |> form("form[phx-change='search']", query: scrobble_rule.match_value)
+      |> form("form[phx-change='search']:not([phx-target])", query: scrobble_rule.match_value)
       |> render_change()
 
       assert_patch(index_live)

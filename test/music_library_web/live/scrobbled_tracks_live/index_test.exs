@@ -56,7 +56,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
       session
       |> unwrap(fn view ->
         view
-        |> form("form[phx-submit='search']", %{query: "Unique Track"})
+        |> form("form[phx-submit='search']:not([phx-target])", %{query: "Unique Track"})
         |> render_submit()
       end)
       |> assert_has("p", "Unique Track Title")

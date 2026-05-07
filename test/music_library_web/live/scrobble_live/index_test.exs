@@ -40,7 +40,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
     test "renders search page with form", %{conn: conn} do
       conn
       |> visit(~p"/scrobble")
-      |> assert_has("form[phx-submit='search']")
+      |> assert_has("form[phx-submit='search']:not([phx-target])")
     end
 
     test "shows connect Last.fm button when not authenticated", %{conn: conn} do
@@ -67,7 +67,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
       session
       |> unwrap(fn view ->
         view
-        |> form("form[phx-submit='search']", %{query: "marbles"})
+        |> form("form[phx-submit='search']:not([phx-target])", %{query: "marbles"})
         |> render_submit()
 
         render(view)
@@ -82,7 +82,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
       session
       |> unwrap(fn view ->
         view
-        |> form("form[phx-submit='search']", %{query: ""})
+        |> form("form[phx-submit='search']:not([phx-target])", %{query: ""})
         |> render_submit()
       end)
       |> refute_has("h3", "Release Groups")
@@ -108,7 +108,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
       session
       |> unwrap(fn view ->
         view
-        |> form("form[phx-submit='search']", %{query: "nonexistent"})
+        |> form("form[phx-submit='search']:not([phx-target])", %{query: "nonexistent"})
         |> render_submit()
 
         render(view)
