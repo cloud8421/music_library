@@ -37,10 +37,10 @@ MusicLibrary.Application (one_for_one)
 ├── MusicLibraryWeb.Telemetry    # Telemetry supervisor
 │   ├── Telemetry.Storage        # Buffered metrics storage (in-memory, 5s flush to SQLite, force-flush on read)
 │   └── :telemetry_poller        # 30s periodic measurements
+├── Phoenix.PubSub (:music_library)
 ├── Oban                         # Background job engine
 ├── Ecto.Migrator                # Migrations (skipped in release; run by Coolify post-deploy)
 ├── Task.Supervisor (MusicLibrary.TaskSupervisor)
-├── Phoenix.PubSub (:music_library)
 └── MusicLibraryWeb.Endpoint
 ```
 
