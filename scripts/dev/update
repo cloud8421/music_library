@@ -23,6 +23,10 @@ mix deps.update --all
 
 mix usage_rules.sync
 
+debug_msg "Updating pi s3-browser dependencies"
+
+npm update --prefix .pi/extensions/s3-browser
+
 debug_msg "Updating gh extensions"
 
 gh extension upgrade gfm-preview

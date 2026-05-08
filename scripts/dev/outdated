@@ -37,12 +37,17 @@ run_and_track "Sqlean" "mix sqlean.update_version" mix sqlean.check_version
 debug_msg "Checking outdated mix dependencies"
 run_and_track "Mix dependencies" "mix deps.update --all" mix hex.outdated --all
 
+debug_msg "Checking outdated pi s3-browser dependencies..."
+run_and_track "pi s3-browser dependencies" \
+  "npm update --prefix .pi/extensions/s3-browser" \
+  npm outdated --prefix .pi/extensions/s3-browser
+
 # Print summary table
 echo ""
 echo "========================================================================"
 echo "Summary"
 echo "========================================================================"
-printf "%-20s | %-16s | %s\n" "Dependency" "Status" "Next Step"
+printf "%-26s | %-16s | %s\n" "Dependency" "Status" "Next Step"
 echo "------------------------------------------------------------------------"
 
 red=$(tput setaf 1)
@@ -55,9 +60,9 @@ for i in "${!command_names[@]}"; do
   next_step="${command_next_steps[$i]}"
 
   if [ "$result" -eq 0 ]; then
-    printf "%-20s | %s%-18s%s | %s\n" "$name" "$green" "✓ Up to date" "$normal" "Nothing to do"
+    printf "%-26s | %s%-18s%s | %s\n" "$name" "$green" "✓ Up to date" "$normal" "Nothing to do"
   else
-    printf "%-20s | %s%-18s%s | %s\n" "$name" "$red" "✗ Outdated" "$normal" "$next_step"
+    printf "%-26s | %s%-18s%s | %s\n" "$name" "$red" "✗ Outdated" "$normal" "$next_step"
   fi
 done
 
