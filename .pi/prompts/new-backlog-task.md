@@ -13,7 +13,7 @@ Use the answers to create the backlog task WITHOUT acceptance criteria or implem
 
 The proceed to make a determination if the task requires research to determine the best implementation route.
 
-If there is more than one route, write your analysis into a backlog document and reference it in the backlog task.
+If there is more than one route, write your analysis into a backlog document and reference it in the backlog task. **Use a flat document path with no subfolders** (e.g., `doc-14 - Research-Exposing-additional-data-points.md`), consistent with the convention used by other documents in the project.
 
 Present all available implementation routes to me, so that I can offer feedback. Once I have picked a direction, update the backlog task with implementation plan and acceptance criteria.
 
