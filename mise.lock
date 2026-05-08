@@ -164,7 +164,7 @@ checksum = "sha256:d0418640a36096e00bddb57761aa0b1b98f91904ec4ed2b9dd75cbad723be
 url = "https://nodejs.org/dist/v26.0.0/node-v26.0.0-win-x64.zip"
 
 [[tools."npm:backlog.md"]]
-version = "1.45.0"
+version = "1.45.1"
 backend = "npm:backlog.md"
 
 [[tools."npm:prettier"]]
