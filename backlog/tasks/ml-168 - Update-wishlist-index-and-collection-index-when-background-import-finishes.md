@@ -3,8 +3,8 @@ id: ML-168
 title: Update wishlist index and collection index when background import finishes
 status: To Do
 assignee: []
-created_date: '2026-05-08 05:40'
-updated_date: '2026-05-08 06:04'
+created_date: "2026-05-08 05:40"
+updated_date: "2026-05-08 06:04"
 labels:
   - ready
 dependencies: []
