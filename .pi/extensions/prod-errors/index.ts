@@ -760,6 +760,16 @@ class ErrorBrowser {
     // ── List mode keys ────────────────────────────────────────────────
 
     if (this.mode === "list" || this.mode === "loading") {
+      if (matchesKey(data, "c")) {
+        if (this.errors.length > 0 && this.cursorIndex >= 0) {
+          const error = this.errors[this.cursorIndex];
+          if (error) {
+            this.onCopy?.(String(error.id));
+          }
+        }
+        return;
+      }
+
       if (matchesKey(data, "r")) {
         this.toggleResolved();
         return;
@@ -868,13 +878,11 @@ class ErrorBrowser {
         return;
       }
 
-      if (matchesKey(data, Key.enter)) {
-        // Copy current line to editor (prod-logs pattern)
+      if (matchesKey(data, "c")) {
         if (this.selectedError) {
-          const detailLines = this.buildDetailLines();
-          const idx = this.detailScrollOffset;
-          if (idx < detailLines.length) {
-            this.onCopy?.(detailLines[idx]!);
+          const text = this.buildStacktraceText();
+          if (text) {
+            this.onCopy?.(text);
           }
         }
         return;
@@ -1035,7 +1043,7 @@ class ErrorBrowser {
           error.reason,
           Math.max(30, width - 25),
         );
-        const line1 = `${cursor} ${statusBadge}${mutedLabel} ${error.kind}: ${reasonText}`;
+        const line1 = `${cursor} ${statusBadge} #${error.id}${mutedLabel} ${error.kind}: ${reasonText}`;
         result.push(
           truncateToWidth(
             isCursor ? theme.fg("accent", line1) : line1,
@@ -1075,7 +1083,7 @@ class ErrorBrowser {
       truncateToWidth(
         theme.fg(
           "dim",
-          ` ↑↓/jk navigate  ↵ details  r ${resolvedLabel} resolved  m ${mutedLabel} muted  M toggle mute  R toggle resolve`,
+          ` ↑↓/jk navigate  c copy id  ↵ details  r ${resolvedLabel} resolved  m ${mutedLabel} muted  M toggle mute  R toggle resolve`,
         ),
         width,
         "",
@@ -1104,6 +1112,29 @@ class ErrorBrowser {
     return formatDetailLines(error);
   }
 
+  private buildStacktraceText(): string {
+    const error = this.selectedError;
+    if (!error) return "";
+    const lines: string[] = [];
+    const occurrences = error.occurrences ?? [];
+    for (const occ of occurrences) {
+      if (occ.stacktrace?.lines?.length) {
+        lines.push(`# Occurrence ${occ.inserted_at}`);
+        for (const sl of occ.stacktrace.lines) {
+          const app = sl.application || "\u2014";
+          const loc = sl.file
+            ? `${sl.file}${sl.line != null ? `:${sl.line}` : ""}`
+            : "(nofile)";
+          lines.push(
+            `  ${app} / ${sl.module}.${sl.function}/${sl.arity}  ${loc}`,
+          );
+        }
+        lines.push("");
+      }
+    }
+    return lines.join("\n").trimEnd();
+  }
+
   private renderDetail(width: number, theme: Theme): string[] {
     const border = theme.fg("accent", "─".repeat(width));
     const result: string[] = [];
@@ -1114,7 +1145,7 @@ class ErrorBrowser {
     // Header
     const error = this.selectedError;
     const headerText = error
-      ? ` Error #${error.id}: ${error.kind}`
+      ? ` Error #${error.id}: ${error.reason}`
       : " Error Detail";
     result.push(
       truncateToWidth(theme.fg("accent", theme.bold(headerText)), width, ""),
@@ -1154,7 +1185,7 @@ class ErrorBrowser {
       truncateToWidth(
         theme.fg(
           "dim",
-          ` Lines ${fromLine}-${toLine} of ${detailLines.length} (${pct}%)  ↑↓/jk scroll  Enter copy  M mute  R resolve  Escape back`,
+          ` Lines ${fromLine}-${toLine} of ${detailLines.length} (${pct}%)  ↑↓/jk scroll  c copy stacktrace  M mute  R resolve  Escape back`,
         ),
         width,
         "",
