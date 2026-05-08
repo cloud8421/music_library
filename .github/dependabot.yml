@@ -44,6 +44,13 @@ updates:
   - cloud8421
   ignore:
   - dependency-name: "live_toast"
+- package-ecosystem: npm
+  directory: ".pi/extensions/s3-browser"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  assignees:
+  - cloud8421
 - package-ecosystem: docker
   directory: /
   schedule:
