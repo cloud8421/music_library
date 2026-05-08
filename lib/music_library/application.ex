@@ -19,11 +19,11 @@ defmodule MusicLibrary.Application do
       MusicLibrary.BackgroundRepo,
       MusicLibrary.TelemetryRepo,
       MusicLibraryWeb.Telemetry,
+      {Phoenix.PubSub, name: MusicLibrary.PubSub},
       {Oban, Application.fetch_env!(:music_library, Oban)},
       {Ecto.Migrator,
        repos: Application.fetch_env!(:music_library, :ecto_repos), skip: skip_migrations?()},
       {Task.Supervisor, name: MusicLibrary.TaskSupervisor},
-      {Phoenix.PubSub, name: MusicLibrary.PubSub},
       # Start a worker by calling: MusicLibrary.Worker.start_link(arg)
       # {MusicLibrary.Worker, arg},
       # Start to serve requests, typically the last entry
