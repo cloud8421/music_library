@@ -140,9 +140,9 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:query, "")
-     |> assign(:collected_results, [])
-     |> assign(:wishlisted_results, [])
+     |> assign_new(:query, fn -> "" end)
+     |> assign_new(:collected_results, fn -> [] end)
+     |> assign_new(:wishlisted_results, fn -> [] end)
      |> assign(:existing_record_ids, existing_record_ids)}
   end
 
