@@ -4,7 +4,7 @@ title: Update wishlist index and collection index when background import finishe
 status: To Do
 assignee: []
 created_date: "2026-05-08 05:40"
-updated_date: "2026-05-08 06:04"
+updated_date: "2026-05-09 06:04"
 labels:
   - ready
 dependencies: []
@@ -279,3 +279,140 @@ No paid resources consumed. The change is purely in-process PubSub and existing 
 | `.agents/skills/ui-framework/SKILL.md` | No changes needed — existing patterns unchanged                                                                                                                                       |
 
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+
+# Implementation Plan — Route A (Revised)
+
+## Objective Alignment
+
+When background import Oban jobs complete, the collection and wishlist index pages must automatically show new records without requiring a manual refresh. Broadcast a PubSub event from import workers after success; index LiveViews subscribe and reload their streams.
+
+## Implementation Steps
+
+### Step 1: Add `broadcast_index_changed/0` to Records context
+
+**File**: `lib/music_library/records.ex`
+
+```elixir
+def broadcast_index_changed do
+  Phoenix.PubSub.broadcast(MusicLibrary.PubSub, "records:index_changed", :records_index_changed)
+end
+```
+
+Simple PubSub wrapper. No schema or DB changes.
+
+### Step 2: Add `subscribe_to_index/0` to Records context
+
+**File**: `lib/music_library/records.ex`
+
+```elixir
+def subscribe_to_index do
+  Phoenix.PubSub.subscribe(MusicLibrary.PubSub, "records:index_changed")
+end
+```
+
+### Step 3: Add `handle_index_changed/1` to IndexActions
+
+**File**: `lib/music_library_web/live_helpers/index_actions.ex`
+
+**Critical**: Must refresh `total_entries` (via `search_records_count`) before reloading the stream. Without this, the pagination bar shows stale page counts when records are added while browsing.
+
+```elixir
+def handle_index_changed(socket) do
+  config = socket.assigns.index_config
+  params = socket.assigns.record_list_params
+  total_records = config.context_module.search_records_count(params.query)
+  updated_params = %{params | total_entries: total_records}
+  load_and_assign_records(socket, updated_params)
+end
+```
+
+Both `search_records_count/2` and `load_and_assign_records/2` already exist as public functions on each context module.
+
+### Step 4: Subscribe in CollectionLive.Index
+
+**File**: `lib/music_library_web/live/collection_live/index.ex`
+
+Add `Records.subscribe_to_index()` in `mount/3` (only when `connected?(socket)`). Add guarded `handle_info`:
+
+```elixir
+def handle_info(:records_index_changed, socket) when socket.assigns.live_action in [:index, :edit] do
+  {:noreply, IndexActions.handle_index_changed(socket)}
+end
+
+def handle_info(:records_index_changed, socket), do: {:noreply, socket}
+```
+
+Guard rationale: on `:import` / `:barcode_scan` the grid is behind a modal — reload would waste a query and flicker the modal title. Only `:index` / `:edit` have the grid visible. Returning from sub-route triggers `handle_params` → fresh load anyway.
+
+### Step 5: Subscribe in WishlistLive.Index
+
+**File**: `lib/music_library_web/live/wishlist_live/index.ex`
+
+Same pattern as Step 4. Guard on `:index` and `:edit` only.
+
+### Step 6: Call `broadcast_index_changed/0` from import workers
+
+**Files**: `lib/music_library/worker/import_from_musicbrainz_release.ex`, `lib/music_library/worker/import_from_musicbrainz_release_group.ex`
+
+After `{:ok, _record}` match, insert `Records.broadcast_index_changed()` before `:ok`.
+
+### Step 7: Write tests
+
+1. `records_test.exs`: Subscribe, broadcast, assert_receive `:records_index_changed`.
+2. `import_from_musicbrainz_release_test.exs`: Subscribe before `perform_job`, assert_receive after success.
+3. `import_from_musicbrainz_release_group_test.exs`: Same pattern.
+4. **LiveView tests**: Mount index as `:index`, send `:records_index_changed`, verify stream reloaded AND `record_list_params.total_entries` refreshed. Also verify no-op when `live_action` is `:import`.
+5. **Manual browser**: Import 2+ records via cart and barcode scan. Confirm auto-update on both indexes, no modal title flicker, pagination bar reflects new total count.
+
+---
+
+## Design Decisions & Tradeoffs
+
+### Single topic for collection + wishlist
+
+Workers handle both types. Single `"records:index_changed"` topic means both indexes reload — one extra FTS query on the non-matching index, negligible. Splitting adds complexity for no gain.
+
+### Guard on `live_action`
+
+Prevents `page_title` flicker in modals during background import. Only reloads when grid is visible (`:index`, `:edit`).
+
+### Offset pagination and index change reloads
+
+The project uses offset-based pagination (`LIMIT ? OFFSET ?`). When `handle_index_changed` reloads, newly-inserted records shift existing records by sort position. If the user is on page 2+ when a background import completes, the page content may shift slightly (records from page 1 slide in, records from the end slide to page 3). Step 3's `total_entries` refresh keeps the pagination bar accurate.
+
+**Why acceptable**: In a personal library (hundreds to low thousands of records), the window is narrow — the background job must complete _after_ the user navigated to page 2+, which is unusual. When it happens, the shift is at most the imported count (typically 1–3). Imperceptible.
+
+**Cursor-based pagination rejected**: Keyset pagination (`WHERE column < :cursor`) would eliminate offset-shift but requires composite cursors per sort order, breaks numbered-page UI, complicates FTS5 joins, and doubles SQL for reverse navigation. A 2-week refactor vs. a 5-line fix — not warranted at this scale.
+
+### Double-reload on async import (harmless)
+
+`handle_cart_imported_async` pushes to base path → `handle_params` → full load. Worker completion triggers a second load via PubSub. Harmless — not worth optimizing.
+
+---
+
+## Architecture Impact
+
+| Touchpoint           | Impact                                                            |
+| -------------------- | ----------------------------------------------------------------- |
+| PubSub topic         | NEW: `"records:index_changed"` → `:records_index_changed`         |
+| Records context      | +2 functions: `broadcast_index_changed/0`, `subscribe_to_index/0` |
+| Import workers       | Both call `broadcast_index_changed/0` after success               |
+| CollectionLive.Index | + subscription in `mount`, + guarded `handle_info`                |
+| WishlistLive.Index   | Same as above                                                     |
+| IndexActions         | + `handle_index_changed/1`                                        |
+
+## Performance Profile
+
+- **PubSub**: O(1), max 2 subscribers. Dead subscribers auto-cleaned.
+- **Queries per refresh**: `search_records_count` (lightweight COUNT) + `search_records` (FTS5 join with LIMIT/OFFSET). Same cost as any search/sort action.
+- **Throttling**: Workers rate-limited by `:music_brainz` queue (concurrency: 1).
+- **Guarded**: Skipped on sub-routes (`:import`, `:barcode_scan`).
+
+## Documentation Updates
+
+- `docs/architecture.md`: Add `"records:index_changed"` to PubSub Topics table.
+<!-- SECTION:NOTES:END -->
