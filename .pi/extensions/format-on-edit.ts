@@ -9,6 +9,16 @@ function isPiTsFile(path: string, cwd: string): boolean {
   return resolve(cwd, path).startsWith(piDir);
 }
 
+function isDocsMd(path: string): boolean {
+  // Matches docs/*.md — only direct children, not nested
+  return /^docs\/[^/]+\.md$/.test(path);
+}
+
+function isBacklogMd(path: string): boolean {
+  // Matches backlog/**/*.md — any depth under backlog/
+  return /^backlog\/.+\.md$/.test(path);
+}
+
 async function formatElixir(
   pi: ExtensionAPI,
   path: string,
@@ -39,6 +49,12 @@ export default function (pi: ExtensionAPI) {
     if (ELIXIR_EXTENSIONS.some((ext) => path.endsWith(ext))) {
       try {
         await formatElixir(pi, path, ctx.signal);
+      } catch {
+        /* ignore */
+      }
+    } else if (isDocsMd(path) || isBacklogMd(path)) {
+      try {
+        await formatTypeScript(pi, path, ctx.signal);
       } catch {
         /* ignore */
       }
