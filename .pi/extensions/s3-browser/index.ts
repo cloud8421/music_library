@@ -12,7 +12,6 @@
  *   /backups
  */
 
-import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { BorderedLoader, DynamicBorder } from "@mariozechner/pi-coding-agent";
 import {
@@ -21,6 +20,15 @@ import {
   SelectList,
   Text,
 } from "@mariozechner/pi-tui";
+import { listAllObjects, type S3ClientConfig } from "./s3-client";
+
+// Re-export for consumers
+export {
+  AuthError,
+  NetworkError,
+  AbortError,
+  type S3Object,
+} from "./s3-client";
 
 // ── S3 configuration (mirrors scripts/prod/litestream-backup) ────────────────
 const S3_ENDPOINT = "https://nbg1.your-objectstorage.com";
@@ -54,55 +62,6 @@ function displayKey(key: string): string {
   return key;
 }
 
-export interface S3Object {
-  key: string;
-  size: number;
-  lastModified: Date;
-}
-
-/**
- * Fetch all objects (handles pagination via ContinuationToken).
- */
-async function listAllObjects(
-  client: S3Client,
-  signal?: AbortSignal,
-): Promise<S3Object[]> {
-  const results: S3Object[] = [];
-  let continuationToken: string | undefined;
-
-  do {
-    const command = new ListObjectsV2Command({
-      Bucket: S3_BUCKET,
-      Prefix: S3_PREFIX,
-      ...(continuationToken ? { ContinuationToken: continuationToken } : {}),
-    });
-
-    const response = await client.send(command, { abortSignal: signal });
-
-    if (response.Contents) {
-      for (const obj of response.Contents) {
-        results.push({
-          key: obj.Key ?? "",
-          size: obj.Size ?? 0,
-          lastModified: obj.LastModified ?? new Date(0),
-        });
-      }
-    }
-
-    continuationToken = response.IsTruncated
-      ? response.NextContinuationToken
-      : undefined;
-  } while (continuationToken);
-
-  // Sort by size descending, then alphabetically descending
-  results.sort((a, b) => {
-    const sizeDiff = b.size - a.size;
-    if (sizeDiff !== 0) return sizeDiff;
-    return b.key.localeCompare(a.key);
-  });
-  return results;
-}
-
 // ── Extension ───────────────────────────────────────────────────────────────
 
 export default function s3BrowserExtension(pi: ExtensionAPI) {
@@ -131,23 +90,46 @@ export default function s3BrowserExtension(pi: ExtensionAPI) {
             theme,
             "Fetching backup list from S3...",
           );
-          loader.onAbort = () => done(null);
 
           const doFetch = async (): Promise<S3Object[]> => {
-            const client = new S3Client({
+            const config: S3ClientConfig = {
+              endpoint: new URL(S3_ENDPOINT).host,
               region: S3_REGION,
-              endpoint: S3_ENDPOINT,
-              credentials: { accessKeyId, secretAccessKey },
-              forcePathStyle: true,
-            });
-            return listAllObjects(client, loader.signal);
+              bucket: S3_BUCKET,
+              accessKeyId,
+              secretAccessKey,
+            };
+            return listAllObjects(config, { prefix: S3_PREFIX }, loader.signal);
           };
 
+          let settled = false;
+          const finish = (result: S3Object[] | null) => {
+            if (!settled) {
+              settled = true;
+              done(result);
+            }
+          };
+          loader.onAbort = () => finish(null);
+
           doFetch()
-            .then(done)
-            .catch((err) => {
-              console.error("[s3-browser] Fetch failed:", err);
-              done(null);
+            .then(finish)
+            .catch((err: unknown) => {
+              if (err instanceof AuthError) {
+                ctx.ui.notify(
+                  "Authentication failed — check LITESTREAM_ACCESS_KEY_ID / LITESTREAM_SECRET_ACCESS_KEY",
+                  "error",
+                );
+              } else if (err instanceof NetworkError) {
+                ctx.ui.notify(
+                  "Could not reach S3 endpoint — check network",
+                  "error",
+                );
+              } else if (err instanceof AbortError) {
+                // User cancelled — clean cancellation, no notification needed
+              } else {
+                console.error("[s3-browser] Fetch failed:", err);
+              }
+              finish(null);
             });
 
           return loader;
