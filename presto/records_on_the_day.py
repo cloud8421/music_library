@@ -67,7 +67,7 @@ HEADER_Y = 0
 HEADER_H = 31
 HEADER_TEXT_H = 14
 HEADER_SIDE_MARGIN = 8
-HEADER_BUTTON_W = 44
+HEADER_BUTTON_W = 32
 HEADER_BUTTON_H = 25
 HEADER_BUTTON_Y = HEADER_Y + (HEADER_H - HEADER_BUTTON_H) // 2
 ARROW_W = HEADER_BUTTON_W
@@ -152,6 +152,38 @@ DISPLAY_SLEEP_BRIGHTNESS = 0.0
 DISPLAY_FADE_MS = 500
 DISPLAY_FADE_STEPS = 20
 
+# Home screen
+HOME_TITLE = "Music Library"
+HOME_TITLE_Y = 60
+HOME_BUTTON_W = WIDTH - 80
+HOME_BUTTON_H = 50
+HOME_BUTTON_X = 40
+HOME_BUTTON1_Y = 120
+HOME_BUTTON2_Y = HOME_BUTTON1_Y + HOME_BUTTON_H + 10
+HOME_BTN_BG = (55, 65, 81)  # Slate blue — distinct from BG and CELL_BG
+
+# On-screen keyboard
+KB_MARGIN = 20
+KB_KEY_GAP = 3
+KB_KEY_H = 38
+KB_KEY_W = (WIDTH - 2 * KB_MARGIN - 9 * KB_KEY_GAP) // 10
+
+KB_INPUT_Y = 42
+KB_INPUT_H = 28
+KB_INPUT_MARGIN = 40
+KB_ROWS_START_Y = KB_INPUT_Y + KB_INPUT_H + 12
+
+ALPHA_KEYS = [
+    list("qwertyuiop"),
+    list("asdfghjkl"),
+    list("zxcvbnm"),
+]
+
+NUM_KEYS = [
+    list("1234567890"),
+    list("-/:;()!@#$"),
+]
+
 # ============================================================================
 # GLOBAL STATE
 # ============================================================================
@@ -166,11 +198,13 @@ view_year = 2026
 view_month = 5
 
 # View state
-STATE_STARTUP = 0
-STATE_MONTH = 1
-STATE_DAY = 2
-STATE_RECORD = 3
-state = STATE_STARTUP
+STATE_MONTH = 0
+STATE_DAY = 1
+STATE_RECORD = 2
+STATE_HOME = 3
+STATE_SEARCH_INPUT = 4
+STATE_SEARCH_RESULTS = 5
+state = STATE_HOME
 
 # Day view state
 selected_day = 0           # 1-based day of month
@@ -185,6 +219,15 @@ _content_height = 0        # Cached total record list height
 # Detail view scroll
 detail_scroll_offset = 0   # Pixel scroll position for detail view
 _detail_content_height = 0 # Cached total detail content height
+
+# Search state
+search_query = ""           # Current search buffer (max ~50 chars)
+search_results = []         # Records from search API
+search_results_error = False
+search_scroll_offset = 0    # Separate scroll offset for search results
+_search_content_height = 0  # Separate content height cache for search results
+keyboard_mode = "alpha"     # "alpha" or "numbers"
+previous_state = None       # Track origin for detail-view back navigation
 
 # Touch debounce
 _last_touch = 0
@@ -216,6 +259,7 @@ _pen_artist = None
 _pen_error = None
 _pen_placeholder = None
 _pen_status = None
+_pen_home_btn = None
 
 
 def _init_pens():
@@ -223,7 +267,7 @@ def _init_pens():
     global _pen_bg, _pen_cell_bg, _pen_cell_other, _pen_today_bg
     global _pen_today_text, _pen_normal_text, _pen_dim_text, _pen_header_text
     global _pen_arrow, _pen_back, _pen_title, _pen_artist, _pen_error
-    global _pen_placeholder, _pen_status
+    global _pen_placeholder, _pen_status, _pen_home_btn
 
     _pen_bg = display.create_pen(*BG)
     _pen_cell_bg = display.create_pen(*CELL_BG)
@@ -240,6 +284,7 @@ def _init_pens():
     _pen_error = display.create_pen(*ERROR_COLOR)
     _pen_placeholder = display.create_pen(*PLACEHOLDER_BG)
     _pen_status = display.create_pen(*STATUS_TEXT)
+    _pen_home_btn = display.create_pen(*HOME_BTN_BG)
 
 
 # ============================================================================
@@ -480,8 +525,8 @@ def sleep_display():
 
 def wake_display():
     """Fade the backlight in, then refresh the clock, reconnect WiFi if
-    needed, and redraw so the today-highlight stays current."""
-    global _display_awake
+    needed, and always return to the home screen."""
+    global _display_awake, state
     _fade_backlight(DISPLAY_SLEEP_BRIGHTNESS, DISPLAY_BRIGHTNESS)
     _display_awake = True
 
@@ -491,6 +536,8 @@ def wake_display():
     if not wifi_connected():
         ensure_wifi_connected()
 
+    # Always return to home screen on wake
+    state = STATE_HOME
     redraw_current_view()
 
 
@@ -514,12 +561,18 @@ def ensure_wifi_connected():
 
 def redraw_current_view():
     """Redraw the active view after wake-time status messages."""
-    if state == STATE_MONTH:
+    if state == STATE_HOME:
+        draw_home_screen()
+    elif state == STATE_MONTH:
         draw_month_view()
     elif state == STATE_DAY:
         draw_day_view()
     elif state == STATE_RECORD:
         draw_record_detail()
+    elif state == STATE_SEARCH_INPUT:
+        draw_search_input()
+    elif state == STATE_SEARCH_RESULTS:
+        draw_search_results()
 
 
 # ============================================================================
@@ -572,6 +625,32 @@ def set_day_records(recs, had_error):
         return
 
     prepare_records_for_display()
+
+
+def fetch_search_results(query):
+    """Fetch search results from the API.
+
+    Returns (records_list, error_flag). Same shape as fetch_records().
+    """
+    # urequests doesn't have url-encode built-in; hand-encode common chars
+    encoded = query.replace(" ", "+")
+    url = API_BASE + "/api/v1/collection?q=" + encoded + "&limit=20"
+
+    try:
+        resp = urequests.get(url, headers=_auth_header())
+        if resp.status_code == 200:
+            data = resp.json()
+            recs = data.get("records", [])
+            resp.close()
+            gc.collect()
+            return recs, False
+        else:
+            resp.close()
+            gc.collect()
+            return [], True
+    except Exception:
+        gc.collect()
+        return [], True
 
 
 def fetch_thumbnail(url):
@@ -740,23 +819,41 @@ def draw_month_view():
     presto.update()
 
 
+HOME_BTN_W = 30
+HOME_BTN_H = 25
+HOME_BTN_Y = HEADER_Y + (HEADER_H - HOME_BTN_H) // 2
+
+
 def _draw_month_header():
-    """Draw the month/year title and navigation arrows at the top."""
+    """Draw the month/year title, navigation arrows, and Home button."""
     # Background bar
     display.set_pen(_pen_cell_bg)
     display.rectangle(0, HEADER_Y, WIDTH, HEADER_H)
 
-    # Month and year text (centered)
+    # Month and year text (centered between arrow buttons)
     display.set_pen(_pen_header_text)
     display.set_font("bitmap14_outline")
     title = "{} {}".format(MONTH_NAMES[view_month - 1], view_year)
     tw = display.measure_text(title, scale=1)
-    tx = (WIDTH - tw) // 2
+    # Left boundary: after Home + left-arrow; right boundary: before right-arrow
+    title_left = HEADER_SIDE_MARGIN + HOME_BTN_W + 4 + ARROW_W
+    title_right = WIDTH - ARROW_W - HEADER_SIDE_MARGIN
+    title_area = title_right - title_left
+    tx = title_left + (title_area - tw) // 2
     ty = HEADER_Y + (HEADER_H - HEADER_TEXT_H) // 2
     display.text(title, tx, ty, scale=1)
 
-    # Left arrow
-    lx = HEADER_SIDE_MARGIN
+    # Home button (leftmost)
+    hx = HEADER_SIDE_MARGIN
+    hy = HOME_BTN_Y
+    display.set_pen(_pen_placeholder)
+    display.rectangle(hx, hy, HOME_BTN_W, HOME_BTN_H)
+    display.set_pen(_pen_back)
+    display.set_font("bitmap8")
+    _draw_centered_text("H", hx, hy, HOME_BTN_W, HOME_BTN_H, 8)
+
+    # Left arrow (shifted right to make room for Home)
+    lx = hx + HOME_BTN_W + 4
     ly = HEADER_BUTTON_Y
     display.set_pen(_pen_placeholder)
     display.rectangle(lx, ly, ARROW_W, ARROW_H)
@@ -873,6 +970,300 @@ def _draw_centered_num(num, cx, cy):
     text = str(num)
     tw = display.measure_text(text, scale=1)
     display.text(text, cx - tw // 2, cy - 5, scale=1)
+
+
+# ============================================================================
+# DRAWING: HOME SCREEN (splash)
+# ============================================================================
+
+def draw_home_screen():
+    """Render the splash screen with two large touch targets."""
+    display.set_pen(_pen_bg)
+    display.clear()
+
+    # Title
+    display.set_pen(_pen_title)
+    display.set_font("bitmap14_outline")
+    tw = display.measure_text(HOME_TITLE, scale=1)
+    display.text(HOME_TITLE, (WIDTH - tw) // 2, HOME_TITLE_Y, scale=1)
+
+    # Buttons
+    _draw_home_button(HOME_BUTTON1_Y, "Search Collection")
+    _draw_home_button(HOME_BUTTON2_Y, "Today's Records")
+
+    presto.update()
+
+
+def _draw_home_button(y, label):
+    """Draw a large rounded-rectangle button for the splash screen."""
+    display.set_pen(_pen_home_btn)
+    display.rectangle(HOME_BUTTON_X, y, HOME_BUTTON_W, HOME_BUTTON_H)
+    display.set_pen(_pen_today_text)
+    display.set_font("bitmap8")
+    tw = display.measure_text(label, scale=1)
+    tx = HOME_BUTTON_X + (HOME_BUTTON_W - tw) // 2
+    ty = y + (HOME_BUTTON_H - 8) // 2
+    display.text(label, tx, ty, scale=1)
+
+
+# ============================================================================
+# DRAWING: SEARCH INPUT (keyboard)
+# ============================================================================
+
+def draw_search_input():
+    """Render the search input view with query field and on-screen keyboard."""
+    display.set_pen(_pen_bg)
+    display.clear()
+
+    _draw_search_input_header()
+
+    # Query text field
+    display.set_pen(_pen_cell_bg)
+    display.rectangle(KB_INPUT_MARGIN, KB_INPUT_Y,
+                      WIDTH - 2 * KB_INPUT_MARGIN, KB_INPUT_H)
+    display.set_pen(_pen_header_text)
+    display.set_font("bitmap8")
+    # Show cursor as underscore if query is empty
+    display_q = search_query if search_query else "_"
+    display.text(display_q, KB_INPUT_MARGIN + 8, KB_INPUT_Y + 12, scale=1)
+
+    _draw_keyboard()
+    presto.update()
+
+
+def _draw_search_input_header():
+    """Draw the search input header with title and Back-to-Home button."""
+    display.set_pen(_pen_cell_bg)
+    display.rectangle(0, DAY_HEADER_Y, WIDTH, DAY_HEADER_H)
+
+    # Back-to-Home button
+    bx, by = BACK_X, BACK_Y
+    display.set_pen(_pen_placeholder)
+    display.rectangle(bx, by, BACK_W, BACK_H)
+    display.set_pen(_pen_back)
+    display.set_font("bitmap8")
+    _draw_centered_text("<", bx, by, BACK_W, BACK_H, DAY_COUNT_TEXT_H)
+
+    # Title
+    display.set_pen(_pen_header_text)
+    display.set_font("bitmap14_outline")
+    title = "Search"
+    tw = display.measure_text(title, scale=1)
+    display.text(title, (WIDTH - tw) // 2,
+                 DAY_HEADER_Y + (DAY_HEADER_H - DAY_HEADER_TEXT_H) // 2, scale=1)
+
+
+def _draw_keyboard():
+    """Draw the on-screen QWERTY or numbers keyboard."""
+    display.set_font("bitmap8")
+    keys_matrix = ALPHA_KEYS if keyboard_mode == "alpha" else NUM_KEYS
+    toggle_label = "123" if keyboard_mode == "alpha" else "ABC"
+
+    cy = KB_ROWS_START_Y
+    for row_keys in keys_matrix:
+        num_keys = len(row_keys)
+        total_gap = (num_keys - 1) * KB_KEY_GAP
+        total_key_w = num_keys * KB_KEY_W
+        row_start_x = (WIDTH - total_key_w - total_gap) // 2
+        for i, char in enumerate(row_keys):
+            kx = row_start_x + i * (KB_KEY_W + KB_KEY_GAP)
+            _draw_key(kx, cy, char, KB_KEY_W, KB_KEY_H)
+        cy += KB_KEY_H + KB_KEY_GAP
+
+    # Bottom row: toggle | space | backspace | OK
+    bottom_w = (WIDTH - 2 * KB_MARGIN - 3 * KB_KEY_GAP) // 4
+    bx = KB_MARGIN
+    _draw_key(bx, cy, toggle_label, bottom_w, KB_KEY_H)
+    bx += bottom_w + KB_KEY_GAP
+    _draw_key(bx, cy, "Space", bottom_w, KB_KEY_H)
+    bx += bottom_w + KB_KEY_GAP
+    _draw_key(bx, cy, "<-", bottom_w, KB_KEY_H)
+    bx += bottom_w + KB_KEY_GAP
+    ok_pen = _pen_dim_text if search_query.strip() == "" else _pen_header_text
+    _draw_key(bx, cy, "OK", bottom_w, KB_KEY_H, text_pen=ok_pen)
+
+
+def _draw_key(x, y, label, w, h, text_pen=None):
+    """Draw a single keyboard key as a rounded rectangle with centered label."""
+    display.set_pen(_pen_cell_bg)
+    display.rectangle(x, y, w, h)
+    pen = text_pen if text_pen is not None else _pen_normal_text
+    display.set_pen(pen)
+    tw = display.measure_text(label, scale=1)
+    tx = x + (w - tw) // 2
+    ty = y + (h - 8) // 2
+    display.text(label, tx, ty, scale=1)
+
+
+def _keyboard_hit_test(x, y):
+    """Map a touch (x, y) to a keyboard action.
+
+    Returns: a character string, "toggle", "space", "backspace", "ok", or None.
+    """
+    if y < KB_ROWS_START_Y:
+        return None
+
+    keys_matrix = ALPHA_KEYS if keyboard_mode == "alpha" else NUM_KEYS
+
+    cy = KB_ROWS_START_Y
+    for row_keys in keys_matrix:
+        num_keys = len(row_keys)
+        total_gap = (num_keys - 1) * KB_KEY_GAP
+        total_key_w = num_keys * KB_KEY_W
+        row_start_x = (WIDTH - total_key_w - total_gap) // 2
+        for i, char in enumerate(row_keys):
+            kx = row_start_x + i * (KB_KEY_W + KB_KEY_GAP)
+            if kx <= x < kx + KB_KEY_W and cy <= y < cy + KB_KEY_H:
+                return char
+        cy += KB_KEY_H + KB_KEY_GAP
+
+    # Bottom row
+    bottom_w = (WIDTH - 2 * KB_MARGIN - 3 * KB_KEY_GAP) // 4
+    bx = KB_MARGIN
+    if bx <= x < bx + bottom_w and cy <= y < cy + KB_KEY_H:
+        return "toggle"
+    bx += bottom_w + KB_KEY_GAP
+    if bx <= x < bx + bottom_w and cy <= y < cy + KB_KEY_H:
+        return "space"
+    bx += bottom_w + KB_KEY_GAP
+    if bx <= x < bx + bottom_w and cy <= y < cy + KB_KEY_H:
+        return "backspace"
+    bx += bottom_w + KB_KEY_GAP
+    if bx <= x < bx + bottom_w and cy <= y < cy + KB_KEY_H:
+        return "ok"
+
+    return None
+
+
+def _flash_key(kx, ky, kw, kh, label):
+    """Brief visual feedback for a key press."""
+    _draw_key(kx, ky, label, kw, kh, text_pen=_pen_today_text)
+    display.set_pen(_pen_arrow)
+    display.rectangle(kx, ky, kw, kh)
+    presto.update()
+    time.sleep(0.05)
+
+
+# ============================================================================
+# DRAWING: SEARCH RESULTS
+# ============================================================================
+
+def draw_search_results():
+    """Render the search results view, reusing record-list rendering."""
+    global search_scroll_offset
+
+    display.set_pen(_pen_bg)
+    display.clear()
+
+    _draw_search_results_header()
+
+    if search_results_error:
+        _draw_search_error()
+        presto.update()
+        return
+
+    if not search_results:
+        _draw_search_empty()
+        presto.update()
+        return
+
+    _draw_search_record_list()
+    presto.update()
+
+
+def _draw_search_results_header():
+    """Draw the search results header with Back button and query label."""
+    display.set_pen(_pen_cell_bg)
+    display.rectangle(0, DAY_HEADER_Y, WIDTH, DAY_HEADER_H)
+
+    # Back button → search input (preserves query)
+    bx, by = BACK_X, BACK_Y
+    display.set_pen(_pen_placeholder)
+    display.rectangle(bx, by, BACK_W, BACK_H)
+    display.set_pen(_pen_back)
+    display.set_font("bitmap8")
+    _draw_centered_text("<", bx, by, BACK_W, BACK_H, DAY_COUNT_TEXT_H)
+
+    # Title "Search: <query>" — truncate for display only, never mutate
+    # the global search_query so user can refine on Back
+    display.set_pen(_pen_header_text)
+    display.set_font("bitmap14_outline")
+    display_label = "Search: " + search_query
+    max_w = WIDTH - (BACK_X + BACK_W + 8) - 8
+    if display.measure_text(display_label, scale=1) > max_w:
+        suffix = "..."
+        display_q = search_query
+        while (display.measure_text("Search: " + display_q + suffix, scale=1) > max_w
+               and len(display_q) > 0):
+            display_q = display_q[:-1]
+        display_label = "Search: " + (display_q + suffix if display_q else suffix)
+    tw = display.measure_text(display_label, scale=1)
+    display.text(display_label, (WIDTH - tw) // 2,
+                 DAY_HEADER_Y + (DAY_HEADER_H - DAY_HEADER_TEXT_H) // 2, scale=1)
+
+
+def _draw_search_record_list():
+    """Draw the scrollable search results list, mirroring day-view scroll."""
+    global search_scroll_offset
+
+    max_offset = _search_max_scroll_offset()
+    search_scroll_offset = min(max(0, search_scroll_offset), max_offset)
+
+    # Up arrow if scrolled down
+    if search_scroll_offset > 0:
+        display.set_pen(_pen_arrow)
+        display.set_font("bitmap14_outline")
+        display.text("^", WIDTH // 2 - 8, RECORD_START_Y - 28, scale=1)
+
+    cy = RECORD_START_Y - search_scroll_offset
+    for rec in search_results:
+        row_h = rec.get("_row_height", THUMB_SIZE + 8)
+        row_bottom = cy + row_h
+
+        if row_bottom <= RECORD_START_Y:
+            cy = row_bottom
+            continue
+
+        if cy >= HEIGHT - 28:
+            break
+
+        _draw_record_row(rec, cy)
+        cy = row_bottom
+
+    # Down arrow if more records below
+    if search_scroll_offset < max_offset:
+        display.set_pen(_pen_arrow)
+        display.set_font("bitmap14_outline")
+        display.text("v", WIDTH // 2 - 8, HEIGHT - 24, scale=1)
+
+
+def _search_max_scroll_offset():
+    """Return the maximum pixel scroll offset for search results."""
+    viewport_h = HEIGHT - RECORD_START_Y - 28
+    return max(0, _search_content_height - viewport_h)
+
+
+def _draw_search_empty():
+    """Show 'No records found' message."""
+    display.set_pen(_pen_dim_text)
+    display.set_font("bitmap8")
+    msg = "No records found"
+    mw = display.measure_text(msg, scale=1)
+    display.text(msg, (WIDTH - mw) // 2, HEIGHT // 2 - 10, scale=1)
+
+
+def _draw_search_error():
+    """Show search error message with retry hint."""
+    display.set_pen(_pen_error)
+    display.set_font("bitmap8")
+    msg = "Could not reach server"
+    mw = display.measure_text(msg, scale=1)
+    display.text(msg, (WIDTH - mw) // 2, HEIGHT // 2 - 20, scale=1)
+
+    display.set_pen(_pen_dim_text)
+    hint = "Tap to retry"
+    hw = display.measure_text(hint, scale=1)
+    display.text(hint, (WIDTH - hw) // 2, HEIGHT // 2 + 10, scale=1)
 
 
 # ============================================================================
@@ -1007,18 +1398,32 @@ def _max_scroll_offset():
     return max(0, _content_height - viewport_h)
 
 
-def prepare_records_for_display():
-    """Cache display fields, row heights, and thumbnails for current records."""
-    global _content_height
+def prepare_records_for_display(recs=None):
+    """Cache display fields, row heights, and thumbnails for a record list.
+
+    If recs is None, uses the global records list (day view).
+    When recs is search_results, updates _search_content_height.
+    """
+    global _content_height, _search_content_height, records, search_results
+    if recs is None:
+        recs = records
 
     display.set_font("bitmap8")
-    _content_height = 0
 
-    for rec in records:
+    is_search = recs is search_results
+    if is_search:
+        _search_content_height = 0
+    else:
+        _content_height = 0
+
+    for rec in recs:
         _prepare_record_for_display(rec)
-        _content_height += rec.get("_row_height", THUMB_SIZE + 8)
+        if is_search:
+            _search_content_height += rec.get("_row_height", THUMB_SIZE + 8)
+        else:
+            _content_height += rec.get("_row_height", THUMB_SIZE + 8)
 
-    preload_record_thumbnails()
+    preload_record_thumbnails(recs)
     gc.collect()
 
 
@@ -1036,9 +1441,11 @@ def _prepare_record_for_display(rec):
     rec["_row_height"] = _record_row_height(rec)
 
 
-def preload_record_thumbnails():
-    """Fetch thumbnail bytes before the first day-view draw."""
-    for rec in records:
+def preload_record_thumbnails(recs=None):
+    """Fetch thumbnail bytes before the first draw of a record list."""
+    if recs is None:
+        recs = records
+    for rec in recs:
         if rec.get("micro_cover_url", ""):
             _record_thumbnail_data(rec)
 
@@ -1263,7 +1670,10 @@ def draw_record_detail():
     display.set_pen(_pen_bg)
     display.clear()
 
-    rec = records[selected_record_idx]
+    if previous_state == STATE_SEARCH_RESULTS:
+        rec = search_results[selected_record_idx]
+    else:
+        rec = records[selected_record_idx]
 
     # Measure content height so scroll bounds are known
     _measure_detail_content(rec)
@@ -1541,14 +1951,22 @@ def cell_to_day(row, col):
     return None
 
 
-def touch_to_record_index(y):
+def touch_to_record_index(y, recs=None, offset=None):
     """Map a touch y-coordinate to a record list index, accounting for
-    scroll offset. Returns None if the touch doesn't hit a record row."""
-    if not records:
+    scroll offset. Use recs/offset params for search results, or defaults
+    for day view."""
+    if recs is None:
+        recs = records
+        if offset is None:
+            offset = scroll_offset
+    elif offset is None:
+        offset = search_scroll_offset
+
+    if not recs:
         return None
 
-    cy = RECORD_START_Y - scroll_offset
-    for i, rec in enumerate(records):
+    cy = RECORD_START_Y - offset
+    for i, rec in enumerate(recs):
         row_h = rec.get("_row_height", THUMB_SIZE + 8)
         if cy <= y < cy + row_h:
             return i
@@ -1556,12 +1974,146 @@ def touch_to_record_index(y):
     return None
 
 
+def handle_home_touch(x, y):
+    """Process a touch event on the home/splash screen."""
+    global state, search_query, keyboard_mode
+    global view_year, view_month, selected_day
+
+    # "Search Collection" button
+    if (HOME_BUTTON_X <= x <= HOME_BUTTON_X + HOME_BUTTON_W and
+            HOME_BUTTON1_Y <= y <= HOME_BUTTON1_Y + HOME_BUTTON_H):
+        search_query = ""
+        keyboard_mode = "alpha"
+        state = STATE_SEARCH_INPUT
+        draw_search_input()
+        return
+
+    # "Today's Records" button → month view with today highlighted
+    if (HOME_BUTTON_X <= x <= HOME_BUTTON_X + HOME_BUTTON_W and
+            HOME_BUTTON2_Y <= y <= HOME_BUTTON2_Y + HOME_BUTTON_H):
+        view_year = today_year
+        view_month = today_month
+        selected_day = today_day
+        state = STATE_MONTH
+        draw_month_view()
+        return
+
+
+def handle_search_input_touch(x, y):
+    """Process a touch event in search input view."""
+    global search_query, keyboard_mode, state, search_results, search_results_error
+    global search_scroll_offset, _search_content_height, previous_state
+
+    # Header Back → Home
+    if BACK_X <= x <= BACK_X + BACK_W and BACK_Y <= y <= BACK_Y + BACK_H:
+        state = STATE_HOME
+        draw_home_screen()
+        return
+
+    action = _keyboard_hit_test(x, y)
+    if action is None:
+        return
+
+    if action == "toggle":
+        keyboard_mode = "numbers" if keyboard_mode == "alpha" else "alpha"
+        draw_search_input()
+        return
+
+    if action == "space":
+        if len(search_query) < 50:
+            search_query += " "
+        draw_search_input()
+        return
+
+    if action == "backspace":
+        search_query = search_query[:-1]
+        draw_search_input()
+        return
+
+    if action == "ok":
+        if not search_query.strip():
+            return
+        draw_status("Searching for:\n" + search_query)
+        if not ensure_wifi_connected():
+            search_results_error = True
+            search_results = []
+            state = STATE_SEARCH_RESULTS
+            draw_search_results()
+            return
+        recs, had_error = fetch_search_results(search_query)
+        search_results = recs
+        search_results_error = had_error
+        search_scroll_offset = 0
+        if not had_error and recs:
+            prepare_records_for_display(recs)
+        previous_state = STATE_SEARCH_INPUT
+        state = STATE_SEARCH_RESULTS
+        draw_search_results()
+        return
+
+    # Character key
+    if len(search_query) < 50 and len(action) == 1:
+        search_query += action
+        draw_search_input()
+
+
+def handle_search_results_touch(x, y):
+    """Process a tap event in search results view.
+    Back button, error retry, and record row taps.
+    Row scroll is handled by the drag logic in the main loop."""
+    global state, search_results, search_results_error
+    global search_scroll_offset, selected_record_idx, detail_scroll_offset
+    global previous_state, records
+
+    # Back button → search input (preserves search_query so user can refine)
+    if BACK_X <= x <= BACK_X + BACK_W and BACK_Y <= y <= BACK_Y + BACK_H:
+        state = STATE_SEARCH_INPUT
+        draw_search_input()
+        return
+
+    # Error state: retry on tap anywhere
+    if search_results_error:
+        draw_status("Retrying search...")
+        if not ensure_wifi_connected():
+            search_results = []
+            draw_search_results()
+            return
+        recs, had_error = fetch_search_results(search_query)
+        search_results = recs
+        search_results_error = had_error
+        search_scroll_offset = 0
+        if not had_error and recs:
+            prepare_records_for_display(recs)
+        draw_search_results()
+        return
+
+    # Record row tap → detail view
+    if not search_results_error and search_results:
+        rec_idx = touch_to_record_index(y, recs=search_results,
+                                         offset=search_scroll_offset)
+
+        if rec_idx is not None:
+            selected_record_idx = rec_idx
+            detail_scroll_offset = 0
+            previous_state = STATE_SEARCH_RESULTS
+            state = STATE_RECORD
+            draw_record_detail()
+
+
 def handle_month_touch(x, y):
     """Process a touch event in month view state."""
     global view_year, view_month, selected_day, state, records, records_error, scroll_offset
 
-    # Check left arrow
-    lx, ly = HEADER_SIDE_MARGIN, HEADER_BUTTON_Y
+    # Check Home button
+    hx, hy = HEADER_SIDE_MARGIN, HOME_BTN_Y
+    if hx <= x <= hx + HOME_BTN_W and hy <= y <= hy + HOME_BTN_H:
+        state = STATE_HOME
+        draw_home_screen()
+        return
+
+    # Check left arrow (shifted right to make room for Home)
+    lx = HEADER_SIDE_MARGIN + HOME_BTN_W + 4
+    ly = HEADER_BUTTON_Y
     if lx <= x <= lx + ARROW_W and ly <= y <= ly + ARROW_H:
         view_year, view_month = previous_month(view_year, view_month)
         draw_month_view()
@@ -1644,8 +2196,9 @@ def main():
     global state, view_year, view_month, _last_touch
     global selected_day, selected_record_idx, records, records_error
     global scroll_offset, detail_scroll_offset
-    global _dragging
+    global _dragging, previous_state
     global _last_activity, _last_drag_redraw
+    global search_scroll_offset
 
     # -- Init display --
     init_display()
@@ -1667,21 +2220,15 @@ def main():
     sync_time()
     set_today()
 
-    # Start on today's records.
+    # Start on splash screen — no auto-fetch
     view_year = today_year
     view_month = today_month
     selected_day = today_day
-    state = STATE_DAY
+    state = STATE_HOME
     records_error = False
     scroll_offset = 0
 
-    draw_status("Loading records for\n{} {}, {}...".format(
-        MONTH_NAMES[view_month - 1], today_day, view_year
-    ))
-    recs, had_error = fetch_records(view_year, view_month, today_day)
-    set_day_records(recs, had_error)
-
-    draw_day_view()
+    draw_home_screen()
     _last_activity = time.ticks_ms()
 
     while True:
@@ -1709,7 +2256,79 @@ def main():
         _last_touch = now
         _last_activity = now
 
-        if state == STATE_MONTH:
+        # -- STATE_HOME: splash screen --
+        if state == STATE_HOME:
+            handle_home_touch(x, y)
+            wait_for_touch_release()
+
+        # -- STATE_SEARCH_INPUT: on-screen keyboard --
+        elif state == STATE_SEARCH_INPUT:
+            handle_search_input_touch(x, y)
+            wait_for_touch_release()
+
+        # -- STATE_SEARCH_RESULTS: search results list --
+        elif state == STATE_SEARCH_RESULTS:
+            # Check back button immediately (no drag needed)
+            if BACK_X <= x <= BACK_X + BACK_W and BACK_Y <= y <= BACK_Y + BACK_H:
+                state = STATE_SEARCH_INPUT
+                draw_search_input()
+                wait_for_touch_release()
+                continue
+
+            # Error state: retry on tap anywhere (before drag)
+            if search_results_error:
+                handle_search_results_touch(x, y)
+                wait_for_touch_release()
+                continue
+
+            # Track vertical drag for scrolling
+            drag_start_y = y
+            last_drag_y = y
+            pending_delta = 0
+            dragged = False
+            _dragging = False
+            _last_drag_redraw = time.ticks_ms()
+            while True:
+                touch_point = read_touch()
+                if touch_point is None:
+                    break
+
+                current_y = touch_point[1]
+                if abs(current_y - drag_start_y) >= DRAG_REDRAW_PX:
+                    dragged = True
+
+                pending_delta += last_drag_y - current_y
+                now = time.ticks_ms()
+                redraw_due = time.ticks_diff(now, _last_drag_redraw) >= DRAG_REDRAW_MS
+                if abs(pending_delta) >= DRAG_REDRAW_PX and redraw_due:
+                    max_offset = _search_max_scroll_offset()
+                    new_offset = min(max(0, search_scroll_offset + pending_delta), max_offset)
+                    if new_offset != search_scroll_offset:
+                        search_scroll_offset = new_offset
+                        _dragging = True
+                        draw_search_results()
+                        _last_drag_redraw = now
+                    pending_delta = 0
+
+                last_drag_y = current_y
+                time.sleep(0.01)
+
+            if dragged and pending_delta:
+                max_offset = _search_max_scroll_offset()
+                new_offset = min(max(0, search_scroll_offset + pending_delta), max_offset)
+                if new_offset != search_scroll_offset:
+                    search_scroll_offset = new_offset
+                    _dragging = True
+
+            if _dragging:
+                _dragging = False
+                draw_search_results()
+
+            if not dragged:
+                # Record row tap handled by handle_search_results_touch
+                handle_search_results_touch(x, y)
+
+        elif state == STATE_MONTH:
             handle_month_touch(x, y)
             wait_for_touch_release()
 
@@ -1771,6 +2390,7 @@ def main():
                     if rec_idx is not None:
                         selected_record_idx = rec_idx
                         detail_scroll_offset = 0
+                        previous_state = STATE_DAY
                         state = STATE_RECORD
                         draw_record_detail()
                         continue
@@ -1781,9 +2401,13 @@ def main():
         elif state == STATE_RECORD:
             # Check back button immediately (no drag needed)
             if BACK_X <= x <= BACK_X + BACK_W and BACK_Y <= y <= BACK_Y + BACK_H:
-                state = STATE_DAY
                 detail_scroll_offset = 0
-                draw_day_view()
+                if previous_state == STATE_SEARCH_RESULTS:
+                    state = STATE_SEARCH_RESULTS
+                    draw_search_results()
+                else:
+                    state = STATE_DAY
+                    draw_day_view()
                 wait_for_touch_release()
                 continue
 
