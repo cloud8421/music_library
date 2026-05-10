@@ -64,11 +64,11 @@ MAX_ROWS = 6
 
 # Header
 HEADER_Y = 0
-HEADER_H = 46
+HEADER_H = 31
 HEADER_TEXT_H = 14
 HEADER_SIDE_MARGIN = 8
 HEADER_BUTTON_W = 44
-HEADER_BUTTON_H = 32
+HEADER_BUTTON_H = 25
 HEADER_BUTTON_Y = HEADER_Y + (HEADER_H - HEADER_BUTTON_H) // 2
 ARROW_W = HEADER_BUTTON_W
 ARROW_H = HEADER_BUTTON_H
@@ -936,7 +936,7 @@ def _draw_day_header():
     cw = display.measure_text(count_str, scale=1)
     display.text(
         count_str,
-        WIDTH - cw - 16,
+        WIDTH - cw - 11,
         DAY_HEADER_Y + (DAY_HEADER_H - DAY_COUNT_TEXT_H) // 2,
         scale=1
     )
