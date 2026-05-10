@@ -382,17 +382,19 @@ def _draw_search_results_header():
     display.set_font("bitmap8")
     _draw_centered_text("<", bx, by, BACK_W, BACK_H, DAY_COUNT_TEXT_H)
 
-    # Title "Search: <query>" — truncate if needed
+    # Title "Search: <query>" — truncate a temporary copy for display only.
+    # Never mutate the global search_query (the user refines it on Back).
     display.set_pen(_pen_header_text)
     display.set_font("bitmap14_outline")
     label = "Search: " + search_query
     max_w = WIDTH - (BACK_X + BACK_W + 8) - 8
     if display.measure_text(label, scale=1) > max_w:
         display_ellipsis = "..."
-        while (display.measure_text("Search: " + search_query + display_ellipsis, scale=1) > max_w
-               and len(search_query) > 0):
-            search_query = search_query[:-1]
-        label = "Search: " + search_query + display_ellipsis if search_query else "Search: ..."
+        display_query = search_query
+        while (display.measure_text("Search: " + display_query + display_ellipsis, scale=1) > max_w
+               and len(display_query) > 0):
+            display_query = display_query[:-1]
+        label = "Search: " + display_query + display_ellipsis if display_query else "Search: ..."
     tw = display.measure_text(label, scale=1)
     display.text(label, (WIDTH - tw)//2,
                  DAY_HEADER_Y + (DAY_HEADER_H - DAY_HEADER_TEXT_H)//2, scale=1)
@@ -457,7 +459,17 @@ def prepare_records_for_display(recs=None):
     gc.collect()
 ```
 
-Similarly parameterize `preload_record_thumbnails(recs=None)`.
+Similarly parameterize `preload_record_thumbnails(recs=None)`:
+
+```python
+def preload_record_thumbnails(recs=None):
+    """Fetch thumbnail bytes before the first draw of the record list."""
+    if recs is None:
+        recs = records
+    for rec in recs:
+        if rec.get("micro_cover_url", ""):
+            _record_thumbnail_data(rec)
+```
 
 #### 5d. Empty and error states
 
@@ -479,9 +491,50 @@ def _draw_search_error():
     hint = "Tap to retry"
     hw = display.measure_text(hint, scale=1)
     display.text(hint, (WIDTH - hw) // 2, HEIGHT // 2 + 10, scale=1)
+
+def handle_search_results_touch(x, y):
+    """Process a tap event in search results view.
+    Back button, error retry, and record row taps.
+    Row scroll is handled by the drag logic in the main loop."""
+    global state, search_results, search_results_error
+    global search_scroll_offset, selected_record_idx, detail_scroll_offset
+    global previous_state
+
+    # Back button → search input (preserves search_query so user can refine)
+    if BACK_X <= x <= BACK_X + BACK_W and BACK_Y <= y <= BACK_Y + BACK_H:
+        state = STATE_SEARCH_INPUT
+        draw_search_input()
+        return
+
+    # Error state: retry on tap anywhere
+    if search_results_error:
+        draw_status("Retrying search...")
+        if not ensure_wifi_connected():
+            search_results_error = True
+            search_results = []
+            draw_search_results()
+            return
+        recs, had_error = fetch_search_results(search_query)
+        search_results = recs
+        search_results_error = had_error
+        search_scroll_offset = 0
+        if not had_error and recs:
+            prepare_records_for_display(recs)
+        draw_search_results()
+        return
+
+    # Record row tap → detail view
+    if not search_results_error and search_results:
+        rec_idx = touch_to_record_index(y)
+        if rec_idx is not None:
+            selected_record_idx = rec_idx
+            detail_scroll_offset = 0
+            previous_state = STATE_SEARCH_RESULTS
+            state = STATE_RECORD
+            draw_record_detail()
 ```
 
-**Verification:** Search results display with cover art, titles, artists, format, year — identical layout to day view. Back returns to STATE_SEARCH_INPUT with query preserved. Tapping a record opens detail. Empty/error states work. Scroll works identically to day view.
+**Verification:** Search results display with cover art, titles, artists, format, year — identical layout to day view. Back returns to STATE_SEARCH_INPUT with query preserved (original query is never truncated by header rendering). Tapping a record opens detail. Empty/error states work. Tapping in error state retries the search. Scroll works identically to day view.
 
 ### Step 6: Navigation state tracking for Back from detail
 
@@ -552,7 +605,14 @@ def handle_home_touch(x, y):
 
 **Design decision:** "Today's Records" goes to month view (with today highlighted) rather than directly to day view. This gives the user full calendar context — they can tap today or any other day. Consistent with the existing month-first navigation pattern.
 
-**Verification:** All touch handlers dispatch correctly. No crashes on state transitions. Scroll works in search results. Record taps in search results open detail.
+**Main loop dispatch additions:**
+
+- `STATE_HOME` → calls `handle_home_touch(x, y)`
+- `STATE_SEARCH_INPUT` → calls `handle_search_input_touch(x, y)`, then `wait_for_touch_release()`
+- `STATE_SEARCH_RESULTS` → checks back button / error tap via `handle_search_results_touch(x, y)`, then enters drag-scroll loop mirroring day-view logic (own `search_scroll_offset`, own `_search_content_height` cache)
+- `STATE_RECORD` → update Back button handler to navigate to `previous_state` instead of always `STATE_DAY`; if `previous_state == STATE_SEARCH_RESULTS` call `draw_search_results()`, if `previous_state == STATE_DAY` call `draw_day_view()`
+
+**Verification:** All touch handlers dispatch correctly. No crashes on state transitions. Scroll works in search results. Record taps in search results open detail. Tapping in search results error state retries the search.
 
 ### Step 10: Delete unused `STATE_STARTUP` references
 
