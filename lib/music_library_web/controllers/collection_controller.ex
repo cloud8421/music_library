@@ -28,12 +28,13 @@ defmodule MusicLibraryWeb.CollectionController do
   end
 
   def index(conn, params) do
+    query = normalize_query(params["q"])
     limit = parse_int(params["limit"], 20)
     offset = parse_int(params["offset"], 0)
 
-    total = Collection.search_records_count("")
+    total = Collection.search_records_count(query)
 
-    records = Collection.search_records("", limit: limit, offset: offset)
+    records = Collection.search_records(query, limit: limit, offset: offset)
 
     render(conn, :index, total: total, limit: limit, offset: offset, records: records)
   end
@@ -48,4 +49,8 @@ defmodule MusicLibraryWeb.CollectionController do
   end
 
   defp parse_int(_, default), do: default
+
+  defp normalize_query(nil), do: ""
+  defp normalize_query(""), do: ""
+  defp normalize_query(query), do: query
 end

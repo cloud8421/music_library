@@ -69,6 +69,81 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
                "records" => [expected_record_json(record)]
              }
     end
+
+    test "filters records when q param matches", %{conn: conn} do
+      beatles = record_with_artist("The Beatles", %{title: "Abbey Road"})
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{api_token()}")
+        |> get(~p"/api/v1/collection?q=beatles")
+
+      assert json_response(conn, 200) == %{
+               "total" => 1,
+               "limit" => 20,
+               "offset" => 0,
+               "records" => [expected_record_json(beatles)]
+             }
+    end
+
+    test "returns all records when q is empty string", %{conn: conn, record: record} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{api_token()}")
+        |> get(~p"/api/v1/collection?q=")
+
+      assert json_response(conn, 200) == %{
+               "total" => 1,
+               "limit" => 20,
+               "offset" => 0,
+               "records" => [expected_record_json(record)]
+             }
+    end
+
+    test "returns empty results when q matches nothing", %{conn: conn} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{api_token()}")
+        |> get(~p"/api/v1/collection?q=nonexistentxyz")
+
+      assert json_response(conn, 200) == %{
+               "total" => 0,
+               "limit" => 20,
+               "offset" => 0,
+               "records" => []
+             }
+    end
+
+    test "respects pagination with search query", %{conn: conn} do
+      _a = record_with_artist("The Beatles", %{title: "Abbey Road"})
+      b = record_with_artist("The Beatles", %{title: "Revolver"})
+      _c = record_with_artist("The Beatles", %{title: "Sgt Pepper"})
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{api_token()}")
+        |> get(~p"/api/v1/collection?q=beatles&limit=1&offset=1")
+
+      assert json_response(conn, 200) == %{
+               "total" => 3,
+               "limit" => 1,
+               "offset" => 1,
+               "records" => [expected_record_json(b)]
+             }
+    end
+
+    test "response shape is unchanged when searching", %{conn: conn} do
+      beatles = record_with_artist("The Beatles", %{title: "Abbey Road"})
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{api_token()}")
+        |> get(~p"/api/v1/collection?q=beatles")
+
+      response = json_response(conn, 200)
+      assert %{"total" => 1, "limit" => 20, "offset" => 0, "records" => [record_json]} = response
+      assert record_json == expected_record_json(beatles)
+    end
   end
 
   describe "GET /api/v1/collection/on_this_day" do
