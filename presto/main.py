@@ -198,60 +198,78 @@ NUM_KEYS = [
 ]
 
 # ============================================================================
-# GLOBAL STATE
+# STATE
 # ============================================================================
 
-api_token = ""
-
-# Time state
-today_year = 2026
-today_month = 5
-today_day = 1
-view_year = 2026
-view_month = 5
-
-# View state
+# View state constants
 STATE_MONTH = 0
 STATE_DAY = 1
 STATE_RECORD = 2
 STATE_HOME = 3
 STATE_SEARCH_INPUT = 4
 STATE_SEARCH_RESULTS = 5
-state = STATE_HOME
 
-# Day view state
-selected_day = 0           # 1-based day of month
-selected_record_idx = None # Index into records[] for detail view
-records = []               # List of record dicts from API
-records_error = False      # True if API call failed
-# Scroll state
-scroll_offset = 0          # Pixel scroll position for day view
-_dragging = False          # True while fast scroll redraws are active
-_content_height = 0        # Cached total record list height
 
-# Detail view scroll
-detail_scroll_offset = 0   # Pixel scroll position for detail view
-_detail_content_height = 0 # Cached total detail content height
+class DayListState:
+    """Mutable state for the day records list."""
 
-# Scrobble button state (per-record-detail-visit; resets on navigation)
-_scrobble_state = "idle"  # "idle" | "loading" | "done"
+    def __init__(self):
+        self.selected_day = 0
+        self.records = []
+        self.error = False
+        self.scroll_offset = 0
+        self.content_height = 0
 
-# Search state
-search_query = ""           # Current search buffer (max ~50 chars)
-search_results = []         # Records from search API
-search_results_error = False
-search_scroll_offset = 0    # Separate scroll offset for search results
-_search_content_height = 0  # Separate content height cache for search results
-keyboard_mode = "alpha"     # "alpha" or "numbers"
-previous_state = None       # Track origin for detail-view back navigation
 
-# Touch debounce
-_last_touch = 0
-_last_drag_redraw = 0
+class SearchState:
+    """Mutable state for search input and search results."""
 
-# Display sleep state
-_last_activity = 0
-_display_awake = True
+    def __init__(self):
+        self.query = ""
+        self.results = []
+        self.error = False
+        self.scroll_offset = 0
+        self.content_height = 0
+        self.keyboard_mode = "alpha"
+
+
+class DetailState:
+    """Mutable state for the record detail view."""
+
+    def __init__(self):
+        self.selected_index = None
+        self.source_screen = None
+        self.scroll_offset = 0
+        self.content_height = 0
+        self.scrobble_state = "idle"
+
+
+class TouchState:
+    """Mutable state for touch debounce, drag, and display sleep."""
+
+    def __init__(self):
+        self.last_touch = 0
+        self.last_drag_redraw = 0
+        self.dragging = False
+        self.last_activity = 0
+        self.display_awake = True
+
+
+class AppState:
+    """Top-level mutable application state."""
+
+    def __init__(self):
+        self.api_token = ""
+        self.screen = STATE_HOME
+        self.today_year = 2026
+        self.today_month = 5
+        self.today_day = 1
+        self.view_year = 2026
+        self.view_month = 5
+        self.day = DayListState()
+        self.search = SearchState()
+        self.detail = DetailState()
+        self.touch = TouchState()
 
 # ============================================================================
 # HELPER: PEN CREATION
@@ -330,6 +348,18 @@ def draw_wrapped(text, x, y, max_width, pen, scale=1):
     lines = _wrapped_lines(text, max_width, scale=scale)
 
     line_height = 8 * scale + 4  # bitmap8 is 8px tall, plus spacing
+    cy = y
+    display.set_pen(pen)
+    for line in lines:
+        display.text(line, x, cy, scale=scale)
+        cy += line_height
+
+    return cy
+
+
+def draw_wrapped_lines(lines, x, y, pen, scale=1):
+    """Draw pre-wrapped text lines and return the Y position after them."""
+    line_height = 8 * scale + 4
     cy = y
     display.set_pen(pen)
     for line in lines:
@@ -453,7 +483,7 @@ def next_month(year, month):
 # NETWORKING
 # ============================================================================
 
-def connect_wifi():
+def connect_wifi(app):
     """Connect to WiFi using credentials from secrets.py.
 
     Returns True on success, False on failure.
@@ -468,13 +498,12 @@ def connect_wifi():
 
     ssid = getattr(secrets, "WIFI_SSID", "")
     password = getattr(secrets, "WIFI_PASSWORD", "")
-    global api_token
-    api_token = getattr(secrets, "API_TOKEN", "")
+    app.api_token = getattr(secrets, "API_TOKEN", "")
 
     if not ssid:
         draw_status("ERROR: WIFI_SSID not set in secrets.py")
         return False
-    if not api_token:
+    if not app.api_token:
         draw_status("ERROR: API_TOKEN not set in secrets.py")
         return False
 
@@ -515,13 +544,12 @@ def sync_time():
         pass
 
 
-def set_today():
-    """Read current date from system clock into global today_* vars."""
-    global today_year, today_month, today_day
+def set_today(app):
+    """Read current date from system clock into app today fields."""
     lt = time.localtime()
-    today_year = lt[0]
-    today_month = lt[1]
-    today_day = lt[2]
+    app.today_year = lt[0]
+    app.today_month = lt[1]
+    app.today_day = lt[2]
 
 
 def make_date_string(year, month, day):
@@ -546,29 +574,25 @@ def _fade_backlight(start, end, duration_ms=DISPLAY_FADE_MS, steps=DISPLAY_FADE_
         time.sleep(step_delay)
 
 
-def sleep_display():
+def sleep_display(app):
     """Turn off the display backlight with a gradual fade."""
-    global _display_awake
     _fade_backlight(DISPLAY_BRIGHTNESS, DISPLAY_SLEEP_BRIGHTNESS)
-    _display_awake = False
+    app.touch.display_awake = False
 
 
-def wake_display():
+def wake_display(app):
     """Fade the backlight in, then refresh the clock, reconnect WiFi if
-    needed, and always return to the home screen."""
-    global _display_awake, state
+    needed, and redraw the current view."""
     _fade_backlight(DISPLAY_SLEEP_BRIGHTNESS, DISPLAY_BRIGHTNESS)
-    _display_awake = True
+    app.touch.display_awake = True
 
     # Refresh today's date from the system clock (may have crossed midnight).
-    set_today()
+    set_today(app)
 
     if not wifi_connected():
-        ensure_wifi_connected()
+        ensure_wifi_connected(app)
 
-    # Always return to home screen on wake
-    state = STATE_HOME
-    redraw_current_view()
+    redraw_current_view(app)
 
 
 def wifi_connected():
@@ -581,40 +605,40 @@ def wifi_connected():
         return False
 
 
-def ensure_wifi_connected():
+def ensure_wifi_connected(app):
     """Reconnect WiFi if it dropped while the display was asleep."""
     if wifi_connected():
         return True
 
-    return connect_wifi()
+    return connect_wifi(app)
 
 
-def redraw_current_view():
+def redraw_current_view(app):
     """Redraw the active view after wake-time status messages."""
-    if state == STATE_HOME:
-        draw_home_screen()
-    elif state == STATE_MONTH:
-        draw_month_view()
-    elif state == STATE_DAY:
-        draw_day_view()
-    elif state == STATE_RECORD:
-        draw_record_detail()
-    elif state == STATE_SEARCH_INPUT:
-        draw_search_input()
-    elif state == STATE_SEARCH_RESULTS:
-        draw_search_results()
+    if app.screen == STATE_HOME:
+        draw_home_screen(app)
+    elif app.screen == STATE_MONTH:
+        draw_month_view(app)
+    elif app.screen == STATE_DAY:
+        draw_day_view(app)
+    elif app.screen == STATE_RECORD:
+        draw_record_detail(app)
+    elif app.screen == STATE_SEARCH_INPUT:
+        draw_search_input(app)
+    elif app.screen == STATE_SEARCH_RESULTS:
+        draw_search_results(app)
 
 
 # ============================================================================
 # API CLIENT
 # ============================================================================
 
-def _auth_header():
+def _auth_header(app):
     """Return the Authorization header dict for urequests."""
-    return {"Authorization": "Bearer " + api_token}
+    return {"Authorization": "Bearer " + app.api_token}
 
 
-def fetch_records(year, month, day):
+def fetch_records(app, year, month, day):
     """Fetch records released on the given date from the API.
 
     Returns (records_list, error_flag).
@@ -625,7 +649,7 @@ def fetch_records(year, month, day):
     url = API_BASE + "/api/v1/collection/on_this_day?date=" + date_str
 
     try:
-        resp = urequests.get(url, headers=_auth_header())
+        resp = urequests.get(url, headers=_auth_header(app))
         if resp.status_code == 200:
             data = resp.json()
             recs = data.get("records", [])
@@ -642,22 +666,20 @@ def fetch_records(year, month, day):
         return [], True
 
 
-def set_day_records(recs, had_error):
+def set_day_records(app, recs, had_error):
     """Set day-view records and prepare display caches."""
-    global records, records_error, scroll_offset, _content_height
-
-    records = recs
-    records_error = had_error
-    scroll_offset = 0
+    app.day.records = recs
+    app.day.error = had_error
+    app.day.scroll_offset = 0
 
     if had_error:
-        _content_height = 0
+        app.day.content_height = 0
         return
 
-    prepare_records_for_display()
+    app.day.content_height = prepare_record_list(app, recs)
 
 
-def fetch_search_results(query):
+def fetch_search_results(app, query):
     """Fetch search results from the API.
 
     Returns (records_list, error_flag). Same shape as fetch_records().
@@ -667,7 +689,7 @@ def fetch_search_results(query):
     url = API_BASE + "/api/v1/collection?q=" + encoded + "&limit=20"
 
     try:
-        resp = urequests.get(url, headers=_auth_header())
+        resp = urequests.get(url, headers=_auth_header(app))
         if resp.status_code == 200:
             data = resp.json()
             recs = data.get("records", [])
@@ -683,13 +705,13 @@ def fetch_search_results(query):
         return [], True
 
 
-def fetch_thumbnail(url):
+def fetch_thumbnail(app, url):
     """Fetch a JPEG thumbnail from the given URL.
 
     Returns the raw bytes on success, None on failure.
     """
     try:
-        resp = urequests.get(url, headers=_auth_header())
+        resp = urequests.get(url, headers=_auth_header(app))
         if resp.status_code == 200:
             data = resp.content
             resp.close()
@@ -698,6 +720,93 @@ def fetch_thumbnail(url):
     except Exception:
         pass
     return None
+
+
+# ============================================================================
+# NAVIGATION
+# ============================================================================
+
+def go_home(app):
+    """Navigate to the home screen."""
+    app.screen = STATE_HOME
+    draw_home_screen(app)
+
+
+def open_month_for_today(app):
+    """Open the month view focused on today's date."""
+    app.view_year = app.today_year
+    app.view_month = app.today_month
+    app.day.selected_day = app.today_day
+    app.screen = STATE_MONTH
+    draw_month_view(app)
+
+
+def open_day(app, day_num):
+    """Open a day, reset its list state, fetch records, and render it."""
+    app.day.selected_day = day_num
+    app.day.records = []
+    app.day.error = False
+    app.day.scroll_offset = 0
+    app.day.content_height = 0
+    app.screen = STATE_DAY
+
+    draw_status("Loading records for\n{} {}, {}...".format(
+        MONTH_NAMES[app.view_month - 1], day_num, app.view_year
+    ))
+
+    recs, had_error = fetch_records(app, app.view_year, app.view_month, day_num)
+    set_day_records(app, recs, had_error)
+    draw_day_view(app)
+
+
+def open_record(app, source_screen, record_idx):
+    """Open a record detail page from day or search results."""
+    app.detail.selected_index = record_idx
+    app.detail.source_screen = source_screen
+    app.detail.scroll_offset = 0
+    app.detail.content_height = 0
+    app.detail.scrobble_state = "idle"
+    app.screen = STATE_RECORD
+    draw_record_detail(app)
+
+
+def back_from_record(app):
+    """Return from detail to the originating list and reset detail state."""
+    source_screen = app.detail.source_screen
+    app.detail.scroll_offset = 0
+    app.detail.content_height = 0
+    app.detail.scrobble_state = "idle"
+    app.detail.selected_index = None
+    app.detail.source_screen = None
+
+    if source_screen == STATE_SEARCH_RESULTS:
+        app.screen = STATE_SEARCH_RESULTS
+        draw_search_results(app)
+    else:
+        app.screen = STATE_DAY
+        draw_day_view(app)
+
+
+def show_search_input(app, reset_keyboard=False):
+    """Navigate to search input, optionally resetting keyboard mode."""
+    if reset_keyboard:
+        app.search.keyboard_mode = "alpha"
+    app.screen = STATE_SEARCH_INPUT
+    draw_search_input(app)
+
+
+def show_search_results(app, recs, had_error):
+    """Navigate to search results and reset result scroll state."""
+    app.search.results = recs
+    app.search.error = had_error
+    app.search.scroll_offset = 0
+    app.search.content_height = 0
+
+    if not had_error and recs:
+        app.search.content_height = prepare_record_list(app, recs)
+
+    app.screen = STATE_SEARCH_RESULTS
+    draw_search_results(app)
 
 
 # ============================================================================
@@ -837,15 +946,15 @@ def draw_status(message):
 # DRAWING: MONTH CALENDAR
 # ============================================================================
 
-def draw_month_view():
+def draw_month_view(app):
     """Render the full month calendar view including header, day-of-week
     labels, day grid, and today highlight."""
     display.set_pen(_pen_bg)
     display.clear()
 
-    _draw_month_header()
+    _draw_month_header(app)
     _draw_day_labels()
-    _draw_day_grid()
+    _draw_day_grid(app)
     presto.update()
 
 
@@ -854,7 +963,7 @@ HOME_BTN_H = 25
 HOME_BTN_Y = HEADER_Y + (HEADER_H - HOME_BTN_H) // 2
 
 
-def _draw_month_header():
+def _draw_month_header(app):
     """Draw the month/year title, navigation arrows, and Home button."""
     # Background bar
     display.set_pen(_pen_cell_bg)
@@ -863,7 +972,7 @@ def _draw_month_header():
     # Month and year text (centered between arrow buttons)
     display.set_pen(_pen_header_text)
     display.set_font("bitmap14_outline")
-    title = "{} {}".format(MONTH_NAMES[view_month - 1], view_year)
+    title = "{} {}".format(MONTH_NAMES[app.view_month - 1], app.view_year)
     tw = display.measure_text(title, scale=1)
     # Left boundary: after Home + left-arrow; right boundary: before right-arrow
     title_left = HEADER_SIDE_MARGIN + HOME_BTN_W + 4 + ARROW_W
@@ -919,10 +1028,10 @@ def _draw_day_labels():
         display.text(name, cx - tw // 2, DOW_Y, scale=1)
 
 
-def _draw_day_grid():
+def _draw_day_grid(app):
     """Draw the 7x6 grid of day cells for the current view month."""
-    days = days_in_month(view_year, view_month)
-    first_dow = day_of_week(view_year, view_month, 1)
+    days = days_in_month(app.view_year, app.view_month)
+    first_dow = day_of_week(app.view_year, app.view_month, 1)
 
     display.set_font("bitmap8")
 
@@ -948,11 +1057,11 @@ def _draw_day_grid():
 
             # Determine cell style
             is_today = (
-                view_year == today_year
-                and view_month == today_month
-                and day_num == today_day
+                app.view_year == app.today_year
+                and app.view_month == app.today_month
+                and day_num == app.today_day
             )
-            is_selected = (state == STATE_DAY and day_num == selected_day)
+            is_selected = (app.screen == STATE_DAY and day_num == app.day.selected_day)
 
             # Handle today + selected combo specially (show both highlight and border)
             if is_today and is_selected:
@@ -1006,7 +1115,7 @@ def _draw_centered_num(num, cx, cy):
 # DRAWING: HOME SCREEN (splash)
 # ============================================================================
 
-def draw_home_screen():
+def draw_home_screen(app):
     """Render the splash screen with two large touch targets."""
     display.set_pen(_pen_bg)
     display.clear()
@@ -1040,7 +1149,7 @@ def _draw_home_button(y, label):
 # DRAWING: SEARCH INPUT (keyboard)
 # ============================================================================
 
-def draw_search_input():
+def draw_search_input(app):
     """Render the search input view with query field and on-screen keyboard."""
     display.set_pen(_pen_bg)
     display.clear()
@@ -1054,10 +1163,10 @@ def draw_search_input():
     display.set_pen(_pen_header_text)
     display.set_font("bitmap8")
     # Show cursor as underscore if query is empty
-    display_q = search_query if search_query else "_"
+    display_q = app.search.query if app.search.query else "_"
     display.text(display_q, KB_INPUT_MARGIN + 8, KB_INPUT_Y + 12, scale=1)
 
-    _draw_keyboard()
+    _draw_keyboard(app)
     presto.update()
 
 
@@ -1083,11 +1192,11 @@ def _draw_search_input_header():
                  DAY_HEADER_Y + (DAY_HEADER_H - DAY_HEADER_TEXT_H) // 2, scale=1)
 
 
-def _draw_keyboard():
+def _draw_keyboard(app):
     """Draw the on-screen QWERTY or numbers keyboard."""
     display.set_font("bitmap8")
-    keys_matrix = ALPHA_KEYS if keyboard_mode == "alpha" else NUM_KEYS
-    toggle_label = "123" if keyboard_mode == "alpha" else "ABC"
+    keys_matrix = ALPHA_KEYS if app.search.keyboard_mode == "alpha" else NUM_KEYS
+    toggle_label = "123" if app.search.keyboard_mode == "alpha" else "ABC"
 
     cy = KB_ROWS_START_Y
     for row_keys in keys_matrix:
@@ -1109,7 +1218,7 @@ def _draw_keyboard():
     bx += bottom_w + KB_KEY_GAP
     _draw_key(bx, cy, "<-", bottom_w, KB_KEY_H)
     bx += bottom_w + KB_KEY_GAP
-    ok_pen = _pen_dim_text if search_query.strip() == "" else _pen_header_text
+    ok_pen = _pen_dim_text if app.search.query.strip() == "" else _pen_header_text
     _draw_key(bx, cy, "OK", bottom_w, KB_KEY_H, text_pen=ok_pen)
 
 
@@ -1125,7 +1234,7 @@ def _draw_key(x, y, label, w, h, text_pen=None):
     display.text(label, tx, ty, scale=1)
 
 
-def _keyboard_hit_test(x, y):
+def _keyboard_hit_test(app, x, y):
     """Map a touch (x, y) to a keyboard action.
 
     Returns: a character string, "toggle", "space", "backspace", "ok", or None.
@@ -1133,7 +1242,7 @@ def _keyboard_hit_test(x, y):
     if y < KB_ROWS_START_Y:
         return None
 
-    keys_matrix = ALPHA_KEYS if keyboard_mode == "alpha" else NUM_KEYS
+    keys_matrix = ALPHA_KEYS if app.search.keyboard_mode == "alpha" else NUM_KEYS
 
     cy = KB_ROWS_START_Y
     for row_keys in keys_matrix:
@@ -1178,30 +1287,28 @@ def _flash_key(kx, ky, kw, kh, label):
 # DRAWING: SEARCH RESULTS
 # ============================================================================
 
-def draw_search_results():
+def draw_search_results(app):
     """Render the search results view, reusing record-list rendering."""
-    global search_scroll_offset
-
     display.set_pen(_pen_bg)
     display.clear()
 
-    _draw_search_results_header()
+    _draw_search_results_header(app)
 
-    if search_results_error:
+    if app.search.error:
         _draw_search_error()
         presto.update()
         return
 
-    if not search_results:
+    if not app.search.results:
         _draw_search_empty()
         presto.update()
         return
 
-    _draw_search_record_list()
+    _draw_search_record_list(app)
     presto.update()
 
 
-def _draw_search_results_header():
+def _draw_search_results_header(app):
     """Draw the search results header with Back button and query label."""
     display.set_pen(_pen_cell_bg)
     display.rectangle(0, DAY_HEADER_Y, WIDTH, DAY_HEADER_H)
@@ -1215,14 +1322,14 @@ def _draw_search_results_header():
     _draw_centered_text("<", bx, by, BACK_W, BACK_H, DAY_COUNT_TEXT_H)
 
     # Title "Search: <query>" — truncate for display only, never mutate
-    # the global search_query so user can refine on Back
+    # the stored search query so user can refine on Back
     display.set_pen(_pen_header_text)
     display.set_font("bitmap14_outline")
-    display_label = "Search: " + search_query
+    display_label = "Search: " + app.search.query
     max_w = WIDTH - (BACK_X + BACK_W + 8) - 8
     if display.measure_text(display_label, scale=1) > max_w:
         suffix = "..."
-        display_q = search_query
+        display_q = app.search.query
         while (display.measure_text("Search: " + display_q + suffix, scale=1) > max_w
                and len(display_q) > 0):
             display_q = display_q[:-1]
@@ -1232,21 +1339,19 @@ def _draw_search_results_header():
                  DAY_HEADER_Y + (DAY_HEADER_H - DAY_HEADER_TEXT_H) // 2, scale=1)
 
 
-def _draw_search_record_list():
+def _draw_search_record_list(app):
     """Draw the scrollable search results list, mirroring day-view scroll."""
-    global search_scroll_offset
-
-    max_offset = _search_max_scroll_offset()
-    search_scroll_offset = min(max(0, search_scroll_offset), max_offset)
+    max_offset = _search_max_scroll_offset(app)
+    app.search.scroll_offset = min(max(0, app.search.scroll_offset), max_offset)
 
     # Up arrow if scrolled down
-    if search_scroll_offset > 0:
+    if app.search.scroll_offset > 0:
         display.set_pen(_pen_arrow)
         display.set_font("bitmap14_outline")
         display.text("^", WIDTH // 2 - 8, RECORD_START_Y - 28, scale=1)
 
-    cy = RECORD_START_Y - search_scroll_offset
-    for rec in search_results:
+    cy = RECORD_START_Y - app.search.scroll_offset
+    for rec in app.search.results:
         row_h = rec.get("_row_height", THUMB_SIZE + 8)
         row_bottom = cy + row_h
 
@@ -1257,20 +1362,20 @@ def _draw_search_record_list():
         if cy >= HEIGHT - 28:
             break
 
-        _draw_record_row(rec, cy)
+        _draw_record_row(app, rec, cy)
         cy = row_bottom
 
     # Down arrow if more records below
-    if search_scroll_offset < max_offset:
+    if app.search.scroll_offset < max_offset:
         display.set_pen(_pen_arrow)
         display.set_font("bitmap14_outline")
         display.text("v", WIDTH // 2 - 8, HEIGHT - 24, scale=1)
 
 
-def _search_max_scroll_offset():
+def _search_max_scroll_offset(app):
     """Return the maximum pixel scroll offset for search results."""
     viewport_h = HEIGHT - RECORD_START_Y - 28
-    return max(0, _search_content_height - viewport_h)
+    return max(0, app.search.content_height - viewport_h)
 
 
 def _draw_search_empty():
@@ -1300,29 +1405,29 @@ def _draw_search_error():
 # DRAWING: DAY VIEW (records list)
 # ============================================================================
 
-def draw_day_view():
+def draw_day_view(app):
     """Render the day view showing records for the selected date."""
     display.set_pen(_pen_bg)
     display.clear()
 
-    if records_error:
+    if app.day.error:
         _draw_day_error()
-        _draw_day_header()
+        _draw_day_header(app)
         presto.update()
         return
 
-    if not records:
+    if not app.day.records:
         _draw_day_empty()
-        _draw_day_header()
+        _draw_day_header(app)
         presto.update()
         return
 
-    _draw_record_list()
-    _draw_day_header()
+    _draw_record_list(app)
+    _draw_day_header(app)
     presto.update()
 
 
-def _draw_day_header():
+def _draw_day_header(app):
     """Draw the header with formatted date and back button."""
     # Background bar
     display.set_pen(_pen_cell_bg)
@@ -1338,7 +1443,7 @@ def _draw_day_header():
 
     # Formatted date
     date_str = "{} {}, {}".format(
-        MONTH_NAMES[view_month - 1], selected_day, view_year
+        MONTH_NAMES[app.view_month - 1], app.day.selected_day, app.view_year
     )
     display.set_pen(_pen_header_text)
     display.set_font("bitmap14_outline")
@@ -1351,7 +1456,8 @@ def _draw_day_header():
     )
 
     # Record count
-    count_str = "{} record{}".format(len(records), "s" if len(records) != 1 else "")
+    record_count = len(app.day.records)
+    count_str = "{} record{}".format(record_count, "s" if record_count != 1 else "")
     display.set_pen(_pen_dim_text)
     display.set_font("bitmap8")
     cw = display.measure_text(count_str, scale=1)
@@ -1386,23 +1492,21 @@ def _draw_day_empty():
     display.text(msg, (WIDTH - mw) // 2, HEIGHT // 2 - 10, scale=1)
 
 
-def _draw_record_list():
+def _draw_record_list(app):
     """Draw the scrollable list of record rows with cover thumbnails.
     Uses dynamic row heights so wrapped text doesn't break layout."""
-    global scroll_offset
-
-    max_offset = _max_scroll_offset()
-    scroll_offset = min(max(0, scroll_offset), max_offset)
+    max_offset = _max_scroll_offset(app)
+    app.day.scroll_offset = min(max(0, app.day.scroll_offset), max_offset)
 
     # Up arrow if scrolled down
-    if scroll_offset > 0:
+    if app.day.scroll_offset > 0:
         display.set_pen(_pen_arrow)
         display.set_font("bitmap14_outline")
         display.text("^", WIDTH // 2 - 8, RECORD_START_Y - 28, scale=1)
 
-    cy = RECORD_START_Y - scroll_offset
+    cy = RECORD_START_Y - app.day.scroll_offset
 
-    for rec in records:
+    for rec in app.day.records:
         row_h = rec.get("_row_height", THUMB_SIZE + 8)
         row_bottom = cy + row_h
 
@@ -1413,48 +1517,36 @@ def _draw_record_list():
         if cy >= HEIGHT - 28:
             break
 
-        _draw_record_row(rec, cy)
+        _draw_record_row(app, rec, cy)
         cy = row_bottom
 
     # Down arrow if more records below
-    if scroll_offset < max_offset:
+    if app.day.scroll_offset < max_offset:
         display.set_pen(_pen_arrow)
         display.set_font("bitmap14_outline")
         display.text("v", WIDTH // 2 - 8, HEIGHT - 24, scale=1)
 
-def _max_scroll_offset():
+def _max_scroll_offset(app):
     """Return the maximum pixel scroll offset for the current records."""
     viewport_h = HEIGHT - RECORD_START_Y - 28
-    return max(0, _content_height - viewport_h)
+    return max(0, app.day.content_height - viewport_h)
 
 
-def prepare_records_for_display(recs=None):
+def prepare_record_list(app, recs):
     """Cache display fields, row heights, and thumbnails for a record list.
 
-    If recs is None, uses the global records list (day view).
-    When recs is search_results, updates _search_content_height.
+    Returns the list content height for the caller's view state.
     """
-    global _content_height, _search_content_height, records, search_results
-    if recs is None:
-        recs = records
-
     display.set_font("bitmap8")
 
-    is_search = recs is search_results
-    if is_search:
-        _search_content_height = 0
-    else:
-        _content_height = 0
-
+    content_height = 0
     for rec in recs:
         _prepare_record_for_display(rec)
-        if is_search:
-            _search_content_height += rec.get("_row_height", THUMB_SIZE + 8)
-        else:
-            _content_height += rec.get("_row_height", THUMB_SIZE + 8)
+        content_height += rec.get("_row_height", THUMB_SIZE + 8)
 
-    preload_record_thumbnails(recs)
+    preload_record_thumbnails(app, recs)
     gc.collect()
+    return content_height
 
 
 def _prepare_record_for_display(rec):
@@ -1467,31 +1559,46 @@ def _prepare_record_for_display(rec):
     rec["_display_title"] = title
     rec["_display_artists"] = artist_str
     rec["_display_meta"] = meta_text
+    rec["_display_title_lines"] = _wrapped_lines(title, TEXT_W, scale=1)
+    rec["_display_artist_lines"] = (
+        _wrapped_lines(artist_str, TEXT_W, scale=1) if artist_str else []
+    )
+    rec["_display_meta_lines"] = (
+        _wrapped_lines(meta_text, TEXT_W, scale=1) if meta_text else []
+    )
     rec["_thumb_url"] = _record_thumbnail_url(rec)
     rec["_row_height"] = _record_row_height(rec)
 
 
-def preload_record_thumbnails(recs=None):
+def preload_record_thumbnails(app, recs):
     """Fetch thumbnail bytes before the first draw of a record list."""
-    if recs is None:
-        recs = records
     for rec in recs:
         if rec.get("micro_cover_url", ""):
-            _record_thumbnail_data(rec)
+            _record_thumbnail_data(app, rec)
 
 
 def _record_row_height(rec):
     """Calculate a record row height without drawing it."""
     min_h = THUMB_SIZE + ROW_PAD_Y * 2 + ROW_SEPARATOR_H
-    title = rec.get("_display_title", display_text(rec.get("title", "Unknown Title")))
-    ty = _wrapped_line_count(title, TEXT_W, scale=1) * 12
+    title_lines = rec.get("_display_title_lines", None)
+    if title_lines is None:
+        title = rec.get("_display_title", display_text(rec.get("title", "Unknown Title")))
+        title_lines = _wrapped_lines(title, TEXT_W, scale=1)
+    ty = max(1, len(title_lines)) * 12
 
-    artist_str = rec.get("_display_artists", "")
-    if artist_str:
-        ty += 2 + _wrapped_line_count(artist_str, TEXT_W, scale=1) * 12
+    artist_lines = rec.get("_display_artist_lines", None)
+    if artist_lines is None:
+        artist_str = rec.get("_display_artists", "")
+        artist_lines = _wrapped_lines(artist_str, TEXT_W, scale=1) if artist_str else []
+    if artist_lines:
+        ty += 2 + len(artist_lines) * 12
 
-    if rec.get("_display_meta", _record_meta_text(rec)):
-        ty += 2 + 12
+    meta_lines = rec.get("_display_meta_lines", None)
+    if meta_lines is None:
+        meta_text = rec.get("_display_meta", _record_meta_text(rec))
+        meta_lines = _wrapped_lines(meta_text, TEXT_W, scale=1) if meta_text else []
+    if meta_lines:
+        ty += 2 + len(meta_lines) * 12
 
     content_h = max(THUMB_SIZE, ty) + ROW_PAD_Y * 2 + ROW_SEPARATOR_H
     return max(min_h, content_h)
@@ -1516,7 +1623,7 @@ def _release_year(release_date):
     return str(release_date)[:4]
 
 
-def _record_thumbnail_data(rec):
+def _record_thumbnail_data(app, rec):
     """Fetch thumbnail bytes once per record and reuse them on redraw."""
     if rec.get("_thumb_failed", False):
         return None
@@ -1529,7 +1636,7 @@ def _record_thumbnail_data(rec):
     if not thumb_url:
         return None
 
-    data = fetch_thumbnail(thumb_url)
+    data = fetch_thumbnail(app, thumb_url)
     if data is None:
         rec["_thumb_failed"] = True
     else:
@@ -1547,7 +1654,7 @@ def _record_thumbnail_url(rec):
     )
 
 
-def _draw_record_row(rec, y):
+def _draw_record_row(app, rec, y):
     """Draw a single record row using its cached layout height."""
     row_h = rec.get("_row_height", None)
     if row_h is None:
@@ -1556,31 +1663,41 @@ def _draw_record_row(rec, y):
 
     # Fetch and draw thumbnail (top-aligned in row)
     thumb_y = y + ROW_PAD_Y
-    if _dragging:
+    if app.touch.dragging:
         _draw_placeholder(THUMB_MARGIN, thumb_y, THUMB_SIZE, THUMB_SIZE)
     else:
-        jpeg_data = _record_thumbnail_data(rec)
+        jpeg_data = _record_thumbnail_data(app, rec)
         if jpeg_data is not None:
             draw_jpeg(jpeg_data, THUMB_MARGIN, thumb_y, THUMB_SIZE, THUMB_SIZE)
         else:
             _draw_placeholder(THUMB_MARGIN, thumb_y, THUMB_SIZE, THUMB_SIZE)
 
     # Title (starts at same height as thumbnail)
-    title = rec.get("_display_title", display_text(rec.get("title", "Unknown Title")))
     display.set_font("bitmap8")
     ty = y + ROW_PAD_Y
-    ty = draw_wrapped(title, TEXT_X, ty, TEXT_W, _pen_title, scale=1)
+    title_lines = rec.get("_display_title_lines", None)
+    if title_lines is None:
+        title = rec.get("_display_title", display_text(rec.get("title", "Unknown Title")))
+        ty = draw_wrapped(title, TEXT_X, ty, TEXT_W, _pen_title, scale=1)
+    else:
+        ty = draw_wrapped_lines(title_lines, TEXT_X, ty, _pen_title, scale=1)
 
     # Artists
-    artist_str = rec.get("_display_artists", "")
-    if artist_str:
+    artist_lines = rec.get("_display_artist_lines", None)
+    if artist_lines is None:
+        artist_str = rec.get("_display_artists", "")
+        artist_lines = _wrapped_lines(artist_str, TEXT_W, scale=1) if artist_str else []
+    if artist_lines:
         ty += 2
-        ty = draw_wrapped(artist_str, TEXT_X, ty, TEXT_W, _pen_artist, scale=1)
+        ty = draw_wrapped_lines(artist_lines, TEXT_X, ty, _pen_artist, scale=1)
 
-    meta_text = rec.get("_display_meta", _record_meta_text(rec))
-    if meta_text:
+    meta_lines = rec.get("_display_meta_lines", None)
+    if meta_lines is None:
+        meta_text = rec.get("_display_meta", _record_meta_text(rec))
+        meta_lines = _wrapped_lines(meta_text, TEXT_W, scale=1) if meta_text else []
+    if meta_lines:
         ty += 2
-        ty = draw_wrapped(meta_text, TEXT_X, ty, TEXT_W, _pen_dim_text, scale=1)
+        ty = draw_wrapped_lines(meta_lines, TEXT_X, ty, _pen_dim_text, scale=1)
 
     # Separator line at the computed bottom
     display.set_pen(_pen_cell_other)
@@ -1596,11 +1713,11 @@ def _draw_record_row(rec, y):
 # DRAWING: RECORD DETAIL
 # ============================================================================
 
-def _max_detail_scroll_offset():
+def _max_detail_scroll_offset(app):
     """Return the maximum pixel scroll offset for the detail view."""
-    if _detail_content_height == 0:
+    if app.detail.content_height == 0:
         return 0
-    content_bottom = DETAIL_COVER_Y + _detail_content_height
+    content_bottom = DETAIL_COVER_Y + app.detail.content_height
     return max(0, content_bottom - HEIGHT)
 
 
@@ -1613,16 +1730,28 @@ def _measure_detail_text_height(text, font="bitmap8", scale=1, max_w=None):
     return len(lines) * line_height
 
 
-def _measure_detail_content(rec):
-    """Compute and cache the total height of the scrollable detail content."""
-    global _detail_content_height
+def _line_metrics(lines, font="bitmap8", scale=1):
+    """Pair pre-wrapped text lines with their measured widths."""
+    display.set_font(font)
+    metrics = []
+    for line in lines:
+        metrics.append((line, display.measure_text(line, scale=scale)))
+    return metrics
 
+
+def _measure_detail_content(app, rec):
+    """Compute and cache the total height of the scrollable detail content."""
     h = 0
 
     # Title (above cover)
     title = rec.get("_display_title",
                     display_text(rec.get("title", "Unknown Title")))
-    h += _measure_detail_text_height(title, font="bitmap14_outline", scale=1)
+    display.set_font("bitmap14_outline")
+    title_lines = _wrapped_lines(title, DETAIL_TEXT_W, scale=1)
+    rec["_detail_title_lines"] = _line_metrics(
+        title_lines, font="bitmap14_outline", scale=1
+    )
+    h += len(title_lines) * 12
     h += 6
 
     # Artists (above cover)
@@ -1631,8 +1760,13 @@ def _measure_detail_content(rec):
         artists = rec.get("artists", [])
         artist_str = display_text(", ".join(artists)) if artists else ""
     if artist_str:
-        h += _measure_detail_text_height(artist_str)
+        display.set_font("bitmap8")
+        artist_lines = _wrapped_lines(artist_str, DETAIL_TEXT_W, scale=1)
+        rec["_detail_artist_lines"] = _line_metrics(artist_lines, scale=1)
+        h += len(artist_lines) * 12
         h += 4
+    else:
+        rec["_detail_artist_lines"] = []
 
     h += DETAIL_INFO_GAP  # gap before cover
 
@@ -1644,8 +1778,13 @@ def _measure_detail_content(rec):
     genres = rec.get("genres", [])
     if genres:
         genre_str = display_text(", ".join(genres))
-        h += _measure_detail_text_height(genre_str)
+        display.set_font("bitmap8")
+        genre_lines = _wrapped_lines(genre_str, DETAIL_TEXT_W, scale=1)
+        rec["_detail_genre_lines"] = _line_metrics(genre_lines, scale=1)
+        h += len(genre_lines) * 12
         h += 4
+    else:
+        rec["_detail_genre_lines"] = []
 
     h += 6
 
@@ -1663,21 +1802,31 @@ def _measure_detail_content(rec):
 
     if meta_parts:
         meta_str = " | ".join(meta_parts)
-        h += _measure_detail_text_height(meta_str)
+        display.set_font("bitmap8")
+        meta_lines = _wrapped_lines(meta_str, DETAIL_TEXT_W, scale=1)
+        rec["_detail_meta_lines"] = _line_metrics(meta_lines, scale=1)
+        h += len(meta_lines) * 12
         h += 4
+    else:
+        rec["_detail_meta_lines"] = []
 
     # Purchased at
     purchased_at = rec.get("purchased_at", "")
     if purchased_at:
         purch_str = "Purchased: " + display_text(str(purchased_at)[:10])
-        h += _measure_detail_text_height(purch_str)
+        display.set_font("bitmap8")
+        purchased_lines = _wrapped_lines(purch_str, DETAIL_TEXT_W, scale=1)
+        rec["_detail_purchased_lines"] = _line_metrics(purchased_lines, scale=1)
+        h += len(purchased_lines) * 12
+    else:
+        rec["_detail_purchased_lines"] = []
 
     # Scrobble button (at bottom, only if scrobble-eligible)
     if rec.get("selected_release_id"):
         h += SCROBBLE_BUTTON_GAP
         h += SCROBBLE_BUTTON_H
 
-    _detail_content_height = h
+    app.detail.content_height = h
 
 
 def _set_clip_below_header():
@@ -1697,30 +1846,29 @@ def _remove_clip():
         pass
 
 
-def draw_record_detail():
+def draw_record_detail(app):
     """Render the individual record detail view. Layout order:
     title, artists, large cover, genres, metadata, purchased at."""
-    global detail_scroll_offset
-
     display.set_pen(_pen_bg)
     display.clear()
 
-    if previous_state == STATE_SEARCH_RESULTS:
-        rec = search_results[selected_record_idx]
+    if app.detail.source_screen == STATE_SEARCH_RESULTS:
+        rec = app.search.results[app.detail.selected_index]
     else:
-        rec = records[selected_record_idx]
+        rec = app.day.records[app.detail.selected_index]
 
-    # Measure content height so scroll bounds are known
-    _measure_detail_content(rec)
+    # Measure content height before normal draws; drag redraws reuse it.
+    if app.detail.content_height == 0 or not app.touch.dragging:
+        _measure_detail_content(app, rec)
 
     # Clamp scroll offset
-    max_off = _max_detail_scroll_offset()
-    if detail_scroll_offset > max_off:
-        detail_scroll_offset = max_off
-    if detail_scroll_offset < 0:
-        detail_scroll_offset = 0
+    max_off = _max_detail_scroll_offset(app)
+    if app.detail.scroll_offset > max_off:
+        app.detail.scroll_offset = max_off
+    if app.detail.scroll_offset < 0:
+        app.detail.scroll_offset = 0
 
-    offset = detail_scroll_offset
+    offset = app.detail.scroll_offset
 
     _draw_detail_header()
 
@@ -1735,7 +1883,7 @@ def draw_record_detail():
     y += DETAIL_INFO_GAP  # gap before cover
 
     # Cover image
-    _draw_detail_cover(rec, y)
+    _draw_detail_cover(app, rec, y)
 
     # Genres, metadata, purchased at (below cover)
     y = y + DETAIL_COVER_SIZE + DETAIL_INFO_GAP
@@ -1745,14 +1893,14 @@ def draw_record_detail():
     if rec.get("selected_release_id"):
         # Compute button Y from measured content height (y doesn't track
         # the bottom because _draw_detail_info_below_cover's return is
-        # discarded — use _detail_content_height which already includes
+        # discarded — use detail content height which already includes
         # the button height and gap from Step 4).
         button_y = (DETAIL_COVER_Y - offset
-                    + _detail_content_height - SCROBBLE_BUTTON_H)
+                    + app.detail.content_height - SCROBBLE_BUTTON_H)
         # Only draw if the button is at least partially visible
         if (button_y + SCROBBLE_BUTTON_H > DAY_HEADER_Y + DAY_HEADER_H
                 and button_y < HEIGHT):
-            _draw_scrobble_button(rec, button_y)
+            _draw_scrobble_button(app, rec, button_y)
 
     # Scroll indicators
     display.set_font("bitmap14_outline")
@@ -1797,25 +1945,33 @@ def _draw_detail_header():
 def _draw_detail_title_artists(rec, y):
     """Draw title and artists above the cover. Returns y after drawing."""
     # Title
-    title = rec.get("_display_title",
-                    display_text(rec.get("title", "Unknown Title")))
-    y = _draw_detail_text_line(title, y, _pen_title,
-                               font="bitmap14_outline", scale=1)
+    title_lines = rec.get("_detail_title_lines", None)
+    if title_lines is None:
+        title = rec.get("_display_title",
+                        display_text(rec.get("title", "Unknown Title")))
+        y = _draw_detail_text_line(title, y, _pen_title,
+                                   font="bitmap14_outline", scale=1)
+    else:
+        y = _draw_detail_text_lines(title_lines, y, _pen_title,
+                                    font="bitmap14_outline", scale=1)
     y += 6
 
     # Artists
-    artist_str = rec.get("_display_artists", "")
-    if not artist_str:
-        artists = rec.get("artists", [])
-        artist_str = display_text(", ".join(artists)) if artists else ""
-    if artist_str:
-        y = _draw_detail_text_line(artist_str, y, _pen_artist)
+    artist_lines = rec.get("_detail_artist_lines", None)
+    if artist_lines is None:
+        artist_str = rec.get("_display_artists", "")
+        if not artist_str:
+            artists = rec.get("artists", [])
+            artist_str = display_text(", ".join(artists)) if artists else ""
+        artist_lines = _wrapped_lines(artist_str, DETAIL_TEXT_W, scale=1) if artist_str else []
+    if artist_lines:
+        y = _draw_detail_text_lines(artist_lines, y, _pen_artist)
         y += 4
 
     return y
 
 
-def _draw_detail_cover(rec, y):
+def _draw_detail_cover(app, rec, y):
     """Fetch and draw the cover art at the given y position."""
     # Skip if entirely outside viewport
     if y + DETAIL_COVER_SIZE <= DAY_HEADER_Y + DAY_HEADER_H:
@@ -1836,8 +1992,13 @@ def _draw_detail_cover(rec, y):
 
     # Use cached data or fetch
     data = rec.get("_detail_thumb_data", None)
+    if data is None and app.touch.dragging:
+        _draw_placeholder(DETAIL_COVER_X, y,
+                          DETAIL_COVER_SIZE, DETAIL_COVER_SIZE)
+        return
+
     if data is None and not rec.get("_detail_thumb_failed", False):
-        data = fetch_thumbnail(thumb_url)
+        data = fetch_thumbnail(app, thumb_url)
         if data is None:
             rec["_detail_thumb_failed"] = True
         else:
@@ -1854,36 +2015,50 @@ def _draw_detail_cover(rec, y):
 def _draw_detail_info_below_cover(rec, y):
     """Draw genres, metadata line, and purchased-at below the cover."""
     # Genres
-    genres = rec.get("genres", [])
-    if genres:
-        genre_str = display_text(", ".join(genres))
-        y = _draw_detail_text_line(genre_str, y, _pen_dim_text)
+    genre_lines = rec.get("_detail_genre_lines", None)
+    if genre_lines is None:
+        genres = rec.get("genres", [])
+        if genres:
+            genre_str = display_text(", ".join(genres))
+            genre_lines = _wrapped_lines(genre_str, DETAIL_TEXT_W, scale=1)
+        else:
+            genre_lines = []
+    if genre_lines:
+        y = _draw_detail_text_lines(genre_lines, y, _pen_dim_text)
         y += 4
 
     y += 6
 
     # Metadata: record_type | format | year
-    meta_parts = []
-    record_type = rec.get("record_type", "")
-    if record_type:
-        meta_parts.append(display_text(record_type))
-    record_format = rec.get("format", "")
-    if record_format:
-        meta_parts.append(display_text(record_format))
-    release_date = rec.get("release_date", "")
-    if release_date:
-        meta_parts.append(str(release_date)[:4])
+    meta_lines = rec.get("_detail_meta_lines", None)
+    if meta_lines is None:
+        meta_parts = []
+        record_type = rec.get("record_type", "")
+        if record_type:
+            meta_parts.append(display_text(record_type))
+        record_format = rec.get("format", "")
+        if record_format:
+            meta_parts.append(display_text(record_format))
+        release_date = rec.get("release_date", "")
+        if release_date:
+            meta_parts.append(str(release_date)[:4])
+        meta_lines = _wrapped_lines(" | ".join(meta_parts), DETAIL_TEXT_W, scale=1) if meta_parts else []
 
-    if meta_parts:
-        meta_str = " | ".join(meta_parts)
-        y = _draw_detail_text_line(meta_str, y, _pen_dim_text)
+    if meta_lines:
+        y = _draw_detail_text_lines(meta_lines, y, _pen_dim_text)
         y += 4
 
     # Purchased at
-    purchased_at = rec.get("purchased_at", "")
-    if purchased_at:
-        purch_str = "Purchased: " + display_text(str(purchased_at)[:10])
-        y = _draw_detail_text_line(purch_str, y, _pen_dim_text)
+    purchased_lines = rec.get("_detail_purchased_lines", None)
+    if purchased_lines is None:
+        purchased_at = rec.get("purchased_at", "")
+        if purchased_at:
+            purch_str = "Purchased: " + display_text(str(purchased_at)[:10])
+            purchased_lines = _wrapped_lines(purch_str, DETAIL_TEXT_W, scale=1)
+        else:
+            purchased_lines = []
+    if purchased_lines:
+        y = _draw_detail_text_lines(purchased_lines, y, _pen_dim_text)
 
     return y
 
@@ -1906,18 +2081,36 @@ def _draw_detail_text_line(text, y, pen, font="bitmap8", scale=1):
     return cy
 
 
-def _draw_scrobble_button(rec, y):
+def _draw_detail_text_lines(lines, y, pen, font="bitmap8", scale=1):
+    """Draw pre-wrapped detail text centered horizontally."""
+    display.set_pen(pen)
+    display.set_font(font)
+
+    line_height = 8 * scale + 4
+    cy = y
+    for item in lines:
+        if isinstance(item, tuple):
+            line, tw = item
+        else:
+            line = item
+            tw = display.measure_text(line, scale=scale)
+        display.text(line, (WIDTH - tw) // 2, cy, scale=scale)
+        cy += line_height
+
+    return cy
+
+
+def _draw_scrobble_button(app, rec, y):
     """Draw the scrobble button at (x, y). Button is horizontally centered.
-    Visual state depends on global _scrobble_state."""
-    global _scrobble_state
+    Visual state depends on app detail scrobble state."""
 
     bx = (WIDTH - SCROBBLE_BUTTON_W) // 2
 
-    if _scrobble_state == "done":
+    if app.detail.scrobble_state == "done":
         bg_pen = _pen_scrobble_done_bg
         text_pen = _pen_scrobble_done_text
         label = "Done"
-    elif _scrobble_state == "loading":
+    elif app.detail.scrobble_state == "loading":
         bg_pen = _pen_scrobble_bg
         text_pen = _pen_scrobble_text
         label = "..."
@@ -2015,28 +2208,28 @@ def touch_to_calendar_cell(x, y):
     return None
 
 
-def cell_to_day(row, col):
+def cell_to_day(app, row, col):
     """Convert a calendar cell (row, col) to a day number (1-based)
     for the current view month. Returns None if the cell is outside
     the current month."""
-    first_dow = day_of_week(view_year, view_month, 1)
+    first_dow = day_of_week(app.view_year, app.view_month, 1)
     day_num = row * CELLS_PER_ROW + col - first_dow + 1
-    days = days_in_month(view_year, view_month)
+    days = days_in_month(app.view_year, app.view_month)
     if 1 <= day_num <= days:
         return day_num
     return None
 
 
-def touch_to_record_index(y, recs=None, offset=None):
+def touch_to_record_index(app, y, recs=None, offset=None):
     """Map a touch y-coordinate to a record list index, accounting for
     scroll offset. Use recs/offset params for search results, or defaults
     for day view."""
     if recs is None:
-        recs = records
+        recs = app.day.records
         if offset is None:
-            offset = scroll_offset
+            offset = app.day.scroll_offset
     elif offset is None:
-        offset = search_scroll_offset
+        offset = app.search.scroll_offset
 
     if not recs:
         return None
@@ -2050,12 +2243,10 @@ def touch_to_record_index(y, recs=None, offset=None):
     return None
 
 
-def _scrobble_button_hit_test(x, y, rec):
+def _scrobble_button_hit_test(app, x, y, rec):
     """Return True if the touch (x, y) falls within the scrobble button bounds.
-    Accounts for current detail_scroll_offset.
+    Accounts for current detail scroll offset.
     Ignores touches in the fixed header area (handled separately)."""
-    global detail_scroll_offset
-
     if not rec.get("selected_release_id"):
         return False
 
@@ -2064,200 +2255,160 @@ def _scrobble_button_hit_test(x, y, rec):
         return False
 
     # Compute button Y position — must match the formula used in
-    # draw_record_detail(). _detail_content_height already
+    # draw_record_detail(). Detail content height already
     # includes SCROBBLE_BUTTON_GAP + SCROBBLE_BUTTON_H from _measure_detail_content.
-    button_y = (DETAIL_COVER_Y - detail_scroll_offset
-                + _detail_content_height - SCROBBLE_BUTTON_H)
+    button_y = (DETAIL_COVER_Y - app.detail.scroll_offset
+                + app.detail.content_height - SCROBBLE_BUTTON_H)
     bx = (WIDTH - SCROBBLE_BUTTON_W) // 2
 
     return (bx <= x <= bx + SCROBBLE_BUTTON_W and
             button_y <= y <= button_y + SCROBBLE_BUTTON_H)
 
 
-def handle_scrobble_touch(rec):
+def handle_scrobble_touch(app, rec):
     """Execute the scrobble HTTP request and update button state.
     Blocks during the request (urequests is synchronous on MicroPython).
     On success, sets state to "done" (persists until navigation).
     On failure, reverts to "idle"."""
-    global _scrobble_state
-
     rec_id = rec.get("id")
     if not rec_id:
         return
 
     # Set loading state and redraw immediately so the user sees "..."
-    _scrobble_state = "loading"
-    draw_record_detail()
+    app.detail.scrobble_state = "loading"
+    draw_record_detail(app)
 
     # Make the POST request. urequests has limited timeout support on
     # MicroPython; if WiFi drops mid-request, the default timeout may
     # be 30+ seconds. Test this scenario on-device.
     url = API_BASE + "/api/v1/collection/" + str(rec_id) + "/scrobble"
     try:
-        resp = urequests.post(url, headers=_auth_header())
+        resp = urequests.post(url, headers=_auth_header(app))
         if resp.status_code == 200:
-            _scrobble_state = "done"
+            app.detail.scrobble_state = "done"
         else:
-            _scrobble_state = "idle"
+            app.detail.scrobble_state = "idle"
         resp.close()
     except Exception:
-        _scrobble_state = "idle"
+        app.detail.scrobble_state = "idle"
 
     gc.collect()
-    draw_record_detail()
+    draw_record_detail(app)
 
 
-def handle_home_touch(x, y):
+def handle_home_touch(app, x, y):
     """Process a touch event on the home/splash screen."""
-    global state, search_query, keyboard_mode
-    global view_year, view_month, selected_day
-
     # "Search Collection" button
     if (HOME_BUTTON_X <= x <= HOME_BUTTON_X + HOME_BUTTON_W and
             HOME_BUTTON1_Y <= y <= HOME_BUTTON1_Y + HOME_BUTTON_H):
-        search_query = ""
-        keyboard_mode = "alpha"
-        state = STATE_SEARCH_INPUT
-        draw_search_input()
+        app.search.query = ""
+        show_search_input(app, reset_keyboard=True)
         return
 
     # "Today's Records" button → month view with today highlighted
     if (HOME_BUTTON_X <= x <= HOME_BUTTON_X + HOME_BUTTON_W and
             HOME_BUTTON2_Y <= y <= HOME_BUTTON2_Y + HOME_BUTTON_H):
-        view_year = today_year
-        view_month = today_month
-        selected_day = today_day
-        state = STATE_MONTH
-        draw_month_view()
+        open_month_for_today(app)
         return
 
 
-def handle_search_input_touch(x, y):
+def handle_search_input_touch(app, x, y):
     """Process a touch event in search input view."""
-    global search_query, keyboard_mode, state, search_results, search_results_error
-    global search_scroll_offset, _search_content_height, previous_state
-
     # Header Back → Home
     if BACK_X <= x <= BACK_X + BACK_W and BACK_Y <= y <= BACK_Y + BACK_H:
-        state = STATE_HOME
-        draw_home_screen()
+        go_home(app)
         return
 
-    action = _keyboard_hit_test(x, y)
+    action = _keyboard_hit_test(app, x, y)
     if action is None:
         return
 
     if action == "toggle":
-        keyboard_mode = "numbers" if keyboard_mode == "alpha" else "alpha"
-        draw_search_input()
+        if app.search.keyboard_mode == "alpha":
+            app.search.keyboard_mode = "numbers"
+        else:
+            app.search.keyboard_mode = "alpha"
+        draw_search_input(app)
         return
 
     if action == "space":
-        if len(search_query) < 50:
-            search_query += " "
-        draw_search_input()
+        if len(app.search.query) < 50:
+            app.search.query += " "
+        draw_search_input(app)
         return
 
     if action == "backspace":
-        search_query = search_query[:-1]
-        draw_search_input()
+        app.search.query = app.search.query[:-1]
+        draw_search_input(app)
         return
 
     if action == "ok":
-        if not search_query.strip():
+        if not app.search.query.strip():
             return
-        draw_status("Searching for:\n" + search_query)
-        if not ensure_wifi_connected():
-            search_results_error = True
-            search_results = []
-            state = STATE_SEARCH_RESULTS
-            draw_search_results()
+        draw_status("Searching for:\n" + app.search.query)
+        if not ensure_wifi_connected(app):
+            show_search_results(app, [], True)
             return
-        recs, had_error = fetch_search_results(search_query)
-        search_results = recs
-        search_results_error = had_error
-        search_scroll_offset = 0
-        if not had_error and recs:
-            prepare_records_for_display(recs)
-        previous_state = STATE_SEARCH_INPUT
-        state = STATE_SEARCH_RESULTS
-        draw_search_results()
+        recs, had_error = fetch_search_results(app, app.search.query)
+        show_search_results(app, recs, had_error)
         return
 
     # Character key
-    if len(search_query) < 50 and len(action) == 1:
-        search_query += action
-        draw_search_input()
+    if len(app.search.query) < 50 and len(action) == 1:
+        app.search.query += action
+        draw_search_input(app)
 
 
-def handle_search_results_touch(x, y):
+def handle_search_results_touch(app, x, y):
     """Process a tap event in search results view.
     Back button, error retry, and record row taps.
     Row scroll is handled by the drag logic in the main loop."""
-    global state, search_results, search_results_error
-    global search_scroll_offset, selected_record_idx, detail_scroll_offset
-    global previous_state, records
-
     # Back button → search input (preserves search_query so user can refine)
     if BACK_X <= x <= BACK_X + BACK_W and BACK_Y <= y <= BACK_Y + BACK_H:
-        state = STATE_SEARCH_INPUT
-        draw_search_input()
+        show_search_input(app)
         return
 
     # Error state: retry on tap anywhere
-    if search_results_error:
+    if app.search.error:
         draw_status("Retrying search...")
-        if not ensure_wifi_connected():
-            search_results = []
-            draw_search_results()
+        if not ensure_wifi_connected(app):
+            show_search_results(app, [], True)
             return
-        recs, had_error = fetch_search_results(search_query)
-        search_results = recs
-        search_results_error = had_error
-        search_scroll_offset = 0
-        if not had_error and recs:
-            prepare_records_for_display(recs)
-        draw_search_results()
+        recs, had_error = fetch_search_results(app, app.search.query)
+        show_search_results(app, recs, had_error)
         return
 
     # Record row tap → detail view
-    if not search_results_error and search_results:
-        rec_idx = touch_to_record_index(y, recs=search_results,
-                                         offset=search_scroll_offset)
+    if not app.search.error and app.search.results:
+        rec_idx = touch_to_record_index(
+            app, y, recs=app.search.results, offset=app.search.scroll_offset
+        )
 
         if rec_idx is not None:
-            selected_record_idx = rec_idx
-            detail_scroll_offset = 0
-            _scrobble_state = "idle"
-            previous_state = STATE_SEARCH_RESULTS
-            state = STATE_RECORD
-            draw_record_detail()
+            open_record(app, STATE_SEARCH_RESULTS, rec_idx)
 
 
-def handle_month_touch(x, y):
+def handle_month_touch(app, x, y):
     """Process a touch event in month view state."""
-    global view_year, view_month, selected_day, state, records, records_error, scroll_offset
-
     # Check Home button
     hx, hy = HEADER_SIDE_MARGIN, HOME_BTN_Y
     if hx <= x <= hx + HOME_BTN_W and hy <= y <= hy + HOME_BTN_H:
-        state = STATE_HOME
-        draw_home_screen()
+        go_home(app)
         return
 
     # Check left arrow (shifted right to make room for Home)
     lx = HEADER_SIDE_MARGIN + HOME_BTN_W + 4
     ly = HEADER_BUTTON_Y
     if lx <= x <= lx + ARROW_W and ly <= y <= ly + ARROW_H:
-        view_year, view_month = previous_month(view_year, view_month)
-        draw_month_view()
+        app.view_year, app.view_month = previous_month(app.view_year, app.view_month)
+        draw_month_view(app)
         return
 
     # Check right arrow
     rx, ry = WIDTH - ARROW_W - HEADER_SIDE_MARGIN, HEADER_BUTTON_Y
     if rx <= x <= rx + ARROW_W and ry <= y <= ry + ARROW_H:
-        view_year, view_month = next_month(view_year, view_month)
-        draw_month_view()
+        app.view_year, app.view_month = next_month(app.view_year, app.view_month)
+        draw_month_view(app)
         return
 
     # Check calendar cells
@@ -2266,49 +2417,86 @@ def handle_month_touch(x, y):
         return
 
     row, col = cell
-    day_num = cell_to_day(row, col)
+    day_num = cell_to_day(app, row, col)
     if day_num is None:
         return
 
-    # Valid day tapped — fetch records
-    selected_day = day_num
-    state = STATE_DAY
-    scroll_offset = 0
-    records_error = False
-    records = []
-
-    # Show loading state
-    draw_status("Loading records for\n{} {}, {}...".format(
-        MONTH_NAMES[view_month - 1], day_num, view_year
-    ))
-
-    # Fetch from API
-    recs, had_error = fetch_records(view_year, view_month, day_num)
-    set_day_records(recs, had_error)
-
-    # Render day view
-    draw_day_view()
+    open_day(app, day_num)
 
 
-def handle_day_touch(x, y):
+def handle_day_touch(app, x, y):
     """Process a tap event in day view state.
     Back button and scroll are handled by drag logic in the main loop."""
-    global records, records_error
-
     # Tap in error state: retry fetching records
-    if records_error:
+    if app.day.error:
         draw_status("Retrying...")
-        if not ensure_wifi_connected():
-            set_day_records([], True)
-            draw_day_view()
+        if not ensure_wifi_connected(app):
+            set_day_records(app, [], True)
+            draw_day_view(app)
             return
 
-        recs, had_error = fetch_records(view_year, view_month, selected_day)
-        set_day_records(recs, had_error)
-        draw_day_view()
+        recs, had_error = fetch_records(
+            app, app.view_year, app.view_month, app.day.selected_day
+        )
+        set_day_records(app, recs, had_error)
+        draw_day_view(app)
         return
 
     # Row taps are handled by the main loop before this function is called.
+
+
+def handle_vertical_drag(app, start_y, get_offset, set_offset, max_offset, redraw,
+                         use_placeholders):
+    """Handle a throttled vertical drag for any scrollable view.
+
+    The hot path only updates offsets and redraws; layout measurement and
+    network image fetches must already be avoided by the redraw path.
+    """
+    drag_start_y = start_y
+    last_drag_y = start_y
+    pending_delta = 0
+    dragged = False
+    did_redraw = False
+    app.touch.dragging = False
+    app.touch.last_drag_redraw = time.ticks_ms()
+
+    while True:
+        touch_point = read_touch()
+        if touch_point is None:
+            break
+
+        current_y = touch_point[1]
+        if abs(current_y - drag_start_y) >= DRAG_REDRAW_PX:
+            dragged = True
+
+        pending_delta += last_drag_y - current_y
+        now = time.ticks_ms()
+        redraw_due = time.ticks_diff(now, app.touch.last_drag_redraw) >= DRAG_REDRAW_MS
+        if abs(pending_delta) >= DRAG_REDRAW_PX and redraw_due:
+            new_offset = min(max(0, get_offset() + pending_delta), max_offset())
+            if new_offset != get_offset():
+                set_offset(new_offset)
+                app.touch.dragging = use_placeholders
+                redraw()
+                did_redraw = True
+                app.touch.last_drag_redraw = now
+            pending_delta = 0
+
+        last_drag_y = current_y
+        time.sleep(0.01)
+
+    if dragged and pending_delta:
+        new_offset = min(max(0, get_offset() + pending_delta), max_offset())
+        if new_offset != get_offset():
+            set_offset(new_offset)
+            app.touch.dragging = use_placeholders
+            did_redraw = True
+
+    if did_redraw:
+        app.touch.dragging = False
+        redraw()
+
+    return dragged
 
 
 # ============================================================================
@@ -2327,12 +2515,7 @@ def init_display():
 def main():
     """Application entry point. Runs the boot sequence then enters the
     main event loop."""
-    global state, view_year, view_month, _last_touch
-    global selected_day, selected_record_idx, records, records_error
-    global scroll_offset, detail_scroll_offset
-    global _dragging, previous_state, _scrobble_state
-    global _last_activity, _last_drag_redraw
-    global search_scroll_offset
+    app = AppState()
 
     # -- Init display --
     init_display()
@@ -2344,256 +2527,151 @@ def main():
     time.sleep(0.5)
 
     # -- WiFi --
-    if not connect_wifi():
+    if not connect_wifi(app):
         # Show persistent error; try to reconnect in a loop
-        while not connect_wifi():
+        while not connect_wifi(app):
             time.sleep(10)
             gc.collect()
 
     # -- NTP sync --
     sync_time()
-    set_today()
+    set_today(app)
 
     # Start on splash screen — no auto-fetch
-    view_year = today_year
-    view_month = today_month
-    selected_day = today_day
-    state = STATE_HOME
-    records_error = False
-    scroll_offset = 0
+    app.view_year = app.today_year
+    app.view_month = app.today_month
+    app.day.selected_day = app.today_day
+    app.screen = STATE_HOME
+    app.day.error = False
+    app.day.scroll_offset = 0
 
-    draw_home_screen()
-    _last_activity = time.ticks_ms()
+    draw_home_screen(app)
+    app.touch.last_activity = time.ticks_ms()
 
     while True:
         touch_point = read_touch()
         now = time.ticks_ms()
 
-        if _display_awake and time.ticks_diff(now, _last_activity) >= DISPLAY_SLEEP_MS:
-            sleep_display()
+        if (app.touch.display_awake
+                and time.ticks_diff(now, app.touch.last_activity) >= DISPLAY_SLEEP_MS):
+            sleep_display(app)
 
         if touch_point is None:
             time.sleep(0.03)
             continue
 
-        if not _display_awake:
-            wake_display()
-            _last_activity = now
-            _last_touch = now
+        if not app.touch.display_awake:
+            wake_display(app)
+            app.touch.last_activity = now
+            app.touch.last_touch = now
             wait_for_touch_release()
             continue
 
         x, y = touch_point
-        if time.ticks_diff(now, _last_touch) < DEBOUNCE_MS:
+        if time.ticks_diff(now, app.touch.last_touch) < DEBOUNCE_MS:
             time.sleep(0.02)
             continue
-        _last_touch = now
-        _last_activity = now
+        app.touch.last_touch = now
+        app.touch.last_activity = now
 
         # -- STATE_HOME: splash screen --
-        if state == STATE_HOME:
-            handle_home_touch(x, y)
+        if app.screen == STATE_HOME:
+            handle_home_touch(app, x, y)
             wait_for_touch_release()
 
         # -- STATE_SEARCH_INPUT: on-screen keyboard --
-        elif state == STATE_SEARCH_INPUT:
-            handle_search_input_touch(x, y)
+        elif app.screen == STATE_SEARCH_INPUT:
+            handle_search_input_touch(app, x, y)
             wait_for_touch_release()
 
         # -- STATE_SEARCH_RESULTS: search results list --
-        elif state == STATE_SEARCH_RESULTS:
+        elif app.screen == STATE_SEARCH_RESULTS:
             # Check back button immediately (no drag needed)
             if BACK_X <= x <= BACK_X + BACK_W and BACK_Y <= y <= BACK_Y + BACK_H:
-                state = STATE_SEARCH_INPUT
-                draw_search_input()
+                show_search_input(app)
                 wait_for_touch_release()
                 continue
 
             # Error state: retry on tap anywhere (before drag)
-            if search_results_error:
-                handle_search_results_touch(x, y)
+            if app.search.error:
+                handle_search_results_touch(app, x, y)
                 wait_for_touch_release()
                 continue
 
-            # Track vertical drag for scrolling
-            drag_start_y = y
-            last_drag_y = y
-            pending_delta = 0
-            dragged = False
-            _dragging = False
-            _last_drag_redraw = time.ticks_ms()
-            while True:
-                touch_point = read_touch()
-                if touch_point is None:
-                    break
-
-                current_y = touch_point[1]
-                if abs(current_y - drag_start_y) >= DRAG_REDRAW_PX:
-                    dragged = True
-
-                pending_delta += last_drag_y - current_y
-                now = time.ticks_ms()
-                redraw_due = time.ticks_diff(now, _last_drag_redraw) >= DRAG_REDRAW_MS
-                if abs(pending_delta) >= DRAG_REDRAW_PX and redraw_due:
-                    max_offset = _search_max_scroll_offset()
-                    new_offset = min(max(0, search_scroll_offset + pending_delta), max_offset)
-                    if new_offset != search_scroll_offset:
-                        search_scroll_offset = new_offset
-                        _dragging = True
-                        draw_search_results()
-                        _last_drag_redraw = now
-                    pending_delta = 0
-
-                last_drag_y = current_y
-                time.sleep(0.01)
-
-            if dragged and pending_delta:
-                max_offset = _search_max_scroll_offset()
-                new_offset = min(max(0, search_scroll_offset + pending_delta), max_offset)
-                if new_offset != search_scroll_offset:
-                    search_scroll_offset = new_offset
-                    _dragging = True
-
-            if _dragging:
-                _dragging = False
-                draw_search_results()
+            dragged = handle_vertical_drag(
+                app,
+                y,
+                lambda: app.search.scroll_offset,
+                lambda value: setattr(app.search, "scroll_offset", value),
+                lambda: _search_max_scroll_offset(app),
+                lambda: draw_search_results(app),
+                True
+            )
 
             if not dragged:
                 # Record row tap handled by handle_search_results_touch
-                handle_search_results_touch(x, y)
+                handle_search_results_touch(app, x, y)
 
-        elif state == STATE_MONTH:
-            handle_month_touch(x, y)
+        elif app.screen == STATE_MONTH:
+            handle_month_touch(app, x, y)
             wait_for_touch_release()
 
-        elif state == STATE_DAY:
+        elif app.screen == STATE_DAY:
             # Check back button immediately (no drag needed)
             if BACK_X <= x <= BACK_X + BACK_W and BACK_Y <= y <= BACK_Y + BACK_H:
-                state = STATE_MONTH
-                draw_month_view()
+                app.screen = STATE_MONTH
+                draw_month_view(app)
                 wait_for_touch_release()
                 continue
 
-            # Track vertical drag for scrolling
-            drag_start_y = y
-            last_drag_y = y
-            pending_delta = 0
-            dragged = False
-            _dragging = False
-            _last_drag_redraw = time.ticks_ms()
-            while True:
-                touch_point = read_touch()
-                if touch_point is None:
-                    break
-
-                current_y = touch_point[1]
-                if abs(current_y - drag_start_y) >= DRAG_REDRAW_PX:
-                    dragged = True
-
-                pending_delta += last_drag_y - current_y
-                now = time.ticks_ms()
-                redraw_due = time.ticks_diff(now, _last_drag_redraw) >= DRAG_REDRAW_MS
-                if abs(pending_delta) >= DRAG_REDRAW_PX and redraw_due:
-                    max_offset = _max_scroll_offset()
-                    new_offset = min(max(0, scroll_offset + pending_delta), max_offset)
-                    if new_offset != scroll_offset:
-                        scroll_offset = new_offset
-                        _dragging = True
-                        draw_day_view()
-                        _last_drag_redraw = now
-                    pending_delta = 0
-
-                last_drag_y = current_y
-                time.sleep(0.01)
-
-            if dragged and pending_delta:
-                max_offset = _max_scroll_offset()
-                new_offset = min(max(0, scroll_offset + pending_delta), max_offset)
-                if new_offset != scroll_offset:
-                    scroll_offset = new_offset
-                    _dragging = True
-
-            if _dragging:
-                _dragging = False
-                draw_day_view()
+            dragged = handle_vertical_drag(
+                app,
+                y,
+                lambda: app.day.scroll_offset,
+                lambda value: setattr(app.day, "scroll_offset", value),
+                lambda: _max_scroll_offset(app),
+                lambda: draw_day_view(app),
+                True
+            )
 
             if not dragged:
                 # Check for record row tap -> detail view
-                if not records_error and records:
-                    rec_idx = touch_to_record_index(y)
+                if not app.day.error and app.day.records:
+                    rec_idx = touch_to_record_index(app, y)
                     if rec_idx is not None:
-                        selected_record_idx = rec_idx
-                        detail_scroll_offset = 0
-                        _scrobble_state = "idle"
-                        previous_state = STATE_DAY
-                        state = STATE_RECORD
-                        draw_record_detail()
+                        open_record(app, STATE_DAY, rec_idx)
                         continue
 
                 # Otherwise handle as normal tap
-                handle_day_touch(x, y)
+                handle_day_touch(app, x, y)
 
-        elif state == STATE_RECORD:
+        elif app.screen == STATE_RECORD:
             # Check back button immediately (no drag needed)
             if BACK_X <= x <= BACK_X + BACK_W and BACK_Y <= y <= BACK_Y + BACK_H:
-                detail_scroll_offset = 0
-                _scrobble_state = "idle"
-                if previous_state == STATE_SEARCH_RESULTS:
-                    state = STATE_SEARCH_RESULTS
-                    draw_search_results()
-                else:
-                    state = STATE_DAY
-                    draw_day_view()
+                back_from_record(app)
                 wait_for_touch_release()
                 continue
 
-            # Track vertical drag for scrolling detail view
-            drag_start_y = y
-            last_drag_y = y
-            pending_delta = 0
-            dragged = False
-            _last_drag_redraw = time.ticks_ms()
-            while True:
-                touch_point = read_touch()
-                if touch_point is None:
-                    break
-
-                current_y = touch_point[1]
-                if abs(current_y - drag_start_y) >= DRAG_REDRAW_PX:
-                    dragged = True
-
-                pending_delta += last_drag_y - current_y
-                now = time.ticks_ms()
-                redraw_due = time.ticks_diff(now, _last_drag_redraw) >= DRAG_REDRAW_MS
-                if abs(pending_delta) >= DRAG_REDRAW_PX and redraw_due:
-                    max_offset = _max_detail_scroll_offset()
-                    new_offset = min(max(0, detail_scroll_offset + pending_delta), max_offset)
-                    if new_offset != detail_scroll_offset:
-                        detail_scroll_offset = new_offset
-                        draw_record_detail()
-                        _last_drag_redraw = now
-                    pending_delta = 0
-
-                last_drag_y = current_y
-                time.sleep(0.01)
-
-            if dragged and pending_delta:
-                max_offset = _max_detail_scroll_offset()
-                new_offset = min(max(0, detail_scroll_offset + pending_delta), max_offset)
-                if new_offset != detail_scroll_offset:
-                    detail_scroll_offset = new_offset
-                    draw_record_detail()
+            dragged = handle_vertical_drag(
+                app,
+                y,
+                lambda: app.detail.scroll_offset,
+                lambda value: setattr(app.detail, "scroll_offset", value),
+                lambda: _max_detail_scroll_offset(app),
+                lambda: draw_record_detail(app),
+                True
+            )
 
             if not dragged:
                 # Determine which record is being viewed
-                if previous_state == STATE_SEARCH_RESULTS:
-                    rec = search_results[selected_record_idx]
+                if app.detail.source_screen == STATE_SEARCH_RESULTS:
+                    rec = app.search.results[app.detail.selected_index]
                 else:
-                    rec = records[selected_record_idx]
+                    rec = app.day.records[app.detail.selected_index]
 
                 # Check scrobble button tap
-                if _scrobble_button_hit_test(x, y, rec):
-                    handle_scrobble_touch(rec)
+                if _scrobble_button_hit_test(app, x, y, rec):
+                    handle_scrobble_touch(app, rec)
 
 
 # ============================================================================
