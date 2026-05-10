@@ -50,7 +50,7 @@ Copy the files to the root of your Presto's flash storage. You can use Thonny, `
 pip install mpremote
 
 # Copy files to the Presto
-mpremote fs cp records_on_the_day.py :main.py
+mpremote fs cp main.py :main.py
 mpremote fs cp secrets.py :secrets.py
 
 # Reset the device to start the app
@@ -63,18 +63,19 @@ After `secrets.py` has been copied to the device once, you can redeploy the app 
 mise run presto
 ```
 
-This copies `records_on_the_day.py` to `:main.py` and resets the device; it does not copy `secrets.py`.
+This copies `main.py` to `:main.py` and resets the device; it does not copy `secrets.py`.
 
 **Using Thonny:**
 
 1. Open Thonny and select "MicroPython (Raspberry Pi Pico)" as the interpreter
-2. Open `records_on_the_day.py` and `secrets.py` in Thonny
-3. Use File → Save Copy → Raspberry Pi Pico to save `records_on_the_day.py` as `main.py` and `secrets.py` as `secrets.py`
+2. Open `main.py` and `secrets.py` in Thonny
+3. Use File → Save Copy → Raspberry Pi Pico to save `main.py` as `main.py` and `secrets.py` as `secrets.py`
 4. Press the reset button on the Presto, or use Run → Send EOF / Soft Reboot
 
 ### 3. The app starts automatically
 
 The Presto runs `main.py` on boot. The app will:
+
 1. Show a startup screen
 2. Connect to WiFi (showing progress)
 3. Sync time via NTP
@@ -119,7 +120,7 @@ The Presto runs `main.py` on boot. The app will:
 
 ```
 presto/
-  records_on_the_day.py # Application source, deployed to the device as main.py
+  main.py # Application source, deployed to the device as main.py
   config.example.py     # Template for secrets.py
   secrets.py            # Your credentials (git-ignored, create from example)
   README.md             # This file
@@ -127,14 +128,14 @@ presto/
 
 ## Troubleshooting
 
-| Symptom | Likely cause | Fix |
-|---------|-------------|-----|
-| Stuck on "secrets.py not found" | `secrets.py` not on the device | Copy `config.example.py` to `secrets.py` and deploy it |
-| Stuck on "WiFi connection failed" | Wrong SSID/password, or network down | Check `secrets.py` credentials; verify network is up |
-| "Could not reach server" on day tap | API token invalid, or server down | Check `API_TOKEN` in `secrets.py`; verify the server is running |
-| Images show as grey rectangles | JPEG decoder not available, or image URLs unreachable | Check firmware version; ensure Presto has internet access |
-| Touch not responding | Firmware touch API mismatch | Try updating Presto firmware to the latest version |
-| Display is black after idle | Backlight sleep is active | Touch once to wake the display |
+| Symptom                             | Likely cause                                          | Fix                                                             |
+| ----------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------- |
+| Stuck on "secrets.py not found"     | `secrets.py` not on the device                        | Copy `config.example.py` to `secrets.py` and deploy it          |
+| Stuck on "WiFi connection failed"   | Wrong SSID/password, or network down                  | Check `secrets.py` credentials; verify network is up            |
+| "Could not reach server" on day tap | API token invalid, or server down                     | Check `API_TOKEN` in `secrets.py`; verify the server is running |
+| Images show as grey rectangles      | JPEG decoder not available, or image URLs unreachable | Check firmware version; ensure Presto has internet access       |
+| Touch not responding                | Firmware touch API mismatch                           | Try updating Presto firmware to the latest version              |
+| Display is black after idle         | Backlight sleep is active                             | Touch once to wake the display                                  |
 
 ## API Endpoint
 

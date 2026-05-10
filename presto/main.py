@@ -1,13 +1,15 @@
 """
-Presto Music Library - Records On This Day Calendar
+Presto Music Library
 ===================================================
 A MicroPython application for the Pimoroni Presto (RP2350B, 720x720 touch
-display, WiFi) that connects to the Music Library API and lets you browse
-records by release date.
+display, WiFi) that connects to the Music Library API and lets you:
+- browse records by release date
+- search records in the collection
 
 Features:
   - WiFi auto-connect with retry
   - NTP time synchronisation
+  - Full text search for collection records 
   - Month calendar view with day-of-week headers
   - Tap a day to see records released on that date (cover art, artist, title)
   - Navigate months with arrow buttons

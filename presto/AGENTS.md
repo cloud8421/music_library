@@ -1,12 +1,12 @@
 # Presto App Guidance
 
 This directory contains MicroPython apps for the Pimoroni Presto. The main app is
-`records_on_the_day.py`, deployed to the device as `main.py`.
+`main.py`, deployed to the device as `main.py`.
 
 ## Context To Read First
 
 - Read `README.md` before changing setup, deployment, user-facing behavior, or API response assumptions.
-- Read `records_on_the_day.py` before changing layout, touch handling, networking, display sleep, or performance-sensitive code.
+- Read `main.py` before changing layout, touch handling, networking, display sleep, or performance-sensitive code.
 - The root project conventions still apply, but most Phoenix/Elixir conventions are not relevant inside `presto/`.
 
 ## Deployment And Verification
@@ -18,7 +18,7 @@ mise run presto                     # deploy and reset
 Manual deployment:
 
 ```bash
-mpremote fs cp records_on_the_day.py :main.py
+mpremote fs cp main.py :main.py
 mpremote fs cp secrets.py :secrets.py
 mpremote reset
 ```
@@ -26,7 +26,7 @@ mpremote reset
 Syntax check (no `__pycache__`):
 
 ```bash
-python3 -c "import py_compile; py_compile.compile('records_on_the_day.py', cfile='/tmp/records_on_the_day.pyc', doraise=True)"
+python3 -c "import py_compile; py_compile.compile('main.py', cfile='/tmp/main.pyc', doraise=True)"
 ```
 
 Do not claim device behavior is verified unless it was tested on the physical Presto.
