@@ -130,6 +130,7 @@ defmodule MusicLibraryWeb.Router do
     get "/collection/random", CollectionController, :random
     get "/collection/on_this_day", CollectionController, :on_this_day
     get "/collection", CollectionController, :index
+    post "/collection/:record_id/scrobble", CollectionController, :scrobble
     get "/errors", ErrorController, :index
     get "/errors/:id", ErrorController, :show
     post "/errors/:id/mute", ErrorController, :mute

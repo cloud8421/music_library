@@ -3,10 +3,10 @@ id: ML-177
 title: >-
   Add POST /api/v1/collection/:record_id/scrobble endpoint and expose
   selected_release_id in API responses
-status: To Do
+status: Done
 assignee: []
 created_date: "2026-05-10 18:46"
-updated_date: "2026-05-10 19:19"
+updated_date: "2026-05-10 19:36"
 labels:
   - api
   - scrobble
@@ -22,6 +22,11 @@ references:
   - >-
     backlog/tasks/ml-170 -
     Expose-additional-data-points-for-api-v1-collection-records.md
+modified_files:
+  - lib/music_library_web/controllers/collection_json.ex
+  - lib/music_library_web/router.ex
+  - lib/music_library_web/controllers/collection_controller.ex
+  - test/music_library_web/controllers/collection_controller_test.exs
 priority: medium
 ordinal: 4000
 ---
@@ -57,14 +62,14 @@ The record view (`CollectionLive.Show`) in the web UI already has a scrobble but
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 POST /api/v1/collection/:record_id/scrobble returns 200 with {"status": "ok"} when scrobble succeeds and the record has a selected_release_id
-- [ ] #2 POST /api/v1/collection/:record_id/scrobble returns 422 with {"status": "error", "reason": "no_selected_release"} when the record has no selected_release_id
-- [ ] #3 POST /api/v1/collection/:record_id/scrobble returns 401 when no valid Bearer token is provided
-- [ ] #4 POST /api/v1/collection/:record_id/scrobble returns 404 when the record ID does not exist
-- [ ] #5 All collection API responses (index, latest, random, on_this_day) include selected_release_id field (string or null)
-- [ ] #6 Existing API response fields are unchanged (backward compatible)
-- [ ] #7 Controller test covers success, missing release_id, missing record, auth failure, and Last.fm error cases
-- [ ] #8 JSON view test verifies selected_release_id in record output
+- [x] #1 POST /api/v1/collection/:record_id/scrobble returns 200 with {"status": "ok"} when scrobble succeeds and the record has a selected_release_id
+- [x] #2 POST /api/v1/collection/:record_id/scrobble returns 422 with {"status": "error", "reason": "no_selected_release"} when the record has no selected_release_id
+- [x] #3 POST /api/v1/collection/:record_id/scrobble returns 401 when no valid Bearer token is provided
+- [x] #4 POST /api/v1/collection/:record_id/scrobble returns 404 when the record ID does not exist
+- [x] #5 All collection API responses (index, latest, random, on_this_day) include selected_release_id field (string or null)
+- [x] #6 Existing API response fields are unchanged (backward compatible)
+- [x] #7 Controller test covers success, missing release_id, missing record, auth failure, and Last.fm error cases
+- [x] #8 JSON view test verifies selected_release_id in record output
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -144,3 +149,50 @@ The work comprises 4 steps with explicit dependencies:
 **Dependencies**: Step 4 depends on Steps 1-3 being complete. Within Step 4, the JSON view assertion can be written as soon as Step 1 is done.
 
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
+## Changes
+
+### 1. `lib/music_library_web/controllers/collection_json.ex`
+
+- Added `selected_release_id` field to the `record/1` private function's response map, exposing it in all collection API responses (index, latest, random, on_this_day).
+
+### 2. `lib/music_library_web/router.ex`
+
+- Added `post "/collection/:record_id/scrobble", CollectionController, :scrobble` to the `:api` pipeline scope, protected by the existing `require_api_token` plug.
+
+### 3. `lib/music_library_web/controllers/collection_controller.ex`
+
+- Added aliases for `MusicBrainz`, `MusicLibrary.Records`, and `MusicLibrary.ScrobbleActivity`.
+- Added `scrobble/2` action with the following response codes:
+  - **404** — Record not found (`Records.get_record/1` returns nil; `phoenix_ecto` 4.x does not auto-convert `Ecto.NoResultsError`, so explicit handling was used)
+  - **422** — No `selected_release_id` set on the record
+  - **200** — Scrobble succeeded (`{"status": "ok"}`)
+  - **422** — MusicBrainz release has zero-duration tracks
+  - **502** — MusicBrainz API error
+  - **502** — Last.fm scrobbling error
+  - **503** — Last.fm session key not configured
+- Added private `do_scrobble/2` to keep the action readable and separate record lookup from scrobble logic.
+
+### 4. `test/music_library_web/controllers/collection_controller_test.exs`
+
+- Added `selected_release_id` to `expected_record_json/1` (string value matching the fixture's `"d3f9b9e2-73f5-4b47-a2a7-2c2199aad608"`)
+- Updated auth test to include the scrobble POST endpoint
+- Added scrobble test describe block with:
+  - 401 test (no bearer token)
+  - 404 test (non-existent record)
+  - 422 test (no selected_release_id)
+  - 200 success test (with MusicBrainz stub, Last.fm stub, and stored session key)
+  - 502 test for MusicBrainz failure
+  - 502 test for Last.fm failure (with session key so it reaches the Last.fm call)
+- All API stubs use `Req.Test.stub/2` matching the project's test infrastructure pattern
+
+## Notes
+
+- The `phoenix_ecto` library in version 4.x does NOT automatically convert `Ecto.NoResultsError` to 404 in controller actions (this was a Phoenix.Ecto 3.x feature). The implementation uses `Records.get_record/1` (non-bang) and handles nil explicitly.
+- The scrobble is synchronous — the full MusicBrainz lookup + Last.fm scrobble happens within the HTTP request cycle. This is intentional: the Presto device needs an immediate success/failure response and sub-second latency is acceptable for these API calls.
+- All 974 tests pass (43 doctests + 931 ExUnit tests).
+<!-- SECTION:FINAL_SUMMARY:END -->

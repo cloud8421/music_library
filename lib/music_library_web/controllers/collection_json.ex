@@ -31,6 +31,7 @@ defmodule MusicLibraryWeb.CollectionJSON do
       genres: record.genres,
       release_date: record.release_date,
       purchased_at: record.purchased_at,
+      selected_release_id: record.selected_release_id,
       artists: Enum.map(record.artists, & &1.name),
       title: record.title,
       cover_url: url(~p"/api/v1/assets/#{Transform.new(hash: record.cover_hash)}"),
