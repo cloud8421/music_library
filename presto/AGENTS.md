@@ -83,6 +83,9 @@ GET https://music-library.claudio-ortolina.org/api/v1/collection/on_this_day?dat
 Authorization: Bearer <API_TOKEN>
 ```
 
-Fields used by the app: `title`, `artists`, `format`, `release_date`, `genres`, `record_type`, `purchased_at`, `micro_cover_url`, `mini_cover_url`, `thumb_url`.
+Fields used by the app: `title`, `artists`, `format`, `release_date`, `genres`, `record_type`, `purchased_at`, `micro_cover_url`, `mini_cover_url`, `thumb_url`, `selected_release_id`.
+
+POST /api/v1/collection/:record_id/scrobble
+Authorization: Bearer <API_TOKEN>
 
 When adding or changing API assumptions, update `README.md`.

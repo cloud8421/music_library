@@ -103,6 +103,7 @@ The Presto runs `main.py` on boot. The app will:
 - Drag vertically to scroll if the content is taller than the screen
 - The header bar stays fixed at the top while the cover and info scroll underneath
 - Tap **< Back** to return to the day view
+- If the record can be scrobbled, a **"Scrobble" button** appears at the bottom — tap it to scrobble the release to Last.fm; "Done" confirms success
 
 ### Display sleep
 
@@ -153,6 +154,7 @@ Response format:
   "records": [
     {
       "id": "...",
+      "selected_release_id": "abc-123-uuid",
       "title": "Album Title",
       "artists": ["Artist Name"],
       "micro_cover_url": "https://.../api/v1/assets/thumb.jpg?width=40",

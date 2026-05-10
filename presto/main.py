@@ -106,6 +106,11 @@ DETAIL_INFO_GAP = 4
 DETAIL_TEXT_X = 40
 DETAIL_TEXT_W = WIDTH - (2 * DETAIL_TEXT_X)
 
+# Scrobble button (detail view)
+SCROBBLE_BUTTON_W = 200
+SCROBBLE_BUTTON_H = 40
+SCROBBLE_BUTTON_GAP = 12  # vertical gap before button
+
 RECORD_START_Y = DAY_HEADER_Y + DAY_HEADER_H + 8
 THUMB_SIZE = 40
 THUMB_MARGIN = 8
@@ -130,6 +135,12 @@ ARTIST_COLOR = (161, 161, 170)
 ERROR_COLOR = (59, 130, 246)
 PLACEHOLDER_BG = (63, 63, 70)
 STATUS_TEXT = (161, 161, 170)
+
+# Scrobble button colors
+SCROBBLE_BG = (55, 65, 81)         # Same slate as HOME_BTN_BG
+SCROBBLE_TEXT = (228, 228, 231)    # Same as TITLE_COLOR
+SCROBBLE_DONE_BG = (34, 197, 94)   # Green success
+SCROBBLE_DONE_TEXT = (255, 255, 255)
 
 # Days of week (Monday first, ISO 8601)
 DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -222,6 +233,9 @@ _content_height = 0        # Cached total record list height
 detail_scroll_offset = 0   # Pixel scroll position for detail view
 _detail_content_height = 0 # Cached total detail content height
 
+# Scrobble button state (per-record-detail-visit; resets on navigation)
+_scrobble_state = "idle"  # "idle" | "loading" | "done"
+
 # Search state
 search_query = ""           # Current search buffer (max ~50 chars)
 search_results = []         # Records from search API
@@ -263,6 +277,12 @@ _pen_placeholder = None
 _pen_status = None
 _pen_home_btn = None
 
+# Scrobble button pens
+_pen_scrobble_bg = None
+_pen_scrobble_text = None
+_pen_scrobble_done_bg = None
+_pen_scrobble_done_text = None
+
 
 def _init_pens():
     """Pre-create all pens from the RGB color constants."""
@@ -287,6 +307,14 @@ def _init_pens():
     _pen_placeholder = display.create_pen(*PLACEHOLDER_BG)
     _pen_status = display.create_pen(*STATUS_TEXT)
     _pen_home_btn = display.create_pen(*HOME_BTN_BG)
+
+    # Scrobble button
+    global _pen_scrobble_bg, _pen_scrobble_text
+    global _pen_scrobble_done_bg, _pen_scrobble_done_text
+    _pen_scrobble_bg = display.create_pen(*SCROBBLE_BG)
+    _pen_scrobble_text = display.create_pen(*SCROBBLE_TEXT)
+    _pen_scrobble_done_bg = display.create_pen(*SCROBBLE_DONE_BG)
+    _pen_scrobble_done_text = display.create_pen(*SCROBBLE_DONE_TEXT)
 
 
 # ============================================================================
@@ -1644,6 +1672,11 @@ def _measure_detail_content(rec):
         purch_str = "Purchased: " + display_text(str(purchased_at)[:10])
         h += _measure_detail_text_height(purch_str)
 
+    # Scrobble button (at bottom, only if scrobble-eligible)
+    if rec.get("selected_release_id"):
+        h += SCROBBLE_BUTTON_GAP
+        h += SCROBBLE_BUTTON_H
+
     _detail_content_height = h
 
 
@@ -1707,6 +1740,19 @@ def draw_record_detail():
     # Genres, metadata, purchased at (below cover)
     y = y + DETAIL_COVER_SIZE + DETAIL_INFO_GAP
     _draw_detail_info_below_cover(rec, y)
+
+    # Scrobble button (at bottom of content, only if eligible)
+    if rec.get("selected_release_id"):
+        # Compute button Y from measured content height (y doesn't track
+        # the bottom because _draw_detail_info_below_cover's return is
+        # discarded — use _detail_content_height which already includes
+        # the button height and gap from Step 4).
+        button_y = (DETAIL_COVER_Y - offset
+                    + _detail_content_height - SCROBBLE_BUTTON_H)
+        # Only draw if the button is at least partially visible
+        if (button_y + SCROBBLE_BUTTON_H > DAY_HEADER_Y + DAY_HEADER_H
+                and button_y < HEIGHT):
+            _draw_scrobble_button(rec, button_y)
 
     # Scroll indicators
     display.set_font("bitmap14_outline")
@@ -1860,6 +1906,34 @@ def _draw_detail_text_line(text, y, pen, font="bitmap8", scale=1):
     return cy
 
 
+def _draw_scrobble_button(rec, y):
+    """Draw the scrobble button at (x, y). Button is horizontally centered.
+    Visual state depends on global _scrobble_state."""
+    global _scrobble_state
+
+    bx = (WIDTH - SCROBBLE_BUTTON_W) // 2
+
+    if _scrobble_state == "done":
+        bg_pen = _pen_scrobble_done_bg
+        text_pen = _pen_scrobble_done_text
+        label = "Done"
+    elif _scrobble_state == "loading":
+        bg_pen = _pen_scrobble_bg
+        text_pen = _pen_scrobble_text
+        label = "..."
+    else:
+        bg_pen = _pen_scrobble_bg
+        text_pen = _pen_scrobble_text
+        label = "Scrobble"
+
+    display.set_pen(bg_pen)
+    display.rectangle(bx, y, SCROBBLE_BUTTON_W, SCROBBLE_BUTTON_H)
+
+    display.set_pen(text_pen)
+    display.set_font("bitmap8")
+    _draw_centered_text(label, bx, y, SCROBBLE_BUTTON_W, SCROBBLE_BUTTON_H, 8)
+
+
 # ============================================================================
 # TOUCH HANDLING
 # ============================================================================
@@ -1974,6 +2048,63 @@ def touch_to_record_index(y, recs=None, offset=None):
             return i
         cy += row_h
     return None
+
+
+def _scrobble_button_hit_test(x, y, rec):
+    """Return True if the touch (x, y) falls within the scrobble button bounds.
+    Accounts for current detail_scroll_offset.
+    Ignores touches in the fixed header area (handled separately)."""
+    global detail_scroll_offset
+
+    if not rec.get("selected_release_id"):
+        return False
+
+    # Reject touches in the fixed header zone (handled by back-button logic)
+    if y <= DAY_HEADER_Y + DAY_HEADER_H:
+        return False
+
+    # Compute button Y position — must match the formula used in
+    # draw_record_detail(). _detail_content_height already
+    # includes SCROBBLE_BUTTON_GAP + SCROBBLE_BUTTON_H from _measure_detail_content.
+    button_y = (DETAIL_COVER_Y - detail_scroll_offset
+                + _detail_content_height - SCROBBLE_BUTTON_H)
+    bx = (WIDTH - SCROBBLE_BUTTON_W) // 2
+
+    return (bx <= x <= bx + SCROBBLE_BUTTON_W and
+            button_y <= y <= button_y + SCROBBLE_BUTTON_H)
+
+
+def handle_scrobble_touch(rec):
+    """Execute the scrobble HTTP request and update button state.
+    Blocks during the request (urequests is synchronous on MicroPython).
+    On success, sets state to "done" (persists until navigation).
+    On failure, reverts to "idle"."""
+    global _scrobble_state
+
+    rec_id = rec.get("id")
+    if not rec_id:
+        return
+
+    # Set loading state and redraw immediately so the user sees "..."
+    _scrobble_state = "loading"
+    draw_record_detail()
+
+    # Make the POST request. urequests has limited timeout support on
+    # MicroPython; if WiFi drops mid-request, the default timeout may
+    # be 30+ seconds. Test this scenario on-device.
+    url = API_BASE + "/api/v1/collection/" + str(rec_id) + "/scrobble"
+    try:
+        resp = urequests.post(url, headers=_auth_header())
+        if resp.status_code == 200:
+            _scrobble_state = "done"
+        else:
+            _scrobble_state = "idle"
+        resp.close()
+    except Exception:
+        _scrobble_state = "idle"
+
+    gc.collect()
+    draw_record_detail()
 
 
 def handle_home_touch(x, y):
@@ -2097,6 +2228,7 @@ def handle_search_results_touch(x, y):
         if rec_idx is not None:
             selected_record_idx = rec_idx
             detail_scroll_offset = 0
+            _scrobble_state = "idle"
             previous_state = STATE_SEARCH_RESULTS
             state = STATE_RECORD
             draw_record_detail()
@@ -2198,7 +2330,7 @@ def main():
     global state, view_year, view_month, _last_touch
     global selected_day, selected_record_idx, records, records_error
     global scroll_offset, detail_scroll_offset
-    global _dragging, previous_state
+    global _dragging, previous_state, _scrobble_state
     global _last_activity, _last_drag_redraw
     global search_scroll_offset
 
@@ -2392,6 +2524,7 @@ def main():
                     if rec_idx is not None:
                         selected_record_idx = rec_idx
                         detail_scroll_offset = 0
+                        _scrobble_state = "idle"
                         previous_state = STATE_DAY
                         state = STATE_RECORD
                         draw_record_detail()
@@ -2404,6 +2537,7 @@ def main():
             # Check back button immediately (no drag needed)
             if BACK_X <= x <= BACK_X + BACK_W and BACK_Y <= y <= BACK_Y + BACK_H:
                 detail_scroll_offset = 0
+                _scrobble_state = "idle"
                 if previous_state == STATE_SEARCH_RESULTS:
                     state = STATE_SEARCH_RESULTS
                     draw_search_results()
@@ -2449,6 +2583,17 @@ def main():
                 if new_offset != detail_scroll_offset:
                     detail_scroll_offset = new_offset
                     draw_record_detail()
+
+            if not dragged:
+                # Determine which record is being viewed
+                if previous_state == STATE_SEARCH_RESULTS:
+                    rec = search_results[selected_record_idx]
+                else:
+                    rec = records[selected_record_idx]
+
+                # Check scrobble button tap
+                if _scrobble_button_hit_test(x, y, rec):
+                    handle_scrobble_touch(rec)
 
 
 # ============================================================================
