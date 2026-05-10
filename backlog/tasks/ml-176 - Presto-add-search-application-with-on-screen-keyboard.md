@@ -1,10 +1,10 @@
 ---
 id: ML-176
 title: "Presto: add search application with on-screen keyboard"
-status: To Do
+status: Done
 assignee: []
 created_date: "2026-05-10 13:34"
-updated_date: "2026-05-10 13:36"
+updated_date: "2026-05-10 14:58"
 labels:
   - presto
   - search
@@ -14,6 +14,7 @@ dependencies:
   - ML-176.1
   - ML-176.2
 priority: medium
+ordinal: 3000
 ---
 
 ## Description
