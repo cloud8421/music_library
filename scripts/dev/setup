@@ -19,3 +19,5 @@ mix hex.repo add fluxon https://repo.fluxonui.com \
 gh extension install thiagokokada/gh-gfm-preview
 
 mix setup
+
+npm ci --prefix .pi/extensions/s3-browser
