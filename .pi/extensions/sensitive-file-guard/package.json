@@ -1,0 +1,11 @@
+{
+  "name": "sensitive-file-guard",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "unbash": "3.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
+  }
+}

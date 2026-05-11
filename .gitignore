@@ -56,3 +56,4 @@ npm-debug.log
 # Superpowers brainstorming mockups
 /.superpowers/
 /.pi/extensions/s3-browser/node_modules
+/.pi/extensions/sensitive-file-guard/node_modules

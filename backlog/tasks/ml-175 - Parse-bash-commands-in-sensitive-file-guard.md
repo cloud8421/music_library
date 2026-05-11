@@ -1,10 +1,10 @@
 ---
 id: ML-175
 title: Parse bash commands in sensitive file guard
-status: To Do
+status: In Progress
 assignee: []
 created_date: "2026-05-10 06:29"
-updated_date: "2026-05-11 06:46"
+updated_date: "2026-05-11 16:41"
 labels:
   - pi
   - ready
@@ -15,6 +15,14 @@ references:
 documentation:
   - "https://github.com/webpro-nl/unbash#readme"
   - "https://www.npmjs.com/package/unbash"
+modified_files:
+  - .pi/extensions/sensitive-file-guard/ast.ts
+  - .pi/extensions/sensitive-file-guard/index.ts
+  - .pi/extensions/sensitive-file-guard/package.json
+  - .pi/extensions/sensitive-file-guard/package-lock.json
+  - .pi/extensions/sensitive-file-guard/extractCommandNames.test.ts
+  - .pi/sensitive-paths.json
+  - .gitignore
 priority: medium
 ---
 
@@ -30,13 +38,13 @@ Make `.pi/extensions/000-sensitive-file-guard.ts` more robust by parsing bash to
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 Bash tool command blocking is based on parsed shell syntax rather than regex matching over the entire command string.
-- [ ] #2 Actual invocations of configured blocked commands such as `env` and `printenv` are blocked when used as simple commands.
-- [ ] #3 Blocked commands are also detected in nested shell syntax that can execute commands, including command substitutions and subshells.
-- [ ] #4 Non-executed text such as quoted strings and comments does not trigger blocked command detection.
-- [ ] #5 Existing sensitive path blocking behavior for non-bash tools remains unchanged.
-- [ ] #6 The implementation degrades safely if bash parsing fails, either by blocking the command or falling back to the existing conservative text checks.
-- [ ] #7 Focused tests or a documented local verification cover allowed and blocked bash examples, including false-positive and nested-command cases.
+- [x] #1 Bash tool command blocking is based on parsed shell syntax rather than regex matching over the entire command string.
+- [x] #2 Actual invocations of configured blocked commands such as `env` and `printenv` are blocked when used as simple commands.
+- [x] #3 Blocked commands are also detected in nested shell syntax that can execute commands, including command substitutions and subshells.
+- [x] #4 Non-executed text such as quoted strings and comments does not trigger blocked command detection.
+- [x] #5 Existing sensitive path blocking behavior for non-bash tools remains unchanged.
+- [x] #6 The implementation degrades safely if bash parsing fails, either by blocking the command or falling back to the existing conservative text checks.
+- [x] #7 Focused tests or a documented local verification cover allowed and blocked bash examples, including false-positive and nested-command cases.
 <!-- AC:END -->
 
 ## Implementation Plan

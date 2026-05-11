@@ -2,6 +2,7 @@ import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { isToolCallEventType } from "@mariozechner/pi-coding-agent";
 import { readFileSync } from "node:fs";
 import { normalize, resolve } from "node:path";
+import { extractCommandNames } from "./ast.ts";
 
 interface Config {
   blocked_paths: string[];
@@ -30,6 +31,11 @@ export default function (pi: ExtensionAPI) {
   }
 
   const pathRegexes = config.blocked_paths.map(patternToRegex);
+  // Build a Set of lowercased blocked command names for exact matching.
+  // Also build regexes for regex fallback when parsing fails.
+  const blockedCommands = new Set(
+    config.blocked_commands.map((c) => c.toLowerCase()),
+  );
   const commandRegexes = config.blocked_commands.map((r) => new RegExp(r, "i"));
 
   // Proactively tell the agent which paths are off-limits so it doesn't try in the first place
@@ -98,14 +104,35 @@ export default function (pi: ExtensionAPI) {
         return { block: true, reason };
       }
 
-      // Check for blocked commands (env, printenv, set)
-      const cmdHit = commandRegexes.find((r) => r.test(command));
-      if (cmdHit) {
-        const reason =
-          `🚫 ACCESS DENIED by sensitive-file-guard: this command matches a blocked pattern. ` +
-          `DO NOT retry. Tell the user the command is blocked and STOP.`;
-        if (ctx.hasUI) ctx.ui.notify(`Blocked sensitive command`, "warning");
-        return { block: true, reason };
+      // --- Parse command structurally to detect blocked commands ---
+      const parsedNames = extractCommandNames(command);
+
+      // Use parsed names if we got any (or if the command parsed to empty
+      // commands, which means it's a comment or similar non-executable text).
+      // Fall back to regex matching if parsing returned an empty set for a
+      // non-empty command — this handles parse failures gracefully.
+      if (parsedNames.size > 0 || command.trim().length === 0) {
+        const cmdHit = [...parsedNames].find((name) =>
+          blockedCommands.has(name),
+        );
+        if (cmdHit) {
+          const reason =
+            `🚫 ACCESS DENIED by sensitive-file-guard: this command matches a blocked pattern. ` +
+            `DO NOT retry. Tell the user the command is blocked and STOP.`;
+          if (ctx.hasUI) ctx.ui.notify(`Blocked sensitive command`, "warning");
+          return { block: true, reason };
+        }
+      } else {
+        // Fallback: parsing returned nothing for a non-empty command.
+        // Use regex-based matching as a conservative safety net.
+        const cmdHit = commandRegexes.find((r) => r.test(command));
+        if (cmdHit) {
+          const reason =
+            `🚫 ACCESS DENIED by sensitive-file-guard: this command matches a blocked pattern. ` +
+            `DO NOT retry. Tell the user the command is blocked and STOP.`;
+          if (ctx.hasUI) ctx.ui.notify(`Blocked sensitive command`, "warning");
+          return { block: true, reason };
+        }
       }
     }
   });

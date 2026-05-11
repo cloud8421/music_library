@@ -1,5 +1,5 @@
 {
-  "_comment": "Blocked paths for pi. Glob-like patterns, matched case-insensitively against absolute paths.",
+  "_comment": "Blocked paths for pi. Glob-like patterns, matched case-insensitively against absolute paths. blocked_commands are exact command names (not regexes), matched case-insensitively against structurally parsed bash AST command names.",
   "blocked_paths": [
     "mise.local.toml",
     "*.pem",
@@ -15,6 +15,6 @@
   ],
   "blocked_commands": [
     "printenv",
-    "\\benv\\b"
+    "env"
   ]
 }
