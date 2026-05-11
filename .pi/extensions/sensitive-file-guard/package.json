@@ -5,7 +5,7 @@
   "dependencies": {
     "unbash": "3.0.0"
   },
-  "devDependencies": {
-    "tsx": "^4.21.0"
+  "scripts": {
+    "test": "node --test extractCommandNames.test.ts"
   }
 }
