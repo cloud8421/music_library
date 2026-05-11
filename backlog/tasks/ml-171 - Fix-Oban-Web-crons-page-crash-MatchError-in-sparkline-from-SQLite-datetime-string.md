@@ -3,10 +3,10 @@ id: ML-171
 title: >-
   Fix Oban Web crons page crash: MatchError in sparkline from SQLite datetime
   string
-status: To Do
+status: Done
 assignee: []
 created_date: "2026-05-09 05:28"
-updated_date: "2026-05-11 13:17"
+updated_date: "2026-05-11 13:22"
 labels:
   - bug
   - oban-web
