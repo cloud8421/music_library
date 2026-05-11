@@ -55,11 +55,7 @@ defmodule MusicLibraryWeb.CollectionController do
   end
 
   defp do_scrobble(conn, record) do
-    if is_nil(record.selected_release_id) or record.selected_release_id == "" do
-      conn
-      |> put_status(422)
-      |> json(%{status: "error", reason: "no_selected_release"})
-    else
+    if Records.Record.selected_release(record) do
       case MusicBrainz.get_release(record.selected_release_id) do
         {:ok, release} ->
           release_with_tracks = MusicBrainz.Release.from_api_response(release)
@@ -93,6 +89,10 @@ defmodule MusicLibraryWeb.CollectionController do
           |> put_status(502)
           |> json(%{status: "error", reason: "musicbrainz_error"})
       end
+    else
+      conn
+      |> put_status(422)
+      |> json(%{status: "error", reason: "no_selected_release"})
     end
   end
 
