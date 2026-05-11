@@ -1,10 +1,10 @@
 ---
 id: ML-175
 title: Parse bash commands in sensitive file guard
-status: In Progress
+status: Done
 assignee: []
 created_date: "2026-05-10 06:29"
-updated_date: "2026-05-11 16:41"
+updated_date: "2026-05-11 16:43"
 labels:
   - pi
   - ready
