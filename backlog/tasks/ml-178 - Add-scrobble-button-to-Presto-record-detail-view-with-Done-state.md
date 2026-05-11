@@ -4,11 +4,9 @@ title: Add scrobble button to Presto record detail view with "Done" state
 status: Done
 assignee: []
 created_date: "2026-05-10 18:57"
-updated_date: "2026-05-10 19:44"
+updated_date: "2026-05-11 06:47"
 labels:
   - presto
-  - scrobble
-  - micropython
 dependencies:
   - ML-177
 references:

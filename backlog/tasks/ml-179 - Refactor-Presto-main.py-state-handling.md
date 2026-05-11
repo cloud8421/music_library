@@ -2,10 +2,9 @@
 id: ML-179
 title: Refactor Presto main.py state handling
 status: Done
-assignee:
-  - Codex
+assignee: []
 created_date: "2026-05-10 20:11"
-updated_date: "2026-05-10 20:19"
+updated_date: "2026-05-11 06:47"
 labels: []
 dependencies: []
 documentation:

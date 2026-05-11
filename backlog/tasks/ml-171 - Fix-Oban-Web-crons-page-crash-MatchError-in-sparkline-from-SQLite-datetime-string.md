@@ -6,10 +6,11 @@ title: >-
 status: To Do
 assignee: []
 created_date: "2026-05-09 05:28"
+updated_date: "2026-05-11 06:46"
 labels:
   - bug
   - oban-web
-  - sqlite
+  - ready
 dependencies: []
 references:
   - >-

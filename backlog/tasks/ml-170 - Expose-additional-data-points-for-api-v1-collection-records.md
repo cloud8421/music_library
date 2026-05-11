@@ -4,10 +4,9 @@ title: Expose additional data points for api/v1/collection/* records
 status: To Do
 assignee: []
 created_date: "2026-05-08 13:02"
-updated_date: "2026-05-08 14:03"
+updated_date: "2026-05-11 06:46"
 labels:
   - api
-  - enhancement
 dependencies: []
 documentation:
   - doc-14 - Research-Exposing-additional-data-points-for-collection-API.md

@@ -4,11 +4,9 @@ title: "Presto: add search application with on-screen keyboard"
 status: Done
 assignee: []
 created_date: "2026-05-10 13:34"
-updated_date: "2026-05-10 14:58"
+updated_date: "2026-05-11 06:47"
 labels:
   - presto
-  - search
-  - feature
 milestone: m-0
 dependencies:
   - ML-176.1

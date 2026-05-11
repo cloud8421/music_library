@@ -4,11 +4,10 @@ title: Parse bash commands in sensitive file guard
 status: To Do
 assignee: []
 created_date: "2026-05-10 06:29"
-updated_date: "2026-05-10 06:49"
+updated_date: "2026-05-11 06:46"
 labels:
   - pi
-  - security
-  - tooling
+  - ready
 dependencies: []
 references:
   - .pi/extensions/000-sensitive-file-guard.ts

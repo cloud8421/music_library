@@ -4,11 +4,9 @@ title: "Comprehensive application audit: functional correctness and performance"
 status: To Do
 assignee: []
 created_date: "2026-05-08 08:46"
-updated_date: "2026-05-08 08:49"
+updated_date: "2026-05-11 06:46"
 labels:
   - audit
-  - performance
-  - reliability
 dependencies: []
 references:
   - docs/architecture.md
