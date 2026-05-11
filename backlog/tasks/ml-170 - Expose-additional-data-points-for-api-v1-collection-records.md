@@ -4,7 +4,7 @@ title: Expose additional data points for api/v1/collection/* records
 status: To Do
 assignee: []
 created_date: "2026-05-08 13:02"
-updated_date: "2026-05-11 06:46"
+updated_date: "2026-05-11 07:40"
 labels:
   - api
 dependencies: []
@@ -204,7 +204,7 @@ WHERE id IN (?)
 
 4. For each record, extract the selected release from `musicbrainz_data` using `Record.releases/1` + `Record.find_release/2`.
 5. Fields to expose from the selected release:
-   - `format` — parsed from media formats (e.g., "cd", "vinyl", "multi")
+   - `format` — derived via `ReleaseSearchResult.format(selected_release)` (atoms: `:cd`, `:vinyl`, `:dvd`, `:blu_ray`, `:digital_download`, `:vhs`, `:multi`, `:unknown`), converted to string with `to_string/1` for the API response
    - `date` — release date string
    - `country` — country code (e.g., "US", "GB", "XW")
    - `catalog_number` — catalog number string
@@ -325,4 +325,11 @@ None required. This is a read-only change that adds fields to existing API respo
   - `artist_country` (`{name: String, code: String}` or null — country of the main artist)
   - `selected_release` (`{format, date, country, catalog_number, packaging, disambiguation}` or null)
 - **No changes** to `docs/project-conventions.md`, `docs/production-infrastructure.md`, or README needed.
+
+### `selected_release.format` (revised 2026-05-11)
+
+The `release_summary` component in `record_components.ex` already derives a release's format from its media via `ReleaseSearchResult.format/1`. This function accepts any struct with a `.media` field whose items have a `.format` field — which includes both `%ReleaseSearchResult{}` and `%MusicBrainz.Release{}` (structural typing). It returns atoms: `:cd`, `:vinyl`, `:dvd`, `:blu_ray`, `:digital_download`, `:vhs`, `:multi`, `:unknown`.
+
+**Simplify Step 4**: instead of building a custom format map, call `ReleaseSearchResult.format(selected_release)` on the release returned by `Record.find_release/2`. Convert the result to a string with `to_string/1` for the API response. No new format parsing code needed.
+
 <!-- SECTION:PLAN:END -->
