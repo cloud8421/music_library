@@ -21,3 +21,5 @@ gh extension install thiagokokada/gh-gfm-preview
 mix setup
 
 npm ci --prefix .pi/extensions/s3-browser
+
+npm ci --prefix .pi/extensions/sensitive-file-guard

@@ -42,12 +42,17 @@ run_and_track "pi s3-browser dependencies" \
   "npm update --prefix .pi/extensions/s3-browser" \
   npm outdated --prefix .pi/extensions/s3-browser
 
+debug_msg "Checking outdated pi sensitive-file-guard dependencies..."
+run_and_track "pi sensitive-file-guard dependencies" \
+  "npm update --prefix .pi/extensions/sensitive-file-guard" \
+  npm outdated --prefix .pi/extensions/sensitive-file-guard
+
 # Print summary table
 echo ""
 echo "========================================================================"
 echo "Summary"
 echo "========================================================================"
-printf "%-26s | %-16s | %s\n" "Dependency" "Status" "Next Step"
+printf "%-36s | %-16s | %s\n" "Dependency" "Status" "Next Step"
 echo "------------------------------------------------------------------------"
 
 red=$(tput setaf 1)
@@ -60,9 +65,9 @@ for i in "${!command_names[@]}"; do
   next_step="${command_next_steps[$i]}"
 
   if [ "$result" -eq 0 ]; then
-    printf "%-26s | %s%-18s%s | %s\n" "$name" "$green" "✓ Up to date" "$normal" "Nothing to do"
+    printf "%-36s | %s%-18s%s | %s\n" "$name" "$green" "✓ Up to date" "$normal" "Nothing to do"
   else
-    printf "%-26s | %s%-18s%s | %s\n" "$name" "$red" "✗ Outdated" "$normal" "$next_step"
+    printf "%-36s | %s%-18s%s | %s\n" "$name" "$red" "✗ Outdated" "$normal" "$next_step"
   fi
 done
 
