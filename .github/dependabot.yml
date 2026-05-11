@@ -51,6 +51,13 @@ updates:
   open-pull-requests-limit: 10
   assignees:
   - cloud8421
+- package-ecosystem: npm
+  directory: ".pi/extensions/sensitive-file-guard"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  assignees:
+  - cloud8421
 - package-ecosystem: docker
   directory: /
   schedule:
