@@ -1,5 +1,5 @@
 [tools]
-"uv" = "0.11.8"
+"uv" = "latest"
 "pipx:mpremote" = "latest"
 "pipx:pimoroni-emulator" = "latest"
 
