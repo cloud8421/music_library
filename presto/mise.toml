@@ -10,6 +10,13 @@ mpremote reset
 '''
 dir = "{{cwd}}"
 
+[tasks.poc]
+run = '''
+mpremote fs cp poc.py :main.py
+mpremote reset
+'''
+dir = "{{cwd}}"
+
 [tasks.emulator]
 run = 'pimoroni-emulator --device presto main.py'
 dir = "{{cwd}}"

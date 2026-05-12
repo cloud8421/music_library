@@ -38,11 +38,11 @@ FLASH_MS = 180
 SCREEN_PADDING = 28
 TITLE_Y = 28
 LABEL_X = SCREEN_PADDING
-VALUE_X = 210
-ROW_1_Y = 110
-ROW_2_Y = 170
-ROW_3_Y = 230
-ROW_4_Y = 290
+VALUE_X = 150
+ROW_1_Y = 90
+ROW_2_Y = 130
+ROW_3_Y = 170
+ROW_4_Y = 210
 FOOTER_Y = HEIGHT - 50
 FLASH_RADIUS = 14
 
@@ -408,7 +408,7 @@ def draw_status_rows(model):
 
 def draw_row(label, value, y, value_pen):
     display.set_pen(_pen_panel)
-    display.rectangle(SCREEN_PADDING, y - 12, WIDTH - 2 * SCREEN_PADDING, 42)
+    display.rectangle(SCREEN_PADDING, y - 12, WIDTH - 2 * SCREEN_PADDING, 22)
 
     display.set_font("bitmap8")
     display.set_pen(_pen_label)
