@@ -128,7 +128,7 @@ defmodule MusicLibrary.MixProject do
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
 
       # HTTP Clients
-      {:finch, "~> 0.21.0"},
+      {:finch, "~> 0.22.0"},
       {:req, "~> 0.5.8"},
       {:server_sent_events, "~> 1.0"},
 
