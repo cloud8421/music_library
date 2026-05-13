@@ -6,11 +6,12 @@ title: >-
 status: To Do
 assignee: []
 created_date: "2026-05-13 18:33"
-updated_date: "2026-05-13 19:27"
+updated_date: "2026-05-13 19:36"
 labels:
   - security
-  - public-asset-endpoint
-  - validation
+  - api
+  - ui
+  - ready
 dependencies: []
 references:
   - doc-19 - GPT-5.5-Security-Review.md
