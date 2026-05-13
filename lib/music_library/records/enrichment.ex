@@ -81,12 +81,9 @@ defmodule MusicLibrary.Records.Enrichment do
 
   @spec extract_colors(Record.t()) :: {:ok, Record.t()} | {:error, term()}
   def extract_colors(record) do
-    with asset when not is_nil(asset) <- Assets.get(record.cover_hash),
+    with {:ok, asset} <- get_asset(record.cover_hash),
          {:ok, colors} <- @color_extractor.extract_dominant_colors(asset.content) do
       Records.update_record(record, %{dominant_colors: colors})
-    else
-      nil -> {:error, :asset_not_found}
-      error -> error
     end
   end
 
@@ -124,5 +121,13 @@ defmodule MusicLibrary.Records.Enrichment do
 
   defp record_meta(record) do
     %{title: record.title, artists: Enum.map(record.artists, & &1.name)}
+  end
+
+  defp get_asset(cover_hash) do
+    if asset = Assets.get(cover_hash) do
+      {:ok, asset}
+    else
+      {:error, :asset_not_found}
+    end
   end
 end
