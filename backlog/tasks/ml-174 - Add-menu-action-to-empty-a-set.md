@@ -4,9 +4,10 @@ title: Add menu action to empty a set
 status: To Do
 assignee: []
 created_date: "2026-05-09 17:57"
-updated_date: "2026-05-11 06:45"
+updated_date: "2026-05-13 19:36"
 labels:
   - ready
+  - ui
 dependencies: []
 references:
   - backlog/docs/doc-16 - Research-Add-menu-action-to-empty-a-set.md
