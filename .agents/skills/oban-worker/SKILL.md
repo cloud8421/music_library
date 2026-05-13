@@ -140,7 +140,7 @@ difference from on-demand workers.
 
 | Plugin | Config | Purpose |
 |--------|--------|---------|
-| `Pruner` | `max_age: 43200` (12h) | Clean up completed jobs |
+| `Pruner` | `max_age: 604800` (7 days) | Clean up completed jobs |
 | `Reindexer` | `schedule: "@weekly"` | Reindex for query performance |
 | `Cron` | timezone: `"Europe/London"` | Schedule recurring jobs |
 

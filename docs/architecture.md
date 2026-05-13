@@ -21,7 +21,7 @@ Key capabilities:
 - Encrypted secret storage (Cloak)
 - Presto companion display (MicroPython, 4" IPS LCD, "Records on this day")
 
-**Elixir ~> 1.14, Phoenix ~> 1.8, LiveView ~> 1.1, SQLite3**
+**Elixir 1.20.0-rc.5, Phoenix ~> 1.8, LiveView ~> 1.1, SQLite3**
 
 ---
 
@@ -197,11 +197,11 @@ HTTP 429 into `:rate_limit` vs `:auth_error` by reading the body `code`
 
 ### Plugins (prod)
 
-| Plugin                   | Config                      | Purpose                                                      |
-| ------------------------ | --------------------------- | ------------------------------------------------------------ |
-| `Oban.Plugins.Pruner`    | `max_age: 43200` (12h)      | Prune completed/cancelled/discarded jobs older than 12 hours |
-| `Oban.Plugins.Reindexer` | `schedule: "@weekly"`       | Weekly reindex of Oban tables for query performance          |
-| `Oban.Plugins.Cron`      | `timezone: "Europe/London"` | Scheduled recurring workers (see Cron Workers table)         |
+| Plugin                   | Config                      | Purpose                                                    |
+| ------------------------ | --------------------------- | ---------------------------------------------------------- |
+| `Oban.Plugins.Pruner`    | `max_age: 604800` (7 days)  | Prune completed/cancelled/discarded jobs older than 7 days |
+| `Oban.Plugins.Reindexer` | `schedule: "@weekly"`       | Weekly reindex of Oban tables for query performance        |
+| `Oban.Plugins.Cron`      | `timezone: "Europe/London"` | Scheduled recurring workers (see Cron Workers table)       |
 
 ### On-Demand Workers
 
