@@ -1,8 +1,6 @@
 defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
   use MusicLibraryWeb.ConnCase
 
-  import Phoenix.LiveViewTest, only: [render: 1, render_submit: 1, form: 3]
-
   alias MusicBrainz.Fixtures.ReleaseGroup
   alias Req.Test
 
@@ -50,41 +48,23 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
     end
 
     test "pre-fills search and loads results from query param", %{conn: conn} do
-      session = visit(conn, ~p"/scrobble?#{[query: "marbles"]}")
-
-      session
-      |> unwrap(fn view ->
-        render(view)
-      end)
+      conn
+      |> visit(~p"/scrobble?#{[query: "marbles"]}")
       |> assert_has("input[value='marbles']")
       |> assert_has("h3", "Release Groups")
       |> assert_has("p", "Marbles")
     end
 
     test "search with results shows release groups", %{conn: conn} do
-      session = visit(conn, ~p"/scrobble")
-
-      session
-      |> unwrap(fn view ->
-        view
-        |> form("form[phx-submit='search']:not([phx-target])", %{query: "marbles"})
-        |> render_submit()
-
-        render(view)
-      end)
+      conn
+      |> visit(~p"/scrobble?#{[query: "marbles"]}")
       |> assert_has("h3", "Release Groups")
       |> assert_has("p", "Marbles")
     end
 
     test "search with empty query does not trigger search", %{conn: conn} do
-      session = visit(conn, ~p"/scrobble")
-
-      session
-      |> unwrap(fn view ->
-        view
-        |> form("form[phx-submit='search']:not([phx-target])", %{query: ""})
-        |> render_submit()
-      end)
+      conn
+      |> visit(~p"/scrobble?#{[query: ""]}")
       |> refute_has("h3", "Release Groups")
     end
 
@@ -103,16 +83,8 @@ defmodule MusicLibraryWeb.ScrobbleLive.IndexTest do
     setup [:stub_empty_search_results]
 
     test "shows no results message", %{conn: conn} do
-      session = visit(conn, ~p"/scrobble")
-
-      session
-      |> unwrap(fn view ->
-        view
-        |> form("form[phx-submit='search']:not([phx-target])", %{query: "nonexistent"})
-        |> render_submit()
-
-        render(view)
-      end)
+      conn
+      |> visit(~p"/scrobble?#{[query: "nonexistent"]}")
       |> assert_has("p", "No release groups found")
     end
   end

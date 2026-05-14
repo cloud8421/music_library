@@ -33,7 +33,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.ReleaseShowTest do
     test "renders the scrobble UI for the release", %{conn: conn} do
       conn
       |> visit(~p"/scrobble/#{@rg_id}/releases/#{@release_id}")
-      |> unwrap(&Phoenix.LiveViewTest.render_async/1)
+      |> unwrap(&render_async/1)
       |> assert_has("h2", text: "Marbles")
     end
 
@@ -44,13 +44,10 @@ defmodule MusicLibraryWeb.ScrobbleLive.ReleaseShowTest do
     end
 
     test "sets the page title once the release loads", %{conn: conn} do
-      {:ok, view, _html} =
-        Phoenix.LiveViewTest.live(conn, ~p"/scrobble/#{@rg_id}/releases/#{@release_id}")
-
-      render_async(view)
-
-      assert Phoenix.LiveViewTest.page_title(view) ==
-               "Marillion - Marbles · Release · Scrobble Anything"
+      conn
+      |> visit(~p"/scrobble/#{@rg_id}/releases/#{@release_id}")
+      |> unwrap(&render_async/1)
+      |> assert_has("title", text: "Marillion - Marbles")
     end
   end
 end

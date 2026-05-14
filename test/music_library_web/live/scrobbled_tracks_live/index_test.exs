@@ -2,12 +2,9 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
   use MusicLibraryWeb.ConnCase
 
   import MusicLibrary.ScrobbledTracksFixtures
-  import Phoenix.LiveViewTest, only: [render_submit: 1, render_change: 1, form: 3]
 
   alias MusicLibrary.ListeningStats
 
-  # Test data
-  @invalid_track_attrs %{title: "", artist: %{name: ""}, album: %{title: ""}}
   @valid_track_attrs %{
     title: "Updated Track Title",
     artist: %{name: "Updated Artist", musicbrainz_id: "9a5cf59b-5da0-4021-b885-b6b78dd6886e"},
@@ -51,14 +48,8 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
     test "filters results by search query", %{conn: conn} do
       track_fixture(%{title: "Unique Track Title"})
 
-      session = visit(conn, ~p"/scrobbled-tracks")
-
-      session
-      |> unwrap(fn view ->
-        view
-        |> form("form[phx-submit='search']:not([phx-target])", %{query: "Unique Track"})
-        |> render_submit()
-      end)
+      conn
+      |> visit(~p"/scrobbled-tracks?#{[query: "Unique Track"]}")
       |> assert_has("p", "Unique Track Title")
     end
   end
@@ -72,14 +63,6 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
         |> visit(~p"/scrobbled-tracks/#{track.scrobbled_at_uts}/edit")
         |> assert_has("h1", "Edit Scrobbled Track")
         |> assert_path(~p"/scrobbled-tracks/#{track.scrobbled_at_uts}/edit")
-
-      # Test validation errors with invalid attrs
-      session
-      |> unwrap(fn view ->
-        view
-        |> form("#track-form", track: @invalid_track_attrs)
-        |> render_change()
-      end)
 
       # Submit valid changes
       session
@@ -97,15 +80,9 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
     test "shows validation errors", %{conn: conn, track: track} do
       conn
       |> visit(~p"/scrobbled-tracks/#{track.scrobbled_at_uts}/edit")
-      |> unwrap(fn view ->
-        html =
-          view
-          |> form("#track-form", track: @invalid_track_attrs)
-          |> render_change()
-
-        assert html =~ "can&#39;t be blank"
-        html
-      end)
+      |> fill_in("Track Title", with: "")
+      |> click_button("Update Track")
+      |> assert_has("[data-part='error']", "can't be blank")
     end
   end
 

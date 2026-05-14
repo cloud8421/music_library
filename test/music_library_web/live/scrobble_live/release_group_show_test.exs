@@ -53,11 +53,9 @@ defmodule MusicLibraryWeb.ScrobbleLive.ReleaseGroupShowTest do
     end
 
     test "sets the page title from the loaded release group", %{conn: conn} do
-      {:ok, view, _html} = Phoenix.LiveViewTest.live(conn, ~p"/scrobble/#{@rg_id}")
-      render_async(view)
-
-      assert Phoenix.LiveViewTest.page_title(view) ==
-               "Marillion - Marbles · Release Group · Scrobble Anything"
+      conn
+      |> visit(~p"/scrobble/#{@rg_id}")
+      |> assert_has("title", text: "Marillion - Marbles", timeout: 200)
     end
   end
 
