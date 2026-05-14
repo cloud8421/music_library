@@ -7,6 +7,7 @@ defmodule MusicLibrary.Worker.ImportFromMusicbrainzRelease do
 
   use Oban.Worker, queue: :music_brainz, max_attempts: 3
 
+  alias MusicLibrary.Records
   alias MusicLibrary.Records.Record
   alias MusicLibrary.Worker.ErrorHandler
 
@@ -19,8 +20,12 @@ defmodule MusicLibrary.Worker.ImportFromMusicbrainzRelease do
     ]
 
     case MusicLibrary.Records.import_from_musicbrainz_release(release_id, opts) do
-      {:ok, _record} -> :ok
-      other -> ErrorHandler.to_oban_result(other)
+      {:ok, _record} ->
+        Records.broadcast_index_changed()
+        :ok
+
+      other ->
+        ErrorHandler.to_oban_result(other)
     end
   end
 end

@@ -23,8 +23,12 @@ defmodule MusicLibrary.Worker.ImportFromMusicbrainzReleaseGroup do
     ]
 
     case Records.import_from_musicbrainz_release_group(release_group_id, opts) do
-      {:ok, _record} -> :ok
-      other -> ErrorHandler.to_oban_result(other)
+      {:ok, _record} ->
+        Records.broadcast_index_changed()
+        :ok
+
+      other ->
+        ErrorHandler.to_oban_result(other)
     end
   end
 end

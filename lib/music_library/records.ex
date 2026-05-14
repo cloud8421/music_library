@@ -126,4 +126,21 @@ defmodule MusicLibrary.Records do
       {:update, record}
     )
   end
+
+  @doc """
+  Broadcasts that the records index has changed (new record imported, deleted, etc.).
+  Index LiveViews subscribe to this topic to auto-refresh.
+  """
+  @spec broadcast_index_changed() :: :ok
+  def broadcast_index_changed do
+    Phoenix.PubSub.broadcast(MusicLibrary.PubSub, "records:index_changed", :records_index_changed)
+  end
+
+  @doc """
+  Subscribes the calling process to records index change notifications.
+  """
+  @spec subscribe_to_index() :: :ok | {:error, term()}
+  def subscribe_to_index do
+    Phoenix.PubSub.subscribe(MusicLibrary.PubSub, "records:index_changed")
+  end
 end

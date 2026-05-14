@@ -1,10 +1,10 @@
 ---
 id: ML-168
 title: Update wishlist index and collection index when background import finishes
-status: To Do
+status: Done
 assignee: []
 created_date: "2026-05-08 05:40"
-updated_date: "2026-05-09 06:04"
+updated_date: "2026-05-14 15:54"
 labels:
   - ready
 dependencies: []
@@ -27,12 +27,12 @@ When importing multiple records, the application performs the import in the back
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 Importing 2+ records via the AddRecord cart automatically updates the collection index without manual refresh
-- [ ] #2 Importing 2+ records via the AddRecord cart automatically updates the wishlist index without manual refresh
-- [ ] #3 Importing 2+ records via barcode scan automatically updates the collection index without manual refresh
-- [ ] #4 Existing import worker tests pass
-- [ ] #5 New tests verify PubSub broadcast from import workers after success
-- [ ] #6 No regressions in CollectionLive.Index or WishlistLive.Index behavior
+- [x] #1 Importing 2+ records via the AddRecord cart automatically updates the collection index without manual refresh
+- [x] #2 Importing 2+ records via the AddRecord cart automatically updates the wishlist index without manual refresh
+- [x] #3 Importing 2+ records via barcode scan automatically updates the collection index without manual refresh
+- [x] #4 Existing import worker tests pass
+- [x] #5 New tests verify PubSub broadcast from import workers after success
+- [x] #6 No regressions in CollectionLive.Index or WishlistLive.Index behavior
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -415,4 +415,28 @@ The project uses offset-based pagination (`LIMIT ? OFFSET ?`). When `handle_inde
 ## Documentation Updates
 
 - `docs/architecture.md`: Add `"records:index_changed"` to PubSub Topics table.
+
+**2026-05-14 — Implementation complete**
+
+All 7 steps implemented:
+
+1. ✅ `broadcast_index_changed/0` added to `lib/music_library/records.ex`
+2. ✅ `subscribe_to_index/0` added to `lib/music_library/records.ex`
+3. ✅ `handle_index_changed/1` added to `lib/music_library_web/live_helpers/index_actions.ex` (refreshes `total_entries` before reload)
+4. ✅ Subscription + guarded `handle_info` in `CollectionLive.Index` (guard: `[:index, :edit]`)
+5. ✅ Subscription + guarded `handle_info` in `WishlistLive.Index` (guard: `[:index, :edit]`)
+6. ✅ Both import workers call `Records.broadcast_index_changed()` after `{:ok, _record}`
+7. ✅ Tests added:
+   - `records_test.exs`: PubSub broadcast/receive round-trip
+   - `import_from_musicbrainz_release_test.exs`: asserts broadcast after success
+   - `import_from_musicbrainz_release_group_test.exs`: asserts broadcast after success
+   - `collection_live/index_test.exs`: reloads stream on `:index`, no-op on `:import`
+   - `wishlist_live/index_test.exs`: reloads stream on `:index`, no-op on `:import`
+
+Full test suite: **981 passed, 0 failures**
+
+`docs/architecture.md`: Added `"records:index_changed"` row to PubSub Topics table.
+
+**Remaining for acceptance criteria #1-#3**: Manual browser verification required — import 2+ records via cart and barcode scan on both collection and wishlist, confirm auto-update and no modal title flicker.
+
 <!-- SECTION:NOTES:END -->

@@ -8,6 +8,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
   alias MusicLibrary.Chats
   alias MusicLibrary.Collection
+  alias MusicLibrary.Records
   alias MusicLibraryWeb.Components.AddRecord
   alias MusicLibraryWeb.LiveHelpers.IndexActions
 
@@ -242,6 +243,10 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      Records.subscribe_to_index()
+    end
+
     {:ok,
      socket
      |> assign(:current_section, :collection)
@@ -298,6 +303,15 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
   def handle_info({MusicLibraryWeb.Components.Chat, :chats_changed}, socket) do
     chat_count = Chats.count_chats(:collection, Chats.collection_musicbrainz_id())
     {:noreply, assign(socket, :chat_count, chat_count)}
+  end
+
+  def handle_info(:records_index_changed, socket)
+      when socket.assigns.live_action in [:index, :edit] do
+    {:noreply, IndexActions.handle_index_changed(socket)}
+  end
+
+  def handle_info(:records_index_changed, socket) do
+    {:noreply, socket}
   end
 
   @impl true

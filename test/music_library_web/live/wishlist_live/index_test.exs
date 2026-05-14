@@ -9,11 +9,43 @@ defmodule MusicLibraryWeb.WishlistLive.IndexTest do
 
   alias MusicLibrary.Records.Record
   alias MusicLibrary.Worker.ImportFromMusicbrainzReleaseGroup
+  alias Phoenix.LiveViewTest
   alias Req.Test
 
   defp fill_wishlist(_) do
     records = Enum.map(1..5, fn _ -> record(%{purchased_at: nil}) end)
     %{wishlist: records}
+  end
+
+  describe "PubSub index_changed" do
+    test "reloads stream when live_action is :index", %{conn: conn} do
+      {:ok, view, _html} = LiveViewTest.live(conn, ~p"/wishlist")
+
+      html_before = LiveViewTest.render(view)
+
+      # Create a new wishlist record behind the scenes (simulating completed background import)
+      _new_record = record(%{purchased_at: nil})
+
+      # Send the index_changed message directly
+      send(view.pid, :records_index_changed)
+
+      # The view should now include the new record
+      html_after = LiveViewTest.render(view)
+      assert html_after != html_before
+    end
+
+    test "ignores message when live_action is :import (guard clause)", %{conn: conn} do
+      {:ok, view, _html} = LiveViewTest.live(conn, ~p"/wishlist/import")
+
+      html_before = LiveViewTest.render(view)
+
+      send(view.pid, :records_index_changed)
+
+      html_after = LiveViewTest.render(view)
+
+      # Should be identical — the message is a no-op when grid is behind modal
+      assert html_after == html_before
+    end
   end
 
   describe "Wishlist" do

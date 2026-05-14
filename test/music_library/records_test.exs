@@ -83,4 +83,13 @@ defmodule MusicLibrary.RecordsTest do
       assert expected == Records.get_record!(expected.id)
     end
   end
+
+  describe "broadcast_index_changed/0 and subscribe_to_index/0" do
+    test "broadcasts :records_index_changed to subscribers" do
+      Records.subscribe_to_index()
+      Records.broadcast_index_changed()
+
+      assert_received :records_index_changed
+    end
+  end
 end

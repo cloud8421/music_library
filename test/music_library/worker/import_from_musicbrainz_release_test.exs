@@ -5,6 +5,7 @@ defmodule MusicLibrary.Worker.ImportFromMusicbrainzReleaseTest do
   import MusicBrainz.Fixtures.ReleaseGroup
   import MusicLibrary.Fixtures.Records
 
+  alias MusicLibrary.Records
   alias MusicLibrary.Records.Record
   alias MusicLibrary.Worker.ImportFromMusicbrainzRelease
 
@@ -62,6 +63,45 @@ defmodule MusicLibrary.Worker.ImportFromMusicbrainzReleaseTest do
                  "purchased_at" => DateTime.to_iso8601(DateTime.utc_now()),
                  "selected_release_id" => "nonexistent-release-id"
                })
+    end
+
+    test "broadcasts index_changed after successful import" do
+      release_data = release(:marbles)
+      release_id = release_id(:marbles)
+
+      release_group_data = release_group(:marbles)
+      release_group_id = release_group_id(:marbles)
+      release_group_releases_data = release_group_releases(:marbles)
+
+      cover_data = marbles_cover_data()
+
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        case conn.path_info do
+          [_ws, _version, "release-group", ^release_group_id] ->
+            Req.Test.json(conn, release_group_data)
+
+          [_ws, _version, "release", ^release_id] ->
+            Req.Test.json(conn, release_data)
+
+          [_ws, _version, "release"] ->
+            Req.Test.json(conn, release_group_releases_data)
+
+          [_release_group, ^release_group_id, "front"] ->
+            Plug.Conn.send_resp(conn, 200, cover_data)
+        end
+      end)
+
+      Records.subscribe_to_index()
+
+      assert :ok =
+               perform_job(ImportFromMusicbrainzRelease, %{
+                 "release_id" => release_id,
+                 "format" => "cd",
+                 "purchased_at" => DateTime.to_iso8601(DateTime.utc_now()),
+                 "selected_release_id" => release_id
+               })
+
+      assert_received :records_index_changed
     end
   end
 end

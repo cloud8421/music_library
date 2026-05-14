@@ -146,6 +146,18 @@ defmodule MusicLibraryWeb.LiveHelpers.IndexActions do
     {:noreply, load_and_assign_records(socket, socket.assigns.record_list_params)}
   end
 
+  @doc """
+  Handles a PubSub notification that records have changed.
+  Refreshes total_entries and reloads the record stream using the current parameters.
+  """
+  def handle_index_changed(socket) do
+    config = socket.assigns.index_config
+    params = socket.assigns.record_list_params
+    total_records = config.context_module.search_records_count(params.query)
+    updated_params = %{params | total_entries: total_records}
+    load_and_assign_records(socket, updated_params)
+  end
+
   defp record_page_title(record, config) do
     Enum.join(
       [

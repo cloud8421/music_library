@@ -12,6 +12,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   alias MusicLibrary.Assets.{Image, Transform}
   alias MusicLibrary.Records.Record
   alias MusicLibrary.Worker.ImportFromMusicbrainzReleaseGroup
+  alias Phoenix.LiveViewTest
   alias Req.Test
 
   # make it a multiple of 4 for easier calculations
@@ -90,6 +91,37 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       for record <- expected_absent do
         refute_has(session, "#records-#{record.id}")
       end
+    end
+  end
+
+  describe "PubSub index_changed" do
+    test "reloads stream when live_action is :index", %{conn: conn} do
+      {:ok, view, _html} = LiveViewTest.live(conn, ~p"/collection")
+
+      html_before = LiveViewTest.render(view)
+
+      # Create a new record behind the scenes (simulating completed background import)
+      _new_record = record()
+
+      # Send the index_changed message directly
+      send(view.pid, :records_index_changed)
+
+      # The view should now include the new record
+      html_after = LiveViewTest.render(view)
+      assert html_after != html_before
+    end
+
+    test "ignores message when live_action is :import (guard clause)", %{conn: conn} do
+      {:ok, view, _html} = LiveViewTest.live(conn, ~p"/collection/import")
+
+      html_before = LiveViewTest.render(view)
+
+      send(view.pid, :records_index_changed)
+
+      html_after = LiveViewTest.render(view)
+
+      # Should be identical — the message is a no-op when grid is behind modal
+      assert html_after == html_before
     end
   end
 

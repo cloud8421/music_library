@@ -176,6 +176,10 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      Records.subscribe_to_index()
+    end
+
     current_date = Date.utc_today()
 
     {:ok,
@@ -215,6 +219,15 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
 
   def handle_info({AddRecord, {:imported_async, count}}, socket) do
     IndexActions.handle_cart_imported_async(socket, count)
+  end
+
+  def handle_info(:records_index_changed, socket)
+      when socket.assigns.live_action in [:index, :edit] do
+    {:noreply, IndexActions.handle_index_changed(socket)}
+  end
+
+  def handle_info(:records_index_changed, socket) do
+    {:noreply, socket}
   end
 
   @impl true
