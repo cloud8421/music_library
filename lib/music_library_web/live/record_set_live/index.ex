@@ -221,6 +221,11 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
     {:noreply, push_patch(socket, to: ~p"/record-sets?#{qs}")}
   end
 
+  def handle_event("empty_set", %{"id" => id}, socket) do
+    {:ok, updated_set} = RecordSets.empty_record_set(%RecordSet{id: id})
+    {:noreply, update_record_set_in_list(socket, updated_set)}
+  end
+
   def handle_event("delete_set", %{"id" => id}, socket) do
     record_set = RecordSets.get_record_set!(id)
     {:ok, _} = RecordSets.delete_record_set(record_set)
@@ -319,6 +324,13 @@ defmodule MusicLibraryWeb.RecordSetLive.Index do
               {gettext("Edit")}
             </.dropdown_link>
             <.dropdown_separator />
+            <.dropdown_button
+              phx-click="empty_set"
+              phx-value-id={@record_set.id}
+              data-confirm={gettext("Remove all records from this set?")}
+            >
+              {gettext("Empty")}
+            </.dropdown_button>
             <.dropdown_button
               phx-click="delete_set"
               phx-value-id={@record_set.id}

@@ -1,16 +1,21 @@
 ---
 id: ML-174
 title: Add menu action to empty a set
-status: To Do
+status: Done
 assignee: []
 created_date: "2026-05-09 17:57"
-updated_date: "2026-05-13 19:36"
+updated_date: "2026-05-14 16:09"
 labels:
   - ready
   - ui
 dependencies: []
 references:
   - backlog/docs/doc-16 - Research-Add-menu-action-to-empty-a-set.md
+modified_files:
+  - lib/music_library/record_sets.ex
+  - lib/music_library_web/live/record_set_live/index.ex
+  - lib/music_library_web/live/record_set_live/show.ex
+  - test/music_library/record_sets_test.exs
 ---
 
 ## Description
@@ -25,15 +30,16 @@ For record sets, it would be useful to empty the set, which means removing all i
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 Clicking "Empty" in the set dropdown (index view) removes all records from that set and the card updates to show 0/0 records
-- [ ] #2 Clicking "Empty" in the set dropdown (show view) removes all records and the grid clears
-- [ ] #3 A confirmation prompt appears before emptying the set
-- [ ] #4 Emptying a set does not delete the set itself (name, description, and metadata are preserved)
-- [ ] #5 The context function `RecordSets.empty_record_set/1` returns `{:ok, record_set}` with an empty items list
-  <!-- AC:END -->
-  <!-- SECTION:PLAN:BEGIN -->
+- [x] #1 Clicking "Empty" in the set dropdown (index view) removes all records from that set and the card updates to show 0/0 records
+- [x] #2 Clicking "Empty" in the set dropdown (show view) removes all records and the grid clears
+- [x] #3 A confirmation prompt appears before emptying the set
+- [x] #4 Emptying a set does not delete the set itself (name, description, and metadata are preserved)
+- [x] #5 The context function `RecordSets.empty_record_set/1` returns `{:ok, record_set}` with an empty items list
+<!-- AC:END -->
 
 ## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
 
 ### 1. Add `empty_record_set/1` to `MusicLibrary.RecordSets`
 
@@ -148,13 +154,23 @@ end
 
 <!-- SECTION:PLAN:END -->
 
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
+Added `RecordSets.empty_record_set/1` context function that bulk-deletes all `RecordSetItem` rows via a single `DELETE FROM record_set_items WHERE record_set_id = ?` query and returns the reloaded (empty) set. Added "Empty" dropdown button with confirmation prompt to both index and show LiveViews. Index view updates the card in place; show view shows a "Set emptied" toast. All 983 tests pass.
+
+<!-- SECTION:FINAL_SUMMARY:END -->
+
+<!-- SECTION:PLAN:END -->
+
 ## Definition of Done
 
 <!-- DOD:BEGIN -->
 
-- [ ] #1 `RecordSets.empty_record_set/1` added and tested
-- [ ] #2 "Empty" dropdown button present in both index and show views
-- [ ] #3 Confirmation prompt shown before emptying
-- [ ] #4 Set metadata preserved after emptying
-- [ ] #5 All existing tests still pass
+- [x] #1 `RecordSets.empty_record_set/1` added and tested
+- [x] #2 "Empty" dropdown button present in both index and show views
+- [x] #3 Confirmation prompt shown before emptying
+- [x] #4 Set metadata preserved after emptying
+- [x] #5 All existing tests still pass
 <!-- DOD:END -->

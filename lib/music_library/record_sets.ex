@@ -88,6 +88,14 @@ defmodule MusicLibrary.RecordSets do
     end
   end
 
+  @spec empty_record_set(RecordSet.t()) :: {:ok, RecordSet.t()}
+  def empty_record_set(%RecordSet{} = record_set) do
+    from(i in RecordSetItem, where: i.record_set_id == ^record_set.id)
+    |> Repo.delete_all()
+
+    {:ok, get_record_set!(record_set.id)}
+  end
+
   @spec delete_record_set(RecordSet.t()) :: {:ok, RecordSet.t()} | {:error, Changeset.t()}
   def delete_record_set(%RecordSet{} = record_set) do
     Repo.delete(record_set)

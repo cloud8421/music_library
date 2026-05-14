@@ -4,7 +4,11 @@ defmodule MusicLibrary.RecordSetsTest do
   import MusicLibrary.Fixtures.Records
   import MusicLibrary.Fixtures.RecordSets
 
+  import Ecto.Query, warn: false
+
   alias MusicLibrary.RecordSets
+  alias MusicLibrary.RecordSets.RecordSetItem
+  alias MusicLibrary.Repo
 
   describe "search_record_sets/2" do
     test "returns sets matching by name" do
@@ -226,6 +230,30 @@ defmodule MusicLibrary.RecordSetsTest do
 
       {:ok, moved_down} = RecordSets.move_record_in_set(set, r3.id, :down)
       assert Enum.map(moved_down.items, & &1.record.id) == Enum.map(set.items, & &1.record.id)
+    end
+  end
+
+  describe "empty_record_set/1" do
+    test "removes all items and returns the empty set" do
+      {set, [_r1, _r2, _r3]} = record_set_with_records(3)
+
+      {:ok, updated} = RecordSets.empty_record_set(set)
+      assert updated.items == []
+      # Set metadata preserved
+      assert updated.name == set.name
+      assert updated.description == set.description
+      # Items are actually deleted from DB
+      assert [] =
+               from(i in RecordSetItem, where: i.record_set_id == ^set.id)
+               |> Repo.all()
+    end
+
+    test "is a no-op on already-empty sets" do
+      set = record_set()
+      assert set.items == []
+
+      {:ok, updated} = RecordSets.empty_record_set(set)
+      assert updated.items == []
     end
   end
 end

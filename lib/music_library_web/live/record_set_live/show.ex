@@ -49,6 +49,12 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
               </.dropdown_link>
               <.dropdown_separator />
               <.dropdown_button
+                phx-click="empty_set"
+                data-confirm={gettext("Remove all records from this set?")}
+              >
+                {gettext("Empty")}
+              </.dropdown_button>
+              <.dropdown_button
                 phx-click="delete_set"
                 data-confirm={gettext("Are you sure?")}
                 class={[
@@ -236,6 +242,15 @@ defmodule MusicLibraryWeb.RecordSetLive.Show do
   end
 
   @impl true
+  def handle_event("empty_set", _params, socket) do
+    {:ok, updated_set} = RecordSets.empty_record_set(socket.assigns.record_set)
+
+    {:noreply,
+     socket
+     |> assign(:record_set, updated_set)
+     |> put_toast(:info, gettext("Set emptied"))}
+  end
+
   def handle_event("delete_set", _params, socket) do
     case RecordSets.delete_record_set(socket.assigns.record_set) do
       {:ok, _} ->

@@ -2535,3 +2535,20 @@ msgstr ""
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Release Group"
 msgstr ""
+
+#: lib/music_library_web/live/record_set_live/index.ex
+#: lib/music_library_web/live/record_set_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Empty"
+msgstr ""
+
+#: lib/music_library_web/live/record_set_live/index.ex
+#: lib/music_library_web/live/record_set_live/show.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Remove all records from this set?"
+msgstr ""
+
+#: lib/music_library_web/live/record_set_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Set emptied"
+msgstr ""
