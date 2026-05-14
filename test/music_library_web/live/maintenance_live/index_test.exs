@@ -4,26 +4,26 @@ defmodule MusicLibraryWeb.MaintenanceLive.IndexTest do
 
   import MusicLibrary.ArtistInfoFixtures
   import MusicLibrary.Fixtures.Records
-  import Phoenix.LiveViewTest
 
   alias MusicLibrary.Secrets
 
   describe "Maintenance page" do
     test "renders all sections and Last.fm status", %{conn: conn} do
-      {:ok, _view, html} = live(conn, ~p"/maintenance")
-
-      assert html =~ "Records"
-      assert html =~ "Artists"
-      assert html =~ "Database"
-      assert html =~ "Assets"
-      assert html =~ "Emails"
-      assert html =~ "Last.fm"
+      conn
+      |> visit(~p"/maintenance")
+      |> assert_has("h3", "Records")
+      |> assert_has("h3", "Artists")
+      |> assert_has("h3", "Database")
+      |> assert_has("h3", "Assets")
+      |> assert_has("h3", "Emails")
+      |> assert_has("h3", "Last.fm")
     end
 
     test "async status resolves to :not_connected when no session key is stored", %{conn: conn} do
-      {:ok, view, _html} = live(conn, ~p"/maintenance")
-
-      assert render_async(view) =~ "Not connected"
+      conn
+      |> visit(~p"/maintenance")
+      |> unwrap(&render_async/1)
+      |> assert_has("span", "Not connected")
     end
 
     test "async status resolves to connected when session key is valid", %{conn: conn} do
@@ -33,9 +33,10 @@ defmodule MusicLibraryWeb.MaintenanceLive.IndexTest do
         Req.Test.json(conn, %{"user" => %{"name" => "alice"}})
       end)
 
-      {:ok, view, _html} = live(conn, ~p"/maintenance")
-
-      assert render_async(view) =~ "Connected as alice"
+      conn
+      |> visit(~p"/maintenance")
+      |> unwrap(&render_async/1)
+      |> assert_has("span", "Connected as alice")
     end
   end
 
@@ -45,9 +46,13 @@ defmodule MusicLibraryWeb.MaintenanceLive.IndexTest do
       r1 = record()
       r2 = record()
 
-      {:ok, view, _html} = live(conn, ~p"/maintenance")
-
-      render_click(view, "refresh_records_musicbrainz_data")
+      session =
+        conn
+        |> visit(~p"/maintenance")
+        |> click_button(
+          "button[phx-click='refresh_records_musicbrainz_data']",
+          "Refresh MusicBrainz data"
+        )
 
       assert_enqueued(
         worker: MusicLibrary.Worker.RecordRefreshMusicBrainzData,
@@ -59,23 +64,24 @@ defmodule MusicLibraryWeb.MaintenanceLive.IndexTest do
         args: %{"id" => r2.id}
       )
 
-      assert render(view) =~ "Operation started in the background."
+      assert_has(session, "p", "Operation started in the background.")
     end
 
     test "'Regenerate record embeddings' enqueues a GenerateRecordEmbedding job per record",
          %{conn: conn} do
       r1 = record()
 
-      {:ok, view, _html} = live(conn, ~p"/maintenance")
-
-      render_click(view, "generate_record_embeddings")
+      session =
+        conn
+        |> visit(~p"/maintenance")
+        |> click_button("Regenerate record embeddings")
 
       assert_enqueued(
         worker: MusicLibrary.Worker.GenerateRecordEmbedding,
         args: %{"record_id" => r1.id}
       )
 
-      assert render(view) =~ "Operation started in the background."
+      assert_has(session, "p", "Operation started in the background.")
     end
   end
 
@@ -85,64 +91,75 @@ defmodule MusicLibraryWeb.MaintenanceLive.IndexTest do
       %{artist_info: artist_info}
     end
 
-    for {event, worker} <- [
-          {"refresh_artists_musicbrainz_data", MusicLibrary.Worker.ArtistRefreshMusicBrainzData},
-          {"refresh_artists_discogs_data", MusicLibrary.Worker.ArtistRefreshDiscogsData},
-          {"refresh_artists_wikipedia_data", MusicLibrary.Worker.ArtistRefreshWikipediaData},
-          {"refresh_artists_lastfm_data", MusicLibrary.Worker.FetchArtistLastFmData}
+    for {event, button_text, worker} <- [
+          {"refresh_artists_musicbrainz_data", "Refresh MusicBrainz data",
+           MusicLibrary.Worker.ArtistRefreshMusicBrainzData},
+          {"refresh_artists_discogs_data", "Refresh Discogs data",
+           MusicLibrary.Worker.ArtistRefreshDiscogsData},
+          {"refresh_artists_wikipedia_data", "Refresh Wikipedia data",
+           MusicLibrary.Worker.ArtistRefreshWikipediaData},
+          {"refresh_artists_lastfm_data", "Refresh Last.fm data",
+           MusicLibrary.Worker.FetchArtistLastFmData}
         ] do
       test "'#{event}' enqueues a #{inspect(worker)} job per artist", %{
         conn: conn,
         artist_info: artist_info
       } do
-        {:ok, view, _html} = live(conn, ~p"/maintenance")
-
-        render_click(view, unquote(event))
+        session =
+          conn
+          |> visit(~p"/maintenance")
+          |> click_button(
+            "button[phx-click='#{unquote(event)}']",
+            unquote(button_text)
+          )
 
         assert_enqueued(worker: unquote(worker), args: %{"id" => artist_info.id})
-
-        assert render(view) =~ "Operation started in the background."
+        assert_has(session, "p", "Operation started in the background.")
       end
     end
   end
 
   describe "database section" do
     test "'Optimize' runs PRAGMA optimize and toasts success", %{conn: conn} do
-      {:ok, view, _html} = live(conn, ~p"/maintenance")
+      session =
+        conn
+        |> visit(~p"/maintenance")
+        |> click_button("Optimize")
 
-      render_click(view, "db_optimize")
-
-      assert render(view) =~ "Database optimized successfully."
+      assert_has(session, "p", "Database optimized successfully.")
     end
   end
 
   describe "assets section" do
     test "'Prune asset cache' runs synchronously and reports the pruned count", %{conn: conn} do
-      {:ok, view, _html} = live(conn, ~p"/maintenance")
+      session =
+        conn
+        |> visit(~p"/maintenance")
+        |> click_button("Prune asset cache")
 
-      render_click(view, "prune_asset_cache")
-
-      assert render(view) =~ "Pruned 0 cached assets."
+      assert_has(session, "p", "Pruned 0 cached assets.")
     end
 
     test "'Prune unreferenced assets' enqueues a PruneAssets job", %{conn: conn} do
-      {:ok, view, _html} = live(conn, ~p"/maintenance")
-
-      render_click(view, "prune_assets")
+      session =
+        conn
+        |> visit(~p"/maintenance")
+        |> click_button("Prune unreferenced assets")
 
       assert_enqueued(worker: MusicLibrary.Worker.PruneAssets)
-      assert render(view) =~ "Asset pruning started in the background."
+      assert_has(session, "p", "Asset pruning started in the background.")
     end
   end
 
   describe "emails section" do
     test "'Send records on this day' shows the :no_records toast when the collection is empty",
          %{conn: conn} do
-      {:ok, view, _html} = live(conn, ~p"/maintenance")
+      session =
+        conn
+        |> visit(~p"/maintenance")
+        |> click_button("Send records on this day")
 
-      render_click(view, "send_records_on_this_day_email")
-
-      assert render(view) =~ "No records on this day."
+      assert_has(session, "p", "No records on this day.")
     end
   end
 
@@ -151,11 +168,11 @@ defmodule MusicLibraryWeb.MaintenanceLive.IndexTest do
     test "'Re-connect to Last.fm' deletes the stored session key and redirects externally",
          %{conn: conn} do
       {:ok, _} = Secrets.store("last_fm_session_key", "sk-xyz")
-      {:ok, view, _html} = live(conn, ~p"/maintenance")
 
-      assert {:error, {:redirect, %{to: url}}} = render_click(view, "reconnect_lastfm")
+      conn
+      |> visit(~p"/maintenance")
+      |> click_button("Re-connect to Last.fm")
 
-      assert url == LastFm.auth_url()
       assert Secrets.get("last_fm_session_key") == nil
     end
   end

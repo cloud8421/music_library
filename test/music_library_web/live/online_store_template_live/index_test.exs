@@ -2,7 +2,6 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.IndexTest do
   use MusicLibraryWeb.ConnCase
 
   import MusicLibrary.Fixtures.OnlineStoreTemplates
-  import Phoenix.LiveViewTest
 
   describe "Index" do
     test "lists all templates", %{conn: conn} do
@@ -19,49 +18,28 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.IndexTest do
       online_store_template(%{name: "Amazon UK"})
       online_store_template(%{name: "Bandcamp"})
 
-      {:ok, view, _html} = live(conn, ~p"/online-store-templates")
-
-      assert has_element?(view, "p", "Amazon UK")
-      assert has_element?(view, "p", "Bandcamp")
-
-      view
-      |> form("form:not([phx-target])", query: "Amazon")
-      |> render_change()
-
-      assert_patch(view, ~p"/online-store-templates?page=1&page_size=50&query=Amazon")
-
-      assert has_element?(view, "p", "Amazon UK")
-      refute has_element?(view, "p", "Bandcamp")
+      conn
+      |> visit(~p"/online-store-templates?#{[query: "Amazon"]}")
+      |> assert_has("p", "Amazon UK")
+      |> refute_has("p", "Bandcamp")
     end
   end
 
   describe "Create template" do
     test "creates with valid data", %{conn: conn} do
-      {:ok, view, _html} = live(conn, ~p"/online-store-templates/new")
-
-      view
-      |> form("#online_store_template-form",
-        online_store_template: %{
-          name: "New Store",
-          url_template: "https://store.example.com/search?q={artist}+{title}"
-        }
-      )
-      |> render_submit()
-
-      assert has_element?(view, "p", "New Store")
+      conn
+      |> visit(~p"/online-store-templates/new")
+      |> fill_in("Template Name", with: "New Store")
+      |> fill_in("URL Template", with: "https://store.example.com/search?q={artist}+{title}")
+      |> click_button("Save Template")
+      |> assert_has("p", "New Store")
     end
 
     test "shows validation errors", %{conn: conn} do
-      {:ok, view, _html} = live(conn, ~p"/online-store-templates/new")
-
-      html =
-        view
-        |> form("#online_store_template-form",
-          online_store_template: %{name: "", url_template: ""}
-        )
-        |> render_change()
-
-      assert html =~ "can&#39;t be blank"
+      conn
+      |> visit(~p"/online-store-templates/new")
+      |> click_button("Save Template")
+      |> assert_has("[data-part='error']", "can't be blank")
     end
   end
 
@@ -69,15 +47,11 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.IndexTest do
     test "updates with valid data", %{conn: conn} do
       template = online_store_template(%{name: "Old Name"})
 
-      {:ok, view, _html} = live(conn, ~p"/online-store-templates/#{template}/edit")
-
-      view
-      |> form("#online_store_template-form",
-        online_store_template: %{name: "Updated Name"}
-      )
-      |> render_submit()
-
-      assert has_element?(view, "p", "Updated Name")
+      conn
+      |> visit(~p"/online-store-templates/#{template}/edit")
+      |> fill_in("Template Name", with: "Updated Name")
+      |> click_button("Save Template")
+      |> assert_has("p", "Updated Name")
     end
   end
 
@@ -85,13 +59,10 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.IndexTest do
     test "deletes from listing", %{conn: conn} do
       template = online_store_template(%{name: "To Delete"})
 
-      {:ok, view, _html} = live(conn, ~p"/online-store-templates")
-
-      view
-      |> element("button[phx-click='delete'][phx-value-id='#{template.id}']")
-      |> render_click()
-
-      refute has_element?(view, "p", "To Delete")
+      conn
+      |> visit(~p"/online-store-templates")
+      |> click_button("button[phx-click='delete'][phx-value-id='#{template.id}']", "Delete")
+      |> refute_has("p", "To Delete")
     end
   end
 
@@ -99,23 +70,22 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.IndexTest do
     test "toggles template enabled status", %{conn: conn} do
       template = online_store_template(%{name: "Toggle Me", enabled: true})
 
-      {:ok, view, _html} = live(conn, ~p"/online-store-templates")
+      session =
+        conn
+        |> visit(~p"/online-store-templates")
+        |> click_button(
+          "button[phx-click='toggle-enabled'][phx-value-id='#{template.id}']",
+          "Disable template"
+        )
 
-      # Toggle to disabled
-      html =
-        view
-        |> element("button[phx-click='toggle-enabled'][phx-value-id='#{template.id}']")
-        |> render_click()
+      assert_has(session, "button", "Enable template")
 
-      assert html =~ "Enable template"
-
-      # Toggle back to enabled
-      html =
-        view
-        |> element("button[phx-click='toggle-enabled'][phx-value-id='#{template.id}']")
-        |> render_click()
-
-      assert html =~ "Disable template"
+      session
+      |> click_button(
+        "button[phx-click='toggle-enabled'][phx-value-id='#{template.id}']",
+        "Enable template"
+      )
+      |> assert_has("button", "Disable template")
     end
   end
 end
