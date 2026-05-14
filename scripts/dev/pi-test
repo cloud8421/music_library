@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+#MISE description="Run pi tests"
+
+set -e
+
+source "$(git rev-parse --show-toplevel)/scripts/_helpers.sh"
+
+ensure_working_directory!
+
+npm test --prefix .pi/extensions/sensitive-file-guard
+
+npm test --prefix .pi/extensions/s3-browser

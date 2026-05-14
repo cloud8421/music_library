@@ -40,6 +40,12 @@ Run project tests
 
 The number of the partition
 
+## `dev:pi-test`
+
+- **Usage**: `dev:pi-test`
+
+Run pi tests
+
 ## `dev:precommit`
 
 - **Usage**: `dev:precommit`
