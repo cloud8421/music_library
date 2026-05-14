@@ -51,8 +51,7 @@ defmodule MusicLibrary.ListeningStats do
   def update(tracks) do
     track_params =
       tracks
-      |> Enum.map(fn t -> Map.take(t, @insertable_fields) end)
-      |> Enum.map(&Map.to_list/1)
+      |> Enum.map(fn t -> t |> Map.take(@insertable_fields) |> Map.to_list() end)
 
     {count, tracks} =
       Repo.insert_all(Track, track_params,

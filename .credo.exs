@@ -5,6 +5,15 @@
       plugins: [{ExSlop, []}],
       checks: %{
         extra: [
+          {Credo.Check.Warning.ExpensiveEmptyEnumCheck, []},
+          {Credo.Check.Refactor.DoubleBooleanNegation, []},
+          {Credo.Check.Refactor.CondStatements, []},
+          {Credo.Check.Refactor.MapMap, []},
+          {Credo.Check.Refactor.FilterFilter, []},
+          {Credo.Check.Refactor.RejectReject, []},
+          {Credo.Check.Refactor.FilterCount, []},
+          {Credo.Check.Refactor.NegatedConditionsInUnless, []},
+          {Credo.Check.Refactor.UnlessWithElse, []},
           {Credo.Check.Refactor.Nesting, max_nesting: 3},
           {Credo.Check.Readability.ModuleDoc,
            ignore_names: [
@@ -32,7 +41,9 @@
            ]},
           {Credo.Check.Refactor.CyclomaticComplexity, max_complexity: 12}
         ],
-        disabled: []
+        disabled: [
+          {Credo.Check.Refactor.AppendSingleItem, []}
+        ]
       }
       # files etc.
     }
