@@ -52,6 +52,7 @@ npm-debug.log
 
 # Presto device secrets (never commit)
 /presto/secrets.py
+/presto/__pycache__
 
 # Superpowers brainstorming mockups
 /.superpowers/
