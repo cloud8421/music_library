@@ -4,6 +4,7 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
   import MusicLibrary.Fixtures.Records
 
   alias MusicBrainz.Fixtures.Release, as: ReleaseFixtures
+  alias MusicLibrary.Assets.Transform
   alias MusicLibrary.Secrets
   alias Req.Test
 
@@ -321,14 +322,18 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
       "purchased_at" => record.purchased_at |> DateTime.to_iso8601(),
       "artists" => Enum.map(record.artists, & &1.name),
       "title" => record.title,
-      "cover_url" =>
-        "http://localhost:4002/api/v1/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjpudWxsfQ",
-      "thumb_url" =>
-        "http://localhost:4002/api/v1/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjo0ODB9",
-      "mini_cover_url" =>
-        "http://localhost:4002/api/v1/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjoxNTB9",
-      "micro_cover_url" =>
-        "http://localhost:4002/api/v1/assets/eyJoYXNoIjoiNTk5NDA3RERGNjk5MDdENEE2MEZFMTNDQ0FBODI0RDI1Q0YwOERDMTI0RkQ2QUEzRThFN0VDRDk4Qzg4NUZGRSIsIndpZHRoIjo0MH0"
+      "covers" => %{
+        "original" => asset_url(record.cover_hash, nil),
+        "large" => asset_url(record.cover_hash, 1000),
+        "medium" => asset_url(record.cover_hash, 460),
+        "small" => asset_url(record.cover_hash, 80)
+      }
     }
+  end
+
+  defp asset_url(cover_hash, width) do
+    payload = Transform.new(hash: cover_hash, width: width)
+
+    "http://localhost:4002#{~p"/api/v1/assets/#{payload}"}"
   end
 end

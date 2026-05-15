@@ -21,7 +21,7 @@ HTTP 200
 jsonpath "$.title" != null
 
 [Captures]
-cover-url: jsonpath "$.cover_url"
+cover-url: jsonpath "$.covers.original"
 
 # GET cover image
 GET {{cover-url}}

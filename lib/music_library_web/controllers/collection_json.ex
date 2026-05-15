@@ -3,6 +3,10 @@ defmodule MusicLibraryWeb.CollectionJSON do
 
   alias MusicLibrary.Assets.Transform
 
+  @large_cover_width 1000
+  @medium_cover_width 460
+  @small_cover_width 80
+
   def show(%{record: record}) do
     record(record)
   end
@@ -34,12 +38,20 @@ defmodule MusicLibraryWeb.CollectionJSON do
       selected_release_id: record.selected_release_id,
       artists: Enum.map(record.artists, & &1.name),
       title: record.title,
-      cover_url: url(~p"/api/v1/assets/#{Transform.new(hash: record.cover_hash)}"),
-      thumb_url: url(~p"/api/v1/assets/#{Transform.new(hash: record.cover_hash, width: 480)}"),
-      mini_cover_url:
-        url(~p"/api/v1/assets/#{Transform.new(hash: record.cover_hash, width: 150)}"),
-      micro_cover_url:
-        url(~p"/api/v1/assets/#{Transform.new(hash: record.cover_hash, width: 40)}")
+      covers: cover_urls(record.cover_hash)
     }
+  end
+
+  defp cover_urls(cover_hash) do
+    %{
+      original: cover_url(cover_hash, nil),
+      large: cover_url(cover_hash, @large_cover_width),
+      medium: cover_url(cover_hash, @medium_cover_width),
+      small: cover_url(cover_hash, @small_cover_width)
+    }
+  end
+
+  defp cover_url(cover_hash, width) do
+    url(~p"/api/v1/assets/#{Transform.new(hash: cover_hash, width: width)}")
   end
 end
