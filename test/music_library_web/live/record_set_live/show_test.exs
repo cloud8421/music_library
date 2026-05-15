@@ -3,7 +3,15 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
 
   import MusicLibrary.Fixtures.RecordSets
   import MusicLibrary.Fixtures.Records, only: [record: 1]
-  import Phoenix.LiveViewTest
+
+  import Phoenix.LiveViewTest,
+    only: [
+      render_click: 1,
+      render_hook: 3,
+      render_submit: 1,
+      element: 2,
+      form: 3
+    ]
 
   alias MusicLibrary.RecordSets
 
@@ -54,16 +62,16 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
     test "removes a record from the set", %{conn: conn} do
       {set, [r1 | _]} = record_set_with_records(2)
 
-      {:ok, view, _html} = live(conn, ~p"/record-sets/#{set}")
-
-      view
-      |> element("button[phx-click='remove_record'][phx-value-record-id='#{r1.id}']")
-      |> render_click()
-
-      refute has_element?(
-               view,
-               "button[phx-click='remove_record'][phx-value-record-id='#{r1.id}']"
-             )
+      conn
+      |> visit(~p"/record-sets/#{set}")
+      |> click_button(
+        "button[phx-click='remove_record'][phx-value-record-id='#{r1.id}']",
+        "Remove"
+      )
+      |> refute_has(
+        "button[phx-click='remove_record'][phx-value-record-id='#{r1.id}']",
+        "Remove"
+      )
     end
   end
 
@@ -71,9 +79,9 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
     test "reorders records via reorder event", %{conn: conn} do
       {set, [r1, r2, r3]} = record_set_with_records(3)
 
-      {:ok, view, _html} = live(conn, ~p"/record-sets/#{set}")
+      session = conn |> visit(~p"/record-sets/#{set}")
 
-      render_hook(view, "reorder", %{"record_ids" => [r3.id, r1.id, r2.id]})
+      unwrap(session, &render_hook(&1, "reorder", %{"record_ids" => [r3.id, r1.id, r2.id]}))
 
       updated = RecordSets.get_record_set!(set.id)
       ids_in_order = Enum.map(updated.items, & &1.record.id)
@@ -85,13 +93,10 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
     test "deletes set and navigates to index", %{conn: conn} do
       set = record_set(%{name: "To Delete"})
 
-      {:ok, view, _html} = live(conn, ~p"/record-sets/#{set}")
-
-      view
-      |> element("button[phx-click='delete_set']")
-      |> render_click()
-
-      assert_redirect(view, ~p"/record-sets")
+      conn
+      |> visit(~p"/record-sets/#{set}")
+      |> click_button("button[phx-click='delete_set']", "Delete")
+      |> assert_path(~p"/record-sets")
     end
   end
 
@@ -121,47 +126,53 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
       set = record_set()
       collected = record(%{title: "Collected Unique Xyzzy", purchased_at: DateTime.utc_now()})
 
-      {:ok, view, _html} = live(conn, ~p"/record-sets/#{set}/show/add-record")
+      session =
+        conn
+        |> visit(~p"/record-sets/#{set}/show/add-record")
+        |> search_picker("Xyzzy")
 
-      html = search_picker(view, "Xyzzy")
-
-      assert html =~ "Collected"
-      assert html =~ escape(collected.title)
+      assert_has(session, "h3", "Collected")
+      assert_has(session, "p", collected.title)
     end
 
     test "shows wishlisted records matching the query", %{conn: conn} do
       set = record_set()
       wishlisted = record(%{title: "Wishlisted Unique Xyzzy", purchased_at: nil})
 
-      {:ok, view, _html} = live(conn, ~p"/record-sets/#{set}/show/add-record")
+      session =
+        conn
+        |> visit(~p"/record-sets/#{set}/show/add-record")
+        |> search_picker("Xyzzy")
 
-      html = search_picker(view, "Xyzzy")
-
-      assert html =~ "Wishlisted"
-      assert html =~ escape(wishlisted.title)
+      assert_has(session, "h3", "Wishlisted")
+      assert_has(session, "p", wishlisted.title)
     end
 
     test "shows 'No records found' for non-matching queries", %{conn: conn} do
       set = record_set()
 
-      {:ok, view, _html} = live(conn, ~p"/record-sets/#{set}/show/add-record")
+      session =
+        conn
+        |> visit(~p"/record-sets/#{set}/show/add-record")
+        |> search_picker("NonexistentTitleZzzzzzzz")
 
-      html = search_picker(view, "NonexistentTitleZzzzzzzz")
-
-      assert html =~ "No records found"
+      assert_has(session, "p", "No records found")
     end
 
     test "adds a record to the set", %{conn: conn} do
       set = record_set()
       picked = record(%{title: "Pickable Unique Xyzzy", purchased_at: DateTime.utc_now()})
 
-      {:ok, view, _html} = live(conn, ~p"/record-sets/#{set}/show/add-record")
+      session =
+        conn
+        |> visit(~p"/record-sets/#{set}/show/add-record")
+        |> search_picker("Xyzzy")
 
-      search_picker(view, "Xyzzy")
-
-      view
-      |> element("li[phx-click='add_record'][phx-value-record-id='#{picked.id}']")
-      |> render_click()
+      unwrap(session, fn view ->
+        view
+        |> element("li[phx-click='add_record'][phx-value-record-id='#{picked.id}']")
+        |> render_click()
+      end)
 
       updated = RecordSets.get_record_set!(set.id)
       assert Enum.any?(updated.items, fn item -> item.record.id == picked.id end)
@@ -172,20 +183,23 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
       existing = record(%{title: "Already In Set Xyzzy", purchased_at: DateTime.utc_now()})
       {:ok, _} = RecordSets.add_record_to_set(set, existing.id)
 
-      {:ok, view, _html} = live(conn, ~p"/record-sets/#{set}/show/add-record")
+      session =
+        conn
+        |> visit(~p"/record-sets/#{set}/show/add-record")
+        |> search_picker("Xyzzy")
 
-      search_picker(view, "Xyzzy")
-
-      refute has_element?(
-               view,
-               "li[phx-click='add_record'][phx-value-record-id='#{existing.id}']"
-             )
+      refute_has(
+        session,
+        "li[phx-click='add_record'][phx-value-record-id='#{existing.id}']"
+      )
     end
   end
 
-  defp search_picker(view, query) do
-    view
-    |> form("#record-picker-navigation form", %{query: query})
-    |> render_submit()
+  defp search_picker(session, query) do
+    unwrap(session, fn view ->
+      view
+      |> form("#record-picker-navigation form", %{query: query})
+      |> render_submit()
+    end)
   end
 end
