@@ -1378,7 +1378,8 @@ def _draw_search_record_list(app):
     if app.search.scroll_offset > 0:
         display.set_pen(_pen_arrow)
         display.set_font("bitmap14_outline")
-        display.text("^", WIDTH // 2 - px(8), RECORD_START_Y - px(28), scale=TEXT_SCALE)
+        arrow_w = display.measure_text("^", scale=TEXT_SCALE)
+        display.text("^", (WIDTH - arrow_w) // 2, DAY_HEADER_H + px(4), scale=TEXT_SCALE)
 
     cy = RECORD_START_Y - app.search.scroll_offset
     for rec in app.search.results:
@@ -1399,7 +1400,8 @@ def _draw_search_record_list(app):
     if app.search.scroll_offset < max_offset:
         display.set_pen(_pen_arrow)
         display.set_font("bitmap14_outline")
-        display.text("v", WIDTH // 2 - px(8), HEIGHT - px(24), scale=TEXT_SCALE)
+        arrow_w = display.measure_text("v", scale=TEXT_SCALE)
+        display.text("v", (WIDTH - arrow_w) // 2, HEIGHT - px(24), scale=TEXT_SCALE)
 
 
 def _search_max_scroll_offset(app):
@@ -1533,7 +1535,8 @@ def _draw_record_list(app):
     if app.day.scroll_offset > 0:
         display.set_pen(_pen_arrow)
         display.set_font("bitmap14_outline")
-        display.text("^", WIDTH // 2 - px(8), RECORD_START_Y - px(28), scale=TEXT_SCALE)
+        arrow_w = display.measure_text("^", scale=TEXT_SCALE)
+        display.text("^", (WIDTH - arrow_w) // 2, DAY_HEADER_H + px(4), scale=TEXT_SCALE)
 
     cy = RECORD_START_Y - app.day.scroll_offset
 
@@ -1555,7 +1558,8 @@ def _draw_record_list(app):
     if app.day.scroll_offset < max_offset:
         display.set_pen(_pen_arrow)
         display.set_font("bitmap14_outline")
-        display.text("v", WIDTH // 2 - px(8), HEIGHT - px(24), scale=TEXT_SCALE)
+        arrow_w = display.measure_text("v", scale=TEXT_SCALE)
+        display.text("v", (WIDTH - arrow_w) // 2, HEIGHT - px(24), scale=TEXT_SCALE)
 
 def _max_scroll_offset(app):
     """Return the maximum pixel scroll offset for the current records."""
@@ -1944,10 +1948,12 @@ def draw_record_detail(app):
     display.set_font("bitmap14_outline")
     if offset > 0:
         display.set_pen(_pen_arrow)
-        display.text("^", WIDTH // 2 - px(8), DAY_HEADER_H + px(4), scale=TEXT_SCALE)
+        arrow_w = display.measure_text("^", scale=TEXT_SCALE)
+        display.text("^", (WIDTH - arrow_w) // 2, DAY_HEADER_H + px(4), scale=TEXT_SCALE)
     if offset < max_off:
         display.set_pen(_pen_arrow)
-        display.text("v", WIDTH // 2 - px(8), HEIGHT - px(24), scale=TEXT_SCALE)
+        arrow_w = display.measure_text("v", scale=TEXT_SCALE)
+        display.text("v", (WIDTH - arrow_w) // 2, HEIGHT - px(24), scale=TEXT_SCALE)
 
     _remove_clip()
 
