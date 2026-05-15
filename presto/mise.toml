@@ -1,7 +1,8 @@
+[settings]
+python.uv_venv_auto = "source"
+
 [tools]
 "uv" = "latest"
-"pipx:mpremote" = "latest"
-"pipx:pimoroni-emulator" = "latest"
 
 [tasks.presto]
 run = '''
@@ -17,3 +18,6 @@ mpremote reset
 
 [tasks.emulator]
 run = 'pimoroni-emulator --device presto main.py'
+
+[tasks.test]
+run = 'pytest tests/ -v'
