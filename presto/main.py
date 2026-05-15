@@ -59,34 +59,52 @@ display = presto.display
 WIDTH, HEIGHT = display.get_bounds()
 touch = presto.touch
 
+
+UI_SCALE = 2
+TEXT_SCALE = UI_SCALE
+TITLE_TEXT_SCALE = UI_SCALE
+PLACEHOLDER_TEXT_SCALE = UI_SCALE * 2
+
+
+def px(value):
+    """Scale a low-resolution layout measurement to full-resolution pixels."""
+    return value * UI_SCALE
+
+
+TEXT_H = px(8)
+TEXT_LINE_H = px(12)
+TITLE_LINE_H = px(14)
+
 # Calendar layout (computed from display bounds)
-CELL_GAP = 3
+CELL_GAP = px(3)
 CELLS_PER_ROW = 7
 MAX_ROWS = 6
 
 # Header
 HEADER_Y = 0
-HEADER_H = 31
-HEADER_TEXT_H = 14
-HEADER_SIDE_MARGIN = 8
-HEADER_BUTTON_W = 32
-HEADER_BUTTON_H = 25
+HEADER_H = px(31)
+HEADER_TEXT_H = px(14)
+HEADER_SIDE_MARGIN = px(8)
+HEADER_BUTTON_W = px(32)
+HEADER_BUTTON_H = px(25)
 HEADER_BUTTON_Y = HEADER_Y + (HEADER_H - HEADER_BUTTON_H) // 2
 ARROW_W = HEADER_BUTTON_W
 ARROW_H = HEADER_BUTTON_H
 
 # Day-of-week labels
-DOW_Y = HEADER_Y + HEADER_H + 2
-DOW_H = 16
-
-# Day cells: fit 7 across with comfortable side margins
-CELL_SIZE = (WIDTH - 16 - (CELLS_PER_ROW - 1) * CELL_GAP) // CELLS_PER_ROW
-if CELL_SIZE > 78:
-    CELL_SIZE = 78
-GRID_LEFT = (WIDTH - (CELLS_PER_ROW * CELL_SIZE + (CELLS_PER_ROW - 1) * CELL_GAP)) // 2
+DOW_Y = HEADER_Y + HEADER_H + px(2)
+DOW_H = px(16)
 
 # Grid starts after day-of-week labels with a small gap
-CALENDAR_TOP = DOW_Y + DOW_H + 6
+CALENDAR_TOP = DOW_Y + DOW_H + px(6)
+
+# Day cells: fit 7 across with comfortable side margins
+CELL_SIZE_BY_WIDTH = (WIDTH - px(16) - (CELLS_PER_ROW - 1) * CELL_GAP) // CELLS_PER_ROW
+CELL_SIZE_BY_HEIGHT = (
+    HEIGHT - CALENDAR_TOP - px(8) - (MAX_ROWS - 1) * CELL_GAP
+) // MAX_ROWS
+CELL_SIZE = min(CELL_SIZE_BY_WIDTH, CELL_SIZE_BY_HEIGHT, px(78))
+GRID_LEFT = (WIDTH - (CELLS_PER_ROW * CELL_SIZE + (CELLS_PER_ROW - 1) * CELL_GAP)) // 2
 
 # Day view (proportional to cell size)
 BACK_X = HEADER_SIDE_MARGIN
@@ -96,28 +114,28 @@ BACK_H = HEADER_BUTTON_H
 DAY_HEADER_Y = HEADER_Y
 DAY_HEADER_H = HEADER_H
 DAY_HEADER_TEXT_H = HEADER_TEXT_H
-DAY_COUNT_TEXT_H = 8
+DAY_COUNT_TEXT_H = TEXT_H
 
 # Detail view
-DETAIL_COVER_SIZE = 150
+DETAIL_COVER_SIZE = px(150)
 DETAIL_COVER_X = (WIDTH - DETAIL_COVER_SIZE) // 2
-DETAIL_COVER_Y = DAY_HEADER_Y + DAY_HEADER_H + 12
-DETAIL_INFO_GAP = 4
-DETAIL_TEXT_X = 40
+DETAIL_COVER_Y = DAY_HEADER_Y + DAY_HEADER_H + px(12)
+DETAIL_INFO_GAP = px(4)
+DETAIL_TEXT_X = px(40)
 DETAIL_TEXT_W = WIDTH - (2 * DETAIL_TEXT_X)
 
 # Scrobble button (detail view)
-SCROBBLE_BUTTON_W = 200
-SCROBBLE_BUTTON_H = 40
-SCROBBLE_BUTTON_GAP = 12  # vertical gap before button
+SCROBBLE_BUTTON_W = px(200)
+SCROBBLE_BUTTON_H = px(40)
+SCROBBLE_BUTTON_GAP = px(12)  # vertical gap before button
 
-RECORD_START_Y = DAY_HEADER_Y + DAY_HEADER_H + 8
-THUMB_SIZE = 40
-THUMB_MARGIN = 8
-ROW_PAD_Y = 8
-ROW_SEPARATOR_H = 1
-TEXT_X = THUMB_MARGIN + THUMB_SIZE + 12
-TEXT_W = WIDTH - TEXT_X - 12
+RECORD_START_Y = DAY_HEADER_Y + DAY_HEADER_H + px(8)
+THUMB_SIZE = px(40)
+THUMB_MARGIN = px(8)
+ROW_PAD_Y = px(8)
+ROW_SEPARATOR_H = px(1)
+TEXT_X = THUMB_MARGIN + THUMB_SIZE + px(12)
+TEXT_W = WIDTH - TEXT_X - px(12)
 
 # Colors (RGB tuples, converted to pens at runtime)
 BG = (24, 24, 27)
@@ -152,7 +170,7 @@ MONTH_NAMES = [
 # Touch debounce (milliseconds)
 DEBOUNCE_MS = 300
 DRAG_REDRAW_MS = 40
-DRAG_REDRAW_PX = 8
+DRAG_REDRAW_PX = px(8)
 TOUCH_RELEASE_TIMEOUT_MS = 3_000
 
 # WiFi connection timeout (seconds)
@@ -167,24 +185,24 @@ DISPLAY_FADE_STEPS = 20
 
 # Home screen
 HOME_TITLE = "Music Library"
-HOME_TITLE_Y = 60
-HOME_BUTTON_W = WIDTH - 80
-HOME_BUTTON_H = 50
-HOME_BUTTON_X = 40
-HOME_BUTTON1_Y = 120
-HOME_BUTTON2_Y = HOME_BUTTON1_Y + HOME_BUTTON_H + 10
+HOME_TITLE_Y = px(60)
+HOME_BUTTON_W = WIDTH - px(80)
+HOME_BUTTON_H = px(50)
+HOME_BUTTON_X = px(40)
+HOME_BUTTON1_Y = px(120)
+HOME_BUTTON2_Y = HOME_BUTTON1_Y + HOME_BUTTON_H + px(10)
 HOME_BTN_BG = (55, 65, 81)  # Slate blue — distinct from BG and CELL_BG
 
 # On-screen keyboard
-KB_MARGIN = 20
-KB_KEY_GAP = 3
-KB_KEY_H = 38
+KB_MARGIN = px(20)
+KB_KEY_GAP = px(3)
+KB_KEY_H = px(36)
 KB_KEY_W = (WIDTH - 2 * KB_MARGIN - 9 * KB_KEY_GAP) // 10
 
-KB_INPUT_Y = 42
-KB_INPUT_H = 28
-KB_INPUT_MARGIN = 40
-KB_ROWS_START_Y = KB_INPUT_Y + KB_INPUT_H + 12
+KB_INPUT_Y = px(42)
+KB_INPUT_H = px(28)
+KB_INPUT_MARGIN = px(40)
+KB_ROWS_START_Y = KB_INPUT_Y + KB_INPUT_H + px(12)
 
 ALPHA_KEYS = [
     list("qwertyuiop"),
@@ -339,7 +357,7 @@ def _init_pens():
 # HELPER: TEXT WRAPPING
 # ============================================================================
 
-def draw_wrapped(text, x, y, max_width, pen, scale=1):
+def draw_wrapped(text, x, y, max_width, pen, scale=TEXT_SCALE):
     """Draw text, wrapping at word boundaries to fit within max_width pixels.
 
     PicoGraphics doesn't support automatic wrapping, so we manually break
@@ -347,7 +365,7 @@ def draw_wrapped(text, x, y, max_width, pen, scale=1):
     """
     lines = _wrapped_lines(text, max_width, scale=scale)
 
-    line_height = 8 * scale + 4  # bitmap8 is 8px tall, plus spacing
+    line_height = _text_line_height(scale)
     cy = y
     display.set_pen(pen)
     for line in lines:
@@ -357,9 +375,9 @@ def draw_wrapped(text, x, y, max_width, pen, scale=1):
     return cy
 
 
-def draw_wrapped_lines(lines, x, y, pen, scale=1):
+def draw_wrapped_lines(lines, x, y, pen, scale=TEXT_SCALE):
     """Draw pre-wrapped text lines and return the Y position after them."""
-    line_height = 8 * scale + 4
+    line_height = _text_line_height(scale)
     cy = y
     display.set_pen(pen)
     for line in lines:
@@ -367,6 +385,11 @@ def draw_wrapped_lines(lines, x, y, pen, scale=1):
         cy += line_height
 
     return cy
+
+
+def _text_line_height(scale=TEXT_SCALE):
+    """Return a bitmap8 line height including scaled inter-line spacing."""
+    return 8 * scale + px(4)
 
 
 def display_text(text):
@@ -404,12 +427,12 @@ def display_text(text):
     return rendered
 
 
-def _wrapped_line_count(text, max_width, scale=1):
+def _wrapped_line_count(text, max_width, scale=TEXT_SCALE):
     """Return how many wrapped lines the text will occupy."""
     return max(1, len(_wrapped_lines(text, max_width, scale=scale)))
 
 
-def _wrapped_lines(text, max_width, scale=1):
+def _wrapped_lines(text, max_width, scale=TEXT_SCALE):
     """Return wrapped lines for text using the display font metrics."""
     words = str(text).split()
     lines = []
@@ -912,9 +935,9 @@ def _draw_placeholder(x, y, w, h):
     display.set_pen(_pen_placeholder)
     display.rectangle(x, y, w, h)
     display.set_pen(_pen_dim_text)
-    cx = x + w // 2 - display.measure_text("?", scale=2) // 2
-    cy = y + h // 2 - 10
-    display.text("?", cx, cy, scale=2)
+    cx = x + w // 2 - display.measure_text("?", scale=PLACEHOLDER_TEXT_SCALE) // 2
+    cy = y + h // 2 - px(10)
+    display.text("?", cx, cy, scale=PLACEHOLDER_TEXT_SCALE)
 
 
 # ============================================================================
@@ -930,14 +953,14 @@ def draw_status(message):
     display.set_font("bitmap8")
 
     lines = message.split("\n")
-    line_h = 20
+    line_h = px(20)
     total_h = len(lines) * line_h
     start_y = (HEIGHT - total_h) // 2
 
     for i, line in enumerate(lines):
-        w = display.measure_text(line, scale=1)
+        w = display.measure_text(line, scale=TEXT_SCALE)
         x = (WIDTH - w) // 2
-        display.text(line, x, start_y + i * line_h, scale=1)
+        display.text(line, x, start_y + i * line_h, scale=TEXT_SCALE)
 
     presto.update()
 
@@ -958,8 +981,8 @@ def draw_month_view(app):
     presto.update()
 
 
-HOME_BTN_W = 30
-HOME_BTN_H = 25
+HOME_BTN_W = px(30)
+HOME_BTN_H = px(25)
 HOME_BTN_Y = HEADER_Y + (HEADER_H - HOME_BTN_H) // 2
 
 
@@ -973,14 +996,14 @@ def _draw_month_header(app):
     display.set_pen(_pen_header_text)
     display.set_font("bitmap14_outline")
     title = "{} {}".format(MONTH_NAMES[app.view_month - 1], app.view_year)
-    tw = display.measure_text(title, scale=1)
+    tw = display.measure_text(title, scale=TEXT_SCALE)
     # Left boundary: after Home + left-arrow; right boundary: before right-arrow
-    title_left = HEADER_SIDE_MARGIN + HOME_BTN_W + 4 + ARROW_W
+    title_left = HEADER_SIDE_MARGIN + HOME_BTN_W + px(4) + ARROW_W
     title_right = WIDTH - ARROW_W - HEADER_SIDE_MARGIN
     title_area = title_right - title_left
     tx = title_left + (title_area - tw) // 2
     ty = HEADER_Y + (HEADER_H - HEADER_TEXT_H) // 2
-    display.text(title, tx, ty, scale=1)
+    display.text(title, tx, ty, scale=TEXT_SCALE)
 
     # Home button (leftmost)
     hx = HEADER_SIDE_MARGIN
@@ -989,16 +1012,16 @@ def _draw_month_header(app):
     display.rectangle(hx, hy, HOME_BTN_W, HOME_BTN_H)
     display.set_pen(_pen_back)
     display.set_font("bitmap8")
-    _draw_centered_text("H", hx, hy, HOME_BTN_W, HOME_BTN_H, 8)
+    _draw_centered_text("H", hx, hy, HOME_BTN_W, HOME_BTN_H, TEXT_H)
 
     # Left arrow (shifted right to make room for Home)
-    lx = hx + HOME_BTN_W + 4
+    lx = hx + HOME_BTN_W + px(4)
     ly = HEADER_BUTTON_Y
     display.set_pen(_pen_placeholder)
     display.rectangle(lx, ly, ARROW_W, ARROW_H)
     display.set_pen(_pen_back)
     display.set_font("bitmap8")
-    _draw_centered_text("<", lx, ly, ARROW_W, ARROW_H, 8)
+    _draw_centered_text("<", lx, ly, ARROW_W, ARROW_H, TEXT_H)
 
     # Right arrow
     rx = WIDTH - ARROW_W - HEADER_SIDE_MARGIN
@@ -1007,10 +1030,10 @@ def _draw_month_header(app):
     display.rectangle(rx, ry, ARROW_W, ARROW_H)
     display.set_pen(_pen_back)
     display.set_font("bitmap8")
-    _draw_centered_text(">", rx, ry, ARROW_W, ARROW_H, 8)
+    _draw_centered_text(">", rx, ry, ARROW_W, ARROW_H, TEXT_H)
 
 
-def _draw_centered_text(text, x, y, w, h, text_h, scale=1):
+def _draw_centered_text(text, x, y, w, h, text_h, scale=TEXT_SCALE):
     """Draw text centered inside a rectangular area."""
     tw = display.measure_text(text, scale=scale)
     tx = x + (w - tw) // 2
@@ -1024,8 +1047,8 @@ def _draw_day_labels():
     display.set_font("bitmap8")
     for i, name in enumerate(DAY_NAMES):
         cx = GRID_LEFT + i * (CELL_SIZE + CELL_GAP) + CELL_SIZE // 2
-        tw = display.measure_text(name, scale=1)
-        display.text(name, cx - tw // 2, DOW_Y, scale=1)
+        tw = display.measure_text(name, scale=TEXT_SCALE)
+        display.text(name, cx - tw // 2, DOW_Y, scale=TEXT_SCALE)
 
 
 def _draw_day_grid(app):
@@ -1107,8 +1130,8 @@ def _draw_day_grid(app):
 def _draw_centered_num(num, cx, cy):
     """Draw a number centered at (cx, cy)."""
     text = str(num)
-    tw = display.measure_text(text, scale=1)
-    display.text(text, cx - tw // 2, cy - 5, scale=1)
+    tw = display.measure_text(text, scale=TEXT_SCALE)
+    display.text(text, cx - tw // 2, cy - px(5), scale=TEXT_SCALE)
 
 
 # ============================================================================
@@ -1123,8 +1146,8 @@ def draw_home_screen(app):
     # Title
     display.set_pen(_pen_title)
     display.set_font("bitmap14_outline")
-    tw = display.measure_text(HOME_TITLE, scale=1)
-    display.text(HOME_TITLE, (WIDTH - tw) // 2, HOME_TITLE_Y, scale=1)
+    tw = display.measure_text(HOME_TITLE, scale=TEXT_SCALE)
+    display.text(HOME_TITLE, (WIDTH - tw) // 2, HOME_TITLE_Y, scale=TEXT_SCALE)
 
     # Buttons
     _draw_home_button(HOME_BUTTON1_Y, "Search Collection")
@@ -1139,10 +1162,10 @@ def _draw_home_button(y, label):
     display.rectangle(HOME_BUTTON_X, y, HOME_BUTTON_W, HOME_BUTTON_H)
     display.set_pen(_pen_today_text)
     display.set_font("bitmap8")
-    tw = display.measure_text(label, scale=1)
+    tw = display.measure_text(label, scale=TEXT_SCALE)
     tx = HOME_BUTTON_X + (HOME_BUTTON_W - tw) // 2
-    ty = y + (HOME_BUTTON_H - 8) // 2
-    display.text(label, tx, ty, scale=1)
+    ty = y + (HOME_BUTTON_H - TEXT_H) // 2
+    display.text(label, tx, ty, scale=TEXT_SCALE)
 
 
 # ============================================================================
@@ -1164,7 +1187,12 @@ def draw_search_input(app):
     display.set_font("bitmap8")
     # Show cursor as underscore if query is empty
     display_q = app.search.query if app.search.query else "_"
-    display.text(display_q, KB_INPUT_MARGIN + 8, KB_INPUT_Y + 12, scale=1)
+    display.text(
+        display_q,
+        KB_INPUT_MARGIN + px(8),
+        KB_INPUT_Y + px(12),
+        scale=TEXT_SCALE
+    )
 
     _draw_keyboard(app)
     presto.update()
@@ -1187,9 +1215,9 @@ def _draw_search_input_header():
     display.set_pen(_pen_header_text)
     display.set_font("bitmap14_outline")
     title = "Search"
-    tw = display.measure_text(title, scale=1)
+    tw = display.measure_text(title, scale=TEXT_SCALE)
     display.text(title, (WIDTH - tw) // 2,
-                 DAY_HEADER_Y + (DAY_HEADER_H - DAY_HEADER_TEXT_H) // 2, scale=1)
+                 DAY_HEADER_Y + (DAY_HEADER_H - DAY_HEADER_TEXT_H) // 2, scale=TEXT_SCALE)
 
 
 def _draw_keyboard(app):
@@ -1228,10 +1256,10 @@ def _draw_key(x, y, label, w, h, text_pen=None):
     display.rectangle(x, y, w, h)
     pen = text_pen if text_pen is not None else _pen_normal_text
     display.set_pen(pen)
-    tw = display.measure_text(label, scale=1)
+    tw = display.measure_text(label, scale=TEXT_SCALE)
     tx = x + (w - tw) // 2
-    ty = y + (h - 8) // 2
-    display.text(label, tx, ty, scale=1)
+    ty = y + (h - TEXT_H) // 2
+    display.text(label, tx, ty, scale=TEXT_SCALE)
 
 
 def _keyboard_hit_test(app, x, y):
@@ -1326,17 +1354,17 @@ def _draw_search_results_header(app):
     display.set_pen(_pen_header_text)
     display.set_font("bitmap14_outline")
     display_label = "Search: " + app.search.query
-    max_w = WIDTH - (BACK_X + BACK_W + 8) - 8
-    if display.measure_text(display_label, scale=1) > max_w:
+    max_w = WIDTH - (BACK_X + BACK_W + px(8)) - px(8)
+    if display.measure_text(display_label, scale=TEXT_SCALE) > max_w:
         suffix = "..."
         display_q = app.search.query
-        while (display.measure_text("Search: " + display_q + suffix, scale=1) > max_w
+        while (display.measure_text("Search: " + display_q + suffix, scale=TEXT_SCALE) > max_w
                and len(display_q) > 0):
             display_q = display_q[:-1]
         display_label = "Search: " + (display_q + suffix if display_q else suffix)
-    tw = display.measure_text(display_label, scale=1)
+    tw = display.measure_text(display_label, scale=TEXT_SCALE)
     display.text(display_label, (WIDTH - tw) // 2,
-                 DAY_HEADER_Y + (DAY_HEADER_H - DAY_HEADER_TEXT_H) // 2, scale=1)
+                 DAY_HEADER_Y + (DAY_HEADER_H - DAY_HEADER_TEXT_H) // 2, scale=TEXT_SCALE)
 
 
 def _draw_search_record_list(app):
@@ -1348,18 +1376,18 @@ def _draw_search_record_list(app):
     if app.search.scroll_offset > 0:
         display.set_pen(_pen_arrow)
         display.set_font("bitmap14_outline")
-        display.text("^", WIDTH // 2 - 8, RECORD_START_Y - 28, scale=1)
+        display.text("^", WIDTH // 2 - px(8), RECORD_START_Y - px(28), scale=TEXT_SCALE)
 
     cy = RECORD_START_Y - app.search.scroll_offset
     for rec in app.search.results:
-        row_h = rec.get("_row_height", THUMB_SIZE + 8)
+        row_h = rec.get("_row_height", THUMB_SIZE + px(8))
         row_bottom = cy + row_h
 
         if row_bottom <= RECORD_START_Y:
             cy = row_bottom
             continue
 
-        if cy >= HEIGHT - 28:
+        if cy >= HEIGHT - px(28):
             break
 
         _draw_record_row(app, rec, cy)
@@ -1369,12 +1397,12 @@ def _draw_search_record_list(app):
     if app.search.scroll_offset < max_offset:
         display.set_pen(_pen_arrow)
         display.set_font("bitmap14_outline")
-        display.text("v", WIDTH // 2 - 8, HEIGHT - 24, scale=1)
+        display.text("v", WIDTH // 2 - px(8), HEIGHT - px(24), scale=TEXT_SCALE)
 
 
 def _search_max_scroll_offset(app):
     """Return the maximum pixel scroll offset for search results."""
-    viewport_h = HEIGHT - RECORD_START_Y - 28
+    viewport_h = HEIGHT - RECORD_START_Y - px(28)
     return max(0, app.search.content_height - viewport_h)
 
 
@@ -1383,8 +1411,8 @@ def _draw_search_empty():
     display.set_pen(_pen_dim_text)
     display.set_font("bitmap8")
     msg = "No records found"
-    mw = display.measure_text(msg, scale=1)
-    display.text(msg, (WIDTH - mw) // 2, HEIGHT // 2 - 10, scale=1)
+    mw = display.measure_text(msg, scale=TEXT_SCALE)
+    display.text(msg, (WIDTH - mw) // 2, HEIGHT // 2 - px(10), scale=TEXT_SCALE)
 
 
 def _draw_search_error():
@@ -1392,13 +1420,13 @@ def _draw_search_error():
     display.set_pen(_pen_error)
     display.set_font("bitmap8")
     msg = "Could not reach server"
-    mw = display.measure_text(msg, scale=1)
-    display.text(msg, (WIDTH - mw) // 2, HEIGHT // 2 - 20, scale=1)
+    mw = display.measure_text(msg, scale=TEXT_SCALE)
+    display.text(msg, (WIDTH - mw) // 2, HEIGHT // 2 - px(20), scale=TEXT_SCALE)
 
     display.set_pen(_pen_dim_text)
     hint = "Tap to retry"
-    hw = display.measure_text(hint, scale=1)
-    display.text(hint, (WIDTH - hw) // 2, HEIGHT // 2 + 10, scale=1)
+    hw = display.measure_text(hint, scale=TEXT_SCALE)
+    display.text(hint, (WIDTH - hw) // 2, HEIGHT // 2 + px(10), scale=TEXT_SCALE)
 
 
 # ============================================================================
@@ -1447,12 +1475,12 @@ def _draw_day_header(app):
     )
     display.set_pen(_pen_header_text)
     display.set_font("bitmap14_outline")
-    tw = display.measure_text(date_str, scale=1)
+    tw = display.measure_text(date_str, scale=TEXT_SCALE)
     display.text(
         date_str,
         (WIDTH - tw) // 2,
         DAY_HEADER_Y + (DAY_HEADER_H - DAY_HEADER_TEXT_H) // 2,
-        scale=1
+        scale=TEXT_SCALE
     )
 
     # Record count
@@ -1460,12 +1488,12 @@ def _draw_day_header(app):
     count_str = "{} record{}".format(record_count, "s" if record_count != 1 else "")
     display.set_pen(_pen_dim_text)
     display.set_font("bitmap8")
-    cw = display.measure_text(count_str, scale=1)
+    cw = display.measure_text(count_str, scale=TEXT_SCALE)
     display.text(
         count_str,
-        WIDTH - cw - 11,
+        WIDTH - cw - px(11),
         DAY_HEADER_Y + (DAY_HEADER_H - DAY_COUNT_TEXT_H) // 2,
-        scale=1
+        scale=TEXT_SCALE
     )
 
 
@@ -1474,13 +1502,13 @@ def _draw_day_error():
     display.set_pen(_pen_error)
     display.set_font("bitmap8")
     msg = "Could not reach server"
-    mw = display.measure_text(msg, scale=1)
-    display.text(msg, (WIDTH - mw) // 2, HEIGHT // 2 - 20, scale=1)
+    mw = display.measure_text(msg, scale=TEXT_SCALE)
+    display.text(msg, (WIDTH - mw) // 2, HEIGHT // 2 - px(20), scale=TEXT_SCALE)
 
     display.set_pen(_pen_dim_text)
     hint = "Tap < Back to return"
-    hw = display.measure_text(hint, scale=1)
-    display.text(hint, (WIDTH - hw) // 2, HEIGHT // 2 + 10, scale=1)
+    hw = display.measure_text(hint, scale=TEXT_SCALE)
+    display.text(hint, (WIDTH - hw) // 2, HEIGHT // 2 + px(10), scale=TEXT_SCALE)
 
 
 def _draw_day_empty():
@@ -1488,8 +1516,8 @@ def _draw_day_empty():
     display.set_pen(_pen_dim_text)
     display.set_font("bitmap8")
     msg = "No records on this day"
-    mw = display.measure_text(msg, scale=1)
-    display.text(msg, (WIDTH - mw) // 2, HEIGHT // 2 - 10, scale=1)
+    mw = display.measure_text(msg, scale=TEXT_SCALE)
+    display.text(msg, (WIDTH - mw) // 2, HEIGHT // 2 - px(10), scale=TEXT_SCALE)
 
 
 def _draw_record_list(app):
@@ -1502,19 +1530,19 @@ def _draw_record_list(app):
     if app.day.scroll_offset > 0:
         display.set_pen(_pen_arrow)
         display.set_font("bitmap14_outline")
-        display.text("^", WIDTH // 2 - 8, RECORD_START_Y - 28, scale=1)
+        display.text("^", WIDTH // 2 - px(8), RECORD_START_Y - px(28), scale=TEXT_SCALE)
 
     cy = RECORD_START_Y - app.day.scroll_offset
 
     for rec in app.day.records:
-        row_h = rec.get("_row_height", THUMB_SIZE + 8)
+        row_h = rec.get("_row_height", THUMB_SIZE + px(8))
         row_bottom = cy + row_h
 
         if row_bottom <= RECORD_START_Y:
             cy = row_bottom
             continue
 
-        if cy >= HEIGHT - 28:
+        if cy >= HEIGHT - px(28):
             break
 
         _draw_record_row(app, rec, cy)
@@ -1524,11 +1552,11 @@ def _draw_record_list(app):
     if app.day.scroll_offset < max_offset:
         display.set_pen(_pen_arrow)
         display.set_font("bitmap14_outline")
-        display.text("v", WIDTH // 2 - 8, HEIGHT - 24, scale=1)
+        display.text("v", WIDTH // 2 - px(8), HEIGHT - px(24), scale=TEXT_SCALE)
 
 def _max_scroll_offset(app):
     """Return the maximum pixel scroll offset for the current records."""
-    viewport_h = HEIGHT - RECORD_START_Y - 28
+    viewport_h = HEIGHT - RECORD_START_Y - px(28)
     return max(0, app.day.content_height - viewport_h)
 
 
@@ -1542,7 +1570,7 @@ def prepare_record_list(app, recs):
     content_height = 0
     for rec in recs:
         _prepare_record_for_display(rec)
-        content_height += rec.get("_row_height", THUMB_SIZE + 8)
+        content_height += rec.get("_row_height", THUMB_SIZE + px(8))
 
     preload_record_thumbnails(app, recs)
     gc.collect()
@@ -1559,12 +1587,12 @@ def _prepare_record_for_display(rec):
     rec["_display_title"] = title
     rec["_display_artists"] = artist_str
     rec["_display_meta"] = meta_text
-    rec["_display_title_lines"] = _wrapped_lines(title, TEXT_W, scale=1)
+    rec["_display_title_lines"] = _wrapped_lines(title, TEXT_W, scale=TEXT_SCALE)
     rec["_display_artist_lines"] = (
-        _wrapped_lines(artist_str, TEXT_W, scale=1) if artist_str else []
+        _wrapped_lines(artist_str, TEXT_W, scale=TEXT_SCALE) if artist_str else []
     )
     rec["_display_meta_lines"] = (
-        _wrapped_lines(meta_text, TEXT_W, scale=1) if meta_text else []
+        _wrapped_lines(meta_text, TEXT_W, scale=TEXT_SCALE) if meta_text else []
     )
     rec["_thumb_url"] = _record_thumbnail_url(rec)
     rec["_row_height"] = _record_row_height(rec)
@@ -1583,22 +1611,22 @@ def _record_row_height(rec):
     title_lines = rec.get("_display_title_lines", None)
     if title_lines is None:
         title = rec.get("_display_title", display_text(rec.get("title", "Unknown Title")))
-        title_lines = _wrapped_lines(title, TEXT_W, scale=1)
-    ty = max(1, len(title_lines)) * 12
+        title_lines = _wrapped_lines(title, TEXT_W, scale=TEXT_SCALE)
+    ty = max(1, len(title_lines)) * TEXT_LINE_H
 
     artist_lines = rec.get("_display_artist_lines", None)
     if artist_lines is None:
         artist_str = rec.get("_display_artists", "")
-        artist_lines = _wrapped_lines(artist_str, TEXT_W, scale=1) if artist_str else []
+        artist_lines = _wrapped_lines(artist_str, TEXT_W, scale=TEXT_SCALE) if artist_str else []
     if artist_lines:
-        ty += 2 + len(artist_lines) * 12
+        ty += px(2) + len(artist_lines) * TEXT_LINE_H
 
     meta_lines = rec.get("_display_meta_lines", None)
     if meta_lines is None:
         meta_text = rec.get("_display_meta", _record_meta_text(rec))
-        meta_lines = _wrapped_lines(meta_text, TEXT_W, scale=1) if meta_text else []
+        meta_lines = _wrapped_lines(meta_text, TEXT_W, scale=TEXT_SCALE) if meta_text else []
     if meta_lines:
-        ty += 2 + len(meta_lines) * 12
+        ty += px(2) + len(meta_lines) * TEXT_LINE_H
 
     content_h = max(THUMB_SIZE, ty) + ROW_PAD_Y * 2 + ROW_SEPARATOR_H
     return max(min_h, content_h)
@@ -1648,8 +1676,8 @@ def _record_thumbnail_data(app, rec):
 def _record_thumbnail_url(rec):
     """Return the preferred cover URL for a record row."""
     return (
-        rec.get("micro_cover_url", "")
-        or rec.get("mini_cover_url", "")
+        rec.get("mini_cover_url", "")
+        or rec.get("micro_cover_url", "")
         or rec.get("thumb_url", "")
     )
 
@@ -1678,26 +1706,26 @@ def _draw_record_row(app, rec, y):
     title_lines = rec.get("_display_title_lines", None)
     if title_lines is None:
         title = rec.get("_display_title", display_text(rec.get("title", "Unknown Title")))
-        ty = draw_wrapped(title, TEXT_X, ty, TEXT_W, _pen_title, scale=1)
+        ty = draw_wrapped(title, TEXT_X, ty, TEXT_W, _pen_title, scale=TEXT_SCALE)
     else:
-        ty = draw_wrapped_lines(title_lines, TEXT_X, ty, _pen_title, scale=1)
+        ty = draw_wrapped_lines(title_lines, TEXT_X, ty, _pen_title, scale=TEXT_SCALE)
 
     # Artists
     artist_lines = rec.get("_display_artist_lines", None)
     if artist_lines is None:
         artist_str = rec.get("_display_artists", "")
-        artist_lines = _wrapped_lines(artist_str, TEXT_W, scale=1) if artist_str else []
+        artist_lines = _wrapped_lines(artist_str, TEXT_W, scale=TEXT_SCALE) if artist_str else []
     if artist_lines:
-        ty += 2
-        ty = draw_wrapped_lines(artist_lines, TEXT_X, ty, _pen_artist, scale=1)
+        ty += px(2)
+        ty = draw_wrapped_lines(artist_lines, TEXT_X, ty, _pen_artist, scale=TEXT_SCALE)
 
     meta_lines = rec.get("_display_meta_lines", None)
     if meta_lines is None:
         meta_text = rec.get("_display_meta", _record_meta_text(rec))
-        meta_lines = _wrapped_lines(meta_text, TEXT_W, scale=1) if meta_text else []
+        meta_lines = _wrapped_lines(meta_text, TEXT_W, scale=TEXT_SCALE) if meta_text else []
     if meta_lines:
-        ty += 2
-        ty = draw_wrapped_lines(meta_lines, TEXT_X, ty, _pen_dim_text, scale=1)
+        ty += px(2)
+        ty = draw_wrapped_lines(meta_lines, TEXT_X, ty, _pen_dim_text, scale=TEXT_SCALE)
 
     # Separator line at the computed bottom
     display.set_pen(_pen_cell_other)
@@ -1721,16 +1749,23 @@ def _max_detail_scroll_offset(app):
     return max(0, content_bottom - HEIGHT)
 
 
-def _measure_detail_text_height(text, font="bitmap8", scale=1, max_w=None):
+def _measure_detail_text_height(text, font="bitmap8", scale=TEXT_SCALE, max_w=None):
     """Return the pixel height that text would occupy when drawn wrapped."""
     if max_w is None:
         max_w = DETAIL_TEXT_W
     lines = _wrapped_lines(text, max_w, scale=scale)
-    line_height = 8 * scale + 4
+    line_height = _line_height_for_font(font, scale)
     return len(lines) * line_height
 
 
-def _line_metrics(lines, font="bitmap8", scale=1):
+def _line_height_for_font(font, scale=TEXT_SCALE):
+    """Return scaled line height for the bitmap font used by a detail section."""
+    if font == "bitmap14_outline":
+        return 14 * scale
+    return _text_line_height(scale)
+
+
+def _line_metrics(lines, font="bitmap8", scale=TEXT_SCALE):
     """Pair pre-wrapped text lines with their measured widths."""
     display.set_font(font)
     metrics = []
@@ -1747,12 +1782,12 @@ def _measure_detail_content(app, rec):
     title = rec.get("_display_title",
                     display_text(rec.get("title", "Unknown Title")))
     display.set_font("bitmap14_outline")
-    title_lines = _wrapped_lines(title, DETAIL_TEXT_W, scale=1)
+    title_lines = _wrapped_lines(title, DETAIL_TEXT_W, scale=TEXT_SCALE)
     rec["_detail_title_lines"] = _line_metrics(
-        title_lines, font="bitmap14_outline", scale=1
+        title_lines, font="bitmap14_outline", scale=TEXT_SCALE
     )
-    h += len(title_lines) * 12
-    h += 6
+    h += len(title_lines) * TITLE_LINE_H
+    h += px(6)
 
     # Artists (above cover)
     artist_str = rec.get("_display_artists", "")
@@ -1761,10 +1796,10 @@ def _measure_detail_content(app, rec):
         artist_str = display_text(", ".join(artists)) if artists else ""
     if artist_str:
         display.set_font("bitmap8")
-        artist_lines = _wrapped_lines(artist_str, DETAIL_TEXT_W, scale=1)
-        rec["_detail_artist_lines"] = _line_metrics(artist_lines, scale=1)
-        h += len(artist_lines) * 12
-        h += 4
+        artist_lines = _wrapped_lines(artist_str, DETAIL_TEXT_W, scale=TEXT_SCALE)
+        rec["_detail_artist_lines"] = _line_metrics(artist_lines, scale=TEXT_SCALE)
+        h += len(artist_lines) * TEXT_LINE_H
+        h += px(4)
     else:
         rec["_detail_artist_lines"] = []
 
@@ -1779,14 +1814,14 @@ def _measure_detail_content(app, rec):
     if genres:
         genre_str = display_text(", ".join(genres))
         display.set_font("bitmap8")
-        genre_lines = _wrapped_lines(genre_str, DETAIL_TEXT_W, scale=1)
-        rec["_detail_genre_lines"] = _line_metrics(genre_lines, scale=1)
-        h += len(genre_lines) * 12
-        h += 4
+        genre_lines = _wrapped_lines(genre_str, DETAIL_TEXT_W, scale=TEXT_SCALE)
+        rec["_detail_genre_lines"] = _line_metrics(genre_lines, scale=TEXT_SCALE)
+        h += len(genre_lines) * TEXT_LINE_H
+        h += px(4)
     else:
         rec["_detail_genre_lines"] = []
 
-    h += 6
+    h += px(6)
 
     # Metadata line: record_type | format | year
     meta_parts = []
@@ -1803,10 +1838,10 @@ def _measure_detail_content(app, rec):
     if meta_parts:
         meta_str = " | ".join(meta_parts)
         display.set_font("bitmap8")
-        meta_lines = _wrapped_lines(meta_str, DETAIL_TEXT_W, scale=1)
-        rec["_detail_meta_lines"] = _line_metrics(meta_lines, scale=1)
-        h += len(meta_lines) * 12
-        h += 4
+        meta_lines = _wrapped_lines(meta_str, DETAIL_TEXT_W, scale=TEXT_SCALE)
+        rec["_detail_meta_lines"] = _line_metrics(meta_lines, scale=TEXT_SCALE)
+        h += len(meta_lines) * TEXT_LINE_H
+        h += px(4)
     else:
         rec["_detail_meta_lines"] = []
 
@@ -1815,9 +1850,9 @@ def _measure_detail_content(app, rec):
     if purchased_at:
         purch_str = "Purchased: " + display_text(str(purchased_at)[:10])
         display.set_font("bitmap8")
-        purchased_lines = _wrapped_lines(purch_str, DETAIL_TEXT_W, scale=1)
-        rec["_detail_purchased_lines"] = _line_metrics(purchased_lines, scale=1)
-        h += len(purchased_lines) * 12
+        purchased_lines = _wrapped_lines(purch_str, DETAIL_TEXT_W, scale=TEXT_SCALE)
+        rec["_detail_purchased_lines"] = _line_metrics(purchased_lines, scale=TEXT_SCALE)
+        h += len(purchased_lines) * TEXT_LINE_H
     else:
         rec["_detail_purchased_lines"] = []
 
@@ -1906,10 +1941,10 @@ def draw_record_detail(app):
     display.set_font("bitmap14_outline")
     if offset > 0:
         display.set_pen(_pen_arrow)
-        display.text("^", WIDTH // 2 - 8, DAY_HEADER_H + 4, scale=1)
+        display.text("^", WIDTH // 2 - px(8), DAY_HEADER_H + px(4), scale=TEXT_SCALE)
     if offset < max_off:
         display.set_pen(_pen_arrow)
-        display.text("v", WIDTH // 2 - 8, HEIGHT - 24, scale=1)
+        display.text("v", WIDTH // 2 - px(8), HEIGHT - px(24), scale=TEXT_SCALE)
 
     _remove_clip()
 
@@ -1933,12 +1968,12 @@ def _draw_detail_header():
     display.set_pen(_pen_header_text)
     display.set_font("bitmap14_outline")
     label = "Record"
-    tw = display.measure_text(label, scale=1)
+    tw = display.measure_text(label, scale=TEXT_SCALE)
     display.text(
         label,
         (WIDTH - tw) // 2,
         DAY_HEADER_Y + (DAY_HEADER_H - DAY_HEADER_TEXT_H) // 2,
-        scale=1
+        scale=TEXT_SCALE
     )
 
 
@@ -1950,11 +1985,11 @@ def _draw_detail_title_artists(rec, y):
         title = rec.get("_display_title",
                         display_text(rec.get("title", "Unknown Title")))
         y = _draw_detail_text_line(title, y, _pen_title,
-                                   font="bitmap14_outline", scale=1)
+                                   font="bitmap14_outline", scale=TEXT_SCALE)
     else:
         y = _draw_detail_text_lines(title_lines, y, _pen_title,
-                                    font="bitmap14_outline", scale=1)
-    y += 6
+                                    font="bitmap14_outline", scale=TEXT_SCALE)
+    y += px(6)
 
     # Artists
     artist_lines = rec.get("_detail_artist_lines", None)
@@ -1963,10 +1998,10 @@ def _draw_detail_title_artists(rec, y):
         if not artist_str:
             artists = rec.get("artists", [])
             artist_str = display_text(", ".join(artists)) if artists else ""
-        artist_lines = _wrapped_lines(artist_str, DETAIL_TEXT_W, scale=1) if artist_str else []
+        artist_lines = _wrapped_lines(artist_str, DETAIL_TEXT_W, scale=TEXT_SCALE) if artist_str else []
     if artist_lines:
         y = _draw_detail_text_lines(artist_lines, y, _pen_artist)
-        y += 4
+        y += px(4)
 
     return y
 
@@ -2020,14 +2055,14 @@ def _draw_detail_info_below_cover(rec, y):
         genres = rec.get("genres", [])
         if genres:
             genre_str = display_text(", ".join(genres))
-            genre_lines = _wrapped_lines(genre_str, DETAIL_TEXT_W, scale=1)
+            genre_lines = _wrapped_lines(genre_str, DETAIL_TEXT_W, scale=TEXT_SCALE)
         else:
             genre_lines = []
     if genre_lines:
         y = _draw_detail_text_lines(genre_lines, y, _pen_dim_text)
-        y += 4
+        y += px(4)
 
-    y += 6
+    y += px(6)
 
     # Metadata: record_type | format | year
     meta_lines = rec.get("_detail_meta_lines", None)
@@ -2042,11 +2077,11 @@ def _draw_detail_info_below_cover(rec, y):
         release_date = rec.get("release_date", "")
         if release_date:
             meta_parts.append(str(release_date)[:4])
-        meta_lines = _wrapped_lines(" | ".join(meta_parts), DETAIL_TEXT_W, scale=1) if meta_parts else []
+        meta_lines = _wrapped_lines(" | ".join(meta_parts), DETAIL_TEXT_W, scale=TEXT_SCALE) if meta_parts else []
 
     if meta_lines:
         y = _draw_detail_text_lines(meta_lines, y, _pen_dim_text)
-        y += 4
+        y += px(4)
 
     # Purchased at
     purchased_lines = rec.get("_detail_purchased_lines", None)
@@ -2054,7 +2089,7 @@ def _draw_detail_info_below_cover(rec, y):
         purchased_at = rec.get("purchased_at", "")
         if purchased_at:
             purch_str = "Purchased: " + display_text(str(purchased_at)[:10])
-            purchased_lines = _wrapped_lines(purch_str, DETAIL_TEXT_W, scale=1)
+            purchased_lines = _wrapped_lines(purch_str, DETAIL_TEXT_W, scale=TEXT_SCALE)
         else:
             purchased_lines = []
     if purchased_lines:
@@ -2063,7 +2098,7 @@ def _draw_detail_info_below_cover(rec, y):
     return y
 
 
-def _draw_detail_text_line(text, y, pen, font="bitmap8", scale=1):
+def _draw_detail_text_line(text, y, pen, font="bitmap8", scale=TEXT_SCALE):
     """Draw text centered horizontally at y, wrapping if needed.
     Returns the y-position after drawing (including wrapped lines)."""
     max_w = DETAIL_TEXT_W
@@ -2071,7 +2106,7 @@ def _draw_detail_text_line(text, y, pen, font="bitmap8", scale=1):
     display.set_font(font)
 
     lines = _wrapped_lines(text, max_w, scale=scale)
-    line_height = 8 * scale + 4
+    line_height = _line_height_for_font(font, scale)
     cy = y
     for line in lines:
         tw = display.measure_text(line, scale=scale)
@@ -2081,12 +2116,12 @@ def _draw_detail_text_line(text, y, pen, font="bitmap8", scale=1):
     return cy
 
 
-def _draw_detail_text_lines(lines, y, pen, font="bitmap8", scale=1):
+def _draw_detail_text_lines(lines, y, pen, font="bitmap8", scale=TEXT_SCALE):
     """Draw pre-wrapped detail text centered horizontally."""
     display.set_pen(pen)
     display.set_font(font)
 
-    line_height = 8 * scale + 4
+    line_height = _line_height_for_font(font, scale)
     cy = y
     for item in lines:
         if isinstance(item, tuple):
@@ -2124,7 +2159,7 @@ def _draw_scrobble_button(app, rec, y):
 
     display.set_pen(text_pen)
     display.set_font("bitmap8")
-    _draw_centered_text(label, bx, y, SCROBBLE_BUTTON_W, SCROBBLE_BUTTON_H, 8)
+    _draw_centered_text(label, bx, y, SCROBBLE_BUTTON_W, SCROBBLE_BUTTON_H, TEXT_H)
 
 
 # ============================================================================
@@ -2236,7 +2271,7 @@ def touch_to_record_index(app, y, recs=None, offset=None):
 
     cy = RECORD_START_Y - offset
     for i, rec in enumerate(recs):
-        row_h = rec.get("_row_height", THUMB_SIZE + 8)
+        row_h = rec.get("_row_height", THUMB_SIZE + px(8))
         if cy <= y < cy + row_h:
             return i
         cy += row_h
@@ -2397,7 +2432,7 @@ def handle_month_touch(app, x, y):
         return
 
     # Check left arrow (shifted right to make room for Home)
-    lx = HEADER_SIDE_MARGIN + HOME_BTN_W + 4
+    lx = HEADER_SIDE_MARGIN + HOME_BTN_W + px(4)
     ly = HEADER_BUTTON_Y
     if lx <= x <= lx + ARROW_W and ly <= y <= ly + ARROW_H:
         app.view_year, app.view_month = previous_month(app.view_year, app.view_month)

@@ -23,6 +23,14 @@ touch = presto.touch
 WIDTH, HEIGHT = display.get_bounds()
 
 
+UI_SCALE = 2
+TEXT_SCALE = UI_SCALE
+
+
+def px(value):
+    return value * UI_SCALE
+
+
 # ============================================================================
 # LAYOUT AND TIMING
 # ============================================================================
@@ -35,16 +43,16 @@ WIFI_CONNECT_TIMEOUT_MS = 10_000
 WIFI_CONNECT_POLL_MS = 250
 FLASH_MS = 180
 
-SCREEN_PADDING = 28
-TITLE_Y = 28
+SCREEN_PADDING = px(28)
+TITLE_Y = px(28)
 LABEL_X = SCREEN_PADDING
-VALUE_X = 150
-ROW_1_Y = 90
-ROW_2_Y = 130
-ROW_3_Y = 170
-ROW_4_Y = 210
-FOOTER_Y = HEIGHT - 50
-FLASH_RADIUS = 14
+VALUE_X = px(150)
+ROW_1_Y = px(90)
+ROW_2_Y = px(130)
+ROW_3_Y = px(170)
+ROW_4_Y = px(210)
+FOOTER_Y = HEIGHT - px(50)
+FLASH_RADIUS = px(14)
 
 
 # ============================================================================
@@ -396,7 +404,7 @@ def draw_header():
     display.set_pen(_pen_title)
     display.set_font("bitmap14_outline")
     text = "Elm-style Presto POC"
-    draw_centered_text(text, TITLE_Y, scale=1)
+    draw_centered_text(text, TITLE_Y, scale=TEXT_SCALE)
 
 
 def draw_status_rows(model):
@@ -408,14 +416,14 @@ def draw_status_rows(model):
 
 def draw_row(label, value, y, value_pen):
     display.set_pen(_pen_panel)
-    display.rectangle(SCREEN_PADDING, y - 12, WIDTH - 2 * SCREEN_PADDING, 22)
+    display.rectangle(SCREEN_PADDING, y - px(12), WIDTH - 2 * SCREEN_PADDING, px(22))
 
     display.set_font("bitmap8")
     display.set_pen(_pen_label)
-    display.text(label, LABEL_X, y, scale=1)
+    display.text(label, LABEL_X, y, scale=TEXT_SCALE)
 
     display.set_pen(value_pen)
-    display.text(value, VALUE_X, y, scale=1)
+    display.text(value, VALUE_X, y, scale=TEXT_SCALE)
 
 
 def draw_flash(model):
@@ -437,10 +445,10 @@ def draw_flash(model):
 def draw_footer():
     display.set_pen(_pen_dim)
     display.set_font("bitmap8")
-    draw_centered_text("Tap anywhere", FOOTER_Y, scale=1)
+    draw_centered_text("Tap anywhere", FOOTER_Y, scale=TEXT_SCALE)
 
 
-def draw_centered_text(text, y, scale=1):
+def draw_centered_text(text, y, scale=TEXT_SCALE):
     width = display.measure_text(text, scale=scale)
     display.text(text, (WIDTH - width) // 2, y, scale=scale)
 

@@ -173,7 +173,7 @@ Response format:
 }
 ```
 
-The Presto client prefers `micro_cover_url` for the 40×40 row thumbnail, then falls back to `mini_cover_url` and `thumb_url`.
+The Presto client prefers `mini_cover_url` for the 80×80 full-resolution row thumbnail, then falls back to `micro_cover_url` and `thumb_url`.
 The detail view prefers `thumb_url` for the full-size cover, falling back to `mini_cover_url` and `micro_cover_url`.
 
 ## License
