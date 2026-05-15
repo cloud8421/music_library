@@ -6,7 +6,6 @@ display is set up as a session-scoped fixture; ``main`` is imported once
 after the mocks are in place.
 """
 
-import os
 import sys
 from pathlib import Path
 
@@ -16,10 +15,6 @@ import pytest
 _presto_dir = Path(__file__).resolve().parent.parent
 if str(_presto_dir) not in sys.path:
     sys.path.insert(0, str(_presto_dir))
-
-# Prevent main() from running when we import the module.
-os.environ["PRESTO_TEST_MODE"] = "1"
-
 
 # ---------------------------------------------------------------------------
 # Emulator session setup
@@ -62,7 +57,7 @@ def _emulator():
 def main_module(_emulator):
     """Import ``main.py`` after the emulator mocks are installed.
 
-    The ``PRESTO_TEST_MODE=1`` guard ensures ``main()`` does not run.
+    The ``__name__ == "__main__"`` guard ensures ``main()`` does not run.
     ``fetch_thumbnail`` is monkey-patched to raise on any network call.
     """
     import main
