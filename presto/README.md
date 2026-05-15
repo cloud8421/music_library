@@ -102,7 +102,7 @@ The Presto runs `main.py` on boot. The app will:
 ### Record detail view
 
 - Tap any **record row** in the day view to open its detail page
-- Shows a **larger cover image** (uses `thumb_url`, 480px source), the full title, artists, genres, record type, format, release year, and purchase date
+- Shows a **larger cover image** (uses `covers.medium`, 460px source), the full title, artists, genres, record type, format, release year, and purchase date
 - Drag vertically to scroll if the content is taller than the screen
 - The header bar stays fixed at the top while the cover and info scroll underneath
 - Tap **< Back** to return to the day view
@@ -207,9 +207,12 @@ Response format:
       "selected_release_id": "abc-123-uuid",
       "title": "Album Title",
       "artists": ["Artist Name"],
-      "micro_cover_url": "https://.../api/v1/assets/thumb.jpg?width=40",
-      "mini_cover_url": "https://.../api/v1/assets/thumb.jpg?width=150",
-      "thumb_url": "https://.../api/v1/assets/thumb.jpg?width=480",
+      "covers": {
+        "original": "https://.../api/v1/assets/original",
+        "large": "https://.../api/v1/assets/large-1000",
+        "medium": "https://.../api/v1/assets/medium-460",
+        "small": "https://.../api/v1/assets/small-80"
+      },
       "release_date": "1973-03-01",
       "genres": ["Rock"],
       "format": "Vinyl",
@@ -220,8 +223,9 @@ Response format:
 }
 ```
 
-The Presto client prefers `mini_cover_url` for the 80×80 full-resolution row thumbnail, then falls back to `micro_cover_url` and `thumb_url`.
-The detail view prefers `thumb_url` for the full-size cover, falling back to `mini_cover_url` and `micro_cover_url`.
+The Presto client uses `covers.small` for the 80×80 full-resolution row thumbnail.
+The detail view uses `covers.medium` for the 460×460 cover centered in the 480×480 display.
+The app does not resize covers on the device; it expects the API to provide display-ready JPEGs.
 
 ## License
 

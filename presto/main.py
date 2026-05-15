@@ -117,7 +117,7 @@ DAY_HEADER_TEXT_H = HEADER_TEXT_H
 DAY_COUNT_TEXT_H = TEXT_H
 
 # Detail view
-DETAIL_COVER_SIZE = px(240)
+DETAIL_COVER_SIZE = px(230)
 DETAIL_COVER_X = (WIDTH - DETAIL_COVER_SIZE) // 2
 DETAIL_COVER_Y = DAY_HEADER_Y + DAY_HEADER_H + px(12)
 DETAIL_INFO_GAP = px(4)
@@ -832,19 +832,6 @@ def show_search_results(app, recs, had_error):
     draw_search_results(app)
 
 
-# ============================================================================
-# JPEG RENDERING
-# ============================================================================
-
-def _jpeg_scale_options():
-    """Return JPEG scale flags paired with their output-size divisors."""
-    full = getattr(_jpegdec_lib, "JPEG_SCALE_FULL", 0)
-    half = getattr(_jpegdec_lib, "JPEG_SCALE_HALF", 1)
-    quarter = getattr(_jpegdec_lib, "JPEG_SCALE_QUARTER", 2)
-    eighth = getattr(_jpegdec_lib, "JPEG_SCALE_EIGHTH", 3)
-    return ((full, 1), (half, 2), (quarter, 4), (eighth, 8))
-
-
 def _close_jpeg(jpeg):
     """Release a jpegdec object if the firmware exposes close()."""
     if jpeg is None:
@@ -856,18 +843,17 @@ def _close_jpeg(jpeg):
         pass
 
 
-def draw_jpeg(data, x, y, max_w, max_h):
-    """Decode and draw a JPEG image, scaled to fit within max_w x max_h
-    and centered in the bounding box.
+def draw_jpeg(data, x, y, placeholder_w, placeholder_h):
+    """Decode and draw an API-sized JPEG image at x, y.
 
     Uses jpegdec module (standard on Pimoroni firmware).
     Falls back to a placeholder rectangle on failure.
     """
     if data is None:
-        _draw_placeholder(x, y, max_w, max_h)
+        _draw_placeholder(x, y, placeholder_w, placeholder_h)
         return
 
-    # Try jpegdec module with smart scaling
+    # Try jpegdec module.
     if _HAS_JPEGDEC:
         jpeg = None
         try:
@@ -877,32 +863,11 @@ def draw_jpeg(data, x, y, max_w, max_h):
             except Exception:
                 jpeg.open_RAM(data)
 
-            # Attempt smart scaling: get dimensions, pick best scale, center
             try:
-                img_h = jpeg.get_height()
-                img_w = jpeg.get_width()
-                # Try scales from largest to smallest; use the first that fits.
-                scale = None
-                divisor = 1
-                for scale_flag, scale_divisor in _jpeg_scale_options():
-                    if img_w // scale_divisor <= max_w and img_h // scale_divisor <= max_h:
-                        scale = scale_flag
-                        divisor = scale_divisor
-                        break
-                if scale is None:
-                    scale, divisor = _jpeg_scale_options()[-1]
-                sw = img_w // divisor
-                sh = img_h // divisor
-                ox = x + (max_w - sw) // 2
-                oy = y + (max_h - sh) // 2
-                jpeg.decode(ox, oy, scale)
-                _close_jpeg(jpeg)
-                return
-            except Exception:
-                pass
-
-            # Fallback: decode at quarter scale (works for most cover art)
-            jpeg.decode(x, y, getattr(_jpegdec_lib, "JPEG_SCALE_QUARTER", 2))
+                jpeg.decode(x, y)
+            except TypeError:
+                # Older firmware expects a third full-size decode argument.
+                jpeg.decode(x, y, 0)
             _close_jpeg(jpeg)
             return
         except Exception:
@@ -927,7 +892,7 @@ def draw_jpeg(data, x, y, max_w, max_h):
         pass
 
     # All methods failed — draw placeholder
-    _draw_placeholder(x, y, max_w, max_h)
+    _draw_placeholder(x, y, placeholder_w, placeholder_h)
 
 
 def _draw_placeholder(x, y, w, h):
@@ -1608,7 +1573,7 @@ def _prepare_record_for_display(rec):
 def preload_record_thumbnails(app, recs):
     """Fetch thumbnail bytes before the first draw of a record list."""
     for rec in recs:
-        if rec.get("micro_cover_url", ""):
+        if _record_thumbnail_url(rec):
             _record_thumbnail_data(app, rec)
 
 
@@ -1681,12 +1646,21 @@ def _record_thumbnail_data(app, rec):
 
 
 def _record_thumbnail_url(rec):
-    """Return the preferred cover URL for a record row."""
-    return (
-        rec.get("mini_cover_url", "")
-        or rec.get("micro_cover_url", "")
-        or rec.get("thumb_url", "")
-    )
+    """Return the API-sized cover URL for a record row."""
+    return _record_cover_url(rec, "small")
+
+
+def _record_detail_cover_url(rec):
+    """Return the API-sized cover URL for a record detail page."""
+    return _record_cover_url(rec, "medium")
+
+
+def _record_cover_url(rec, size):
+    """Return a named cover URL from the API covers object."""
+    covers = rec.get("covers", {})
+    if not covers:
+        return ""
+    return covers.get(size, "") or ""
 
 
 def _draw_record_row(app, rec, y):
@@ -2023,13 +1997,9 @@ def _draw_detail_cover(app, rec, y):
     if y >= HEIGHT:
         return
 
-    thumb_url = (
-        rec.get("thumb_url", "")
-        or rec.get("mini_cover_url", "")
-        or rec.get("micro_cover_url", "")
-    )
+    cover_url = _record_detail_cover_url(rec)
 
-    if not thumb_url:
+    if not cover_url:
         _draw_placeholder(DETAIL_COVER_X, y,
                           DETAIL_COVER_SIZE, DETAIL_COVER_SIZE)
         return
@@ -2042,7 +2012,7 @@ def _draw_detail_cover(app, rec, y):
         return
 
     if data is None and not rec.get("_detail_thumb_failed", False):
-        data = fetch_thumbnail(app, thumb_url)
+        data = fetch_thumbnail(app, cover_url)
         if data is None:
             rec["_detail_thumb_failed"] = True
         else:

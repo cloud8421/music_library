@@ -105,6 +105,12 @@ def make_mock_record(index=0):
         "genres": ["Jazz", "Modal"],
         "record_type": "LP",
         "purchased_at": "2024-03-15",
+        "covers": {
+            "original": f"https://example.com/covers/original-{index}.jpg",
+            "large": f"https://example.com/covers/large-{index}.jpg",
+            "medium": f"https://example.com/covers/medium-{index}.jpg",
+            "small": f"https://example.com/covers/small-{index}.jpg",
+        },
         # Pre-computed display strings (row view)
         "_display_title": title,
         "_display_artists": artist,

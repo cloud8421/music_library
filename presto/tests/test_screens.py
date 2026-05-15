@@ -96,6 +96,16 @@ class TestSmokeScreens:
         main_module.draw_record_detail(app)
         self._screenshot(main_module, "record-detail")
 
+    def test_cover_contract_uses_api_sized_images(self, main_module):
+        """Cover helpers use the named API sizes expected by the display."""
+        rec = make_mock_record(0)
+
+        assert main_module.THUMB_SIZE == 80
+        assert main_module.DETAIL_COVER_SIZE == 460
+        assert main_module.DETAIL_COVER_X == 10
+        assert main_module._record_thumbnail_url(rec).endswith("/small-0.jpg")
+        assert main_module._record_detail_cover_url(rec).endswith("/medium-0.jpg")
+
     def test_search_input_renders(self, main_module):
         """Search input screen with on-screen keyboard."""
         app = self._make_app(main_module)
@@ -113,7 +123,7 @@ class TestSmokeScreens:
         app.search.results = recs
 
         # Pre-compute content height (prepare_record_list won't trigger
-        # network calls because _thumb_failed=True and _thumb_url="").
+        # network calls because _thumb_failed=True).
         app.search.content_height = main_module.prepare_record_list(app, recs)
 
         main_module.draw_search_results(app)

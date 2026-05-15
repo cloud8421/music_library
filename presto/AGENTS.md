@@ -72,7 +72,8 @@ _These rules apply to any scrollable view (day list, detail page, or future addi
 
 ## Image Handling
 
-- Row thumbnails prefer `micro_cover_url` → `mini_cover_url` → `thumb_url`. Detail/large cover prefers `thumb_url` → `mini_cover_url` → `micro_cover_url`.
+- Row thumbnails use `covers.small` from the API. Detail covers use `covers.medium`.
+- The API provides display-ready JPEG sizes: `covers.small` is 80px and `covers.medium` is 460px. Do not resize covers on the device.
 - Cache downloaded image bytes on the record dict. Use separate cache keys for different sizes (e.g., `_thumb_data` for rows, `_detail_thumb_data` for detail view). Never fetch images during drag — show placeholders instead and repaint real covers on release.
 - JPEG is the practical default. PNG has worse memory characteristics; raw/RGB565 needs a confirmed stable blit API on the target firmware.
 
@@ -99,7 +100,7 @@ GET https://music-library.claudio-ortolina.org/api/v1/collection/on_this_day?dat
 Authorization: Bearer <API_TOKEN>
 ```
 
-Fields used by the app: `title`, `artists`, `format`, `release_date`, `genres`, `record_type`, `purchased_at`, `micro_cover_url`, `mini_cover_url`, `thumb_url`, `selected_release_id`.
+Fields used by the app: `title`, `artists`, `format`, `release_date`, `genres`, `record_type`, `purchased_at`, `covers.small`, `covers.medium`, `selected_release_id`.
 
 POST /api/v1/collection/:record_id/scrobble
 Authorization: Bearer <API_TOKEN>
