@@ -2,23 +2,7 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
   use MusicLibraryWeb.ConnCase
 
   import MusicLibrary.ScrobbleRulesFixtures
-  import Phoenix.LiveViewTest
-
-  # Test data
-  @invalid_attrs %{type: "", match_value: "", target_musicbrainz_id: ""}
-  @valid_attrs %{
-    type: :album,
-    match_value: "some match_value",
-    target_musicbrainz_id: "12345678-1234-1234-1234-123456789012",
-    description: "some description",
-    enabled: "true"
-  }
-  @update_attrs %{
-    type: :artist,
-    match_value: "some updated match_value",
-    target_musicbrainz_id: "87654321-4321-4321-4321-210987654321",
-    description: "some updated description"
-  }
+  import Phoenix.LiveViewTest, only: [render_change: 1, form: 3]
 
   defp create_scrobble_rule(_) do
     scrobble_rule = scrobble_rule_fixture()
@@ -29,106 +13,118 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
     setup [:create_scrobble_rule]
 
     test "lists all scrobble_rules", %{conn: conn, scrobble_rule: scrobble_rule} do
-      {:ok, _index_live, html} = live(conn, ~p"/scrobble-rules")
-
-      assert html =~ "Scrobble Rules"
-      assert html =~ scrobble_rule.match_value
+      conn
+      |> visit(~p"/scrobble-rules")
+      |> assert_has("p", scrobble_rule.match_value)
     end
 
     test "saves new scrobble_rule", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
+      session =
+        conn
+        |> visit(~p"/scrobble-rules")
+        |> click_link("Add")
 
-      assert index_live |> element("a", "Add") |> render_click() =~
-               "New Scrobble Rule"
+      assert_has(session, "h1", "New Scrobble Rule")
+      assert_path(session, ~p"/scrobble-rules/new")
 
-      assert_patch(index_live, ~p"/scrobble-rules/new")
+      # Validation
+      conn
+      |> visit(~p"/scrobble-rules/new")
+      |> click_button("Save Rule")
+      |> assert_has("[data-part='error']", "can't be blank")
 
-      assert index_live
-             |> form("#scrobble_rule-form", scrobble_rule: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      index_live
-      |> form("#scrobble_rule-form", scrobble_rule: @valid_attrs)
-      |> render_submit()
-
-      # The rule should be created and visible in the list
-      html = render(index_live)
-      assert html =~ "some match_value"
+      # Successful creation
+      conn
+      |> visit(~p"/scrobble-rules/new")
+      |> set_rule_type(:album)
+      |> fill_in("Album Title", with: "some match_value")
+      |> fill_in("Target MusicBrainz ID",
+        with: "12345678-1234-1234-1234-123456789012"
+      )
+      |> fill_in("Description (optional)", with: "some description")
+      |> check("Enable this rule")
+      |> click_button("Save Rule")
+      |> assert_has("p", "some match_value")
     end
 
     test "updates scrobble_rule in listing", %{conn: conn, scrobble_rule: scrobble_rule} do
-      {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
+      session =
+        conn
+        |> visit(~p"/scrobble-rules")
+        |> click_link(
+          "#scrobble_rules-#{scrobble_rule.id} a[href*='edit']",
+          "Edit"
+        )
 
-      assert index_live
-             |> element("#scrobble_rules-#{scrobble_rule.id} a[href*='edit']")
-             |> render_click() =~
-               "Edit Scrobble Rule"
+      assert_has(session, "h1", "Edit Scrobble Rule")
+      assert_path(session, ~p"/scrobble-rules/#{scrobble_rule}/edit")
 
-      assert_patch(index_live, ~p"/scrobble-rules/#{scrobble_rule}/edit?page=1&page_size=50")
+      # Validation with cleared fields
+      conn
+      |> visit(~p"/scrobble-rules/#{scrobble_rule}/edit")
+      |> unwrap(fn view ->
+        view
+        |> form("#scrobble_rule-form",
+          scrobble_rule: %{type: "", match_value: "", target_musicbrainz_id: ""}
+        )
+        |> render_change()
+      end)
+      |> assert_has("*", "can't be blank")
 
-      assert index_live
-             |> form("#scrobble_rule-form", scrobble_rule: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      index_live
-      |> form("#scrobble_rule-form", scrobble_rule: @update_attrs)
-      |> render_submit()
-
-      html = render(index_live)
-      assert html =~ "Scrobble rule updated successfully"
-      assert html =~ "some updated match_value"
+      # Successful update (fresh session)
+      conn
+      |> visit(~p"/scrobble-rules/#{scrobble_rule}/edit")
+      |> set_rule_type(:artist)
+      |> fill_in("Artist Name", with: "some updated match_value")
+      |> fill_in("Target MusicBrainz ID",
+        with: "87654321-4321-4321-4321-210987654321"
+      )
+      |> fill_in("Description (optional)", with: "some updated description")
+      |> click_button("Save Rule")
+      |> assert_has("p", "some updated match_value")
     end
 
     test "deletes scrobble_rule in listing", %{conn: conn, scrobble_rule: scrobble_rule} do
-      {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
-
-      assert index_live
-             |> element("#scrobble_rules-#{scrobble_rule.id} button[phx-click='delete']")
-             |> render_click()
-
-      refute has_element?(index_live, "#scrobble_rule-#{scrobble_rule.id}")
+      conn
+      |> visit(~p"/scrobble-rules")
+      |> click_button(
+        "#scrobble_rules-#{scrobble_rule.id} button[phx-click='delete']",
+        "Delete"
+      )
+      |> refute_has("#scrobble_rule-#{scrobble_rule.id}")
     end
 
     test "toggles rule enabled status", %{conn: conn, scrobble_rule: scrobble_rule} do
-      {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
+      session = conn |> visit(~p"/scrobble-rules")
 
-      # Toggle to disabled
-      html =
-        index_live
-        |> element("#scrobble_rules-#{scrobble_rule.id} button[phx-click='toggle_enabled']")
-        |> render_click()
-
-      assert html =~ "Enable rule"
-
-      # Toggle back to enabled
-      html =
-        index_live
-        |> element("#scrobble_rules-#{scrobble_rule.id} button[phx-click='toggle_enabled']")
-        |> render_click()
-
-      assert html =~ "Disable rule"
+      session
+      |> click_button(
+        "#scrobble_rules-#{scrobble_rule.id} button[phx-click='toggle_enabled']",
+        "Disable rule"
+      )
+      |> assert_has("button", "Enable rule")
+      |> click_button(
+        "#scrobble_rules-#{scrobble_rule.id} button[phx-click='toggle_enabled']",
+        "Enable rule"
+      )
+      |> assert_has("button", "Disable rule")
     end
 
     test "applies individual rule", %{conn: conn, scrobble_rule: scrobble_rule} do
-      {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
-
-      assert index_live
-             |> element("#scrobble_rules-#{scrobble_rule.id} button[phx-click='apply_rule']")
-             |> render_click()
-
-      # Should show success message (even if no tracks were updated)
-      assert render(index_live) =~ "Rule applied successfully"
+      conn
+      |> visit(~p"/scrobble-rules")
+      |> click_button(
+        "#scrobble_rules-#{scrobble_rule.id} button[phx-click='apply_rule']",
+        "Apply rule"
+      )
+      |> assert_has("p", "Rule applied successfully")
     end
 
     test "applies all rules", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
-
-      assert index_live
-             |> element("button[phx-click='apply_all_rules']")
-             |> render_click()
-
-      # Should show success message
-      assert render(index_live) =~ "All rules applied successfully"
+      conn
+      |> visit(~p"/scrobble-rules")
+      |> click_button("button[phx-click='apply_all_rules']", "Apply")
+      |> assert_has("p", "All rules applied successfully")
     end
 
     test "searches scrobble rules by match_value", %{conn: conn, scrobble_rule: scrobble_rule} do
@@ -137,57 +133,48 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
           match_value: "Unrelated Album"
         })
 
-      {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
+      session =
+        conn
+        |> visit(~p"/scrobble-rules")
+        |> search_rules(scrobble_rule.match_value)
 
-      index_live
-      |> form("form[phx-change='search']:not([phx-target])", query: scrobble_rule.match_value)
-      |> render_change()
-
-      assert_patch(index_live)
-
-      html = render(index_live)
-      assert html =~ scrobble_rule.match_value
-      refute html =~ "Unrelated Album"
+      assert_has(session, "p", scrobble_rule.match_value)
+      refute_has(session, "p", "Unrelated Album")
     end
 
     test "switches sort order", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
-
-      # Switch to alphabetical
-      index_live
-      |> element("a[href*='order=alphabetical']")
-      |> render_click()
-
-      assert_patch(index_live)
-
-      # Switch back to inserted_at
-      index_live
-      |> element("a[href*='order=inserted_at']")
-      |> render_click()
-
-      assert_patch(index_live)
+      conn
+      |> visit(~p"/scrobble-rules")
+      |> click_link("a[href*='order=alphabetical']", "A->Z")
+      |> assert_path(~p"/scrobble-rules", query_params: %{order: "alphabetical"})
+      |> click_link("a[href*='order=inserted_at']", "Updated")
+      |> assert_path(~p"/scrobble-rules", query_params: %{order: "inserted_at"})
     end
   end
 
   test "updates form labels based on rule type", %{conn: conn} do
-    {:ok, index_live, _html} = live(conn, ~p"/scrobble-rules")
+    conn
+    |> visit(~p"/scrobble-rules")
+    |> click_link("Add")
+    |> set_rule_type(:album)
+    |> assert_has("label", "Album Title")
+    |> set_rule_type(:artist)
+    |> assert_has("label", "Artist Name")
+  end
 
-    assert index_live |> element("a", "Add") |> render_click()
-
-    # Select album type
-    html =
-      index_live
-      |> form("#scrobble_rule-form", scrobble_rule: %{type: :album})
+  defp search_rules(session, query) do
+    unwrap(session, fn view ->
+      view
+      |> form("form[phx-change='search']:not([phx-target])", %{query: query})
       |> render_change()
+    end)
+  end
 
-    assert html =~ "Album Title"
-
-    # Select artist type
-    html =
-      index_live
-      |> form("#scrobble_rule-form", scrobble_rule: %{type: :artist})
+  defp set_rule_type(session, type) do
+    unwrap(session, fn view ->
+      view
+      |> form("#scrobble_rule-form", scrobble_rule: %{type: type})
       |> render_change()
-
-    assert html =~ "Artist Name"
+    end)
   end
 end
