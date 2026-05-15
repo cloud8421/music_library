@@ -130,6 +130,53 @@ presto/
   README.md             # This file
 ```
 
+## Testing
+
+### Prerequisites
+
+The test harness uses the [`pimoroni-emulator`](https://github.com/iksaif/pimoroni-emu)
+(already installed via `mise`) to provide a headless display with mock
+MicroPython modules.  You also need `pytest` (installed via the project venv).
+
+### Running tests
+
+```bash
+# From the presto/ directory:
+mise run test
+
+# Or directly:
+cd presto
+pytest tests/ -v
+```
+
+### What the tests cover
+
+Smoke tests verify that every screen renders without crashing:
+
+| Test                     | Screen                 |
+| ------------------------ | ---------------------- |
+| `test_home_screen`       | Home / splash          |
+| `test_month_view`        | Month calendar grid    |
+| `test_day_view_empty`    | Day view (no records)  |
+| `test_day_view_error`    | Day view (error state) |
+| `test_record_detail`     | Record detail view     |
+| `test_search_input`      | Search input screen    |
+| `test_search_results`    | Search results list    |
+
+All tests use mock data and do **not** make network requests.
+Screenshots are saved to `presto/tests/fixtures/` for manual inspection.
+
+### Adding new tests
+
+1. Add a test method to `presto/tests/test_screens.py` following the existing
+   pattern:
+   - Create an `AppState` via `main_module.AppState()`
+   - Set the appropriate view state fields
+   - Call the screen's draw function
+   - Optionally save a screenshot
+2. Use `make_mock_record()` from `tests.conftest` if your test needs record data.
+3. Run `mise run test` to verify.
+
 ## Troubleshooting
 
 | Symptom                             | Likely cause                                          | Fix                                                             |

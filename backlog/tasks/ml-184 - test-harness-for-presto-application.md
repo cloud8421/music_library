@@ -1,10 +1,11 @@
 ---
 id: ML-184
 title: test harness for presto application
-status: To Do
-assignee: []
+status: Done
+assignee:
+  - pi
 created_date: "2026-05-15 07:18"
-updated_date: "2026-05-15 08:50"
+updated_date: "2026-05-15 09:48"
 labels:
   - presto
   - ready
@@ -14,6 +15,14 @@ references:
   - presto/mise.toml
   - presto/main.py
   - doc-23 - Research-Presto-test-harness-implementation-routes.md
+modified_files:
+  - presto/main.py
+  - presto/mise.toml
+  - presto/tests/__init__.py
+  - presto/tests/conftest.py
+  - presto/tests/test_screens.py
+  - presto/README.md
+  - presto/AGENTS.md
 priority: medium
 ordinal: 18000
 ---
@@ -30,13 +39,13 @@ Build a test harness for the Presto application so that it's possible at the ver
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 main.py can be imported without starting the event loop when PRESTO_TEST_MODE=1 is set
+- [x] #1 main.py can be imported without starting the event loop when PRESTO_TEST_MODE=1 is set
 - [ ] #2 Deploying to physical Presto still works (mise run presto)
-- [ ] #3 mise run emulator still opens the emulator window
-- [ ] #4 All 7 smoke tests pass (home, month, day-empty, day-error, record-detail, search-input, search-results)
-- [ ] #5 mise run test executes all tests and reports results
-- [ ] #6 presto/README.md includes a Testing section with usage instructions
-- [ ] #7 presto/AGENTS.md mentions the test harness
+- [x] #3 mise run emulator still opens the emulator window
+- [x] #4 All 7 smoke tests pass (home, month, day-empty, day-error, record-detail, search-input, search-results)
+- [x] #5 mise run test executes all tests and reports results
+- [x] #6 presto/README.md includes a Testing section with usage instructions
+- [x] #7 presto/AGENTS.md mentions the test harness
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -266,3 +275,96 @@ The only "deployment" consideration is that `main.py` continues to work on the p
 | `docs/project-conventions.md` | No changes needed — existing testing conventions cover Elixir only.                                                                                             |
 
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+
+## Implementation notes
+
+### Step 1: Guard
+
+- Added `import os` after `import gc` in main.py
+- Wrapped bare `main()` call with `if os.environ.get("PRESTO_TEST_MODE") != "1":`
+- Emulator still launches: `mise run emulator` opens normally
+
+### Step 2: Infrastructure
+
+- Created `presto/tests/__init__.py`, `conftest.py`, `test_screens.py`, `fixtures/`
+- conftest sets `PRESTO_TEST_MODE=1`, provides session-scoped `_emulator` fixture
+  (installs mocks + headless display), `main_module` fixture (imports main lazily),
+  `init_display` fixture, and `make_mock_record()` helper
+- `fetch_thumbnail` is monkey-patched to raise RuntimeError on network access
+
+### Step 3: Smoke tests
+
+- 7 tests pass in 0.58s: home, month, day-empty, day-error, record-detail,
+  search-input, search-results
+- Screenshots saved to `presto/tests/fixtures/`
+- No network calls triggered
+
+### Step 4: Mise task
+
+- Added `[tasks.test]` to `presto/mise.toml`: `pytest tests/ -v`
+- `mise run test` works from the presto directory
+
+### Step 5: Documentation
+
+- Added "Testing" section to `presto/README.md` with usage, coverage table,
+  and instructions for adding new tests
+- Added "## Testing" section to `presto/AGENTS.md` with conventions
+
+### Key implementation difference from plan
+
+- Did not use `DeviceTest` as base class — instead used pytest session-scoped
+  fixtures that call `install_mocks()` and `create_display()` directly. This
+  allows clean pytest integration (fixtures, parametrization) without
+  unittest.TestCase constraints.
+- `import main` happens lazily inside a session-scoped fixture that depends
+  on the emulator setup fixture, ensuring mocks are in place before the
+  module-level `Presto(full_res=True)` call executes.
+
+### Acceptance criteria #2 (physical deploy) remains unchecked
+
+Cannot verify without physical Presto device. The guard is a no-op when
+`PRESTO_TEST_MODE` is unset, so the change is semantically identical to the
+original bare `main()` call.
+
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
+## Summary
+
+Added a smoke-test harness for the Presto MicroPython application using the pimoroni-emulator's mock system for headless rendering.
+
+### What changed
+
+- **`presto/main.py`** — Added `import os` and wrapped the bare `main()` call with an environment-variable guard (`if os.environ.get("PRESTO_TEST_MODE") != "1":`). The guard is a no-op in normal operation; the emulator and physical deploy paths are unchanged.
+- **`presto/tests/`** — New test directory with:
+  - `conftest.py` — Session-scoped fixtures that install emulator mocks, create a headless Presto display, import `main` lazily, init pens, and monkey-patch `fetch_thumbnail` to raise on any accidental network call. Provides `make_mock_record()` helper.
+  - `test_screens.py` — 7 smoke tests (home, month, day-empty, day-error, record-detail, search-input, search-results), all passing in ~0.6s.
+  - `fixtures/` — 7 screenshots generated per run for manual visual inspection.
+- **`presto/mise.toml`** — Added `[tasks.test]` task: `pytest tests/ -v`.
+- **`presto/README.md`** — Added "Testing" section with usage instructions and coverage table.
+- **`presto/AGENTS.md`** — Added "## Testing" section with conventions.
+
+### Tests
+
+```
+7 passed in 0.58s
+```
+
+All tests use mock data with `_thumb_failed=True` / `_thumb_data=None` so no network calls occur. The `fetch_thumbnail` monkey-patch acts as a safety net.
+
+### Key implementation note
+
+Used pytest session-scoped fixtures calling `install_mocks()` + `create_display()` directly rather than extending `DeviceTest`. This avoids unittest.TestCase constraints and allows clean pytest fixture injection. `import main` happens lazily inside a fixture that depends on the emulator setup, ensuring mock modules are in `sys.modules` before the module-level `Presto(full_res=True)` call executes.
+
+### Outstanding
+
+Acceptance criterion #2 (physical Presto deployment) could not be verified without the device. The guard change is semantically a no-op when `PRESTO_TEST_MODE` is unset — the code path is identical to the original bare `main()` call.
+
+<!-- SECTION:FINAL_SUMMARY:END -->

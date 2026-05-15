@@ -29,6 +29,7 @@ Setup:
 # ============================================================================
 
 import gc
+import os
 import time
 import network
 import ntptime
@@ -2713,4 +2714,5 @@ def main():
 # STARTUP
 # ============================================================================
 
-main()
+if os.environ.get("PRESTO_TEST_MODE") != "1":
+    main()

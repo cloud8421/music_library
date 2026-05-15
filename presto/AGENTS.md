@@ -31,6 +31,22 @@ python3 -c "import py_compile; py_compile.compile('main.py', cfile='/tmp/main.py
 
 Do not claim device behavior is verified unless it was tested on the physical Presto.
 
+## Testing
+
+The test harness lives in `presto/tests/` and uses the `pimoroni-emulator`'s
+mock MicroPython modules for headless smoke testing.
+
+- Run tests: `mise run test`
+- Tests import `main.py` without starting the event loop (guarded by
+  `PRESTO_TEST_MODE=1`).
+- Smoke tests cover every screen state.  When adding a new screen, add a
+  corresponding test in `presto/tests/test_screens.py`.
+- All tests use mock data from `make_mock_record()`.  No network calls are
+  made during test execution — `fetch_thumbnail` is monkey-patched to raise
+  on any accidental network access.
+- Screenshots are saved to `presto/tests/fixtures/` for manual visual
+  inspection.
+
 ## Hardware And Runtime Constraints
 
 - Stock Presto firmware: MicroPython, PicoGraphics, touch driver, `urequests`, `ntptime`, usually `jpegdec`.
