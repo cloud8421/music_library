@@ -63,8 +63,6 @@ defmodule MusicLibraryWeb.Router do
     scope "/" do
       pipe_through :logged_in
 
-      get "/backup", ArchiveController, :backup
-
       get "/assets/:transform_payload", AssetController, :show
 
       live_session :default,
@@ -138,7 +136,6 @@ defmodule MusicLibraryWeb.Router do
     post "/errors/:id/resolve", ErrorController, :resolve
     post "/errors/:id/unresolve", ErrorController, :unresolve
     get "/assets/:transform_payload", AssetController, :show
-    get "/backup", ArchiveController, :backup
   end
 
   if Application.compile_env(:music_library, :monitoring_routes) do

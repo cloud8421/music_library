@@ -1,14 +1,20 @@
 ---
 id: ML-180
 title: Remove backup function from application
-status: To Do
+status: Done
 assignee: []
 created_date: "2026-05-12 04:57"
-updated_date: "2026-05-12 10:25"
+updated_date: "2026-05-15 06:11"
 labels:
   - api
   - ui
 dependencies: []
+modified_files:
+  - lib/music_library_web/router.ex
+  - lib/music_library_web/controllers/archive_controller.ex
+  - lib/music_library_web/live/maintenance_live/index.ex
+  - test/music_library_web/controllers/archive_controller_test.exs
+  - docs/architecture.md
 ---
 
 ## Description
@@ -23,12 +29,12 @@ Management scripts and tools superseded this functionality. It can be removed fr
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 The /backup and /api/v1/backup routes return 404
-- [ ] #2 The Maintenance page no longer shows a Backup button in the Database section
-- [ ] #3 `mix compile --warnings-as-errors` passes with no ArchiveController references
-- [ ] #4 `mix test` passes with no ArchiveControllerTest references
-- [ ] #5 The record format `:backup` type still works (record_component format labels still show "Backup" for backup-format records)
-- [ ] #6 `docs/architecture.md` no longer lists ArchiveController in the routes table
+- [x] #1 The /backup and /api/v1/backup routes return 404
+- [x] #2 The Maintenance page no longer shows a Backup button in the Database section
+- [x] #3 `mix compile --warnings-as-errors` passes with no ArchiveController references
+- [x] #4 `mix test` passes with no ArchiveControllerTest references
+- [x] #5 The record format `:backup` type still works (record_component format labels still show "Backup" for backup-format records)
+- [x] #6 `docs/architecture.md` no longer lists ArchiveController in the routes table
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -136,3 +142,19 @@ None required. No migrations, no environment variables, no service provisioning.
 - **`docs/architecture.md`**: Remove the `ArchiveController` row from the routes table. No other architecture docs need changes.
 - No changes to `docs/project-conventions.md`, `docs/production-infrastructure.md`, `docs/available-tasks.md`, or README needed.
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
+Removed the in-app database backup download feature:
+
+1. **Router** (`lib/music_library_web/router.ex`): Removed `get "/backup", ArchiveController, :backup` from both the `:logged_in` pipeline and the `:api` scope.
+2. **Controller** (`lib/music_library_web/controllers/archive_controller.ex`): Deleted — module only contained `backup/2` and a private `database_path/0` helper.
+3. **Maintenance UI** (`lib/music_library_web/live/maintenance_live/index.ex`): Removed the `<.button href={~p"/backup"}>` element from the Database section.
+4. **Tests** (`test/music_library_web/controllers/archive_controller_test.exs`): Deleted.
+5. **Docs** (`docs/architecture.md`): Removed the `ArchiveController` row from the controller routes table.
+
+All 982 tests pass. No ArchiveController references remain. The `:backup` record format atom and `format_label(:backup)` are intentionally untouched (they represent a record format type, not the backup download feature).
+
+<!-- SECTION:FINAL_SUMMARY:END -->

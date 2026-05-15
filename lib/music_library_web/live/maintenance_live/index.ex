@@ -153,9 +153,6 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
               >
                 {gettext("Optimize")}
               </.button>
-              <.button href={~p"/backup"}>
-                {gettext("Backup")}
-              </.button>
             </.button_group>
           </li>
         </ul>
