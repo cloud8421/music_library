@@ -17,7 +17,7 @@ from presto import Presto
 # HARDWARE
 # ============================================================================
 
-presto = Presto()
+presto = Presto(full_res=True)
 display = presto.display
 touch = presto.touch
 WIDTH, HEIGHT = display.get_bounds()

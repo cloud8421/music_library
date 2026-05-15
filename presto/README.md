@@ -1,6 +1,6 @@
 # Presto Music Library - Records On This Day
 
-A MicroPython application for the [Pimoroni Presto](https://shop.pimoroni.com/products/presto?variant=54894104019323) (RP2350B, 720×720 touch display, WiFi) that connects to the Music Library API and lets you browse your record collection by release date.
+A MicroPython application for the [Pimoroni Presto](https://shop.pimoroni.com/products/presto?variant=54894104019323) (RP2350B, 480×480 touch display, WiFi) that connects to the Music Library API and lets you browse your record collection by release date.
 
 ## Features
 
@@ -20,6 +20,9 @@ A MicroPython application for the [Pimoroni Presto](https://shop.pimoroni.com/pr
 - Pimoroni Presto running stock firmware (MicroPython + PicoGraphics + touch driver)
 - WiFi network with internet access
 - A valid API token for the Music Library API
+
+The app initialises Presto with `full_res=True`, so all layout and touch coordinates
+use the display's full 480×480 pixel coordinate system.
 
 ## Setup
 

@@ -1,7 +1,7 @@
 """
 Presto Music Library
 ===================================================
-A MicroPython application for the Pimoroni Presto (RP2350B, 720x720 touch
+A MicroPython application for the Pimoroni Presto (RP2350B, 480x480 touch
 display, WiFi) that connects to the Music Library API and lets you:
 - browse records by release date
 - search records in the collection
@@ -53,8 +53,8 @@ except ImportError:
 # API endpoint (production server)
 API_BASE = "https://music-library.claudio-ortolina.org"
 
-# Setup for the Presto display
-presto = Presto()
+# Setup for the Presto display in full-resolution 480x480 mode.
+presto = Presto(full_res=True)
 display = presto.display
 WIDTH, HEIGHT = display.get_bounds()
 touch = presto.touch
