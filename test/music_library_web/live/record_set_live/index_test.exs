@@ -2,7 +2,6 @@ defmodule MusicLibraryWeb.RecordSetLive.IndexTest do
   use MusicLibraryWeb.ConnCase
 
   import MusicLibrary.Fixtures.RecordSets
-  import Phoenix.LiveViewTest
 
   alias MusicLibrary.RecordSets
 
@@ -39,7 +38,8 @@ defmodule MusicLibraryWeb.RecordSetLive.IndexTest do
       record_set(%{name: "Zulu Set"})
       record_set(%{name: "Alpha Set"})
 
-      {:ok, _view, html} = live(conn, ~p"/record-sets?order=alphabetical")
+      session = conn |> visit(~p"/record-sets?order=alphabetical")
+      html = Phoenix.LiveViewTest.render(session.view)
 
       alpha_pos = :binary.match(html, "Alpha Set")
       zulu_pos = :binary.match(html, "Zulu Set")
@@ -50,25 +50,20 @@ defmodule MusicLibraryWeb.RecordSetLive.IndexTest do
 
   describe "Create set" do
     test "creates a set with valid data", %{conn: conn} do
-      {:ok, view, _html} = live(conn, ~p"/record-sets/new")
-
-      view
-      |> form("#record-set-form", record_set: %{name: "Brand New Set"})
-      |> render_submit()
+      conn
+      |> visit(~p"/record-sets/new")
+      |> fill_in("Name", with: "Brand New Set")
+      |> click_button("Save Set")
 
       assert [set] = RecordSets.search_record_sets("Brand New Set")
       assert set.name == "Brand New Set"
     end
 
     test "shows validation errors with invalid data", %{conn: conn} do
-      {:ok, view, _html} = live(conn, ~p"/record-sets/new")
-
-      html =
-        view
-        |> form("#record-set-form", record_set: %{name: ""})
-        |> render_change()
-
-      assert html =~ "can&#39;t be blank"
+      conn
+      |> visit(~p"/record-sets/new")
+      |> click_button("Save Set")
+      |> assert_has("[data-part='error']", "can't be blank")
     end
   end
 
@@ -76,11 +71,10 @@ defmodule MusicLibraryWeb.RecordSetLive.IndexTest do
     test "updates set with valid data", %{conn: conn} do
       set = record_set(%{name: "Old Name"})
 
-      {:ok, view, _html} = live(conn, ~p"/record-sets/#{set}/edit")
-
-      view
-      |> form("#record-set-form", record_set: %{name: "Updated Name"})
-      |> render_submit()
+      conn
+      |> visit(~p"/record-sets/#{set}/edit")
+      |> fill_in("Name", with: "Updated Name")
+      |> click_button("Save Set")
 
       updated = RecordSets.get_record_set!(set.id)
       assert updated.name == "Updated Name"
