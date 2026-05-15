@@ -1333,7 +1333,9 @@ def draw_search_results(app):
         presto.update()
         return
 
+    _set_clip_below_header()
     _draw_search_record_list(app)
+    _remove_clip()
     presto.update()
 
 
@@ -1439,20 +1441,21 @@ def draw_day_view(app):
     display.set_pen(_pen_bg)
     display.clear()
 
+    _draw_day_header(app)
+
     if app.day.error:
         _draw_day_error()
-        _draw_day_header(app)
         presto.update()
         return
 
     if not app.day.records:
         _draw_day_empty()
-        _draw_day_header(app)
         presto.update()
         return
 
+    _set_clip_below_header()
     _draw_record_list(app)
-    _draw_day_header(app)
+    _remove_clip()
     presto.update()
 
 
