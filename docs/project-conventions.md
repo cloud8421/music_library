@@ -71,7 +71,7 @@ Key rules: `json_extract()` must match expression index text exactly, subquery m
 
 → See `.agents/skills/testing/SKILL.md` for full conventions, fixture modules, and SQLite/Swoosh/Worker test patterns.
 
-Key rules: feature setup stays in test modules that need it, fixture modules use `System.unique_integer([:positive])`, assert specific values not just shapes, error assertions match specific error types, worker tests must `assert_enqueued`, no boilerplate-only tests.
+Key rules: feature setup stays in test modules that need it, fixture modules use `System.unique_integer([:positive])`, LiveView async page tests use `render_async()` from `LiveTestHelpers` rather than `unwrap(&render_async/1)`, assert specific values not just shapes, error assertions match specific error types, worker tests must `assert_enqueued`, no boilerplate-only tests.
 
 ## Tech Debt / Hygiene
 

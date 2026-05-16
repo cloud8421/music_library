@@ -75,15 +75,23 @@ conn
 
 ### ConnCase Auto-Imports
 
+`MusicLibraryWeb.ConnCase` imports `MusicLibraryWeb.LiveTestHelpers`, `PhoenixTest`
+in full, and selected `Phoenix.LiveViewTest` functions.
+
+`LiveTestHelpers` provides:
+- `escape/1`
+- `render_async/1`, `render_async/2`
+- `trigger_hook/3`, `trigger_hook/4`
+
 `MusicLibraryWeb.ConnCase` auto-imports the following LiveViewTest functions (with `only:`):
-- `render_async/1`, `render_change/1`, `render_click/3`
+- `render_change/1`, `render_click/3`
 - `render_hook/2`, `render_hook/3`
 - `element/2`, `element/3`
 - `form/3`
 
-It also imports `PhoenixTest` in full. When a test needs LiveViewTest functions NOT in
-the auto-import list (e.g. `render_click/1`, `render_submit/1`), add an explicit
-`only:` import to the test file rather than importing the whole module.
+When a test needs LiveViewTest functions NOT in the auto-import list (e.g.
+`render_click/1`, `render_submit/1`), add an explicit `only:` import to the test
+file rather than importing the whole module.
 
 ### The `unwrap/2` Escape Hatch
 
@@ -215,29 +223,32 @@ When converting a test file from `Phoenix.LiveViewTest.live/2` to `PhoenixTest.v
 2. **Replace `live(conn, path)`** with `visit(conn, path)`. The session returned by
    `visit` pipes into all PhoenixTest helpers.
 
-3. **Replace `form/3` + `render_submit/1`** with `fill_in/3` + `click_button/2` (for
+3. **After `visit/2`, replace `unwrap(&render_async/1)`** with `render_async()`.
+   For custom timeouts, use `render_async(timeout)`.
+
+4. **Replace `form/3` + `render_submit/1`** with `fill_in/3` + `click_button/2` (for
    standard inputs with labels) or `unwrap` with `form/3` + `render_submit/1` (for
    forms inside LiveComponents without labeled inputs).
 
-4. **Replace `form/3` + `render_change/1`** with `fill_in/3` (triggers `phx-change`
+5. **Replace `form/3` + `render_change/1`** with `fill_in/3` (triggers `phx-change`
    automatically) or `unwrap` with `form/3` + `render_change/1` (for Fluxon custom
    components or label-less inputs).
 
-5. **Replace `element/2` + `render_click/1`** with `click_button/2` (for `<button>`)
+6. **Replace `element/2` + `render_click/1`** with `click_button/2` (for `<button>`)
    or `click_link/2` (for `<a>`), or `unwrap` with `element/2` + `render_click/1`
    (for `<li>`, `<span>`, or other non-standard clickable elements).
 
-6. **Replace `render_hook/3`** with `unwrap(&render_hook(&1, event, value))`.
+7. **Replace `render_hook/3`** with `unwrap(&render_hook(&1, event, value))`.
 
-7. **Replace `assert_redirect(view, path)`** with `assert_path(session, path)`.
+8. **Replace `assert_redirect(view, path)`** with `assert_path(session, path)`.
 
-8. **Replace `has_element?(view, selector)`** with `assert_has(session, selector)` or
+9. **Replace `has_element?(view, selector)`** with `assert_has(session, selector)` or
    `refute_has(session, selector)`.
 
-9. **Replace `render(view)` with substring checks** (`html =~ "text"`) with
+10. **Replace `render(view)` with substring checks** (`html =~ "text"`) with
    `assert_has(session, selector, text)` or `assert_has(session, selector, text: text)`.
 
-10. **For position-based assertions** (e.g., verifying alphabetical order in HTML),
+11. **For position-based assertions** (e.g., verifying alphabetical order in HTML),
     access raw HTML via `Phoenix.LiveViewTest.render(session.view)`.
 
 ## Known Blockers for Full PhoenixTest Migration
@@ -445,15 +456,18 @@ assert render_hook(view, "music_library:clipcopy", %{text: "copy me"}) =~ "copy 
 
 ## Testing `handle_async`
 
-For async operations in LiveView tests, use `unwrap(&render_async/1)` which handles
-the async resolution and returns a PhoenixTest session:
+For async operations in PhoenixTest-backed LiveView tests, use `render_async()` from
+`LiveTestHelpers`. It waits for async work and returns the PhoenixTest session:
 
 ```elixir
 conn
 |> visit(~p"/maintenance")
-|> unwrap(&render_async/1)
+|> render_async()
 |> assert_has("span", "Connected as alice")
 ```
+
+For raw `live/2` or `live_isolated/3` views, the same helper accepts the view or
+element and delegates to `Phoenix.LiveViewTest.render_async/2`.
 
 For unit testing `handle_async/3` callbacks, always handle all three cases:
 
