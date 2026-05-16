@@ -173,6 +173,7 @@ MONTH_NAMES = [
 
 # Touch debounce (milliseconds)
 DEBOUNCE_MS = 300
+KEYBOARD_DEBOUNCE_MS = 80
 DRAG_REDRAW_MS = 40
 DRAG_REDRAW_PX = px(8)
 TOUCH_RELEASE_TIMEOUT_MS = 3_000
@@ -2287,6 +2288,13 @@ def read_touch():
     return None
 
 
+def _touch_debounce_ms(app):
+    """Return the active debounce threshold for the current screen."""
+    if app.screen == STATE_SEARCH_INPUT:
+        return KEYBOARD_DEBOUNCE_MS
+    return DEBOUNCE_MS
+
+
 def _normalise_touch(point):
     """Convert common touch return shapes to (x, y)."""
     if not point:
@@ -2692,7 +2700,7 @@ def main():
             continue
 
         x, y = touch_point
-        if time.ticks_diff(now, app.touch.last_touch) < DEBOUNCE_MS:
+        if time.ticks_diff(now, app.touch.last_touch) < _touch_debounce_ms(app):
             time.sleep(0.02)
             continue
         app.touch.last_touch = now

@@ -228,6 +228,19 @@ class TestSmokeScreens:
             main_module.KB_INPUT_UPDATE_H,
         )]
 
+    def test_search_input_uses_shorter_touch_debounce(self, main_module):
+        """Keyboard taps use a shorter debounce than the rest of the UI."""
+        app = self._make_app(main_module)
+
+        assert main_module.DEBOUNCE_MS == 300
+        assert main_module.KEYBOARD_DEBOUNCE_MS == 80
+
+        app.screen = main_module.STATE_SEARCH_INPUT
+        assert main_module._touch_debounce_ms(app) == 80
+
+        app.screen = main_module.STATE_HOME
+        assert main_module._touch_debounce_ms(app) == 300
+
     def test_scrobble_button_partial_redraw(self, main_module, monkeypatch):
         """Scrobble feedback redraws only the visible button region."""
         app = self._make_app(main_module)
