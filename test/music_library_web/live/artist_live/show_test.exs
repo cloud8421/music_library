@@ -260,9 +260,9 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
 
       conn
       |> visit(~p"/artists/#{musicbrainz_id}/edit")
-      |> unwrap(&render_async/1)
+      |> unwrap(fn view -> render_async(view, 500) end)
       |> click_button("#image-search-button", "Search")
-      |> unwrap(&render_async/1)
+      |> unwrap(fn view -> render_async(view, 500) end)
       |> unwrap(fn view ->
         view
         |> element(
