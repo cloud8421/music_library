@@ -96,6 +96,37 @@ class TestSmokeScreens:
         main_module.draw_record_detail(app)
         self._screenshot(main_module, "record-detail")
 
+    def test_record_detail_uses_placeholder_cover_while_dragging(
+        self, main_module, monkeypatch
+    ):
+        """Detail scroll redraws avoid decoding a cached medium JPEG."""
+        app = self._make_app(main_module)
+        app.screen = main_module.STATE_RECORD
+        app.day.selected_day = 15
+        app.touch.dragging = True
+
+        rec = make_mock_record(0)
+        rec["_detail_thumb_data"] = b"cached-jpeg"
+        rec["_detail_thumb_failed"] = False
+        app.day.records = [rec]
+        app.detail.selected_index = 0
+        app.detail.source_screen = main_module.STATE_DAY
+
+        calls = {"jpeg": 0, "placeholder": 0}
+
+        def _count_jpeg(*_args):
+            calls["jpeg"] += 1
+
+        def _count_placeholder(*_args):
+            calls["placeholder"] += 1
+
+        monkeypatch.setattr(main_module, "draw_jpeg", _count_jpeg)
+        monkeypatch.setattr(main_module, "_draw_placeholder", _count_placeholder)
+
+        main_module.draw_record_detail(app)
+
+        assert calls == {"jpeg": 0, "placeholder": 1}
+
     def test_cover_contract_uses_api_sized_images(self, main_module):
         """Cover helpers use the named API sizes expected by the display."""
         rec = make_mock_record(0)

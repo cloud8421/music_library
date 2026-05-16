@@ -1997,6 +1997,11 @@ def _draw_detail_cover(app, rec, y):
     if y >= HEIGHT:
         return
 
+    if app.touch.dragging:
+        _draw_placeholder(DETAIL_COVER_X, y,
+                          DETAIL_COVER_SIZE, DETAIL_COVER_SIZE)
+        return
+
     cover_url = _record_detail_cover_url(rec)
 
     if not cover_url:
@@ -2004,12 +2009,7 @@ def _draw_detail_cover(app, rec, y):
                           DETAIL_COVER_SIZE, DETAIL_COVER_SIZE)
         return
 
-    # Use cached data or fetch
     data = rec.get("_detail_thumb_data", None)
-    if data is None and app.touch.dragging:
-        _draw_placeholder(DETAIL_COVER_X, y,
-                          DETAIL_COVER_SIZE, DETAIL_COVER_SIZE)
-        return
 
     if data is None and not rec.get("_detail_thumb_failed", False):
         data = fetch_thumbnail(app, cover_url)
