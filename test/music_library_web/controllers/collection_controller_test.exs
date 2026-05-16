@@ -325,7 +325,7 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
       "covers" => %{
         "original" => asset_url(record.cover_hash, nil),
         "large" => asset_url(record.cover_hash, 1000),
-        "medium" => asset_url(record.cover_hash, 460),
+        "medium" => asset_url(record.cover_hash, 400),
         "small" => asset_url(record.cover_hash, 80)
       }
     }

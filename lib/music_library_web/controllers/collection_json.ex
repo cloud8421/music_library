@@ -4,7 +4,7 @@ defmodule MusicLibraryWeb.CollectionJSON do
   alias MusicLibrary.Assets.Transform
 
   @large_cover_width 1000
-  @medium_cover_width 460
+  @medium_cover_width 400
   @small_cover_width 80
 
   def show(%{record: record}) do
