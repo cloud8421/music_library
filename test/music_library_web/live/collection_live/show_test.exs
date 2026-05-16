@@ -20,7 +20,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
 
       conn
       |> visit(~p"/collection/#{record.id}")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> assert_has("a", "Edit")
       |> click_link("Edit")
       |> assert_path(~p"/collection/#{record}/show/edit")
@@ -43,7 +43,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
       session =
         conn
         |> visit(~p"/collection/#{record.id}")
-        |> unwrap(&render_async/1)
+        |> render_async()
         |> assert_has("h2", escape(record.title))
         |> assert_has("p", record.release_date)
         |> assert_has("p", format_label(record.format))
@@ -82,7 +82,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
         conn
         |> visit(~p"/collection/#{record.id}")
         |> assert_has("button", "Show Tracks")
-        |> unwrap(&render_async/1)
+        |> render_async()
         |> assert_has("a", "Connect Last.fm")
 
       release =

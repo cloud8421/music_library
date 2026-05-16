@@ -22,7 +22,7 @@ defmodule MusicLibraryWeb.MaintenanceLive.IndexTest do
     test "async status resolves to :not_connected when no session key is stored", %{conn: conn} do
       conn
       |> visit(~p"/maintenance")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> assert_has("span", "Not connected")
     end
 
@@ -35,7 +35,7 @@ defmodule MusicLibraryWeb.MaintenanceLive.IndexTest do
 
       conn
       |> visit(~p"/maintenance")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> assert_has("span", "Connected as alice")
     end
   end

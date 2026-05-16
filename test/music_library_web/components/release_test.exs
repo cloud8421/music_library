@@ -12,7 +12,7 @@ defmodule MusicLibraryWeb.Components.ReleaseTest do
   import MusicLibrary.Fixtures.Records
 
   import Phoenix.LiveViewTest,
-    only: [element: 2, render: 1, render_async: 1, render_change: 2, render_click: 1]
+    only: [element: 2, render: 1, render_change: 2, render_click: 1]
 
   alias MusicBrainz.Fixtures.Release, as: ReleaseFixtures
   alias MusicLibrary.Secrets
@@ -83,7 +83,7 @@ defmodule MusicLibraryWeb.Components.ReleaseTest do
 
       conn
       |> visit(~p"/collection/#{record.id}")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> assert_has("div[data-part=inner-prefix]", text: "Finished at")
     end
 
@@ -93,7 +93,7 @@ defmodule MusicLibraryWeb.Components.ReleaseTest do
 
       conn
       |> visit(~p"/collection/#{record.id}")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> unwrap(fn view ->
         view
         |> element("button[phx-click=scrobble_release][phx-target]")
@@ -116,7 +116,7 @@ defmodule MusicLibraryWeb.Components.ReleaseTest do
 
       conn
       |> visit(~p"/collection/#{record.id}")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> unwrap(fn view ->
         view
         |> element(@sheet_form)
@@ -136,7 +136,7 @@ defmodule MusicLibraryWeb.Components.ReleaseTest do
 
       conn
       |> visit(~p"/collection/#{record.id}")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> unwrap(fn view ->
         view
         |> element(@sheet_form)
@@ -172,7 +172,7 @@ defmodule MusicLibraryWeb.Components.ReleaseTest do
 
       conn
       |> visit(~p"/collection/#{record.id}")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> unwrap(fn view ->
         view
         |> element(@sheet_form)
@@ -197,7 +197,7 @@ defmodule MusicLibraryWeb.Components.ReleaseTest do
 
       conn
       |> visit(~p"/collection/#{record.id}")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> unwrap(fn view ->
         view
         |> element(@sheet_form)
@@ -221,7 +221,7 @@ defmodule MusicLibraryWeb.Components.ReleaseTest do
 
       conn
       |> visit(~p"/collection/#{record.id}")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> refute_has("button", text: "Scrobble selected")
     end
 
@@ -232,7 +232,7 @@ defmodule MusicLibraryWeb.Components.ReleaseTest do
 
       conn
       |> visit(~p"/collection/#{record.id}")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> unwrap(fn view ->
         view
         |> element(@sheet_form)
@@ -250,7 +250,7 @@ defmodule MusicLibraryWeb.Components.ReleaseTest do
 
       conn
       |> visit(~p"/collection/#{record.id}")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> unwrap(fn view ->
         view
         |> element(@sheet_form)
@@ -267,7 +267,7 @@ defmodule MusicLibraryWeb.Components.ReleaseTest do
 
       conn
       |> visit(~p"/collection/#{record.id}")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> unwrap(fn view ->
         view
         |> element(@sheet_form)
@@ -323,8 +323,7 @@ end
 defmodule MusicLibraryWeb.Components.ReleaseTest.ShowPrintTest do
   use MusicLibraryWeb.ConnCase, async: false
 
-  import Phoenix.LiveViewTest,
-    only: [render: 1, render_async: 1]
+  import Phoenix.LiveViewTest, only: [render: 1]
 
   alias MusicBrainz.Fixtures.Release, as: ReleaseFixtures
   alias Req.Test

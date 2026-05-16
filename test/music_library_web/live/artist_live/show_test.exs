@@ -3,7 +3,15 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
 
   import MusicLibrary.Fixtures.Records
 
-  import Phoenix.LiveViewTest
+  import Phoenix.LiveViewTest,
+    only: [
+      element: 2,
+      file_input: 4,
+      form: 2,
+      render_click: 1,
+      render_submit: 1,
+      render_upload: 2
+    ]
 
   alias LastFm.Fixtures
   alias MusicLibrary.Artists
@@ -48,7 +56,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
 
       conn
       |> visit(~p"/artists/#{artist_musicbrainz_id}")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> assert_has("span", "No scrobbles")
       |> assert_has("dt", "Biography")
     end
@@ -74,7 +82,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
 
       conn
       |> visit(~p"/artists/#{artist_musicbrainz_id}")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> assert_has("dt", "Biography")
       |> assert_has("span", "Wikipedia")
       |> assert_has("p", text: "English musician")
@@ -96,7 +104,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
 
       conn
       |> visit(~p"/artists/#{artist_musicbrainz_id}")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> assert_has("span", "No scrobbles")
       |> refute_has("summary", "Biography")
       |> assert_has("div", "Error loading biography")
@@ -118,7 +126,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
 
       conn
       |> visit(~p"/artists/#{artist_musicbrainz_id}")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> assert_has("span", "United Kingdom")
       |> assert_has("span", "🇬🇧")
       |> assert_has("code", artist_musicbrainz_id)
@@ -150,7 +158,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
 
       conn
       |> visit(~p"/artists/#{artist_musicbrainz_id}")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> assert_has("#collection p", escape(collection_record.title))
       |> assert_has("#wishlist p", escape(wishlist_record.title))
       |> refute_has("#collection p", escape(other_collection_record.title))
@@ -168,7 +176,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
     } do
       conn
       |> visit(~p"/artists/#{musicbrainz_id}/edit")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> assert_has("#artist-info-form")
       |> assert_has("label", text: "Search for artist image online")
     end
@@ -185,9 +193,9 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       session =
         conn
         |> visit(~p"/artists/#{musicbrainz_id}/edit")
-        |> unwrap(&render_async/1)
+        |> render_async()
         |> click_button("#image-search-button", "Search")
-        |> unwrap(&render_async/1)
+        |> render_async()
 
       html = Phoenix.LiveViewTest.render(session.view)
       assert html =~ "https://thumbnails.example.com/raven-thumb.jpg"
@@ -205,9 +213,9 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       session =
         conn
         |> visit(~p"/artists/#{musicbrainz_id}/edit")
-        |> unwrap(&render_async/1)
+        |> render_async()
         |> click_button("#image-search-button", "Search")
-        |> unwrap(&render_async/1)
+        |> render_async()
 
       html = Phoenix.LiveViewTest.render(session.view)
       assert html =~ "Search failed"
@@ -220,7 +228,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
     } do
       conn
       |> visit(~p"/artists/#{musicbrainz_id}/edit")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> unwrap(fn view ->
         image =
           file_input(view, "#artist-info-form", :image_data, [
@@ -260,9 +268,9 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
 
       conn
       |> visit(~p"/artists/#{musicbrainz_id}/edit")
-      |> unwrap(fn view -> render_async(view, 500) end)
+      |> render_async(500)
       |> click_button("#image-search-button", "Search")
-      |> unwrap(fn view -> render_async(view, 500) end)
+      |> render_async(500)
       |> unwrap(fn view ->
         view
         |> element(
@@ -270,7 +278,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
         )
         |> render_click()
       end)
-      |> unwrap(&render_async/1)
+      |> render_async()
 
       updated = Artists.get_artist_info!(artist_info.id)
       assert updated.image_data_hash != artist_info.image_data_hash

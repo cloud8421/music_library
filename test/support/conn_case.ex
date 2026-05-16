@@ -14,7 +14,6 @@ defmodule MusicLibraryWeb.ConnCase do
       import Phoenix.LiveViewTest,
         # The default endpoint for testing
         only: [
-          render_async: 1,
           render_change: 1,
           render_click: 3,
           render_hook: 2,

@@ -45,7 +45,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbumsTest do
     test "renders no album rows when no scrobbles exist", %{conn: conn} do
       conn
       |> visit("/")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> refute_has("#top-albums img")
     end
   end
@@ -56,7 +56,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbumsTest do
     test "shows the album title, linked artist, and play count", %{conn: conn} do
       conn
       |> visit("/")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> assert_has("#top-albums p", text: "Marbles")
       |> assert_has(~s|#top-albums a[href="/artists/#{@marillion_mbid}"]|, text: "Marillion")
       |> assert_has("#top-albums span", text: "2")
@@ -65,7 +65,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbumsTest do
     test "uses the Last.fm cover URL when no matching record exists", %{conn: conn} do
       conn
       |> visit("/")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> assert_has(~s|#top-albums img[src="https://example.com/cover.jpg"]|)
     end
 
@@ -76,7 +76,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbumsTest do
       session =
         conn
         |> visit("/")
-        |> unwrap(&render_async/1)
+        |> render_async()
 
       html = Phoenix.LiveViewTest.render(session.view)
 
@@ -94,7 +94,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbumsTest do
       session =
         conn
         |> visit("/")
-        |> unwrap(&render_async/1)
+        |> render_async()
 
       html = Phoenix.LiveViewTest.render(session.view)
 
@@ -113,7 +113,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbumsTest do
       session =
         conn
         |> visit("/")
-        |> unwrap(&render_async/1)
+        |> render_async()
 
       html = Phoenix.LiveViewTest.render(session.view)
 
@@ -146,7 +146,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbumsTest do
       session =
         conn
         |> visit("/")
-        |> unwrap(&render_async/1)
+        |> render_async()
 
       session
       |> assert_has("##{"top-album-#{@marbles_release_id}"}")
@@ -176,7 +176,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbumsTest do
       session =
         conn
         |> visit("/")
-        |> unwrap(&render_async/1)
+        |> render_async()
 
       html = Phoenix.LiveViewTest.render(session.view)
 
@@ -206,7 +206,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbumsTest do
       session =
         conn
         |> visit("/")
-        |> unwrap(&render_async/1)
+        |> render_async()
 
       refute_has(session, "#top-albums", text: "Older Album")
 
@@ -214,7 +214,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbumsTest do
       |> within("#top-albums", fn s ->
         s
         |> click_button("30d")
-        |> unwrap(&render_async/1)
+        |> render_async()
       end)
 
       assert_has(session, "#top-albums", text: "Older Album")

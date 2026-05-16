@@ -2,7 +2,9 @@ defmodule MusicLibraryWeb.Components.ChatTest do
   use MusicLibraryWeb.ConnCase, async: false
 
   import MusicLibrary.Fixtures.Records
-  import Phoenix.LiveViewTest
+
+  import Phoenix.LiveViewTest,
+    only: [element: 2, form: 3, live: 2, render: 1, render_click: 1, render_submit: 1]
 
   alias MusicBrainz.Fixtures.Release, as: ReleaseFixtures
   alias MusicBrainz.Fixtures.ReleaseGroup

@@ -3,7 +3,8 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
   use Oban.Testing, repo: MusicLibrary.BackgroundRepo
 
   import MusicLibrary.Fixtures.Records
-  import Phoenix.LiveViewTest
+
+  import Phoenix.LiveViewTest, only: [live: 2, render: 1, render_click: 3]
 
   alias MusicBrainz.Fixtures.Release, as: ReleaseFixtures
   alias MusicBrainz.Fixtures.ReleaseGroup

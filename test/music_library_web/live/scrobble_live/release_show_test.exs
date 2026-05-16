@@ -33,7 +33,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.ReleaseShowTest do
     test "renders the scrobble UI for the release", %{conn: conn} do
       conn
       |> visit(~p"/scrobble/#{@rg_id}/releases/#{@release_id}")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> assert_has("h2", text: "Marbles")
     end
 
@@ -46,7 +46,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.ReleaseShowTest do
     test "sets the page title once the release loads", %{conn: conn} do
       conn
       |> visit(~p"/scrobble/#{@rg_id}/releases/#{@release_id}")
-      |> unwrap(&render_async/1)
+      |> render_async()
       |> assert_has("title", text: "Marillion - Marbles")
     end
   end
