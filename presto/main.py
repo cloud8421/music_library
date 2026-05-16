@@ -115,6 +115,10 @@ DAY_HEADER_Y = HEADER_Y
 DAY_HEADER_H = HEADER_H
 DAY_HEADER_TEXT_H = HEADER_TEXT_H
 DAY_COUNT_TEXT_H = TEXT_H
+SCROLL_VIEWPORT_X = 0
+SCROLL_VIEWPORT_Y = DAY_HEADER_Y + DAY_HEADER_H
+SCROLL_VIEWPORT_W = WIDTH
+SCROLL_VIEWPORT_H = HEIGHT - SCROLL_VIEWPORT_Y
 
 # Detail view
 DETAIL_COVER_SIZE = px(200)
@@ -202,6 +206,12 @@ KB_KEY_W = (WIDTH - 2 * KB_MARGIN - 9 * KB_KEY_GAP) // 10
 KB_INPUT_Y = px(42)
 KB_INPUT_H = px(28)
 KB_INPUT_MARGIN = px(40)
+KB_INPUT_X = KB_INPUT_MARGIN
+KB_INPUT_W = WIDTH - (2 * KB_INPUT_MARGIN)
+KB_INPUT_UPDATE_X = 0
+KB_INPUT_UPDATE_Y = KB_INPUT_Y
+KB_INPUT_UPDATE_W = WIDTH
+KB_INPUT_UPDATE_H = KB_INPUT_H
 KB_ROWS_START_Y = KB_INPUT_Y + KB_INPUT_H + px(12)
 
 ALPHA_KEYS = [
@@ -351,6 +361,44 @@ def _init_pens():
     _pen_scrobble_text = display.create_pen(*SCROBBLE_TEXT)
     _pen_scrobble_done_bg = display.create_pen(*SCROBBLE_DONE_BG)
     _pen_scrobble_done_text = display.create_pen(*SCROBBLE_DONE_TEXT)
+
+
+# ============================================================================
+# HELPER: DISPLAY UPDATES
+# ============================================================================
+
+def _display_update():
+    """Push the full display buffer to the screen."""
+    presto.update()
+
+
+def _partial_display_update(x, y, w, h):
+    """Push a bounded display region, falling back to a full update."""
+    if w <= 0 or h <= 0:
+        return
+
+    try:
+        presto.partial_update(x, y, w, h)
+    except Exception:
+        _display_update()
+
+
+def _clear_region(x, y, w, h):
+    """Clear a bounded display region to the app background."""
+    display.set_pen(_pen_bg)
+    display.rectangle(x, y, w, h)
+
+
+def _clear_scroll_viewport():
+    """Clear the scrollable content area below the fixed header."""
+    _clear_region(SCROLL_VIEWPORT_X, SCROLL_VIEWPORT_Y,
+                  SCROLL_VIEWPORT_W, SCROLL_VIEWPORT_H)
+
+
+def _partial_scroll_viewport_update():
+    """Push the scrollable content area below the fixed header."""
+    _partial_display_update(SCROLL_VIEWPORT_X, SCROLL_VIEWPORT_Y,
+                            SCROLL_VIEWPORT_W, SCROLL_VIEWPORT_H)
 
 
 # ============================================================================
@@ -927,7 +975,7 @@ def draw_status(message):
         x = (WIDTH - w) // 2
         display.text(line, x, start_y + i * line_h, scale=TEXT_SCALE)
 
-    presto.update()
+    _display_update()
 
 
 # ============================================================================
@@ -943,7 +991,7 @@ def draw_month_view(app):
     _draw_month_header(app)
     _draw_day_labels()
     _draw_day_grid(app)
-    presto.update()
+    _display_update()
 
 
 HOME_BTN_W = px(30)
@@ -1118,7 +1166,7 @@ def draw_home_screen(app):
     _draw_home_button(HOME_BUTTON1_Y, "Search Collection")
     _draw_home_button(HOME_BUTTON2_Y, "Today's Records")
 
-    presto.update()
+    _display_update()
 
 
 def _draw_home_button(y, label):
@@ -1143,24 +1191,35 @@ def draw_search_input(app):
     display.clear()
 
     _draw_search_input_header()
+    _draw_search_query_field(app)
+    _draw_keyboard(app)
+    _display_update()
 
-    # Query text field
+
+def _draw_search_query_field(app):
+    """Draw the search query field without touching the keyboard."""
+    _clear_region(KB_INPUT_UPDATE_X, KB_INPUT_UPDATE_Y,
+                  KB_INPUT_UPDATE_W, KB_INPUT_UPDATE_H)
+
     display.set_pen(_pen_cell_bg)
-    display.rectangle(KB_INPUT_MARGIN, KB_INPUT_Y,
-                      WIDTH - 2 * KB_INPUT_MARGIN, KB_INPUT_H)
+    display.rectangle(KB_INPUT_X, KB_INPUT_Y, KB_INPUT_W, KB_INPUT_H)
     display.set_pen(_pen_header_text)
     display.set_font("bitmap8")
-    # Show cursor as underscore if query is empty
+
     display_q = app.search.query if app.search.query else "_"
     display.text(
         display_q,
-        KB_INPUT_MARGIN + px(8),
+        KB_INPUT_X + px(8),
         KB_INPUT_Y + px(12),
         scale=TEXT_SCALE
     )
 
-    _draw_keyboard(app)
-    presto.update()
+
+def _redraw_search_query_field(app):
+    """Redraw and push only the search query field row."""
+    _draw_search_query_field(app)
+    _partial_display_update(KB_INPUT_UPDATE_X, KB_INPUT_UPDATE_Y,
+                            KB_INPUT_UPDATE_W, KB_INPUT_UPDATE_H)
 
 
 def _draw_search_input_header():
@@ -1272,7 +1331,7 @@ def _flash_key(kx, ky, kw, kh, label):
     _draw_key(kx, ky, label, kw, kh, text_pen=_pen_today_text)
     display.set_pen(_pen_arrow)
     display.rectangle(kx, ky, kw, kh)
-    presto.update()
+    _partial_display_update(kx, ky, kw, kh)
     time.sleep(0.05)
 
 
@@ -1280,27 +1339,39 @@ def _flash_key(kx, ky, kw, kh, label):
 # DRAWING: SEARCH RESULTS
 # ============================================================================
 
-def draw_search_results(app):
+def draw_search_results(app, partial=False):
     """Render the search results view, reusing record-list rendering."""
-    display.set_pen(_pen_bg)
-    display.clear()
+    if partial:
+        _clear_scroll_viewport()
+    else:
+        display.set_pen(_pen_bg)
+        display.clear()
 
-    _draw_search_results_header(app)
+        _draw_search_results_header(app)
 
     if app.search.error:
         _draw_search_error()
-        presto.update()
+        if partial:
+            _partial_scroll_viewport_update()
+        else:
+            _display_update()
         return
 
     if not app.search.results:
         _draw_search_empty()
-        presto.update()
+        if partial:
+            _partial_scroll_viewport_update()
+        else:
+            _display_update()
         return
 
     _set_clip_below_header()
     _draw_search_record_list(app)
     _remove_clip()
-    presto.update()
+    if partial:
+        _partial_scroll_viewport_update()
+    else:
+        _display_update()
 
 
 def _draw_search_results_header(app):
@@ -1402,27 +1473,39 @@ def _draw_search_error():
 # DRAWING: DAY VIEW (records list)
 # ============================================================================
 
-def draw_day_view(app):
+def draw_day_view(app, partial=False):
     """Render the day view showing records for the selected date."""
-    display.set_pen(_pen_bg)
-    display.clear()
+    if partial:
+        _clear_scroll_viewport()
+    else:
+        display.set_pen(_pen_bg)
+        display.clear()
 
-    _draw_day_header(app)
+        _draw_day_header(app)
 
     if app.day.error:
         _draw_day_error()
-        presto.update()
+        if partial:
+            _partial_scroll_viewport_update()
+        else:
+            _display_update()
         return
 
     if not app.day.records:
         _draw_day_empty()
-        presto.update()
+        if partial:
+            _partial_scroll_viewport_update()
+        else:
+            _display_update()
         return
 
     _set_clip_below_header()
     _draw_record_list(app)
     _remove_clip()
-    presto.update()
+    if partial:
+        _partial_scroll_viewport_update()
+    else:
+        _display_update()
 
 
 def _draw_day_header(app):
@@ -1862,11 +1945,14 @@ def _remove_clip():
         pass
 
 
-def draw_record_detail(app):
+def draw_record_detail(app, partial=False):
     """Render the individual record detail view. Layout order:
     title, artists, large cover, genres, metadata, purchased at."""
-    display.set_pen(_pen_bg)
-    display.clear()
+    if partial:
+        _clear_scroll_viewport()
+    else:
+        display.set_pen(_pen_bg)
+        display.clear()
 
     if app.detail.source_screen == STATE_SEARCH_RESULTS:
         rec = app.search.results[app.detail.selected_index]
@@ -1886,7 +1972,8 @@ def draw_record_detail(app):
 
     offset = app.detail.scroll_offset
 
-    _draw_detail_header()
+    if not partial:
+        _draw_detail_header()
 
     # Clip scrolling content below the header
     _set_clip_below_header()
@@ -1907,12 +1994,7 @@ def draw_record_detail(app):
 
     # Scrobble button (at bottom of content, only if eligible)
     if rec.get("selected_release_id"):
-        # Compute button Y from measured content height (y doesn't track
-        # the bottom because _draw_detail_info_below_cover's return is
-        # discarded — use detail content height which already includes
-        # the button height and gap from Step 4).
-        button_y = (DETAIL_COVER_Y - offset
-                    + app.detail.content_height - SCROBBLE_BUTTON_H)
+        button_y = _detail_scrobble_button_y(app)
         # Only draw if the button is at least partially visible
         if (button_y + SCROBBLE_BUTTON_H > DAY_HEADER_Y + DAY_HEADER_H
                 and button_y < HEIGHT):
@@ -1931,7 +2013,16 @@ def draw_record_detail(app):
 
     _remove_clip()
 
-    presto.update()
+    if partial:
+        _partial_scroll_viewport_update()
+    else:
+        _display_update()
+
+
+def _detail_scrobble_button_y(app):
+    """Return the scrobble button Y position for the current detail offset."""
+    return (DETAIL_COVER_Y - app.detail.scroll_offset
+            + app.detail.content_height - SCROBBLE_BUTTON_H)
 
 
 def _draw_detail_header():
@@ -2141,6 +2232,28 @@ def _draw_scrobble_button(app, rec, y):
     _draw_centered_text(label, bx, y, SCROBBLE_BUTTON_W, SCROBBLE_BUTTON_H, TEXT_H)
 
 
+def _redraw_scrobble_button(app, rec):
+    """Redraw and push only the visible scrobble button region."""
+    if not rec.get("selected_release_id"):
+        return
+
+    if app.detail.content_height == 0:
+        _measure_detail_content(app, rec)
+
+    button_y = _detail_scrobble_button_y(app)
+    update_y = max(button_y, SCROLL_VIEWPORT_Y)
+    update_bottom = min(button_y + SCROBBLE_BUTTON_H, HEIGHT)
+    if update_bottom <= update_y:
+        return
+
+    bx = (WIDTH - SCROBBLE_BUTTON_W) // 2
+    _set_clip_below_header()
+    _draw_scrobble_button(app, rec, button_y)
+    _remove_clip()
+    _partial_display_update(bx, update_y, SCROBBLE_BUTTON_W,
+                            update_bottom - update_y)
+
+
 # ============================================================================
 # TOUCH HANDLING
 # ============================================================================
@@ -2268,11 +2381,8 @@ def _scrobble_button_hit_test(app, x, y, rec):
     if y <= DAY_HEADER_Y + DAY_HEADER_H:
         return False
 
-    # Compute button Y position — must match the formula used in
-    # draw_record_detail(). Detail content height already
-    # includes SCROBBLE_BUTTON_GAP + SCROBBLE_BUTTON_H from _measure_detail_content.
-    button_y = (DETAIL_COVER_Y - app.detail.scroll_offset
-                + app.detail.content_height - SCROBBLE_BUTTON_H)
+    # Detail content height already includes the button gap and height.
+    button_y = _detail_scrobble_button_y(app)
     bx = (WIDTH - SCROBBLE_BUTTON_W) // 2
 
     return (bx <= x <= bx + SCROBBLE_BUTTON_W and
@@ -2290,7 +2400,7 @@ def handle_scrobble_touch(app, rec):
 
     # Set loading state and redraw immediately so the user sees "..."
     app.detail.scrobble_state = "loading"
-    draw_record_detail(app)
+    _redraw_scrobble_button(app, rec)
 
     # Make the POST request. urequests has limited timeout support on
     # MicroPython; if WiFi drops mid-request, the default timeout may
@@ -2307,7 +2417,7 @@ def handle_scrobble_touch(app, rec):
         app.detail.scrobble_state = "idle"
 
     gc.collect()
-    draw_record_detail(app)
+    _redraw_scrobble_button(app, rec)
 
 
 def handle_home_touch(app, x, y):
@@ -2348,12 +2458,12 @@ def handle_search_input_touch(app, x, y):
     if action == "space":
         if len(app.search.query) < 50:
             app.search.query += " "
-        draw_search_input(app)
+            _redraw_search_query_field(app)
         return
 
     if action == "backspace":
         app.search.query = app.search.query[:-1]
-        draw_search_input(app)
+        _redraw_search_query_field(app)
         return
 
     if action == "ok":
@@ -2370,7 +2480,7 @@ def handle_search_input_touch(app, x, y):
     # Character key
     if len(app.search.query) < 50 and len(action) == 1:
         app.search.query += action
-        draw_search_input(app)
+        _redraw_search_query_field(app)
 
 
 def handle_search_results_touch(app, x, y):
@@ -2618,7 +2728,7 @@ def main():
                 lambda: app.search.scroll_offset,
                 lambda value: setattr(app.search, "scroll_offset", value),
                 lambda: _search_max_scroll_offset(app),
-                lambda: draw_search_results(app),
+                lambda: draw_search_results(app, partial=True),
                 True
             )
 
@@ -2644,7 +2754,7 @@ def main():
                 lambda: app.day.scroll_offset,
                 lambda value: setattr(app.day, "scroll_offset", value),
                 lambda: _max_scroll_offset(app),
-                lambda: draw_day_view(app),
+                lambda: draw_day_view(app, partial=True),
                 True
             )
 
@@ -2672,7 +2782,7 @@ def main():
                 lambda: app.detail.scroll_offset,
                 lambda value: setattr(app.detail, "scroll_offset", value),
                 lambda: _max_detail_scroll_offset(app),
-                lambda: draw_record_detail(app),
+                lambda: draw_record_detail(app, partial=True),
                 True
             )
 

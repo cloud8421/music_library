@@ -137,6 +137,136 @@ class TestSmokeScreens:
         assert main_module._record_thumbnail_url(rec).endswith("/small-0.jpg")
         assert main_module._record_detail_cover_url(rec).endswith("/medium-0.jpg")
 
+    def test_partial_update_uses_region_when_available(self, main_module, monkeypatch):
+        """Bounded display updates call the Presto partial update API."""
+        calls = []
+
+        monkeypatch.setattr(
+            main_module.presto,
+            "partial_update",
+            lambda *args: calls.append(("partial", args))
+        )
+        monkeypatch.setattr(
+            main_module.presto,
+            "update",
+            lambda: calls.append(("full", ()))
+        )
+
+        main_module._partial_display_update(1, 2, 3, 4)
+
+        assert calls == [("partial", (1, 2, 3, 4))]
+
+    def test_partial_update_falls_back_to_full_update(self, main_module, monkeypatch):
+        """Bounded display updates fall back when partial update fails."""
+        calls = []
+
+        def _raise_partial(*_args):
+            raise RuntimeError("partial update unavailable")
+
+        monkeypatch.setattr(main_module.presto, "partial_update", _raise_partial)
+        monkeypatch.setattr(
+            main_module.presto,
+            "update",
+            lambda: calls.append(("full", ()))
+        )
+
+        main_module._partial_display_update(1, 2, 3, 4)
+
+        assert calls == [("full", ())]
+
+    def test_day_view_partial_redraw_updates_scroll_viewport(
+        self, main_module, monkeypatch
+    ):
+        """Day-list bounded redraws update only the scroll viewport."""
+        app = self._make_app(main_module)
+        app.screen = main_module.STATE_DAY
+        app.view_year = 2026
+        app.view_month = 5
+        app.day.selected_day = 15
+
+        recs = [make_mock_record(i) for i in range(3)]
+        app.day.records = recs
+        app.day.content_height = main_module.prepare_record_list(app, recs)
+
+        calls = []
+        monkeypatch.setattr(
+            main_module.presto,
+            "partial_update",
+            lambda *args: calls.append(args)
+        )
+        monkeypatch.setattr(main_module.presto, "update", lambda: calls.append("full"))
+
+        main_module.draw_day_view(app, partial=True)
+
+        assert calls == [(
+            main_module.SCROLL_VIEWPORT_X,
+            main_module.SCROLL_VIEWPORT_Y,
+            main_module.SCROLL_VIEWPORT_W,
+            main_module.SCROLL_VIEWPORT_H,
+        )]
+
+    def test_search_query_field_partial_redraw(self, main_module, monkeypatch):
+        """Typing in search redraws only the query field row."""
+        app = self._make_app(main_module)
+        app.screen = main_module.STATE_SEARCH_INPUT
+        app.search.query = "blue"
+
+        calls = []
+        monkeypatch.setattr(
+            main_module.presto,
+            "partial_update",
+            lambda *args: calls.append(args)
+        )
+        monkeypatch.setattr(main_module.presto, "update", lambda: calls.append("full"))
+
+        main_module._redraw_search_query_field(app)
+
+        assert calls == [(
+            main_module.KB_INPUT_UPDATE_X,
+            main_module.KB_INPUT_UPDATE_Y,
+            main_module.KB_INPUT_UPDATE_W,
+            main_module.KB_INPUT_UPDATE_H,
+        )]
+
+    def test_scrobble_button_partial_redraw(self, main_module, monkeypatch):
+        """Scrobble feedback redraws only the visible button region."""
+        app = self._make_app(main_module)
+        app.screen = main_module.STATE_RECORD
+        app.day.selected_day = 15
+
+        rec = make_mock_record(0)
+        app.day.records = [rec]
+        app.detail.selected_index = 0
+        app.detail.source_screen = main_module.STATE_DAY
+        main_module._measure_detail_content(app, rec)
+        app.detail.scroll_offset = main_module._max_detail_scroll_offset(app)
+
+        calls = []
+        monkeypatch.setattr(
+            main_module.presto,
+            "partial_update",
+            lambda *args: calls.append(args)
+        )
+        monkeypatch.setattr(main_module.presto, "update", lambda: calls.append("full"))
+
+        app.detail.scrobble_state = "loading"
+        main_module._redraw_scrobble_button(app, rec)
+
+        button_x = (main_module.WIDTH - main_module.SCROBBLE_BUTTON_W) // 2
+        button_y = main_module._detail_scrobble_button_y(app)
+        update_y = max(button_y, main_module.SCROLL_VIEWPORT_Y)
+        update_h = min(
+            button_y + main_module.SCROBBLE_BUTTON_H,
+            main_module.HEIGHT
+        ) - update_y
+
+        assert calls == [(
+            button_x,
+            update_y,
+            main_module.SCROBBLE_BUTTON_W,
+            update_h,
+        )]
+
     def test_search_input_renders(self, main_module):
         """Search input screen with on-screen keyboard."""
         app = self._make_app(main_module)
