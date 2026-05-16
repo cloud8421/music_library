@@ -3,7 +3,16 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.RulePickerTest do
 
   import MusicLibrary.Fixtures.Records
   import MusicLibrary.ScrobbledTracksFixtures
-  import Phoenix.LiveViewTest
+
+  import Phoenix.LiveViewTest,
+    only: [
+      render_submit: 1,
+      render_click: 1,
+      render_click: 2,
+      render_click: 3,
+      form: 3,
+      element: 2
+    ]
 
   alias MusicLibrary.ScrobbleRules
 
@@ -24,39 +33,43 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.RulePickerTest do
     %{collected: collected}
   end
 
-  defp open_rule_picker(view, album_title) do
-    render_click(view, "open_rule_picker", %{"album-title" => album_title})
-    view
+  defp open_rule_picker(session, album_title) do
+    unwrap(session, fn view ->
+      render_click(view, "open_rule_picker", %{"album-title" => album_title})
+    end)
   end
 
-  defp search_picker(view, query) do
-    view
-    |> form("#rule-picker-navigation form", %{query: query})
-    |> render_submit()
+  defp search_picker(session, query) do
+    unwrap(session, fn view ->
+      view
+      |> form("#rule-picker-navigation form", %{query: query})
+      |> render_submit()
+    end)
   end
 
   describe "Rule picker modal" do
     setup [:create_track_without_album_mbid]
 
     test "opens and shows album title", %{conn: conn, track: track} do
-      {:ok, view, _html} = live(conn, ~p"/scrobbled-tracks")
-
-      open_rule_picker(view, track.album.title)
-
-      assert has_element?(view, "#rule-picker-modal")
-      assert has_element?(view, "h1", "Create Scrobble Rule")
-      assert render(view) =~ track.album.title
+      conn
+      |> visit(~p"/scrobbled-tracks")
+      |> open_rule_picker(track.album.title)
+      |> assert_has("#rule-picker-modal")
+      |> assert_has("h1", "Create Scrobble Rule")
+      |> assert_has("*", track.album.title)
     end
 
     test "closes when close event is triggered", %{conn: conn, track: track} do
-      {:ok, view, _html} = live(conn, ~p"/scrobbled-tracks")
+      session =
+        conn
+        |> visit(~p"/scrobbled-tracks")
+        |> open_rule_picker(track.album.title)
 
-      open_rule_picker(view, track.album.title)
-      assert has_element?(view, "#rule-picker-modal")
+      assert_has(session, "#rule-picker-modal")
 
-      render_click(view, "close_rule_picker")
-
-      refute has_element?(view, "#rule-picker-modal")
+      session
+      |> unwrap(fn view -> render_click(view, "close_rule_picker") end)
+      |> refute_has("#rule-picker-modal")
     end
   end
 
@@ -68,13 +81,12 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.RulePickerTest do
       track: track,
       collected: collected
     } do
-      {:ok, view, _html} = live(conn, ~p"/scrobbled-tracks")
-
-      open_rule_picker(view, track.album.title)
-      html = search_picker(view, collected.title)
-
-      assert html =~ collected.title
-      assert html =~ "Collected"
+      conn
+      |> visit(~p"/scrobbled-tracks")
+      |> open_rule_picker(track.album.title)
+      |> search_picker(collected.title)
+      |> assert_has("p", collected.title)
+      |> assert_has("h3", "Collected")
     end
 
     test "filters out records without selected_release_id", %{conn: conn, track: track} do
@@ -87,37 +99,31 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.RulePickerTest do
 
       assert is_nil(no_release.selected_release_id)
 
-      {:ok, view, _html} = live(conn, ~p"/scrobbled-tracks")
-
-      open_rule_picker(view, track.album.title)
-      search_picker(view, "No Release Zzzzzz")
-
-      refute has_element?(
-               view,
-               "li[phx-click='select_record'][phx-value-record-id='#{no_release.id}']"
-             )
+      conn
+      |> visit(~p"/scrobbled-tracks")
+      |> open_rule_picker(track.album.title)
+      |> search_picker("No Release Zzzzzz")
+      |> refute_has("li[phx-click='select_record'][phx-value-record-id='#{no_release.id}']")
     end
 
     test "shows wishlisted records", %{conn: conn, track: track} do
       wishlisted = record(%{title: "Wish You Were Here", purchased_at: nil})
 
-      {:ok, view, _html} = live(conn, ~p"/scrobbled-tracks")
-
-      open_rule_picker(view, track.album.title)
-      html = search_picker(view, wishlisted.title)
-
-      assert html =~ wishlisted.title
-      assert html =~ "Wishlisted"
+      conn
+      |> visit(~p"/scrobbled-tracks")
+      |> open_rule_picker(track.album.title)
+      |> search_picker(wishlisted.title)
+      |> assert_has("p", wishlisted.title)
+      |> assert_has("h3", "Wishlisted")
     end
 
     test "empty search returns no results", %{conn: conn, track: track} do
-      {:ok, view, _html} = live(conn, ~p"/scrobbled-tracks")
-
-      open_rule_picker(view, track.album.title)
-      html = search_picker(view, "   ")
-
-      refute html =~ "Collected"
-      refute html =~ "Wishlisted"
+      conn
+      |> visit(~p"/scrobbled-tracks")
+      |> open_rule_picker(track.album.title)
+      |> search_picker("   ")
+      |> refute_has("h3", "Collected")
+      |> refute_has("h3", "Wishlisted")
     end
   end
 
@@ -129,16 +135,16 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.RulePickerTest do
       track: track,
       collected: collected
     } do
-      {:ok, view, _html} = live(conn, ~p"/scrobbled-tracks")
-
-      open_rule_picker(view, track.album.title)
-      search_picker(view, collected.title)
-
-      view
-      |> element("li[phx-click='select_record'][phx-value-record-id='#{collected.id}']")
-      |> render_click()
-
-      refute has_element?(view, "#rule-picker-modal")
+      conn
+      |> visit(~p"/scrobbled-tracks")
+      |> open_rule_picker(track.album.title)
+      |> search_picker(collected.title)
+      |> unwrap(fn view ->
+        view
+        |> element("li[phx-click='select_record'][phx-value-record-id='#{collected.id}']")
+        |> render_click()
+      end)
+      |> refute_has("#rule-picker-modal")
 
       [rule] = ScrobbleRules.list_scrobble_rules(type: :album)
       assert rule.match_value == track.album.title
@@ -155,17 +161,19 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.RulePickerTest do
           target_musicbrainz_id: Ecto.UUID.generate()
         })
 
-      {:ok, view, _html} = live(conn, ~p"/scrobbled-tracks")
-
-      open_rule_picker(view, track.album.title)
-      search_picker(view, collected.title)
-
-      view
-      |> element("li[phx-click='select_record'][phx-value-record-id='#{collected.id}']")
-      |> render_click()
+      session =
+        conn
+        |> visit(~p"/scrobbled-tracks")
+        |> open_rule_picker(track.album.title)
+        |> search_picker(collected.title)
+        |> unwrap(fn view ->
+          view
+          |> element("li[phx-click='select_record'][phx-value-record-id='#{collected.id}']")
+          |> render_click()
+        end)
 
       # Modal stays open after error
-      assert has_element?(view, "#rule-picker-modal")
+      assert_has(session, "#rule-picker-modal")
 
       # Only the original rule exists, no duplicate was created
       assert length(ScrobbleRules.list_scrobble_rules(type: :album)) == 1
