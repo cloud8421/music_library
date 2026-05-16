@@ -1,38 +1,32 @@
-# Presto Music Library - Records On This Day
+# Presto Music Library
 
-A MicroPython application for the [Pimoroni Presto](https://shop.pimoroni.com/products/presto?variant=54894104019323) (RP2350B, 480×480 touch display, WiFi) that connects to the Music Library API and lets you browse your record collection by release date.
+MicroPython app for the [Pimoroni Presto](https://shop.pimoroni.com/products/presto?variant=54894104019323) that connects to the Music Library API. It runs full-resolution on the 480x480 touch display and lets you search the collection or browse records released on a selected date.
 
-## Features
+## What It Does
 
-- **Month calendar** — 7×6 grid with day-of-week headers, today highlight
-- **Today's records on boot** — opens directly to records released on today's date
-- **Tap a day** — see records released on that date with cover art, titles, artist names, format, and release year
-- **Record detail view** — tap any record row to see large cover art, genres, record type, and purchase date
-- **Month navigation** — arrow buttons to browse previous/future months
-- **Touch scrolling** — drag the day view to scroll through longer record lists
-- **Display sleep** — turns the backlight off after 1 minute of inactivity and wakes on touch
-- **WiFi auto-connect** — connects on boot with retry logic
-- **NTP time sync** — calendar always shows the correct date
-- **Error handling** — graceful messages when the server is unreachable or images fail to load
+- Home screen with **Search Collection** and **Today's Records**
+- Month calendar with day navigation and today's date highlighted
+- Day list with cover art, title, artists, format, and release year
+- Search input with on-screen keyboard and scrollable results
+- Record detail page with larger cover art, genres, metadata, purchase date, and optional Last.fm scrobble button
+- Display sleep after 1 minute of inactivity, with wake-on-touch
+- WiFi reconnect, NTP sync, and simple network error states
 
 ## Requirements
 
-- Pimoroni Presto running stock firmware (MicroPython + PicoGraphics + touch driver)
-- WiFi network with internet access
-- A valid API token for the Music Library API
-
-The app initialises Presto with `full_res=True`, so all layout and touch coordinates
-use the display's full 480×480 pixel coordinate system.
+- Pimoroni Presto running stock firmware with MicroPython, PicoGraphics, touch, `urequests`, `ntptime`, and usually `jpegdec`
+- WiFi with internet access
+- Music Library API token
 
 ## Setup
 
-### 1. Create secrets.py
+Create `secrets.py` from the template:
 
 ```bash
 cp config.example.py secrets.py
 ```
 
-Edit `secrets.py` and fill in your credentials:
+Fill in:
 
 ```python
 WIFI_SSID = "your-wifi-ssid"
@@ -40,192 +34,100 @@ WIFI_PASSWORD = "your-wifi-password"
 API_TOKEN = "your-api-token"
 ```
 
-> `secrets.py` is git-ignored and never committed.
+`secrets.py` is git-ignored and must not be committed.
 
-### 2. Deploy to your Presto
+## Deploy
 
-Copy the files to the root of your Presto's flash storage. You can use Thonny, `mpremote`, or any MicroPython file transfer tool.
-
-**Using `mpremote`:**
+First-time deployment needs both the app and credentials on the device:
 
 ```bash
-# Install mpremote if you don't have it
-pip install mpremote
-
-# Copy files to the Presto
 mpremote fs cp main.py :main.py
 mpremote fs cp secrets.py :secrets.py
-
-# Reset the device to start the app
 mpremote reset
 ```
 
-After `secrets.py` has been copied to the device once, you can redeploy the app with the project task:
+After `secrets.py` has been copied once, use the project task:
 
 ```bash
 mise run presto
 ```
 
-This copies `main.py` to `:main.py` and resets the device; it does not copy `secrets.py`.
+That task copies `main.py` to `:main.py` and resets the Presto. It does not copy `secrets.py`.
 
-**Using Thonny:**
-
-1. Open Thonny and select "MicroPython (Raspberry Pi Pico)" as the interpreter
-2. Open `main.py` and `secrets.py` in Thonny
-3. Use File → Save Copy → Raspberry Pi Pico to save `main.py` as `main.py` and `secrets.py` as `secrets.py`
-4. Press the reset button on the Presto, or use Run → Send EOF / Soft Reboot
-
-### 3. The app starts automatically
-
-The Presto runs `main.py` on boot. The app will:
-
-1. Show a startup screen
-2. Connect to WiFi (showing progress)
-3. Sync time via NTP
-4. Load and display today's records
+The Presto runs `main.py` on boot, connects to WiFi, syncs time, then opens the home screen.
 
 ## Usage
 
-### Month view
+**Home:** tap **Search Collection** to search by text, or **Today's Records** to open the current month with today highlighted.
 
-- **Today's date** is highlighted in blue
-- Tap **← →** arrows to navigate months
-- Tap any **day cell** to see records released on that date
+**Month view:** use the arrow buttons to change month, tap a day to load records released on that date, or tap **H** to return home.
 
-### Day view
+**Day view:** drag vertically to scroll long lists. During drag scrolling, covers are drawn as placeholders and restored when the drag ends. Tap a row to open its detail page.
 
-- Shows records with **cover art**, **title**, **artists**, **format**, and **release year**
-- Tap **< Back** to return to the month view
-- Drag vertically to scroll through longer lists
-- During drag scrolling, cover art is temporarily shown as lightweight placeholders and redrawn when you lift your finger
+**Search:** type with the on-screen keyboard and tap **OK**. Results use the same row and detail views as the day list. Back from results returns to the search input with the query preserved.
 
-### Record detail view
+**Record detail:** shows title, artists, medium cover, genres, record type, format, release year, and purchase date. Records with `selected_release_id` show a **Scrobble** button; successful scrobbles show **Done** until you leave the detail page.
 
-- Tap any **record row** in the day view to open its detail page
-- Shows a **larger cover image** (uses `covers.medium` in a 400×400 detail cover area), the full title, artists, genres, record type, format, release year, and purchase date
-- Drag vertically to scroll if the content is taller than the screen
-- The header bar stays fixed at the top while the cover and info scroll underneath
-- Tap **< Back** to return to the day view
-- If the record can be scrobbled, a **"Scrobble" button** appears at the bottom — tap it to scrobble the release to Last.fm; "Done" confirms success
-
-### Display sleep
-
-- After 1 minute with no touch input, the display backlight turns off
-- Touch the screen once to wake it; the wake touch is ignored so it will not also press a button or scroll
-- WiFi is left enabled while the display sleeps. If it drops while idle, the app reconnects on wake
-
-### Error states
-
-- **"Could not reach server"** — the API is unreachable. Tap anywhere on the day view to retry, or tap Back to return to the month view.
-- **"WiFi connection failed"** — WiFi credentials are wrong or the network is down. The app retries every 10 seconds.
-- **Grey placeholder** in place of cover art — the image could not be loaded (network issue or invalid URL). The rest of the record info is still shown.
-
-## Files
-
-```
-presto/
-  main.py # Application source, deployed to the device as main.py
-  config.example.py     # Template for secrets.py
-  secrets.py            # Your credentials (git-ignored, create from example)
-  README.md             # This file
-```
+**Display sleep:** after 1 minute without touch input, the backlight turns off. The first touch wakes the display and is consumed so it does not also press a button or start a scroll.
 
 ## Testing
 
-### Prerequisites
-
-The test harness uses the [`pimoroni-emulator`](https://github.com/iksaif/pimoroni-emu)
-(already installed via `mise`) to provide a headless display with mock
-MicroPython modules.  You also need `pytest` (installed via the project venv).
-
-### Running tests
+Run the headless smoke tests from this directory:
 
 ```bash
-# From the presto/ directory:
 mise run test
-
-# Or directly:
-cd presto
-pytest tests/ -v
 ```
 
-### What the tests cover
+The tests use `pimoroni-emulator` mock MicroPython modules, import `main.py` without starting the event loop, and block accidental network calls. They render all screen states and save screenshots to `tests/fixtures/` for manual inspection.
 
-Smoke tests verify that every screen renders without crashing:
+For a syntax-only check without creating `__pycache__`:
 
-| Test                     | Screen                 |
-| ------------------------ | ---------------------- |
-| `test_home_screen`       | Home / splash          |
-| `test_month_view`        | Month calendar grid    |
-| `test_day_view_empty`    | Day view (no records)  |
-| `test_day_view_error`    | Day view (error state) |
-| `test_record_detail`     | Record detail view     |
-| `test_search_input`      | Search input screen    |
-| `test_search_results`    | Search results list    |
-
-All tests use mock data and do **not** make network requests.
-Screenshots are saved to `presto/tests/fixtures/` for manual inspection.
-
-### Adding new tests
-
-1. Add a test method to `presto/tests/test_screens.py` following the existing
-   pattern:
-   - Create an `AppState` via `main_module.AppState()`
-   - Set the appropriate view state fields
-   - Call the screen's draw function
-   - Optionally save a screenshot
-2. Use `make_mock_record()` from `tests.conftest` if your test needs record data.
-3. Run `mise run test` to verify.
+```bash
+python3 -c "import py_compile; py_compile.compile('main.py', cfile='/tmp/main.pyc', doraise=True)"
+```
 
 ## Troubleshooting
 
-| Symptom                             | Likely cause                                          | Fix                                                             |
-| ----------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------- |
-| Stuck on "secrets.py not found"     | `secrets.py` not on the device                        | Copy `config.example.py` to `secrets.py` and deploy it          |
-| Stuck on "WiFi connection failed"   | Wrong SSID/password, or network down                  | Check `secrets.py` credentials; verify network is up            |
-| "Could not reach server" on day tap | API token invalid, or server down                     | Check `API_TOKEN` in `secrets.py`; verify the server is running |
-| Images show as grey rectangles      | JPEG decoder not available, or image URLs unreachable | Check firmware version; ensure Presto has internet access       |
-| Touch not responding                | Firmware touch API mismatch                           | Try updating Presto firmware to the latest version              |
-| Display is black after idle         | Backlight sleep is active                             | Touch once to wake the display                                  |
+| Symptom | Likely cause | Fix |
+| --- | --- | --- |
+| `secrets.py not found` | Credentials are missing on the device | Copy `secrets.py` to the Presto root |
+| `WIFI_SSID not set` or `API_TOKEN not set` | Required value is blank | Check `secrets.py` |
+| `WiFi connection failed` | Wrong credentials or network unavailable | Verify SSID, password, and network |
+| `Could not reach server` | API token invalid, server down, or network lost | Check `API_TOKEN` and server status |
+| Grey cover placeholders | JPEG decoder unavailable or image URL failed | Check firmware and internet access |
+| Black display after idle | Display sleep is active | Touch once to wake |
 
-## API Endpoint
+## API Contract
 
-The app talks to:
+All requests use:
 
-```
-GET https://music-library.claudio-ortolina.org/api/v1/collection/on_this_day?date=YYYY-MM-DD
+```http
 Authorization: Bearer <API_TOKEN>
 ```
 
-Response format:
+The app calls:
 
-```json
-{
-  "records": [
-    {
-      "id": "...",
-      "selected_release_id": "abc-123-uuid",
-      "title": "Album Title",
-      "artists": ["Artist Name"],
-      "covers": {
-        "original": "https://.../api/v1/assets/original",
-        "large": "https://.../api/v1/assets/large-1000",
-        "medium": "https://.../api/v1/assets/medium",
-        "small": "https://.../api/v1/assets/small-80"
-      },
-      "release_date": "1973-03-01",
-      "genres": ["Rock"],
-      "format": "Vinyl",
-      "record_type": "LP",
-      "purchased_at": "2024-11-15"
-    }
-  ]
-}
+```http
+GET /api/v1/collection/on_this_day?date=YYYY-MM-DD
+GET /api/v1/collection?q=QUERY&limit=20
+POST /api/v1/collection/:record_id/scrobble
 ```
 
-The Presto client uses `covers.small` for the 80×80 full-resolution row thumbnail.
-The detail view uses `covers.medium` in a 400×400 cover area centered in the 480×480 display.
-The app does not resize covers on the device; it expects the API to provide display-ready JPEGs.
+Both `GET` endpoints return `{ "records": [...] }`. Fields used by the client:
+
+- `id`
+- `selected_release_id`
+- `title`
+- `artists`
+- `format`
+- `release_date`
+- `genres`
+- `record_type`
+- `purchased_at`
+- `covers.small`
+- `covers.medium`
+
+The day and search lists use `covers.small` as an 80x80 row thumbnail. Detail pages use `covers.medium` in a 400x400 cover area. The app expects display-ready JPEGs and does not resize covers on the device.
 
 ## License
 
