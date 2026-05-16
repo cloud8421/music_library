@@ -132,8 +132,8 @@ class TestSmokeScreens:
         rec = make_mock_record(0)
 
         assert main_module.THUMB_SIZE == 80
-        assert main_module.DETAIL_COVER_SIZE == 460
-        assert main_module.DETAIL_COVER_X == 10
+        assert main_module.DETAIL_COVER_SIZE == 400
+        assert main_module.DETAIL_COVER_X == 40
         assert main_module._record_thumbnail_url(rec).endswith("/small-0.jpg")
         assert main_module._record_detail_cover_url(rec).endswith("/medium-0.jpg")
 

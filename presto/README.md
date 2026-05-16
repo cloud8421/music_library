@@ -102,7 +102,7 @@ The Presto runs `main.py` on boot. The app will:
 ### Record detail view
 
 - Tap any **record row** in the day view to open its detail page
-- Shows a **larger cover image** (uses `covers.medium`, 460px source), the full title, artists, genres, record type, format, release year, and purchase date
+- Shows a **larger cover image** (uses `covers.medium` in a 400×400 detail cover area), the full title, artists, genres, record type, format, release year, and purchase date
 - Drag vertically to scroll if the content is taller than the screen
 - The header bar stays fixed at the top while the cover and info scroll underneath
 - Tap **< Back** to return to the day view
@@ -210,7 +210,7 @@ Response format:
       "covers": {
         "original": "https://.../api/v1/assets/original",
         "large": "https://.../api/v1/assets/large-1000",
-        "medium": "https://.../api/v1/assets/medium-460",
+        "medium": "https://.../api/v1/assets/medium",
         "small": "https://.../api/v1/assets/small-80"
       },
       "release_date": "1973-03-01",
@@ -224,7 +224,7 @@ Response format:
 ```
 
 The Presto client uses `covers.small` for the 80×80 full-resolution row thumbnail.
-The detail view uses `covers.medium` for the 460×460 cover centered in the 480×480 display.
+The detail view uses `covers.medium` in a 400×400 cover area centered in the 480×480 display.
 The app does not resize covers on the device; it expects the API to provide display-ready JPEGs.
 
 ## License
