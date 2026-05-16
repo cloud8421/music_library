@@ -2,6 +2,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
   use MusicLibraryWeb.ConnCase
 
   import MusicLibrary.Fixtures.Records
+
   import Phoenix.LiveViewTest
 
   alias LastFm.Fixtures
@@ -181,14 +182,14 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
         Test.json(conn, BraveSearch.Fixtures.search_images_response())
       end)
 
-      {:ok, view, _html} = live(conn, ~p"/artists/#{musicbrainz_id}/edit")
+      session =
+        conn
+        |> visit(~p"/artists/#{musicbrainz_id}/edit")
+        |> unwrap(&render_async/1)
+        |> click_button("#image-search-button", "Search")
+        |> unwrap(&render_async/1)
 
-      view
-      |> element("#image-search-button")
-      |> render_click()
-
-      html = render_async(view)
-
+      html = Phoenix.LiveViewTest.render(session.view)
       assert html =~ "https://thumbnails.example.com/raven-thumb.jpg"
     end
 
@@ -201,14 +202,14 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
         Test.transport_error(conn, :timeout)
       end)
 
-      {:ok, view, _html} = live(conn, ~p"/artists/#{musicbrainz_id}/edit")
+      session =
+        conn
+        |> visit(~p"/artists/#{musicbrainz_id}/edit")
+        |> unwrap(&render_async/1)
+        |> click_button("#image-search-button", "Search")
+        |> unwrap(&render_async/1)
 
-      view
-      |> element("#image-search-button")
-      |> render_click()
-
-      html = render_async(view)
-
+      html = Phoenix.LiveViewTest.render(session.view)
       assert html =~ "Search failed"
     end
 
@@ -217,18 +218,21 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       artist_musicbrainz_id: musicbrainz_id,
       artist_info: artist_info
     } do
-      {:ok, view, _html} = live(conn, ~p"/artists/#{musicbrainz_id}/edit")
+      conn
+      |> visit(~p"/artists/#{musicbrainz_id}/edit")
+      |> unwrap(&render_async/1)
+      |> unwrap(fn view ->
+        image =
+          file_input(view, "#artist-info-form", :image_data, [
+            %{name: "raven.jpg", content: raven_cover_data(), type: "image/jpeg"}
+          ])
 
-      image =
-        file_input(view, "#artist-info-form", :image_data, [
-          %{name: "raven.jpg", content: raven_cover_data(), type: "image/jpeg"}
-        ])
+        render_upload(image, "raven.jpg")
 
-      render_upload(image, "raven.jpg")
-
-      view
-      |> form("#artist-info-form")
-      |> render_submit()
+        view
+        |> form("#artist-info-form")
+        |> render_submit()
+      end)
 
       updated = Artists.get_artist_info!(artist_info.id)
       assert updated.image_data_hash != artist_info.image_data_hash
@@ -254,18 +258,19 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
         end
       end)
 
-      {:ok, view, _html} = live(conn, ~p"/artists/#{musicbrainz_id}/edit")
-
-      view |> element("#image-search-button") |> render_click()
-      render_async(view, 300)
-
-      view
-      |> element(
-        "button[phx-click='select_image'][phx-value-url='https://images.example.com/raven-cover.jpg']"
-      )
-      |> render_click()
-
-      render_async(view, 300)
+      conn
+      |> visit(~p"/artists/#{musicbrainz_id}/edit")
+      |> unwrap(&render_async/1)
+      |> click_button("#image-search-button", "Search")
+      |> unwrap(&render_async/1)
+      |> unwrap(fn view ->
+        view
+        |> element(
+          "button[phx-click='select_image'][phx-value-url='https://images.example.com/raven-cover.jpg']"
+        )
+        |> render_click()
+      end)
+      |> unwrap(&render_async/1)
 
       updated = Artists.get_artist_info!(artist_info.id)
       assert updated.image_data_hash != artist_info.image_data_hash

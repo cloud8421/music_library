@@ -3,7 +3,6 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbumsTest do
 
   import MusicLibrary.Fixtures.Records
   import MusicLibrary.ScrobbledTracksFixtures
-  import Phoenix.LiveViewTest
 
   # Any release_id from the marbles release-group fixture. Records created by
   # `record/0` include `musicbrainz_data: ReleaseGroup.release_group(:marbles)`,
@@ -74,8 +73,12 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbumsTest do
          %{conn: conn} do
       _record = record(%{purchased_at: DateTime.utc_now()})
 
-      {:ok, view, _html} = live(conn, ~p"/")
-      html = render_async(view)
+      session =
+        conn
+        |> visit("/")
+        |> unwrap(&render_async/1)
+
+      html = Phoenix.LiveViewTest.render(session.view)
 
       assert html =~ ~r|<img[^>]+src="/assets/[^"]+"[^>]+alt="Marbles"|
       refute html =~ ~s|src="https://example.com/cover.jpg"|
@@ -88,8 +91,12 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbumsTest do
     test "single collected record: success badge and navigation to collection show", %{conn: conn} do
       collected = record(%{purchased_at: DateTime.utc_now()})
 
-      {:ok, view, _html} = live(conn, ~p"/")
-      html = render_async(view)
+      session =
+        conn
+        |> visit("/")
+        |> unwrap(&render_async/1)
+
+      html = Phoenix.LiveViewTest.render(session.view)
 
       # The whole row is clickable, navigating to the collection show route.
       assert html =~ ~s|/collection/#{collected.id}|
@@ -103,8 +110,12 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbumsTest do
          %{conn: conn} do
       wishlisted = record(%{purchased_at: nil})
 
-      {:ok, view, _html} = live(conn, ~p"/")
-      html = render_async(view)
+      session =
+        conn
+        |> visit("/")
+        |> unwrap(&render_async/1)
+
+      html = Phoenix.LiveViewTest.render(session.view)
 
       assert html =~ ~s|/wishlist/#{wishlisted.id}|
       assert html =~ "cursor-pointer"
@@ -145,7 +156,7 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbumsTest do
       |> refute_has("#top-albums div.cursor-pointer")
     end
 
-    test "no matching record: renders a plain badge and row is not navigable", %{conn: _conn} do
+    test "no matching record: renders a plain badge and row is not navigable", %{conn: conn} do
       # Replace the Marbles scrobbles with an orphan album that has no record.
       # The base setup created Marbles scrobbles — add one that will outrank
       # them in play_count so it appears first.
@@ -162,8 +173,12 @@ defmodule MusicLibraryWeb.StatsLive.TopAlbumsTest do
         })
       end
 
-      {:ok, view, _html} = live(build_conn() |> init_test_session(%{logged_in: true}), ~p"/")
-      html = render_async(view)
+      session =
+        conn
+        |> visit("/")
+        |> unwrap(&render_async/1)
+
+      html = Phoenix.LiveViewTest.render(session.view)
 
       assert html =~ "Orphan Album"
       # Plain badge is primary/surface — no success/warning color classes on
