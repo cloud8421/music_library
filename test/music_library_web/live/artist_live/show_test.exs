@@ -278,7 +278,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
         )
         |> render_click()
       end)
-      |> render_async()
+      |> render_async(500)
 
       updated = Artists.get_artist_info!(artist_info.id)
       assert updated.image_data_hash != artist_info.image_data_hash
