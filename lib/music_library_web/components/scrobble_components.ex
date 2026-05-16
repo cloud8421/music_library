@@ -113,15 +113,16 @@ defmodule MusicLibraryWeb.ScrobbleComponents do
       <.badge :if={@musicbrainz_id == "" and is_nil(@album_title)}>
         {gettext("No MB ID")}
       </.badge>
-      <.badge
+      <.button
         :if={@musicbrainz_id == "" and @album_title}
+        variant="dashed"
         class="cursor-pointer"
         phx-click="open_rule_picker"
         phx-value-album-title={@album_title}
       >
         <.icon name="hero-link" class="icon" />
         {gettext("No MB ID")}
-      </.badge>
+      </.button>
 
       <%= case {@record_count, @status} do %>
         <% {0, _} -> %>
