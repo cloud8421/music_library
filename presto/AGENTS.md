@@ -70,6 +70,16 @@ _These rules apply to any scrollable view (day list, detail page, or future addi
 - Each scrollable view gets its own offset variable and its own content-height cache. Never reuse one view's scroll state for another.
 - If the view has a fixed header, use `display.set_clip()` / `display.remove_clip()` to prevent scrollable content from drawing over it.
 
+## Partial Display Updates
+
+- Use full display updates for full-screen transitions, state changes, and any redraw that changes the header, background, or multiple unrelated regions.
+- Use the app's partial-update helper for bounded redraws; do not call `presto.partial_update()` directly. The helper must fall back to a full update when firmware or emulator support is missing.
+- Before a partial update, redraw the complete changed rectangle in the framebuffer, including background clearing, borders, labels, and any pixels that may have been covered by the previous state.
+- Partial update rectangles must fully contain the changed pixels and be expressed with named geometry constants, not scattered literals.
+- For fixed-header scroll views, partial redraws should clear and redraw only the scroll viewport below the header, then update that viewport rectangle. Keep clipping active so scrolled content cannot overwrite the header.
+- Do not make network requests, measure text, or rebuild layout inside partial redraw hot paths; prepare and cache that work before the first draw.
+- Emulator tests may assert which partial-update rectangle is requested. Do not claim physical display behavior is verified unless tested on the physical Presto.
+
 ## Image Handling
 
 - Row thumbnails use `covers.small` from the API. Detail covers use `covers.medium`.
