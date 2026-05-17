@@ -445,6 +445,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         |> fill_in("Search for a record", with: "Marillion Marbles")
         |> click_link("#musicbrainz_#{first_id} a", "CD")
         |> click_button("Import 1 record")
+        |> refute_path("/collection/import", timeout: 2_000)
         |> assert_path("/collection/*", timeout: 2_000)
 
       [record] = MusicLibrary.Repo.all(Record)
