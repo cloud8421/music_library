@@ -5,11 +5,10 @@ defmodule MusicLibraryWeb.WishlistLive.IndexTest do
   import Ecto.Query, only: [from: 2]
   import MusicBrainz.Fixtures.ReleaseGroup
   import MusicLibrary.Fixtures.Records
-  import Phoenix.LiveViewTest, only: [assert_redirect: 2]
 
+  alias MusicLibrary.Records
   alias MusicLibrary.Records.Record
   alias MusicLibrary.Worker.ImportFromMusicbrainzReleaseGroup
-  alias Phoenix.LiveViewTest
   alias Req.Test
 
   defp fill_wishlist(_) do
@@ -19,32 +18,27 @@ defmodule MusicLibraryWeb.WishlistLive.IndexTest do
 
   describe "PubSub index_changed" do
     test "reloads stream when live_action is :index", %{conn: conn} do
-      {:ok, view, _html} = LiveViewTest.live(conn, ~p"/wishlist")
-
-      html_before = LiveViewTest.render(view)
+      session = visit(conn, ~p"/wishlist")
 
       # Create a new wishlist record behind the scenes (simulating completed background import)
-      _new_record = record(%{purchased_at: nil})
+      new_record = record(%{purchased_at: nil})
 
-      # Send the index_changed message directly
-      send(view.pid, :records_index_changed)
+      refute_has(session, "#records-#{new_record.id}")
 
-      # The view should now include the new record
-      html_after = LiveViewTest.render(view)
-      assert html_after != html_before
+      Records.broadcast_index_changed()
+
+      assert_has(session, "#records-#{new_record.id}", timeout: 200)
     end
 
     test "ignores message when live_action is :import (guard clause)", %{conn: conn} do
-      {:ok, view, _html} = LiveViewTest.live(conn, ~p"/wishlist/import")
+      session = visit(conn, ~p"/wishlist/import")
 
-      html_before = LiveViewTest.render(view)
+      new_record = record(%{purchased_at: nil})
 
-      send(view.pid, :records_index_changed)
+      Records.broadcast_index_changed()
 
-      html_after = LiveViewTest.render(view)
-
-      # Should be identical — the message is a no-op when grid is behind modal
-      assert html_after == html_before
+      # The message is a no-op when the grid is behind the import modal.
+      refute_has(session, "#records-#{new_record.id}", timeout: 100)
     end
   end
 
@@ -107,36 +101,26 @@ defmodule MusicLibraryWeb.WishlistLive.IndexTest do
     end
 
     test "imports a single cart item synchronously and navigates to wishlist", %{conn: conn} do
-      alias Phoenix.LiveViewTest, as: LVT
-
       stub_full_import()
 
       [first | _] = Map.get(release_group_search_results(), "release-groups")
       first_id = first["id"]
 
-      {:ok, view, _html} = LVT.live(conn, ~p"/wishlist/import")
+      session =
+        conn
+        |> visit(~p"/wishlist/import")
+        |> fill_in("Search for a record", with: "Marillion Marbles")
+        |> click_link("#musicbrainz_#{first_id} a", "CD")
+        |> click_button("Import 1 record")
+        |> assert_path("/wishlist/*", timeout: 2_000)
 
-      view
-      |> LVT.form("#import_form", %{"mb_query" => "Marillion Marbles"})
-      |> LVT.render_change()
-
-      view
-      |> LVT.element("#musicbrainz_#{first_id} a", "CD")
-      |> LVT.render_click()
-
-      view
-      |> LVT.element("button", "Import 1 record")
-      |> LVT.render_click()
-
-      {path, _flash} = assert_redirect(view, 2_000)
-      "/wishlist/" <> record_id = path
-
-      record = MusicLibrary.Records.get_record!(record_id)
+      [record] = MusicLibrary.Repo.all(Record)
 
       assert record.musicbrainz_id == first_id
       assert record.title == "Marbles"
       assert record.format == :cd
       assert record.purchased_at == nil
+      assert_path(session, ~p"/wishlist/#{record}")
 
       refute_enqueued(worker: ImportFromMusicbrainzReleaseGroup)
     end

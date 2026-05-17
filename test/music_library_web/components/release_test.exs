@@ -12,7 +12,7 @@ defmodule MusicLibraryWeb.Components.ReleaseTest do
   import MusicLibrary.Fixtures.Records
 
   import Phoenix.LiveViewTest,
-    only: [element: 2, render: 1, render_change: 2, render_click: 1]
+    only: [element: 2, render_change: 2, render_click: 1]
 
   alias MusicBrainz.Fixtures.Release, as: ReleaseFixtures
   alias MusicLibrary.Secrets
@@ -289,44 +289,17 @@ defmodule MusicLibraryWeb.Components.ReleaseTest do
   end
 end
 
-defmodule ReleaseComponentHost do
-  @moduledoc false
-  use MusicLibraryWeb, :live_view
-
-  @impl true
-  def mount(_params, session, socket) do
-    {:ok,
-     assign(socket,
-       release_id: session["release_id"],
-       show_print?: session["show_print?"],
-       timezone: "UTC"
-     )}
-  end
-
-  @impl true
-  def render(assigns) do
-    ~H"""
-    <div>
-      <.live_component
-        id="host-release"
-        module={MusicLibraryWeb.Components.Release}
-        release_id={@release_id}
-        show_print?={@show_print?}
-        sheet_id="host-sheet"
-        timezone={@timezone}
-      />
-    </div>
-    """
-  end
-end
-
 defmodule MusicLibraryWeb.Components.ReleaseTest.ShowPrintTest do
   use MusicLibraryWeb.ConnCase, async: false
 
-  import Phoenix.LiveViewTest, only: [render: 1]
+  import MusicLibrary.Fixtures.Records
 
   alias MusicBrainz.Fixtures.Release, as: ReleaseFixtures
+  alias MusicBrainz.Fixtures.ReleaseGroup
   alias Req.Test
+
+  @rg_id ReleaseGroup.release_group_id(:marbles)
+  @release_id ReleaseFixtures.release_id(:marbles)
 
   defp stub_musicbrainz_release(_) do
     Test.stub(MusicBrainz.API, fn conn ->
@@ -346,31 +319,19 @@ defmodule MusicLibraryWeb.Components.ReleaseTest.ShowPrintTest do
     setup [:stub_musicbrainz_release]
 
     test "true renders Print tracklist dropdown entries", %{conn: conn} do
-      {:ok, view, _html} =
-        Phoenix.LiveViewTest.live_isolated(conn, ReleaseComponentHost,
-          session: %{
-            "release_id" => ReleaseFixtures.release_id(:marbles),
-            "show_print?" => true
-          }
-        )
+      record = record()
 
-      render_async(view)
-
-      assert render(view) =~ "Print tracklist"
+      conn
+      |> visit(~p"/collection/#{record.id}")
+      |> render_async()
+      |> assert_has("a", text: "Print tracklist")
     end
 
     test "false hides Print tracklist dropdown entries", %{conn: conn} do
-      {:ok, view, _html} =
-        Phoenix.LiveViewTest.live_isolated(conn, ReleaseComponentHost,
-          session: %{
-            "release_id" => ReleaseFixtures.release_id(:marbles),
-            "show_print?" => false
-          }
-        )
-
-      render_async(view)
-
-      refute render(view) =~ "Print tracklist"
+      conn
+      |> visit(~p"/scrobble/#{@rg_id}/releases/#{@release_id}")
+      |> render_async()
+      |> refute_has("a", text: "Print tracklist")
     end
   end
 end

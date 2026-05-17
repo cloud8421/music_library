@@ -6,13 +6,12 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   import MusicBrainz.Fixtures.ReleaseGroup
   import MusicLibrary.Fixtures.Records
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
-  import Phoenix.LiveViewTest, only: [assert_redirect: 2]
 
   alias MusicLibrary.Assets
   alias MusicLibrary.Assets.{Image, Transform}
+  alias MusicLibrary.Records
   alias MusicLibrary.Records.Record
   alias MusicLibrary.Worker.ImportFromMusicbrainzReleaseGroup
-  alias Phoenix.LiveViewTest
   alias Req.Test
 
   # make it a multiple of 4 for easier calculations
@@ -22,6 +21,14 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   defp fill_collection(_) do
     records = Enum.map(1..@total_records, fn _ -> record() end)
     %{collection: records}
+  end
+
+  defp change_cart_format(session, selector, params) do
+    unwrap(session, fn view ->
+      view
+      |> element(selector)
+      |> Phoenix.LiveViewTest.render_change(params)
+    end)
   end
 
   describe "Collection" do
@@ -96,32 +103,27 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
   describe "PubSub index_changed" do
     test "reloads stream when live_action is :index", %{conn: conn} do
-      {:ok, view, _html} = LiveViewTest.live(conn, ~p"/collection")
-
-      html_before = LiveViewTest.render(view)
+      session = visit(conn, ~p"/collection")
 
       # Create a new record behind the scenes (simulating completed background import)
-      _new_record = record()
+      new_record = record()
 
-      # Send the index_changed message directly
-      send(view.pid, :records_index_changed)
+      refute_has(session, "#records-#{new_record.id}")
 
-      # The view should now include the new record
-      html_after = LiveViewTest.render(view)
-      assert html_after != html_before
+      Records.broadcast_index_changed()
+
+      assert_has(session, "#records-#{new_record.id}", timeout: 200)
     end
 
     test "ignores message when live_action is :import (guard clause)", %{conn: conn} do
-      {:ok, view, _html} = LiveViewTest.live(conn, ~p"/collection/import")
+      session = visit(conn, ~p"/collection/import")
 
-      html_before = LiveViewTest.render(view)
+      new_record = record()
 
-      send(view.pid, :records_index_changed)
+      Records.broadcast_index_changed()
 
-      html_after = LiveViewTest.render(view)
-
-      # Should be identical — the message is a no-op when grid is behind modal
-      assert html_after == html_before
+      # The message is a no-op when the grid is behind the import modal.
+      refute_has(session, "#records-#{new_record.id}", timeout: 100)
     end
   end
 
@@ -384,65 +386,37 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     end
 
     test "changes the format of a cart item", %{conn: conn} do
-      alias Phoenix.LiveViewTest, as: LVT
-
       stub_release_group_search()
 
       [first | _] = Map.get(release_group_search_results(), "release-groups")
       first_id = first["id"]
 
-      {:ok, view, _html} = LVT.live(conn, ~p"/collection/import")
-
-      view
-      |> LVT.form("#import_form", %{"mb_query" => "Marillion Marbles"})
-      |> LVT.render_change()
-
-      view
-      |> LVT.element("#musicbrainz_#{first_id} a", "CD")
-      |> LVT.render_click()
-
-      view
-      |> LVT.element("#cart-items form")
-      |> LVT.render_change(%{"format" => "vinyl"})
-
-      assert LVT.render(view) =~ "In cart"
+      conn
+      |> visit(~p"/collection/import")
+      |> fill_in("Search for a record", with: "Marillion Marbles")
+      |> click_link("#musicbrainz_#{first_id} a", "CD")
+      |> change_cart_format("#cart-items form", %{"format" => "vinyl"})
+      |> assert_has("#musicbrainz_#{first_id} span", text: "In cart")
     end
 
     test "rejects change_format when the resulting pair is already in the cart", %{conn: conn} do
-      alias Phoenix.LiveViewTest, as: LVT
-
       stub_release_group_search()
 
       [first | _] = Map.get(release_group_search_results(), "release-groups")
       first_id = first["id"]
 
-      {:ok, view, _html} = LVT.live(conn, ~p"/collection/import")
+      session =
+        conn
+        |> visit(~p"/collection/import")
+        |> fill_in("Search for a record", with: "Marillion Marbles")
+        |> click_link("#musicbrainz_#{first_id} a", "CD")
+        |> click_link("#musicbrainz_#{first_id} a", "Vinyl")
 
-      view
-      |> LVT.form("#import_form", %{"mb_query" => "Marillion Marbles"})
-      |> LVT.render_change()
+      assert_has(session, "#cart-items li", count: 2)
 
-      view
-      |> LVT.element("#musicbrainz_#{first_id} a", "CD")
-      |> LVT.render_click()
-
-      view
-      |> LVT.element("#musicbrainz_#{first_id} a", "Vinyl")
-      |> LVT.render_click()
-
-      html = LVT.render(view)
-      cart_item_ids = Regex.scan(~r/id="cart-item-(\d+)"/, html, capture: :all_but_first)
-      assert length(cart_item_ids) == 2
-
-      [first_id_match | _] = cart_item_ids
-      [item_id] = first_id_match
-
-      view
-      |> LVT.element("#cart-item-#{item_id} form")
-      |> LVT.render_change(%{"cart_item_id" => item_id, "format" => "vinyl"})
-
-      html_after = LVT.render(view)
-      assert Regex.scan(~r/id="cart-item-/, html_after) |> length() == 2
+      session
+      |> change_cart_format("#cart-items li:last-child form", %{"format" => "vinyl"})
+      |> assert_has("#cart-items li", count: 2)
     end
 
     test "clears the cart", %{conn: conn} do
@@ -460,36 +434,26 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     end
 
     test "imports a single cart item synchronously and navigates", %{conn: conn} do
-      alias Phoenix.LiveViewTest, as: LVT
-
       stub_full_import()
 
       [first | _] = Map.get(release_group_search_results(), "release-groups")
       first_id = first["id"]
 
-      {:ok, view, _html} = LVT.live(conn, ~p"/collection/import")
+      session =
+        conn
+        |> visit(~p"/collection/import")
+        |> fill_in("Search for a record", with: "Marillion Marbles")
+        |> click_link("#musicbrainz_#{first_id} a", "CD")
+        |> click_button("Import 1 record")
+        |> assert_path("/collection/*", timeout: 2_000)
 
-      view
-      |> LVT.form("#import_form", %{"mb_query" => "Marillion Marbles"})
-      |> LVT.render_change()
-
-      view
-      |> LVT.element("#musicbrainz_#{first_id} a", "CD")
-      |> LVT.render_click()
-
-      view
-      |> LVT.element("button", "Import 1 record")
-      |> LVT.render_click()
-
-      {path, _flash} = assert_redirect(view, 2_000)
-      "/collection/" <> record_id = path
-
-      record = MusicLibrary.Records.get_record!(record_id)
+      [record] = MusicLibrary.Repo.all(Record)
 
       assert record.musicbrainz_id == first_id
       assert record.title == "Marbles"
       assert record.format == :cd
       refute is_nil(record.purchased_at)
+      assert_path(session, ~p"/collection/#{record}")
 
       {:ok, resized_cover_data} = Image.resize(marbles_cover_data())
       assets = Assets.get(record.cover_hash)

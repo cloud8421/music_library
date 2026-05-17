@@ -4,8 +4,6 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
 
   import MusicLibrary.Fixtures.Records
 
-  import Phoenix.LiveViewTest, only: [live: 2, render: 1, render_click: 3]
-
   alias MusicBrainz.Fixtures.Release, as: ReleaseFixtures
   alias MusicBrainz.Fixtures.ReleaseGroup
   alias MusicLibrary.Chats
@@ -43,15 +41,45 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
     end)
   end
 
+  defp visit_record(conn, record) do
+    visit(conn, ~p"/collection/#{record.id}")
+  end
+
+  defp trigger_record_action(session, event) do
+    unwrap(session, fn view ->
+      render_click(view, event, %{})
+    end)
+  end
+
+  defp submit_record_chat_message(session, message) do
+    unwrap(session, fn view ->
+      view
+      |> form("#record-chat-form", %{"message" => message})
+      |> Phoenix.LiveViewTest.render_submit()
+    end)
+  end
+
+  defp stub_openai_stream do
+    body =
+      "data: #{JSON.encode!(%{type: "response.output_text.delta", delta: "Hello"})}\n\n" <>
+        "data: #{JSON.encode!(%{type: "response.completed"})}\n\n"
+
+    Test.stub(OpenAI.API, fn conn ->
+      conn
+      |> Plug.Conn.put_resp_content_type("text/event-stream")
+      |> Plug.Conn.send_resp(200, body)
+    end)
+  end
+
   describe "refresh_musicbrainz_data event" do
     test "success path shows confirmation toast", %{conn: conn} do
       record = record()
       stub_musicbrainz_happy_path(record.musicbrainz_id)
 
-      {:ok, view, _html} = live(conn, ~p"/collection/#{record.id}")
-      render_click(view, "refresh_musicbrainz_data", %{})
-
-      assert render(view) =~ "MusicBrainz data refreshed successfully"
+      conn
+      |> visit_record(record)
+      |> trigger_record_action("refresh_musicbrainz_data")
+      |> assert_has("#toast-group", text: "MusicBrainz data refreshed successfully")
     end
 
     @tag :capture_log
@@ -70,11 +98,10 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
         end
       end)
 
-      {:ok, view, _html} = live(conn, ~p"/collection/#{record.id}")
-      render_click(view, "refresh_musicbrainz_data", %{})
-
-      html = render(view)
-      assert html =~ "Error refreshing MusicBrainz data"
+      conn
+      |> visit_record(record)
+      |> trigger_record_action("refresh_musicbrainz_data")
+      |> assert_has("#toast-group", text: "Error refreshing MusicBrainz data")
     end
   end
 
@@ -83,10 +110,11 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
       record = record()
       stub_musicbrainz_happy_path(record.musicbrainz_id, cover_data: raven_cover_data())
 
-      {:ok, view, _html} = live(conn, ~p"/collection/#{record.id}")
-      render_click(view, "refresh_cover", %{})
+      conn
+      |> visit_record(record)
+      |> trigger_record_action("refresh_cover")
+      |> assert_has("#toast-group", text: "Cover refreshed successfully")
 
-      assert render(view) =~ "Cover refreshed successfully"
       refute Records.get_record!(record.id).cover_hash == record.cover_hash
     end
 
@@ -109,10 +137,10 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
         end
       end)
 
-      {:ok, view, _html} = live(conn, ~p"/collection/#{record.id}")
-      render_click(view, "refresh_cover", %{})
-
-      assert render(view) =~ "Error refreshing cover"
+      conn
+      |> visit_record(record)
+      |> trigger_record_action("refresh_cover")
+      |> assert_has("#toast-group", text: "Error refreshing cover")
     end
   end
 
@@ -121,10 +149,10 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
       record = record()
       stub_musicbrainz_happy_path(record.musicbrainz_id)
 
-      {:ok, view, _html} = live(conn, ~p"/collection/#{record.id}")
-      render_click(view, "populate_genres", %{})
-
-      assert render(view) =~ "In progress - record will update automatically"
+      conn
+      |> visit_record(record)
+      |> trigger_record_action("populate_genres")
+      |> assert_has("#toast-group", text: "In progress - record will update automatically")
 
       assert_enqueued(
         worker: MusicLibrary.Worker.PopulateGenres,
@@ -138,10 +166,10 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
       record = record(%{dominant_colors: []})
       stub_musicbrainz_happy_path(record.musicbrainz_id)
 
-      {:ok, view, _html} = live(conn, ~p"/collection/#{record.id}")
-      render_click(view, "extract_colors", %{})
-
-      assert render(view) =~ "Colors extracted"
+      conn
+      |> visit_record(record)
+      |> trigger_record_action("extract_colors")
+      |> assert_has("#toast-group", text: "Colors extracted")
 
       updated = Records.get_record!(record.id)
       # FakeColorExtractor returns a fixed 5-color palette
@@ -157,10 +185,10 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
       {:ok, record} = Records.update_record(record, %{cover_hash: String.duplicate("00", 32)})
       stub_musicbrainz_happy_path(record.musicbrainz_id)
 
-      {:ok, view, _html} = live(conn, ~p"/collection/#{record.id}")
-      render_click(view, "extract_colors", %{})
-
-      assert render(view) =~ "Error extracting colors"
+      conn
+      |> visit_record(record)
+      |> trigger_record_action("extract_colors")
+      |> assert_has("#toast-group", text: "Error extracting colors")
     end
   end
 
@@ -168,22 +196,13 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
     test "re-counts chats when the Chat component broadcasts a change", %{conn: conn} do
       record = record()
       stub_musicbrainz_happy_path(record.musicbrainz_id)
+      stub_openai_stream()
 
-      {:ok, view, _html} = live(conn, ~p"/collection/#{record.id}")
+      conn
+      |> visit_record(record)
+      |> submit_record_chat_message("hello")
+      |> assert_has("span.text-xs", text: "1", timeout: 200)
 
-      {:ok, _chat} =
-        Chats.create_chat_with_message(
-          %{entity: :record, musicbrainz_id: record.musicbrainz_id},
-          %{role: "user", content: "hello"}
-        )
-
-      # The Chat component would `send(self(), {Chat, :chats_changed})` after
-      # seeding a chat. We simulate that by sending the same message directly.
-      send(view.pid, {MusicLibraryWeb.Components.Chat, :chats_changed})
-
-      # Forcing a re-render flushes the handle_info that re-computes chat_count;
-      # we verify via the context function which is the authoritative count.
-      _ = render(view)
       assert Chats.count_chats(:record, record.musicbrainz_id) == 1
     end
   end
@@ -193,7 +212,7 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
       record = record()
       stub_musicbrainz_happy_path(record.musicbrainz_id)
 
-      {:ok, view, _html} = live(conn, ~p"/collection/#{record.id}")
+      session = visit_record(conn, record)
 
       updated_record = %{record | title: "Brand New Title"}
 
@@ -203,9 +222,9 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
         {:update, updated_record}
       )
 
-      html = render(view)
-      assert html =~ "Brand New Title"
-      assert html =~ "Record updated in the background"
+      session
+      |> assert_has("*", text: "Brand New Title", timeout: 200)
+      |> assert_has("#toast-group", text: "Record updated in the background")
     end
   end
 
@@ -219,9 +238,9 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
 
       {:ok, _} = Similarity.store_embedding(record.id, embedding, embedding_text)
 
-      {:ok, view, _html} = live(conn, ~p"/collection/#{record.id}")
-
-      assert render(view) =~ "Genres: progressive rock"
+      conn
+      |> visit_record(record)
+      |> assert_has("*", text: "Genres: progressive rock")
     end
 
     # The `{:error, :not_found}` branch is exercised implicitly by every
