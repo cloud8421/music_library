@@ -2551,3 +2551,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Set emptied"
 msgstr ""
+
+#: lib/music_library_web/components/record_form.ex
+#, elixir-autogen, elixir-format
+msgid "ISO format"
+msgstr ""

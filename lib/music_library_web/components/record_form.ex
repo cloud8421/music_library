@@ -53,7 +53,11 @@ defmodule MusicLibraryWeb.Components.RecordForm do
           </:option>
         </.select>
         <div class={[@show_purchased_at && "sm:columns-2", "space-y-2"]}>
-          <.input field={@form[:release_date]} label={gettext("Release Date")} />
+          <.input
+            field={@form[:release_date]}
+            label={gettext("Release Date")}
+            sublabel={gettext("ISO format")}
+          />
           <.date_time_picker
             :if={@show_purchased_at}
             field={@form[:purchased_at]}
