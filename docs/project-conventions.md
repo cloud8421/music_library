@@ -16,6 +16,24 @@ Key rules: imperative present tense, single-line under 60 characters, task ID pr
 - When working on a Backlog.md task, **make sure to read the implementation plan included in the task, and follow it**. If the plan is outdated compared to the conditions of the codebase, notify the user.
 - **GitHub issues are legacy and read-only for the agent.** Never create, comment on, close, or reopen GitHub issues — only the user does that. When asked about "the issue tracker" or "open issues", reach for Backlog.md, not `gh issue`.
 
+### Pre-commit Hooks
+
+The pre-commit hook (`scripts/dev/precommit`) inspects staged files and runs only the checks relevant to the change, rather than always running the full verification suite. CI always runs the full suite unconditionally.
+
+| Category    | File pattern                                                                                                                                 | Checks (conditional)                                                                                                                                                               |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **elixir**  | `lib/`, `test/`, `config/`, `mix.exs`, `mix.lock`, `priv/repo/migrations/`, `priv/gettext/`, `.credo.exs`, `.formatter.exs`, `.sobelow-conf` | `mix format --check-formatted`<br>`mix credo --strict`<br>`mix sobelow --compact --exit`<br>`mix gettext.extract --check-up-to-date`<br>`mix test`<br>`mix deps.unlock --unused` † |
+| **shell**   | `scripts/`, `.shellcheckrc`                                                                                                                  | `shellcheck` on all `scripts/` files (excluding `.hurl`)                                                                                                                           |
+| **assets**  | `assets/`, `.pi/extensions/.*\.(ts\|js\|json)$`                                                                                              | `prettier` on CSS, JS, and TS/JSON in `.pi/extensions/` (excluding `node_modules`)                                                                                                 |
+| **docs**    | `docs/`, `README.md`, `AGENTS.md`                                                                                                            | `prettier` on Markdown and Livebook files                                                                                                                                          |
+| **backlog** | `backlog/`                                                                                                                                   | `prettier` on all backlog markdown files                                                                                                                                           |
+| **presto**  | `presto/`                                                                                                                                    | `(cd presto && mise run test)` — runs pytest                                                                                                                                       |
+| **docker**  | `Dockerfile`, `.dockerignore`, `compose.yaml`                                                                                                | `mise run dev:validate-docker-image` (only if `Dockerfile` is staged)                                                                                                              |
+
+> **† `mix deps.unlock --unused` sub-gate**: Runs only when `mix.exs` or `mix.lock` is in the staged files — not on every Elixir change. An unused dependency can only be introduced by changing the dependency specification, not by changing application code.
+
+If no staged files match any category (e.g., `git commit --allow-empty`), the script exits early without running any checks.
+
 ## Architecture
 
 - **Context modules own all queries.** LiveViews never query the database directly -- they call context functions.

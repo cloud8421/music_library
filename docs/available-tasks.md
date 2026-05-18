@@ -50,7 +50,7 @@ Run pi tests
 
 - **Usage**: `dev:precommit`
 
-Run checks before a commit
+Run checks before a commit (conditional on staged file types)
 
 ## `dev:readme`
 
