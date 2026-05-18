@@ -1,12 +1,18 @@
 ---
 id: ML-187
 title: Restructure pre-commit hooks to run only necessary checks depending on change
-status: To Do
-assignee: []
+status: Done
+assignee:
+  - pi
 created_date: "2026-05-15 08:41"
-updated_date: "2026-05-18 14:54"
+updated_date: "2026-05-18 15:09"
 labels: []
 dependencies: []
+modified_files:
+  - scripts/dev/precommit
+  - docs/project-conventions.md
+  - docs/available-tasks.md
+  - AGENTS.md
 ---
 
 ## Description
@@ -20,6 +26,22 @@ Currently pre-commit hooks run the entire verification suite irrespectively of t
 3. Changes to the presto application only need to run the (upcoming) presto test suite.
 4. Possibly some other patterns, need to verify the complete repo structure.
 <!-- SECTION:DESCRIPTION:END -->
+
+## Acceptance Criteria
+
+<!-- AC:BEGIN -->
+
+- [x] #1 Backlog-only changes trigger only prettier on backlog files
+- [x] #2 Docs-only changes trigger only prettier on docs files
+- [x] #3 Elixir changes (without mix.exs/mix.lock) trigger credo, sobelow, gettext, format, and test, but NOT deps.unlock
+- [x] #4 mix.exs or mix.lock changes trigger deps.unlock in addition to other Elixir checks
+- [x] #5 Shell script changes trigger only shellcheck
+- [x] #6 Presto changes trigger only pytest
+- [x] #7 Dockerfile changes trigger validate-docker-image
+- [x] #8 Empty STAGED exits early without errors
+- [x] #9 Combined changes from multiple categories trigger all relevant checks
+- [x] #10 Documentation updated: project-conventions.md has Pre-commit Hooks section, available-tasks.md has updated description
+<!-- AC:END -->
 
 ## Implementation Plan
 
@@ -243,4 +265,45 @@ Annoyances identified:
 
 - `mise run dev:validate-docker-image` exists and is used in CI
 - Not currently in pre-commit — adding it closes a CI→local gap
+
+### Implementation complete
+
+**Step 1**: Restructured `scripts/dev/precommit` with conditional guards for 7 categories: shell, elixir, deps (sub-gate), assets, docs, backlog, presto, docker.
+
+**Step 2**: Added presto check via `(cd presto && mise run test)` gated on `^presto/`.
+
+**Step 3**: Added Docker image validation via `mise run dev:validate-docker-image` gated on docker pattern.
+
+**Step 4**: Verified pattern matching for all categories and edge cases (empty STAGED, mix.exs sub-gate, combined categories). Ran real integration test: backlog-only triggered only prettier; Elixir triggered credo → sobelow chain.
+
+**Step 5**: Updated `docs/project-conventions.md` with Pre-commit Hooks subsection (category table + sub-gate footnote). Updated `docs/available-tasks.md` dev:precommit description.
+
+### Commit
+
+Committed as `974ef45` - `ML-187: restructure pre-commit checks to run conditionally`. Pre-commit hook verified: ran only shellcheck + docs prettier for the staged shell/docs files (no Elixir checks, no tests).
+
+Also fixed pre-existing prettier issue in `AGENTS.md`.
+
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
+## Summary
+
+Restructured `scripts/dev/precommit` to run only relevant checks based on staged file types, replacing the linear "run everything" approach.
+
+### Changes
+
+- **`scripts/dev/precommit`**: Replaced linear execution with 7 conditionally-gated check categories (shell, elixir, deps, assets, docs, backlog, presto, docker). Each gated behind `grep -qE` on `$STAGED`. Added `deps.unlock` sub-gate (only when `mix.exs` or `mix.lock` staged). Added presto and docker checks that were missing entirely. Added early exit for empty STAGED. Updated MISE description.
+
+- **`docs/project-conventions.md`**: Added "Pre-commit Hooks" subsection under Workflow with file-to-check mapping table and `deps.unlock` sub-gate footnote.
+
+- **`docs/available-tasks.md`**: Updated `dev:precommit` description to note conditional behavior.
+
+### Verification
+
+Pattern matching verified for all 7 categories in isolation and combined. Real integration test: backlog-only triggered only prettier; Elixir triggered credo→sobelow chain (skipped deps.unlock when no mix.exs/mix.lock staged). Empty STAGED exits early.
+
+<!-- SECTION:FINAL_SUMMARY:END -->
