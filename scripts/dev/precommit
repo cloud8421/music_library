@@ -14,20 +14,24 @@ staged_lines() {
   echo "$STAGED" | tr ' ' '\n'
 }
 
-# Early exit if no staged files (e.g., --allow-empty)
-if [ -z "$STAGED" ]; then
-  debug_msg "No staged files found, skipping pre-commit checks."
-  exit 0
+# Determine if we should gate checks on staged files.
+# $STAGED is set by .git/hooks/pre-commit during git commit.
+# When run directly (e.g., mise run dev:precommit), run all checks.
+if [ -z "${STAGED:-}" ]; then
+  debug_msg "No staged files in context — running all checks."
+  SKIP_GATE=true
+else
+  SKIP_GATE=false
 fi
 
 # --- Shell scripts ---
-if staged_lines | grep -qE '^scripts/|^\.shellcheckrc'; then
+if $SKIP_GATE || staged_lines | grep -qE '^scripts/|^\.shellcheckrc'; then
   debug_msg "Running shellcheck..."
   fd . 'scripts/' --exclude '*.hurl' -t file --exec shellcheck --color
 fi
 
 # --- Elixir ---
-if staged_lines | grep -qE '^(lib/|test/|config/|mix\.exs|mix\.lock|priv/repo/migrations/|priv/gettext/|\.credo\.exs|\.formatter\.exs|\.sobelow-conf)'; then
+if $SKIP_GATE || staged_lines | grep -qE '^(lib/|test/|config/|mix\.exs|mix\.lock|priv/repo/migrations/|priv/gettext/|\.credo\.exs|\.formatter\.exs|\.sobelow-conf)'; then
   debug_msg "Running credo..."
   mix credo --strict
 
@@ -45,37 +49,37 @@ if staged_lines | grep -qE '^(lib/|test/|config/|mix\.exs|mix\.lock|priv/repo/mi
 fi
 
 # deps.unlock sub-gate: only when mix.exs or mix.lock changed
-if staged_lines | grep -qE '^mix\.exs$|^mix\.lock$'; then
+if $SKIP_GATE || staged_lines | grep -qE '^mix\.exs$|^mix\.lock$'; then
   debug_msg "Checking unused deps..."
   mix deps.unlock --unused
 fi
 
 # --- Assets (JS/TS/CSS) ---
-if staged_lines | grep -qE '^assets/|^\.pi/extensions/.*\.(ts|js|json)$'; then
+if $SKIP_GATE || staged_lines | grep -qE '^assets/|^\.pi/extensions/.*\.(ts|js|json)$'; then
   debug_msg "Checking assets formatting..."
   prettier --check 'assets/css/**/*.css' 'assets/js/**/*.js' '.pi/extensions/**/*.{ts,js,json}' '!.pi/extensions/**/node_modules/**'
 fi
 
 # --- Documentation ---
-if staged_lines | grep -qE '^docs/|^README\.md$|^AGENTS\.md$'; then
+if $SKIP_GATE || staged_lines | grep -qE '^docs/|^README\.md$|^AGENTS\.md$'; then
   debug_msg "Checking docs formatting..."
   prettier --check 'docs/**/*.md' 'docs/**/*.livemd' 'README.md' 'AGENTS.md'
 fi
 
 # --- Backlog ---
-if staged_lines | grep -qE '^backlog/'; then
+if $SKIP_GATE || staged_lines | grep -qE '^backlog/'; then
   debug_msg "Checking backlog formatting..."
   prettier --check 'backlog/archive/**/*.md' 'backlog/completed/**/*.md' 'backlog/tasks/**/*.md' 'backlog/docs/**/*.md'
 fi
 
 # --- Presto ---
-if staged_lines | grep -qE '^presto/'; then
+if $SKIP_GATE || staged_lines | grep -qE '^presto/'; then
   debug_msg "Checking presto..."
   (cd presto && mise run test)
 fi
 
 # --- Docker ---
-if staged_lines | grep -qE '^Dockerfile$|^\.dockerignore$|^compose\.yaml$'; then
+if $SKIP_GATE || staged_lines | grep -qE '^Dockerfile$|^\.dockerignore$|^compose\.yaml$'; then
   debug_msg "Validating Docker image..."
   mise run dev:validate-docker-image
 fi
