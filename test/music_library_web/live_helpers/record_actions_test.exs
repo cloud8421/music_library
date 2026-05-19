@@ -9,6 +9,7 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
   alias MusicLibrary.Chats
   alias MusicLibrary.Records
   alias MusicLibrary.Records.Similarity
+  alias MusicLibraryWeb.LiveHelpers.RecordActions
   alias Req.Test
 
   # A MusicBrainz stub that returns valid fixture responses for every route
@@ -69,6 +70,49 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
       |> Plug.Conn.put_resp_content_type("text/event-stream")
       |> Plug.Conn.send_resp(200, body)
     end)
+  end
+
+  defp connected_socket(assigns \\ %{}) do
+    %Phoenix.LiveView.Socket{transport_pid: self(), assigns: assigns}
+  end
+
+  describe "manage_subscription" do
+    test "does not duplicate a same-record subscription" do
+      record = record()
+
+      assert :ok = RecordActions.manage_subscription(connected_socket(), record.id)
+
+      assert :ok =
+               RecordActions.manage_subscription(connected_socket(%{record: record}), record.id)
+
+      updated_record = %{record | title: "Single PubSub Delivery Title"}
+
+      assert :ok = Records.notify_update(updated_record)
+      assert_receive {:update, ^updated_record}
+      refute_receive {:update, ^updated_record}, 100
+    end
+
+    test "switches subscriptions when navigating between records" do
+      old_record = record()
+      new_record = record()
+
+      assert :ok = RecordActions.manage_subscription(connected_socket(), old_record.id)
+
+      assert :ok =
+               RecordActions.manage_subscription(
+                 connected_socket(%{record: old_record}),
+                 new_record.id
+               )
+
+      updated_old_record = %{old_record | title: "Old Record Update"}
+      updated_new_record = %{new_record | title: "New Record Update"}
+
+      assert :ok = Records.notify_update(updated_old_record)
+      refute_receive {:update, ^updated_old_record}, 100
+
+      assert :ok = Records.notify_update(updated_new_record)
+      assert_receive {:update, ^updated_new_record}
+    end
   end
 
   describe "refresh_musicbrainz_data event" do

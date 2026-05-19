@@ -1,10 +1,11 @@
 ---
 id: ML-190
 title: Skip redundant unsubscribe+resubscribe on same-record reconnect
-status: To Do
-assignee: []
+status: Done
+assignee:
+  - Codex
 created_date: "2026-05-19 08:42"
-updated_date: "2026-05-19 09:26"
+updated_date: "2026-05-19 11:06"
 labels:
   - audit
   - pubsub
@@ -16,6 +17,7 @@ documentation:
     Audit-Report-PubSub-Subscription-Lifecycle-Phase-2.md
 modified_files:
   - lib/music_library_web/live_helpers/record_actions.ex
+  - test/music_library_web/live_helpers/record_actions_test.exs
 priority: low
 ordinal: 25000
 ---
@@ -24,11 +26,11 @@ ordinal: 25000
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
 
-`RecordActions.manage_subscription/2` unsubscribes the old record and subscribes the new record on every `handle_params` call. When LiveView reconnects to the same record (e.g., after a WebSocket drop within the reconnect grace period), it unsubscribes and resubscribes to the same topic. While harmless (Phoenix.PubSub deduplicates by PID), a same-record check would be a micro-optimization.
+`RecordActions.manage_subscription/2` manages record show PubSub topics from `handle_params/3`. Phoenix.PubSub allows duplicate subscriptions for the same PID/topic and delivers duplicate events, so same-record parameter handling must leave the existing subscription untouched instead of subscribing again.
 
-**Fix:** Add a guard: `if socket.assigns[:record] && socket.assigns.record.id != new_id, do: Records.unsubscribe(...)` — only unsubscribe when the record actually changes.
+**Fix:** Make `manage_subscription/2` distinguish first subscription, different-record navigation, and same-record no-op. First mount subscribes to the record topic; navigating to a different record unsubscribes the old topic and subscribes the new topic; same-record handling does nothing.
 
-**Source:** Audit doc-25 (Phase 2), Recommendation #2.
+**Source:** Audit doc-25 (Phase 2), Recommendation #2, corrected after verifying Phoenix.PubSub duplicate-subscription behavior.
 
 <!-- SECTION:DESCRIPTION:END -->
 
@@ -36,9 +38,10 @@ ordinal: 25000
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 manage_subscription/2 only calls unsubscribe when old record ID differs from new ID
-- [ ] #2 Same-record reconnect skips unsubscribe+resubscribe entirely
-- [ ] #3 All existing tests pass
+- [x] #1 manage_subscription/2 leaves the existing PubSub subscription untouched when the assigned record ID already matches the new ID
+- [x] #2 manage_subscription/2 still unsubscribes from the old record and subscribes to the new record when navigating between different records
+- [x] #3 A regression test verifies same-record parameter handling does not create duplicate PubSub deliveries
+- [x] #4 Relevant tests pass
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -47,65 +50,48 @@ ordinal: 25000
 
 ## Overview
 
-Micro-optimization to skip the redundant `Records.unsubscribe/1` call when a LiveView reconnects to the same record. The change is a single guard addition in `RecordActions.manage_subscription/2`. No other modules are affected.
+Correct the same-record subscription optimization so it avoids both sides of the redundant PubSub lifecycle. Phoenix.PubSub allows duplicate subscriptions for the same PID/topic and will deliver duplicate events, so same-record handling must not call `Records.subscribe/1` again.
 
-**Nature:** Code hygiene, not a measurable performance win. The skip eliminates at most two ETS operations on reconnect, which Phoenix.PubSub already deduplicates by PID internally.
+## Implementation
 
-## Callers (no changes needed)
-
-| LiveView            | File                                                 | Line | Hook              |
-| ------------------- | ---------------------------------------------------- | ---- | ----------------- |
-| CollectionLive.Show | `lib/music_library_web/live/collection_live/show.ex` | 361  | `handle_params/3` |
-| WishlistLive.Show   | `lib/music_library_web/live/wishlist_live/show.ex`   | 298  | `handle_params/3` |
-
-Both call `manage_subscription(socket, id)` at the top of `handle_params/3` before loading the record. No caller changes are needed because the function signature and return value (`:ok`) remain unchanged.
-
-## Code change
-
-**File:** `lib/music_library_web/live_helpers/record_actions.ex`
-
-Change the unsubscribe guard from:
-
-```elixir
-if socket.assigns[:record], do: Records.unsubscribe(socket.assigns.record.id)
-```
-
-to:
-
-```elixir
-if socket.assigns[:record] && socket.assigns.record.id != new_id,
-  do: Records.unsubscribe(socket.assigns.record.id)
-```
-
-The `Records.subscribe(new_id)` call is intentionally left unconditional: on same-record reconnect it's a no-op (PubSub deduplicates by PID), and on first mount it's required.
-
-## Edge-case coverage
-
-| Scenario                     | `socket.assigns[:record]` | old vs new     | Unsub? | Sub?        | Correct? |
-| ---------------------------- | ------------------------- | -------------- | ------ | ----------- | -------- |
-| First mount                  | `nil`                     | short-circuits | No     | Yes         | ✅       |
-| Navigate to different record | record A                  | A ≠ B          | Yes    | Yes         | ✅       |
-| Reconnect same record        | record X                  | X == X         | No     | Yes (no-op) | ✅       |
-
-## Verification steps
-
-1. **Run existing tests:**
-
-   ```bash
-   mix test test/music_library_web/live_helpers/record_actions_test.exs
-   mix test test/music_library_web/live/collection_live/show_test.exs
-   mix test test/music_library_web/live/wishlist_live/show_test.exs
-   ```
-
-   All should pass. These cover `manage_subscription/2` indirectly through PubSub broadcast handling and full page navigation tests.
-
-2. **Manual reconnect smoke test (optional):** Navigate to a record show page, kill the server, restart it, and confirm the page reconnects and continues to receive PubSub updates (e.g., trigger a background cover refresh and verify the toast appears).
-
-3. **No new test is strictly required.** The change is a pure optimization — it removes a redundant call that was already harmless. Existing PubSub broadcast tests in `record_actions_test.exs` (the `handle_record_updated` describe block) confirm the subscription lifecycle works end-to-end.
+1. Update `lib/music_library_web/live_helpers/record_actions.ex` so `manage_subscription/2` has explicit branches for first subscription, different-record navigation, and same-record no-op.
+2. Add focused regression tests in `test/music_library_web/live_helpers/record_actions_test.exs` using a connected `Phoenix.LiveView.Socket` and the real `Records.subscribe/1` / `Records.notify_update/1` PubSub path.
+3. Verify the same-record case delivers one broadcast once, and the different-record case stops receiving the old topic while receiving the new topic.
+4. Run the focused helper/show tests and format the changed files.
+5. Update this Backlog task to replace the previous incorrect PubSub deduplication note with the verified behavior.
 
 ## Documentation
 
-- No user-facing docs need updating.
-- The `@doc` for `manage_subscription/2` is already accurate and does not need amendment.
-- No production infrastructure changes, environment variables, or migrations are required.
+No project architecture, production infrastructure, or convention docs need codebase-level changes because this is a bug fix within the existing `LiveHelpers.RecordActions.manage_subscription/2` pattern. The necessary documentation updates are the local `@doc` for `manage_subscription/2` and this task record, since it previously claimed Phoenix.PubSub deduplicates duplicate subscriptions.
+
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+
+Found that Phoenix.PubSub duplicate subscriptions are allowed and produce duplicate deliveries; the previous task notes/final summary claiming PID/topic deduplication were incorrect.
+
+Updated `manage_subscription/2` to treat same-record handling as a no-op, preserving first-subscribe and different-record switch behavior. Added regression tests that prove one broadcast is delivered once after same-record handling and that different-record navigation drops the old topic.
+
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
+Updated `RecordActions.manage_subscription/2` so it no-ops when the assigned record ID already matches the requested record ID. This prevents duplicate Phoenix.PubSub subscriptions, which would otherwise deliver duplicate `{:update, record}` messages for one broadcast.
+
+The helper now has explicit branches for first subscription, different-record navigation, and same-record no-op. Its `@doc` was corrected to describe the actual behavior.
+
+Added focused regression coverage in `test/music_library_web/live_helpers/record_actions_test.exs`:
+
+- same-record subscription handling does not duplicate PubSub deliveries
+- navigating between records unsubscribes the old topic and subscribes the new topic
+
+Documentation update: corrected this Backlog task's description, plan, notes, and final summary. No project architecture, production infrastructure, or convention docs required changes because the behavior remains within the existing LiveView subscription pattern.
+
+Tests run:
+`mix test test/music_library_web/live_helpers/record_actions_test.exs test/music_library_web/live/collection_live/show_test.exs test/music_library_web/live/wishlist_live/show_test.exs` -> 23 passed
+
+<!-- SECTION:FINAL_SUMMARY:END -->

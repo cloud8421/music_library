@@ -99,13 +99,22 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActions do
 
   @doc """
   Manages PubSub subscriptions when navigating between records.
-  Unsubscribes from the previous record (if any) and subscribes to the new one,
-  but only when the socket is connected.
+  Subscribes on first connect, switches topics when the record changes, and
+  leaves same-record subscriptions untouched to avoid duplicate PubSub events.
   """
   def manage_subscription(socket, new_id) do
     if Phoenix.LiveView.connected?(socket) do
-      if socket.assigns[:record], do: Records.unsubscribe(socket.assigns.record.id)
-      Records.subscribe(new_id)
+      case socket.assigns[:record] do
+        %{id: ^new_id} ->
+          :ok
+
+        %{id: old_id} ->
+          Records.unsubscribe(old_id)
+          Records.subscribe(new_id)
+
+        _missing_record ->
+          Records.subscribe(new_id)
+      end
     end
 
     :ok
