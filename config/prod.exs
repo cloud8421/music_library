@@ -49,8 +49,9 @@ config :music_library, Oban,
        {"0 */12 * * *", MusicLibrary.Worker.PruneAssetCache},
        # every day at 2 am,
        {"0 2 * * *", MusicLibrary.Worker.PruneAssets},
-       # every day at 3 am,
-       {"0 3 * * *", MusicLibrary.Worker.RepoVacuum},
+       # every day at 3:03 am (staggered 3 min past the hour to avoid
+       # collision with RefreshScrobbles every-5-min cadence, fixes #4075)
+       {"3 3 * * *", MusicLibrary.Worker.RepoVacuum},
        # every day at 4 am,
        {"0 4 * * *", MusicLibrary.Worker.RepoOptimize},
        # every first day of the month, staggered hourly

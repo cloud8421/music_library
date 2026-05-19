@@ -105,6 +105,7 @@ if config_env() == :prod do
     # 128MB * pool_size = base memory usage
     cache_size: -128_000,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5"),
+    busy_timeout: 5_000,
     show_sensitive_data_on_connection_error: false
 
   background_database_path =
