@@ -30,6 +30,16 @@ precedence over the generic reference material below.
 6. **Streams for all collections.** Use LiveView streams, not list assigns. See the
    LiveView reference below for stream patterns.
 
+## LiveView stream gotchas
+
+- **Do not switch between separate conditional stream containers without re-streaming.**
+  Streams are consumed after render and the browser DOM holds the rendered children. If
+  two mutually exclusive branches both consume the same stream, such as grid/list views
+  behind `:if`, switching branches mounts a new stream container with no queued inserts.
+  The result is often an empty state even though records exist. Keep the stream container
+  mounted, render both views without replacing the stream root, or re-run
+  `stream(..., reset: true)` when the branch changes.
+
 ## Component organization
 
 - Generic UI → `CoreComponents`
