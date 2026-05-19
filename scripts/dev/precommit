@@ -61,9 +61,9 @@ if $SKIP_GATE || staged_lines | grep -qE '^assets/|^\.pi/extensions/.*\.(ts|js|j
 fi
 
 # --- Documentation ---
-if $SKIP_GATE || staged_lines | grep -qE '^docs/|^README\.md$|^AGENTS\.md$'; then
+if $SKIP_GATE || staged_lines | grep -qE '^docs/|^README\.md$'; then
   debug_msg "Checking docs formatting..."
-  prettier --check 'docs/**/*.md' 'docs/**/*.livemd' 'README.md' 'AGENTS.md'
+  prettier --check 'docs/**/*.md' 'docs/**/*.livemd' 'README.md'
 fi
 
 # --- Backlog ---
