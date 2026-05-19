@@ -1,10 +1,10 @@
 ---
 id: ML-169
 title: "Comprehensive application audit: functional correctness and performance"
-status: To Do
+status: Done
 assignee: []
 created_date: "2026-05-08 08:46"
-updated_date: "2026-05-11 06:46"
+updated_date: "2026-05-19 07:46"
 labels:
   - audit
 dependencies: []
@@ -35,11 +35,11 @@ The audit is divided into 4 independent phases that can be tackled in parallel o
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 Phase 1 (async messages): all LiveComponents that send messages to parent LiveViews have matching handle_info clauses documented; missing handlers identified with severity
-- [ ] #2 Phase 2 (PubSub lifecycle): all subscribe/unsubscribe pairs verified correct; stale subscription risks identified; ML-168 gap separately accounted for
-- [ ] #3 Phase 3 (state change safety): concurrent record-mutation patterns audited; {:update, record} guards and manage_subscription patterns verified across all navigation paths
-- [ ] #4 Phase 4 (performance): unnecessary round trips, redundant full-stream reloads, and synchronous mount work identified with estimated impact and fix approach
-- [ ] #5 Each phase produces a written finding report with file paths, line references, severity ratings, and recommended fixes
+- [x] #1 Phase 1 (async messages): all LiveComponents that send messages to parent LiveViews have matching handle_info clauses documented; missing handlers identified with severity
+- [x] #2 Phase 2 (PubSub lifecycle): all subscribe/unsubscribe pairs verified correct; stale subscription risks identified; ML-168 gap separately accounted for
+- [x] #3 Phase 3 (state change safety): concurrent record-mutation patterns audited; {:update, record} guards and manage_subscription patterns verified across all navigation paths
+- [x] #4 Phase 4 (performance): unnecessary round trips, redundant full-stream reloads, and synchronous mount work identified with estimated impact and fix approach
+- [x] #5 Each phase produces a written finding report with file paths, line references, severity ratings, and recommended fixes
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -223,10 +223,10 @@ Each phase is a standalone investigation that produces a findings document. Fixe
 
 <!-- DOD:BEGIN -->
 
-- [ ] #1 Audit report for each phase written as a Backlog.md document with file paths, line references, severity ratings, and fix recommendations
-- [ ] #2 At least one concrete finding identified per phase before considering the phase complete
-- [ ] #3 Each finding includes a specific file:line reference (not just a general concern)
-- [ ] #4 Findings are triaged by severity: HIGH (crashes/data loss), MEDIUM (wrong behavior/noticeable perf), LOW (cosmetic/redundant)
-- [ ] #5 ML-168 is referenced where relevant but not duplicated — this audit identifies NEW issues only
-- [ ] #6 No fixes implemented during audit — only identification and recommendation
+- [x] #1 Audit report for each phase written as a Backlog.md document with file paths, line references, severity ratings, and fix recommendations
+- [x] #2 At least one concrete finding identified per phase before considering the phase complete
+- [x] #3 Each finding includes a specific file:line reference (not just a general concern)
+- [x] #4 Findings are triaged by severity: HIGH (crashes/data loss), MEDIUM (wrong behavior/noticeable perf), LOW (cosmetic/redundant)
+- [x] #5 ML-168 is referenced where relevant but not duplicated — this audit identifies NEW issues only
+- [x] #6 No fixes implemented during audit — only identification and recommendation
 <!-- DOD:END -->
