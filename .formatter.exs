@@ -5,7 +5,9 @@
   inputs: ["*.{heex,ex,exs}", "{config,lib,test}/**/*.{heex,ex,exs}", "priv/*/seeds.exs"],
   quokka: [
     only: [
+      :autosort,
       :blocks,
+      :configs,
       :defs,
       :deprecations,
       :line_length,
