@@ -119,6 +119,10 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActions do
   @doc """
   Handles a background record update. Returns the updated socket (not wrapped
   in `{:noreply, ...}`) so the caller can pipe additional assigns.
+
+  **Note:** Callers intentionally bypass this function when `live_action == :edit`
+  to prevent background worker updates from overwriting the user's in-progress
+  form edits. See CollectionLive.Show and WishlistLive.Show `handle_info({:update, record})`.
   """
   def handle_record_updated(socket, record) do
     socket

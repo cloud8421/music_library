@@ -1,10 +1,10 @@
 ---
 id: ML-188
 title: Fix form edit + background update race in Show LiveViews
-status: To Do
+status: Done
 assignee: []
 created_date: "2026-05-19 08:42"
-updated_date: "2026-05-19 09:00"
+updated_date: "2026-05-19 10:18"
 labels:
   - audit
   - bug
@@ -19,6 +19,10 @@ documentation:
 modified_files:
   - lib/music_library_web/live/collection_live/show.ex
   - lib/music_library_web/live/wishlist_live/show.ex
+  - lib/music_library_web/live_helpers/record_actions.ex
+  - test/music_library_web/live/collection_live/show_test.exs
+  - test/music_library_web/live/wishlist_live/show_test.exs
+  - docs/architecture.md
 priority: medium
 ordinal: 23000
 ---
@@ -48,15 +52,15 @@ When a user is editing a record in a modal (`live_action == :edit`) and a backgr
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 handle_info({:update, record}) skips assign(:record, ...) when live_action == :edit in CollectionLive.Show
-- [ ] #2 handle_info({:update, record}) skips assign(:record, ...) when live_action == :edit in WishlistLive.Show
-- [ ] #3 Warning toast shown to user when background update occurs during edit (different wording from normal info toast)
-- [ ] #4 handle_info({:update, record}) still works normally when live_action == :show
-- [ ] #5 When user navigates away from edit, handle_params re-fetches fresh record with worker changes
-- [ ] #6 Mismatched record.id still handled as no-op (socket unchanged)
-- [ ] #7 Tests added for all three cases: :edit guard, :show normal path, mismatched-id no-op
-- [ ] #8 docs/architecture.md updated to mention live_action guard
-- [ ] #9 Comment added in RecordActions.handle_record_updated/2 noting intentional bypass during :edit
+- [x] #1 handle_info({:update, record}) skips assign(:record, ...) when live_action == :edit in CollectionLive.Show
+- [x] #2 handle_info({:update, record}) skips assign(:record, ...) when live_action == :edit in WishlistLive.Show
+- [x] #3 Warning toast shown to user when background update occurs during edit (different wording from normal info toast)
+- [x] #4 handle_info({:update, record}) still works normally when live_action == :show
+- [x] #5 When user navigates away from edit, handle_params re-fetches fresh record with worker changes
+- [x] #6 Mismatched record.id still handled as no-op (socket unchanged)
+- [x] #7 Tests added for all three cases: :edit guard, :show normal path, mismatched-id no-op
+- [x] #8 docs/architecture.md updated to mention live_action guard
+- [x] #9 Comment added in RecordActions.handle_record_updated/2 noting intentional bypass during :edit
 <!-- AC:END -->
 
 ## Implementation Notes
@@ -117,3 +121,15 @@ Run: `mix test test/music_library_web/live/collection_live/show_test.exs test/mu
 - Update `docs/architecture.md`: the existing line about `handle_info/2` validating inbound record updates against `socket.assigns.record.id` should also mention the `live_action` guard for form-edit safety
 - Update the task's final summary with a brief note about the design decision
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
+Added `live_action` guard to `handle_info({:update, record})` in both CollectionLive.Show and WishlistLive.Show. When the user is editing a record (`live_action == :edit`), background worker updates are skipped and a distinct warning toast ("Your edits may be stale — save and re-open...") is shown instead of silently overwriting the socket. When showing (`live_action == :show`), existing behavior is unchanged — the record updates and shows "Record updated in the background". Mismatched-ID records remain a no-op.
+
+This prevents the race where a background worker (PopulateGenres, RefreshCover, etc.) updates the DB and broadcasts `{:update, v2}` while the user's edit modal is open with v1. The guard keeps `@record = v1` on the socket so the form saves only user-changed fields via Ecto changeset semantics. When the user navigates away from edit, `handle_params` re-fetches the fresh record with worker changes.
+
+6 tests added (3 per LiveView), covering: `:show` normal path, `:edit` guard path, and mismatched-ID no-op. Architecture docs updated with guard description.
+
+<!-- SECTION:FINAL_SUMMARY:END -->

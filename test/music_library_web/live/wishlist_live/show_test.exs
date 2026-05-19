@@ -6,6 +6,7 @@ defmodule MusicLibraryWeb.WishlistLive.ShowTest do
 
   alias MusicLibrary.Assets.Transform
   alias MusicLibrary.Records.Record
+  alias Phoenix.PubSub
 
   describe "Edit record from show page" do
     test "can navigate to the record edit form", %{conn: conn} do
@@ -49,6 +50,70 @@ defmodule MusicLibraryWeb.WishlistLive.ShowTest do
       for genre <- record.genres do
         assert_has(session, "a", genre)
       end
+    end
+  end
+
+  describe "handle_info({:update, record}) with live_action guard" do
+    test "updates record when showing (live_action is :show)", %{conn: conn} do
+      record = record(purchased_at: nil)
+      updated_record = %{record | title: "Background Updated Title"}
+
+      session =
+        conn
+        |> visit(~p"/wishlist/#{record.id}")
+
+      PubSub.broadcast(
+        MusicLibrary.PubSub,
+        "records:#{record.id}",
+        {:update, updated_record}
+      )
+
+      session
+      |> assert_has("*", text: "Background Updated Title", timeout: 200)
+      |> assert_has("#toast-group", text: "Record updated in the background")
+    end
+
+    test "skips update when editing and shows warning toast", %{conn: conn} do
+      record = record(purchased_at: nil)
+      updated_record = %{record | title: "Should Not Appear"}
+
+      session =
+        conn
+        |> visit(~p"/wishlist/#{record.id}")
+        |> click_link("Edit")
+
+      PubSub.broadcast(
+        MusicLibrary.PubSub,
+        "records:#{record.id}",
+        {:update, updated_record}
+      )
+
+      session
+      |> refute_has("h2", text: "Should Not Appear")
+      |> assert_has(
+        "#toast-group",
+        text:
+          "Record was updated in the background. Your edits may be stale — save and re-open to see the latest data."
+      )
+    end
+
+    test "no-ops when broadcasted record has mismatched ID", %{conn: conn} do
+      record = record(purchased_at: nil)
+      other_record = record(purchased_at: nil)
+
+      session =
+        conn
+        |> visit(~p"/wishlist/#{record.id}")
+
+      PubSub.broadcast(
+        MusicLibrary.PubSub,
+        "records:#{record.id}",
+        {:update, other_record}
+      )
+
+      session
+      |> assert_has("h2", text: escape(record.title))
+      |> refute_has("#toast-group", text: "Record updated in the background")
     end
   end
 end

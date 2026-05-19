@@ -2556,3 +2556,9 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "ISO format"
 msgstr ""
+
+#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Record was updated in the background. Your edits may be stale — save and re-open to see the latest data."
+msgstr ""

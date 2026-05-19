@@ -365,10 +365,22 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
   @impl true
   def handle_info({:update, record}, socket) do
-    if record.id == socket.assigns.record.id do
-      {:noreply, RecordActions.handle_record_updated(socket, record)}
-    else
-      {:noreply, socket}
+    cond do
+      record.id != socket.assigns.record.id ->
+        {:noreply, socket}
+
+      socket.assigns.live_action == :edit ->
+        {:noreply,
+         socket
+         |> put_toast(
+           :warning,
+           gettext(
+             "Record was updated in the background. Your edits may be stale — save and re-open to see the latest data."
+           )
+         )}
+
+      true ->
+        {:noreply, RecordActions.handle_record_updated(socket, record)}
     end
   end
 

@@ -250,11 +250,11 @@ HTTP 429 into `:rate_limit` vs `:auth_error` by reading the body `code`
 
 ## PubSub Topics
 
-| PubSub           | Topic Pattern              | Message                  | Used By                                                                                        |
-| ---------------- | -------------------------- | ------------------------ | ---------------------------------------------------------------------------------------------- |
-| `:music_library` | `"records:#{id}"`          | `{:update, record}`      | CollectionLive.Show, WishlistLive.Show — subscribe in handle_params, unsubscribe on navigation |
-| `:music_library` | `"records:index_changed"`  | `:records_index_changed` | CollectionLive.Index, WishlistLive.Index — auto-refresh when background import completes       |
-| `:music_library` | `"listening_stats:update"` | `%{track_count: n}`      | StatsLive.Index, ScrobbledTracksLive.Index — new scrobbles arrived                             |
+| PubSub           | Topic Pattern              | Message                  | Used By                                                                                                                                                                                                                                                                                                                                               |
+| ---------------- | -------------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `:music_library` | `"records:#{id}"`          | `{:update, record}`      | CollectionLive.Show, WishlistLive.Show — subscribe in `handle_params`, unsubscribe on navigation. `handle_info({:update, record})` matches record ID against socket and guards against applying background updates during `:edit` `live_action` (skips assign, shows warning toast) to prevent worker changes from overwriting in-progress form edits |
+| `:music_library` | `"records:index_changed"`  | `:records_index_changed` | CollectionLive.Index, WishlistLive.Index — auto-refresh when background import completes                                                                                                                                                                                                                                                              |
+| `:music_library` | `"listening_stats:update"` | `%{track_count: n}`      | StatsLive.Index, ScrobbledTracksLive.Index — new scrobbles arrived                                                                                                                                                                                                                                                                                    |
 
 ---
 

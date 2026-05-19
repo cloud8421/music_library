@@ -472,13 +472,25 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
   @impl true
   def handle_info({:update, record}, socket) do
-    if record.id == socket.assigns.record.id do
-      {:noreply,
-       socket
-       |> RecordActions.handle_record_updated(record)
-       |> assign_similar_records()}
-    else
-      {:noreply, socket}
+    cond do
+      record.id != socket.assigns.record.id ->
+        {:noreply, socket}
+
+      socket.assigns.live_action == :edit ->
+        {:noreply,
+         socket
+         |> put_toast(
+           :warning,
+           gettext(
+             "Record was updated in the background. Your edits may be stale — save and re-open to see the latest data."
+           )
+         )}
+
+      true ->
+        {:noreply,
+         socket
+         |> RecordActions.handle_record_updated(record)
+         |> assign_similar_records()}
     end
   end
 
