@@ -1,10 +1,10 @@
 ---
 id: ML-189
 title: Make Release component's dynamic tag type-safe
-status: To Do
+status: Done
 assignee: []
 created_date: "2026-05-19 08:42"
-updated_date: "2026-05-19 09:10"
+updated_date: "2026-05-19 11:13"
 labels:
   - audit
   - liveview
@@ -96,3 +96,26 @@ end
 3. Run `mix test test/music_library_web/components/release_test.exs` — all existing Release component tests pass.
 4. Confirm `on_release_loaded` no longer appears in either LiveView template or the Release component.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
+### Changes
+
+**1. Release component** (`lib/music_library_web/components/release.ex`):
+
+- `notify_release_loaded/2` now always sends `{__MODULE__, {:loaded, release}}` — removed the nil-check and `on_release_loaded` attribute-based conditional.
+
+**2. ScrobbleLive.ReleaseShow** (`lib/music_library_web/live/scrobble_live/release_show.ex`):
+
+- Updated `handle_info` to match `{MusicLibraryWeb.Components.Release, {:loaded, release}}`.
+- Removed `on_release_loaded={:release_loaded}` assign from the template.
+
+**3. CollectionLive.Show** (`lib/music_library_web/live/collection_live/show.ex`):
+
+- Added no-op `handle_info({MusicLibraryWeb.Components.Release, {:loaded, _release}}, socket)` to consume the message (previously silently dropped).
+
+All 21 tests pass (12 release component + 3 release_show + 6 collection_show).
+
+<!-- SECTION:FINAL_SUMMARY:END -->

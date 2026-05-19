@@ -470,6 +470,10 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     RecordActions.handle_chats_changed(socket)
   end
 
+  def handle_info({MusicLibraryWeb.Components.Release, {:loaded, _release}}, socket) do
+    {:noreply, socket}
+  end
+
   @impl true
   def handle_info({:update, record}, socket) do
     cond do

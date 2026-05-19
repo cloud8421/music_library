@@ -76,11 +76,8 @@ defmodule MusicLibraryWeb.Components.Release do
      )}
   end
 
-  defp notify_release_loaded(socket, release) do
-    case socket.assigns[:on_release_loaded] do
-      nil -> :ok
-      tag -> send(self(), {tag, release})
-    end
+  defp notify_release_loaded(_socket, release) do
+    send(self(), {__MODULE__, {:loaded, release}})
   end
 
   defp apply_pending_form_params(socket) do

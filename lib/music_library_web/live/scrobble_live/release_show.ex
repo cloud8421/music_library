@@ -38,7 +38,6 @@ defmodule MusicLibraryWeb.ScrobbleLive.ReleaseShow do
         release_id={@release_id}
         show_print?={false}
         timezone={@timezone}
-        on_release_loaded={:release_loaded}
       />
     </Layouts.app>
     """
@@ -65,7 +64,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.ReleaseShow do
   end
 
   @impl true
-  def handle_info({:release_loaded, release}, socket) do
+  def handle_info({MusicLibraryWeb.Components.Release, {:loaded, release}}, socket) do
     {:noreply, assign(socket, :page_title, page_title(release))}
   end
 
