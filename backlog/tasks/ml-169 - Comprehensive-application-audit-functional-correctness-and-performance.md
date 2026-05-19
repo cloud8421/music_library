@@ -4,7 +4,7 @@ title: "Comprehensive application audit: functional correctness and performance"
 status: Done
 assignee: []
 created_date: "2026-05-08 08:46"
-updated_date: "2026-05-19 07:46"
+updated_date: "2026-05-19 08:50"
 labels:
   - audit
 dependencies: []
@@ -15,6 +15,7 @@ references:
     backlog/tasks/ml-168 -
     Update-wishlist-index-and-collection-index-when-background-import-finishes.md
 priority: medium
+ordinal: 1000
 ---
 
 ## Description
