@@ -5,6 +5,7 @@ defmodule MusicLibraryWeb.WishlistLive.ShowTest do
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
 
   alias MusicLibrary.Assets.Transform
+  alias MusicLibrary.Records
   alias MusicLibrary.Records.Record
   alias Phoenix.PubSub
 
@@ -49,6 +50,21 @@ defmodule MusicLibraryWeb.WishlistLive.ShowTest do
 
       for genre <- record.genres do
         assert_has(session, "a", genre)
+      end
+    end
+  end
+
+  describe "Delete record" do
+    test "deletes the record and navigates back to wishlist", %{conn: conn} do
+      record = record(purchased_at: nil)
+
+      conn
+      |> visit(~p"/wishlist/#{record.id}")
+      |> click_link("a[data-confirm='Are you sure?']", "Delete")
+      |> assert_path(~p"/wishlist")
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Records.get_record!(record.id)
       end
     end
   end

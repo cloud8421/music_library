@@ -3,6 +3,8 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.IndexTest do
 
   import MusicLibrary.Fixtures.OnlineStoreTemplates
 
+  alias MusicLibrary.OnlineStoreTemplates
+
   describe "Index" do
     test "lists all templates", %{conn: conn} do
       online_store_template(%{name: "Amazon UK"})
@@ -63,6 +65,10 @@ defmodule MusicLibraryWeb.OnlineStoreTemplateLive.IndexTest do
       |> visit(~p"/online-store-templates")
       |> click_button("button[phx-click='delete'][phx-value-id='#{template.id}']", "Delete")
       |> refute_has("p", "To Delete")
+
+      assert_raise Ecto.NoResultsError, fn ->
+        OnlineStoreTemplates.get_template!(template.id)
+      end
     end
   end
 

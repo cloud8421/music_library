@@ -45,6 +45,20 @@ defmodule MusicLibraryWeb.WishlistLive.IndexTest do
   describe "Wishlist" do
     setup [:fill_wishlist]
 
+    test "deletes a record from the listing", %{conn: conn} do
+      record = record(%{title: "Delete From Wishlist Index", purchased_at: nil})
+
+      conn
+      |> visit(~p"/wishlist")
+      |> assert_has("#records-#{record.id}")
+      |> click_link("#records-#{record.id} a[data-confirm='Are you sure?']", "Delete")
+      |> refute_has("#records-#{record.id}")
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Records.get_record!(record.id)
+      end
+    end
+
     test "can purchase a record and move it to the collection", %{
       conn: conn,
       wishlist: wishlist_records

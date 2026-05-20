@@ -86,6 +86,22 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
     end
   end
 
+  describe "Delete track" do
+    setup [:create_track]
+
+    test "deletes a scrobbled track from the listing", %{conn: conn, track: track} do
+      conn
+      |> visit(~p"/scrobbled-tracks")
+      |> assert_has("p", track.title)
+      |> click_button("button[data-confirm='Are you sure?']", "Delete")
+      |> refute_has("p", track.title)
+
+      assert_raise Ecto.NoResultsError, fn ->
+        ListeningStats.get_track!(track.scrobbled_at_uts)
+      end
+    end
+  end
+
   describe "Pagination" do
     test "navigates to next page", %{conn: conn} do
       create_test_tracks(21)

@@ -80,4 +80,20 @@ defmodule MusicLibraryWeb.RecordSetLive.IndexTest do
       assert updated.name == "Updated Name"
     end
   end
+
+  describe "Delete set" do
+    test "deletes a set from the listing", %{conn: conn} do
+      set = record_set(%{name: "Delete From Index"})
+
+      conn
+      |> visit(~p"/record-sets")
+      |> assert_has("h2", "Delete From Index")
+      |> click_button("button[phx-click='delete_set'][phx-value-id='#{set.id}']", "Delete")
+      |> refute_has("h2", "Delete From Index")
+
+      assert_raise Ecto.NoResultsError, fn ->
+        RecordSets.get_record_set!(set.id)
+      end
+    end
+  end
 end

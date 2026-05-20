@@ -127,6 +127,22 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     end
   end
 
+  describe "Delete record" do
+    test "deletes a record from the listing", %{conn: conn} do
+      record = record(%{title: "Delete From Collection Index"})
+
+      conn
+      |> visit(~p"/collection")
+      |> assert_has("#records-#{record.id}")
+      |> click_link("#records-#{record.id} a[data-confirm='Are you sure?']", "Delete")
+      |> refute_has("#records-#{record.id}")
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Records.get_record!(record.id)
+      end
+    end
+  end
+
   describe "Search and pagination" do
     setup [:fill_collection]
 

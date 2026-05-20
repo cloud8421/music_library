@@ -69,7 +69,12 @@ defmodule MusicLibrary.RecordsTest do
 
       [artist] = record.artists
 
-      Records.delete_record(record)
+      assert {:ok, deleted} = Records.delete_record(record)
+      assert deleted.id == record.id
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Records.get_record!(record.id)
+      end
 
       assert_enqueued worker: MusicLibrary.Worker.PruneArtistInfo,
                       args: %{id: artist.musicbrainz_id}

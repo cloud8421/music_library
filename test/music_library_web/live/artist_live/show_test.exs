@@ -17,6 +17,7 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
   alias MusicLibrary.Artists
   alias MusicLibrary.Assets
   alias MusicLibrary.Assets.Asset
+  alias MusicLibrary.Records
   alias Req.Test
 
   defp fill_collection(_config) do
@@ -163,6 +164,26 @@ defmodule MusicLibraryWeb.ArtistLive.ShowTest do
       |> assert_has("#wishlist p", escape(wishlist_record.title))
       |> refute_has("#collection p", escape(other_collection_record.title))
       |> refute_has("#wishlist p", escape(other_collection_record.title))
+    end
+
+    test "deletes a record from the artist record list", %{
+      conn: conn,
+      collection_record: collection_record,
+      artist_musicbrainz_id: artist_musicbrainz_id
+    } do
+      stub_last_fm(%{})
+
+      conn
+      |> visit(~p"/artists/#{artist_musicbrainz_id}")
+      |> render_async()
+      |> assert_has("#collection p", escape(collection_record.title))
+      |> click_link("a[data-confirm='Are you sure?']", "Delete")
+      |> refute_has("#collection p", escape(collection_record.title))
+      |> assert_has("#toast-group", "Record deleted")
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Records.get_record!(collection_record.id)
+      end
     end
   end
 

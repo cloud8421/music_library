@@ -4,6 +4,8 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
   import MusicLibrary.ScrobbleRulesFixtures
   import Phoenix.LiveViewTest, only: [render_change: 1, form: 3]
 
+  alias MusicLibrary.ScrobbleRules
+
   defp create_scrobble_rule(_) do
     scrobble_rule = scrobble_rule_fixture()
     %{scrobble_rule: scrobble_rule}
@@ -92,6 +94,10 @@ defmodule MusicLibraryWeb.ScrobbleRulesLiveTest do
         "Delete"
       )
       |> refute_has("#scrobble_rule-#{scrobble_rule.id}")
+
+      assert_raise Ecto.NoResultsError, fn ->
+        ScrobbleRules.get_scrobble_rule!(scrobble_rule.id)
+      end
     end
 
     test "toggles rule enabled status", %{conn: conn, scrobble_rule: scrobble_rule} do

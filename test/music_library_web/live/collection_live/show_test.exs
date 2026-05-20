@@ -6,6 +6,7 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
 
   alias MusicBrainz.Fixtures
   alias MusicLibrary.Assets.Transform
+  alias MusicLibrary.Records
   alias MusicLibrary.Records.Record
   alias Phoenix.PubSub
 
@@ -65,6 +66,26 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
 
       for genre <- record.genres do
         assert_has(session, "a", genre)
+      end
+    end
+  end
+
+  describe "Delete record" do
+    test "deletes the record and navigates back to collection", %{conn: conn} do
+      record = record()
+      release_response = Fixtures.Release.release(:marbles)
+
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        Req.Test.json(conn, release_response)
+      end)
+
+      conn
+      |> visit(~p"/collection/#{record.id}")
+      |> click_link("a[data-confirm='Are you sure?']", "Delete")
+      |> assert_path(~p"/collection")
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Records.get_record!(record.id)
       end
     end
   end

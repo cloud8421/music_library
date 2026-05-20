@@ -97,6 +97,10 @@ defmodule MusicLibraryWeb.RecordSetLive.ShowTest do
       |> visit(~p"/record-sets/#{set}")
       |> click_button("button[phx-click='delete_set']", "Delete")
       |> assert_path(~p"/record-sets")
+
+      assert_raise Ecto.NoResultsError, fn ->
+        RecordSets.get_record_set!(set.id)
+      end
     end
   end
 
