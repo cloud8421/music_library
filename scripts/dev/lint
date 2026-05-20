@@ -8,23 +8,64 @@ source "$(git rev-parse --show-toplevel)/scripts/_helpers.sh"
 
 ensure_working_directory!
 
-debug_msg "Formatting..."
-mix format
+# Collect changed files (staged, unstaged, untracked) for conditional gating.
+changed_lines() {
+  {
+    git diff --cached --name-only 2>/dev/null
+    git diff --name-only 2>/dev/null
+    git ls-files --others --exclude-standard 2>/dev/null
+  } | sort -u
+}
 
-debug_msg "Running credo..."
-mix credo
+# Determine if we should gate checks on changed files.
+# --all flag forces running all checks regardless of changes.
+# No changes at all also runs everything (fresh clone, clean slate).
+if [ "${1:-}" = "--all" ]; then
+  debug_msg "--all flag passed — running all checks."
+  SKIP_GATE=true
+elif [ -z "$(changed_lines)" ]; then
+  debug_msg "No changes detected — running all checks."
+  SKIP_GATE=true
+else
+  SKIP_GATE=false
+fi
 
-debug_msg "Auditing dependencies for CVEs (warn-only)..."
-mix deps.audit || true
+# --- Shell scripts ---
+if $SKIP_GATE || changed_lines | grep -qE '^scripts/'; then
+  debug_msg "Running shellcheck..."
+  fd . 'scripts/' --exclude '*.hurl' -t file --exec shellcheck --color
+fi
 
-debug_msg "Extracting translations..."
-mix gettext.extract --merge
+# --- Elixir ---
+if $SKIP_GATE || changed_lines | grep -qE '^(lib/|test/|config/|mix\.exs|mix\.lock|priv/repo/migrations/|priv/gettext/|\.credo\.exs|\.formatter\.exs|\.sobelow-conf)'; then
+  debug_msg "Formatting..."
+  mix format
 
-debug_msg "Running shellcheck..."
-fd . 'scripts/' --exclude '*.hurl' -t file --exec shellcheck --color
+  debug_msg "Running credo..."
+  mix credo
 
-debug_msg "Running prettier..."
-prettier --write '.pi/extensions/**/*.{ts,js,json}'
-prettier --write 'assets/css/**/*.css' 'assets/js/**/*.js'
-prettier --write 'docs/**/*.md' 'docs/**/*.livemd' 'README.md'
-prettier --write 'backlog/archive/**/*.md' 'backlog/completed/**/*.md' 'backlog/tasks/**/*.md' 'backlog/docs/**/*.md'
+  debug_msg "Extracting translations..."
+  mix gettext.extract --merge
+
+  debug_msg "Auditing dependencies for CVEs (warn-only)..."
+  mix deps.audit || true
+fi
+
+# --- Assets (JS/TS/CSS) ---
+if $SKIP_GATE || changed_lines | grep -qE '^assets/|^\.pi/extensions/'; then
+  debug_msg "Running prettier on assets..."
+  prettier --write '.pi/extensions/**/*.{ts,js,json}'
+  prettier --write 'assets/css/**/*.css' 'assets/js/**/*.js'
+fi
+
+# --- Documentation ---
+if $SKIP_GATE || changed_lines | grep -qE '^docs/|^README\.md$'; then
+  debug_msg "Running prettier on docs..."
+  prettier --write 'docs/**/*.md' 'docs/**/*.livemd' 'README.md'
+fi
+
+# --- Backlog ---
+if $SKIP_GATE || changed_lines | grep -qE '^backlog/'; then
+  debug_msg "Running prettier on backlog..."
+  prettier --write 'backlog/archive/**/*.md' 'backlog/completed/**/*.md' 'backlog/tasks/**/*.md' 'backlog/docs/**/*.md'
+fi
