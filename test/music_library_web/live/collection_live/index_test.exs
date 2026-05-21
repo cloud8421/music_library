@@ -571,11 +571,13 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       end)
 
       # With a transport_error stub, the scan should fail gracefully.
-      # The cart should remain empty (no results added).
+      # The cart should remain empty (no results added) and an error
+      # toast should be displayed.
       conn
       |> visit(~p"/collection/scan")
       |> trigger_hook("#barcode-scanner", "barcode_scanned", %{"number" => barcode})
       |> assert_has("#cart-empty")
+      |> assert_has("#toast-group", text: "Failed to search release for barcode 123")
     end
 
     test "removes one scanned result from the cart", %{conn: conn} do
@@ -646,13 +648,12 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       assert_has(session, "#cart-empty")
     end
 
-    test "enqueues import jobs for 2+ new releases via context function" do
+    test "enqueues import jobs for 2+ new releases via UI", %{conn: conn} do
       barcode1 = "5037300650128"
       barcode2 = "1234567890123"
       releases = releases(:marbles)
 
-      # Ensure clean MusicBrainz stub state
-      # The barcode search query includes "barcode:NUMBER AND NOT format:digitalmedia"
+      # Stub MusicBrainz for both barcode scans
       Test.stub(MusicBrainz.API, fn conn ->
         query = conn.params["query"] || ""
 
@@ -663,26 +664,23 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         end
       end)
 
-      # Scan both barcodes to get scan results
-      {:ok, result1} = MusicLibrary.BarcodeScan.scan(barcode1)
-      {:ok, result2} = MusicLibrary.BarcodeScan.scan(barcode2)
+      # Trigger both barcode scans through the UI hook
+      session =
+        conn
+        |> visit(~p"/collection/scan")
+        |> trigger_hook("#barcode-scanner", "barcode_scanned", %{"number" => barcode1})
+        |> trigger_hook("#barcode-scanner", "barcode_scanned", %{"number" => barcode2})
 
-      results = [result1, result2]
+      assert_has(session, "#cart-items li", count: 2)
 
-      # Both should be new results (no existing records)
-      assert MusicLibrary.BarcodeScan.should_import_async?(results)
+      # Click the "Add 2 releases" button (the button is in the cart sidebar)
+      session
+      |> click_button("Add 2 releases")
 
-      # Import async should succeed and enqueue jobs
-      current_time = DateTime.utc_now()
-
-      {:ok, [], async_count} =
-        MusicLibrary.BarcodeScan.import_results_async(results, current_time)
-
-      assert async_count == 2
-
-      # Verify jobs were enqueued
-      assert_enqueued(worker: ImportFromMusicbrainzRelease)
-      assert_enqueued(worker: ImportFromMusicbrainzRelease)
+      # Verify exactly two distinct import jobs were enqueued
+      enqueued = all_enqueued(worker: ImportFromMusicbrainzRelease)
+      assert length(enqueued) == 2
+      assert Enum.all?(enqueued, & &1.args["release_id"])
 
       # No records should have been inserted synchronously
       assert MusicLibrary.Repo.all(Record) == []

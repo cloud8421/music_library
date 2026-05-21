@@ -5,6 +5,8 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
     only: [
       render_click: 1,
       render_hook: 3,
+      render_submit: 1,
+      form: 3,
       element: 2
     ]
 
@@ -453,19 +455,25 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
       %{record: record}
     end
 
-    test "creates a new note through the Notes context", %{record: record} do
+    test "creates a new note through the Notes component form", %{conn: conn, record: record} do
       # No note exists yet
       assert Notes.get_note(:record, record.musicbrainz_id) == nil
 
-      {:ok, note} =
-        Notes.create_note(
-          %MusicLibrary.Notes.Note{entity: :record, musicbrainz_id: record.musicbrainz_id},
-          %{"content" => "My test note content"}
-        )
+      session =
+        conn
+        |> visit(~p"/collection/#{record.id}")
+        |> render_async()
 
-      assert note.content == "My test note content"
-      assert note.entity == :record
-      assert note.musicbrainz_id == record.musicbrainz_id
+      # The Notes component starts in "edit" mode when no note exists.
+      # Submit the notes form (always in the DOM, even when the Fluxon sheet is hidden).
+      session =
+        unwrap(session, fn view ->
+          view
+          |> form("#notes-form", %{"note" => %{"content" => "My test note content"}})
+          |> render_submit()
+        end)
+
+      assert_has(session, "#toast-group", text: "Note created successfully")
 
       # Verify persistence
       fetched = Notes.get_note(:record, record.musicbrainz_id)
@@ -489,16 +497,38 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
       assert_has(session, "#read-panel article", text: "Existing note content")
     end
 
-    test "updates existing note content through the Notes context", %{record: record} do
+    test "updates existing note content through the Notes component form", %{
+      conn: conn,
+      record: record
+    } do
       # Pre-create a note
-      {:ok, note} =
+      {:ok, _note} =
         Notes.create_note(
           %MusicLibrary.Notes.Note{entity: :record, musicbrainz_id: record.musicbrainz_id},
           %{"content" => "Original content"}
         )
 
-      {:ok, updated} = Notes.update_note(note, %{"content" => "Updated content"})
-      assert updated.content == "Updated content"
+      session =
+        conn
+        |> visit(~p"/collection/#{record.id}")
+        |> render_async()
+
+      # Switch to "edit" tab inside the Notes component
+      session =
+        unwrap(session, fn view ->
+          view
+          |> element("button[aria-controls='edit-panel']")
+          |> render_click()
+        end)
+
+      # Submit updated content through the form
+      session
+      |> unwrap(fn view ->
+        view
+        |> form("#notes-form", %{"note" => %{"content" => "Updated content"}})
+        |> render_submit()
+      end)
+      |> assert_has("#toast-group", text: "Note updated successfully")
 
       # Verify persistence
       fetched = Notes.get_note(:record, record.musicbrainz_id)

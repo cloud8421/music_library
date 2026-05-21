@@ -468,11 +468,12 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
             "Failed to search release for barcode #{number}: #{inspect(reason)}"
           end)
 
-          put_toast(
-            socket,
+          put_toast!(
             :error,
             gettext("Failed to search release for barcode %{number}", number: number)
           )
+
+          socket
       end
 
     {:noreply, socket}
@@ -509,7 +510,8 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
 
         socket
         |> maybe_toast_errors(sync_errors)
-        |> put_toast(
+
+        put_toast!(
           :info,
           ngettext(
             "Importing %{count} record in the background...",
@@ -518,10 +520,13 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
             count: async_count
           )
         )
+
+        socket
       else
         case BarcodeScan.import_results(scan_results, current_time) do
           [] ->
-            put_toast(socket, :info, gettext("Records imported successfully"))
+            put_toast!(:info, gettext("Records imported successfully"))
+            socket
 
           errors ->
             maybe_toast_errors(socket, errors)
@@ -544,11 +549,12 @@ defmodule MusicLibraryWeb.Components.BarcodeScanner do
         "#{number}: #{ErrorMessages.friendly_message(reason)}"
       end)
 
-    put_toast(
-      socket,
+    put_toast!(
       :error,
       gettext("Some records could not be imported: %{summary}", summary: errors_summary)
     )
+
+    socket
   end
 
   defp release_format_label(release) do
