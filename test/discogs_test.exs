@@ -4,6 +4,75 @@ defmodule DiscogsTest do
   alias Discogs.API.ErrorResponse
   alias Discogs.Fixtures
 
+  describe "ErrorResponse.from_response/1" do
+    test "extracts message from body" do
+      err = ErrorResponse.from_response(%{status: 429, body: %{"message" => "rate limited"}})
+      assert err.message == "rate limited"
+      assert err.kind == :rate_limit
+    end
+
+    test "fallback message when body has no message key" do
+      err = ErrorResponse.from_response(%{status: 500, body: %{"error" => "boom"}})
+      assert err.message == nil
+      assert err.kind == :server_error
+    end
+
+    test "fallback message when body is not a map" do
+      err = ErrorResponse.from_response(%{status: 404, body: "not found"})
+      assert err.message == nil
+      assert err.kind == :not_found
+    end
+  end
+
+  describe "retry_delay_seconds/1" do
+    test "returns 60 for rate_limit" do
+      err = ErrorResponse.from_response(%{status: 429, body: %{}})
+      assert ErrorResponse.retry_delay_seconds(err) == 60
+    end
+
+    test "returns 30 for server_error" do
+      err = ErrorResponse.from_response(%{status: 500, body: %{}})
+      assert ErrorResponse.retry_delay_seconds(err) == 30
+    end
+
+    test "returns 10 for timeout" do
+      err = %ErrorResponse{status: nil, message: nil, kind: :timeout, body: nil}
+      assert ErrorResponse.retry_delay_seconds(err) == 10
+    end
+
+    test "returns 30 as default for non-retryable kinds" do
+      err = ErrorResponse.from_response(%{status: 404, body: %{}})
+      assert ErrorResponse.retry_delay_seconds(err) == 30
+    end
+  end
+
+  describe "retryable?/1" do
+    test "returns true for rate_limit" do
+      err = ErrorResponse.from_response(%{status: 429, body: %{}})
+      assert ErrorResponse.retryable?(err)
+    end
+
+    test "returns true for server_error" do
+      err = ErrorResponse.from_response(%{status: 503, body: %{}})
+      assert ErrorResponse.retryable?(err)
+    end
+
+    test "returns true for timeout" do
+      err = %ErrorResponse{status: nil, message: nil, kind: :timeout, body: nil}
+      assert ErrorResponse.retryable?(err)
+    end
+
+    test "returns false for not_found" do
+      err = ErrorResponse.from_response(%{status: 404, body: %{}})
+      refute ErrorResponse.retryable?(err)
+    end
+
+    test "returns false for auth_error" do
+      err = ErrorResponse.from_response(%{status: 401, body: %{}})
+      refute ErrorResponse.retryable?(err)
+    end
+  end
+
   describe "get_artist/1" do
     test "returns the artist" do
       discogs_id = "discogs_id"

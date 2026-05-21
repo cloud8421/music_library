@@ -143,6 +143,132 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
 
       assert_has(session, "##{record_yesterday.id} h2", escape(record_yesterday.title))
     end
+
+    test "groups records with the same musicbrainz_id in the 'On This Day' section", %{
+      conn: conn,
+      collection: collection
+    } do
+      today = Date.utc_today()
+
+      # Create a record and a duplicate with the same musicbrainz_id
+      base_record =
+        List.first(collection)
+        |> Records.change_record(%{
+          release_date: Date.to_iso8601(today),
+          purchased_at: DateTime.utc_now()
+        })
+        |> Repo.update!()
+
+      # Create another record with the SAME musicbrainz_id (different purchase)
+      # Convert Artist structs to plain maps for create_record
+      artist_maps = Enum.map(base_record.artists, &Map.from_struct/1)
+
+      dup_attrs = %{
+        title: base_record.title,
+        musicbrainz_id: base_record.musicbrainz_id,
+        release_date: Date.to_iso8601(today),
+        purchased_at: DateTime.utc_now() |> DateTime.add(1, :second),
+        artists: artist_maps,
+        genres: base_record.genres,
+        format: base_record.format,
+        type: base_record.type,
+        cover_url: base_record.cover_url,
+        cover_hash: base_record.cover_hash,
+        musicbrainz_data: base_record.musicbrainz_data
+      }
+
+      {:ok, _dup} = MusicLibrary.Records.create_record(dup_attrs)
+
+      session = conn |> visit("/")
+
+      # The grouped record should appear with the group ID
+      assert_has(session, "#group-#{base_record.musicbrainz_id}")
+      # It should show the release count
+      assert_has(session, "#group-#{base_record.musicbrainz_id}", "2 releases")
+    end
+
+    test "shows 'Today' label for records released on the current date", %{
+      conn: conn,
+      collection: collection
+    } do
+      today = Date.utc_today()
+
+      _record =
+        List.first(collection)
+        |> Records.change_record(%{
+          release_date: Date.to_iso8601(today),
+          purchased_at: DateTime.utc_now()
+        })
+        |> Repo.update!()
+
+      session = conn |> visit("/")
+
+      assert_has(session, "span", "Today")
+    end
+
+    test "shows anniversary label for records released exactly 5 years ago", %{
+      conn: conn,
+      collection: collection
+    } do
+      today = Date.utc_today()
+      # Use year-based adjustment so month-day stays the same
+      five_years_ago = %{today | year: today.year - 5}
+
+      _record =
+        List.first(collection)
+        |> Records.change_record(%{
+          release_date: Date.to_iso8601(five_years_ago),
+          purchased_at: DateTime.utc_now()
+        })
+        |> Repo.update!()
+
+      session = conn |> visit("/")
+
+      assert_has(session, "span", "5 years ago")
+    end
+
+    test "shows anniversary label for records released exactly 10 years ago", %{
+      conn: conn,
+      collection: collection
+    } do
+      today = Date.utc_today()
+      # Use year-based adjustment so month-day stays the same
+      ten_years_ago = %{today | year: today.year - 10}
+
+      _record =
+        List.first(collection)
+        |> Records.change_record(%{
+          release_date: Date.to_iso8601(ten_years_ago),
+          purchased_at: DateTime.utc_now()
+        })
+        |> Repo.update!()
+
+      session = conn |> visit("/")
+
+      assert_has(session, "span", "10 years ago")
+    end
+
+    test "shows normal year label for records not on milestone anniversary", %{
+      conn: conn,
+      collection: collection
+    } do
+      today = Date.utc_today()
+      # Use year-based adjustment so month-day stays the same
+      three_years_ago = %{today | year: today.year - 3}
+
+      _record =
+        List.first(collection)
+        |> Records.change_record(%{
+          release_date: Date.to_iso8601(three_years_ago),
+          purchased_at: DateTime.utc_now()
+        })
+        |> Repo.update!()
+
+      session = conn |> visit("/")
+
+      # 3 years is not a milestone (not divisible by 5 or 10)
+      assert_has(session, "span", "3 years ago")
+    end
   end
 
   describe "Scrobble activity" do

@@ -39,6 +39,15 @@ defmodule MusicLibrary.Worker.ArtistRefreshWikipediaDataTest do
       assert Map.has_key?(updated.wikipedia_data, "intro_html")
     end
 
+    test "cancels when no English Wikipedia article exists", %{artist_info: artist_info} do
+      Req.Test.stub(Wikipedia.API, fn conn ->
+        Req.Test.json(conn, Wikipedia.Fixtures.wikidata_response_no_enwiki())
+      end)
+
+      assert {:cancel, :no_english_wikipedia} =
+               perform_job(ArtistRefreshWikipediaData, %{"id" => artist_info.id})
+    end
+
     test "discards job when no wikidata_id exists in musicbrainz_data" do
       artist_info =
         artist_info_fixture(%{musicbrainz_data: %{"name" => "No Wikipedia Artist"}})
