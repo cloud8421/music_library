@@ -1,10 +1,10 @@
 ---
 id: ML-192
 title: Add high-value behavioral test coverage
-status: To Do
+status: Done
 assignee: []
 created_date: "2026-05-20 17:19"
-updated_date: "2026-05-20 21:54"
+updated_date: "2026-05-21 05:23"
 labels:
   - testing
   - coverage
@@ -31,12 +31,12 @@ Increase coverage where current tests would catch meaningful regressions in user
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 Record editing tests cover genre search suggestions, adding a new normalized genre, preventing duplicate/blank genres, and removing an existing genre through the LiveComponent path.
-- [ ] #2 Record editing tests cover Brave cover search success, search failure with a friendly message, selecting a search result, and persisting the downloaded cover hash on the record.
-- [ ] #3 Barcode scanner tests cover a scan failure toast, removing one scanned result, clearing all scanned results, and the 2+ new-release async import branch including expected enqueued import jobs.
-- [ ] #4 Notes component tests cover creating a new record or artist note, rendering an existing note in read mode, updating note content, and persisting the result through the Notes context.
-- [ ] #5 Scrobble rules tests prove apply_all_rules/1 only updates the supplied track subset and leaves non-supplied matching tracks unchanged.
-- [ ] #6 Assets image tests cover convert/3 same-format passthrough, successful JPEG/WebP conversion as supported by the app, and invalid image data returning an error tuple.
+- [x] #1 Record editing tests cover genre search suggestions, adding a new normalized genre, preventing duplicate/blank genres, and removing an existing genre through the LiveComponent path.
+- [x] #2 Record editing tests cover Brave cover search success, search failure with a friendly message, selecting a search result, and persisting the downloaded cover hash on the record.
+- [x] #3 Barcode scanner tests cover a scan failure toast, removing one scanned result, clearing all scanned results, and the 2+ new-release async import branch including expected enqueued import jobs.
+- [x] #4 Notes component tests cover creating a new record or artist note, rendering an existing note in read mode, updating note content, and persisting the result through the Notes context.
+- [x] #5 Scrobble rules tests prove apply_all_rules/1 only updates the supplied track subset and leaves non-supplied matching tracks unchanged.
+- [x] #6 Assets image tests cover convert/3 same-format passthrough, successful JPEG/WebP conversion as supported by the app, and invalid image data returning an error tuple.
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -177,3 +177,53 @@ Reviewed against 10 review criteria. Five issues found, all addressed:
 4. **Minor** — Step 4 now cross-references the existing barcode scan test as a pattern for MusicBrainz.API stubbing.
 5. **Advisory** — Documentation section now mandates updating the testing skill if `mode: :global` stubs are introduced.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
+## Summary
+
+Added 15 behavioral tests across 5 areas, increasing coverage for user-facing workflows and core data transformations:
+
+### RecordForm genre editing (5 tests)
+
+- Genre search suggestions via render_hook("search_genres")
+- Adding a new normalized genre via render_hook("add_genre")
+- Duplicate genre prevention (assert count: 1 badge)
+- Removing existing genre via render_click on badge
+- Genre persistence through form save + get_record verification
+
+### RecordForm cover search (3 tests)
+
+- BraveSearch success with start_async/render_async and cover search results rendering
+- Search failure with friendly error message (429 → "Search failed")
+- Cover selection, download, and hash persistence via BraveSearchAPI stub with set_req_test_to_shared()
+
+### BarcodeScanner (4 tests)
+
+- Scan failure toast via transport_error stub
+- Remove one scanned result from cart
+- Clear all scanned results
+- 2+ new-release async import branch: should_import_async?, import_results_async, assert_enqueued × 2
+
+### Notes component (3 tests)
+
+- Note CRUD through Notes context (create, read, update + persistence verification)
+- Existing note rendered in read mode (assert_has "#read-panel article")
+- Note persistence via Notes.get_note after operations
+
+### ScrobbleRules subset application (1 test)
+
+- apply_all_rules/1 only updates supplied track subset, leaves non-supplied matching tracks unchanged
+
+### Assets.Image convert/3 (3 tests)
+
+- Same-format passthrough (JPEG→JPEG returns original binary)
+- JPEG→WebP conversion via libvips
+- Invalid image data returns error tuple
+
+### Documentation
+
+- Added cross-process stub pattern (set_req_test_to_shared/0) to testing skill
+<!-- SECTION:FINAL_SUMMARY:END -->

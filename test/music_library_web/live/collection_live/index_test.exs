@@ -11,6 +11,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   alias MusicLibrary.Assets.{Image, Transform}
   alias MusicLibrary.Records
   alias MusicLibrary.Records.Record
+  alias MusicLibrary.Worker.ImportFromMusicbrainzRelease
   alias MusicLibrary.Worker.ImportFromMusicbrainzReleaseGroup
   alias Req.Test
 
@@ -559,6 +560,132 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       |> trigger_hook("#barcode-scanner", "camera_allowed")
       |> refute_has("button#camera-button")
       |> assert_has("video#camera-preview")
+    end
+
+    @tag :capture_log
+    test "shows error toast on scan failure", %{conn: conn} do
+      barcode = "123"
+
+      Test.stub(MusicBrainz.API, fn conn ->
+        Req.Test.transport_error(conn, :timeout)
+      end)
+
+      # With a transport_error stub, the scan should fail gracefully.
+      # The cart should remain empty (no results added).
+      conn
+      |> visit(~p"/collection/scan")
+      |> trigger_hook("#barcode-scanner", "barcode_scanned", %{"number" => barcode})
+      |> assert_has("#cart-empty")
+    end
+
+    test "removes one scanned result from the cart", %{conn: conn} do
+      barcode1 = "5037300650128"
+      barcode2 = "1234567890123"
+      releases = releases(:marbles)
+
+      # Stub MusicBrainz for both barcode scans
+      Test.stub(MusicBrainz.API, fn conn ->
+        case conn.params["query"] do
+          ^barcode1 -> Test.json(conn, releases)
+          ^barcode2 -> Test.json(conn, releases)
+          _ -> Test.json(conn, %{"releases" => []})
+        end
+      end)
+
+      session =
+        conn
+        |> visit(~p"/collection/scan")
+        |> trigger_hook("#barcode-scanner", "barcode_scanned", %{"number" => barcode1})
+        |> trigger_hook("#barcode-scanner", "barcode_scanned", %{"number" => barcode2})
+
+      assert_has(session, "#cart-items li", count: 2)
+
+      # Remove the first result
+      session =
+        unwrap(session, fn view ->
+          view
+          |> element("#barcode-scanner")
+          |> render_hook("remove_result", %{"number" => barcode1})
+        end)
+
+      assert_has(session, "#cart-items li", count: 1)
+      refute_has(session, "#cart-item-#{barcode1}")
+      assert_has(session, "#cart-item-#{barcode2}")
+    end
+
+    test "clears all scanned results", %{conn: conn} do
+      barcode1 = "5037300650128"
+      barcode2 = "1234567890123"
+      releases = releases(:marbles)
+
+      # Stub MusicBrainz for both barcode scans
+      Test.stub(MusicBrainz.API, fn conn ->
+        case conn.params["query"] do
+          ^barcode1 -> Test.json(conn, releases)
+          ^barcode2 -> Test.json(conn, releases)
+          _ -> Test.json(conn, %{"releases" => []})
+        end
+      end)
+
+      session =
+        conn
+        |> visit(~p"/collection/scan")
+        |> trigger_hook("#barcode-scanner", "barcode_scanned", %{"number" => barcode1})
+        |> trigger_hook("#barcode-scanner", "barcode_scanned", %{"number" => barcode2})
+
+      assert_has(session, "#cart-items li", count: 2)
+
+      # Clear all results
+      session =
+        unwrap(session, fn view ->
+          view
+          |> element("#barcode-scanner")
+          |> render_hook("clear_results")
+        end)
+
+      assert_has(session, "#cart-empty")
+    end
+
+    test "enqueues import jobs for 2+ new releases via context function" do
+      barcode1 = "5037300650128"
+      barcode2 = "1234567890123"
+      releases = releases(:marbles)
+
+      # Ensure clean MusicBrainz stub state
+      # The barcode search query includes "barcode:NUMBER AND NOT format:digitalmedia"
+      Test.stub(MusicBrainz.API, fn conn ->
+        query = conn.params["query"] || ""
+
+        cond do
+          String.contains?(query, barcode1) -> Test.json(conn, releases)
+          String.contains?(query, barcode2) -> Test.json(conn, releases)
+          true -> Test.json(conn, %{"releases" => []})
+        end
+      end)
+
+      # Scan both barcodes to get scan results
+      {:ok, result1} = MusicLibrary.BarcodeScan.scan(barcode1)
+      {:ok, result2} = MusicLibrary.BarcodeScan.scan(barcode2)
+
+      results = [result1, result2]
+
+      # Both should be new results (no existing records)
+      assert MusicLibrary.BarcodeScan.should_import_async?(results)
+
+      # Import async should succeed and enqueue jobs
+      current_time = DateTime.utc_now()
+
+      {:ok, [], async_count} =
+        MusicLibrary.BarcodeScan.import_results_async(results, current_time)
+
+      assert async_count == 2
+
+      # Verify jobs were enqueued
+      assert_enqueued(worker: ImportFromMusicbrainzRelease)
+      assert_enqueued(worker: ImportFromMusicbrainzRelease)
+
+      # No records should have been inserted synchronously
+      assert MusicLibrary.Repo.all(Record) == []
     end
 
     test "adds a record after scanning", %{conn: conn} do

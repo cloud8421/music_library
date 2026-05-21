@@ -421,6 +421,43 @@ defmodule MusicLibrary.ScrobbleRulesTest do
       assert {:ok, 0} = ScrobbleRules.apply_all_artist_rules([])
     end
 
+    test "apply_all_rules/1 only updates supplied track subset and leaves other matching tracks unchanged" do
+      rule =
+        scrobble_rule_fixture(%{
+          match_value: "Test Subset Album",
+          target_musicbrainz_id: "99999999-9999-9999-9999-999999999999"
+        })
+
+      # Use explicit scrobbled_at_uts values (SQLite second precision requires this for ordering)
+      now = System.system_time(:second)
+
+      supplied_track =
+        scrobbled_track_fixture(%{
+          scrobbled_at_uts: now,
+          album: %{title: "Test Subset Album"},
+          artist: %{name: "Test Artist"}
+        })
+
+      non_supplied_matching_track =
+        scrobbled_track_fixture(%{
+          scrobbled_at_uts: now + 1,
+          album: %{title: "Test Subset Album"},
+          artist: %{name: "Test Artist"}
+        })
+
+      results = ScrobbleRules.apply_all_rules([supplied_track])
+      assert results != []
+
+      # The supplied track should have been updated
+      updated_supplied = Repo.get(Track, supplied_track.scrobbled_at_uts)
+      assert updated_supplied.album.musicbrainz_id == rule.target_musicbrainz_id
+
+      # The non-supplied matching track should NOT have been updated
+      # (musicbrainz_id remains as stored, which is nil for unset embedded fields)
+      updated_non_supplied = Repo.get(Track, non_supplied_matching_track.scrobbled_at_uts)
+      assert updated_non_supplied.album.musicbrainz_id == nil
+    end
+
     test "apply_all_rules/0 batches rules by type" do
       # Create multiple rules of each type
       _album_rule1 = scrobble_rule_fixture(@valid_album_attrs)
