@@ -95,8 +95,12 @@ defmodule MusicLibrary.MixProject do
 
       # Database
       {:phoenix_ecto, "~> 4.5"},
-      {:ecto_sql, "~> 3.10"},
-      {:ecto_sqlite3, "~> 0.23.0"},
+      # override until error_tracker catches up
+      {:ecto_sql, "~> 3.10", override: true},
+      # override until error_tracker catches up
+      {:ecto, "~> 3.14", override: true},
+      # override until error_tracker catches up
+      {:ecto_sqlite3, "~> 0.24.0"},
       {:cloak_ecto, "~> 1.3"},
 
       # UI
