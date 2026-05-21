@@ -2,11 +2,15 @@
   configs: [
     %{
       name: "default",
-      requires: ["./deps/phoenix_test/lib/phoenix_test/credo/**/*.ex"],
+      requires: [
+        "./deps/phoenix_test/lib/phoenix_test/credo/**/*.ex",
+        "./lib/music_library/credo/**/*.ex"
+      ],
       plugins: [{ExSlop, []}],
       checks: %{
         extra: [
           {PhoenixTest.Credo.NoOpenBrowser, []},
+          {MusicLibrary.Credo.NoLiveComponentPutToast, []},
           {Credo.Check.Warning.ExpensiveEmptyEnumCheck, []},
           {Credo.Check.Refactor.DoubleBooleanNegation, []},
           {Credo.Check.Refactor.CondStatements, []},

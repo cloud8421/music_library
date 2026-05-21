@@ -563,10 +563,11 @@ defmodule MusicLibraryWeb.Components.RecordForm do
       {:ok, record} ->
         notify_parent({:saved, record})
 
+        put_toast!(:info, gettext("Cover art updated successfully"))
+
         {:noreply,
          socket
          |> assign(:cover_search_loading, false)
-         |> put_toast(:info, gettext("Cover art updated successfully"))
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, _changeset} ->
@@ -602,10 +603,9 @@ defmodule MusicLibraryWeb.Components.RecordForm do
          {:ok, record} <- Records.update_record(socket.assigns.record, params) do
       notify_parent({:saved, record})
 
-      {:noreply,
-       socket
-       |> put_toast(:info, gettext("Record updated successfully"))
-       |> push_patch(to: socket.assigns.patch)}
+      put_toast!(:info, gettext("Record updated successfully"))
+
+      {:noreply, push_patch(socket, to: socket.assigns.patch)}
     else
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
