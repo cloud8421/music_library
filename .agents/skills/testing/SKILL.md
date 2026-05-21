@@ -176,6 +176,34 @@ When adding a new API call, you must:
 2. Use fixture data from the appropriate fixtures module
 3. Ensure the stub covers error cases too (rate limiting, auth errors, 404s)
 
+### Cross-Process Stubs (start_async / Tasks)
+
+When code under test calls an API via a `start_async` Task or other spawned
+process, Req.Test stubs (which are process-scoped by default) will not be
+visible inside the spawned process. Use `Req.Test.set_req_test_to_shared/0`
+in `setup` to make stubs shared across process boundaries:
+
+```elixir
+setup do
+  Req.Test.set_req_test_to_shared()
+
+  on_exit(fn ->
+    # Clear the stub after the test to avoid cross-test pollution
+    Req.Test.stub(MyApiModule, nil)
+  end)
+
+  :ok
+end
+```
+
+**Important:** Shared stubs cannot be used in concurrent (`async: true`) tests.
+Isolate cross-process stub tests in their own `describe` block and do not set
+`async: true` on the test module.
+
+**Alternative:** If you can obtain the spawned process PID, use
+`Req.Test.allow/3` instead of `set_req_test_to_shared/0` to grant access
+only to specific processes while keeping the test async-safe.
+
 ## Worker Tests
 
 Workers that enqueue other jobs MUST use `assert_enqueued`:
