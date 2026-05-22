@@ -6,7 +6,7 @@ title: >-
 status: To Do
 assignee: []
 created_date: "2026-05-02 16:02"
-updated_date: "2026-05-04 08:19"
+updated_date: "2026-05-22 22:40"
 labels:
   - ready
 dependencies: []
@@ -20,6 +20,8 @@ documentation:
   - lib/open_ai/api.ex
   - lib/music_library_web/components/chat.ex
   - lib/music_library_web/live/collection_live/index.ex
+  - docs/architecture.md
+  - docs/production-infrastructure.md
 priority: high
 ---
 
@@ -51,475 +53,398 @@ The `Collection.collection_summary/0` function loads ALL records from the DB, fo
 - [ ] #6 Existing record and artist chats continue to work without changes (no regression in streaming)
 - [ ] #7 Tests cover: Files API endpoints, file upload/create/refresh lifecycle, `file_search` tool inclusion in chat requests, fallback when file store is unavailable, empty collection edge case
 - [ ] #8 Per-chat input tokens for the collection chat instructions are O(1) relative to collection size (the file is searched by OpenAI on demand, not embedded in instructions)
+- [ ] #9 Refresh scheduling uses a true debounce/coalescing strategy so rapid/bulk mutations and mutations during an executing refresh cannot leave the active file stale
+- [ ] #10 FileStore only switches the active vector store after vector-store-file indexing succeeds; failed refreshes keep the previous active store available
+- [ ] #11 Production documentation includes OpenAI file_search/vector-store cost profile, initial refresh behavior, cleanup/rollback notes, and whether new environment variables are required
 <!-- AC:END -->
 
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
 
-## Approach: OpenAI `file_search` tool + Oban-managed file lifecycle
+## Approach: OpenAI `file_search` tool + Oban-managed collection catalog lifecycle
 
-Upload the collection catalog as a file to OpenAI, create a vector store, and use the Responses API's built-in `file_search` tool. OpenAI automatically performs semantic search over the file and includes relevant results inline in the response stream — no SSE event handling changes, no orchestration loop.
-
-Token savings: ~9,000 → ~100 tokens per chat (99% reduction). File search results consume ~200-500 tokens only when the model actually searches.
+Upload the collection catalog to OpenAI, index it in a vector store, and include the Responses API `file_search` tool in collection chat requests. Keep only aggregated stats and record count in the prompt instructions. This makes per-chat instructions O(1) relative to collection size while preserving the ability to answer record-specific questions through retrieval.
 
 Research and alternative analysis: see [ML-156 Research document](backlog://document/doc-1).
 
+### Why this approach
+
+- **Stats-only** is much simpler, but it removes record-specific collection awareness.
+- **Custom function calling** would avoid OpenAI file storage, but requires a streaming tool-call orchestration loop and changes shared chat streaming code for all chat types.
+- **Local RAG with SQLite FTS/sqlite-vec** avoids external vector-store lifecycle, but still requires retrieval orchestration before/inside every chat request and would either be mostly lexical or depend on the existing embedding pipeline being complete and fresh. It remains a good future option if OpenAI file_search quality/cost is poor.
+- **OpenAI file_search** gives semantic retrieval with minimal streaming changes: file-search events are `response.*` events and can be ignored by the existing catch-all while output text streams normally.
+
+### Performance and cost profile
+
+- **Per chat:** instructions contain stats + count only (~100-300 tokens), not the full catalog (~9,000+ tokens for ~500 records). File-search result tokens are paid only when the model searches.
+- **Per refresh:** catalog generation, upload, and indexing are O(collection size). This is moved out of LiveView/chat paths and into debounced Oban jobs.
+- **Page load:** `CollectionLive.Index` loads a stats-only context, not the full catalog. Measure `stats_summary/0` once on realistic data; if it is noticeably slow, switch it from in-memory grouping to SQL aggregate queries.
+- **Hash skip:** store a SHA-256 hash of the uploaded catalog. Cron/manual refreshes skip upload/index work when the catalog content is unchanged.
+- **Benchmarks:** no recurring benchmark is required. Do one implementation-time measurement comparing before/after instruction byte/token estimates for representative collection sizes (current data, 1,000 records if easy to synthesize) and record catalog refresh runtime.
+- **Paid resources:** document current OpenAI pricing at implementation time in `docs/production-infrastructure.md` because prices change. Expected profile for current scale is negligible storage for a small text file/vector store plus occasional indexing after debounced mutations, and per-chat retrieval/tool charges only when file_search runs.
+
 ### Architecture decisions
 
-1. **Chat sessions never upload or refresh files.** They read `vector_store_id` from `Secrets`. If missing, they fall back to stats-only instructions (no errors surfaced to the user).
-2. **File upload and refresh happen exclusively in Oban workers.** No `Task.start`, no `start_async` — all OpenAI API calls for file management are serialized through a unique Oban worker with a 5-minute debounce window.
-3. **Refresh is triggered at the lowest level.** `Records.create_record/1`, `Records.update_record/2`, and `Records.delete_record/1` enqueue the refresh worker on success. This catches all mutation paths (Index, Show, cart import, barcode scan, batch operations) without PubSub or LiveView-specific hooks.
-4. **The full `collection_summary/0` (catalog + stats) is eliminated from the LiveView page load.** `CollectionLive.Index.mount/3` loads only a lightweight `stats_summary/0` — the same aggregated stats (record count, artist count, genre/format/era breakdowns) but without the per-record catalog lines. The full catalog is only loaded inside the Oban worker when a file upload/refresh is needed. Stats are ~200 tokens, always included in instructions, giving the LLM high-level collection awareness even before file search.
+1. **Chat sessions never upload or refresh files.** They only read the active vector store ID from `FileStore.get_vector_store_id/0`. Missing/unavailable store falls back to stats-only instructions without surfacing an error to the user.
+2. **Use a new vector store per successful refresh.** Build and index the new file/store off to the side, then switch the active secret only after vector-store-file indexing completes. Failed refreshes leave the previous active store untouched.
+3. **Persist FileStore state as one JSON secret.** Store `%{file_id, vector_store_id, catalog_hash, updated_at}` in a single encrypted `Secrets` entry to avoid partial multi-secret updates. `get_vector_store_id/0` only returns `{:ok, id}` when the state contains a usable active file and vector store.
+4. **True debounce/coalescing.** Record mutations schedule a refresh for 5 minutes in the future. Additional mutations while a refresh is scheduled replace `scheduled_at`, pushing the refresh out. Mutations that happen while a worker is already executing can schedule a follow-up refresh, so no changes are dropped.
+5. **Refresh triggers cover all catalog-affecting mutations.** CRUD paths enqueue refreshes, and direct enrichment `Repo.update` paths that affect catalog content (notably genres and any title/artist/release-date/format/purchased-state changes) either go through `Records.update_record/2` or explicitly enqueue on success.
+6. **OpenAI API work uses an `:open_ai` Oban queue.** Add a serialized queue (`open_ai: 1`) for OpenAI-calling workers, in addition to the existing Req rate limiter.
+7. **Cleanup is scoped and safe.** Only delete OpenAI files/vector stores with the ML-managed name/filename prefix, and never delete unrelated OpenAI resources.
 
 ---
 
-### Phase 1: OpenAI API extensions (7 new endpoints)
+### Phase 0: Baseline measurement and API documentation check
 
-Add to `OpenAI.API` (following existing `new_request/1` pattern with `Req.RateLimiter` on `:open_ai` bucket):
+Before implementing:
 
-- `upload_file(file_content, filename, config)` — `POST /v1/files` with multipart body (`purpose: "assistants"`, `file` field containing the catalog text). Uses `Req` multipart support.
-- `create_vector_store(name, config)` — `POST /v1/vector_stores` with `%{name: name}` body.
-- `add_file_to_vector_store(store_id, file_id, config)` — `POST /v1/vector_stores/{store_id}/files` with `%{file_id: file_id}` body.
-- `remove_file_from_vector_store(store_id, file_id, config)` — `DELETE /v1/vector_stores/{store_id}/files/{file_id}`. Detaches the old file from the vector store before deleting.
-- `delete_file(file_id, config)` — `DELETE /v1/files/{file_id}`. Called after detaching from vector store.
-- `get_file(file_id, config)` — `GET /v1/files/{file_id}`. Returns file metadata including `status` field (`uploaded`, `processed`, `error`). Used to poll indexing completion after attach.
-- `list_files(config)` — `GET /v1/files`. Returns paginated list of files. Used by the periodic cleanup worker to find orphaned resources.
+1. Confirm current OpenAI Responses API `file_search`, Files, and Vector Stores endpoint shapes.
+2. Confirm the status values for vector-store file indexing and poll the vector-store-file endpoint, not the generic file metadata endpoint.
+3. Record a one-off baseline:
+   - current collection chat instruction byte length / estimated tokens;
+   - expected stats-only instruction byte length / estimated tokens;
+   - current `Collection.collection_summary/0` runtime on realistic data.
 
-~90 lines.
+Do not add a permanent benchmark unless this measurement shows refresh/page-load costs are high enough to justify ongoing tracking.
 
 ---
 
-### Phase 2: FileStore module
+### Phase 1: OpenAI API extensions
 
-Create `MusicLibrary.Chats.CollectionChat.FileStore`:
+Add public functions to `OpenAI.API` following the existing `new_request/1` pattern, Req rate limiting, and `OpenAI.API.ErrorResponse.from_response/1` error handling:
+
+- `upload_file(file_content, filename, config)` — `POST /v1/files` with multipart body (`purpose: "assistants"`, file text content).
+- `create_vector_store(name, config)` — `POST /v1/vector_stores` with an ML-managed name such as `music-library-collection-chat-<timestamp>-<hash>`.
+- `add_file_to_vector_store(vector_store_id, file_id, config)` — `POST /v1/vector_stores/{vector_store_id}/files`.
+- `get_vector_store_file(vector_store_id, file_id, config)` — `GET /v1/vector_stores/{vector_store_id}/files/{file_id}`. Use this for indexing status polling.
+- `delete_vector_store(vector_store_id, config)` — `DELETE /v1/vector_stores/{vector_store_id}` for cleanup/rollback.
+- `delete_file(file_id, config)` — `DELETE /v1/files/{file_id}`.
+- `list_files(config)` — `GET /v1/files`, used by scoped cleanup.
+- `list_vector_stores(config)` — `GET /v1/vector_stores`, used by scoped cleanup.
+- Add `remove_file_from_vector_store/3` only if the confirmed API flow requires detach without deleting the whole old vector store.
+
+Keep the existing 6-arity `chat_stream/6` intact and add a 7-arity `chat_stream/7` that accepts a tools list.
+
+---
+
+### Phase 2: Collection context changes
+
+Add lightweight collection context functions:
 
 ```elixir
-defmodule MusicLibrary.Chats.CollectionChat.FileStore do
-  @moduledoc """
-  Manages the collection catalog file lifecycle at OpenAI.
-  Persists file_id and vector_store_id via Secrets.
+@spec count_records() :: non_neg_integer()
+def count_records
 
-  All OpenAI API calls happen inside Oban workers — never from chat
-  sessions or LiveViews. The chat session path only calls get_vector_store_id/0.
-  """
+@spec stats_summary() :: {String.t(), non_neg_integer()}
+def stats_summary
 
-  @spec upload_or_refresh() :: :ok | {:error, term()}
-  def upload_or_refresh do
-    # 1. Check Secrets for existing file_id + vector_store_id
-    # 2. If missing → initial upload flow:
-    #    a. Call Collection.collection_summary/0 to get catalog text
-    #    b. POST /v1/files → file_id
-    #    c. POST /v1/vector_stores → vector_store_id
-    #    d. POST /v1/vector_stores/{id}/files → attach
-    #    e. Poll GET /v1/files/{file_id} until status == "processed"
-    #       (max 10 attempts, 2s backoff)
-    #    f. Persist both IDs via Secrets.store/2
-    # 3. If present → refresh flow:
-    #    a. Call Collection.collection_summary/0
-    #    b. POST /v1/files → new_file_id
-    #    c. POST /v1/vector_stores/{store_id}/files → attach new file
-    #    d. Poll GET /v1/files/{new_file_id} until status == "processed"
-    #    e. DELETE /v1/vector_stores/{store_id}/files/{old_file_id} → detach old
-    #    f. DELETE /v1/files/{old_file_id} → delete old file
-    #    g. Update file_id in Secrets (vector_store_id unchanged)
-    # 4. Log errors at each step; return :ok or {:error, reason}
-  end
-
-  @spec get_vector_store_id() :: {:ok, String.t()} | {:error, :not_uploaded}
-  def get_vector_store_id do
-    # Read vector_store_id from Secrets
-    # Return {:ok, id} or {:error, :not_uploaded}
-  end
-
-  @spec cleanup_orphaned_files() :: :ok
-  def cleanup_orphaned_files do
-    # Called by periodic cleanup worker
-    # 1. Read known file_id + vector_store_id from Secrets
-    # 2. Call GET /v1/files to list all files
-    # 3. Delete any file whose id doesn't match the known file_id
-    #    (with safety check: also detach from any vector store first)
-    # 4. Log orphan count, return :ok
-  end
-end
+@spec file_search_catalog() :: {String.t(), non_neg_integer(), String.t()}
+def file_search_catalog
 ```
 
-Key design properties:
+- `stats_summary/0` returns `{stats_text, release_group_count}` with no per-record catalog lines. Empty collection returns `{ "", 0 }`.
+- `file_search_catalog/0` returns deterministic text for upload plus record count and SHA-256 hash. Include the stats header and per-record lines, ordered deterministically, with only collection records (`purchased_at` not nil).
+- Keep any existing `collection_summary/0` tests passing if the function remains. If renamed/extracted, update tests and callers so only FileStore uses the full catalog.
+- The LiveView/chat path must never receive the full catalog.
 
-- `upload_or_refresh/0` is the single entry point called by the Oban worker — never by chat sessions
-- `get_vector_store_id/0` is the single entry point called by chat sessions — read-only, no side effects
-- `cleanup_orphaned_files/0` is a safety net for edge cases (e.g., Secrets write failed after OpenAI upload succeeded)
-
-~70 lines.
+If the one-off measurement shows `stats_summary/0` is too expensive, compute stats with SQL aggregates rather than loading all essential fields.
 
 ---
 
-### Phase 3: Oban workers
+### Phase 3: `CollectionChat.FileStore`
 
-#### 3a. RefreshCollectionFile worker
+Create `MusicLibrary.Chats.CollectionChat.FileStore` with `@moduledoc`, specs, and public functions:
 
-Create `MusicLibrary.Worker.RefreshCollectionFile`:
+```elixir
+@spec upload_or_refresh() :: :ok | {:error, term()}
+def upload_or_refresh
+
+@spec get_vector_store_id() :: {:ok, String.t()} | {:error, :not_uploaded}
+def get_vector_store_id
+
+@spec cleanup_orphaned_resources() :: :ok | {:error, term()}
+def cleanup_orphaned_resources
+```
+
+#### Active-state secret
+
+Use one encrypted secret value, JSON-encoded, for example under `collection_chat_file_store`:
+
+```json
+{
+  "file_id": "file_...",
+  "vector_store_id": "vs_...",
+  "catalog_hash": "sha256...",
+  "updated_at": "2026-05-22T...Z"
+}
+```
+
+#### Upload/refresh flow
+
+1. Build `{catalog_text, record_count, hash}` via `Collection.file_search_catalog/0`.
+2. If `record_count == 0`:
+   - delete old active vector store/file best-effort;
+   - clear the active FileStore secret;
+   - return `:ok` so collection chat falls back to stats-only.
+3. Read the active state secret.
+4. If active state exists and `catalog_hash == hash`, return `:ok` without OpenAI API calls.
+5. Upload a new file with an ML-managed filename prefix and the hash in the name.
+6. Create a new vector store with an ML-managed name prefix and the hash/timestamp in the name.
+7. Attach the uploaded file to the new vector store.
+8. Poll `get_vector_store_file/3` until indexing is complete. Use bounded attempts/backoff; return `{:error, reason}` for failed/cancelled/timeouts.
+9. Only after indexing succeeds, persist the new active-state JSON secret.
+10. Best-effort delete the previous active vector store and file. Log cleanup failures and rely on the cleanup worker to retry later.
+
+If any step before the active secret switch fails, best-effort delete the newly created resources and return `{:error, reason}`. The old active store remains available to chat users.
+
+#### Read path
+
+`get_vector_store_id/0` is read-only and returns:
+
+- `{:ok, vector_store_id}` only when the active JSON secret has both a `file_id` and `vector_store_id`;
+- `{:error, :not_uploaded}` otherwise.
+
+#### Cleanup flow
+
+`cleanup_orphaned_resources/0`:
+
+1. Read the active state.
+2. List OpenAI vector stores and files.
+3. Select only resources with the ML-managed collection-chat prefix.
+4. Delete inactive vector stores first.
+5. Delete inactive files.
+6. Never delete resources without the ML-managed prefix.
+
+---
+
+### Phase 4: Oban workers and queue config
+
+Add `:open_ai` to Oban queues in `config/config.exs`:
+
+```elixir
+queues: [default: 10, heavy_writes: 1, music_brainz: 1, discogs: 1, wikipedia: 1, last_fm: 1, open_ai: 1]
+```
+
+Create `MusicLibrary.Worker.RefreshCollectionFile` as a thin wrapper:
 
 ```elixir
 defmodule MusicLibrary.Worker.RefreshCollectionFile do
   use Oban.Worker,
-    queue: :default,
-    unique: [period: 300, keys: [:worker]],
-    max_attempts: 3
+    queue: :open_ai,
+    max_attempts: 3,
+    unique: [fields: [:worker], states: [:scheduled], period: :infinity],
+    replace: [scheduled: [:scheduled_at]]
 
   @impl true
   def perform(_job) do
     case MusicLibrary.Chats.CollectionChat.FileStore.upload_or_refresh() do
       :ok -> :ok
-      {:error, reason} -> {:error, reason}
+      {:error, reason} -> MusicLibrary.Worker.ErrorHandler.to_oban_result(reason)
     end
+  end
+
+  @spec enqueue_debounced() :: {:ok, Oban.Job.t()} | {:error, Ecto.Changeset.t()}
+  def enqueue_debounced do
+    %{}
+    |> new(schedule_in: {5, :minutes})
+    |> Oban.insert()
   end
 end
 ```
 
-- `unique: [period: 300, keys: [:worker]]` — 5-minute debounce window. Only one refresh can be executing or scheduled at a time. Rapid record mutations (cart import of 50 records) each call `Oban.insert` but only the first insert succeeds; subsequent inserts within the 300s unique window are silently ignored by Oban.
-- `max_attempts: 3` — transient OpenAI failures get 2 retries.
-- Queue `:default` (concurrency 10) — the worker is fast (a few API calls), no need for a dedicated queue.
+Important debounce semantics:
 
-Enqueued from two places:
+- uniqueness checks only `:scheduled` jobs, so mutations during an executing refresh can enqueue a follow-up scheduled refresh;
+- `replace: [scheduled: [:scheduled_at]]` means rapid mutations push the single scheduled refresh later instead of first-writer-wins;
+- the hourly cron and catalog hash skip provide recovery without repeated uploads.
 
-1. **Record mutations** — `Records.create_record/1`, `update_record/2`, `delete_record/1` (see Phase 4)
-2. **Cron** — every hour in both dev and prod, to handle initial upload after deploy and recovery after failures:
+Create `MusicLibrary.Worker.CleanupOrphanedOpenAICollectionResources`:
 
-```elixir
-# config/prod.exs (add to crontab)
-{"0 * * * *", MusicLibrary.Worker.RefreshCollectionFile}
+- queue `:open_ai`;
+- `max_attempts: 2`;
+- delegates to `FileStore.cleanup_orphaned_resources/0`;
+- routes errors through `Worker.ErrorHandler`.
 
-# config/dev.exs (add to crontab)
-{"*/15 * * * *", MusicLibrary.Worker.RefreshCollectionFile}
-```
+Cron:
 
-~15 lines.
-
-#### 3b. CleanupOrphanedOpenAIFiles worker
-
-Create `MusicLibrary.Worker.CleanupOrphanedOpenAIFiles`:
-
-- Cron: monthly (1st of month, 11 AM)
-- Calls `FileStore.cleanup_orphaned_files/0`
-- Queue: `:default`
-- `max_attempts: 2`
-
-~12 lines.
+- production: hourly `RefreshCollectionFile` for initial upload/recovery; monthly cleanup after existing monthly jobs;
+- development: every 15 minutes for refresh if desired; monthly cleanup can stay production-only unless useful in dev.
 
 ---
 
-### Phase 4: Records context + Collection context + LiveView changes
+### Phase 5: Record mutation triggers
 
-#### 4a. Records context — enqueue refresh on mutations
-
-In `lib/music_library/records.ex`, after each successful mutation, enqueue the refresh worker **outside** the `with` chain (non-blocking — the mutation succeeds regardless of enqueue result):
+Add a shared enqueue helper in the Records context, e.g.:
 
 ```elixir
-def create_record(attrs \\ %{}) do
-  with {:ok, record} <- do_create_record(attrs),
-       record = Enrichment.best_effort_extract_colors(record),
-       :ok <- refresh_artist_info_async(record) do
-    enqueue_collection_file_refresh()
-    {:ok, record}
+@spec enqueue_collection_file_refresh() :: :ok
+def enqueue_collection_file_refresh do
+  case MusicLibrary.Worker.RefreshCollectionFile.enqueue_debounced() do
+    {:ok, _job} -> :ok
+    {:error, reason} ->
+      Logger.warning("Failed to enqueue collection file refresh: #{inspect(reason)}")
+      :ok
   end
-end
-
-def update_record(%Record{} = record, attrs) do
-  with {:ok, updated_record} <- do_update_record(record, attrs),
-       :ok <- refresh_artist_info_async(updated_record) do
-    enqueue_collection_file_refresh()
-    {:ok, updated_record}
-  end
-end
-
-def delete_record(%Record{} = record) do
-  with {:ok, record} <- Repo.delete(record) do
-    record
-    |> Record.artist_ids()
-    |> Enum.each(fn artist_id ->
-      Artists.prune_artist_info_async(artist_id)
-    end)
-
-    enqueue_collection_file_refresh()
-    {:ok, record}
-  end
-end
-
-defp enqueue_collection_file_refresh do
-  %{} |> MusicLibrary.Worker.RefreshCollectionFile.new() |> Oban.insert()
 end
 ```
 
-- `Oban.insert/1` (not `insert!`) — failures to enqueue are silently ignored; the hourly cron acts as a safety net.
-- The enqueue happens after the `with` succeeds, ensuring we only refresh when data actually changed.
-- All mutation paths are covered: single create (AddRecord, barcode scan), cart import (batch creates via `ImportFromMusicbrainzReleaseGroup` worker, which calls `create_record/1` internally), edit (Index and Show), delete.
+Use it after successful mutations, non-blocking:
 
-~15 lines.
+- `Records.create_record/1`
+- `Records.update_record/2`
+- `Records.delete_record/1`
+- enrichment/direct update paths that affect catalog content, especially `Records.Enrichment.populate_genres/1`
+- any other direct update path discovered during implementation that changes title, artists, release date, format, genres, MusicBrainz ID, or purchased status.
 
-#### 4b. Collection context — add `stats_summary/0` and `count_records/0`
+Do not enqueue on failed changesets/API errors. It is acceptable to enqueue for some harmless non-catalog changes because the FileStore hash skip avoids unnecessary uploads.
 
-Add to `lib/music_library/collection.ex`:
+---
 
-```elixir
-@spec count_records() :: non_neg_integer()
-def count_records do
-  from(r in Record, where: not is_nil(r.purchased_at))
-  |> Repo.aggregate(:count)
-end
+### Phase 6: LiveView and collection chat changes
 
-@spec stats_summary() :: {String.t(), non_neg_integer()}
-def stats_summary do
-  # Same record load as collection_summary/0 (the heavy SQL query),
-  # but only computes the stats header — NO per-record catalog formatting.
-  # Returns {stats_string, group_count}.
-  # Example stats_string:
-  #   "# Stats: 500 releases, 200 artists\nGenres: rock 150, ...\nFormats: ...\nEras: ..."
-  records = from(r in Record, where: not is_nil(r.purchased_at), select: ^essential_fields()) |> Repo.all()
-  groups = records |> Enum.group_by(& &1.musicbrainz_id)
-  stats = build_stats(records, length(groups))
-  {stats, length(groups)}
-end
-```
+#### CollectionLive.Index
 
-~10 lines. `collection_summary/0` remains in the module — it's now only called by `FileStore.upload_or_refresh/0` (inside the Oban worker) to generate the catalog text for file upload. `stats_summary/0` extracts the lightweight stats portion for the LiveView to load (still a full table scan, but skips the expensive per-record string formatting — ~200 tokens of output vs ~9,000).
-
-#### 4c. CollectionLive.Index — load stats instead of full catalog
-
-Replace the heavy `start_async(:collection_summary, &Collection.collection_summary/0)` with `stats_summary`:
+Replace full catalog loading:
 
 ```elixir
-# In mount/3:
 |> assign(:collection_stats, {"", 0})
 |> start_async(:collection_stats, fn -> Collection.stats_summary() end)
-
-# Rename handle_async:
-def handle_async(:collection_stats, {:ok, stats}, socket) do
-  {:noreply, assign(socket, :collection_stats, stats)}
-end
-
-def handle_async(:collection_stats, {:exit, _reason}, socket) do
-  {:noreply, socket}
-end
-
-# In the template — pass stats as chat_context:
-chat_context={@collection_stats}
 ```
 
-The `@collection_summary` assign is removed. The Chat component receives `{stats_string, record_count}`, matching the existing tuple shape so no Chat component changes are needed.
+Pass `chat_context={@collection_stats}` to the Chat component. Remove the `@collection_summary` assign from the LiveView path.
 
-~8 lines (mostly renames).
+#### OpenAI facade/API
+
+Update `OpenAI.chat_stream/2` to accept `:vector_store_ids`:
+
+```elixir
+vector_store_ids = Keyword.get(opts, :vector_store_ids, [])
+tools = build_tools(vector_store_ids)
+API.chat_stream(messages, instructions, model, temperature, open_ai_config(), on_chunk, tools)
+```
+
+Build tools as:
+
+- no vector store: `[%{type: "web_search_preview"}]`
+- vector store present: `[%{type: "file_search", vector_store_ids: ids}, %{type: "web_search_preview"}]`
+
+Preserve the existing `API.chat_stream/6` behavior for record and artist chats.
+
+#### CollectionChat
+
+`CollectionChat.stream_response/3`:
+
+1. Build instructions from stats + count only.
+2. Call `FileStore.get_vector_store_id/0`.
+3. Include `vector_store_ids: [id]` only when available.
+4. Fall back to stats-only instructions when not uploaded.
+
+Instructions must:
+
+- tell the model to use stats for aggregate questions;
+- tell the model to use file search for artists/albums/genres/formats;
+- tell the model not to invent records when search returns no results;
+- keep the existing `[[artist/album]]` linking rule.
 
 ---
 
-### Phase 5: Chat streaming changes
+### Phase 7: Tests
 
-#### 5a. OpenAI facade — accept `:vector_store_ids` option
+#### OpenAI.API tests
 
-Modify `OpenAI.chat_stream/2` to pass tools to the API layer:
+Add coverage for new endpoints:
 
-```elixir
-def chat_stream(messages, opts) when is_list(messages) do
-  model = Keyword.get(opts, :model, "gpt-4.1")
-  temperature = Keyword.get(opts, :temperature, 0.7)
-  instructions = Keyword.get(opts, :instructions, "")
-  on_chunk = Keyword.fetch!(opts, :on_chunk)
-  vector_store_ids = Keyword.get(opts, :vector_store_ids, [])
+- multipart upload includes `purpose: "assistants"`, filename, and file content;
+- vector store creation request body/name;
+- file-to-vector-store attachment;
+- vector-store-file status polling endpoint, including completed, in-progress, and failed statuses;
+- delete vector store and delete file;
+- list files and list vector stores for cleanup;
+- representative 429/5xx responses return `OpenAI.API.ErrorResponse` with the expected kind.
 
-  tools = build_tools(vector_store_ids)
+#### FileStore tests
 
-  API.chat_stream(messages, instructions, model, temperature, open_ai_config(), on_chunk, tools)
-end
+Use `Req.Test` stubs and the `Secrets` context (not raw DB writes):
 
-defp build_tools([]), do: [%{type: "web_search_preview"}]
-defp build_tools(ids) when is_list(ids) do
-  [%{type: "file_search", vector_store_ids: ids}, %{type: "web_search_preview"}]
-end
-```
+- first upload creates file + vector store, attaches file, polls vector-store-file until complete, and stores active JSON state;
+- refresh creates a new file/store and does not switch active state until indexing succeeds;
+- failed refresh leaves previous active state available;
+- unchanged catalog hash skips all OpenAI API calls;
+- empty collection clears/deletes active resources so old records are not searchable;
+- partial failures best-effort clean up newly created resources;
+- cleanup deletes only inactive ML-managed resources and skips unrelated OpenAI files/vector stores;
+- `get_vector_store_id/0` returns `{:ok, id}` only for complete active state and `{:error, :not_uploaded}` otherwise.
 
-~10 lines.
+#### Worker tests
 
-#### 5b. OpenAI.API — accept optional tools parameter
+- `perform/1` delegates to FileStore and returns `:ok` on success;
+- structured OpenAI errors are routed through `Worker.ErrorHandler`;
+- debounced enqueue creates one scheduled job and later enqueue replaces `scheduled_at` rather than first-writer-wins;
+- a mutation can enqueue a follow-up job when another refresh job is already executing or no scheduled job exists.
 
-Add a 7-arity overload to `API.chat_stream`:
+#### Records/enrichment tests
 
-```elixir
-def chat_stream(messages, instructions, model, temperature, config, cb) do
-  chat_stream(messages, instructions, model, temperature, config, cb, [%{type: "web_search_preview"}])
-end
+- `create_record/1`, `update_record/2`, and `delete_record/1` enqueue `RefreshCollectionFile` via `assert_enqueued`;
+- failed changes do not enqueue;
+- catalog-affecting enrichment/direct update paths enqueue after success, especially genre population;
+- bulk import or repeated creates coalesce into a single scheduled refresh with the latest scheduled time.
 
-def chat_stream(messages, instructions, model, temperature, config, cb, tools) when is_list(tools) do
-  config
-  |> new_request()
-  |> Req.merge(
-    url: "/v1/responses",
-    receive_timeout: 60_000,
-    connect_options: [timeout: 5_000],
-    json: %{
-      model: model,
-      instructions: instructions,
-      input: messages,
-      tools: tools,
-      stream: true,
-      temperature: temperature
-    },
-    into: :self
-  )
-  |> do_chat_stream(cb)
-end
-```
+#### Collection/LiveView tests
 
-- Uses function clause pattern matching (`when is_list(tools)`) rather than default argument with `||`, avoiding the falsy-empty-list pitfall.
-- The 6-arity version is preserved for backward compatibility (existing RecordChat and ArtistChat callers).
+- `stats_summary/0` returns stats string and correct count;
+- `stats_summary/0` returns `{ "", 0 }` for empty collection;
+- `file_search_catalog/0` returns deterministic catalog text and hash;
+- `CollectionLive.Index` uses `@collection_stats`, not `@collection_summary`, and Chat receives the stats tuple.
 
-~5 lines.
+#### CollectionChat/OpenAI request tests
 
-#### 5c. CollectionChat — new instructions and streaming logic
-
-Update `CollectionChat`:
-
-```elixir
-@impl true
-def stream_response(messages, {stats, record_count}, callback) do
-  instructions = build_instructions(stats, record_count)
-
-  vector_store_opts =
-    case FileStore.get_vector_store_id() do
-      {:ok, id} -> [vector_store_ids: [id]]
-      {:error, :not_uploaded} -> []  # fall back to stats-only
-    end
-
-  OpenAI.chat_stream(messages, [
-    on_chunk: callback,
-    instructions: instructions,
-    model: "gpt-5.1"
-  ] ++ vector_store_opts)
-end
-
-defp build_instructions(stats, record_count) do
-  Prompt.build("""
-  Answer questions about the user's music collection.
-  Use the provided stats and file search to answer questions
-  about the collection.
-
-  #{stats}
-
-  The collection contains #{record_count} records in total.
-
-  Use file search to find specific records when the user asks about
-  artists, albums, genres, or formats in their collection.
-
-  If file search returns no results for a query, say so honestly —
-  don't guess or invent records. If you're unsure whether a record
-  exists, mention that it wasn't found in the collection.
-
-  # Mentioning artists/albums
-
-  **IF YOU MENTION AN ARTIST NAME OR ALBUM NAME, wrap it in "[[name]]",
-  for example "[[Steven Wilson]]"
-  """)
-end
-```
-
-Key changes from current code:
-
-- `stream_response/3` keeps the `{tuple, count}` signature shape — the stats string replaces the catalog text
-- `build_instructions/2` interpolates aggregated stats (~200 tokens) instead of the full catalog (~9,000 tokens)
-- `FileStore.get_vector_store_id/0` is the only FileStore function called from the chat path
-- On `{:error, :not_uploaded}`, vector_store_opts is empty → `build_tools([])` returns only `web_search_preview` → stats-only fallback (still useful for aggregate questions)
-- Added explicit guidance for when file search returns no results
-- The "Collection catalog:" section is removed; replaced with stats inline
-
-~18 lines (modifications to existing code).
+- instructions include stats and count;
+- instructions do **not** include per-record catalog lines, even with records present;
+- active FileStore secret causes request tools to include `file_search` with the vector store ID;
+- missing/incomplete FileStore secret omits `file_search` and keeps `web_search_preview`;
+- `web_search_preview` remains present for all chat types;
+- SSE fixtures including `response.file_search_call.*` events stream successfully via the existing `response.*` catch-all;
+- existing record and artist chat request shapes remain unchanged.
 
 ---
 
-### Phase 6: Testing
+### Phase 8: Verification
 
-#### 6a. OpenAI.API endpoint tests (`test/open_ai/api_test.exs`)
+Run the normal checks required by the task DoD:
 
-Add test blocks for the 7 new endpoints, following existing `Req.Test.stub` patterns:
+- `mix compile --warnings-as-errors`
+- `mix test`
+- `mix format --check-formatted`
+- `mix credo`
 
-- `upload_file/3` — verify multipart body includes `purpose: "assistants"` and file content; test success (200 + file JSON) and error (500) responses
-- `create_vector_store/2` — verify request body has `name` field; test success and error
-- `add_file_to_vector_store/3` — verify URL path includes store_id; test success and error
-- `remove_file_from_vector_store/3` — verify DELETE request; test 200 and 404 (already removed)
-- `delete_file/2` — verify DELETE request; test success
-- `get_file/2` — test `status: "processed"` (success), `status: "uploaded"` (still processing), and error
-- `list_files/1` — test paginated response with file list
-- Rate-limit error handling (429 → `ErrorResponse` with `:rate_limit` kind) for each endpoint
+Implementation-time manual verification:
 
-~80 lines.
+1. Compare before/after collection chat instruction byte/token estimates.
+2. Run one FileStore refresh against test stubs and inspect logs for successful upload/index/switch/cleanup ordering.
+3. Confirm a simulated failed refresh leaves the previous vector store ID active.
+4. Confirm empty collection does not leave the old catalog searchable.
+5. If UI-visible code changes beyond the assign rename, use browser tooling for the collection page; otherwise no visual verification is required.
 
-#### 6b. FileStore tests (`test/music_library/chats/collection_chat/file_store_test.exs`)
+---
 
-Test `FileStore` functions with `Req.Test` stubs and direct `Secrets` manipulation:
+### Phase 9: Production and documentation
 
-- `upload_or_refresh/0` — first-time upload (no secrets → creates file + store + attaches → secrets populated)
-- `upload_or_refresh/0` — refresh (secrets present → uploads new file → attaches → detaches old → deletes old → updates file_id in secrets)
-- `upload_or_refresh/0` — handles file still "uploaded" (polls until "processed")
-- `upload_or_refresh/0` — handles OpenAI API errors gracefully (returns `{:error, ...}`)
-- `get_vector_store_id/0` — returns `{:ok, id}` when secret exists
-- `get_vector_store_id/0` — returns `{:error, :not_uploaded}` when secret missing
-- `cleanup_orphaned_files/0` — deletes files not matching known file_id; skips known file
+No new server environment variables are expected; the implementation uses the existing `OPENAI_KEY`. Document this explicitly. Confirm the OpenAI project/key has access to Files, Vector Stores, and Responses `file_search`.
 
-~70 lines.
+Production rollout behavior:
 
-#### 6c. CollectionChat tests (`test/music_library/chats/collection_chat_test.exs`)
+- initial upload happens through the hourly cron after deploy;
+- if the user wants immediate availability, ask before performing any production action, then trigger `RefreshCollectionFile` through existing admin tooling/Oban UI;
+- rollback/fallback is safe because collection chat works stats-only when the active FileStore secret is missing or incomplete;
+- cleanup worker removes stale ML-managed OpenAI files/vector stores, never unrelated resources.
 
-Update existing tests and add new ones:
+Update documentation:
 
-- Verify instructions **no longer** contain the per-record catalog lines (the key regression test)
-- Verify instructions **do** contain the aggregated stats string and record count
-- Verify `file_search` tool is included in the API request body when vector store is available (stub `FileStore.get_vector_store_id/0` → `{:ok, "vs_test"}` and assert `tools` array in the JSON body contains `%{"type" => "file_search", "vector_store_ids" => ["vs_test"]}`)
-- Verify `file_search` tool is **not** included when vector store is unavailable (stub → `{:error, :not_uploaded}`, assert tools only has `web_search_preview`)
-- Verify `web_search_preview` is always included regardless of file_search presence
-- Test empty collection edge case (stats = "", record_count = 0)
-- Test SSE event handling: include `response.file_search_call.in_progress`, `response.file_search_call.searching`, and `response.file_search_call.completed` events in the test stream fixture to verify they're silently consumed (caught by the `"response." <> _` catch-all) without breaking the stream
-
-~60 lines (modifications to existing + new tests).
-
-#### 6d. Worker tests (`test/music_library/worker/refresh_collection_file_test.exs`)
-
-- `perform/1` delegates to `FileStore.upload_or_refresh/0` and returns `:ok`
-- `perform/1` returns `{:error, reason}` on failure
-- Unique constraint: inserting two jobs within 300s results in only one executing (test with `Oban.insert/1` returning `{:ok, _}` for first and `{:ok, %{conflict?: true}}` for second)
-
-~20 lines.
-
-#### 6e. Records context integration tests
-
-In existing `test/music_library/records_test.exs` (or equivalent):
-
-- `create_record/1` enqueues `RefreshCollectionFile` worker
-- `update_record/2` enqueues `RefreshCollectionFile` worker
-- `delete_record/1` enqueues `RefreshCollectionFile` worker
-- Verify with `assert_enqueued` (Oban testing helper)
-
-~15 lines.
-
-#### 6f. LiveView test
-
-In `test/music_library_web/live/collection_live/index_test.exs` (or equivalent):
-
-- Verify `@collection_stats` is set after mount (not `@collection_summary`)
-- Verify Chat component receives `{stats_string, count}` tuple as `chat_context`
-
-~8 lines (modifications to existing test).
-
-#### 6g. Collection context tests
-
-In existing `test/music_library/collection_test.exs` (or equivalent):
-
-- `stats_summary/0` returns stats string with genre/format/era breakdowns and correct group count
-- `stats_summary/0` returns `{"", 0}` for empty collection
-- `count_records/0` returns correct count
-- Existing `collection_summary/0` tests continue to pass unchanged
-
-~20 lines.
-
-Estimated total: ~510 lines across 13-15 files. Risk: low/medium — the core streaming infrastructure (`decode_responses_event/2`, Chat component `do_send_message/2`, SSE event loop) is untouched. New code is additive (API endpoints, Oban worker, FileStore module) and follows existing patterns.
-
+- `docs/architecture.md` — add `CollectionChat.FileStore`, OpenAI file/vector-store endpoints, `:open_ai` queue, refresh/cleanup workers, and updated collection chat data flow.
+- `docs/production-infrastructure.md` — add OpenAI Files/Vector Stores usage, cost profile with current pricing checked at implementation time, no-new-env-var note, initial refresh behavior, cleanup/rollback notes, and operational cautions.
+- Update any relevant tests/docs comments if function names change (`collection_summary/0`, `stats_summary/0`, `file_search_catalog/0`).
 <!-- SECTION:PLAN:END -->
 
 ## Definition of Done
