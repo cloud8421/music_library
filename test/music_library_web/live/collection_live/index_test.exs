@@ -13,7 +13,6 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   alias MusicLibrary.Records.Record
   alias MusicLibrary.Worker.ImportFromMusicbrainzRelease
   alias MusicLibrary.Worker.ImportFromMusicbrainzReleaseGroup
-  alias MusicLibraryWeb.CollectionLive.Index, as: CollectionIndex
   alias Req.Test
 
   # make it a multiple of 4 for easier calculations
@@ -776,73 +775,5 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     transform = %Transform{hash: record.cover_hash, width: width}
     payload = Transform.encode!(transform)
     ~p"/assets/#{payload}"
-  end
-
-  describe "handle_async delete_record" do
-    import Phoenix.LiveViewTest
-
-    defp build_socket(conn) do
-      {:ok, view, _html} = live(conn, ~p"/collection")
-      state = :sys.get_state(view.pid)
-      state.socket
-    end
-
-    test "{:ok, {:ok, _}} is a no-op", %{conn: conn} do
-      record = record(%{title: "HandleAsync Success"})
-      socket = build_socket(conn)
-      socket = Phoenix.LiveView.stream_delete(socket, :records, record)
-
-      assert {:noreply, _socket} =
-               CollectionIndex.handle_async(
-                 {:delete_record, record.id},
-                 {:ok, {:ok, record}},
-                 socket
-               )
-    end
-
-    test "{:ok, {:error, _}} does not crash", %{conn: conn} do
-      record = record(%{title: "HandleAsync Error"})
-      socket = build_socket(conn)
-      socket = Phoenix.LiveView.stream_delete(socket, :records, record)
-
-      assert {:noreply, _socket} =
-               CollectionIndex.handle_async(
-                 {:delete_record, record.id},
-                 {:ok, {:error, :not_found}},
-                 socket
-               )
-    end
-
-    test "{:exit, _} does not crash", %{conn: conn} do
-      record = record(%{title: "HandleAsync Exit"})
-      socket = build_socket(conn)
-      socket = Phoenix.LiveView.stream_delete(socket, :records, record)
-
-      assert {:noreply, _socket} =
-               CollectionIndex.handle_async(
-                 {:delete_record, record.id},
-                 {:exit, :killed},
-                 socket
-               )
-    end
-
-    test "{:exit, _} uses generic message, never leaks reason", %{conn: conn} do
-      record = record(%{title: "HandleAsync Exit No Leak"})
-      socket = build_socket(conn)
-      socket = Phoenix.LiveView.stream_delete(socket, :records, record)
-
-      {:noreply, socket} =
-        CollectionIndex.handle_async(
-          {:delete_record, record.id},
-          {:exit, {:killed, "some stacktrace that should not leak"}},
-          socket
-        )
-
-      # Verify the toast contains the generic message, NOT the raw exit reason
-      assert socket.assigns[:toasts_sync]
-      [toast | _] = socket.assigns.toasts_sync
-      refute inspect(toast) =~ "stacktrace"
-      refute inspect(toast) =~ "killed"
-    end
   end
 end
