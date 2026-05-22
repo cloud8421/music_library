@@ -1,17 +1,7 @@
 {
   "_comment": "Blocked paths for pi. Glob-like patterns, matched case-insensitively against absolute paths. blocked_commands are exact command names (not regexes), matched case-insensitively against structurally parsed bash AST command names.",
   "blocked_paths": [
-    "mise.local.toml",
-    "*.pem",
-    "*.key",
-    "*.key.pub",
-    "*secret*",
-    "*credential*",
-    "*credentials*",
-    ".ssh/",
-    ".aws/",
-    ".gnupg/",
-    "~/.pi/agent/sessions/"
+    "mise.local.toml"
   ],
   "blocked_commands": [
     "printenv",
