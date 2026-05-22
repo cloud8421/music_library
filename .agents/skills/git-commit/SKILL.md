@@ -18,7 +18,8 @@ and commits that don't follow them will be rejected.
 3. **Is this a single logical change?** One change per commit. If a change spans
    multiple tasks, split the commit.
 
-4. **Did you run precommit checks?** `mise run dev:precommit` before committing.
+4. **You do not need to run precommit checks** as `mise run dev:precommit` is
+   run automatically via git hooks.
 
 ## Commit Message Format
 
@@ -110,6 +111,7 @@ git add lib/music_library/records.ex test/music_library/records_test.exs
 ### Commit Message Validation
 
 After writing the commit message, verify:
+
 1. Subject is imperative present tense
 2. Subject is ≤60 characters (including task ID)
 3. Task ID references the correct Backlog task
