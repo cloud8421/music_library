@@ -2562,3 +2562,17 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Record was updated in the background. Your edits may be stale — save and re-open to see the latest data."
 msgstr ""
+
+#: lib/music_library_web/live/collection_live/index.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/index.ex
+#: lib/music_library_web/live/wishlist_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Delete failed, please try again"
+msgstr ""
+
+#: lib/music_library_web/live/collection_live/index.ex
+#: lib/music_library_web/live/scrobbled_tracks_live/index.ex
+#: lib/music_library_web/live/wishlist_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Failed to delete: "
+msgstr ""

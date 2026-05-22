@@ -8,6 +8,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
   alias LastFm.Track
   alias MusicLibrary.Assets.Transform
   alias MusicLibrary.ListeningStats
+  alias MusicLibraryWeb.ErrorMessages
 
   @default_tracks_list_params %{
     query: "",
@@ -298,9 +299,13 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
 
   def handle_event("delete", %{"scrobbled-at-uts" => scrobbled_at_uts}, socket) do
     track = ListeningStats.get_track!(scrobbled_at_uts)
-    {:ok, _} = ListeningStats.delete_track(track)
+    stream_element = %{track: track}
+    socket = stream_delete(socket, :tracks, stream_element)
 
-    {:noreply, stream_delete(socket, :tracks, %{track: track})}
+    {:noreply,
+     start_async(socket, {:delete_track, scrobbled_at_uts}, fn ->
+       {ListeningStats.delete_track(track), stream_element}
+     end)}
   end
 
   def handle_event("search", %{"query" => query}, socket) do
@@ -315,6 +320,22 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.Index do
   def handle_event("refresh_scrobbles", _, socket) do
     ListeningStats.refresh()
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_async({:delete_track, _uts}, {:ok, {{:ok, _track}, _element}}, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_async({:delete_track, _uts}, {:ok, {{:error, reason}, element}}, socket) do
+    {:noreply,
+     socket
+     |> stream_insert(:tracks, element)
+     |> put_toast(:error, gettext("Failed to delete: ") <> ErrorMessages.friendly_message(reason))}
+  end
+
+  def handle_async({:delete_track, _uts}, {:exit, _reason}, socket) do
+    {:noreply, put_toast(socket, :error, gettext("Delete failed, please try again"))}
   end
 
   defp parse_order("scrobbled_at"), do: :scrobbled_at

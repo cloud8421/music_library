@@ -9,6 +9,7 @@ defmodule MusicLibraryWeb.WishlistLive.IndexTest do
   alias MusicLibrary.Records
   alias MusicLibrary.Records.Record
   alias MusicLibrary.Worker.ImportFromMusicbrainzReleaseGroup
+  alias MusicLibraryWeb.WishlistLive.Index, as: WishlistIndex
   alias Req.Test
 
   defp fill_wishlist(_) do
@@ -53,6 +54,7 @@ defmodule MusicLibraryWeb.WishlistLive.IndexTest do
       |> assert_has("#records-#{record.id}")
       |> click_link("#records-#{record.id} a[data-confirm='Are you sure?']", "Delete")
       |> refute_has("#records-#{record.id}")
+      |> render_async()
 
       assert_raise Ecto.NoResultsError, fn ->
         Records.get_record!(record.id)
@@ -173,5 +175,72 @@ defmodule MusicLibraryWeb.WishlistLive.IndexTest do
           Plug.Conn.send_resp(conn, 200, cover_data)
       end
     end)
+  end
+
+  describe "handle_async delete_record" do
+    import Phoenix.LiveViewTest
+
+    defp build_socket(conn) do
+      {:ok, view, _html} = live(conn, ~p"/wishlist")
+      state = :sys.get_state(view.pid)
+      state.socket
+    end
+
+    test "{:ok, {:ok, _}} is a no-op", %{conn: conn} do
+      record = record(%{title: "HandleAsync Success", purchased_at: nil})
+      socket = build_socket(conn)
+      socket = Phoenix.LiveView.stream_delete(socket, :records, record)
+
+      assert {:noreply, _socket} =
+               WishlistIndex.handle_async(
+                 {:delete_record, record.id},
+                 {:ok, {:ok, record}},
+                 socket
+               )
+    end
+
+    test "{:ok, {:error, _}} does not crash", %{conn: conn} do
+      record = record(%{title: "HandleAsync Error", purchased_at: nil})
+      socket = build_socket(conn)
+      socket = Phoenix.LiveView.stream_delete(socket, :records, record)
+
+      assert {:noreply, _socket} =
+               WishlistIndex.handle_async(
+                 {:delete_record, record.id},
+                 {:ok, {:error, :not_found}},
+                 socket
+               )
+    end
+
+    test "{:exit, _} does not crash", %{conn: conn} do
+      record = record(%{title: "HandleAsync Exit", purchased_at: nil})
+      socket = build_socket(conn)
+      socket = Phoenix.LiveView.stream_delete(socket, :records, record)
+
+      assert {:noreply, _socket} =
+               WishlistIndex.handle_async(
+                 {:delete_record, record.id},
+                 {:exit, :killed},
+                 socket
+               )
+    end
+
+    test "{:exit, _} uses generic message, never leaks reason", %{conn: conn} do
+      record = record(%{title: "HandleAsync Exit No Leak", purchased_at: nil})
+      socket = build_socket(conn)
+      socket = Phoenix.LiveView.stream_delete(socket, :records, record)
+
+      {:noreply, socket} =
+        WishlistIndex.handle_async(
+          {:delete_record, record.id},
+          {:exit, {:killed, "some stacktrace that should not leak"}},
+          socket
+        )
+
+      assert socket.assigns[:toasts_sync]
+      [toast | _] = socket.assigns.toasts_sync
+      refute inspect(toast) =~ "stacktrace"
+      refute inspect(toast) =~ "killed"
+    end
   end
 end

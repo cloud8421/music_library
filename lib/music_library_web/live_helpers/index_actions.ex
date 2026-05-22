@@ -3,7 +3,16 @@ defmodule MusicLibraryWeb.LiveHelpers.IndexActions do
 
   import LiveToast, only: [put_toast: 3]
   import Phoenix.Component, only: [assign: 3]
-  import Phoenix.LiveView, only: [push_patch: 2, push_navigate: 2, stream: 4, stream_delete: 3]
+
+  import Phoenix.LiveView,
+    only: [
+      push_patch: 2,
+      push_navigate: 2,
+      start_async: 3,
+      stream: 4,
+      stream_delete: 3
+    ]
+
   import MusicLibraryWeb.Components.Pagination, only: [page_to_offset: 2]
   import MusicLibraryWeb.LiveHelpers.Params
 
@@ -91,9 +100,12 @@ defmodule MusicLibraryWeb.LiveHelpers.IndexActions do
 
   def handle_delete(socket, id) do
     record = Records.get_record!(id)
-    {:ok, _} = Records.delete_record(record)
+    socket = stream_delete(socket, :records, record)
 
-    {:noreply, stream_delete(socket, :records, record)}
+    {:noreply,
+     start_async(socket, {:delete_record, id}, fn ->
+       Records.delete_record(record)
+     end)}
   end
 
   def handle_search(socket, query) do

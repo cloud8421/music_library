@@ -4,6 +4,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
   import MusicLibrary.ScrobbledTracksFixtures
 
   alias MusicLibrary.ListeningStats
+  alias MusicLibraryWeb.ScrobbledTracksLive.Index, as: ScrobbledTracksIndex
 
   @valid_track_attrs %{
     title: "Updated Track Title",
@@ -95,6 +96,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
       |> assert_has("p", track.title)
       |> click_button("button[data-confirm='Are you sure?']", "Delete")
       |> refute_has("p", track.title)
+      |> render_async()
 
       assert_raise Ecto.NoResultsError, fn ->
         ListeningStats.get_track!(track.scrobbled_at_uts)
@@ -152,6 +154,77 @@ defmodule MusicLibraryWeb.ScrobbledTracksLiveTest do
       assert_raise Ecto.NoResultsError, fn ->
         visit(conn, ~p"/scrobbled-tracks/#{invalid_id}/edit")
       end
+    end
+  end
+
+  describe "handle_async delete_track" do
+    import Phoenix.LiveViewTest
+
+    defp build_socket(conn) do
+      {:ok, view, _html} = live(conn, ~p"/scrobbled-tracks")
+      state = :sys.get_state(view.pid)
+      state.socket
+    end
+
+    test "{:ok, {{:ok, _}, _}} is a no-op", %{conn: conn} do
+      track = track_fixture()
+      element = %{track: track}
+      socket = build_socket(conn)
+      socket = Phoenix.LiveView.stream_delete(socket, :tracks, element)
+
+      assert {:noreply, _socket} =
+               ScrobbledTracksIndex.handle_async(
+                 {:delete_track, track.scrobbled_at_uts},
+                 {:ok, {{:ok, track}, element}},
+                 socket
+               )
+    end
+
+    test "{:ok, {{:error, _}, _}} does not crash", %{conn: conn} do
+      track = track_fixture()
+      element = %{track: track}
+      socket = build_socket(conn)
+      socket = Phoenix.LiveView.stream_delete(socket, :tracks, element)
+
+      assert {:noreply, _socket} =
+               ScrobbledTracksIndex.handle_async(
+                 {:delete_track, track.scrobbled_at_uts},
+                 {:ok, {{:error, :not_found}, element}},
+                 socket
+               )
+    end
+
+    test "{:exit, _} does not crash", %{conn: conn} do
+      track = track_fixture()
+      element = %{track: track}
+      socket = build_socket(conn)
+      socket = Phoenix.LiveView.stream_delete(socket, :tracks, element)
+
+      assert {:noreply, _socket} =
+               ScrobbledTracksIndex.handle_async(
+                 {:delete_track, track.scrobbled_at_uts},
+                 {:exit, :killed},
+                 socket
+               )
+    end
+
+    test "{:exit, _} uses generic message, never leaks reason", %{conn: conn} do
+      track = track_fixture()
+      element = %{track: track}
+      socket = build_socket(conn)
+      socket = Phoenix.LiveView.stream_delete(socket, :tracks, element)
+
+      {:noreply, socket} =
+        ScrobbledTracksIndex.handle_async(
+          {:delete_track, track.scrobbled_at_uts},
+          {:exit, {:killed, "some stacktrace that should not leak"}},
+          socket
+        )
+
+      assert socket.assigns[:toasts_sync]
+      [toast | _] = socket.assigns.toasts_sync
+      refute inspect(toast) =~ "stacktrace"
+      refute inspect(toast) =~ "killed"
     end
   end
 end

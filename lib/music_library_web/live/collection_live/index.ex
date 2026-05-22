@@ -10,6 +10,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
   alias MusicLibrary.Collection
   alias MusicLibrary.Records
   alias MusicLibraryWeb.Components.AddRecord
+  alias MusicLibraryWeb.ErrorMessages
   alias MusicLibraryWeb.LiveHelpers.IndexActions
 
   defp index_config do
@@ -321,6 +322,28 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
   def handle_async(:collection_summary, {:exit, _reason}, socket) do
     {:noreply, socket}
+  end
+
+  def handle_async({:delete_record, _id}, {:ok, {:ok, _record}}, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_async({:delete_record, id}, {:ok, {:error, reason}}, socket) do
+    record = Records.get_record!(id)
+
+    {:noreply,
+     socket
+     |> stream_insert(:records, record)
+     |> put_toast(:error, gettext("Failed to delete: ") <> ErrorMessages.friendly_message(reason))}
+  end
+
+  def handle_async({:delete_record, id}, {:exit, _reason}, socket) do
+    record = Records.get_record!(id)
+
+    {:noreply,
+     socket
+     |> stream_insert(:records, record)
+     |> put_toast(:error, gettext("Delete failed, please try again"))}
   end
 
   @impl true
