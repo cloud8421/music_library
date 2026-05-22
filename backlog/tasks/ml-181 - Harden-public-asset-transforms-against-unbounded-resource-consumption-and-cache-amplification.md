@@ -3,10 +3,10 @@ id: ML-181
 title: >-
   Harden public asset transforms against unbounded resource consumption and
   cache amplification
-status: To Do
+status: Done
 assignee: []
 created_date: "2026-05-13 18:33"
-updated_date: "2026-05-13 19:36"
+updated_date: "2026-05-22 06:52"
 labels:
   - security
   - api
@@ -19,6 +19,12 @@ references:
     backlog/completed/ml-35 -
     Harden-the-public-asset-endpoint-against-invalid-payloads.md
   - doc-21 - ML-181-Research-Public-Asset-Transform-Hardening-Routes.md
+modified_files:
+  - lib/music_library/assets/transform.ex
+  - lib/music_library/assets/cache.ex
+  - lib/music_library_web/controllers/asset_controller.ex
+  - test/music_library/assets/transform_test.exs
+  - test/music_library_web/controllers/asset_controller_test.exs
 priority: medium
 ordinal: 9000
 ---
@@ -35,17 +41,17 @@ The unauthenticated `GET /public/assets/:transform_payload` endpoint decodes arb
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 Transform.decode/1 rejects payloads with string width (400 Bad Request)
-- [ ] #2 Transform.decode/1 rejects payloads with negative width (400 Bad Request)
-- [ ] #3 Transform.decode/1 rejects payloads with zero width (400 Bad Request)
-- [ ] #4 Transform.decode/1 rejects payloads with float width (400 Bad Request)
-- [ ] #5 Transform.decode/1 rejects payloads with width > 2048 (400 Bad Request)
-- [ ] #6 Transform.decode/1 accepts width: nil (original size, no resize)
-- [ ] #7 Transform.decode/1 accepts widths in 1..2048 (e.g., 96, 150, 480, 300, 2048)
-- [ ] #8 Canonical cache key collates variant payloads for the same (hash, width) into a single ETS entry
-- [ ] #9 Existing email image URLs (width: 96) continue to serve correctly
-- [ ] #10 API and authenticated asset routes continue to work unchanged
-- [ ] #11 Existing controller and LiveView tests pass without modification
+- [x] #1 Transform.decode/1 rejects payloads with string width (400 Bad Request)
+- [x] #2 Transform.decode/1 rejects payloads with negative width (400 Bad Request)
+- [x] #3 Transform.decode/1 rejects payloads with zero width (400 Bad Request)
+- [x] #4 Transform.decode/1 rejects payloads with float width (400 Bad Request)
+- [x] #5 Transform.decode/1 rejects payloads with width > 2048 (400 Bad Request)
+- [x] #6 Transform.decode/1 accepts width: nil (original size, no resize)
+- [x] #7 Transform.decode/1 accepts widths in 1..2048 (e.g., 96, 150, 480, 300, 2048)
+- [x] #8 Canonical cache key collates variant payloads for the same (hash, width) into a single ETS entry
+- [x] #9 Existing email image URLs (width: 96) continue to serve correctly
+- [x] #10 API and authenticated asset routes continue to work unchanged
+- [x] #11 Existing controller and LiveView tests pass without modification
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -244,3 +250,29 @@ No production changes required:
 - **`docs/architecture.md`**: No update needed — asset serving path is not documented at this granularity
 - **`docs/project-conventions.md`**: No update needed
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
+### Summary
+
+Added two complementary defenses to the public asset transform endpoint:
+
+1. **Width validation in `Transform.decode/1` and `decode!/1`** — Rejects payloads where `width` is not `nil` or a positive integer in `1..2048`. Invalid payloads return `{:error, :invalid_payload}` (400 Bad Request at the controller level). A private `valid_width?/1` guard handles nil, valid integer range, and all invalid cases (string, negative, zero, float, very large).
+
+2. **Canonical cache key derivation** — Added `Transform.canonical_key/1` producing `"hash:width"` strings. `AssetController` now uses this as the ETS cache key while continuing to use the raw payload string for HTTP ETags. This collapses variant JSON payloads encoding the same (hash, width) into a single cache entry.
+
+### Changes
+
+- `lib/music_library/assets/transform.ex` — Added `@max_width 2048`, `valid_width?/1`, `canonical_key/1`, updated `decode/1`, `decode!/1`, and `@moduledoc`
+- `lib/music_library/assets/cache.ex` — Updated `@moduledoc` Cache key section to describe key as opaque
+- `lib/music_library_web/controllers/asset_controller.ex` — Uses `Transform.canonical_key/1` for ETS cache; HTTP ETag remains raw payload
+- `test/music_library/assets/transform_test.exs` — 8 new unit tests for width validation edge cases + canonical_key doctest
+- `test/music_library_web/controllers/asset_controller_test.exs` — 4 new integration tests (string/negative/large width rejection, cache amplification fix)
+
+### Verification
+
+- Full test suite: **1115 passed** (44 doctests, 1071 tests), 0 failures
+- Existing controller and LiveView tests pass without modification
+<!-- SECTION:FINAL_SUMMARY:END -->

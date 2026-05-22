@@ -17,7 +17,9 @@ defmodule MusicLibraryWeb.AssetController do
         bad_request(conn)
 
       {:ok, transform} ->
-        case cached_get(payload, transform, format) do
+        cache_key = Transform.canonical_key(transform)
+
+        case cached_get(cache_key, transform, format) do
           nil ->
             not_found(conn)
 
@@ -30,12 +32,12 @@ defmodule MusicLibraryWeb.AssetController do
     end
   end
 
-  defp cached_get(_payload, transform, _format) when is_nil(transform.hash) do
+  defp cached_get(_cache_key, transform, _format) when is_nil(transform.hash) do
     nil
   end
 
-  defp cached_get(payload, transform, format) do
-    case Cache.get(payload, format) do
+  defp cached_get(cache_key, transform, format) do
+    case Cache.get(cache_key, format) do
       :not_found ->
         if asset = Assets.get(transform.hash) do
           result =
@@ -47,7 +49,7 @@ defmodule MusicLibraryWeb.AssetController do
 
           case result do
             {:ok, image_data} ->
-              Cache.set(payload, format, image_data)
+              Cache.set(cache_key, format, image_data)
               image_data
 
             {:error, reason} ->

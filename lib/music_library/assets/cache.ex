@@ -4,9 +4,10 @@ defmodule MusicLibrary.Assets.Cache do
 
   ## Cache key
 
-  Each entry is keyed by `{payload, format}` where `payload` is a transform
-  parameter string (encoding width and asset hash) and `format` is the output
-  MIME type (e.g. `"image/webp"`).
+  Each entry is keyed by `{key, format}` where `key` is an opaque canonical
+  transform key provided by the caller (currently `"hash:width"` from
+  `Transform.canonical_key/1`) and `format` is the output MIME type
+  (e.g. `"image/webp"`).
 
   ## TTL and pruning
 

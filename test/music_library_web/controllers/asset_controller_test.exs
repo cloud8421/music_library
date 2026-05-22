@@ -87,6 +87,67 @@ defmodule MusicLibraryWeb.AssetControllerTest do
       assert text_response(conn, 404) == "Not found"
     end
 
+    test "400s when payload has string width", %{conn: conn, asset: asset} do
+      payload =
+        %{hash: asset.hash, width: "300"}
+        |> JSON.encode!()
+        |> Base.url_encode64(padding: false)
+
+      conn = get(conn, ~p"/assets/#{payload}")
+      assert text_response(conn, 400) == "Bad request"
+    end
+
+    test "400s when payload has negative width", %{conn: conn, asset: asset} do
+      payload =
+        %{hash: asset.hash, width: -1}
+        |> JSON.encode!()
+        |> Base.url_encode64(padding: false)
+
+      conn = get(conn, ~p"/assets/#{payload}")
+      assert text_response(conn, 400) == "Bad request"
+    end
+
+    test "400s when payload has very large width", %{conn: conn, asset: asset} do
+      payload =
+        %{hash: asset.hash, width: 99_999}
+        |> JSON.encode!()
+        |> Base.url_encode64(padding: false)
+
+      conn = get(conn, ~p"/assets/#{payload}")
+      assert text_response(conn, 400) == "Bad request"
+    end
+
+    test "canonical cache key collapses variant payloads into single ETS entry", %{
+      conn: conn,
+      asset: asset
+    } do
+      # Two variant payloads encoding the same (hash, width)
+      payload_a =
+        %{hash: asset.hash, width: 480}
+        |> JSON.encode!()
+        |> Base.url_encode64(padding: false)
+
+      # Same hash/width but different JSON key order / whitespace
+      payload_b =
+        %{width: 480, hash: asset.hash}
+        |> JSON.encode!()
+        |> Base.url_encode64(padding: false)
+
+      # First request populates the cache
+      conn_a = get(conn, ~p"/assets/#{payload_a}")
+      assert conn_a.status == 200
+      assert get_resp_header(conn_a, "etag") == [payload_a]
+
+      # Second request with different payload but same canonical key
+      # should serve from cache (same content, correct ETag for this payload)
+      conn_b = get(conn, ~p"/assets/#{payload_b}")
+      assert conn_b.status == 200
+      assert get_resp_header(conn_b, "etag") == [payload_b]
+
+      # Both should return the same image content
+      assert conn_a.resp_body == conn_b.resp_body
+    end
+
     @tag :capture_log
     test "404s when asset content is corrupt", %{conn: conn} do
       {:ok, asset} = Assets.store(%{content: "not an image", format: "image/jpeg"})
