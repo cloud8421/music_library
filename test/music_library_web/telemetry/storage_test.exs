@@ -1,5 +1,5 @@
 defmodule MusicLibraryWeb.Telemetry.StorageTest do
-  use ExUnit.Case, async: false
+  use ExUnit.Case, async: true
 
   import ExUnit.CaptureLog
   import Telemetry.Metrics, only: [summary: 2]
