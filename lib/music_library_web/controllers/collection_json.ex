@@ -38,7 +38,11 @@ defmodule MusicLibraryWeb.CollectionJSON do
       selected_release_id: record.selected_release_id,
       artists: Enum.map(record.artists, & &1.name),
       title: record.title,
-      covers: cover_urls(record.cover_hash)
+      covers: cover_urls(record.cover_hash),
+      scrobble_count: Map.get(record, :scrobble_count, 0),
+      last_listened_at: Map.get(record, :last_listened_at),
+      artist_country: Map.get(record, :artist_country),
+      selected_release: Map.get(record, :selected_release)
     }
   end
 

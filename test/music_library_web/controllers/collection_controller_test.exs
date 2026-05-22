@@ -327,6 +327,17 @@ defmodule MusicLibraryWeb.CollectionControllerTest do
         "large" => asset_url(record.cover_hash, 1000),
         "medium" => asset_url(record.cover_hash, 400),
         "small" => asset_url(record.cover_hash, 80)
+      },
+      "scrobble_count" => 0,
+      "last_listened_at" => nil,
+      "artist_country" => nil,
+      "selected_release" => %{
+        "catalog_number" => "",
+        "country" => "GB",
+        "date" => "2004-05-03",
+        "disambiguation" => "",
+        "format" => "multi",
+        "packaging" => "Jewel Case"
       }
     }
   end

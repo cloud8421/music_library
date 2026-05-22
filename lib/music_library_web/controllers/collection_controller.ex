@@ -3,17 +3,26 @@ defmodule MusicLibraryWeb.CollectionController do
 
   alias MusicBrainz
   alias MusicLibrary.Collection
+  alias MusicLibrary.Collection.Enrichment
   alias MusicLibrary.Records
   alias MusicLibrary.ScrobbleActivity
 
   def latest(conn, _params) do
-    latest_record = Collection.get_latest_record!()
+    latest_record =
+      Collection.get_latest_record!()
+      |> List.wrap()
+      |> Enrichment.enrich()
+      |> hd()
 
     render(conn, :show, record: latest_record)
   end
 
   def random(conn, _params) do
-    random_record = Collection.get_random_record!()
+    random_record =
+      Collection.get_random_record!()
+      |> List.wrap()
+      |> Enrichment.enrich()
+      |> hd()
 
     render(conn, :show, record: random_record)
   end
@@ -25,7 +34,10 @@ defmodule MusicLibraryWeb.CollectionController do
         date_string -> Date.from_iso8601!(date_string)
       end
 
-    records_on_this_day = Collection.get_records_on_this_day(current_date)
+    records_on_this_day =
+      current_date
+      |> Collection.get_records_on_this_day()
+      |> Enrichment.enrich()
 
     render(conn, :on_this_day, records: records_on_this_day)
   end
@@ -37,7 +49,10 @@ defmodule MusicLibraryWeb.CollectionController do
 
     total = Collection.search_records_count(query)
 
-    records = Collection.search_records(query, limit: limit, offset: offset)
+    records =
+      query
+      |> Collection.search_records(limit: limit, offset: offset)
+      |> Enrichment.enrich()
 
     render(conn, :index, total: total, limit: limit, offset: offset, records: records)
   end

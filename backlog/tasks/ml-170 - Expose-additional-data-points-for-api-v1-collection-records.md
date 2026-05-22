@@ -1,10 +1,10 @@
 ---
 id: ML-170
 title: Expose additional data points for api/v1/collection/* records
-status: To Do
+status: Done
 assignee: []
 created_date: "2026-05-08 13:02"
-updated_date: "2026-05-12 10:03"
+updated_date: "2026-05-22 12:20"
 labels:
   - api
   - ready
@@ -39,14 +39,14 @@ The API endpoints affected are:
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 `GET /api/v1/collection` (index) responses include `scrobble_count`, `last_listened_at`, `artist_country`, and `selected_release` for each record
-- [ ] #2 `GET /api/v1/collection/latest` response includes all four new fields
-- [ ] #3 `GET /api/v1/collection/random` response includes all four new fields
-- [ ] #4 `GET /api/v1/collection/on_this_day` responses include all four new fields for each record
-- [ ] #5 Records without scrobble data return `scrobble_count: 0` and `last_listened_at: null`
-- [ ] #6 Records without artist info return `artist_country: null`
-- [ ] #7 Records without a selected release return `selected_release: null`
-- [ ] #8 All existing tests pass (backward compatible — no existing field removed or renamed)
+- [x] #1 `GET /api/v1/collection` (index) responses include `scrobble_count`, `last_listened_at`, `artist_country`, and `selected_release` for each record
+- [x] #2 `GET /api/v1/collection/latest` response includes all four new fields
+- [x] #3 `GET /api/v1/collection/random` response includes all four new fields
+- [x] #4 `GET /api/v1/collection/on_this_day` responses include all four new fields for each record
+- [x] #5 Records without scrobble data return `scrobble_count: 0` and `last_listened_at: null`
+- [x] #6 Records without artist info return `artist_country: null`
+- [x] #7 Records without a selected release return `selected_release: null`
+- [x] #8 All existing tests pass (backward compatible — no existing field removed or renamed)
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -334,3 +334,11 @@ The `release_summary` component in `record_components.ex` already derives a rele
 **Simplify Step 4**: instead of building a custom format map, call `ReleaseSearchResult.format(selected_release)` on the release returned by `Record.find_release/2`. Convert the result to a string with `to_string/1` for the API response. No new format parsing code needed.
 
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
+Added `MusicLibrary.Collection.Enrichment` module that batch-hydrates collection API results with scrobble stats, artist country, and selected release data using 3 fixed-count queries per request. Extended `CollectionJSON.record/1` with four new fields (`scrobble_count`, `last_listened_at`, `artist_country`, `selected_release`) using `Map.get/3` for nil-safety. Wired enrichment into all four endpoints (`index`, `latest`, `random`, `on_this_day`). 19 new unit tests + updated controller tests. Full test suite passes (1134 tests, no regressions).
+
+<!-- SECTION:FINAL_SUMMARY:END -->
