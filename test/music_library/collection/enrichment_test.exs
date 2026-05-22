@@ -41,6 +41,38 @@ defmodule MusicLibrary.Collection.EnrichmentTest do
       assert enriched.last_listened_at == nil
     end
 
+    test "matches scrobbles by title and main artist when album musicbrainz_id is missing" do
+      record =
+        Records.record_with_artist("Fallback Artist", %{
+          title: "Fallback Album"
+        })
+
+      uts = 1_700_000_200
+
+      _track =
+        ScrobbledTracksFixtures.track_fixture(%{
+          album_musicbrainz_id: "",
+          album_title: "Fallback Album",
+          artist_name: "Fallback Artist",
+          scrobbled_at_uts: uts
+        })
+
+      _non_matching_track =
+        ScrobbledTracksFixtures.track_fixture(%{
+          album_musicbrainz_id: "",
+          album_title: "Fallback Album",
+          artist_name: "Different Artist",
+          scrobbled_at_uts: 1_700_000_300
+        })
+
+      [enriched] = Enrichment.enrich_scrobbles([record])
+
+      expected_iso = uts |> DateTime.from_unix!() |> DateTime.to_iso8601()
+
+      assert enriched.scrobble_count == 1
+      assert enriched.last_listened_at == expected_iso
+    end
+
     test "returns zero and nil when release_ids is empty" do
       record = Records.record(%{release_ids: []})
 
@@ -212,13 +244,14 @@ defmodule MusicLibrary.Collection.EnrichmentTest do
       assert enriched.selected_release != nil
       assert is_map(enriched.selected_release)
 
-      sr = enriched.selected_release
-      assert Map.has_key?(sr, :format)
-      assert Map.has_key?(sr, :date)
-      assert Map.has_key?(sr, :country)
-      assert Map.has_key?(sr, :catalog_number)
-      assert Map.has_key?(sr, :packaging)
-      assert Map.has_key?(sr, :disambiguation)
+      assert enriched.selected_release == %{
+               format: "multi",
+               date: "2004-05-03",
+               country: "GB",
+               catalog_number: "",
+               packaging: "Jewel Case",
+               disambiguation: ""
+             }
     end
 
     test "returns nil when selected_release_id is nil" do

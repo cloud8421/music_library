@@ -4,12 +4,11 @@ defmodule MusicLibrary.Collection.Enrichment do
   points: scrobble stats, artist country, and selected release info.
 
   All enrichment runs in fixed-count batch queries — 3 total, regardless of
-  result size. No N+1 risk and no title+artist fallback queries.
+  result size. No N+1 risk.
   """
 
   import Ecto.Query
 
-  alias LastFm.Track
   alias MusicBrainz.ReleaseSearchResult
   alias MusicLibrary.Artists.ArtistInfo
   alias MusicLibrary.Records.Record
@@ -42,28 +41,22 @@ defmodule MusicLibrary.Collection.Enrichment do
   @doc """
   Adds `:scrobble_count` and `:last_listened_at` to each record.
 
-  Uses a single batch query against `scrobbled_tracks` keyed by
-  `json_extract(album, '$.musicbrainz_id')` (the release MusicBrainz ID).
-  For records with multiple release_ids (different editions of the same
-  release group), scrobble counts are summed and the most recent
-  `last_listened_at` across all releases is kept.
+  Uses a single batch query against `scrobbled_tracks`, matching either the
+  album MusicBrainz ID against the record's `release_ids` or falling back to
+  album title + main artist name when Last.fm does not provide album MBIDs.
   """
   @spec enrich_scrobbles([map()]) :: [map()]
   def enrich_scrobbles(records) do
-    release_ids =
+    record_ids =
       records
-      |> Enum.flat_map(&Map.get(&1, :release_ids, []))
+      |> Enum.map(&Map.get(&1, :id))
       |> Enum.reject(&is_nil/1)
       |> Enum.uniq()
 
-    if release_ids == [] do
-      Enum.map(records, fn record ->
-        record
-        |> Map.put(:scrobble_count, 0)
-        |> Map.put(:last_listened_at, nil)
-      end)
+    if record_ids == [] do
+      Enum.map(records, &put_empty_scrobble_stats/1)
     else
-      lookup = build_scrobble_lookup(release_ids)
+      lookup = build_scrobble_lookup(record_ids)
 
       Enum.map(records, fn record ->
         enrich_one_record_scrobbles(record, lookup)
@@ -72,48 +65,62 @@ defmodule MusicLibrary.Collection.Enrichment do
   end
 
   defp enrich_one_record_scrobbles(record, lookup) do
-    record_release_ids = Map.get(record, :release_ids, []) || []
-
-    {total_count, latest_uts} =
-      record_release_ids
-      |> Enum.reduce({0, nil}, fn release_id, {count_acc, uts_acc} ->
-        case Map.get(lookup, release_id) do
-          nil ->
-            {count_acc, uts_acc}
-
-          %{scrobble_count: sc, last_listened_at: la} ->
-            new_count = count_acc + sc
-            new_uts = max_uts(uts_acc, la)
-            {new_count, new_uts}
-        end
-      end)
+    stats = Map.get(lookup, Map.get(record, :id), %{scrobble_count: 0, last_listened_at: nil})
 
     record
-    |> Map.put(:scrobble_count, total_count)
-    |> Map.put(:last_listened_at, format_last_listened_at(latest_uts))
+    |> Map.put(:scrobble_count, stats.scrobble_count)
+    |> Map.put(:last_listened_at, format_last_listened_at(stats.last_listened_at))
   end
 
-  defp build_scrobble_lookup(release_ids) do
-    from(t in Track,
-      where: fragment("json_extract(?, '$.musicbrainz_id')", t.album) in ^release_ids,
-      group_by: fragment("json_extract(?, '$.musicbrainz_id')", t.album),
+  defp put_empty_scrobble_stats(record) do
+    record
+    |> Map.put(:scrobble_count, 0)
+    |> Map.put(:last_listened_at, nil)
+  end
+
+  defp build_scrobble_lookup(record_ids) do
+    from(r in Record,
+      where: r.id in ^record_ids,
       select: %{
-        release_id: fragment("json_extract(?, '$.musicbrainz_id')", t.album),
-        scrobble_count: fragment("COUNT(DISTINCT ?)", t.scrobbled_at_uts),
-        last_listened_at: max(t.scrobbled_at_uts)
+        record_id: r.id,
+        scrobble_count:
+          fragment(
+            """
+            (SELECT COUNT(DISTINCT t.scrobbled_at_uts)
+            FROM scrobbled_tracks t
+            WHERE json_extract(t.album, '$.musicbrainz_id') IN (SELECT value FROM json_each(?))
+              OR (
+                json_extract(t.album, '$.title') = ?
+                AND json_extract(t.artist, '$.name') = json_extract(?, '$[0].name')
+              ))
+            """,
+            r.release_ids,
+            r.title,
+            r.artists
+          ),
+        last_listened_at:
+          fragment(
+            """
+            (SELECT MAX(t.scrobbled_at_uts)
+            FROM scrobbled_tracks t
+            WHERE json_extract(t.album, '$.musicbrainz_id') IN (SELECT value FROM json_each(?))
+              OR (
+                json_extract(t.album, '$.title') = ?
+                AND json_extract(t.artist, '$.name') = json_extract(?, '$[0].name')
+              ))
+            """,
+            r.release_ids,
+            r.title,
+            r.artists
+          )
       }
     )
     |> Repo.all()
     |> Map.new(fn row ->
-      {row.release_id,
+      {row.record_id,
        %{scrobble_count: row.scrobble_count, last_listened_at: row.last_listened_at}}
     end)
   end
-
-  defp max_uts(nil, nil), do: nil
-  defp max_uts(nil, val), do: val
-  defp max_uts(val, nil), do: val
-  defp max_uts(a, b), do: max(a, b)
 
   defp format_last_listened_at(nil), do: nil
 
@@ -184,9 +191,8 @@ defmodule MusicLibrary.Collection.Enrichment do
   release (edition).
 
   Looks up the `records` table by the record's `:id`, extracts the selected
-  release from `musicbrainz_data` using `Record.releases/1` and
-  `Record.find_release/2`, then exposes six fields: format, date, country,
-  catalog_number, packaging, disambiguation.
+  release with `Record.selected_release/1`, then exposes six fields: format,
+  date, country, catalog_number, packaging, disambiguation.
 
   Returns a map or nil if no selected release is available.
   """
@@ -217,43 +223,24 @@ defmodule MusicLibrary.Collection.Enrichment do
 
   defp build_selected_release_lookup(record_ids) do
     from(r in Record,
-      where: r.id in ^record_ids,
-      select: %{
-        id: r.id,
-        musicbrainz_data: r.musicbrainz_data,
-        selected_release_id: r.selected_release_id
-      }
+      where: r.id in ^record_ids
     )
     |> Repo.all()
-    |> Map.new(fn row ->
-      selected_release =
-        extract_selected_release(row.musicbrainz_data, row.selected_release_id)
-
-      {row.id, selected_release}
+    |> Map.new(fn record ->
+      {record.id, extract_selected_release(record)}
     end)
   end
 
-  defp extract_selected_release(nil, _), do: nil
-  defp extract_selected_release(_, nil), do: nil
-  defp extract_selected_release(_, ""), do: nil
-
-  defp extract_selected_release(musicbrainz_data, selected_release_id) do
-    # Build a minimal map with :musicbrainz_data for Record.releases/1 and Record.find_release/2
-    temp_record = %{musicbrainz_data: musicbrainz_data}
-
-    case Record.find_release(temp_record, selected_release_id) do
-      nil ->
-        nil
-
-      release ->
-        %{
-          format: to_string(ReleaseSearchResult.format(release)),
-          date: release.date,
-          country: release.country,
-          catalog_number: release.catalog_number,
-          packaging: release.packaging,
-          disambiguation: release.disambiguation
-        }
+  defp extract_selected_release(%Record{} = record) do
+    if release = Record.selected_release(record) do
+      %{
+        format: to_string(ReleaseSearchResult.format(release)),
+        date: release.date,
+        country: release.country,
+        catalog_number: release.catalog_number,
+        packaging: release.packaging,
+        disambiguation: release.disambiguation
+      }
     end
   end
 end
