@@ -1,5 +1,5 @@
 defmodule MusicLibraryWeb.UniversalSearchLive.IndexTest do
-  use MusicLibraryWeb.ConnCase
+  use MusicLibraryWeb.ConnCase, async: false
 
   import MusicLibrary.Fixtures.Records
   import MusicLibrary.Fixtures.RecordSets
