@@ -1,10 +1,10 @@
 ---
 id: ML-182
 title: Analyze and plan elimination of LiveViewTest usage in favor of PhoenixTest
-status: In Progress
+status: Done
 assignee: []
 created_date: "2026-05-14 21:40"
-updated_date: "2026-05-14 22:15"
+updated_date: "2026-05-23 06:17"
 labels:
   - testing
   - refactoring
