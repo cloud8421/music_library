@@ -29,24 +29,65 @@
 
 ## Features
 
+### Record management
+
 - Add records from MusicBrainz, with optional override of specific pieces of data
+- Cart-style multi-record import for adding several releases at once
 - Manage a collection and a wishlist of records, with ways to quickly search
-  and filter based on records' metadata
+  and filter based on records' metadata (full-text search with structured query syntax:
+  `artist:X`, `album:X`, `genre:"Y"`, `format:cd`, `type:album`, `purchase_year:2024`)
 - Browse record releases and select a collected release
-- AI-powered chat for records and artists, with web search
+- Dominant color extraction from cover art
+- Generate a 120mm×120mm PDF tracklist from record and release data
+
+### AI chat
+
+- AI-powered chat for records, artists, and the entire collection — with web search
+  (OpenAI streaming via Responses API, entity-specific context for each chat type)
+
+### Artists
+
 - Artist details with biography, discography, and similar artists
-- Wishlist with links to online stores for purchasing
-- Curate record sets (e.g. "best live albums")
+- Markdown notes on records and artists
+
+### Wishlist
+
+- Wishlist with configurable online store templates for purchasing
+
+### Record sets
+
+- Curate record sets (e.g. "best live albums") with drag-and-drop ordering
+
+### Search
+
 - Universal search across collection, wishlist, artists, and record sets
-- Integration with Last.fm:
-  - display latest scrobbles, and where possible
-    connect them with records in the collection or wishlist
-  - scrobble a record
-  - store a local copy of the complete scrobble history, and setup rules to fix its data as needed
-  - audit scrobble data quality and identify tracks with missing MusicBrainz IDs
-- Similarity search via OpenAI embeddings
-- Barcode scanning for quick imports
-- Stats dashboard with collection overview, top artists, top albums, and records on this day
+- Similarity search via OpenAI embeddings (cosine-distance search with sqlite-vec)
+
+### Last.fm integration
+
+- Display latest scrobbles, and where possible connect them with records in the
+  collection or wishlist
+- Browse and search the complete scrobble history
+- Scrobble a record directly
+- Store a local copy of the complete scrobble history, and setup scrobble rules
+  to fix data quality issues (missing MusicBrainz IDs, artist/album remapping)
+- Audit scrobble data quality via mix task: identify tracks with missing
+  MusicBrainz IDs for artists and albums
+
+### Import & scanning
+
+- Barcode scanning for quick imports (barcode → MusicBrainz lookup)
+
+### Stats & maintenance
+
+- Stats dashboard with collection overview, top artists, top albums, and
+  records on this day
+- Daily email digest: "records on this day" with cover images and anniversary styling
+- Admin maintenance dashboard: batch metadata/embedding refresh, database
+  vacuum/optimize, Last.fm connection status
+
+### Infrastructure
+
 - All data stored in SQLite databases for portability and ease of backup/restore
 
 ## Screenshots
