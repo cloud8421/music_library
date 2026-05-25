@@ -59,7 +59,6 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
       session =
         conn
         |> visit("/")
-        |> render_async()
         |> assert_has("span", escape(latest_record.title))
 
       for artist <- latest_record.artists do

@@ -25,29 +25,11 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       <.section>
         <:title>{gettext("Records")}</:title>
         <div class="mt-5 grid min-h-35 grid-cols-3 gap-5 sm:grid-cols-5">
-          <.async_result :let={latest_record} assign={@latest_record}>
-            <:loading>
-              <div class="col-span-3 flex items-center rounded-md bg-white px-4 py-5 shadow-sm sm:col-span-2 sm:px-6 sm:pt-6 dark:bg-zinc-800 animate-pulse">
-                <div class="w-full space-y-3">
-                  <div class="h-4 w-1/3 rounded bg-zinc-200 dark:bg-zinc-700"></div>
-                  <div class="h-6 w-2/3 rounded bg-zinc-200 dark:bg-zinc-700"></div>
-                </div>
-              </div>
-            </:loading>
-            <:failed :let={_reason}>
-              <div class="col-span-3 flex items-center justify-center rounded-md bg-white px-4 py-5 shadow-sm sm:col-span-2 sm:px-6 sm:pt-6 dark:bg-zinc-800">
-                <.icon
-                  name="hero-exclamation-triangle"
-                  class="size-5 text-zinc-400 dark:text-zinc-500"
-                />
-              </div>
-            </:failed>
-            <.album_preview
-              record={latest_record}
-              title={gettext("Latest purchase")}
-              class="col-span-3 sm:col-span-2"
-            />
-          </.async_result>
+          <.album_preview
+            record={@latest_record}
+            title={gettext("Latest purchase")}
+            class="col-span-3 sm:col-span-2"
+          />
           <.counter
             title={gettext("Collection")}
             count={@collection_count}
@@ -179,6 +161,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
      |> stream(:recent_albums, [])
      |> assign(
        current_date: current_date,
+       latest_record: Collection.get_latest_record(),
        collection_count: Collection.count(),
        wishlist_count: Wishlist.count(),
        scrobble_count: ListeningStats.scrobble_count(),
@@ -188,9 +171,6 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        current_section: :stats,
        rule_picker_album_title: nil
      )
-     |> assign_async(:latest_record, fn ->
-       {:ok, %{latest_record: Collection.get_latest_record()}}
-     end)
      |> assign_async(:collection_summary, fn ->
        {:ok,
         %{
