@@ -38,18 +38,18 @@ jobs:
           cache-name: cache-elixir-deps
         with:
           path: deps
-          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('mise.lock') }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('.tool-versions') }}-
+            ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('mise.lock') }}-
       - name: Cache compiled build
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5
         env:
           cache-name: cache-compiled-build-lint
         with:
           path: _build
-          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('mise.lock') }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('.tool-versions') }}-
+            ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('mise.lock') }}-
             ${{ runner.os }}-mix-${{ env.cache-name }}-
       - name: Clean to rule out incremental build as a source of flakiness
         if: github.run_attempt != '1'
@@ -115,18 +115,18 @@ jobs:
           cache-name: cache-elixir-deps
         with:
           path: deps
-          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('mise.lock') }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('.tool-versions') }}-
+            ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('mise.lock') }}-
       - name: Cache compiled build
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5
         env:
           cache-name: cache-compiled-build-test
         with:
           path: _build
-          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('mise.lock') }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('.tool-versions') }}-
+            ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('mise.lock') }}-
             ${{ runner.os }}-mix-${{ env.cache-name }}-
       - name: Clean to rule out incremental build as a source of flakiness
         if: github.run_attempt != '1'
