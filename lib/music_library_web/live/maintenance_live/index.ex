@@ -25,6 +25,27 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
     >
       <div>
         <h3 class="mt-2 text-base font-semibold text-zinc-900 dark:text-zinc-200">
+          {gettext("Settings")}
+        </h3>
+        <dl>
+          <div class="flex gap-2 mt-2">
+            <dt class="text-xs/6 font-medium text-zinc-900 md:text-sm dark:text-zinc-400">
+              {gettext("Current timezone")}
+            </dt>
+            <dd class="mt-1 text-xs/6 text-zinc-700 sm:col-span-2 sm:mt-0 md:text-sm dark:text-zinc-300">
+              {@timezone}
+            </dd>
+          </div>
+          <div class="flex gap-2 mt-2">
+            <dt class="text-xs/6 font-medium text-zinc-900 md:text-sm dark:text-zinc-400">
+              {gettext("Default timezone")}
+            </dt>
+            <dd class="mt-1 text-xs/6 text-zinc-700 sm:col-span-2 sm:mt-0 md:text-sm dark:text-zinc-300">
+              {@default_timezone}
+            </dd>
+          </div>
+        </dl>
+        <h3 class="mt-2 text-base font-semibold text-zinc-900 dark:text-zinc-200">
           {gettext("Records")}
         </h3>
         <p class="mt-2 max-w-4xl text-sm text-zinc-500 dark:text-zinc-400">
@@ -274,7 +295,8 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
      socket
      |> assign(
        page_title: gettext("Maintenance"),
-       current_section: :maintenance
+       current_section: :maintenance,
+       default_timezone: MusicLibrary.default_timezone()
      )
      |> assign_job_counts()
      |> assign_async(:lastfm_status, fn ->

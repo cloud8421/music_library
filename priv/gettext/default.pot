@@ -2576,3 +2576,18 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Failed to delete: "
 msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Current timezone"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Default timezone"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Settings"
+msgstr ""
