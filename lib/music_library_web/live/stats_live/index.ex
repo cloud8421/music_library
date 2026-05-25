@@ -11,6 +11,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   alias MusicLibrary.{Collection, ListeningStats, Records, Wishlist}
   alias MusicLibraryWeb.ErrorMessages
   alias MusicLibraryWeb.StatsLive.{TopAlbums, TopArtists}
+  alias Phoenix.LiveView.AsyncResult
 
   @impl true
   def render(assigns) do
@@ -21,32 +22,126 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       socket={@socket}
       toasts_sync={assigns[:toasts_sync]}
     >
-      <.record_stats
-        latest_record={@latest_record}
-        collection_count={@collection_count}
-        wishlist_count={@wishlist_count}
-        scrobble_count={@scrobble_count}
-      />
-      <div :if={@collection_count > 0} class="grid gap-x-5 md:grid-cols-2">
-        <.formats_stats collection_count_by_format={@collection_count_by_format} />
-        <.types_stats collection_count_by_type={@collection_count_by_type} />
-      </div>
+      <.section>
+        <:title>{gettext("Records")}</:title>
+        <div class="mt-5 grid min-h-35 grid-cols-3 gap-5 sm:grid-cols-5">
+          <.async_result :let={latest_record} assign={@latest_record}>
+            <:loading>
+              <div class="col-span-3 flex items-center rounded-md bg-white px-4 py-5 shadow-sm sm:col-span-2 sm:px-6 sm:pt-6 dark:bg-zinc-800 animate-pulse">
+                <div class="w-full space-y-3">
+                  <div class="h-4 w-1/3 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+                  <div class="h-6 w-2/3 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+                </div>
+              </div>
+            </:loading>
+            <:failed :let={_reason}>
+              <div class="col-span-3 flex items-center justify-center rounded-md bg-white px-4 py-5 shadow-sm sm:col-span-2 sm:px-6 sm:pt-6 dark:bg-zinc-800">
+                <.icon
+                  name="hero-exclamation-triangle"
+                  class="size-5 text-zinc-400 dark:text-zinc-500"
+                />
+              </div>
+            </:failed>
+            <.album_preview
+              record={latest_record}
+              title={gettext("Latest purchase")}
+              class="col-span-3 sm:col-span-2"
+            />
+          </.async_result>
+          <.counter
+            title={gettext("Collection")}
+            count={@collection_count}
+            path={~p"/collection"}
+          />
+          <.counter title={gettext("Wishlist")} count={@wishlist_count} path={~p"/wishlist"} />
+          <.counter
+            title={gettext("Scrobbles")}
+            count={to_compact(@scrobble_count)}
+            tooltip={@scrobble_count}
+            path={~p"/scrobbled-tracks"}
+          />
+        </div>
+      </.section>
+
       <div class="grid grid-cols-1 gap-x-5 md:grid-cols-2 lg:grid-cols-3">
         <TopArtists.live id="top-artists" timezone={@timezone} last_updated_uts={@last_updated_uts} />
         <TopAlbums.live id="top-albums" timezone={@timezone} last_updated_uts={@last_updated_uts} />
-        <.on_this_day current_date={@current_date} records_on_this_day={@records_on_this_day} />
+        <.async_result :let={records_on_this_day} assign={@on_this_day_records}>
+          <:loading>
+            <.section container_class="order-first lg:order-last">
+              <:title>{gettext("On This day")}</:title>
+              <div class="rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800 animate-pulse">
+                <div class="mb-2 h-4 w-2/3 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+                <div class="h-4 w-1/2 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+              </div>
+            </.section>
+          </:loading>
+          <:failed :let={_reason}>
+            <.section container_class="order-first lg:order-last">
+              <:title>{gettext("On This day")}</:title>
+              <div class="rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800 text-sm text-zinc-400 dark:text-zinc-500">
+                {gettext("Could not load records on this day.")}
+              </div>
+            </.section>
+          </:failed>
+          <.on_this_day
+            current_date={@current_date}
+            records_on_this_day={records_on_this_day}
+          />
+        </.async_result>
       </div>
+
+      <.async_result :let={summary} assign={@collection_summary}>
+        <:loading>
+          <div class="grid gap-x-5 md:grid-cols-2">
+            <.section>
+              <:title>{gettext("Formats")}</:title>
+              <div class="mt-5 rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800 animate-pulse">
+                <div class="h-4 w-1/3 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+              </div>
+            </.section>
+            <.section>
+              <:title>{gettext("Types")}</:title>
+              <div class="mt-5 rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800 animate-pulse">
+                <div class="h-4 w-1/3 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+              </div>
+            </.section>
+          </div>
+        </:loading>
+        <:failed :let={_reason}></:failed>
+        <div :if={@collection_count > 0} class="grid gap-x-5 md:grid-cols-2">
+          <.formats_stats collection_count_by_format={summary.collection_count_by_format} />
+          <.types_stats collection_count_by_type={summary.collection_count_by_type} />
+        </div>
+      </.async_result>
 
       <.scrobble_activity
         scrobble_activity_mode={@scrobble_activity_mode}
         streams={@streams}
       />
 
-      <div :if={@collection_count > 0} class="grid grid-cols-1 gap-x-5 md:grid-cols-2 lg:grid-cols-3">
-        <.top_collection_artists records_by_artist={@records_by_artist} />
-        <.top_collection_genres records_by_genre={@records_by_genre} />
-        <.top_release_years records_by_release_year={@records_by_release_year} />
-      </div>
+      <.async_result :let={summary} assign={@collection_summary}>
+        <:loading>
+          <div class="grid grid-cols-1 gap-x-5 md:grid-cols-2 lg:grid-cols-3">
+            <.section>
+              <:title>{gettext("Loading…")}</:title>
+              <div class="mt-5 rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800 animate-pulse">
+                <div class="mb-3 h-4 w-3/4 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+                <div class="h-4 w-1/2 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+              </div>
+            </.section>
+          </div>
+        </:loading>
+        <:failed :let={_reason}></:failed>
+        <div
+          :if={@collection_count > 0}
+          class="grid grid-cols-1 gap-x-5 md:grid-cols-2 lg:grid-cols-3"
+        >
+          <.top_collection_artists records_by_artist={summary.records_by_artist} />
+          <.top_collection_genres records_by_genre={summary.records_by_genre} />
+          <.top_release_years records_by_release_year={summary.records_by_release_year} />
+        </div>
+      </.async_result>
 
       <.structured_modal
         :if={@rule_picker_album_title}
@@ -66,15 +161,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     current_date = DateTime.now!(socket.assigns.timezone) |> DateTime.to_date()
-    latest_record = Collection.get_latest_record()
-    records_by_artists = Collection.count_records_by_artist(limit: 20)
-    records_by_genre = Collection.count_records_by_genre(limit: 20)
-    records_by_release_year = Collection.count_records_by_release_year(limit: 20)
-
-    records_on_this_day =
-      current_date
-      |> Collection.get_records_on_this_day()
-      |> Collection.group_records_by_release_group()
+    timezone = socket.assigns.timezone
 
     if connected?(socket) do
       ListeningStats.subscribe()
@@ -88,20 +175,84 @@ defmodule MusicLibraryWeb.StatsLive.Index do
      |> stream_configure(:recent_albums,
        dom_id: fn %{album: album} -> "album-#{album.scrobbled_at_uts}" end
      )
-     |> assign_counts()
-     |> assign_scrobble_activity()
+     |> stream(:recent_tracks, [])
+     |> stream(:recent_albums, [])
      |> assign(
        current_date: current_date,
+       collection_count: Collection.count(),
+       wishlist_count: Wishlist.count(),
+       scrobble_count: ListeningStats.scrobble_count(),
+       last_updated_uts: nil,
        scrobble_activity_mode: "albums",
-       latest_record: latest_record,
        page_title: gettext("Stats"),
        current_section: :stats,
-       rule_picker_album_title: nil,
-       records_by_artist: records_by_artists,
-       records_by_genre: records_by_genre,
-       records_by_release_year: records_by_release_year,
-       records_on_this_day: records_on_this_day
-     )}
+       rule_picker_album_title: nil
+     )
+     |> assign_async(:latest_record, fn ->
+       {:ok, %{latest_record: Collection.get_latest_record()}}
+     end)
+     |> assign_async(:collection_summary, fn ->
+       {:ok,
+        %{
+          collection_summary: %{
+            collection_count_by_format: Collection.count_records_by_format(),
+            collection_count_by_type: Collection.count_records_by_type(),
+            records_by_artist: Collection.count_records_by_artist(limit: 20),
+            records_by_genre: Collection.count_records_by_genre(limit: 20),
+            records_by_release_year: Collection.count_records_by_release_year(limit: 20)
+          }
+        }}
+     end)
+     |> assign_async(:on_this_day_records, fn ->
+       {:ok,
+        %{
+          on_this_day_records:
+            current_date
+            |> Collection.get_records_on_this_day()
+            |> Collection.group_records_by_release_group()
+        }}
+     end)
+     |> start_async(:scrobble_activity, fn ->
+       %{
+         recent_tracks: recent_tracks,
+         recent_albums: recent_albums
+       } = ListeningStats.recent_activity(timezone)
+
+       last_updated_uts =
+         if rt = List.first(recent_tracks), do: rt.track.scrobbled_at_uts
+
+       {:ok,
+        %{
+          recent_tracks: recent_tracks,
+          recent_albums: recent_albums,
+          last_updated_uts: last_updated_uts
+        }}
+     end)}
+  end
+
+  @impl true
+  def handle_async(:scrobble_activity, {:ok, {:ok, result}}, socket) do
+    %{recent_tracks: tracks, recent_albums: albums, last_updated_uts: uts} = result
+
+    {:noreply,
+     socket
+     |> assign(:last_updated_uts, uts)
+     |> stream(:recent_tracks, tracks, reset: true)
+     |> stream(:recent_albums, albums, reset: true)}
+  end
+
+  def handle_async(:scrobble_activity, {:ok, {:error, reason}}, socket) do
+    require Logger
+    Logger.error("Failed to load scrobble activity: #{inspect(reason)}")
+
+    {:noreply, socket}
+  end
+
+  def handle_async(:scrobble_activity, {:exit, reason}, socket) do
+    require Logger
+    Logger.error("Scrobble activity task exited: #{inspect(reason)}")
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -148,7 +299,14 @@ defmodule MusicLibraryWeb.StatsLive.Index do
 
         {:noreply,
          socket
-         |> assign(%{current_date: date, records_on_this_day: records_on_this_day})}
+         |> assign(:current_date, date)
+         |> assign(
+           :on_this_day_records,
+           AsyncResult.ok(
+             socket.assigns.on_this_day_records,
+             records_on_this_day
+           )
+         )}
 
       {:error, _reason} ->
         {:noreply, socket}
@@ -511,56 +669,6 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       />
     </.section>
     """
-  end
-
-  attr :latest_record, Records.Record, required: false
-  attr :collection_count, :integer, required: true
-  attr :wishlist_count, :integer, required: true
-  attr :scrobble_count, :integer, required: true
-
-  defp record_stats(assigns) do
-    ~H"""
-    <.section>
-      <:title>{gettext("Records")}</:title>
-      <div class="mt-5 grid min-h-35 grid-cols-3 gap-5 sm:grid-cols-5">
-        <.album_preview
-          record={@latest_record}
-          title={gettext("Latest purchase")}
-          class="col-span-3 sm:col-span-2"
-        />
-        <.counter
-          title={gettext("Collection")}
-          count={@collection_count}
-          path={~p"/collection"}
-        />
-        <.counter title={gettext("Wishlist")} count={@wishlist_count} path={~p"/wishlist"} />
-        <.counter
-          title={gettext("Scrobbles")}
-          count={to_compact(@scrobble_count)}
-          tooltip={@scrobble_count}
-          path={~p"/scrobbled-tracks"}
-        />
-      </div>
-    </.section>
-    """
-  end
-
-  defp assign_counts(socket) do
-    collection_count_by_format = Collection.count_records_by_format()
-
-    collection_count_by_type = Collection.count_records_by_type()
-
-    collection_count =
-      Enum.sum_by(collection_count_by_format, fn {_, count} -> count end)
-
-    wishlist_count = Wishlist.count()
-
-    assign(socket,
-      collection_count_by_format: collection_count_by_format,
-      collection_count_by_type: collection_count_by_type,
-      collection_count: collection_count,
-      wishlist_count: wishlist_count
-    )
   end
 
   defp assign_scrobble_activity(socket) do

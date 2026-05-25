@@ -36,6 +36,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         conn
         |> visit("/")
         |> assert_has("dd", collection |> length() |> Integer.to_string())
+        |> render_async()
 
       collection
       |> Enum.frequencies_by(& &1.format)
@@ -58,6 +59,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
       session =
         conn
         |> visit("/")
+        |> render_async()
         |> assert_has("span", escape(latest_record.title))
 
       for artist <- latest_record.artists do
@@ -94,7 +96,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         })
         |> Repo.update!()
 
-      session = conn |> visit("/")
+      session = conn |> visit("/") |> render_async()
 
       assert_has(session, "h1", "On This day")
 
@@ -126,7 +128,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         })
         |> Repo.update!()
 
-      session = conn |> visit("/")
+      session = conn |> visit("/") |> render_async()
 
       assert_has(session, "##{record_today.id} h2", escape(record_today.title))
 
@@ -179,7 +181,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
 
       {:ok, _dup} = MusicLibrary.Records.create_record(dup_attrs)
 
-      session = conn |> visit("/")
+      session = conn |> visit("/") |> render_async()
 
       # The grouped record should appear with the group ID
       assert_has(session, "#group-#{base_record.musicbrainz_id}")
@@ -201,7 +203,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         })
         |> Repo.update!()
 
-      session = conn |> visit("/")
+      session = conn |> visit("/") |> render_async()
 
       assert_has(session, "span", "Today")
     end
@@ -222,7 +224,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         })
         |> Repo.update!()
 
-      session = conn |> visit("/")
+      session = conn |> visit("/") |> render_async()
 
       assert_has(session, "span", "5 years ago")
     end
@@ -243,7 +245,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         })
         |> Repo.update!()
 
-      session = conn |> visit("/")
+      session = conn |> visit("/") |> render_async()
 
       assert_has(session, "span", "10 years ago")
     end
@@ -264,7 +266,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         })
         |> Repo.update!()
 
-      session = conn |> visit("/")
+      session = conn |> visit("/") |> render_async()
 
       # 3 years is not a milestone (not divisible by 5 or 10)
       assert_has(session, "span", "3 years ago")

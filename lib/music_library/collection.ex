@@ -27,6 +27,13 @@ defmodule MusicLibrary.Collection do
     Records.search_records_count(base_search(), query)
   end
 
+  @doc "Direct scalar count for collection badge — faster than summing grouped format counts."
+  @spec count() :: non_neg_integer()
+  def count do
+    from(r in Record, where: not is_nil(r.purchased_at))
+    |> Repo.aggregate(:count)
+  end
+
   @spec count_records_by_format() :: [{String.t(), non_neg_integer()}]
   def count_records_by_format do
     q =
