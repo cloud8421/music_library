@@ -31,7 +31,7 @@ defmodule MusicLibrary.ErrorsTest do
       result = Errors.list_errors()
 
       assert result.total == 2
-      assert length(result.errors) == 2
+      assert Enum.count_until(result.errors, 3) == 2
       ids = Enum.map(result.errors, & &1.id)
       assert e1.id in ids
       assert e2.id in ids
@@ -44,7 +44,7 @@ defmodule MusicLibrary.ErrorsTest do
       result = Errors.list_errors(status: :resolved)
 
       assert result.total == 1
-      assert length(result.errors) == 1
+      assert Enum.count_until(result.errors, 2) == 1
       assert hd(result.errors).id == e2.id
       assert hd(result.errors).status == :resolved
     end
@@ -56,7 +56,7 @@ defmodule MusicLibrary.ErrorsTest do
       result = Errors.list_errors(muted: true)
 
       assert result.total == 1
-      assert length(result.errors) == 1
+      assert Enum.count_until(result.errors, 2) == 1
       assert hd(result.errors).id == e2.id
       assert hd(result.errors).muted == true
     end
@@ -68,7 +68,7 @@ defmodule MusicLibrary.ErrorsTest do
       result = Errors.list_errors(search: "specific text")
 
       assert result.total == 1
-      assert length(result.errors) == 1
+      assert Enum.count_until(result.errors, 2) == 1
       assert hd(result.errors).id == e2.id
       assert hd(result.errors).reason == "Second error with specific text"
     end
@@ -82,7 +82,7 @@ defmodule MusicLibrary.ErrorsTest do
       result = Errors.list_errors(search: "100%")
 
       assert result.total == 1
-      assert length(result.errors) == 1
+      assert Enum.count_until(result.errors, 2) == 1
       assert hd(result.errors).id == e1.id
     end
 
@@ -94,7 +94,7 @@ defmodule MusicLibrary.ErrorsTest do
       result = Errors.list_errors(limit: 2)
 
       assert result.total == 3
-      assert length(result.errors) == 2
+      assert Enum.count_until(result.errors, 3) == 2
     end
 
     test "respects offset" do
@@ -105,7 +105,7 @@ defmodule MusicLibrary.ErrorsTest do
       result = Errors.list_errors(offset: 1, limit: 10)
 
       assert result.total == 3
-      assert length(result.errors) == 2
+      assert Enum.count_until(result.errors, 3) == 2
     end
 
     test "returns empty list when no errors match filters" do
@@ -137,7 +137,7 @@ defmodule MusicLibrary.ErrorsTest do
       assert result.reason == "Something went wrong"
       assert result.occurrence_count == 2
       refute is_nil(result.first_occurrence_at)
-      assert length(result.occurrences) == 2
+      assert Enum.count_until(result.occurrences, 3) == 2
 
       # Occurrences sorted desc by inserted_at (most recent first)
       [occ1, occ2] = result.occurrences

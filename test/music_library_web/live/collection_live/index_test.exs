@@ -680,7 +680,7 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
       # Verify exactly two distinct import jobs were enqueued
       enqueued = all_enqueued(worker: ImportFromMusicbrainzRelease)
-      assert length(enqueued) == 2
+      assert Enum.count_until(enqueued, 3) == 2
       assert Enum.all?(enqueued, & &1.args["release_id"])
 
       # No records should have been inserted synchronously

@@ -58,7 +58,7 @@ defmodule MusicLibrary.QueryReporterTest do
 
       handlers = :telemetry.list_handlers(@event)
       matching = Enum.filter(handlers, &(&1.id == "music-library-query-reporter"))
-      assert length(matching) == 1
+      assert Enum.count_until(matching, 2) == 1
     end
   end
 

@@ -69,17 +69,15 @@ if Code.ensure_loaded?(Credo) do
     defp traverse_put_toast_call({:defmodule, _meta, _args}, issues, _issue_meta),
       do: {nil, issues}
 
-    defp traverse_put_toast_call({:put_toast, meta, args} = ast, issues, issue_meta)
-         when is_list(args) and length(args) == 3 do
+    defp traverse_put_toast_call({:put_toast, meta, [_a, _b, _c]} = ast, issues, issue_meta) do
       {ast, issues ++ [issue_for(meta, issue_meta)]}
     end
 
     defp traverse_put_toast_call(
-           {{:., dot_meta, [_target, :put_toast]}, call_meta, args} = ast,
+           {{:., dot_meta, [_target, :put_toast]}, call_meta, [_a, _b, _c]} = ast,
            issues,
            issue_meta
-         )
-         when is_list(args) and length(args) == 3 do
+         ) do
       {ast, issues ++ [issue_for(call_meta, dot_meta, issue_meta)]}
     end
 
@@ -111,11 +109,10 @@ if Code.ensure_loaded?(Credo) do
 
     defp traverse_put_toast_call(ast, issues, _issue_meta), do: {ast, issues}
 
-    defp piped_put_toast_meta({:put_toast, meta, args}) when is_list(args) and length(args) == 2,
+    defp piped_put_toast_meta({:put_toast, meta, [_a, _b]}),
       do: meta
 
-    defp piped_put_toast_meta({{:., dot_meta, [_target, :put_toast]}, call_meta, args})
-         when is_list(args) and length(args) == 2 do
+    defp piped_put_toast_meta({{:., dot_meta, [_target, :put_toast]}, call_meta, [_a, _b]}) do
       merge_meta(call_meta, dot_meta)
     end
 

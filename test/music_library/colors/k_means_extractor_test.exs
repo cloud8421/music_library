@@ -10,13 +10,13 @@ defmodule MusicLibrary.Colors.KMeansExtractorTest do
   describe "extract_dominant_colors/1" do
     test "extracts 5 colors by default" do
       assert {:ok, colors} = KMeansExtractor.extract_dominant_colors(@image_data)
-      assert length(colors) == 5
+      assert Enum.count_until(colors, 6) == 5
       assert Enum.all?(colors, &color_hex?/1)
     end
 
     test "extracts custom number of colors" do
       assert {:ok, colors} = KMeansExtractor.extract_dominant_colors(@image_data, 3)
-      assert length(colors) == 3
+      assert Enum.count_until(colors, 4) == 3
       assert Enum.all?(colors, &color_hex?/1)
     end
   end

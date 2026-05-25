@@ -54,7 +54,7 @@ defmodule MusicLibrary.Records.RecordReleaseTest do
 
       rows = list_releases(record.id)
 
-      assert length(rows) == 2
+      assert Enum.count_until(rows, 3) == 2
       assert Enum.all?(rows, fn row -> row.cover_hash == nil end)
       assert Enum.all?(rows, fn row -> row.purchased_at == nil end)
     end
@@ -123,7 +123,7 @@ defmodule MusicLibrary.Records.RecordReleaseTest do
 
       rows = list_releases(record.id)
 
-      assert length(rows) == 2
+      assert Enum.count_until(rows, 3) == 2
       assert Enum.all?(rows, fn row -> row.cover_hash == "hash-new" end)
     end
 
@@ -136,7 +136,7 @@ defmodule MusicLibrary.Records.RecordReleaseTest do
 
       rows = list_releases(record.id)
 
-      assert length(rows) == 2
+      assert Enum.count_until(rows, 3) == 2
       assert Enum.all?(rows, fn row -> row.purchased_at == ~U[2025-02-20 12:00:00Z] end)
     end
 
@@ -157,7 +157,7 @@ defmodule MusicLibrary.Records.RecordReleaseTest do
   describe "before delete trigger" do
     test "remove all rows when the record is deleted" do
       record = insert_record()
-      assert length(list_releases(record.id)) == 2
+      assert Enum.count_until(list_releases(record.id), 3) == 2
 
       Repo.delete!(record)
 

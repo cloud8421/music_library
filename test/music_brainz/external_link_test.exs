@@ -20,14 +20,14 @@ defmodule MusicBrainz.ExternalLinkTest do
     test "returns URLs matching the pattern", %{artist_data: artist_data} do
       results = ExternalLink.external_links(artist_data, "spotify")
 
-      assert length(results) == 1
+      assert Enum.count_until(results, 2) == 1
       assert "https://open.spotify.com/artist/4X42BfuhWCAZ2swiVze9O0" in results
     end
 
     test "returns all URLs matching the pattern when multiple exist", %{artist_data: artist_data} do
       results = ExternalLink.external_links(artist_data, "youtube")
 
-      assert length(results) == 2
+      assert Enum.count_until(results, 3) == 2
       assert "https://www.youtube.com/user/StevenWilsonHQ" in results
       assert "https://music.youtube.com/channel/UCN_yfO7km9qK5n9JlLJRdrg" in results
     end
@@ -36,7 +36,7 @@ defmodule MusicBrainz.ExternalLinkTest do
       results = ExternalLink.external_links(artist_data, nil)
 
       # The fixture has 59 relations with URLs
-      assert length(results) == 59
+      assert Enum.count_until(results, 60) == 59
     end
 
     test "pattern matching is case-sensitive", %{artist_data: artist_data} do
@@ -47,7 +47,7 @@ defmodule MusicBrainz.ExternalLinkTest do
     test "pattern matches substring of URL", %{artist_data: artist_data} do
       results = ExternalLink.external_links(artist_data, "discogs")
 
-      assert length(results) == 1
+      assert Enum.count_until(results, 2) == 1
       assert "https://www.discogs.com/artist/227943" in results
     end
   end
@@ -70,7 +70,7 @@ defmodule MusicBrainz.ExternalLinkTest do
 
       results = ExternalLink.external_links(artist_data, patterns)
 
-      assert length(results) == 2
+      assert Enum.count_until(results, 3) == 2
 
       spotify_link = Enum.find(results, fn link -> link.name == :spotify end)
       assert spotify_link.url == "https://open.spotify.com/artist/4X42BfuhWCAZ2swiVze9O0"
@@ -88,7 +88,7 @@ defmodule MusicBrainz.ExternalLinkTest do
 
       results = ExternalLink.external_links(artist_data, patterns)
 
-      assert length(results) == 1
+      assert Enum.count_until(results, 2) == 1
       assert [youtube_link] = results
       assert youtube_link.name == :youtube
 
@@ -109,7 +109,7 @@ defmodule MusicBrainz.ExternalLinkTest do
       results = ExternalLink.external_links(artist_data, patterns)
 
       # Only spotify and discogs should match
-      assert length(results) == 2
+      assert Enum.count_until(results, 3) == 2
 
       names = Enum.map(results, & &1.name)
       assert :spotify in names

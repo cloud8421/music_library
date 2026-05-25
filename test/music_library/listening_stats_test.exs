@@ -77,7 +77,7 @@ defmodule MusicLibrary.ListeningStatsTest do
 
       tracks = list_tracks()
 
-      assert length(tracks) == 2
+      assert Enum.count_until(tracks, 3) == 2
       track_titles = Enum.map(tracks, & &1.title)
       assert "First Track" in track_titles
       assert "Second Track" in track_titles
@@ -139,7 +139,7 @@ defmodule MusicLibrary.ListeningStatsTest do
 
       tracks = list_tracks(%{query: "Special"})
 
-      assert length(tracks) == 1
+      assert Enum.count_until(tracks, 2) == 1
       assert List.first(tracks).title == "Special Track"
     end
 
@@ -149,7 +149,7 @@ defmodule MusicLibrary.ListeningStatsTest do
 
       tracks = list_tracks(%{query: "Special Artist"})
 
-      assert length(tracks) == 1
+      assert Enum.count_until(tracks, 2) == 1
       assert List.first(tracks).artist.name == "Special Artist"
     end
 
@@ -159,7 +159,7 @@ defmodule MusicLibrary.ListeningStatsTest do
 
       tracks = list_tracks(%{query: "Special Album"})
 
-      assert length(tracks) == 1
+      assert Enum.count_until(tracks, 2) == 1
       assert List.first(tracks).album.title == "Special Album"
     end
 
@@ -168,11 +168,11 @@ defmodule MusicLibrary.ListeningStatsTest do
 
       # Get first 2 tracks
       tracks_page_1 = list_tracks(%{page: 1, page_size: 2})
-      assert length(tracks_page_1) == 2
+      assert Enum.count_until(tracks_page_1, 3) == 2
 
       # Get next 2 tracks
       tracks_page_2 = list_tracks(%{page: 2, page_size: 2})
-      assert length(tracks_page_2) == 2
+      assert Enum.count_until(tracks_page_2, 3) == 2
 
       # Ensure they're different tracks
       page_1_ids = Enum.map(tracks_page_1, & &1.scrobbled_at_uts)
@@ -386,10 +386,12 @@ defmodule MusicLibrary.ListeningStatsTest do
       tracks = ListeningStats.list_tracks()
 
       titles = Enum.map(tracks, & &1.track.title)
-      assert length(titles) == length(Enum.uniq(titles)), "list_tracks returned duplicate rows"
+
+      assert Enum.count(titles) == Enum.count(Enum.uniq(titles)),
+             "list_tracks returned duplicate rows"
 
       for result <- tracks do
-        assert length(result.matching_records) == 2
+        assert Enum.count_until(result.matching_records, 3) == 2
 
         record_ids = Enum.map(result.matching_records, & &1.id)
         assert expected_record_id in record_ids
@@ -402,11 +404,11 @@ defmodule MusicLibrary.ListeningStatsTest do
 
       titles = Enum.map(recent_tracks, & &1.track.title)
 
-      assert length(titles) == length(Enum.uniq(titles)),
+      assert Enum.count(titles) == Enum.count(Enum.uniq(titles)),
              "recent_activity returned duplicate rows"
 
       for result <- recent_tracks do
-        assert length(result.matching_records) == 2
+        assert Enum.count_until(result.matching_records, 3) == 2
 
         record_ids = Enum.map(result.matching_records, & &1.id)
         assert expected_record_id in record_ids
@@ -417,7 +419,9 @@ defmodule MusicLibrary.ListeningStatsTest do
       results = ListeningStats.get_top_albums(limit: 10)
 
       marbles_entries = Enum.filter(results, fn r -> r.album_title == "Marbles" end)
-      assert length(marbles_entries) == 1, "get_top_albums returned duplicate album entries"
+
+      assert Enum.count_until(marbles_entries, 2) == 1,
+             "get_top_albums returned duplicate album entries"
 
       [entry] = marbles_entries
       assert entry.play_count == 2
@@ -433,7 +437,7 @@ defmodule MusicLibrary.ListeningStatsTest do
 
       for result <- recent_tracks do
         assert is_list(result.matching_records)
-        assert length(result.matching_records) == 2
+        assert Enum.count_until(result.matching_records, 3) == 2
 
         for record <- result.matching_records do
           assert Map.has_key?(record, :id)
@@ -489,7 +493,7 @@ defmodule MusicLibrary.ListeningStatsTest do
 
       [result] = recent_tracks
 
-      assert length(result.matching_records) == 2
+      assert Enum.count_until(result.matching_records, 3) == 2
 
       record_ids = Enum.map(result.matching_records, & &1.id)
       assert collected.id in record_ids
@@ -507,10 +511,10 @@ defmodule MusicLibrary.ListeningStatsTest do
       results = ListeningStats.get_top_albums(limit: 10)
 
       marbles_entries = Enum.filter(results, fn r -> r.album_title == "Marbles" end)
-      assert length(marbles_entries) == 1
+      assert Enum.count_until(marbles_entries, 2) == 1
 
       [entry] = marbles_entries
-      assert length(entry.matching_records) == 2
+      assert Enum.count_until(entry.matching_records, 3) == 2
 
       record_ids = Enum.map(entry.matching_records, & &1.id)
       assert collected.id in record_ids

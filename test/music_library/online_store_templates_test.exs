@@ -34,7 +34,7 @@ defmodule MusicLibrary.OnlineStoreTemplatesTest do
       online_store_template(%{name: "Bandcamp"})
 
       results = OnlineStoreTemplates.list_templates(query: "Amazon")
-      assert length(results) == 1
+      assert Enum.count_until(results, 2) == 1
       assert hd(results).name == "Amazon UK"
     end
 
@@ -43,7 +43,7 @@ defmodule MusicLibrary.OnlineStoreTemplatesTest do
       online_store_template(%{name: "Store B", description: "digital downloads"})
 
       results = OnlineStoreTemplates.list_templates(query: "vinyl")
-      assert length(results) == 1
+      assert Enum.count_until(results, 2) == 1
       assert hd(results).name == "Store A"
     end
 
@@ -51,7 +51,7 @@ defmodule MusicLibrary.OnlineStoreTemplatesTest do
       for i <- 1..3, do: online_store_template(%{name: "Store #{i}"})
 
       results = OnlineStoreTemplates.list_templates(limit: 1)
-      assert length(results) == 1
+      assert Enum.count_until(results, 2) == 1
     end
   end
 

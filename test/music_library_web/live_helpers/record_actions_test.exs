@@ -217,7 +217,7 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordActionsTest do
 
       updated = Records.get_record!(record.id)
       # FakeColorExtractor returns a fixed 5-color palette
-      assert length(updated.dominant_colors) == 5
+      assert Enum.count_until(updated.dominant_colors, 6) == 5
     end
 
     @tag :capture_log

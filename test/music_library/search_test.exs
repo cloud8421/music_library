@@ -93,10 +93,10 @@ defmodule MusicLibrary.SearchTest do
     test "respects limit", %{collected: _collected} do
       results = Search.universal_search("Marillion", limit: 1)
 
-      assert length(results.collection) <= 1
-      assert length(results.wishlist) <= 1
-      assert length(results.artists) <= 1
-      assert length(results.record_sets) <= 1
+      assert Enum.count_until(results.collection, 2) <= 1
+      assert Enum.count_until(results.wishlist, 2) <= 1
+      assert Enum.count_until(results.artists, 2) <= 1
+      assert Enum.count_until(results.record_sets, 2) <= 1
     end
   end
 

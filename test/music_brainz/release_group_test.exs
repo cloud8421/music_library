@@ -95,7 +95,7 @@ defmodule MusicBrainz.ReleaseGroupTest do
       }
 
       result = ReleaseGroup.included_release_groups(release_group)
-      assert length(result) == 1
+      assert Enum.count_until(result, 2) == 1
       assert hd(result).id == "rg-included-1"
       assert hd(result).type == :ep
     end

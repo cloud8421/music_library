@@ -39,7 +39,7 @@ defmodule MusicLibrary.ArtistsTest do
 
       results = Artists.search_by_name("Marillion", 10)
 
-      assert length(results) == 1
+      assert Enum.count_until(results, 2) == 1
       assert hd(results).artist.name == "Marillion"
     end
 
@@ -57,7 +57,7 @@ defmodule MusicLibrary.ArtistsTest do
 
       results = Artists.search_by_name("i", 1)
 
-      assert length(results) == 1
+      assert Enum.count_until(results, 2) == 1
     end
   end
 

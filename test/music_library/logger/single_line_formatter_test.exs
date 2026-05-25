@@ -85,7 +85,7 @@ defmodule MusicLibrary.Logger.SingleLineFormatterTest do
         |> IO.chardata_to_string()
 
       lines = String.split(result, "\n", trim: true)
-      assert length(lines) == 1
+      assert Enum.count_until(lines, 2) == 1
     end
 
     test "includes level and timestamp" do

@@ -256,7 +256,7 @@ defmodule MusicLibrary.BarcodeScanTest do
       errors =
         BarcodeScan.import_results([collected_result, not_found_result], DateTime.utc_now())
 
-      assert length(errors) == 2
+      assert Enum.count_until(errors, 3) == 2
       assert {"1111111111", :already_collected} in errors
       assert {"2222222222", :not_found} in errors
     end

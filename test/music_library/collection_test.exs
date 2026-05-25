@@ -124,7 +124,7 @@ defmodule MusicLibrary.CollectionTest do
 
       assert [{:group, %{representative: rep, records: records}}] = result
       assert rep.id == cd.id
-      assert length(records) == 2
+      assert Enum.count_until(records, 3) == 2
       # Sorted by purchased_at ascending
       assert Enum.map(records, & &1.id) == [cd.id, vinyl.id]
     end
@@ -396,7 +396,7 @@ defmodule MusicLibrary.CollectionTest do
       lines = String.split(catalog, "\n")
 
       assert record_count == 2
-      assert length(lines) == 2
+      assert Enum.count_until(lines, 3) == 2
 
       # Stats section
       assert stats =~ "# Stats: 2 releases"
@@ -446,7 +446,7 @@ defmodule MusicLibrary.CollectionTest do
       lines = String.split(catalog, "\n")
 
       assert record_count == 1
-      assert length(lines) == 1
+      assert Enum.count_until(lines, 2) == 1
 
       line = hd(lines)
       assert line =~ "cd"

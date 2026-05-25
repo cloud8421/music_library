@@ -412,7 +412,7 @@ defmodule MusicLibrary.Records.SimilarityTest do
     test "respects limit option", %{record1: record1} do
       similar = Similarity.find_similar(record1.id, limit: 1, max_distance: 1.0)
 
-      assert length(similar) == 1
+      assert Enum.count_until(similar, 2) == 1
     end
 
     test "returns empty list for record without embedding" do

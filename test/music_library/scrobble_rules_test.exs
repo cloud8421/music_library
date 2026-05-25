@@ -278,7 +278,7 @@ defmodule MusicLibrary.ScrobbleRulesTest do
         })
 
       assert results = ScrobbleRules.apply_all_rules()
-      assert length(results) == 2
+      assert Enum.count_until(results, 3) == 2
 
       # Verify all results are successful
       Enum.each(results, fn result ->
@@ -495,7 +495,7 @@ defmodule MusicLibrary.ScrobbleRulesTest do
       results = ScrobbleRules.apply_all_rules()
 
       # Should have 4 results (one for each rule)
-      assert length(results) == 4
+      assert Enum.count_until(results, 5) == 4
 
       # All results should be successful
       Enum.each(results, fn result ->

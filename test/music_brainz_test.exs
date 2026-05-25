@@ -89,7 +89,7 @@ defmodule MusicBrainzTest do
       end)
 
       assert {:ok, releases} = MusicBrainz.get_all_releases(@release_group_id)
-      assert length(releases) == 142
+      assert Enum.count_until(releases, 143) == 142
       assert releases == full_page["releases"] ++ tail_page["releases"]
       assert Agent.get(agent, & &1) == ["0", "100"]
     end
@@ -108,7 +108,7 @@ defmodule MusicBrainzTest do
       end)
 
       assert {:ok, releases} = MusicBrainz.get_all_releases(@release_group_id)
-      assert length(releases) == 100
+      assert Enum.count_until(releases, 101) == 100
       assert releases == full_page["releases"]
     end
 

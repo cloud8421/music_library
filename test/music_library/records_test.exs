@@ -24,7 +24,7 @@ defmodule MusicLibrary.RecordsTest do
       assert record.cover_hash ==
                "599407DDF69907D4A60FE13CCAA824D25CF08DC124FD6AA3E8E7ECD98C885FFE"
 
-      assert length(record.dominant_colors) == 5
+      assert Enum.count_until(record.dominant_colors, 6) == 5
       assert Enum.all?(record.dominant_colors, &color_hex?/1)
     end
 

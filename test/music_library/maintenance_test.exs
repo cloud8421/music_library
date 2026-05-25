@@ -106,7 +106,7 @@ defmodule MusicLibrary.MaintenanceTest do
 
       result = Maintenance.get_artists_missing_musicbrainz_id()
 
-      assert length(result) == 2
+      assert Enum.count_until(result, 3) == 2
 
       artist_a = Enum.find(result, fn r -> r.artist_name == "Artist A" end)
       artist_b = Enum.find(result, fn r -> r.artist_name == "Artist B" end)
@@ -123,7 +123,7 @@ defmodule MusicLibrary.MaintenanceTest do
 
       result = Maintenance.get_artists_missing_musicbrainz_id()
 
-      assert length(result) == 2
+      assert Enum.count_until(result, 3) == 2
       assert List.first(result).artist_name == "Artist B"
       assert List.first(result).track_count == 3
     end
@@ -135,7 +135,7 @@ defmodule MusicLibrary.MaintenanceTest do
 
       result = Maintenance.get_artists_missing_musicbrainz_id(limit: 2)
 
-      assert length(result) == 2
+      assert Enum.count_until(result, 3) == 2
     end
 
     test "excludes artists with valid musicbrainz_id" do
@@ -144,7 +144,7 @@ defmodule MusicLibrary.MaintenanceTest do
 
       result = Maintenance.get_artists_missing_musicbrainz_id()
 
-      assert length(result) == 1
+      assert Enum.count_until(result, 2) == 1
       assert List.first(result).artist_name == "Artist A"
     end
   end
@@ -177,7 +177,7 @@ defmodule MusicLibrary.MaintenanceTest do
 
       result = Maintenance.get_albums_missing_musicbrainz_id()
 
-      assert length(result) == 2
+      assert Enum.count_until(result, 3) == 2
 
       album_a = Enum.find(result, fn r -> r.album_title == "Album A" end)
       album_b = Enum.find(result, fn r -> r.album_title == "Album B" end)
@@ -196,7 +196,7 @@ defmodule MusicLibrary.MaintenanceTest do
 
       result = Maintenance.get_albums_missing_musicbrainz_id()
 
-      assert length(result) == 2
+      assert Enum.count_until(result, 3) == 2
       assert List.first(result).album_title == "Album B"
       assert List.first(result).track_count == 3
     end
@@ -208,7 +208,7 @@ defmodule MusicLibrary.MaintenanceTest do
 
       result = Maintenance.get_albums_missing_musicbrainz_id(limit: 2)
 
-      assert length(result) == 2
+      assert Enum.count_until(result, 3) == 2
     end
 
     test "excludes albums with valid musicbrainz_id" do
@@ -217,7 +217,7 @@ defmodule MusicLibrary.MaintenanceTest do
 
       result = Maintenance.get_albums_missing_musicbrainz_id()
 
-      assert length(result) == 1
+      assert Enum.count_until(result, 2) == 1
       assert List.first(result).album_title == "Album A"
     end
   end

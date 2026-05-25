@@ -78,7 +78,7 @@ defmodule MusicLibraryWeb.ErrorControllerTest do
       assert %{"errors" => returned, "total" => 3, "limit" => 50, "offset" => 0} =
                json_response(conn, 200)
 
-      assert length(returned) == 3
+      assert Enum.count_until(returned, 4) == 3
 
       # Verify each returned error has the expected fields
       for error <- returned do
@@ -138,7 +138,7 @@ defmodule MusicLibraryWeb.ErrorControllerTest do
       assert %{"errors" => returned, "total" => 3, "limit" => 2, "offset" => 1} =
                json_response(conn, 200)
 
-      assert length(returned) == 2
+      assert Enum.count_until(returned, 3) == 2
     end
 
     test "returns empty list when no errors match", %{conn: conn} do
@@ -224,7 +224,7 @@ defmodule MusicLibraryWeb.ErrorControllerTest do
 
       # Occurrences
       occurrences = returned["occurrences"]
-      assert length(occurrences) == 2
+      assert Enum.count_until(occurrences, 3) == 2
 
       # Most recent first (desc inserted_at)
       first_occ = hd(occurrences)
@@ -240,7 +240,7 @@ defmodule MusicLibraryWeb.ErrorControllerTest do
 
       # Stacktrace lines
       lines = first_occ["stacktrace"]["lines"]
-      assert length(lines) == 2
+      assert Enum.count_until(lines, 3) == 2
       [line1, line2] = lines
 
       assert line1["module"] == "OtherModule"

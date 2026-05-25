@@ -176,7 +176,7 @@ defmodule MusicLibraryWeb.ScrobbledTracksLive.RulePickerTest do
       assert_has(session, "#rule-picker-modal")
 
       # Only the original rule exists, no duplicate was created
-      assert length(ScrobbleRules.list_scrobble_rules(type: :album)) == 1
+      assert Enum.count_until(ScrobbleRules.list_scrobble_rules(type: :album), 2) == 1
     end
   end
 end

@@ -360,7 +360,7 @@ defmodule MusicLibraryWeb.Components.ChatTest do
       # contains two user rows with the same content.
       reloaded = Chats.get_chat!(chat.id)
       user_messages = Enum.filter(reloaded.messages, &(&1.role == "user"))
-      assert length(user_messages) == 2
+      assert Enum.count_until(user_messages, 3) == 2
     end
   end
 end

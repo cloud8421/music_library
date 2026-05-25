@@ -27,7 +27,7 @@ defmodule MusicLibrary.BatchTest do
                  {:error, :test_failure}
                end)
 
-      assert length(failed_ids) == 2
+      assert Enum.count_until(failed_ids, 3) == 2
       assert r1.id in failed_ids
       assert r2.id in failed_ids
     end

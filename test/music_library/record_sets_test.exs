@@ -58,7 +58,7 @@ defmodule MusicLibrary.RecordSetsTest do
       for i <- 1..5, do: record_set(%{name: "Set #{i}"})
 
       results = RecordSets.search_record_sets("", limit: 2)
-      assert length(results) == 2
+      assert Enum.count_until(results, 3) == 2
 
       all = RecordSets.search_record_sets("")
       offset_results = RecordSets.search_record_sets("", offset: 2, limit: 2)
@@ -151,7 +151,7 @@ defmodule MusicLibrary.RecordSetsTest do
       rec = record()
 
       assert {:ok, updated} = RecordSets.add_record_to_set(set, rec.id)
-      assert length(updated.items) == 1
+      assert Enum.count_until(updated.items, 2) == 1
       assert hd(updated.items).record.id == rec.id
     end
 
