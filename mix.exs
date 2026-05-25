@@ -43,6 +43,7 @@ defmodule MusicLibrary.MixProject do
   #   suite).
   defp ignored_coverage_modules do
     [
+      MusicLibrary.Application,
       MusicLibrary.Release,
       MusicLibrary.Repo,
       MusicLibrary.BackgroundRepo,
@@ -54,6 +55,7 @@ defmodule MusicLibrary.MixProject do
       MusicLibraryWeb,
       MusicLibraryWeb.ErrorHTML,
       MusicLibraryWeb.ErrorJSON,
+      MusicLibraryWeb.Router,
       MusicLibraryWeb.SessionHTML,
       MusicLibraryWeb.Telemetry,
       MusicLibraryWeb.Telemetry.Storage,
