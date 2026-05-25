@@ -45,6 +45,30 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         </div>
       </.section>
 
+      <.async_result :let={summary} assign={@collection_summary}>
+        <:loading>
+          <div class="grid gap-x-5 md:grid-cols-2">
+            <.section>
+              <:title>{gettext("Formats")}</:title>
+              <div class="mt-5 rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800 animate-pulse">
+                <div class="h-4 w-1/3 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+              </div>
+            </.section>
+            <.section>
+              <:title>{gettext("Types")}</:title>
+              <div class="mt-5 rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800 animate-pulse">
+                <div class="h-4 w-1/3 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+              </div>
+            </.section>
+          </div>
+        </:loading>
+        <:failed :let={_reason}></:failed>
+        <div :if={@collection_count > 0} class="grid gap-x-5 md:grid-cols-2">
+          <.formats_stats collection_count_by_format={summary.collection_count_by_format} />
+          <.types_stats collection_count_by_type={summary.collection_count_by_type} />
+        </div>
+      </.async_result>
+
       <div class="grid grid-cols-1 gap-x-5 md:grid-cols-2 lg:grid-cols-3">
         <TopArtists.live id="top-artists" timezone={@timezone} last_updated_uts={@last_updated_uts} />
         <TopAlbums.live id="top-albums" timezone={@timezone} last_updated_uts={@last_updated_uts} />
@@ -72,30 +96,6 @@ defmodule MusicLibraryWeb.StatsLive.Index do
           />
         </.async_result>
       </div>
-
-      <.async_result :let={summary} assign={@collection_summary}>
-        <:loading>
-          <div class="grid gap-x-5 md:grid-cols-2">
-            <.section>
-              <:title>{gettext("Formats")}</:title>
-              <div class="mt-5 rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800 animate-pulse">
-                <div class="h-4 w-1/3 rounded bg-zinc-200 dark:bg-zinc-700"></div>
-              </div>
-            </.section>
-            <.section>
-              <:title>{gettext("Types")}</:title>
-              <div class="mt-5 rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800 animate-pulse">
-                <div class="h-4 w-1/3 rounded bg-zinc-200 dark:bg-zinc-700"></div>
-              </div>
-            </.section>
-          </div>
-        </:loading>
-        <:failed :let={_reason}></:failed>
-        <div :if={@collection_count > 0} class="grid gap-x-5 md:grid-cols-2">
-          <.formats_stats collection_count_by_format={summary.collection_count_by_format} />
-          <.types_stats collection_count_by_type={summary.collection_count_by_type} />
-        </div>
-      </.async_result>
 
       <.scrobble_activity
         scrobble_activity_mode={@scrobble_activity_mode}
