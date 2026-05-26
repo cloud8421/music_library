@@ -56,6 +56,17 @@ That task copies `main.py` to `:main.py` and resets the Presto. It does not copy
 
 The Presto runs `main.py` on boot, connects to WiFi, syncs time, then opens the home screen.
 
+An equivalent Elm-style implementation is available in `music_library.py`. It
+uses messages, model updates, and effects for the application runtime while
+providing the same Music Library screens and API interactions. Deploy it as
+the device entrypoint with:
+
+```bash
+mise run music_library
+```
+
+This task copies `music_library.py` to `:main.py` on the device and resets it.
+
 ## Usage
 
 **Home:** tap **Search Collection** to search by text, or **Today's Records** to open the current month with today highlighted.
@@ -78,24 +89,29 @@ Run the headless smoke tests from this directory:
 mise run test
 ```
 
-The tests use `pimoroni-emulator` mock MicroPython modules, import `main.py` without starting the event loop, and block accidental network calls. They render all screen states and save screenshots to `tests/fixtures/` for manual inspection.
+The tests use `pimoroni-emulator` mock MicroPython modules, import both
+`main.py` and `music_library.py` without starting their event loops, and block
+accidental network calls. They render all screen states and save screenshots
+to `tests/fixtures/` for manual inspection. Additional runtime tests cover the
+message/effect boundary in `music_library.py`.
 
 For a syntax-only check without creating `__pycache__`:
 
 ```bash
 python3 -c "import py_compile; py_compile.compile('main.py', cfile='/tmp/main.pyc', doraise=True)"
+python3 -c "import py_compile; py_compile.compile('music_library.py', cfile='/tmp/music_library.pyc', doraise=True)"
 ```
 
 ## Troubleshooting
 
-| Symptom | Likely cause | Fix |
-| --- | --- | --- |
-| `secrets.py not found` | Credentials are missing on the device | Copy `secrets.py` to the Presto root |
-| `WIFI_SSID not set` or `API_TOKEN not set` | Required value is blank | Check `secrets.py` |
-| `WiFi connection failed` | Wrong credentials or network unavailable | Verify SSID, password, and network |
-| `Could not reach server` | API token invalid, server down, or network lost | Check `API_TOKEN` and server status |
-| Grey cover placeholders | JPEG decoder unavailable or image URL failed | Check firmware and internet access |
-| Black display after idle | Display sleep is active | Touch once to wake |
+| Symptom                                    | Likely cause                                    | Fix                                  |
+| ------------------------------------------ | ----------------------------------------------- | ------------------------------------ |
+| `secrets.py not found`                     | Credentials are missing on the device           | Copy `secrets.py` to the Presto root |
+| `WIFI_SSID not set` or `API_TOKEN not set` | Required value is blank                         | Check `secrets.py`                   |
+| `WiFi connection failed`                   | Wrong credentials or network unavailable        | Verify SSID, password, and network   |
+| `Could not reach server`                   | API token invalid, server down, or network lost | Check `API_TOKEN` and server status  |
+| Grey cover placeholders                    | JPEG decoder unavailable or image URL failed    | Check firmware and internet access   |
+| Black display after idle                   | Display sleep is active                         | Touch once to wake                   |
 
 ## API Contract
 

@@ -1,4 +1,4 @@
-"""Smoke tests — verify every Presto screen renders without crashing.
+"""Smoke tests - verify every complete Presto entrypoint renders its screens.
 
 Each test:
 1. Creates an ``AppState`` (requires ``init_display`` fixture).
@@ -7,7 +7,7 @@ Each test:
 4. Asserts no exception occurred.
 5. Saves a screenshot to ``presto/tests/fixtures/`` for manual inspection.
 
-No network calls are made — ``fetch_thumbnail`` is monkey-patched to raise,
+No network calls are made - ``fetch_thumbnail`` is monkey-patched to raise,
 and mock records have ``_thumb_failed=True`` / ``_thumb_data=None``.
 """
 
@@ -18,7 +18,7 @@ from tests.conftest import make_mock_record
 
 @pytest.mark.usefixtures("init_display")
 class TestSmokeScreens:
-    """Smoke tests for all 7 Presto screens."""
+    """Smoke tests for all visible screens in both complete applications."""
 
     # ------------------------------------------------------------------
     # Helpers
@@ -251,7 +251,9 @@ class TestSmokeScreens:
         app.day.records = [rec]
         app.detail.selected_index = 0
         app.detail.source_screen = main_module.STATE_DAY
-        main_module._measure_detail_content(app, rec)
+        detail_height = main_module._measure_detail_content(app, rec)
+        if detail_height is not None:
+            app.detail.content_height = detail_height
         app.detail.scroll_offset = main_module._max_detail_scroll_offset(app)
 
         calls = []

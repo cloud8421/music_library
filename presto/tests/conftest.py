@@ -1,11 +1,11 @@
 """Presto smoke test configuration and helpers.
 
-Uses the pimoroni-emulator's mock system so ``main.py`` can be imported
-on CPython without real MicroPython hardware.  The emulator's headless
-display is set up as a session-scoped fixture; ``main`` is imported once
-after the mocks are in place.
+Uses the pimoroni-emulator's mock system so the Presto entrypoints can be
+imported on CPython without real MicroPython hardware. The emulator's
+headless display is set up as a session-scoped fixture.
 """
 
+import importlib
 import sys
 from pathlib import Path
 
@@ -50,25 +50,31 @@ def _emulator():
 
 
 # ---------------------------------------------------------------------------
-# Module fixture — import main once
+# Module fixture - render both complete entrypoints
 # ---------------------------------------------------------------------------
 
-@pytest.fixture(scope="session")
-def main_module(_emulator):
-    """Import ``main.py`` after the emulator mocks are installed.
+@pytest.fixture(scope="session", params=("main", "music_library"))
+def main_module(_emulator, request):
+    """Import each application after emulator mocks are installed.
 
-    The ``__name__ == "__main__"`` guard ensures ``main()`` does not run.
+    The ``__name__ == "__main__"`` guards ensure ``main()`` does not run.
     ``fetch_thumbnail`` is monkey-patched to raise on any network call.
     """
-    import main
+    module = importlib.import_module(request.param)
 
     # Guard against accidental network access in smoke tests.
     def _raise_on_network(*_args, **_kwargs):
-        raise RuntimeError("Network call in smoke test — use mock data")
+        raise RuntimeError("Network call in smoke test - use mock data")
 
-    main.fetch_thumbnail = _raise_on_network
+    module.fetch_thumbnail = _raise_on_network
 
-    return main
+    return module
+
+
+@pytest.fixture(scope="session")
+def music_library_module(_emulator):
+    """Import the architecture-based application for transition tests."""
+    return importlib.import_module("music_library")
 
 
 # ---------------------------------------------------------------------------

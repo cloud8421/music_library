@@ -10,6 +10,12 @@ mpremote fs cp main.py :main.py
 mpremote reset
 '''
 
+[tasks.music_library]
+run = '''
+mpremote fs cp music_library.py :main.py
+mpremote reset
+'''
+
 [tasks.poc]
 run = '''
 mpremote fs cp poc.py :main.py
