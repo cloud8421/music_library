@@ -13,7 +13,7 @@ services:
     environment:
       - API_TOKEN
       - BACKGROUND_DATABASE_PATH
-      - CLOAK_ENCRIPTION_KEY
+      - CLOAK_ENCRYPTION_KEY
       - DATABASE_PATH
       - DISCOGS_PERSONAL_ACCESS_TOKEN
       - LAST_FM_API_KEY
