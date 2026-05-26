@@ -149,8 +149,8 @@ The project is managed and configured via [mise-en-place](https://mise.jdx.dev):
 
 > [!IMPORTANT]
 > The project uses [Fluxon UI](https://fluxonui.com/), so it requires a valid
-> set of credentials. See the `env` section in `mise.toml` for the required
-> environment variables.
+> set of credentials to pull the dependency. See the `env` section in
+> `mise.toml` for the required environment variables.
 
 It's recommended to use the git hooks included in the project. Install with:
 

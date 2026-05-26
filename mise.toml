@@ -11,8 +11,10 @@ lockfile = true
 FLUXON_KEY_FINGERPRINT = 'change-me'
 FLUXON_LICENSE_KEY = 'change-me'
 
+# CLOAK - CHANGE ME!
+CLOAK_ENCRYPTION_KEY = 'k98umyqee+AczNLQhR+7IbpME5C8zwSfIZcQDsTnIyU='
+
 # RUNTIME
-CLOAK_ENCRYPTION_KEY = 'change-me'
 LAST_FM_API_KEY = 'change-me'
 LAST_FM_SHARED_SECRET = 'change-me'
 LAST_FM_USER = 'change-me'
