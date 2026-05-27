@@ -44,4 +44,9 @@ litestream = 'latest'
 includes = ["scripts"]
 
 [tasks.test]
-depends = ["dev:partitioned-test 1", "dev:partitioned-test 2"]
+depends = [
+  "dev:partitioned-test 1",
+  "dev:partitioned-test 2",
+  "dev:partitioned-test 3",
+  "dev:partitioned-test 4",
+]
