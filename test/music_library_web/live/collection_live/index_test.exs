@@ -1,6 +1,6 @@
 defmodule MusicLibraryWeb.CollectionLive.IndexTest do
   use MusicLibraryWeb.ConnCase
-  use Oban.Testing, repo: MusicLibrary.BackgroundRepo
+  use Oban.Testing, repo: MusicLibrary.BackgroundRepo, engine: Oban.Engines.Lite
 
   import MusicBrainz.Fixtures.Release
   import MusicBrainz.Fixtures.ReleaseGroup

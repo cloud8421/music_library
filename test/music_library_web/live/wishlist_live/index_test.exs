@@ -1,6 +1,6 @@
 defmodule MusicLibraryWeb.WishlistLive.IndexTest do
   use MusicLibraryWeb.ConnCase
-  use Oban.Testing, repo: MusicLibrary.BackgroundRepo
+  use Oban.Testing, repo: MusicLibrary.BackgroundRepo, engine: Oban.Engines.Lite
 
   import Ecto.Query, only: [from: 2]
   import MusicBrainz.Fixtures.ReleaseGroup

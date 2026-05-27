@@ -7,7 +7,7 @@ defmodule MusicLibrary.DataCase do
 
   using do
     quote do
-      use Oban.Testing, repo: MusicLibrary.BackgroundRepo
+      use Oban.Testing, repo: MusicLibrary.BackgroundRepo, engine: Oban.Engines.Lite
 
       import Ecto
       import Ecto.Changeset

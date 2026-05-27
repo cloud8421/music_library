@@ -9,7 +9,7 @@ defmodule MusicLibrary.Worker.RefreshScrobbles do
   use Oban.Worker,
     queue: :last_fm,
     max_attempts: 3,
-    unique: [period: 60, states: [:available, :scheduled, :executing]]
+    unique: [period: 60, states: :incomplete]
 
   alias LastFm.{API, Config}
   alias MusicLibrary.ListeningStats
