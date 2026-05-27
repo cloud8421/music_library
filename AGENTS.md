@@ -27,6 +27,17 @@ Before exploring the codebase for any task, read `docs/architecture.md`. Do this
 - **Read `docs/available-tasks.md`** before running mise tasks. Read the file to see available tasks, then run `mise run <task> --help` for task-specific options.
 - **Read `presto/AGENTS.md`** before changing anything in the `presto/` directory. Also read it when the user mentions "presto", the Pimoroni Presto device, MicroPython, or touch display.
 
+## Documentation writing
+
+- Keep reference documentation factual and concise. Follow the existing file structure, extending current sections, tables, and terminology rather than introducing a new presentation style.
+- Begin explanatory documentation with the concrete problem, capability, or operational reason it addresses. Establish why something matters before describing mechanics.
+- Prefer specific detail over broad claims: name relevant modules, routes, workers, dependencies, data flows, configuration values, constraints, and verification steps.
+- Use functional headings and lists only when they clarify progression, categories, requirements, steps, or tradeoffs.
+- Make tradeoffs explicit where they affect maintenance, reliability, portability, failure handling, user experience, or operational complexity.
+- Keep recommendations contextual. Describe the conditions under which an approach fits this application instead of presenting choices as universal rules.
+- For guides and technical walkthroughs, favour an example-driven progression: context, minimal relevant implementation or procedure, constraints, and verification.
+- Use a plain, informed tone. Avoid sales language, unsupported certainty, and conclusions that go beyond the available evidence.
+
 <!-- usage-rules-start -->
 <!-- usage_rules-start -->
 ## usage_rules usage
