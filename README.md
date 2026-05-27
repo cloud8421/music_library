@@ -94,51 +94,51 @@
 
 ### Stats dashboard
 
-![Stats dashboard](.github/screenshots/stats-dashboard.png)
+![Stats dashboard](.github/screenshots/stats-dashboard.jpg)
 
 ### Collection
 
-![Collection](.github/screenshots/collection-grid.png)
+![Collection](.github/screenshots/collection-grid.jpg)
 
 ### Searching for a record to add
 
-![Searching for a record to add](.github/screenshots/add-record-search.png)
+![Searching for a record to add](.github/screenshots/add-record-search.jpg)
 
 ### Record details
 
-![Record details](.github/screenshots/record-details.png)
+![Record details](.github/screenshots/record-details.jpg)
 
 ### Record releases
 
-![Record releases](.github/screenshots/record-releases.png)
+![Record releases](.github/screenshots/record-releases.jpg)
 
 ### Record chat
 
-![Record chat](.github/screenshots/record-chat.png)
+![Record chat](.github/screenshots/record-chat.jpg)
 
 ### Artist details
 
-![Artist details](.github/screenshots/artist-page.png)
+![Artist details](.github/screenshots/artist-page.jpg)
 
 ### Wishlist record details
 
-![Wishlist record details](.github/screenshots/wishlist-record-details.png)
+![Wishlist record details](.github/screenshots/wishlist-record-details.jpg)
 
 ### Record sets
 
-![Record sets](.github/screenshots/record-sets.png)
+![Record sets](.github/screenshots/record-sets.jpg)
 
 ### Scrobble rules
 
-![Scrobble rules](.github/screenshots/scrobble-rules.png)
+![Scrobble rules](.github/screenshots/scrobble-rules.jpg)
 
 ### New scrobble rule
 
-![New scrobble rule](.github/screenshots/scrobble-rule-form.png)
+![New scrobble rule](.github/screenshots/scrobble-rule-form.jpg)
 
 ### Universal search
 
-![Universal search](.github/screenshots/universal-search.png)
+![Universal search](.github/screenshots/universal-search.jpg)
 
 ## Setup
 
