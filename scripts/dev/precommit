@@ -45,7 +45,7 @@ if $SKIP_GATE || staged_lines | grep -qE '^(lib/|test/|config/|mix\.exs|mix\.loc
   mix format --check-formatted
 
   debug_msg "Running tests..."
-  mix test
+  mise run //:test
 fi
 
 # deps.unlock sub-gate: only when mix.exs or mix.lock changed
