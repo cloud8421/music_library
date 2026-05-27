@@ -225,8 +225,7 @@ defmodule MusicLibrary.MixProject do
     [
       file: "AGENTS.md",
       usage_rules: [
-        "usage_rules:all",
-        :elixir,
+        :usage_rules,
         {:mdex, link: :at}
       ],
       skills: [
