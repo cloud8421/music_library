@@ -605,7 +605,14 @@ defmodule MusicLibraryWeb.RecordComponents do
     >
       <ul>
         <li :for={included_release_group <- Records.Record.included_release_groups(@record)}>
-          {included_release_group.artists} - {included_release_group.title}
+          <.link
+            href={ReleaseGroup.url(included_release_group.id)}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-zinc-700 hover:text-zinc-500 hover:underline dark:text-zinc-400 dark:hover:text-zinc-300"
+          >
+            {included_release_group.artists} - {included_release_group.title}
+          </.link>
         </li>
       </ul>
     </.dl_row>
