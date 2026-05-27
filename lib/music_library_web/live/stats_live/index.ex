@@ -45,29 +45,10 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         </div>
       </.section>
 
-      <.async_result :let={summary} assign={@collection_summary}>
-        <:loading>
-          <div class="grid gap-x-5 md:grid-cols-2">
-            <.section>
-              <:title>{gettext("Formats")}</:title>
-              <div class="mt-5 rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800 animate-pulse">
-                <div class="h-4 w-1/3 rounded bg-zinc-200 dark:bg-zinc-700"></div>
-              </div>
-            </.section>
-            <.section>
-              <:title>{gettext("Types")}</:title>
-              <div class="mt-5 rounded-md bg-white p-6 shadow-sm dark:bg-zinc-800 animate-pulse">
-                <div class="h-4 w-1/3 rounded bg-zinc-200 dark:bg-zinc-700"></div>
-              </div>
-            </.section>
-          </div>
-        </:loading>
-        <:failed :let={_reason}></:failed>
-        <div :if={@collection_count > 0} class="grid gap-x-5 md:grid-cols-2">
-          <.formats_stats collection_count_by_format={summary.collection_count_by_format} />
-          <.types_stats collection_count_by_type={summary.collection_count_by_type} />
-        </div>
-      </.async_result>
+      <div :if={@collection_count > 0} class="grid gap-x-5 md:grid-cols-2">
+        <.formats_stats collection_count_by_format={@collection_count_by_format} />
+        <.types_stats collection_count_by_type={@collection_count_by_type} />
+      </div>
 
       <div class="grid grid-cols-1 gap-x-5 md:grid-cols-2 lg:grid-cols-3">
         <TopArtists.live id="top-artists" timezone={@timezone} last_updated_uts={@last_updated_uts} />
@@ -165,6 +146,8 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        collection_count: Collection.count(),
        wishlist_count: Wishlist.count(),
        scrobble_count: ListeningStats.scrobble_count(),
+       collection_count_by_format: Collection.count_records_by_format(),
+       collection_count_by_type: Collection.count_records_by_type(),
        last_updated_uts: nil,
        scrobble_activity_mode: "albums",
        page_title: gettext("Stats"),
@@ -175,8 +158,6 @@ defmodule MusicLibraryWeb.StatsLive.Index do
        {:ok,
         %{
           collection_summary: %{
-            collection_count_by_format: Collection.count_records_by_format(),
-            collection_count_by_type: Collection.count_records_by_type(),
             records_by_artist: Collection.count_records_by_artist(limit: 20),
             records_by_genre: Collection.count_records_by_genre(limit: 20),
             records_by_release_year: Collection.count_records_by_release_year(limit: 20)

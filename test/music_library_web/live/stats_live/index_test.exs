@@ -36,7 +36,6 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
         conn
         |> visit("/")
         |> assert_has("dd", collection |> length() |> Integer.to_string())
-        |> render_async()
 
       collection
       |> Enum.frequencies_by(& &1.format)
