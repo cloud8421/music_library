@@ -12,13 +12,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: lib/music_library_web/components/record_components.ex
-#: lib/music_library_web/live/collection_live/show.ex
 #: lib/music_library_web/live/online_store_template_live/index.ex
 #: lib/music_library_web/live/record_set_live/index.ex
 #: lib/music_library_web/live/record_set_live/show.ex
 #: lib/music_library_web/live/scrobble_rules_live/index.ex
 #: lib/music_library_web/live/scrobbled_tracks_live/index.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Are you sure?"
 msgstr ""
@@ -38,13 +36,11 @@ msgid "Cover art"
 msgstr ""
 
 #: lib/music_library_web/components/record_components.ex
-#: lib/music_library_web/live/collection_live/show.ex
 #: lib/music_library_web/live/online_store_template_live/index.ex
 #: lib/music_library_web/live/record_set_live/index.ex
 #: lib/music_library_web/live/record_set_live/show.ex
 #: lib/music_library_web/live/scrobble_rules_live/index.ex
 #: lib/music_library_web/live/scrobbled_tracks_live/index.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr ""
@@ -52,14 +48,13 @@ msgstr ""
 #: lib/music_library_web/components/notes.ex
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/artist_live/show.ex
-#: lib/music_library_web/live/collection_live/show.ex
 #: lib/music_library_web/live/online_store_template_live/index.ex
 #: lib/music_library_web/live/record_set_live/index.ex
 #: lib/music_library_web/live/record_set_live/show.ex
 #: lib/music_library_web/live/scrobble_rules_live/index.ex
 #: lib/music_library_web/live/scrobbled_tracks_live/index.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
 #: lib/music_library_web/live_helpers/index_actions.ex
+#: lib/music_library_web/live_helpers/record_show.ex
 #, elixir-autogen, elixir-format
 msgid "Edit"
 msgstr ""
@@ -280,8 +275,7 @@ msgid "No MB ID"
 msgstr ""
 
 #: lib/music_library_web/live/artist_live/show.ex
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/live_helpers/record_show.ex
 #, elixir-autogen, elixir-format
 msgid "Details"
 msgstr ""
@@ -296,20 +290,17 @@ msgstr ""
 msgid "Loading biography"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "Populate genres"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "Refresh MB data"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "Refresh cover"
 msgstr ""
@@ -601,8 +592,7 @@ msgstr ""
 msgid "Collected release"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "No release selected"
 msgstr ""
@@ -622,8 +612,7 @@ msgstr ""
 msgid "Loading release with tracks"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "Show Tracks"
 msgstr ""
@@ -639,15 +628,13 @@ msgid "Successfully connected your Last.fm account"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/live_helpers/record_show.ex
 #, elixir-autogen, elixir-format
 msgid "Error scrobbling release"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/live_helpers/record_show.ex
 #, elixir-autogen, elixir-format
 msgid "Release scrobbled successfully"
 msgstr ""
@@ -662,9 +649,8 @@ msgstr ""
 msgid "Scrobbling..."
 msgstr ""
 
+#: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/components/release.ex
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Scrobble release"
 msgstr ""
@@ -795,13 +781,11 @@ msgstr ""
 #: lib/music_library_web/components/layouts/app.html.heex
 #: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/artist_live/show.ex
-#: lib/music_library_web/live/collection_live/show.ex
 #: lib/music_library_web/live/online_store_template_live/index.ex
 #: lib/music_library_web/live/record_set_live/index.ex
 #: lib/music_library_web/live/record_set_live/show.ex
 #: lib/music_library_web/live/scrobble_rules_live/index.ex
 #: lib/music_library_web/live/scrobbled_tracks_live/index.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr ""
@@ -1013,7 +997,7 @@ msgstr ""
 msgid "to open this search"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "Copy record selected release ID to clipboard"
 msgstr ""
@@ -1736,14 +1720,12 @@ msgstr ""
 msgid "Based on genres, artists, and musical style"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "Ask about this album..."
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "Ask anything about this album"
 msgstr ""
@@ -1753,8 +1735,7 @@ msgstr ""
 msgid "Chat about %{title}"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "Chat about album"
 msgstr ""
@@ -1822,9 +1803,8 @@ msgid "Copy MB ID"
 msgstr ""
 
 #: lib/music_library_web/components/core_components.ex
+#: lib/music_library_web/components/record_components.ex
 #: lib/music_library_web/live/artist_live/show.ex
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Debug data"
 msgstr ""
@@ -1910,8 +1890,7 @@ msgstr ""
 msgid "Error extracting colors"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "Extract colors"
 msgstr ""
@@ -2561,8 +2540,7 @@ msgstr ""
 msgid "ISO format"
 msgstr ""
 
-#: lib/music_library_web/live/collection_live/show.ex
-#: lib/music_library_web/live/wishlist_live/show.ex
+#: lib/music_library_web/live_helpers/record_show.ex
 #, elixir-autogen, elixir-format
 msgid "Record was updated in the background. Your edits may be stale — save and re-open to see the latest data."
 msgstr ""

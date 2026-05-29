@@ -1,11 +1,8 @@
 defmodule MusicLibraryWeb.WishlistLive.Show do
   use MusicLibraryWeb, :live_view
 
-  require Logger
-
   import MusicLibraryWeb.RecordComponents,
     only: [
-      artist_links: 1,
       record_cover: 1,
       record_debug_sheet: 1,
       record_external_links: 1,
@@ -13,16 +10,25 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
       record_includes: 1,
       record_published_releases: 1,
       record_sets_list: 1,
+      record_show_action_bar: 1,
+      record_show_chat: 1,
+      record_show_edit_modal: 1,
+      record_show_release_sheet: 1,
+      record_show_selected_release_row: 1,
       record_timestamps: 1,
-      record_title_and_metadata: 1,
-      release_summary: 1
+      record_title_and_metadata: 1
     ]
 
-  alias MusicLibrary.Chats
   alias MusicLibrary.OnlineStoreTemplates
-  alias MusicLibrary.{Records, RecordSets, ScrobbleActivity}
-  alias MusicLibraryWeb.ErrorMessages
-  alias MusicLibraryWeb.LiveHelpers.RecordActions
+  alias MusicLibrary.{Records, ScrobbleActivity}
+  alias MusicLibraryWeb.LiveHelpers.RecordShow
+
+  @common_record_events [
+    "refresh_musicbrainz_data",
+    "refresh_cover",
+    "populate_genres",
+    "extract_colors"
+  ]
 
   @impl true
   def render(assigns) do
@@ -42,201 +48,42 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
         </div>
 
         <div class="xl:col-span-3">
-          <div class="mt-4 flex items-center justify-between md:mt-0">
-            <h1 class="text-base/6 font-medium text-zinc-700">
-              <.artist_links joinphrase_class="text-sm" artists={@record.artists} />
-            </h1>
-            <div class="min-w-12">
-              <.button_group>
-                <.button
-                  :if={@can_scrobble? and @record.selected_release_id}
-                  variant="soft"
-                  phx-click="scrobble_release"
-                >
-                  <span class="sr-only">{gettext("Scrobble release")}</span>
-                  <.icon
-                    name="hero-play"
-                    class="icon"
-                    aria-hidden="true"
-                    data-slot="icon"
-                  />
-                </.button>
-                <.button
-                  variant="soft"
-                  phx-click={MusicLibraryWeb.Components.Chat.open("record-chat-sheet")}
-                >
-                  <span class="sr-only">{gettext("Chat about album")}</span>
-                  <.icon
-                    name="hero-chat-bubble-left-right"
-                    class="icon"
-                    aria-hidden="true"
-                    data-slot="icon"
-                  />
-                  <span :if={@chat_count > 0} class="text-xs font-medium">{@chat_count}</span>
-                </.button>
-                <.button
-                  :if={@record.selected_release_id}
-                  variant="soft"
-                  phx-click={MusicLibraryWeb.Components.Release.open("release-with-tracks-sheet")}
-                >
-                  <span class="sr-only">{gettext("Show Tracks")}</span>
-                  <.icon
-                    name="hero-numbered-list"
-                    class="icon"
-                    aria-hidden="true"
-                    data-slot="icon"
-                  />
-                </.button>
-                <.dropdown id={"actions-#{@record.id}"} placement="bottom-end">
-                  <:toggle>
-                    <.button variant="soft">
-                      <span class="sr-only">{gettext("Actions")}</span>
-                      <.icon
-                        name="hero-ellipsis-vertical"
-                        class="icon cursor-pointer text-zinc-500 dark:text-zinc-400"
-                        aria-hidden="true"
-                        data-slot="icon"
-                      />
-                    </.button>
-                  </:toggle>
-                  <.focus_wrap id={"actions-#{@record.id}-focus-wrap"}>
-                    <.dropdown_link
-                      id={"actions-#{@record.id}-debug"}
-                      phx-click={Fluxon.open_dialog("debug-data")}
-                    >
-                      <.icon
-                        name="hero-code-bracket"
-                        class="mr-1 size-4"
-                        aria-hidden="true"
-                        data-slot="icon"
-                      />
-                      {gettext("Debug data")}
-                    </.dropdown_link>
+          <.record_show_action_bar
+            record={@record}
+            can_scrobble?={@can_scrobble?}
+            chat_count={@chat_count}
+            edit_path={~p"/wishlist/#{@record}/show/edit"}
+          >
+            <:dropdown_extra>
+              <.dropdown_link
+                :if={!@record.purchased_at}
+                id={"actions-#{@record.id}-purchase"}
+                phx-click={
+                  JS.dispatch("music_library:confetti")
+                  |> JS.push("add-to-collection")
+                }
+              >
+                <.icon
+                  name="hero-banknotes"
+                  class="phx-click-loading:animate-shake mr-1 size-4"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+                {gettext("Purchased")}
+              </.dropdown_link>
+            </:dropdown_extra>
+          </.record_show_action_bar>
 
-                    <.dropdown_separator />
-
-                    <.dropdown_link
-                      id={"actions-#{@record.id}-edit"}
-                      patch={~p"/wishlist/#{@record}/show/edit"}
-                    >
-                      <.icon
-                        name="hero-pencil-square"
-                        class="phx-click-loading:animate-bounce mr-1 size-4"
-                        aria-hidden="true"
-                        data-slot="icon"
-                      />
-                      {gettext("Edit")}
-                    </.dropdown_link>
-
-                    <.dropdown_link
-                      id={"actions-#{@record.id}-refresh-cover"}
-                      phx-click="refresh_cover"
-                    >
-                      <.icon
-                        name="hero-photo"
-                        class="phx-click-loading:animate-bounce mr-1 size-4"
-                        aria-hidden="true"
-                        data-slot="icon"
-                      />
-                      {gettext("Refresh cover")}
-                    </.dropdown_link>
-
-                    <.dropdown_link
-                      id={"actions-#{@record.id}-refresh-mb-data"}
-                      phx-click="refresh_musicbrainz_data"
-                    >
-                      <.icon
-                        name="hero-cloud-arrow-down"
-                        class="phx-click-loading:animate-bounce mr-1 size-4"
-                        aria-hidden="true"
-                        data-slot="icon"
-                      />
-                      {gettext("Refresh MB data")}
-                    </.dropdown_link>
-
-                    <.dropdown_link
-                      id={"actions-#{@record.id}-populate-genres"}
-                      phx-click="populate_genres"
-                    >
-                      <.icon
-                        name="hero-sparkles"
-                        class="phx-click-loading:animate-shake mr-1 size-4"
-                        aria-hidden="true"
-                        data-slot="icon"
-                      />
-                      {gettext("Populate genres")}
-                    </.dropdown_link>
-
-                    <.dropdown_link
-                      :if={!@record.purchased_at}
-                      id={"actions-#{@record.id}-purchase"}
-                      phx-click={
-                        JS.dispatch("music_library:confetti")
-                        |> JS.push("add-to-collection")
-                      }
-                    >
-                      <.icon
-                        name="hero-banknotes"
-                        class="phx-click-loading:animate-shake mr-1 size-4"
-                        aria-hidden="true"
-                        data-slot="icon"
-                      />
-                      {gettext("Purchased")}
-                    </.dropdown_link>
-
-                    <.dropdown_link
-                      id={"actions-#{@record.id}-extract-colors"}
-                      phx-click="extract_colors"
-                    >
-                      <.icon
-                        name="hero-paint-brush"
-                        class="phx-click-loading:animate-shake mr-1 size-4"
-                        aria-hidden="true"
-                        data-slot="icon"
-                      />
-                      {gettext("Extract colors")}
-                    </.dropdown_link>
-
-                    <.dropdown_separator />
-                    <.dropdown_link
-                      id={"actions-#{@record.id}-delete"}
-                      phx-click="delete"
-                      data-confirm={gettext("Are you sure?")}
-                      class="text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
-                    >
-                      <.icon
-                        name="hero-trash"
-                        class="phx-click-loading:animate-spin mr-1 size-4"
-                        aria-hidden="true"
-                        data-slot="icon"
-                      />
-                      {gettext("Delete")}
-                    </.dropdown_link>
-                  </.focus_wrap>
-                </.dropdown>
-              </.button_group>
-            </div>
-          </div>
           <.record_title_and_metadata record={@record} current_date={@current_date} />
           <.record_external_links record={@record} />
           <div class="mt-4 md:mt-8">
             <dl class="divide-y divide-zinc-100 dark:divide-slate-300/30">
               <.record_genres record={@record} section={:wishlist} />
               <.record_published_releases record={@record} />
-              <.dl_row label={gettext("Wishlisted release")}>
-                <div class="flex justify-between space-x-2">
-                  <span
-                    :if={!@record.selected_release_id}
-                    class="text-xs text-zinc-700 md:text-sm dark:text-zinc-300"
-                  >
-                    {gettext("No release selected")}
-                  </span>
-                  <.release_summary
-                    :if={@record.selected_release_id}
-                    release={Records.Record.selected_release(@record)}
-                  />
-                </div>
-              </.dl_row>
+              <.record_show_selected_release_row
+                record={@record}
+                label={gettext("Wishlisted release")}
+              />
               <.record_includes record={@record} />
               <.record_sets_list record_sets={@record_sets} />
             </dl>
@@ -281,49 +128,17 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
       <.record_debug_sheet record={@record} embedding_text={@embedding_text} />
 
-      <.sheet
-        :if={@record.selected_release_id}
-        id="release-with-tracks-sheet"
-        placement="right"
-        class="flex min-w-xs flex-col overflow-hidden p-0 sm:min-w-sm"
-      >
-        <.live_component
-          id="release-with-tracks"
-          sheet_id="release-with-tracks-sheet"
-          module={MusicLibraryWeb.Components.Release}
-          release_id={@record.selected_release_id}
-          show_print?={false}
-          timezone={@timezone}
-        />
-      </.sheet>
+      <.record_show_release_sheet record={@record} show_print?={false} timezone={@timezone} />
 
-      <.live_component
-        id="record-chat"
-        sheet_id="record-chat-sheet"
-        module={MusicLibraryWeb.Components.Chat}
-        title={@record.title}
-        entity={:record}
-        musicbrainz_id={@record.musicbrainz_id}
-        chat_module={MusicLibrary.Chats.RecordChat}
-        chat_context={{@record, @embedding_text}}
-        placeholder={gettext("Ask about this album...")}
-        empty_prompt={gettext("Ask anything about this album")}
+      <.record_show_chat record={@record} embedding_text={@embedding_text} />
+
+      <.record_show_edit_modal
+        record={@record}
+        live_action={@live_action}
+        show_purchased_at={false}
+        close_path={~p"/wishlist/#{@record}"}
+        patch_path={~p"/wishlist/#{@record}"}
       />
-
-      <.structured_modal
-        :if={@live_action == :edit}
-        id="record-modal"
-        on_close={JS.patch(~p"/wishlist/#{@record}")}
-      >
-        <.live_component
-          module={MusicLibraryWeb.Components.RecordForm}
-          id={@record.id}
-          action={@live_action}
-          show_purchased_at={false}
-          record={@record}
-          patch={~p"/wishlist/#{@record}"}
-        />
-      </.structured_modal>
     </Layouts.app>
     """
   end
@@ -341,40 +156,19 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    RecordActions.manage_subscription(socket, id)
-
-    record = Records.get_record!(id)
-    online_store_templates = OnlineStoreTemplates.list_enabled_templates()
-
-    record_sets = RecordSets.list_record_sets_for_record(record.id)
-
     {:noreply,
      socket
-     |> assign(:page_title, page_title(socket.assigns.live_action, record))
-     |> assign(:record, record)
-     |> assign(:online_store_templates, online_store_templates)
-     |> assign(:record_sets, record_sets)
-     |> assign(:chat_count, Chats.count_chats(:record, record.musicbrainz_id))
-     |> RecordActions.assign_embedding_text()}
+     |> RecordShow.assign_common_record(id, gettext("Wishlist"))
+     |> assign(:online_store_templates, OnlineStoreTemplates.list_enabled_templates())}
   end
 
   @impl true
   def handle_event("delete", _params, socket) do
-    {:ok, _} = Records.delete_record(socket.assigns.record)
-
-    {:noreply, push_navigate(socket, to: ~p"/wishlist")}
+    RecordShow.delete_record(socket, ~p"/wishlist")
   end
 
-  def handle_event("refresh_musicbrainz_data", _params, socket) do
-    RecordActions.refresh_musicbrainz_data(socket)
-  end
-
-  def handle_event("refresh_cover", _params, socket) do
-    RecordActions.refresh_cover(socket)
-  end
-
-  def handle_event("populate_genres", _params, socket) do
-    RecordActions.populate_genres(socket)
+  def handle_event(event, _params, socket) when event in @common_record_events do
+    RecordShow.handle_common_event(event, socket)
   end
 
   def handle_event("add-to-collection", _params, socket) do
@@ -393,100 +187,29 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
     end
   end
 
-  def handle_event("extract_colors", _params, socket) do
-    RecordActions.extract_colors(socket)
-  end
-
   def handle_event("scrobble_release", _params, socket) do
-    record = socket.assigns.record
-
-    {:noreply,
-     start_async(socket, :scrobble_release, fn ->
-       with {:ok, release} <- MusicBrainz.get_release(record.selected_release_id) do
-         release_with_tracks = MusicBrainz.Release.from_api_response(release)
-
-         ScrobbleActivity.scrobble_release(release_with_tracks, :finished_at, DateTime.utc_now())
-       end
-     end)}
+    RecordShow.scrobble_release(socket)
   end
 
   @impl true
-  def handle_async(:scrobble_release, {:ok, {:ok, _result}}, socket) do
-    {:noreply, put_toast(socket, :info, gettext("Release scrobbled successfully"))}
-  end
-
-  def handle_async(:scrobble_release, {:ok, {:error, reason}}, socket) do
-    {:noreply,
-     put_toast(
-       socket,
-       :error,
-       gettext("Error scrobbling release") <> ": " <> ErrorMessages.friendly_message(reason)
-     )}
-  end
-
-  def handle_async(:scrobble_release, {:exit, reason}, socket) do
-    Logger.error("Scrobble release failed: #{inspect(reason)}")
-
-    {:noreply,
-     put_toast(
-       socket,
-       :error,
-       gettext("Error scrobbling release") <> ": " <> ErrorMessages.friendly_message(reason)
-     )}
+  def handle_async(:scrobble_release, result, socket) do
+    RecordShow.handle_scrobble_release(result, socket)
   end
 
   @impl true
   def handle_info({MusicLibraryWeb.Components.RecordForm, {:saved, record}}, socket) do
-    {:noreply,
-     socket
-     |> assign(:record, record)
-     |> RecordActions.assign_embedding_text()}
+    RecordShow.handle_saved_record(socket, record)
   end
 
   def handle_info({MusicLibraryWeb.Components.Chat, :chats_changed}, socket) do
-    RecordActions.handle_chats_changed(socket)
+    RecordShow.handle_chats_changed(socket)
   end
 
   def handle_info({MusicLibraryWeb.Components.Release, {:loaded, _release}}, socket) do
-    {:noreply, socket}
+    RecordShow.handle_release_loaded(socket)
   end
 
-  @impl true
   def handle_info({:update, record}, socket) do
-    cond do
-      record.id != socket.assigns.record.id ->
-        {:noreply, socket}
-
-      socket.assigns.live_action == :edit ->
-        {:noreply,
-         socket
-         |> put_toast(
-           :warning,
-           gettext(
-             "Record was updated in the background. Your edits may be stale — save and re-open to see the latest data."
-           )
-         )}
-
-      true ->
-        {:noreply, RecordActions.handle_record_updated(socket, record)}
-    end
+    RecordShow.handle_record_update(socket, record)
   end
-
-  defp page_title(action, record) do
-    Enum.join(
-      [
-        Records.Record.artist_names(record),
-        "-",
-        record.title,
-        "·",
-        title_segment(action),
-        "·",
-        gettext("Wishlist")
-      ],
-      " "
-    )
-  end
-
-  defp title_segment(:show), do: gettext("Details")
-  defp title_segment(:edit), do: gettext("Edit")
 end

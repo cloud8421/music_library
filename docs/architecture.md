@@ -313,31 +313,32 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 
 ### Shared Component Modules (lib/music_library_web/components/)
 
-| Module               | Purpose                                                                                                                                                                     |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `CoreComponents`     | Forms, buttons, icons, tables, flash messages                                                                                                                               |
-| `Layouts`            | Application layout templates, navigation components (`dropdown_nav/1`)                                                                                                      |
-| `RecordComponents`   | Record cards, cover images, artist images, labels, grids, release status icon badge, shared show-page sections (title, external links, genres, releases, timestamps, debug) |
-| `ChartComponents`    | Charts for stats dashboard                                                                                                                                                  |
-| `StatsComponents`    | Stats dashboard widgets (`section/1` layout, counters, album preview, records on this day)                                                                                  |
-| `ScrobbleComponents` | Scrobble activity displays: status badges, import dropdowns, metadata tooltips, and record-matching UI                                                                      |
-| `SearchComponents`   | Search result rendering                                                                                                                                                     |
-| `CartComponents`     | `cart_sidebar/1` — shared cart aside used by `AddRecord` and `BarcodeScanner`                                                                                               |
-| `Pagination`         | Pagination UI and logic                                                                                                                                                     |
+| Module               | Purpose                                                                                                                              |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `CoreComponents`     | Forms, buttons, icons, tables, flash messages                                                                                        |
+| `Layouts`            | Application layout templates, navigation components (`dropdown_nav/1`)                                                               |
+| `RecordComponents`   | Record cards, cover images, artist images, labels, grids, release status badges, and shared record show-page sections/actions/sheets |
+| `ChartComponents`    | Charts for stats dashboard                                                                                                           |
+| `StatsComponents`    | Stats dashboard widgets (`section/1` layout, counters, album preview, records on this day)                                           |
+| `ScrobbleComponents` | Scrobble activity displays: status badges, import dropdowns, metadata tooltips, and record-matching UI                               |
+| `SearchComponents`   | Search result rendering                                                                                                              |
+| `CartComponents`     | `cart_sidebar/1` — shared cart aside used by `AddRecord` and `BarcodeScanner`                                                        |
+| `Pagination`         | Pagination UI and logic                                                                                                              |
 
 ### Web Utility Modules (lib/music_library_web/)
 
-| Module                      | Purpose                                                                                                                                     |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ErrorMessages`             | Maps internal error terms (atoms, structs) to user-friendly gettext strings via `friendly_message/1`                                        |
-| `Markdown`                  | Markdown-to-HTML conversion (MDEx with ammonia sanitization) with `[[double bracket]]` link syntax and streaming document support for chat  |
-| `Duration`                  | Milliseconds to human-readable duration formatting                                                                                          |
-| `Auth`                      | Authentication plugs: login password check, API token validation, session enforcement                                                       |
-| `ArtistLive.Biography`      | Artist biography building/rendering from Wikipedia and Last.fm data                                                                         |
-| `LiveHelpers.Params`        | URL query param parsing: pagination, search query, sort order, display mode, fallback index                                                 |
-| `LiveHelpers.IndexActions`  | Shared index page logic (search, pagination, import, delete, display mode) for Collection/Wishlist index pages, parameterized by config map |
-| `LiveHelpers.RecordActions` | Shared record action handlers (refresh cover, genres, embeddings, MusicBrainz data) for Collection/Wishlist show pages                      |
-| —                           | Logster v2 handles `[:phoenix, :socket_connected]` telemetry — not a custom module                                                          |
+| Module                      | Purpose                                                                                                                                      |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ErrorMessages`             | Maps internal error terms (atoms, structs) to user-friendly gettext strings via `friendly_message/1`                                         |
+| `Markdown`                  | Markdown-to-HTML conversion (MDEx with ammonia sanitization) with `[[double bracket]]` link syntax and streaming document support for chat   |
+| `Duration`                  | Milliseconds to human-readable duration formatting                                                                                           |
+| `Auth`                      | Authentication plugs: login password check, API token validation, session enforcement                                                        |
+| `ArtistLive.Biography`      | Artist biography building/rendering from Wikipedia and Last.fm data                                                                          |
+| `LiveHelpers.Params`        | URL query param parsing: pagination, search query, sort order, display mode, fallback index                                                  |
+| `LiveHelpers.IndexActions`  | Shared index page logic (search, pagination, import, delete, display mode) for Collection/Wishlist index pages, parameterized by config map  |
+| `LiveHelpers.RecordActions` | Shared record action handlers (refresh cover, genres, embeddings, MusicBrainz data) for Collection/Wishlist show pages                       |
+| `LiveHelpers.RecordShow`    | Shared Collection/Wishlist show-page loading, page titles, delete navigation, scrobble async handling, and background record update handling |
+| —                           | Logster v2 handles `[:phoenix, :socket_connected]` telemetry — not a custom module                                                           |
 
 ### Controllers
 

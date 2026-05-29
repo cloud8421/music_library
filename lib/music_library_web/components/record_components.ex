@@ -554,6 +554,281 @@ defmodule MusicLibraryWeb.RecordComponents do
   end
 
   attr :record, Records.Record, required: true
+  attr :can_scrobble?, :boolean, required: true
+  attr :chat_count, :integer, required: true
+  attr :edit_path, :string, required: true
+  slot :dropdown_start
+  slot :dropdown_extra
+
+  def record_show_action_bar(assigns) do
+    ~H"""
+    <div class="mt-4 flex items-center justify-between md:mt-0">
+      <h1 class="text-base/6 font-medium text-zinc-700">
+        <.artist_links joinphrase_class="text-sm" artists={@record.artists} />
+      </h1>
+      <div class="min-w-12">
+        <.button_group>
+          <.button
+            :if={@can_scrobble? and @record.selected_release_id}
+            variant="soft"
+            phx-click="scrobble_release"
+          >
+            <span class="sr-only">{gettext("Scrobble release")}</span>
+            <.icon
+              name="hero-play"
+              class="icon"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+          </.button>
+          <.button
+            variant="soft"
+            phx-click={MusicLibraryWeb.Components.Chat.open("record-chat-sheet")}
+          >
+            <span class="sr-only">{gettext("Chat about album")}</span>
+            <.icon
+              name="hero-chat-bubble-left-right"
+              class="icon"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+            <span :if={@chat_count > 0} class="text-xs font-medium">{@chat_count}</span>
+          </.button>
+          <.button
+            :if={@record.selected_release_id}
+            variant="soft"
+            phx-click={MusicLibraryWeb.Components.Release.open("release-with-tracks-sheet")}
+          >
+            <span class="sr-only">{gettext("Show Tracks")}</span>
+            <.icon
+              name="hero-numbered-list"
+              class="icon"
+              aria-hidden="true"
+              data-slot="icon"
+            />
+          </.button>
+          <.dropdown id={"actions-#{@record.id}"} placement="bottom-end">
+            <:toggle>
+              <.button variant="soft">
+                <span class="sr-only">{gettext("Actions")}</span>
+                <.icon
+                  name="hero-ellipsis-vertical"
+                  class="icon cursor-pointer text-zinc-500 dark:text-zinc-400"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+              </.button>
+            </:toggle>
+            <.focus_wrap id={"actions-#{@record.id}-focus-wrap"}>
+              {render_slot(@dropdown_start)}
+
+              <.dropdown_link
+                id={"actions-#{@record.id}-debug"}
+                phx-click={Fluxon.open_dialog("debug-data")}
+              >
+                <.icon
+                  name="hero-code-bracket"
+                  class="mr-1 size-4"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+                {gettext("Debug data")}
+              </.dropdown_link>
+
+              <.dropdown_separator />
+
+              <.dropdown_link id={"actions-#{@record.id}-edit"} patch={@edit_path}>
+                <.icon
+                  name="hero-pencil-square"
+                  class="phx-click-loading:animate-bounce mr-1 size-4"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+                {gettext("Edit")}
+              </.dropdown_link>
+
+              <.dropdown_link
+                id={"actions-#{@record.id}-refresh-cover"}
+                phx-click="refresh_cover"
+              >
+                <.icon
+                  name="hero-photo"
+                  class="phx-click-loading:animate-bounce mr-1 size-4"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+                {gettext("Refresh cover")}
+              </.dropdown_link>
+
+              <.dropdown_link
+                id={"actions-#{@record.id}-refresh-mb-data"}
+                phx-click="refresh_musicbrainz_data"
+              >
+                <.icon
+                  name="hero-cloud-arrow-down"
+                  class="phx-click-loading:animate-bounce mr-1 size-4"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+                {gettext("Refresh MB data")}
+              </.dropdown_link>
+
+              <.dropdown_link
+                id={"actions-#{@record.id}-populate-genres"}
+                phx-click="populate_genres"
+              >
+                <.icon
+                  name="hero-sparkles"
+                  class="phx-click-loading:animate-shake mr-1 size-4"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+                {gettext("Populate genres")}
+              </.dropdown_link>
+
+              {render_slot(@dropdown_extra)}
+
+              <.dropdown_link
+                id={"actions-#{@record.id}-extract-colors"}
+                phx-click="extract_colors"
+              >
+                <.icon
+                  name="hero-paint-brush"
+                  class="phx-click-loading:animate-shake mr-1 size-4"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+                {gettext("Extract colors")}
+              </.dropdown_link>
+
+              <.dropdown_separator />
+              <.dropdown_link
+                id={"actions-#{@record.id}-delete"}
+                phx-click="delete"
+                data-confirm={gettext("Are you sure?")}
+                class="text-red-900! hover:bg-red-50! dark:text-red-500! dark:hover:bg-red-900/30! dark:hover:text-red-600!"
+              >
+                <.icon
+                  name="hero-trash"
+                  class="phx-click-loading:animate-spin mr-1 size-4"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+                {gettext("Delete")}
+              </.dropdown_link>
+            </.focus_wrap>
+          </.dropdown>
+        </.button_group>
+      </div>
+    </div>
+    """
+  end
+
+  attr :record, Records.Record, required: true
+  attr :label, :string, required: true
+  attr :copy_selected_release_id?, :boolean, default: false
+
+  def record_show_selected_release_row(assigns) do
+    ~H"""
+    <.dl_row label={@label}>
+      <div class="flex justify-between space-x-2">
+        <span
+          :if={!@record.selected_release_id}
+          class="text-xs text-zinc-700 md:text-sm dark:text-zinc-300"
+        >
+          {gettext("No release selected")}
+        </span>
+        <.release_summary
+          :if={@record.selected_release_id}
+          release={Records.Record.selected_release(@record)}
+        />
+        <span
+          :if={@copy_selected_release_id? and @record.selected_release_id}
+          id={"record-selected-release-" <> @record.id}
+          class="hidden"
+        >
+          {@record.selected_release_id}
+        </span>
+        <.copy_to_clipboard
+          :if={@copy_selected_release_id? and @record.selected_release_id}
+          target_id={"record-selected-release-" <> @record.id}
+          label={gettext("Copy record selected release ID to clipboard")}
+        />
+      </div>
+    </.dl_row>
+    """
+  end
+
+  attr :record, Records.Record, required: true
+  attr :show_print?, :boolean, required: true
+  attr :timezone, :string, required: true
+
+  def record_show_release_sheet(assigns) do
+    ~H"""
+    <.sheet
+      :if={@record.selected_release_id}
+      id="release-with-tracks-sheet"
+      placement="right"
+      class="flex min-w-xs flex-col overflow-hidden p-0 sm:min-w-sm"
+    >
+      <.live_component
+        id="release-with-tracks"
+        sheet_id="release-with-tracks-sheet"
+        module={MusicLibraryWeb.Components.Release}
+        release_id={@record.selected_release_id}
+        show_print?={@show_print?}
+        timezone={@timezone}
+      />
+    </.sheet>
+    """
+  end
+
+  attr :record, Records.Record, required: true
+  attr :embedding_text, :string, required: true
+
+  def record_show_chat(assigns) do
+    ~H"""
+    <.live_component
+      id="record-chat"
+      sheet_id="record-chat-sheet"
+      module={MusicLibraryWeb.Components.Chat}
+      title={@record.title}
+      entity={:record}
+      musicbrainz_id={@record.musicbrainz_id}
+      chat_module={MusicLibrary.Chats.RecordChat}
+      chat_context={{@record, @embedding_text}}
+      placeholder={gettext("Ask about this album...")}
+      empty_prompt={gettext("Ask anything about this album")}
+    />
+    """
+  end
+
+  attr :record, Records.Record, required: true
+  attr :live_action, :atom, required: true
+  attr :show_purchased_at, :boolean, required: true
+  attr :close_path, :string, required: true
+  attr :patch_path, :string, required: true
+
+  def record_show_edit_modal(assigns) do
+    ~H"""
+    <.structured_modal
+      :if={@live_action == :edit}
+      id="record-modal"
+      on_close={JS.patch(@close_path)}
+    >
+      <.live_component
+        module={MusicLibraryWeb.Components.RecordForm}
+        id={@record.id}
+        action={@live_action}
+        show_purchased_at={@show_purchased_at}
+        record={@record}
+        patch={@patch_path}
+      />
+    </.structured_modal>
+    """
+  end
+
+  attr :record, Records.Record, required: true
   attr :section, :atom, values: [:collection, :wishlist], required: true
 
   def record_genres(assigns) do
