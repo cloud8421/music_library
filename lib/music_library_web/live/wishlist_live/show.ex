@@ -58,6 +58,19 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
                   />
                   <span :if={@chat_count > 0} class="text-xs font-medium">{@chat_count}</span>
                 </.button>
+                <.button
+                  :if={@record.selected_release_id}
+                  variant="soft"
+                  phx-click={MusicLibraryWeb.Components.Release.open("release-with-tracks-sheet")}
+                >
+                  <span class="sr-only">{gettext("Show Tracks")}</span>
+                  <.icon
+                    name="hero-numbered-list"
+                    class="icon"
+                    aria-hidden="true"
+                    data-slot="icon"
+                  />
+                </.button>
                 <.dropdown id={"actions-#{@record.id}"} placement="bottom-end">
                   <:toggle>
                     <.button variant="soft">
@@ -252,6 +265,22 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
       <.record_debug_sheet record={@record} embedding_text={@embedding_text} />
 
+      <.sheet
+        :if={@record.selected_release_id}
+        id="release-with-tracks-sheet"
+        placement="right"
+        class="flex min-w-xs flex-col overflow-hidden p-0 sm:min-w-sm"
+      >
+        <.live_component
+          id="release-with-tracks"
+          sheet_id="release-with-tracks-sheet"
+          module={MusicLibraryWeb.Components.Release}
+          release_id={@record.selected_release_id}
+          show_print?={false}
+          timezone={@timezone}
+        />
+      </.sheet>
+
       <.live_component
         id="record-chat"
         sheet_id="record-chat-sheet"
@@ -361,6 +390,10 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
   def handle_info({MusicLibraryWeb.Components.Chat, :chats_changed}, socket) do
     RecordActions.handle_chats_changed(socket)
+  end
+
+  def handle_info({MusicLibraryWeb.Components.Release, {:loaded, _release}}, socket) do
+    {:noreply, socket}
   end
 
   @impl true

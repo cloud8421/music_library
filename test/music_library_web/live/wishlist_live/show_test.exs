@@ -4,12 +4,25 @@ defmodule MusicLibraryWeb.WishlistLive.ShowTest do
   import MusicLibrary.Fixtures.Records
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
 
+  alias MusicBrainz.Fixtures
   alias MusicLibrary.Assets.Transform
   alias MusicLibrary.Records
   alias MusicLibrary.Records.Record
   alias Phoenix.PubSub
 
+  defp stub_release(_) do
+    release_response = Fixtures.Release.release(:marbles)
+
+    Req.Test.stub(MusicBrainz.API, fn conn ->
+      Req.Test.json(conn, release_response)
+    end)
+
+    %{release_response: release_response}
+  end
+
   describe "Edit record from show page" do
+    setup [:stub_release]
+
     test "can navigate to the record edit form", %{conn: conn} do
       record = record(purchased_at: nil)
 
@@ -22,6 +35,8 @@ defmodule MusicLibraryWeb.WishlistLive.ShowTest do
   end
 
   describe "Show record" do
+    setup [:stub_release]
+
     test "includes all needed information", %{conn: conn} do
       record = record(purchased_at: nil)
       transform = %Transform{hash: record.cover_hash, width: nil}
@@ -55,6 +70,8 @@ defmodule MusicLibraryWeb.WishlistLive.ShowTest do
   end
 
   describe "Delete record" do
+    setup [:stub_release]
+
     test "deletes the record and navigates back to wishlist", %{conn: conn} do
       record = record(purchased_at: nil)
 
@@ -70,6 +87,8 @@ defmodule MusicLibraryWeb.WishlistLive.ShowTest do
   end
 
   describe "handle_info({:update, record}) with live_action guard" do
+    setup [:stub_release]
+
     test "updates record when showing (live_action is :show)", %{conn: conn} do
       record = record(purchased_at: nil)
       updated_record = %{record | title: "Background Updated Title"}
@@ -130,6 +149,36 @@ defmodule MusicLibraryWeb.WishlistLive.ShowTest do
       session
       |> assert_has("h2", text: escape(record.title))
       |> refute_has("#toast-group", text: "Record updated in the background")
+    end
+  end
+
+  describe "Side panel" do
+    setup [:stub_release]
+
+    test "shows a record's tracks", %{conn: conn, release_response: release_response} do
+      record = record()
+
+      session =
+        conn
+        |> visit(~p"/wishlist/#{record.id}")
+        |> assert_has("button", "Show Tracks")
+        |> render_async()
+        |> assert_has("a", "Connect Last.fm")
+
+      release =
+        MusicBrainz.Release.from_api_response(release_response)
+
+      for medium <- release.media do
+        session
+        |> within("#disc-#{medium.number}", fn inner_session ->
+          for track <- medium.tracks do
+            inner_session
+            |> assert_has("li", escape(track.title))
+          end
+
+          inner_session
+        end)
+      end
     end
   end
 end

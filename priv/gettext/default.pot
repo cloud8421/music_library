@@ -623,6 +623,7 @@ msgid "Loading release with tracks"
 msgstr ""
 
 #: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Show Tracks"
 msgstr ""
