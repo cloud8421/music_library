@@ -640,12 +640,14 @@ msgstr ""
 
 #: lib/music_library_web/components/release.ex
 #: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Error scrobbling release"
 msgstr ""
 
 #: lib/music_library_web/components/release.ex
 #: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Release scrobbled successfully"
 msgstr ""
@@ -662,6 +664,7 @@ msgstr ""
 
 #: lib/music_library_web/components/release.ex
 #: lib/music_library_web/live/collection_live/show.ex
+#: lib/music_library_web/live/wishlist_live/show.ex
 #, elixir-autogen, elixir-format
 msgid "Scrobble release"
 msgstr ""

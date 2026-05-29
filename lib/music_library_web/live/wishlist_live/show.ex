@@ -1,6 +1,8 @@
 defmodule MusicLibraryWeb.WishlistLive.Show do
   use MusicLibraryWeb, :live_view
 
+  require Logger
+
   import MusicLibraryWeb.RecordComponents,
     only: [
       artist_links: 1,
@@ -18,7 +20,8 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
   alias MusicLibrary.Chats
   alias MusicLibrary.OnlineStoreTemplates
-  alias MusicLibrary.{Records, RecordSets}
+  alias MusicLibrary.{Records, RecordSets, ScrobbleActivity}
+  alias MusicLibraryWeb.ErrorMessages
   alias MusicLibraryWeb.LiveHelpers.RecordActions
 
   @impl true
@@ -45,6 +48,19 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
             </h1>
             <div class="min-w-12">
               <.button_group>
+                <.button
+                  :if={@can_scrobble? and @record.selected_release_id}
+                  variant="soft"
+                  phx-click="scrobble_release"
+                >
+                  <span class="sr-only">{gettext("Scrobble release")}</span>
+                  <.icon
+                    name="hero-play"
+                    class="icon"
+                    aria-hidden="true"
+                    data-slot="icon"
+                  />
+                </.button>
                 <.button
                   variant="soft"
                   phx-click={MusicLibraryWeb.Components.Chat.open("record-chat-sheet")}
@@ -319,6 +335,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
     {:ok,
      socket
      |> assign(current_section: :wishlist)
+     |> assign(:can_scrobble?, ScrobbleActivity.can_scrobble?())
      |> assign(:current_date, current_date)}
   end
 
@@ -378,6 +395,44 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
 
   def handle_event("extract_colors", _params, socket) do
     RecordActions.extract_colors(socket)
+  end
+
+  def handle_event("scrobble_release", _params, socket) do
+    record = socket.assigns.record
+
+    {:noreply,
+     start_async(socket, :scrobble_release, fn ->
+       with {:ok, release} <- MusicBrainz.get_release(record.selected_release_id) do
+         release_with_tracks = MusicBrainz.Release.from_api_response(release)
+
+         ScrobbleActivity.scrobble_release(release_with_tracks, :finished_at, DateTime.utc_now())
+       end
+     end)}
+  end
+
+  @impl true
+  def handle_async(:scrobble_release, {:ok, {:ok, _result}}, socket) do
+    {:noreply, put_toast(socket, :info, gettext("Release scrobbled successfully"))}
+  end
+
+  def handle_async(:scrobble_release, {:ok, {:error, reason}}, socket) do
+    {:noreply,
+     put_toast(
+       socket,
+       :error,
+       gettext("Error scrobbling release") <> ": " <> ErrorMessages.friendly_message(reason)
+     )}
+  end
+
+  def handle_async(:scrobble_release, {:exit, reason}, socket) do
+    Logger.error("Scrobble release failed: #{inspect(reason)}")
+
+    {:noreply,
+     put_toast(
+       socket,
+       :error,
+       gettext("Error scrobbling release") <> ": " <> ErrorMessages.friendly_message(reason)
+     )}
   end
 
   @impl true
