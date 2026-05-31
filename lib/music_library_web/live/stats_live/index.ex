@@ -307,7 +307,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     <.section>
       <:title>{gettext("Top 20 Release Years")}</:title>
       <div class="mt-5 rounded-md bg-white shadow-sm dark:bg-zinc-800">
-        <.vertical_bar_chart
+        <.horizontal_bar_chart
           data={@records_by_release_year}
           color_class="bg-zinc-800 dark:bg-zinc-300"
           label_fn={fn {year, _count} -> year end}
@@ -331,7 +331,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     <.section>
       <:title>{gettext("Top %{n} Collection Genres", %{n: length(@records_by_genre)})}</:title>
       <div class="mt-5 rounded-md bg-white shadow-sm dark:bg-zinc-800">
-        <.vertical_bar_chart
+        <.horizontal_bar_chart
           data={@records_by_genre}
           color_class="bg-zinc-500"
           label_fn={fn {genre, _count} -> genre end}
@@ -355,7 +355,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     <.section>
       <:title>{gettext("Top %{n} Collection Artists", %{n: length(@records_by_artist)})}</:title>
       <div class="mt-5 rounded-md bg-white shadow-sm dark:bg-zinc-800">
-        <.vertical_bar_chart
+        <.horizontal_bar_chart
           data={@records_by_artist}
           color_class="bg-red-500"
           label_fn={fn datum -> datum.name end}

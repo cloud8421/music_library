@@ -14,7 +14,7 @@ defmodule MusicLibraryWeb.ChartComponents do
 
   ## Examples
 
-      <.vertical_bar_chart
+      <.horizontal_bar_chart
         data={[{"Artist 1", 5}, {"Artist 2", 3}]}
         label_fn={&elem(&1, 0)}
         value_fn={&elem(&1, 1)}
@@ -28,7 +28,7 @@ defmodule MusicLibraryWeb.ChartComponents do
   attr :class, :string, default: ""
   attr :datum_click, :any, default: nil, doc: "the function for handling phx-click on each datum"
 
-  def vertical_bar_chart(assigns) when assigns.data != [] do
+  def horizontal_bar_chart(assigns) when assigns.data != [] do
     assigns =
       assigns
       |> assign(:max_value, max_value(assigns.data, assigns.value_fn))
@@ -67,7 +67,7 @@ defmodule MusicLibraryWeb.ChartComponents do
     """
   end
 
-  def vertical_bar_chart(assigns) do
+  def horizontal_bar_chart(assigns) do
     ~H"""
     <div class={["w-full", @class]}>
       {gettext("No data available")}
