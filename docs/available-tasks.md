@@ -126,6 +126,6 @@ Run HTTP tests against production
 
 ## `test`
 
-- Depends: dev:partitioned-test 1, dev:partitioned-test 2
+- Depends: dev:partitioned-test 1, dev:partitioned-test 2, dev:partitioned-test 3, dev:partitioned-test 4
 
 - **Usage**: `test`
