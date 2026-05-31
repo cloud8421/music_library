@@ -8,8 +8,11 @@ backend = "core:elixir"
 checksum = "blake3:c929482ef634fa41d7a8fe3a3772e046c05389236eeadade6acfa2f73e9c57bf"
 
 [[tools.erlang]]
-version = "28.5"
+version = "28.5.0.1"
 backend = "core:erlang"
+
+[tools.erlang."platforms.macos-arm64"]
+checksum = "blake3:bb521a30c24d9278d9f0282336747f6cf9dc4ac52cd5a6cba15fb1358325ae6d"
 
 [[tools.fd]]
 version = "10.4.2"
