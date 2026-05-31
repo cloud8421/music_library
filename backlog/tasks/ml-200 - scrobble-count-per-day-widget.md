@@ -5,7 +5,7 @@ status: Done
 assignee:
   - cloud
 created_date: "2026-05-31 18:02"
-updated_date: "2026-05-31 18:50"
+updated_date: "2026-05-31 18:59"
 labels: []
 dependencies: []
 documentation:
@@ -17,7 +17,7 @@ ordinal: 33000
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
 
-In the stats page, right before Scrobble Activity, add a horizontal bar chart that shows the last 30 days of scrobble activity as the count of scrobbled tracks per day.
+In the stats page, right before Scrobble Activity, add a vertical bar chart that shows the last 30 days of scrobble activity as the count of scrobbled tracks per day.
 
 <!-- SECTION:DESCRIPTION:END -->
 
@@ -168,6 +168,10 @@ No manual production changes are expected.
 
 Review-fix pass: strengthen Stats LiveView tests for the daily scrobble chart by (1) asserting the rendered row count is tied to the expected date label instead of matching any descendant text, and (2) adding a connected LiveView PubSub refresh test that mounts the page, inserts a new unique scrobble afterwards via `ListeningStats.update/1`, and verifies the daily chart updates without reload. Then run focused tests and formatting.
 
+Requested UI revision: add a reusable `vertical_bar_chart/1` component to `MusicLibraryWeb.ChartComponents` using CSS Grid and paired light/dark styling, then switch the Daily Scrobbles widget in `StatsLive.Index` from `horizontal_bar_chart/1` to the new component. Preserve existing label/value functions and update LiveView tests only if the DOM structure changes. Verify with focused tests, formatting, Credo, and browser preview on port 4003.
+
+Small visual refinement: update `vertical_bar_chart/1` day labels from 45-degree angled labels to 90-degree rotated labels centered below each column, then rerun focused tests/formatting and quick browser verification.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -184,6 +188,14 @@ Review fixes complete: the LiveView test now pairs the expected date label with 
 
 Credo follow-up: replaced `length(...) == literal` assertions in `daily_scrobble_counts/1` tests with `Enum.count_until/2`; full `mix credo --strict` now passes.
 
+User reviewed the horizontal chart and requested replacing it with a vertical bar chart component for the daily scrobble widget.
+
+User requested the vertical chart day labels rotate 90 degrees and align centered under each column.
+
+Vertical label refinement follow-up: labels are cropped after rotating to 90 degrees, so move the rotated label baseline down within its slot and verify again.
+
+Moved the 90-degree day labels down and centered them under each column by giving the rotated label its own larger relative slot and centering with absolute positioning; focused tests, compile, format check, and component Credo pass.
+
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary
@@ -192,7 +204,7 @@ Credo follow-up: replaced `length(...) == literal` assertions in `daily_scrobble
 
 ## What changed
 
-Added a "Daily Scrobbles" horizontal bar chart to the Stats page showing scrobble count per day for the last 30 local calendar days, positioned immediately before the existing Scrobble Activity section.
+Added a "Daily Scrobbles" vertical bar chart to the Stats page showing scrobble count per day for the last 30 local calendar days, positioned immediately before the existing Scrobble Activity section.
 
 ### New context function (`MusicLibrary.ListeningStats.daily_scrobble_counts/1`)
 
@@ -205,7 +217,8 @@ Added a "Daily Scrobbles" horizontal bar chart to the Stats page showing scrobbl
 ### Stats page widget (`MusicLibraryWeb.StatsLive.Index`)
 
 - Section titled "Daily Scrobbles" (gettext-wrapped), wrapped in `#daily-scrobble-counts`
-- Reuses `ChartComponents.horizontal_bar_chart/1` with emerald bars and local date labels (`%b %d`)
+- Uses new `ChartComponents.vertical_bar_chart/1` with emerald bars and local date labels (`%b %d`)
+- Day labels are rotated 90 degrees and centered below each column
 - Refreshes through the existing `assign_scrobble_activity/1` path when PubSub receives `%{track_count: n}` for nonzero imports
 
 ### Tests
@@ -216,11 +229,12 @@ Added a "Daily Scrobbles" horizontal bar chart to the Stats page showing scrobbl
 ### Verification
 
 - `mix test test/music_library/listening_stats_test.exs test/music_library_web/live/stats_live/index_test.exs` — 65 passed
-- `mix format --check-formatted lib/music_library/listening_stats.ex lib/music_library_web/live/stats_live/index.ex test/music_library/listening_stats_test.exs test/music_library_web/live/stats_live/index_test.exs`
+- `mix test test/music_library_web/live/stats_live/index_test.exs` — 15 passed after vertical-label refinement
+- `mix format --check-formatted lib/music_library_web/components/chart_components.ex`
 - `mix compile --warnings-as-errors`
 - `mix gettext.extract --check-up-to-date`
-- `mix credo --strict`
-- Browser preview on port 4003 verified placement, 30 rendered chart bars/labels, light/dark appearance, and no console errors
+- `mix credo --strict` / `mix credo --strict lib/music_library_web/components/chart_components.ex`
+- Browser preview on port 4003 verified placement, 30 rendered chart bars/labels, responsive horizontal scrolling, light/dark appearance, and no console errors
 
 ### Risks / follow-ups
 

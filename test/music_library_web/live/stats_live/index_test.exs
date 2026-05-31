@@ -508,14 +508,15 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
     end
 
     defp assert_daily_chart_count(session, label, expected_count) do
-      value_texts =
+      chart_datums =
         session.view
         |> render()
         |> LazyHTML.from_fragment()
-        |> LazyHTML.query(~s(#daily-scrobble-counts [title="#{label}"] + div + div))
-        |> Enum.map(&(LazyHTML.text(&1) |> String.trim()))
+        |> LazyHTML.query(
+          ~s(#daily-scrobble-counts [data-chart-label="#{label}"][data-chart-value="#{expected_count}"])
+        )
 
-      assert value_texts == [to_string(expected_count)]
+      assert Enum.count_until(chart_datums, 2) == 1
 
       session
     end

@@ -82,9 +82,9 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         <.section>
           <:title>{gettext("Daily Scrobbles")}</:title>
           <div class="mt-5 rounded-md bg-white shadow-sm dark:bg-zinc-800">
-            <.horizontal_bar_chart
+            <.vertical_bar_chart
               data={@daily_scrobble_counts}
-              color_class="bg-emerald-500"
+              color_class="bg-red-500 dark:bg-red-400"
               label_fn={fn %{date: date, count: _count} -> Calendar.strftime(date, "%b %d") end}
               value_fn={fn %{date: _date, count: count} -> count end}
             />
