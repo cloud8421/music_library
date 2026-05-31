@@ -1,10 +1,11 @@
 ---
 id: ML-200
 title: scrobble count per day widget
-status: To Do
-assignee: []
+status: Done
+assignee:
+  - cloud
 created_date: "2026-05-31 18:02"
-updated_date: "2026-05-31 18:23"
+updated_date: "2026-05-31 18:50"
 labels: []
 dependencies: []
 documentation:
@@ -24,14 +25,14 @@ In the stats page, right before Scrobble Activity, add a horizontal bar chart th
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 Stats page displays a new scrobble-count-per-day chart immediately before the existing Scrobble Activity section.
-- [ ] #2 The chart shows exactly 30 local calendar days: today plus the previous 29 days, ordered oldest to newest.
-- [ ] #3 Each day displays the count of scrobbled track rows for that local day, including zero-count days.
-- [ ] #4 Daily grouping respects the user's configured/browser timezone rather than UTC-only day boundaries.
-- [ ] #5 The chart refreshes when new scrobbles are imported and the existing listening-stats update notification is received.
-- [ ] #6 The implementation has context-level tests for daily count generation, zero-fill behavior, ordering, and timezone boundaries.
-- [ ] #7 The stats page has LiveView tests proving the chart is rendered in the correct location with expected labels/counts.
-- [ ] #8 All user-facing chart text is gettext-wrapped and gettext catalogs are updated.
+- [x] #1 Stats page displays a new scrobble-count-per-day chart immediately before the existing Scrobble Activity section.
+- [x] #2 The chart shows exactly 30 local calendar days: today plus the previous 29 days, ordered oldest to newest.
+- [x] #3 Each day displays the count of scrobbled track rows for that local day, including zero-count days.
+- [x] #4 Daily grouping respects the user's configured/browser timezone rather than UTC-only day boundaries.
+- [x] #5 The chart refreshes when new scrobbles are imported and the existing listening-stats update notification is received.
+- [x] #6 The implementation has context-level tests for daily count generation, zero-fill behavior, ordering, and timezone boundaries.
+- [x] #7 The stats page has LiveView tests proving the chart is rendered in the correct location with expected labels/counts.
+- [x] #8 All user-facing chart text is gettext-wrapped and gettext catalogs are updated.
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -164,7 +165,10 @@ No manual production changes are expected.
    - With the dev server running, open the stats page and capture screenshots after the chart is visible.
    - Verify both light and dark mode if custom colors/classes are added or changed.
    - Verification before completion: chart appears immediately before Scrobble Activity, has 30 bars/rows, remains readable at common viewport widths, excludes future/out-of-window rows, and dark-mode colors are paired/correct.
-   <!-- SECTION:PLAN:END -->
+
+Review-fix pass: strengthen Stats LiveView tests for the daily scrobble chart by (1) asserting the rendered row count is tied to the expected date label instead of matching any descendant text, and (2) adding a connected LiveView PubSub refresh test that mounts the page, inserts a new unique scrobble afterwards via `ListeningStats.update/1`, and verifies the daily chart updates without reload. Then run focused tests and formatting.
+
+<!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
 
@@ -172,4 +176,54 @@ No manual production changes are expected.
 
 Updated plan and research doc after the existing chart component was renamed from `vertical_bar_chart/1` to `horizontal_bar_chart/1`, so implementers should use the corrected component name.
 
+Steps 1-4 complete: context function `daily_scrobble_counts/1`, widget in StatsLive.Index before scrobble-activity, PubSub refresh wired via assign_scrobble_activity/1. Context tests (6) pass. LiveView tests (3) pass.
+
+Review found the context/query implementation is sound, but the LiveView test suite does not exercise the post-mount `%{track_count: n}` refresh path and has a weak count assertion that can pass on date-label text.
+
+Review fixes complete: the LiveView test now pairs the expected date label with the adjacent chart value via LazyHTML instead of matching arbitrary descendant text, and a new connected LiveView test verifies `ListeningStats.update/1` broadcasts a nonzero update that refreshes the daily chart after mount.
+
+Credo follow-up: replaced `length(...) == literal` assertions in `daily_scrobble_counts/1` tests with `Enum.count_until/2`; full `mix credo --strict` now passes.
+
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
+## What changed
+
+Added a "Daily Scrobbles" horizontal bar chart to the Stats page showing scrobble count per day for the last 30 local calendar days, positioned immediately before the existing Scrobble Activity section.
+
+### New context function (`MusicLibrary.ListeningStats.daily_scrobble_counts/1`)
+
+- Accepts `timezone`, `days` (default 30), and `current_time` (testable)
+- Computes local calendar boundaries using `Date.add/2` (DST-safe, not fixed 24-hour intervals)
+- Queries `scrobbled_tracks` with a bounded range scan on `scrobbled_at_uts` using the existing `scrobbled_tracks_scrobbled_at_uts_title_index` covering index
+- Groups timestamps by local `Date` in Elixir, fills zeroes for days with no scrobbles
+- Returns 30 `%{date: Date.t(), count: non_neg_integer()}` entries, oldest to newest
+
+### Stats page widget (`MusicLibraryWeb.StatsLive.Index`)
+
+- Section titled "Daily Scrobbles" (gettext-wrapped), wrapped in `#daily-scrobble-counts`
+- Reuses `ChartComponents.horizontal_bar_chart/1` with emerald bars and local date labels (`%b %d`)
+- Refreshes through the existing `assign_scrobble_activity/1` path when PubSub receives `%{track_count: n}` for nonzero imports
+
+### Tests
+
+- Context tests cover 30-day length, ordering, zero-fill, boundary exclusion/inclusion, row counting (not distinct timestamps), and timezone grouping
+- LiveView tests cover section rendering, DOM order before Scrobble Activity, precise date/count pairing, and post-mount PubSub refresh after `ListeningStats.update/1`
+
+### Verification
+
+- `mix test test/music_library/listening_stats_test.exs test/music_library_web/live/stats_live/index_test.exs` — 65 passed
+- `mix format --check-formatted lib/music_library/listening_stats.ex lib/music_library_web/live/stats_live/index.ex test/music_library/listening_stats_test.exs test/music_library_web/live/stats_live/index_test.exs`
+- `mix compile --warnings-as-errors`
+- `mix gettext.extract --check-up-to-date`
+- `mix credo --strict`
+- Browser preview on port 4003 verified placement, 30 rendered chart bars/labels, light/dark appearance, and no console errors
+
+### Risks / follow-ups
+
+- No production changes or migrations needed
+- Query currently loads the bounded 30-day timestamp window into memory; if the app ever has very high recent scrobble volume, revisit a materialized daily-count table.
+<!-- SECTION:FINAL_SUMMARY:END -->

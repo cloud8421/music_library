@@ -722,6 +722,185 @@ defmodule MusicLibrary.ListeningStatsTest do
     end
   end
 
+  describe "daily_scrobble_counts/1" do
+    @timezone "Etc/UTC"
+
+    defp uts_for_date(date) do
+      {:ok, noon} = DateTime.new(date, ~T[12:00:00], @timezone)
+      DateTime.to_unix(noon)
+    end
+
+    test "returns exactly 30 days ordered oldest to newest" do
+      today = ~D[2026-05-31]
+      {:ok, now} = DateTime.new(today, ~T[11:00:00], @timezone)
+
+      track_fixture(%{title: "Today", scrobbled_at_uts: uts_for_date(today)})
+
+      results =
+        ListeningStats.daily_scrobble_counts(
+          timezone: @timezone,
+          days: 30,
+          current_time: now
+        )
+
+      assert Enum.count_until(results, 31) == 30
+
+      first_date = Date.add(today, -29)
+      expected_dates = Enum.to_list(Date.range(first_date, today))
+
+      assert Enum.map(results, & &1.date) == expected_dates
+
+      assert Enum.all?(results, &is_integer(&1.count))
+    end
+
+    test "zero-fills days with no scrobbles" do
+      today = ~D[2026-05-31]
+      {:ok, now} = DateTime.new(today, ~T[11:00:00], @timezone)
+
+      day_1 = Date.add(today, -29)
+      day_2 = Date.add(today, -15)
+
+      track_fixture(%{title: "Day 1", scrobbled_at_uts: uts_for_date(day_1)})
+      track_fixture(%{title: "Day 15", scrobbled_at_uts: uts_for_date(day_2)})
+
+      results =
+        ListeningStats.daily_scrobble_counts(
+          timezone: @timezone,
+          days: 30,
+          current_time: now
+        )
+
+      non_zero = Enum.reject(results, &(&1.count == 0))
+      assert Enum.count_until(non_zero, 3) == 2
+
+      day_1_entry = Enum.find(results, &(&1.date == day_1))
+      assert day_1_entry.count == 1
+
+      day_2_entry = Enum.find(results, &(&1.date == day_2))
+      assert day_2_entry.count == 1
+
+      # All other 28 days should be zero
+      assert 28 == Enum.count(results, &(&1.count == 0))
+    end
+
+    test "excludes tracks before the window" do
+      today = ~D[2026-05-31]
+      {:ok, now} = DateTime.new(today, ~T[11:00:00], @timezone)
+
+      first_date = Date.add(today, -29)
+      before_window = Date.add(first_date, -1)
+
+      track_fixture(%{title: "Before", scrobbled_at_uts: uts_for_date(before_window)})
+      track_fixture(%{title: "In window", scrobbled_at_uts: uts_for_date(first_date)})
+
+      results =
+        ListeningStats.daily_scrobble_counts(
+          timezone: @timezone,
+          days: 30,
+          current_time: now
+        )
+
+      first_day_entry = Enum.find(results, &(&1.date == first_date))
+      assert first_day_entry.count == 1
+
+      # Total non-zero should be exactly 1 (the before-window track is excluded)
+      assert Enum.count(results, &(&1.count > 0)) == 1
+    end
+
+    test "excludes tracks at or after tomorrow's midnight" do
+      today = ~D[2026-05-31]
+      {:ok, now} = DateTime.new(today, ~T[11:00:00], @timezone)
+      tomorrow = Date.add(today, 1)
+
+      # Track exactly at tomorrow midnight (should be excluded)
+      {:ok, tomorrow_midnight} = DateTime.new(tomorrow, ~T[00:00:00], @timezone)
+
+      track_fixture(%{
+        title: "Tomorrow",
+        scrobbled_at_uts: DateTime.to_unix(tomorrow_midnight)
+      })
+
+      track_fixture(%{title: "Today", scrobbled_at_uts: uts_for_date(today)})
+
+      results =
+        ListeningStats.daily_scrobble_counts(
+          timezone: @timezone,
+          days: 30,
+          current_time: now
+        )
+
+      today_entry = Enum.find(results, &(&1.date == today))
+      assert today_entry.count == 1
+
+      # No entry for tomorrow in the results (30 days = today + 29 previous)
+      refute Enum.any?(results, &(&1.date == tomorrow))
+
+      # Only one track counted
+      assert Enum.count(results, &(&1.count > 0)) == 1
+    end
+
+    test "counts rows, not distinct timestamps" do
+      today = ~D[2026-05-31]
+      {:ok, now} = DateTime.new(today, ~T[11:00:00], @timezone)
+
+      # Two tracks at the exact same timestamp on today
+      same_uts = uts_for_date(today)
+      track_fixture(%{title: "Track A", scrobbled_at_uts: same_uts})
+      track_fixture(%{title: "Track B", scrobbled_at_uts: same_uts})
+
+      results =
+        ListeningStats.daily_scrobble_counts(
+          timezone: @timezone,
+          days: 30,
+          current_time: now
+        )
+
+      today_entry = Enum.find(results, &(&1.date == today))
+      assert today_entry.count == 2
+    end
+
+    test "groups by local date, respecting timezone boundaries" do
+      # Use `Etc/GMT+5` which is 5 hours behind UTC.
+      # A track at 03:00 UTC on day X is 22:00 local on day X-1.
+      tz = "Etc/GMT+5"
+      today = ~D[2026-05-31]
+      {:ok, now} = DateTime.new(today, ~T[11:00:00], tz)
+
+      # In GMT+5, today starts at 05:00 UTC (midnight local = 05:00 UTC)
+      # A track at 04:00 UTC on 'today' is actually 23:00 local on 'yesterday'
+      yesterday_local = Date.add(today, -1)
+
+      # This track is at 04:00 UTC on 'today' date — that's 23:00 GMT+5 on yesterday
+      {:ok, utc_4am_today} = DateTime.new(today, ~T[04:00:00], "Etc/UTC")
+
+      track_fixture(%{
+        title: "Late night",
+        scrobbled_at_uts: DateTime.to_unix(utc_4am_today)
+      })
+
+      # This track is at 06:00 UTC on 'today' date — that's 01:00 GMT+5 on today
+      {:ok, utc_6am_today} = DateTime.new(today, ~T[06:00:00], "Etc/UTC")
+
+      track_fixture(%{
+        title: "Early morning",
+        scrobbled_at_uts: DateTime.to_unix(utc_6am_today)
+      })
+
+      results =
+        ListeningStats.daily_scrobble_counts(
+          timezone: tz,
+          days: 30,
+          current_time: now
+        )
+
+      yesterday_entry = Enum.find(results, &(&1.date == yesterday_local))
+      assert yesterday_entry.count == 1
+
+      today_entry = Enum.find(results, &(&1.date == today))
+      assert today_entry.count == 1
+    end
+  end
+
   describe "get_top_artists_by_days/2" do
     test "counts tracks with missing artist_infos records within date range" do
       artist_info =

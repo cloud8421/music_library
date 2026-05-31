@@ -78,6 +78,20 @@ defmodule MusicLibraryWeb.StatsLive.Index do
         </.async_result>
       </div>
 
+      <div id="daily-scrobble-counts">
+        <.section>
+          <:title>{gettext("Daily Scrobbles")}</:title>
+          <div class="mt-5 rounded-md bg-white shadow-sm dark:bg-zinc-800">
+            <.horizontal_bar_chart
+              data={@daily_scrobble_counts}
+              color_class="bg-emerald-500"
+              label_fn={fn %{date: date, count: _count} -> Calendar.strftime(date, "%b %d") end}
+              value_fn={fn %{date: _date, count: count} -> count end}
+            />
+          </div>
+        </.section>
+      </div>
+
       <.scrobble_activity
         scrobble_activity_mode={@scrobble_activity_mode}
         streams={@streams}
@@ -141,6 +155,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
      |> stream(:recent_tracks, [])
      |> stream(:recent_albums, [])
      |> assign(
+       daily_scrobble_counts: ListeningStats.daily_scrobble_counts(timezone: timezone),
        current_date: current_date,
        latest_record: Collection.get_latest_record(),
        collection_count: Collection.count(),
@@ -633,12 +648,15 @@ defmodule MusicLibraryWeb.StatsLive.Index do
   end
 
   defp assign_scrobble_activity(socket) do
+    timezone = socket.assigns.timezone
+
     %{
       recent_tracks: recent_tracks,
       recent_albums: recent_albums
-    } = ListeningStats.recent_activity(socket.assigns.timezone)
+    } = ListeningStats.recent_activity(timezone)
 
     scrobble_count = ListeningStats.scrobble_count()
+    daily_scrobble_counts = ListeningStats.daily_scrobble_counts(timezone: timezone)
 
     last_updated_uts =
       if rt = List.first(recent_tracks) do
@@ -648,6 +666,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
     socket
     |> assign(:last_updated_uts, last_updated_uts)
     |> assign(:scrobble_count, scrobble_count)
+    |> assign(:daily_scrobble_counts, daily_scrobble_counts)
     |> stream(:recent_tracks, recent_tracks, reset: true)
     |> stream(:recent_albums, recent_albums, reset: true)
   end

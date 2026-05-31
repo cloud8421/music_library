@@ -6,7 +6,7 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
   import MusicLibrary.Fixtures.Records
   import MusicLibraryWeb.RecordComponents, only: [format_label: 1, type_label: 1]
 
-  alias MusicLibrary.{Records, Repo, Wishlist}
+  alias MusicLibrary.{ListeningStats, Records, Repo, Wishlist}
 
   defp fill_collection(_) do
     current_time = DateTime.utc_now()
@@ -442,6 +442,128 @@ defmodule MusicLibraryWeb.StatsLive.IndexTest do
 
       assert [wishlisted_record] = Wishlist.search_records("mbid:#{release_group_id}")
       assert_path(session, ~p"/wishlist/#{wishlisted_record.id}")
+    end
+  end
+
+  describe "Daily Scrobble Counts" do
+    # Need render/1 for raw HTML assertions (not auto-imported by ConnCase)
+    import Phoenix.LiveViewTest, only: [render: 1]
+
+    defp daily_chart_timezone, do: MusicLibrary.default_timezone()
+
+    defp chart_test_date do
+      DateTime.utc_now()
+      |> DateTime.shift_zone!(daily_chart_timezone())
+      |> DateTime.to_date()
+      |> Date.add(-1)
+    end
+
+    defp chart_label(date) do
+      Calendar.strftime(date, "%b %d")
+    end
+
+    defp create_chart_track(attrs) do
+      date = Keyword.fetch!(attrs, :date)
+      offset_seconds = Keyword.get(attrs, :offset_seconds, 0)
+      title = Keyword.get_lazy(attrs, :title, &unique_track_title/0)
+      timezone = daily_chart_timezone()
+
+      {:ok, date_noon} = DateTime.new(date, ~T[12:00:00], timezone)
+      scrobbled_at = DateTime.add(date_noon, offset_seconds, :second)
+
+      %LastFm.Track{
+        musicbrainz_id: "test-daily",
+        title: title,
+        artist: %LastFm.Artist{musicbrainz_id: "", name: "Daily Artist"},
+        album: %LastFm.Album{musicbrainz_id: "", title: "Daily Album"},
+        cover_url: "https://example.com/daily.jpg",
+        scrobbled_at_uts: DateTime.to_unix(scrobbled_at),
+        scrobbled_at_label: "test",
+        last_fm_data: %{}
+      }
+    end
+
+    defp insert_chart_tracks(date, count) do
+      tracks =
+        Enum.map(1..count, fn index ->
+          create_chart_track(
+            date: date,
+            offset_seconds: index,
+            title: unique_track_title(index)
+          )
+        end)
+
+      assert {:ok, ^count} = ListeningStats.update(tracks)
+
+      tracks
+    end
+
+    defp unique_track_title(suffix \\ nil) do
+      unique = System.unique_integer([:positive])
+
+      case suffix do
+        nil -> "Test Daily Track #{unique}"
+        suffix -> "Test Daily Track #{suffix}-#{unique}"
+      end
+    end
+
+    defp assert_daily_chart_count(session, label, expected_count) do
+      value_texts =
+        session.view
+        |> render()
+        |> LazyHTML.from_fragment()
+        |> LazyHTML.query(~s(#daily-scrobble-counts [title="#{label}"] + div + div))
+        |> Enum.map(&(LazyHTML.text(&1) |> String.trim()))
+
+      assert value_texts == [to_string(expected_count)]
+
+      session
+    end
+
+    test "renders the daily scrobble counts section before scrobble activity", %{conn: conn} do
+      chart_date = chart_test_date()
+      insert_chart_tracks(chart_date, 1)
+
+      session = conn |> visit("/")
+
+      assert_has(session, "#daily-scrobble-counts h1", "Daily Scrobbles")
+    end
+
+    test "renders with correct date labels and counts", %{conn: conn} do
+      chart_date = chart_test_date()
+      insert_chart_tracks(chart_date, 2)
+
+      session = conn |> visit("/")
+
+      assert_daily_chart_count(session, chart_label(chart_date), 2)
+    end
+
+    test "refreshes daily counts when listening stats update notification is received", %{
+      conn: conn
+    } do
+      chart_date = chart_test_date()
+      insert_chart_tracks(chart_date, 1)
+
+      session = conn |> visit("/")
+      label = chart_label(chart_date)
+
+      assert_daily_chart_count(session, label, 1)
+
+      new_track = create_chart_track(date: chart_date, offset_seconds: 60)
+
+      assert {:ok, 1} = ListeningStats.update([new_track])
+      assert_daily_chart_count(session, label, 2)
+    end
+
+    test "appears before scrobble activity in DOM order", %{conn: conn} do
+      chart_date = chart_test_date()
+      insert_chart_tracks(chart_date, 1)
+
+      session = conn |> visit("/")
+      html = render(session.view)
+
+      # daily-scrobble-counts must appear before scrobble-activity in the HTML
+      assert html =~ ~r/daily-scrobble-counts.*scrobble-activity/s
     end
   end
 end

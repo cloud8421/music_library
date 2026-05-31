@@ -163,6 +163,53 @@ defmodule MusicLibrary.ListeningStats do
     Calendar.strftime(ldt, "%d/%m/%Y %X")
   end
 
+  @doc """
+  Returns daily scrobble counts for the last N calendar days in the given timezone.
+
+  Returns a list of maps `%{date: Date.t(), count: non_neg_integer()}` ordered
+  oldest to newest, with zero-filled entries for days with no scrobbles.
+
+  ## Options
+
+    * `:timezone` — IANA timezone string (default: configured `default_timezone`)
+    * `:days` — number of days to return, including today (default: 30)
+    * `:current_time` — `DateTime` to treat as "now" (default: `DateTime.utc_now/0`;
+      injectable for testing)
+  """
+  @spec daily_scrobble_counts(keyword()) :: [%{date: Date.t(), count: non_neg_integer()}]
+  def daily_scrobble_counts(opts \\ []) do
+    timezone = Keyword.get(opts, :timezone, MusicLibrary.default_timezone())
+    days = Keyword.get(opts, :days, 30)
+    current_time = Keyword.get_lazy(opts, :current_time, &DateTime.utc_now/0)
+
+    today = current_time |> DateTime.shift_zone!(timezone) |> DateTime.to_date()
+    first_date = Date.add(today, -(days - 1))
+    tomorrow = Date.add(today, 1)
+
+    start_uts = local_midnight_unix(first_date, timezone)
+    end_uts = local_midnight_unix(tomorrow, timezone)
+
+    query =
+      from t in Track,
+        where: t.scrobbled_at_uts >= ^start_uts and t.scrobbled_at_uts < ^end_uts,
+        order_by: [asc: t.scrobbled_at_uts],
+        select: t.scrobbled_at_uts
+
+    timestamps = Repo.all(query)
+
+    counts_by_date =
+      Enum.reduce(timestamps, %{}, fn uts, acc ->
+        date =
+          uts |> DateTime.from_unix!() |> DateTime.shift_zone!(timezone) |> DateTime.to_date()
+
+        Map.update(acc, date, 1, &(&1 + 1))
+      end)
+
+    Enum.map(Date.range(first_date, today), fn date ->
+      %{date: date, count: Map.get(counts_by_date, date, 0)}
+    end)
+  end
+
   # Track CRUD + listing
 
   @spec list_tracks(map()) :: [map()]
@@ -522,6 +569,18 @@ defmodule MusicLibrary.ListeningStats do
     |> NaiveDateTime.beginning_of_day()
     |> DateTime.from_naive!(timezone)
     |> DateTime.to_unix()
+  end
+
+  # Converts a local calendar-date midnight to a Unix timestamp in the given
+  # timezone. Handles DST gaps (spring-forward) by using the wall-clock time
+  # just after the gap, and DST ambiguities (fall-back) by using the first
+  # occurrence of midnight.
+  defp local_midnight_unix(date, timezone) do
+    case DateTime.new(date, ~T[00:00:00], timezone) do
+      {:ok, dt} -> DateTime.to_unix(dt)
+      {:ambiguous, first_dt, _second_dt} -> DateTime.to_unix(first_dt)
+      {:gap, _just_before, just_after} -> DateTime.to_unix(just_after)
+    end
   end
 
   defp polyfill_track(track, timezone, artist_id) do
