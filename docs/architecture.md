@@ -191,10 +191,10 @@ HTTP 429 into `:rate_limit` vs `:auth_error` by reading the body `code`
 | -------------- | ----------- | ------------------------------------------------------------------- |
 | `default`      | 10          | General async tasks                                                 |
 | `heavy_writes` | 1           | DB-intensive or serialized operations                               |
-| `music_brainz` | 1           | MusicBrainz calls (rate-limited at Req layer via `Req.RateLimiter`) |
-| `discogs`      | 1           | Discogs calls (rate-limited at Req layer via `Req.RateLimiter`)     |
-| `wikipedia`    | 1           | Wikipedia calls                                                     |
-| `last_fm`      | 1           | Last.fm calls (rate-limited at Req layer via `Req.RateLimiter`)     |
+| `music_brainz` | 3           | MusicBrainz calls (rate-limited at Req layer via `Req.RateLimiter`) |
+| `discogs`      | 3           | Discogs calls (rate-limited at Req layer via `Req.RateLimiter`)     |
+| `wikipedia`    | 3           | Wikipedia calls                                                     |
+| `last_fm`      | 3           | Last.fm calls (rate-limited at Req layer via `Req.RateLimiter`)     |
 
 ### Plugins (prod)
 
