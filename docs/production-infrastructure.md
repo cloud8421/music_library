@@ -276,10 +276,11 @@ Pi extensions provide additional tools for production observability without manu
 or browser access. Each extension reads its own environment variables from the pi
 runtime environment (not server-side config).
 
-| Extension     | Tools                                                               | Env vars                                                     |
-| ------------- | ------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `prod-logs`   | `fetch_production_logs`                                             | `PI_COOLIFY_HOST`, `PI_COOLIFY_APP_UUID`, `PI_COOLIFY_TOKEN` |
-| `prod-errors` | `fetch_production_errors`, `fetch_production_error`, `/prod-errors` | `PI_API_TOKEN`, `PI_SERVICE_FQDN_WEB`                        |
+| Extension     | Tools                                                                                                         | Env vars                                                     |
+| ------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `prod-logs`   | `fetch_production_logs`                                                                                       | `PI_COOLIFY_HOST`, `PI_COOLIFY_APP_UUID`, `PI_COOLIFY_TOKEN` |
+| `prod-errors` | `fetch_production_errors`, `fetch_production_error`, `/prod-errors`                                           | `PI_API_TOKEN`, `PI_SERVICE_FQDN_WEB`                        |
+| `ci-browser`  | `ci_list_runs`, `ci_view_run`, `ci_find_current_branch_run`, `ci_watch_run`, `ci_watch_current_branch`, `/ci` | `gh` CLI (must be installed and authenticated)               |
 
 **`prod-logs` env vars:**
 

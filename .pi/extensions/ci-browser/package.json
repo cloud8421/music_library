@@ -1,0 +1,8 @@
+{
+  "name": "ci-browser",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-strip-types --test ci-client.test.ts format.test.ts"
+  }
+}

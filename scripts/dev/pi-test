@@ -11,3 +11,5 @@ ensure_working_directory!
 npm test --prefix .pi/extensions/sensitive-file-guard
 
 npm test --prefix .pi/extensions/s3-browser
+
+npm test --prefix .pi/extensions/ci-browser

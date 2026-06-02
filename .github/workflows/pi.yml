@@ -31,3 +31,7 @@ jobs:
         run: |
           npm ci --prefix .pi/extensions/s3-browser
           npm test --prefix .pi/extensions/s3-browser
+
+      - name: Test ci-browser
+        run: |
+          npm test --prefix .pi/extensions/ci-browser
