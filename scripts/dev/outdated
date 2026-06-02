@@ -47,6 +47,11 @@ run_and_track "pi sensitive-file-guard dependencies" \
   "npm update --prefix .pi/extensions/sensitive-file-guard" \
   npm outdated --prefix .pi/extensions/sensitive-file-guard
 
+debug_msg "Checking outdated pi ci-browser dependencies..."
+run_and_track "pi ci-browser dependencies" \
+  "npm update --prefix .pi/extensions/ci-browser" \
+  npm outdated --prefix .pi/extensions/ci-browser
+
 # Print summary table
 echo ""
 echo "========================================================================"

@@ -31,6 +31,10 @@ debug_msg "Updating pi sensitive-file-guard dependencies"
 
 npm update --prefix .pi/extensions/sensitive-file-guard
 
+debug_msg "Updating pi ci-browser dependencies"
+
+npm update --prefix .pi/extensions/ci-browser
+
 debug_msg "Updating gh extensions"
 
 gh extension upgrade gfm-preview
