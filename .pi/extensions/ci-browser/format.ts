@@ -353,6 +353,17 @@ export function truncateText(
     };
   }
 
+  if (maxBytes <= 0 || maxLines <= 0) {
+    return {
+      content: "",
+      truncated: true,
+      totalLines,
+      outputLines: 0,
+      totalBytes,
+      outputBytes: 0,
+    };
+  }
+
   // Truncate lines first
   let lines = allLines;
   if (lines.length > maxLines) {
@@ -360,27 +371,64 @@ export function truncateText(
     lines = lines.slice(-maxLines);
   }
 
-  // Build output, stopping at byte limit
-  let output = "";
+  // Build output, stopping at byte limit. If the first retained line alone is
+  // larger than the byte budget, preserve a valid UTF-8 prefix instead of
+  // dropping the whole log body.
+  const outputLines: string[] = [];
   let outputBytes = 0;
-  let outputLines = 0;
 
   for (const line of lines) {
-    const lineBytes = Buffer.byteLength(line + "\n", "utf-8");
-    if (outputBytes + lineBytes > maxBytes) break;
-    output += line + "\n";
-    outputBytes += lineBytes;
-    outputLines++;
+    const separator = outputLines.length > 0 ? "\n" : "";
+    const lineWithSeparator = separator + line;
+    const lineBytes = Buffer.byteLength(lineWithSeparator, "utf-8");
+
+    if (outputBytes + lineBytes <= maxBytes) {
+      outputLines.push(line);
+      outputBytes += lineBytes;
+      continue;
+    }
+
+    const remainingBytes =
+      maxBytes - outputBytes - Buffer.byteLength(separator, "utf-8");
+
+    if (remainingBytes > 0) {
+      const partialLine = takeUtf8Prefix(line, remainingBytes);
+      if (partialLine) {
+        outputLines.push(partialLine);
+        outputBytes +=
+          Buffer.byteLength(separator, "utf-8") +
+          Buffer.byteLength(partialLine, "utf-8");
+      }
+    }
+
+    break;
   }
 
+  const content = outputLines.join("\n");
+
   return {
-    content: output.trimEnd(),
+    content,
     truncated: true,
     totalLines,
-    outputLines,
+    outputLines: outputLines.length,
     totalBytes,
-    outputBytes: Buffer.byteLength(output, "utf-8"),
+    outputBytes: Buffer.byteLength(content, "utf-8"),
   };
+}
+
+function takeUtf8Prefix(text: string, maxBytes: number): string {
+  let result = "";
+  let bytes = 0;
+
+  for (const char of text) {
+    const charBytes = Buffer.byteLength(char, "utf-8");
+    if (bytes + charBytes > maxBytes) break;
+
+    result += char;
+    bytes += charBytes;
+  }
+
+  return result;
 }
 
 export function formatTruncationNotice(result: TruncationResult): string {

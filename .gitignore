@@ -58,6 +58,7 @@ npm-debug.log
 /.superpowers/
 /.pi/extensions/s3-browser/node_modules
 /.pi/extensions/sensitive-file-guard/node_modules
+/.pi/extensions/ci-browser/node_modules
 /presto/tests/__pycache__
 /presto/tests/fixtures/*.png
 /presto/tests/.pytest_cache

@@ -495,7 +495,11 @@ describe("pollRunUntilDone", () => {
     const updates: unknown[] = [];
     const result = await client.pollRunUntilDone(
       12345,
-      { intervalMs: 50, timeoutMs: 30_000 },
+      {
+        intervalMs: 50,
+        timeoutMs: 30_000,
+        sleep: async () => {},
+      },
       ctl.signal,
       (s) => updates.push(s),
     );
@@ -523,24 +527,40 @@ describe("pollRunUntilDone", () => {
     assert.equal(result.timedOut, false);
   });
 
-  it("respects timeout", async () => {
-    const exec = fakeExec({
-      "gh run view": JSON.stringify(
-        fakeDetail({ status: "in_progress", conclusion: null }),
-      ),
-    });
+  it("respects timeout without making an extra poll after the timeout", async () => {
+    let calls = 0;
+    let now = 0;
+    const exec: ExecFn = async () => {
+      calls++;
+      return {
+        stdout: JSON.stringify(
+          fakeDetail({ status: "in_progress", conclusion: null }),
+        ),
+        stderr: "",
+        code: 0,
+        killed: false,
+      };
+    };
     const client = createCiClient(exec);
     const ctl = new AbortController();
-    // timeoutMs=100 clamps to 30000, but this test verifies the result is not
-    // cancelled. The run never completes, so it will eventually timeout or be
-    // cancelled externally. For test speed we cancel quickly.
-    setTimeout(() => ctl.abort(), 100);
+
     const result = await client.pollRunUntilDone(
       12345,
-      { intervalMs: 10_000, timeoutMs: 30_000 },
+      {
+        intervalMs: 60_000,
+        timeoutMs: 30_000,
+        now: () => now,
+        sleep: async (ms) => {
+          now += ms;
+        },
+      },
       ctl.signal,
     );
-    assert.equal(result.cancelled, true);
+
+    assert.equal(result.cancelled, false);
+    assert.equal(result.timedOut, true);
+    assert.equal(result.pollCount, 1);
+    assert.equal(calls, 1);
   });
 
   it("clamps interval and timeout", async () => {

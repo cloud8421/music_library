@@ -2,7 +2,10 @@
   "name": "ci-browser",
   "private": true,
   "type": "module",
+  "dependencies": {
+    "typebox": "^1.1.39"
+  },
   "scripts": {
-    "test": "node --experimental-strip-types --test ci-client.test.ts format.test.ts"
+    "test": "node --experimental-strip-types --test ci-client.test.ts format.test.ts index.test.ts"
   }
 }

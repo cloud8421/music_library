@@ -268,6 +268,25 @@ function isTerminal(run: RunDetail): boolean {
   return run.status === "completed" && run.conclusion !== null;
 }
 
+function abortableSleep(ms: number, signal: AbortSignal): Promise<void> {
+  if (ms <= 0) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    const onAbort = () => {
+      clearTimeout(timer);
+      signal.removeEventListener("abort", onAbort);
+      resolve();
+    };
+
+    const timer = setTimeout(() => {
+      signal.removeEventListener("abort", onAbort);
+      resolve();
+    }, ms);
+
+    signal.addEventListener("abort", onAbort, { once: true });
+  });
+}
+
 // ── Client factory ──────────────────────────────────────────────────────────
 
 export interface ListRunsOptions {
@@ -285,6 +304,8 @@ export interface ViewRunOptions {
 export interface PollOptions {
   intervalMs?: number;
   timeoutMs?: number;
+  now?: () => number;
+  sleep?: (ms: number, signal: AbortSignal) => Promise<void>;
 }
 
 export interface CiClient {
@@ -459,11 +480,13 @@ export function createCiClient(exec: ExecFn): CiClient {
       3_600_000,
     );
 
-    const startTime = Date.now();
+    const now = opts.now ?? Date.now;
+    const sleep = opts.sleep ?? abortableSleep;
+    const startTime = now();
     let pollCount = 0;
 
     function elapsed(): number {
-      return Date.now() - startTime;
+      return now() - startTime;
     }
 
     function buildState(run: RunDetail): PollState {
@@ -508,7 +531,8 @@ export function createCiClient(exec: ExecFn): CiClient {
         };
       }
 
-      if (elapsed() >= timeoutMs) {
+      const remainingMs = timeoutMs - elapsed();
+      if (remainingMs <= 0) {
         return {
           run,
           pollCount,
@@ -518,15 +542,7 @@ export function createCiClient(exec: ExecFn): CiClient {
         };
       }
 
-      // Wait for interval (with abort awareness)
-      await new Promise<void>((resolve, reject) => {
-        const timer = setTimeout(resolve, intervalMs);
-        const onAbort = () => {
-          clearTimeout(timer);
-          resolve();
-        };
-        signal.addEventListener("abort", onAbort, { once: true });
-      });
+      await sleep(Math.min(intervalMs, remainingMs), signal);
 
       if (signal.aborted) {
         return {
@@ -535,6 +551,16 @@ export function createCiClient(exec: ExecFn): CiClient {
           elapsedMs: elapsed(),
           timedOut: false,
           cancelled: true,
+        };
+      }
+
+      if (elapsed() >= timeoutMs) {
+        return {
+          run,
+          pollCount,
+          elapsedMs: elapsed(),
+          timedOut: true,
+          cancelled: false,
         };
       }
 

@@ -10,6 +10,6 @@
     "allowImportingTsExtensions": true,
     "lib": ["ES2022"]
   },
-  "include": ["ci-client.ts", "format.ts", "index.ts"],
+  "include": ["ci-client.ts", "format.ts", "index.ts", "*.test.ts"],
   "exclude": ["node_modules"]
 }

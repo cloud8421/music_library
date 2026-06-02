@@ -12,16 +12,8 @@
  *   /ci  — Interactive TUI browser for CI runs
  */
 
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { BorderedLoader, DynamicBorder } from "@mariozechner/pi-coding-agent";
-import {
-  Container,
-  type SelectItem,
-  SelectList,
-  Text,
-} from "@mariozechner/pi-tui";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
-import { StringEnum } from "@earendil-works/pi-ai";
 
 import { createCiClient } from "./ci-client.ts";
 import * as fmt from "./format.ts";
@@ -29,6 +21,35 @@ import type { RunListItem, RunDetail } from "./ci-client.ts";
 import type { CiClient } from "./ci-client.ts";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
+
+type SelectItem = { value: string; label: string; description?: string };
+
+type TuiComponents = {
+  BorderedLoader: any;
+  DynamicBorder: any;
+  Container: any;
+  SelectList: any;
+  Text: any;
+};
+
+function stringEnum<const T extends readonly string[]>(values: T) {
+  return Type.Unsafe<T[number]>({ type: "string", enum: [...values] });
+}
+
+async function loadTuiComponents(): Promise<TuiComponents> {
+  const [codingAgent, tui] = await Promise.all([
+    import("@earendil-works/pi-coding-agent"),
+    import("@earendil-works/pi-tui"),
+  ]);
+
+  return {
+    BorderedLoader: codingAgent.BorderedLoader,
+    DynamicBorder: codingAgent.DynamicBorder,
+    Container: tui.Container,
+    SelectList: tui.SelectList,
+    Text: tui.Text,
+  };
+}
 
 function friendlyError(err: unknown): string {
   if (err instanceof Error) return err.message;
@@ -69,7 +90,9 @@ export default function ciBrowserExtension(pi: ExtensionAPI) {
     return labels[run.status] ?? run.status.toUpperCase();
   }
 
-  async function showDetail(text: string, ctx: any) {
+  async function showDetail(text: string, ctx: any, components: TuiComponents) {
+    const { Container, DynamicBorder, Text } = components;
+
     await ctx.ui.custom<null>((tui: any, theme: any, _kb: any, done: any) => {
       const container = new Container();
       container.addChild(
@@ -97,7 +120,12 @@ export default function ciBrowserExtension(pi: ExtensionAPI) {
     });
   }
 
-  async function watchRunInTui(runId: number, ctx: any) {
+  async function watchRunInTui(
+    runId: number,
+    ctx: any,
+    components: TuiComponents,
+  ) {
+    const { Container, DynamicBorder, Text } = components;
     const controller = new AbortController();
 
     const finalText = await ctx.ui.custom<string | null>(
@@ -185,7 +213,7 @@ export default function ciBrowserExtension(pi: ExtensionAPI) {
     );
 
     if (finalText) {
-      await showDetail(finalText, ctx);
+      await showDetail(finalText, ctx, components);
     }
   }
 
@@ -210,7 +238,7 @@ export default function ciBrowserExtension(pi: ExtensionAPI) {
         Type.String({ description: "Filter by branch name" }),
       ),
       status: Type.Optional(
-        StringEnum([
+        stringEnum([
           "queued",
           "completed",
           "in_progress",
@@ -498,6 +526,10 @@ export default function ciBrowserExtension(pi: ExtensionAPI) {
         return;
       }
 
+      const components = await loadTuiComponents();
+      const { BorderedLoader, Container, DynamicBorder, SelectList, Text } =
+        components;
+
       let runs: RunListItem[] | null = null;
       let errorMsg: string | null = null;
 
@@ -721,10 +753,10 @@ export default function ciBrowserExtension(pi: ExtensionAPI) {
             if (!findResult) break;
 
             if (findResult.type === "no_active_run") {
-              await showDetail(findResult.text, ctx);
+              await showDetail(findResult.text, ctx, components);
               break;
             }
-            await watchRunInTui(findResult.run!.databaseId, ctx);
+            await watchRunInTui(findResult.run!.databaseId, ctx, components);
             break;
           }
 
@@ -907,7 +939,7 @@ export default function ciBrowserExtension(pi: ExtensionAPI) {
                   break;
                 }
                 case "watch": {
-                  await watchRunInTui(run.databaseId, ctx);
+                  await watchRunInTui(run.databaseId, ctx, components);
                   try {
                     run = await client.viewRun(run.databaseId);
                   } catch {

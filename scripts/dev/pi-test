@@ -8,8 +8,18 @@ source "$(git rev-parse --show-toplevel)/scripts/_helpers.sh"
 
 ensure_working_directory!
 
-npm test --prefix .pi/extensions/sensitive-file-guard
+run_npm_extension_tests() {
+  local extension_dir="$1"
 
-npm test --prefix .pi/extensions/s3-browser
+  if [[ -f "$extension_dir/package-lock.json" && ! -d "$extension_dir/node_modules" ]]; then
+    npm ci --prefix "$extension_dir"
+  fi
 
-npm test --prefix .pi/extensions/ci-browser
+  npm test --prefix "$extension_dir"
+}
+
+run_npm_extension_tests .pi/extensions/sensitive-file-guard
+
+run_npm_extension_tests .pi/extensions/s3-browser
+
+run_npm_extension_tests .pi/extensions/ci-browser

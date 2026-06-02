@@ -441,7 +441,20 @@ describe("truncateText", () => {
     const text = "a".repeat(60_000);
     const result = truncateText(text, 100);
     assert.equal(result.truncated, true);
+    assert.equal(result.content.length, 100);
     assert.ok(result.content.length < text.length);
+    assert.ok(Buffer.byteLength(result.content, "utf-8") <= 100);
+  });
+
+  it("preserves useful content from a single line larger than the byte limit", () => {
+    const text = "error: " + "a".repeat(60_000);
+    const result = truncateText(text, 100);
+
+    assert.equal(result.truncated, true);
+    assert.equal(result.outputLines, 1);
+    assert.ok(result.content.startsWith("error: "));
+    assert.ok(result.content.length > 0);
+    assert.ok(Buffer.byteLength(result.content, "utf-8") <= 100);
   });
 
   it("truncates by line limit and keeps tail", () => {

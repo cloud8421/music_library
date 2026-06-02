@@ -3,9 +3,9 @@ id: ML-201
 title: PI ci integration
 status: Done
 assignee:
-  - pi
+  - "@pi"
 created_date: "2026-06-02 06:25"
-updated_date: "2026-06-02 07:20"
+updated_date: "2026-06-02 20:06"
 labels:
   - pi
   - ci
@@ -14,12 +14,16 @@ dependencies: []
 documentation:
   - doc-32 - ML-201-Research-CI-integration-routes.md
 modified_files:
+  - .gitignore
   - .pi/extensions/ci-browser/index.ts
   - .pi/extensions/ci-browser/ci-client.ts
   - .pi/extensions/ci-browser/format.ts
   - .pi/extensions/ci-browser/ci-client.test.ts
   - .pi/extensions/ci-browser/format.test.ts
+  - .pi/extensions/ci-browser/index.test.ts
   - .pi/extensions/ci-browser/package.json
+  - .pi/extensions/ci-browser/package-lock.json
+  - .pi/extensions/ci-browser/tsconfig.json
   - scripts/dev/pi-test
   - .github/workflows/pi.yml
   - docs/architecture.md
@@ -286,7 +290,10 @@ No manual production runtime changes are required.
    - Reload pi and manually verify `/ci` plus at least `ci_list_runs` and `ci_view_run` against this repository.
    - If a run is active for the branch/current HEAD, verify watch to terminal status or cancellation; if none is active, verify the no-active-run path includes latest completed branch context.
    - Completion gate: all focused tests pass, TUI and tools satisfy the acceptance criteria, and no production/runtime changes are needed.
-   <!-- SECTION:PLAN:END -->
+
+Review remediation plan: fix failed-log truncation to preserve useful content for long single lines, make watch polling honor timeout before each subsequent `gh run view`, and add an index-level smoke test that imports the extension and asserts registration of all CI tools plus `/ci`.
+
+<!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
 
@@ -298,6 +305,10 @@ Steps 4-6 complete: All 5 LLM tools registered with Typebox schemas, StringEnum,
 
 Step 7 complete: Updated docs/architecture.md with new 'Project Tooling (pi Extensions)' section listing ci-browser alongside existing extensions. Updated docs/production-infrastructure.md Pi coding agent tools table with ci-browser tools and gh dependency. AC #1-#3 and #6 are implemented in code but require manual TUI smoke test verification.
 
+Addressing review findings from ML-201 implementation review.
+
+Review findings fixed: long single-line failed logs now preserve a UTF-8-safe prefix instead of truncating to empty output; watch polling now caps each sleep to remaining timeout and rechecks timeout before another `gh run view`; index-level smoke tests import the extension and assert registration of all CI tools plus `/ci`. `scripts/dev/pi-test` now installs locked npm dependencies when missing so the new index smoke test can run from a clean checkout.
+
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary
@@ -306,27 +317,23 @@ Step 7 complete: Updated docs/architecture.md with new 'Project Tooling (pi Exte
 
 Created `.pi/extensions/ci-browser/` — a project-local pi extension for browsing GitHub Actions CI runs via the `gh` CLI.
 
-**Files added:**
+Key pieces:
 
-- `ci-client.ts` — Typed helper layer around `gh`/`git` CLI with injected exec for testability. Exposes `listRuns()`, `viewRun()`, `viewRunFailedLog()`, `findCurrentBranchRun()`, `pollRunUntilDone()`, and structured error classes (`GhNotFoundError`, `GhAuthError`, `NotAGitRepoError`, `InvalidRunIdError`, `JsonParseError`, `GhCommandError`).
-- `format.ts` — Pure formatting/truncation helpers for run lists, run details, watch progress, and current-branch results. Includes `truncateText()` and `formatTruncationNotice()` for bounded output.
-- `index.ts` — Extension entry point: registers `/ci` TUI command with SelectList-based run browser, detail view (jobs/steps with failed-log action), watch mode, current-branch detection, refresh, and URL copy. Registers 5 LLM tools: `ci_list_runs`, `ci_view_run`, `ci_find_current_branch_run`, `ci_watch_run`, `ci_watch_current_branch` with Typebox schemas, `StringEnum` enums, prompt snippets, prompt guidelines, truncation, and `onUpdate` streaming for watch tools.
-- `ci-client.test.ts` — 27 tests covering JSON parsing, run filtering/selection, watch polling terminal states, cancellation, timeout, error classes.
-- `format.test.ts` — 40 tests covering status/conclusion labels, relative time, duration formatting, truncation, list/detail/watch formatting.
-- `package.json` — npm config with `test` script using Node's built-in test runner.
+- `ci-client.ts` provides the typed helper layer around `gh`/`git`, including run listing, run detail, failed-log retrieval, current-branch selection, polling, and normalized CLI error classes.
+- `format.ts` formats run lists/details/watch output and bounds failed-log output with truncation notices.
+- `index.ts` registers `/ci` plus five LLM tools: `ci_list_runs`, `ci_view_run`, `ci_find_current_branch_run`, `ci_watch_run`, and `ci_watch_current_branch`.
+- Tests cover helper behavior, formatting/truncation, watch cancellation/timeout, and extension registration via `index.test.ts`.
+- `scripts/dev/pi-test` and `.github/workflows/pi.yml` run the ci-browser tests; the extension has a small `typebox` lockfile/dependency so the index smoke test can run from a clean checkout.
+- Project docs were updated in `docs/architecture.md` and `docs/production-infrastructure.md`.
 
-**Files modified:**
+Review follow-up fixes:
 
-- `scripts/dev/pi-test` — Added `npm test --prefix .pi/extensions/ci-browser`
-- `.github/workflows/pi.yml` — Added "Test ci-browser" step
-- `docs/architecture.md` — Added "Project Tooling (pi Extensions)" section listing all pi extensions including ci-browser
-- `docs/production-infrastructure.md` — Added ci-browser row to Pi coding agent tools table
+- Oversized single-line failed logs now preserve a UTF-8-safe prefix instead of returning empty truncated output.
+- Watch polling now sleeps only until the remaining timeout and rechecks timeout before issuing another `gh run view`, avoiding extra polls after timeout.
+- Added `index.test.ts` to import the extension and verify all CI tools plus `/ci` are registered.
 
-**Tests:** All 137 pi extension tests pass (41 + 29 + 67). No regressions in existing extensions.
+Verification: `scripts/dev/pi-test` passes (41 sensitive-file-guard + 29 s3-browser + 70 ci-browser tests).
 
-**Risks/follow-ups:**
+Follow-up risk: `/ci` TUI paths are code-complete but still need a manual smoke test in a running pi session for AC #1-#3/#6.
 
-- TUI UI (#1-#3, #6) is code-complete but needs manual smoke test in running pi session — verify `/ci` lists runs, detail view renders, watch mode works, and edge cases display correctly.
-- No `gh pr checks` fallback (Route C deferred) — branches without workflow runs won't benefit from PR checks view.
-- No npm `package-lock.json` since ci-browser has zero external dependencies.
 <!-- SECTION:FINAL_SUMMARY:END -->
