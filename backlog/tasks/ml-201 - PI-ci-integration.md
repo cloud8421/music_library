@@ -5,7 +5,7 @@ status: Done
 assignee:
   - "@pi"
 created_date: "2026-06-02 06:25"
-updated_date: "2026-06-02 20:06"
+updated_date: "2026-06-02 20:13"
 labels:
   - pi
   - ci
@@ -293,6 +293,8 @@ No manual production runtime changes are required.
 
 Review remediation plan: fix failed-log truncation to preserve useful content for long single lines, make watch polling honor timeout before each subsequent `gh run view`, and add an index-level smoke test that imports the extension and asserts registration of all CI tools plus `/ci`.
 
+Watch output follow-up: include job/step details in watch progress/final output by formatting current run detail during watch instead of only the compact status line. Update tests to assert watch results/progress include representative job/step names, then run ci-browser and pi extension tests.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -309,6 +311,10 @@ Addressing review findings from ML-201 implementation review.
 
 Review findings fixed: long single-line failed logs now preserve a UTF-8-safe prefix instead of truncating to empty output; watch polling now caps each sleep to remaining timeout and rechecks timeout before another `gh run view`; index-level smoke tests import the extension and assert registration of all CI tools plus `/ci`. `scripts/dev/pi-test` now installs locked npm dependencies when missing so the new index smoke test can run from a clean checkout.
 
+User reported watch output only shows run status and not steps. Reopening ML-201 to address watch visibility.
+
+Watch visibility follow-up complete: watch progress and final watch output now include job and step details; the TUI watch screen updates with the same formatted run progress instead of a status-only line. Tests assert watch progress/result output includes representative job and step names. Verification: `scripts/dev/pi-test` passes.
+
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary
@@ -322,15 +328,16 @@ Key pieces:
 - `ci-client.ts` provides the typed helper layer around `gh`/`git`, including run listing, run detail, failed-log retrieval, current-branch selection, polling, and normalized CLI error classes.
 - `format.ts` formats run lists/details/watch output and bounds failed-log output with truncation notices.
 - `index.ts` registers `/ci` plus five LLM tools: `ci_list_runs`, `ci_view_run`, `ci_find_current_branch_run`, `ci_watch_run`, and `ci_watch_current_branch`.
-- Tests cover helper behavior, formatting/truncation, watch cancellation/timeout, and extension registration via `index.test.ts`.
+- Tests cover helper behavior, formatting/truncation, watch cancellation/timeout, extension registration via `index.test.ts`, and watch output including job/step details.
 - `scripts/dev/pi-test` and `.github/workflows/pi.yml` run the ci-browser tests; the extension has a small `typebox` lockfile/dependency so the index smoke test can run from a clean checkout.
 - Project docs were updated in `docs/architecture.md` and `docs/production-infrastructure.md`.
 
-Review follow-up fixes:
+Review/follow-up fixes:
 
 - Oversized single-line failed logs now preserve a UTF-8-safe prefix instead of returning empty truncated output.
 - Watch polling now sleeps only until the remaining timeout and rechecks timeout before issuing another `gh run view`, avoiding extra polls after timeout.
 - Added `index.test.ts` to import the extension and verify all CI tools plus `/ci` are registered.
+- Watch progress, TUI watch updates, and final watch results now include job and step details rather than status-only output.
 
 Verification: `scripts/dev/pi-test` passes (41 sensitive-file-guard + 29 s3-browser + 70 ci-browser tests).
 

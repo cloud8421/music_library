@@ -307,6 +307,10 @@ describe("formatWatchProgress", () => {
     assert.ok(output.includes("#12345"));
     assert.ok(output.includes("poll #5"));
     assert.ok(output.includes("50s"));
+    assert.ok(output.includes("Jobs (1):"));
+    assert.ok(output.includes("test"));
+    assert.ok(output.includes("Checkout"));
+    assert.ok(output.includes("Run tests"));
   });
 });
 
@@ -331,6 +335,10 @@ describe("formatWatchResult", () => {
     assert.ok(output.includes("✓ PASS"));
     assert.ok(output.includes("Polls: 10"));
     assert.ok(output.includes("Interval: 10s"));
+    assert.ok(output.includes("Jobs (1):"));
+    assert.ok(output.includes("test"));
+    assert.ok(output.includes("Checkout"));
+    assert.ok(output.includes("Run tests"));
   });
 
   it("renders cancelled result", () => {

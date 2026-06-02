@@ -150,16 +150,8 @@ export default function ciBrowserExtension(pi: ExtensionAPI) {
         );
         container.addChild(new Text("", 1, 0));
 
-        const startTime = Date.now();
-        let pollCount = 0;
-        let lastStatus = "loading...";
-
-        const statusText = new Text(
-          theme.fg("dim", `Status: ${lastStatus}  |  Polls: 0  |  Elapsed: 0s`),
-          1,
-          0,
-        );
-        container.addChild(statusText);
+        const watchText = new Text("Loading run status...", 1, 0);
+        container.addChild(watchText);
         container.addChild(new Text("", 1, 0));
         container.addChild(new Text(theme.fg("dim", "esc  cancel"), 1, 0));
         container.addChild(
@@ -172,17 +164,7 @@ export default function ciBrowserExtension(pi: ExtensionAPI) {
             { intervalMs: 10_000, timeoutMs: 1_800_000 },
             controller.signal,
             (state) => {
-              pollCount = state.pollCount;
-              lastStatus = statusLabel(state.run);
-              const elapsed = Math.floor((Date.now() - startTime) / 1000);
-              const color =
-                state.run.status === "completed" ? "success" : "dim";
-              statusText.setText(
-                theme.fg(
-                  color,
-                  `Status: ${lastStatus}  |  Polls: ${pollCount}  |  Elapsed: ${elapsed}s`,
-                ),
-              );
+              watchText.setText(fmt.formatWatchProgress(state));
               tui.requestRender();
             },
           )

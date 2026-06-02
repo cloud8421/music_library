@@ -164,6 +164,17 @@ function formatJob(job: Job): string {
   return lines.join("\n");
 }
 
+function formatRunJobs(run: RunDetail): string[] {
+  if (run.jobs.length === 0) return ["No job information available."];
+
+  const lines = [`Jobs (${run.jobs.length}):`];
+  for (const job of run.jobs) {
+    lines.push(formatJob(job));
+  }
+
+  return lines;
+}
+
 export function formatRunDetail(run: RunDetail, failedLog?: string): string {
   const lines: string[] = [];
 
@@ -191,15 +202,7 @@ export function formatRunDetail(run: RunDetail, failedLog?: string): string {
   lines.push(`URL:      ${run.url}`);
   lines.push("");
 
-  // Jobs
-  if (run.jobs.length > 0) {
-    lines.push(`Jobs (${run.jobs.length}):`);
-    for (const job of run.jobs) {
-      lines.push(formatJob(job));
-    }
-  } else {
-    lines.push("No job information available.");
-  }
+  lines.push(...formatRunJobs(run));
 
   // Failed log
   if (failedLog) {
@@ -244,10 +247,14 @@ export function formatRunDetailCompact(run: RunDetail): string {
 export function formatWatchProgress(state: PollState): string {
   const run = state.run;
   const label = statusLabel(run);
-  return (
+  const lines = [
     `${label}  #${run.databaseId}  ${run.workflowName}  ` +
-    `poll #${state.pollCount}  ${formatDuration(state.elapsedMs)}`
-  );
+      `poll #${state.pollCount}  ${formatDuration(state.elapsedMs)}`,
+    "",
+    ...formatRunJobs(run),
+  ];
+
+  return lines.join("\n");
 }
 
 export function formatWatchResult(
@@ -277,8 +284,8 @@ export function formatWatchResult(
   );
   lines.push("");
 
-  // Always include the final run detail compact
-  lines.push(formatRunDetailCompact(run));
+  // Always include the final run detail with jobs and steps.
+  lines.push(formatRunDetail(run));
 
   return lines.join("\n");
 }
