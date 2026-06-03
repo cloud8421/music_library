@@ -30,18 +30,22 @@ defmodule MusicLibraryWeb.MaintenanceLive.Index do
         <dl>
           <div class="flex gap-2 mt-2">
             <dt class="text-xs/6 font-medium text-zinc-900 md:text-sm dark:text-zinc-400">
-              {gettext("Current timezone")}
+              {gettext("Timezone:")}
             </dt>
             <dd class="mt-1 text-xs/6 text-zinc-700 sm:col-span-2 sm:mt-0 md:text-sm dark:text-zinc-300">
               {@timezone}
-            </dd>
-          </div>
-          <div class="flex gap-2 mt-2">
-            <dt class="text-xs/6 font-medium text-zinc-900 md:text-sm dark:text-zinc-400">
-              {gettext("Default timezone")}
-            </dt>
-            <dd class="mt-1 text-xs/6 text-zinc-700 sm:col-span-2 sm:mt-0 md:text-sm dark:text-zinc-300">
-              {@default_timezone}
+              <span
+                :if={@timezone == @default_timezone}
+                class="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-200"
+              >
+                {gettext("Matches default")}
+              </span>
+              <span
+                :if={@timezone != @default_timezone}
+                class="ml-2 inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+              >
+                {gettext("Default is %{default_timezone}", default_timezone: @default_timezone)}
+              </span>
             </dd>
           </div>
         </dl>

@@ -2561,16 +2561,6 @@ msgstr ""
 
 #: lib/music_library_web/live/maintenance_live/index.ex
 #, elixir-autogen, elixir-format
-msgid "Current timezone"
-msgstr ""
-
-#: lib/music_library_web/live/maintenance_live/index.ex
-#, elixir-autogen, elixir-format
-msgid "Default timezone"
-msgstr ""
-
-#: lib/music_library_web/live/maintenance_live/index.ex
-#, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr ""
 
@@ -2587,4 +2577,19 @@ msgstr ""
 #: lib/music_library_web/live/stats_live/index.ex
 #, elixir-autogen, elixir-format
 msgid "Daily Scrobbles"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Timezone:"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Default is %{default_timezone}"
+msgstr ""
+
+#: lib/music_library_web/live/maintenance_live/index.ex
+#, elixir-autogen, elixir-format
+msgid "Matches default"
 msgstr ""

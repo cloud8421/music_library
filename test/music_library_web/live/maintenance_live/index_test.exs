@@ -4,6 +4,7 @@ defmodule MusicLibraryWeb.MaintenanceLive.IndexTest do
 
   import MusicLibrary.ArtistInfoFixtures
   import MusicLibrary.Fixtures.Records
+  import Phoenix.LiveViewTest, only: [live: 2, put_connect_params: 2, render: 1]
 
   alias MusicLibrary.Secrets
 
@@ -160,6 +161,30 @@ defmodule MusicLibraryWeb.MaintenanceLive.IndexTest do
         |> click_button("Send records on this day")
 
       assert_has(session, "p", "No records on this day.")
+    end
+  end
+
+  describe "Settings section" do
+    test "renders timezone with 'Matches default' badge when no connect param", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/maintenance")
+      html = render(view)
+
+      assert html =~ "Europe/London"
+      assert html =~ "Matches default"
+    end
+
+    test "renders custom timezone and 'Default is' badge when connect param differs", %{
+      conn: conn
+    } do
+      {:ok, view, _html} =
+        conn
+        |> put_connect_params(%{"timezone" => "Asia/Tokyo"})
+        |> live(~p"/maintenance")
+
+      html = render(view)
+
+      assert html =~ "Asia/Tokyo"
+      assert html =~ "Default is Europe/London"
     end
   end
 
