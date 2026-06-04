@@ -13,7 +13,7 @@ consistent conventions for structure, error handling, queue assignment, and test
 1. **Does the worker delegate to a context module?** `perform/1` must be a thin wrapper.
    No business logic inline.
 
-2. **Is the queue correct?** Rate-limited APIs get dedicated queues with concurrency 1.
+2. **Is the queue correct?** Rate-limited APIs get dedicated queues (currently concurrency 3).
    DB-intensive operations go to `heavy_writes`. General tasks go to `default`.
 
 3. **Does error handling use `ErrorHandler`?** Workers calling APIs route HTTP errors
@@ -59,14 +59,14 @@ end
 |-------|-------------|---------|
 | `default` | 10 | General async tasks, non-API operations |
 | `heavy_writes` | 1 | DB-intensive or serialized operations |
-| `music_brainz` | 1 | MusicBrainz API calls |
-| `discogs` | 1 | Discogs API calls |
-| `wikipedia` | 1 | Wikipedia API calls |
-| `last_fm` | 1 | Last.fm API calls |
+| `music_brainz` | 3 | MusicBrainz API calls |
+| `discogs` | 3 | Discogs API calls |
+| `wikipedia` | 3 | Wikipedia API calls |
+| `last_fm` | 3 | Last.fm API calls |
 
 **Rule**: Any worker that calls an external API goes on that API's dedicated queue.
-The concurrency of 1 combined with `Req.RateLimiter` ensures the API rate limit is
-never exceeded.
+The dedicated concurrency combined with `Req.RateLimiter` ensures the API rate limit
+is never exceeded.
 
 ## Return Values
 
