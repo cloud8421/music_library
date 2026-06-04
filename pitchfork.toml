@@ -1,0 +1,2 @@
+[daemons.backlog]
+run = 'backlog browser'
