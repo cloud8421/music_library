@@ -397,7 +397,7 @@ defmodule MusicLibrary.ListeningStats do
             'type', r.type, \
             'purchased_at', r.purchased_at, \
             'cover_hash', r.cover_hash\
-            )) \
+            ) ORDER BY (CASE WHEN r.purchased_at IS NOT NULL THEN 0 ELSE 1 END), r.id) \
             FROM records r \
             WHERE r.musicbrainz_id = (\
             SELECT r2.musicbrainz_id FROM records r2 \
@@ -504,7 +504,7 @@ defmodule MusicLibrary.ListeningStats do
             'type', r.type, \
             'purchased_at', r.purchased_at, \
             'cover_hash', r.cover_hash\
-            )) \
+            ) ORDER BY (CASE WHEN r.purchased_at IS NOT NULL THEN 0 ELSE 1 END), r.id) \
             FROM records r \
             WHERE r.musicbrainz_id = (\
             SELECT r2.musicbrainz_id FROM records r2 \

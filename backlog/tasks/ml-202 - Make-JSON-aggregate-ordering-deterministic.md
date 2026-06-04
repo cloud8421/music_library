@@ -1,10 +1,11 @@
 ---
 id: ML-202
 title: Make JSON aggregate ordering deterministic
-status: To Do
-assignee: []
+status: Done
+assignee:
+  - pi
 created_date: "2026-06-04 04:04"
-updated_date: "2026-06-04 05:29"
+updated_date: "2026-06-04 05:35"
 labels:
   - sqlite
   - listening-stats
@@ -36,11 +37,11 @@ Use SQLite aggregate ORDER BY support to make JSON arrays built by `json_group_a
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 All SQL `json_group_array(json_object(...))` matching-record payloads in ListeningStats use an explicit aggregate ORDER BY clause.
-- [ ] #2 The chosen ordering is stable and user-meaningful, prioritizing collected records over wishlisted records where that distinction is displayed.
-- [ ] #3 Recent activity and top-album behaviour remains otherwise unchanged.
-- [ ] #4 Tests assert deterministic matching-record ordering for representative collection/wishlist combinations.
-- [ ] #5 Query plans are reviewed for the changed SQL and no obvious full-scan regression is introduced.
+- [x] #1 All SQL `json_group_array(json_object(...))` matching-record payloads in ListeningStats use an explicit aggregate ORDER BY clause.
+- [x] #2 The chosen ordering is stable and user-meaningful, prioritizing collected records over wishlisted records where that distinction is displayed.
+- [x] #3 Recent activity and top-album behaviour remains otherwise unchanged.
+- [x] #4 Tests assert deterministic matching-record ordering for representative collection/wishlist combinations.
+- [x] #5 Query plans are reviewed for the changed SQL and no obvious full-scan regression is introduced.
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -345,3 +346,58 @@ Not required:
 - `docs/project-conventions.md` — it already delegates database-specific conventions to the SQLite optimization skill.
 - `docs/production-infrastructure.md` — no infrastructure change.
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+
+Step 1: Confirmed exactly two json_group_array(json_object(...)) fragments in listening_stats.ex
+
+Step 2-3: Added aggregate ORDER BY (CASE WHEN r.purchased_at IS NOT NULL THEN 0 ELSE 1 END), r.id) to both fragments
+
+Step 4: Added 3 deterministic ordering tests (list_tracks, recent_activity, get_top_albums) with 2 collected + 2 wishlisted records sharing a release group
+
+Step 5: EXPLAIN QUERY PLAN confirmed no full-scan regression. Index usage intact.
+
+All 53 listening_stats_test.exs tests pass.
+
+Step 6: Added json_group_array() aggregate ORDER BY convention to sqlite-optimization SKILL.md
+
+Step 7: All 37 stats/scrobbled_tracks LiveView tests pass
+
+Step 8: Full test suite passed — 1151 tests across 4 partitions, 0 failures
+
+Task finalized: all AC checked, tests pass, final summary written
+
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
+Added SQLite aggregate ORDER BY to both json_group_array(json_object(...)) matching-record payloads in MusicLibrary.ListeningStats, using ordering `(CASE WHEN r.purchased_at IS NOT NULL THEN 0 ELSE 1 END), r.id` to put collected records before wishlisted records, with id as a stable tiebreaker.
+
+## What changed
+
+**lib/music_library/listening_stats.ex** — two private SQL fragments:
+
+- `tracks_with_record_info_query/0` (line ~400): matching_records json_group_array now includes ORDER BY clause
+- `top_albums_attach_metadata/1` (line ~507): matching_records json_group_array now includes ORDER BY clause
+
+**test/music_library/listening_stats_test.exs** — new "matching_records deterministic ordering" describe block with 3 tests asserting collected-first id-ordered matching_records for list_tracks/1, recent_activity/2, and get_top_albums/1.
+
+**.agents/skills/sqlite-optimization/SKILL.md** — added json_group_array() aggregate ORDER BY convention under JSON Column Patterns.
+
+## Tests run
+
+- listening_stats_test.exs: 53 passed
+- stats_live/index_test.exs: passed
+- stats_live/top_albums_test.exs: passed
+- scrobbled_tracks_live/index_test.exs: passed
+- Full suite (mise run test): 1151 passed, 0 failures
+
+## Risks and follow-ups
+
+No risks identified. The change is narrow — only adds an ORDER BY clause inside existing correlated subquery aggregates. No schema, migration, or public API changes. Index usage confirmed intact via EXPLAIN QUERY PLAN. No follow-up work needed.
+
+<!-- SECTION:FINAL_SUMMARY:END -->

@@ -522,6 +522,94 @@ defmodule MusicLibrary.ListeningStatsTest do
     end
   end
 
+  describe "matching_records deterministic ordering" do
+    setup do
+      shared_musicbrainz_id = Ecto.UUID.generate()
+      shared_release_id = "d3f9b9e2-73f5-4b47-a2a7-2c2199aad608"
+
+      collected_a =
+        RecordsFixtures.record(%{
+          title: "Marbles CD",
+          format: :cd,
+          musicbrainz_id: shared_musicbrainz_id
+        })
+
+      collected_b =
+        RecordsFixtures.record(%{
+          title: "Marbles Vinyl",
+          format: :vinyl,
+          musicbrainz_id: shared_musicbrainz_id
+        })
+
+      wishlisted_a =
+        RecordsFixtures.record(%{
+          title: "Marbles Blu-ray",
+          format: :blu_ray,
+          musicbrainz_id: shared_musicbrainz_id,
+          purchased_at: nil
+        })
+
+      wishlisted_b =
+        RecordsFixtures.record(%{
+          title: "Marbles DVD",
+          format: :dvd,
+          musicbrainz_id: shared_musicbrainz_id,
+          purchased_at: nil
+        })
+
+      now = System.system_time(:second)
+
+      track_fixture(%{
+        title: "The Invisible Man",
+        album_title: "Marbles",
+        album_musicbrainz_id: shared_release_id,
+        artist_name: "Marillion",
+        scrobbled_at_uts: now - 100
+      })
+
+      collected_ids =
+        [collected_a.id, collected_b.id]
+        |> Enum.sort()
+
+      wishlisted_ids =
+        [wishlisted_a.id, wishlisted_b.id]
+        |> Enum.sort()
+
+      expected_ids = collected_ids ++ wishlisted_ids
+
+      %{expected_ids: expected_ids}
+    end
+
+    test "list_tracks matching_records are collected-first then id-ordered",
+         %{expected_ids: expected_ids} do
+      results = ListeningStats.list_tracks()
+      assert Enum.count_until(results, 2) == 1
+
+      [result] = results
+      assert Enum.map(result.matching_records, & &1.id) == expected_ids
+    end
+
+    test "recent_activity matching_records are collected-first then id-ordered",
+         %{expected_ids: expected_ids} do
+      %{recent_tracks: recent_tracks} = ListeningStats.recent_activity("Etc/UTC", 20)
+      assert Enum.count_until(recent_tracks, 2) == 1
+
+      [result] = recent_tracks
+      assert Enum.map(result.matching_records, & &1.id) == expected_ids
+    end
+
+    test "get_top_albums matching_records are collected-first then id-ordered",
+         %{expected_ids: expected_ids} do
+      results = ListeningStats.get_top_albums(limit: 10)
+
+      marbles_entries = Enum.filter(results, fn r -> r.album_title == "Marbles" end)
+      assert Enum.count_until(marbles_entries, 2) == 1
+
+      [entry] = marbles_entries
+      assert Enum.map(entry.matching_records, & &1.id) == expected_ids
+    end
+  end
+
   describe "play_count uses count(DISTINCT scrobbled_at_uts)" do
     test "two tracks at the same scrobbled_at_uts count as one play in get_top_albums" do
       shared_uts = System.system_time(:second) - 100

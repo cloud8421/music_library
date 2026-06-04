@@ -133,6 +133,31 @@ from(r in Record,
 )
 ```
 
+### json_group_array() aggregate ORDER BY
+
+When `json_group_array(json_object(...))` produces output whose element order is
+user-visible or test-relevant, include an explicit aggregate `ORDER BY` clause.
+Without it, array element order is non-deterministic and may vary between query
+executions.
+
+```sql
+-- Deterministic: collect first, then id
+json_group_array(
+  json_object('id', r.id, 'title', r.title)
+  ORDER BY (CASE WHEN r.purchased_at IS NOT NULL THEN 0 ELSE 1 END), r.id
+)
+
+-- Deterministic: alphabetical by title
+json_group_array(
+  json_object('id', r.id, 'title', r.title)
+  ORDER BY r.title, r.id
+)
+```
+
+SQLite may report `USE TEMP B-TREE FOR json_group_array(ORDER BY)` in
+`EXPLAIN QUERY PLAN`. This is expected — the temporary sort is bounded by the
+aggregate group size, not by the full table.
+
 ## Materialized Views via Triggers
 
 SQLite lacks native materialized views. Use explicit `up`/`down` in migrations for
