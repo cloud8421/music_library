@@ -19,8 +19,8 @@ Run `mise run dev:outdated`. Read the summary table at the end — it has three 
 Dependency, Status, and Next Step.
 
 If mix dependencies are outdated, the output usually contains a hex.pm diff preview
-link (looks like `https://hex.pm/l/FR8QK`). Offer the user the option to open it in
-the browser for manual inspection before proceeding.
+link (looks like `https://hex.pm/l/FR8QK`). Show the URL to the user so they
+can manually inspect it in the browser.
 
 ### 2. Assess the updates
 
@@ -42,15 +42,13 @@ When in doubt, ask the user which approach they prefer.
 
 ### 4. Verify
 
-Run these checks after updating:
+Run these checks sequentially after updating:
 
 1. `mise run dev:outdated` — confirm everything is now up to date
-2. `mix compile` — catch compilation errors early
-3. `mix assets.build` — verify JS/CSS builds succeed (this depends on compiled
-   Elixir code, so it must run after `mix compile`). This matters because NPM,
+2. `mix assets.build` — verify JS/CSS builds succeed. This matters because NPM,
    Tailwind, and ESBuild updates can break the asset pipeline.
-4. `mise run dev:lint` — catch formatting or credo issues introduced by updates
-5. `mix test` — verify nothing is broken
+3. `mise run dev:lint` — catch formatting or credo issues introduced by updates
+4. `mix test` — verify nothing is broken
 
 ### 5. Commit
 
