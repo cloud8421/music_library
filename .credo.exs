@@ -10,6 +10,12 @@
         extra: [
           {PhoenixTest.Credo.NoOpenBrowser, []},
           {MusicLibrary.Credo.NoLiveComponentPutToast, []},
+          {MusicLibrary.Credo.NoRepoInLiveView, []},
+          {MusicLibrary.Credo.NoDiscardInWorker, []},
+          {MusicLibrary.Credo.ErrorResponseImplementsBehaviour, []},
+          {MusicLibrary.Credo.NoInspectInToast, []},
+          {MusicLibrary.Credo.NoWriteToFtsTable, []},
+          {MusicLibrary.Credo.NoPutToastBangInLiveView, []},
           {Credo.Check.Warning.ExpensiveEmptyEnumCheck, []},
           {Credo.Check.Refactor.DoubleBooleanNegation, []},
           {Credo.Check.Refactor.CondStatements, []},
