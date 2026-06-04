@@ -4,7 +4,7 @@ title: Make JSON aggregate ordering deterministic
 status: To Do
 assignee: []
 created_date: "2026-06-04 04:04"
-updated_date: "2026-06-04 05:16"
+updated_date: "2026-06-04 05:29"
 labels:
   - sqlite
   - listening-stats
@@ -19,7 +19,7 @@ documentation:
 modified_files:
   - lib/music_library/listening_stats.ex
   - test/music_library/listening_stats_test.exs
-  - docs/architecture.md
+  - .agents/skills/sqlite-optimization/SKILL.md
 priority: medium
 ordinal: 35000
 ---
@@ -47,181 +47,301 @@ Use SQLite aggregate ORDER BY support to make JSON arrays built by `json_group_a
 
 <!-- SECTION:PLAN:BEGIN -->
 
-## 1. Objective alignment
+## 1. Objective and scope
 
-The `json_group_array(json_object(...))` calls in `ListeningStats` construct matching-record payloads for recent activity and top-album metadata without an aggregate `ORDER BY` clause. SQLite returns rows to `json_group_array()` in an arbitrary order that can change between invocations, making the JSON arrays non-deterministic.
+Make every `json_group_array(json_object(...))` matching-record payload in `MusicLibrary.ListeningStats` deterministic by using SQLite aggregate `ORDER BY` support.
 
-This plan makes ordering deterministic by adding an aggregate `ORDER BY` clause to each `json_group_array(json_object(...))` fragment. The chosen ordering prioritizes collected records (purchased_at IS NOT NULL) over wishlisted records (purchased_at IS NULL), with `r.id` as a stable secondary key. This mirrors the ordering already used in the `cover_hash` correlated subquery within the same module, and matches the visual hierarchy in the UI where collected records appear first/more prominently and wishlisted records are dimmed.
+Current affected payloads:
 
-The plan changes only the SQL fragments in `ListeningStats` — no schema changes, no new indexes, no migration, no API changes.
+1. `tracks_with_record_info_query/0` — used by `list_tracks/1` and `recent_activity/2`.
+2. `top_albums_attach_metadata/1` — used by `get_top_albums/1` and `get_top_albums_by_days/2`.
 
-## 2. Simplicity and alternatives considered
+The change is intentionally narrow:
 
-**Chosen approach**: Add `ORDER BY (CASE WHEN r.purchased_at IS NOT NULL THEN 0 ELSE 1 END), r.id` inside each `json_group_array()` call.
+- No schema changes.
+- No migrations or new indexes.
+- No public API shape changes.
+- No LiveView/component changes.
+- No production infrastructure changes.
 
-**Alternatives evaluated and rejected**:
+The output JSON object shape remains unchanged. Only the array order becomes deterministic.
 
-- **Order by `r.title`**: Titles are user-meaningful but don't reflect the collection/wishlist distinction. Two records with the same title (different formats) would tie-break unpredictably. Rejected because it doesn't satisfy acceptance criterion #2.
-- **Order by `r.purchased_at DESC, r.id`**: Puts collected records first (since wishlisted have NULL purchased_at, which sorts last by default in SQLite). However, this doesn't guarantee all collected records appear before all wishlisted records — NULL ordering behavior depends on the SQLite `NULLS FIRST/LAST` setting. The explicit CASE expression is unambiguous. Rejected in favor of the more explicit CASE approach.
-- **Order by `r.format, r.id`**: Stable but doesn't prioritize collection vs wishlist. Rejected because acceptance criterion #2 explicitly requires prioritizing collected records.
-- **`ORDER BY r.id` alone**: Stable but ignores the collected/wishlisted distinction. Rejected — doesn't satisfy acceptance criterion #2.
+## 2. Chosen ordering
 
-**Why the chosen approach is the right trade-off**: It's minimal (one clause addition per fragment), uses an ordering pattern already established in the same module (the `cover_hash` subquery uses the identical `CASE WHEN r.purchased_at IS NOT NULL THEN 0 ELSE 1 END, r.id`), and directly satisfies both acceptance criteria: deterministic ordering (#1) and collection-first priority (#2).
-
-## 3. Completeness and sequencing
-
-### Dependencies
-
-- No step depends on external changes. The change is self-contained within `ListeningStats`.
-- SQLite 3.44.0+ is required for aggregate `ORDER BY`. The project runs SQLite 3.53.1 (confirmed via `exqlite` 0.37.0).
-
-### Steps
-
-#### Step 1: Add ORDER BY to `tracks_with_record_info_query/0` matching_records
-
-**What**: In `lib/music_library/listening_stats.ex`, locate the `json_group_array(json_object(...))` fragment inside `tracks_with_record_info_query/0`. Append `ORDER BY (CASE WHEN r.purchased_at IS NOT NULL THEN 0 ELSE 1 END), r.id` before the closing `)` of `json_group_array`.
-
-**Current fragment (before the `)` of json_group_array)**:
+Use this aggregate ordering in both `json_group_array(json_object(...))` fragments:
 
 ```sql
-'purchased_at', r.purchased_at, \
+ORDER BY (CASE WHEN r.purchased_at IS NOT NULL THEN 0 ELSE 1 END), r.id
+```
+
+Ordering semantics:
+
+1. Collected records (`purchased_at IS NOT NULL`) appear before wishlisted records (`purchased_at IS NULL`). This is the user-meaningful part of the ordering and matches how the UI distinguishes collected and wishlisted records.
+2. `r.id` provides a stable deterministic tie-breaker within each group. There is no existing domain-level preference for ordering multiple collected copies or multiple wishlisted copies of the same release group, so `id` avoids inventing new UI semantics.
+
+This matches the existing `cover_hash` correlated subqueries in the same module, which already prioritize collected records first and then use `r.id`.
+
+## 3. Simplicity and alternatives considered
+
+**Chosen approach**: add the aggregate `ORDER BY` clause directly inside each `json_group_array(...)` call.
+
+Alternatives considered:
+
+- **Application-level sorting after JSON decode**: rejected because the SQL payload itself would remain non-deterministic and every caller/parser path would need to preserve the same ordering rule manually. The task specifically targets SQLite aggregate ordering.
+- **Wrap an ordered subquery around the aggregate**: rejected because it is more verbose and was only necessary before SQLite 3.44.0. The project runtime supports aggregate `ORDER BY` directly.
+- **Order by `r.title`, `r.format`, or `r.type` before `r.id`**: rejected because these introduce new ordering semantics not currently expressed elsewhere. Format/type ordering would be alphabetical rather than a product decision.
+- **Order by `r.purchased_at DESC, r.id`**: rejected because it changes the secondary order of collected records to purchase recency. The objective is deterministic matching-record order, not recency ranking. The explicit `CASE` expression also documents the collection-vs-wishlist priority clearly.
+- **Order by `r.id` only**: rejected because it ignores the collected/wishlisted distinction required by acceptance criterion #2.
+
+The chosen approach is the smallest implementation that satisfies determinism and the collection-first display priority.
+
+## 4. Prerequisites and compatibility
+
+SQLite aggregate `ORDER BY` is available from SQLite 3.44.0. The current project runtime reports SQLite 3.53.2 through `exqlite` 0.37.0, so the syntax is supported locally.
+
+Verification command:
+
+```sql
+SELECT sqlite_version();
+```
+
+If a future environment reports SQLite < 3.44.0, stop and replace this plan with the ordered-subquery fallback rather than implementing direct aggregate `ORDER BY`.
+
+## 5. Implementation steps
+
+### Step 1: Confirm affected SQL fragments
+
+Search before editing:
+
+```bash
+rg -n "json_group_array\(json_object|matching_records" lib/music_library/listening_stats.ex
+```
+
+Expected affected fragments are the two matching-record subqueries in:
+
+- `tracks_with_record_info_query/0`
+- `top_albums_attach_metadata/1`
+
+Do not change unrelated JSON aggregation if new unrelated matches appear.
+
+### Step 2: Update `tracks_with_record_info_query/0`
+
+In `lib/music_library/listening_stats.ex`, update the matching-record aggregate from:
+
+```sql
 'cover_hash', r.cover_hash\
 )) \
 ```
 
-**After change**:
+to:
 
 ```sql
-'purchased_at', r.purchased_at, \
 'cover_hash', r.cover_hash\
 ) ORDER BY (CASE WHEN r.purchased_at IS NOT NULL THEN 0 ELSE 1 END), r.id) \
 ```
 
-**Affects**: `recent_activity/2` and `list_tracks/1` (both call `tracks_with_record_info_query/0`). Matching records for each track row will now be deterministically ordered: collected records first, then wishlisted, subsorted by id.
+Affected public paths:
 
-**Verification**:
+- `ListeningStats.list_tracks/1`
+- `ListeningStats.recent_activity/2`
+- `ScrobbledTracksLive.Index`
+- `StatsLive.Index` recent activity sections
 
-- Run `mix test test/music_library/listening_stats_test.exs` — existing deduplication and mixed collection/wishlist tests must still pass.
-- Run `mix test test/music_library_web/live/stats_live/index_test.exs` — StatsLive scrobble activity tests must still pass.
+### Step 3: Update `top_albums_attach_metadata/1`
 
-#### Step 2: Add ORDER BY to `top_albums_attach_metadata/1` matching_records
+Apply the same aggregate `ORDER BY` clause to the matching-record aggregate inside `top_albums_attach_metadata/1`.
 
-**What**: In `lib/music_library/listening_stats.ex`, locate the `json_group_array(json_object(...))` fragment inside `top_albums_attach_metadata/1`. Apply the same `ORDER BY` clause.
+Affected public paths:
 
-**Affects**: `get_top_albums/1`, `get_top_albums_by_days/2`. Matching records for each top-album entry will be deterministically ordered.
+- `ListeningStats.get_top_albums/1`
+- `ListeningStats.get_top_albums_by_days/2`
+- `StatsLive.TopAlbums`
+- `StatsLive.Index` top-album sections
 
-**Verification**:
+### Step 4: Strengthen deterministic-order tests
 
-- Run `mix test test/music_library/listening_stats_test.exs` — `get_top_albums` tests in the deduplication and mixed collection/wishlist describes must still pass.
-- Run `mix test test/music_library_web/live/stats_live/top_albums_test.exs` — existing tests must still pass.
+Update `test/music_library/listening_stats_test.exs` with representative ordering assertions.
 
-#### Step 3: Add or adjust fixtures for multi-record ordering tests
+Use a fixture setup with at least four records sharing the same release group:
 
-**What**: The existing test fixtures in `test/music_library/listening_stats_test.exs` already cover mixed collected/wishlisted records for a release group (the "matching_records with mixed collected and wishlisted" describe). However, the tests only assert presence of both records, not their order. Add assertions that:
+- two collected records (`purchased_at` set)
+- two wishlisted records (`purchased_at: nil`)
 
-1. Collected records appear before wishlisted records in the `matching_records` list.
-2. Within the collected group, records are ordered by `id`.
-3. Within the wishlisted group, records are ordered by `id`.
+Create at least one scrobbled track whose album MusicBrainz release ID maps to that shared release group.
 
-The existing fixture setup in the "deduplication when multiple records share a release group" describe creates two collected records — these tests also need order assertions.
+Expected order helper:
 
-**Verification**: The new assertions must pass after Steps 1–2 are applied. Run `mix test test/music_library/listening_stats_test.exs` and confirm all tests pass.
+```elixir
+expected_ids =
+  collected_records
+  |> Enum.map(& &1.id)
+  |> Enum.sort()
+  |> Kernel.++(
+    wishlisted_records
+    |> Enum.map(& &1.id)
+    |> Enum.sort()
+  )
+```
 
-#### Step 4: Run EXPLAIN QUERY PLAN for changed SQL
+Assert `Enum.map(result.matching_records, & &1.id) == expected_ids` for:
 
-**What**: Execute `EXPLAIN QUERY PLAN` on both modified queries and compare against current plans. The `ORDER BY` inside `json_group_array` is processed on the inner correlated subquery result set, which is already bounded by the `WHERE r.musicbrainz_id = (...)` filter. Since a release group typically has 1–5 records, the sort cost is negligible.
+1. `ListeningStats.list_tracks/1`
+2. `ListeningStats.recent_activity/2`
+3. `ListeningStats.get_top_albums/1`
 
-**Verification**:
+Keep the existing presence/shape assertions for `:id`, `:title`, `:format`, `:type`, `:purchased_at`, and `:cover_hash` so behaviour remains otherwise covered.
 
-- Inside `mise run dev:sqlite-console`, run:
-  ```sql
-  EXPLAIN QUERY PLAN SELECT json_group_array(json_object('id', r.id, 'title', r.title, 'format', r.format, 'type', r.type, 'purchased_at', r.purchased_at, 'cover_hash', r.cover_hash) ORDER BY (CASE WHEN r.purchased_at IS NOT NULL THEN 0 ELSE 1 END), r.id) FROM records r WHERE r.musicbrainz_id = 'some-real-id';
-  ```
-  Confirm the plan shows no full table scan — it should use the existing index on `records.musicbrainz_id`.
-- Repeat for the top-albums path.
+### Step 5: Review query plans with the real lookup path
 
-#### Step 5: Run the full test suite
+Run `EXPLAIN QUERY PLAN` against the actual changed inner lookup shape, not just a simplified `records` query.
 
-**What**: Run the complete project test suite to ensure no regressions:
+Pick a real release ID:
+
+```sql
+SELECT release_id FROM record_releases LIMIT 1;
+```
+
+Then run:
+
+```sql
+EXPLAIN QUERY PLAN
+SELECT json_group_array(
+  json_object(
+    'id', r.id,
+    'title', r.title,
+    'format', r.format,
+    'type', r.type,
+    'purchased_at', r.purchased_at,
+    'cover_hash', r.cover_hash
+  ) ORDER BY (CASE WHEN r.purchased_at IS NOT NULL THEN 0 ELSE 1 END), r.id
+)
+FROM records r
+WHERE r.musicbrainz_id = (
+  SELECT r2.musicbrainz_id
+  FROM records r2
+  INNER JOIN record_releases rr ON rr.record_id = r2.id
+  WHERE rr.release_id = '<real-release-id>'
+  LIMIT 1
+);
+```
+
+Expected plan characteristics:
+
+- `SEARCH rr USING INDEX record_releases_release_id_index (release_id=?)`
+- `SEARCH r2 USING INDEX sqlite_autoindex_records_1 (id=?)` or equivalent primary-key lookup
+- `SEARCH r USING INDEX records_musicbrainz_id_index (musicbrainz_id=?)`
+- `USE TEMP B-TREE FOR json_group_array(ORDER BY)` is expected and acceptable
+- no full scan of `records` for the matching-record lookup
+
+Repeat the same check after the final SQL is in place. The top-albums path uses the same inner release-ID lookup shape, so this representative plan is sufficient for the changed aggregate.
+
+### Step 6: Update SQLite optimization documentation
+
+Update `.agents/skills/sqlite-optimization/SKILL.md` under `JSON Column Patterns` with a short note that JSON aggregates whose output order is user-visible or test-relevant must include an explicit aggregate `ORDER BY` clause.
+
+Include a minimal example similar to:
+
+```sql
+json_group_array(
+  json_object('id', r.id, 'title', r.title)
+  ORDER BY r.title, r.id
+)
+```
+
+Mention that SQLite may report `USE TEMP B-TREE FOR json_group_array(ORDER BY)` and that this is expected for small bounded aggregate groups.
+
+No `docs/architecture.md` update is needed because this change does not add, remove, or restructure modules, schemas, contexts, workers, routes, or external integrations.
+
+### Step 7: Run focused tests
+
+Run:
+
+```bash
+mix test test/music_library/listening_stats_test.exs
+mix test test/music_library_web/live/stats_live/index_test.exs
+mix test test/music_library_web/live/stats_live/top_albums_test.exs
+mix test test/music_library_web/live/scrobbled_tracks_live/index_test.exs
+```
+
+### Step 8: Run full verification
+
+Run the full test suite:
 
 ```bash
 mise run test
 ```
 
-#### Step 6: Run pre-commit checks
-
-**What**: Stage changes and run the pre-commit script:
+Stage the relevant files and run the conditional pre-commit checks:
 
 ```bash
-git add lib/music_library/listening_stats.ex test/music_library/listening_stats_test.exs
-bash scripts/dev/precommit
+git add lib/music_library/listening_stats.ex \
+  test/music_library/listening_stats_test.exs \
+  .agents/skills/sqlite-optimization/SKILL.md
+mise run dev:precommit
 ```
 
-## 4. Verifiability
+## 6. Architecture impact analysis
 
-Each step above includes specific verification actions. Summary of all verification checkpoints:
+| Touchpoint                               | Impact                                                                                                                  |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `ListeningStats` context                 | Two private SQL fragments gain aggregate ordering. Public return shapes stay the same.                                  |
+| `Records.Record.parse_matching_record/1` | Unchanged. It parses the same JSON object shape.                                                                        |
+| `StatsLive.Index`                        | Indirect display-only impact: matching-record dropdown/order is now stable, collected first.                            |
+| `StatsLive.TopAlbums`                    | Indirect display-only impact: matching-record dropdown/order is now stable, collected first.                            |
+| `ScrobbledTracksLive.Index`              | Indirect display-only impact through `list_tracks/1`.                                                                   |
+| Database schema/indexes                  | Unchanged. Existing `record_releases.release_id` and `records.musicbrainz_id` indexes remain the relevant access paths. |
+| Supervision tree/PubSub/external APIs    | Unchanged.                                                                                                              |
+| Developer documentation                  | `.agents/skills/sqlite-optimization/SKILL.md` gains a JSON aggregate ordering convention.                               |
 
-| Step | Verification                                                                        |
-| ---- | ----------------------------------------------------------------------------------- |
-| 1    | `mix test test/music_library/listening_stats_test.exs` + StatsLive index tests      |
-| 2    | `mix test test/music_library/listening_stats_test.exs` + StatsLive top_albums tests |
-| 3    | `mix test test/music_library/listening_stats_test.exs` — new order assertions pass  |
-| 4    | `EXPLAIN QUERY PLAN` shows index usage, no full scan                                |
-| 5    | `mise run test` — full suite green                                                  |
-| 6    | `scripts/dev/precommit` — format, credo, sobelow, tests all pass                    |
+There is no significant architecture variation. The implementation stays inside the existing `ListeningStats` SQL-enrichment pattern.
 
-## 5. Architecture impact analysis
+## 7. Performance profile
 
-| Touchpoint                  | Impact                                                                                                                                                                                                                                                                                       |
-| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ListeningStats` context    | **Changed**: two private functions (`tracks_with_record_info_query/0`, `top_albums_attach_metadata/1`) get an ORDER BY clause added to their `json_group_array` fragments. No public API changes.                                                                                            |
-| `Records.Record` schema     | **Unchanged**: `parse_matching_record/1` is unaffected — it parses the same JSON object shape, just now in a deterministic order. No field additions or removals.                                                                                                                            |
-| `parse_matching_records/1`  | **Unchanged**: processes the same JSON array from `json_group_array`, just now deterministically ordered.                                                                                                                                                                                    |
-| `StatsLive.Index`           | **Indirectly affected**: the `recent_activity` stream and top-album components render matching records. When a release group has both collected and wishlisted variants, the order they appear in the UI dropdown/row will now be stable (collected first). No LiveView code changes needed. |
-| `TopAlbums` component       | **Indirectly affected**: renders matching records via `record_components`. Same as above — order is now stable.                                                                                                                                                                              |
-| `ScrobbledTracksLive.Index` | **Indirectly affected**: uses `list_tracks/1` which calls `tracks_with_record_info_query/0`. Matching record order in track rows is now deterministic.                                                                                                                                       |
-| PubSub topics               | **Unchanged**: no new topics, no message format changes.                                                                                                                                                                                                                                     |
-| Supervision tree            | **Unchanged**: no new processes.                                                                                                                                                                                                                                                             |
-| External APIs               | **Unchanged**: no API calls in this path.                                                                                                                                                                                                                                                    |
-| Database                    | **Unchanged**: no schema changes, no migrations. The `records.musicbrainz_id` index already exists and covers the WHERE clause.                                                                                                                                                              |
+The changed aggregate executes inside correlated scalar subqueries that are already bounded by the outer result limits and by release-group membership.
 
-## 6. Performance profile
+Expected cost:
 
-**Time complexity**: The ORDER BY operates on the result set of a correlated subquery filtered by `WHERE r.musicbrainz_id = (...)`. Each row in the outer query (tracks/top-albums) triggers one subquery execution. The subquery matches records sharing a release group — typically 1–5 rows in the vast majority of cases. Sorting 1–5 rows is O(n log n) but effectively constant-time at this scale. The cost per outer row is unchanged from the current implementation (which already does the same scan+json_group_array, just without the sort).
+- Per matching-record aggregate: `O(k log k)` for sorting `k` records sharing a release group.
+- In normal data, `k` is expected to be small, typically 1–5 physical records for a release group.
+- The number of aggregate executions is unchanged: one per outer row already returned by the existing query.
+- The lookup path is unchanged and should continue to use `record_releases_release_id_index` and `records_musicbrainz_id_index`.
 
-**Database query patterns**: No change to the query shape. Still correlated scalar subqueries bounded by the outer LIMIT. The ORDER BY is processed by SQLite's aggregate engine during `json_group_array` execution; it does not affect the outer query plan. No N+1 risk — the correlated subquery was already N queries (one per outer row), and this doesn't change that count or its cost profile.
+SQLite may allocate a temporary sorter/B-tree for the aggregate `ORDER BY`; `EXPLAIN QUERY PLAN` may show `USE TEMP B-TREE FOR json_group_array(ORDER BY)`. That is expected. The temporary memory is proportional to `k`, not to the full `records` table.
 
-**Memory footprint**: `json_group_array` already buffers all matching record rows into a JSON string. Adding ORDER BY doesn't change the buffer size — it only changes the order rows are fed into the accumulator. No additional memory allocation.
+No N+1 regression is introduced because the correlated subqueries already existed. The change only orders the small result set that was already being aggregated.
 
-**Latency/throughput**: Negligible. Sorting 1–5 integers within a subquery that already does a B-tree lookup on `musicbrainz_id` is not measurable at realistic loads. The outer query's LIMIT (100 for `recent_activity`, configurable for top albums) caps the number of subquery invocations.
+## 8. Benchmarking requirements
 
-**Index usage**: The `WHERE r.musicbrainz_id = (...)` clause in both subqueries uses the existing index on `records.musicbrainz_id`. The ORDER BY does not interfere with this index usage — it only affects post-filter ordering.
+No recurring benchmark is required. This is a deterministic-ordering change on a small bounded aggregate group.
 
-## 7. Benchmarking requirements
+Required one-off verification:
 
-**One-off verification**: Run `EXPLAIN QUERY PLAN` on both fragments before and after the change (Step 4). The plan must show the same index usage and no introduction of full-table scans. No ongoing monitoring benchmarks are needed — the change is a pure reordering of already-fetched data with no new scan or join paths.
+- Run `EXPLAIN QUERY PLAN` for the changed inner lookup shape.
+- Confirm index usage remains intact.
+- Confirm any temporary B-tree is only for `json_group_array(ORDER BY)`.
+- Confirm there is no full `records` scan in the matching-record lookup.
 
-**What to measure**:
+If query plans unexpectedly show full scans of `records` or `record_releases`, stop and investigate before proceeding. Do not add indexes unless the plan review proves they are needed.
 
-- `EXPLAIN QUERY PLAN` output for `tracks_with_record_info_query` (pick one representative track)
-- `EXPLAIN QUERY PLAN` output for `top_albums_attach_metadata` (pick one representative album)
+## 9. Cost profile
 
-**Threshold**: The query plan must remain identical to the current plan, with the addition of `USE TEMP B-TREE FOR ORDER BY` at the innermost subquery level (which is expected and unavoidable for any ORDER BY). No `SCAN TABLE records` (full scan) should appear.
+No paid resources are required. The change performs no external API calls and adds no storage, service, or infrastructure dependency.
 
-## 8. Cost profile
+## 10. Production infrastructure steps
 
-No paid resources are consumed by this change. It is a pure SQL fragment modification within the existing SQLite database. No API calls, no additional compute, no storage changes.
+No manual production infrastructure steps are required.
 
-## 9. Production infrastructure steps
+Deployment uses the existing application deployment path. There are no new environment variables, migrations, provisioned services, secrets, DNS changes, or backup changes.
 
-**No production changes required**. The change is a pure application-code modification with no database migration, no environment variable changes, no service provisioning, no DNS changes, and no firewall rule changes. Deployment follows the standard CI/CD pipeline.
+## 11. Documentation updates
 
-## 10. Documentation updates
+Required:
 
-| File                                          | Change                                                                                                                                                                                                                                                                                        |
-| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `docs/architecture.md`                        | No change needed — the architecture document describes module responsibilities and schemas at a higher level. The `ListeningStats` context description is already accurate.                                                                                                                   |
-| `docs/project-conventions.md`                 | No change needed — no new convention is introduced. The SQL pattern (aggregate ORDER BY) is a standard SQLite feature, not a project-specific convention.                                                                                                                                     |
-| `.agents/skills/sqlite-optimization/SKILL.md` | **Minor addition recommended**: Add a note in the "JSON Column Patterns" section documenting that `json_group_array(json_object(...))` should include an explicit `ORDER BY` clause to ensure deterministic output. This is a project convention worth documenting because it's easy to miss. |
+- Update `.agents/skills/sqlite-optimization/SKILL.md` with the deterministic JSON aggregate ordering convention.
 
+Not required:
+
+- `docs/architecture.md` — no architecture boundary changes.
+- `docs/project-conventions.md` — it already delegates database-specific conventions to the SQLite optimization skill.
+- `docs/production-infrastructure.md` — no infrastructure change.
 <!-- SECTION:PLAN:END -->
