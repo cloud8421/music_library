@@ -5,6 +5,7 @@ config_roots = ["presto", "."]
 
 [settings]
 lockfile = true
+lockfile_platforms = ["macos-arm64", "macos-x64", "linux-arm64", "linux-x64"]
 
 [env]
 # BUILD

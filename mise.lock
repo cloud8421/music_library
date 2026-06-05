@@ -4,15 +4,9 @@
 version = "1.20.0-otp-29"
 backend = "core:elixir"
 
-[tools.elixir."platforms.macos-arm64"]
-checksum = "blake3:948b0442f75a4bcb3bf2988323ef0930c7d1c61de2aabaa02fb27ce63f06a858"
-
 [[tools.erlang]]
 version = "29.0.1"
 backend = "core:erlang"
-
-[tools.erlang."platforms.macos-arm64"]
-checksum = "blake3:b96e51d337daff03cabd78ed3f91cfc68e622bd453826d8874796fa99006389c"
 
 [[tools.fd]]
 version = "10.4.2"
@@ -22,25 +16,13 @@ backend = "aqua:sharkdp/fd"
 checksum = "sha256:f32d3657473fba74e2600babc8db0b93420d51169223b7e8143b2ed55d8fd9e8"
 url = "https://github.com/sharkdp/fd/releases/download/v10.4.2/fd-v10.4.2-aarch64-unknown-linux-musl.tar.gz"
 
-[tools.fd."platforms.linux-arm64-musl"]
-checksum = "sha256:f32d3657473fba74e2600babc8db0b93420d51169223b7e8143b2ed55d8fd9e8"
-url = "https://github.com/sharkdp/fd/releases/download/v10.4.2/fd-v10.4.2-aarch64-unknown-linux-musl.tar.gz"
-
 [tools.fd."platforms.linux-x64"]
-checksum = "sha256:e3257d48e29a6be965187dbd24ce9af564e0fe67b3e73c9bdcd180f4ec11bdde"
-url = "https://github.com/sharkdp/fd/releases/download/v10.4.2/fd-v10.4.2-x86_64-unknown-linux-musl.tar.gz"
-
-[tools.fd."platforms.linux-x64-musl"]
 checksum = "sha256:e3257d48e29a6be965187dbd24ce9af564e0fe67b3e73c9bdcd180f4ec11bdde"
 url = "https://github.com/sharkdp/fd/releases/download/v10.4.2/fd-v10.4.2-x86_64-unknown-linux-musl.tar.gz"
 
 [tools.fd."platforms.macos-arm64"]
 checksum = "sha256:623dc0afc81b92e4d4606b380d7bc91916ba7b97814263e554d50923a39e480a"
 url = "https://github.com/sharkdp/fd/releases/download/v10.4.2/fd-v10.4.2-aarch64-apple-darwin.tar.gz"
-
-[tools.fd."platforms.windows-x64"]
-checksum = "sha256:b2816e506390a89941c63c9187d58a3cc10e9a55f2ef0685f9ea0eccaf7c98c8"
-url = "https://github.com/sharkdp/fd/releases/download/v10.4.2/fd-v10.4.2-x86_64-pc-windows-msvc.zip"
 
 [[tools.gh]]
 version = "2.93.0"
@@ -51,17 +33,7 @@ checksum = "sha256:c55feb33684abba57e9909737340d5b39282257c0363e1edde6785ac4a413
 url = "https://github.com/cli/cli/releases/download/v2.93.0/gh_2.93.0_linux_arm64.tar.gz"
 provenance = "github-attestations"
 
-[tools.gh."platforms.linux-arm64-musl"]
-checksum = "sha256:c55feb33684abba57e9909737340d5b39282257c0363e1edde6785ac4a413be7"
-url = "https://github.com/cli/cli/releases/download/v2.93.0/gh_2.93.0_linux_arm64.tar.gz"
-provenance = "github-attestations"
-
 [tools.gh."platforms.linux-x64"]
-checksum = "sha256:02d1290eba130e0b896f3709ffff22e1c75a51475ddb70476a85abc6b5807af0"
-url = "https://github.com/cli/cli/releases/download/v2.93.0/gh_2.93.0_linux_amd64.tar.gz"
-provenance = "github-attestations"
-
-[tools.gh."platforms.linux-x64-musl"]
 checksum = "sha256:02d1290eba130e0b896f3709ffff22e1c75a51475ddb70476a85abc6b5807af0"
 url = "https://github.com/cli/cli/releases/download/v2.93.0/gh_2.93.0_linux_amd64.tar.gz"
 provenance = "github-attestations"
@@ -74,11 +46,6 @@ provenance = "github-attestations"
 [tools.gh."platforms.macos-x64"]
 checksum = "sha256:009425b9d175c482037fe25181817fd6b1ea3ae1f51cfae0e18f29f33d3152ac"
 url = "https://github.com/cli/cli/releases/download/v2.93.0/gh_2.93.0_macOS_amd64.zip"
-provenance = "github-attestations"
-
-[tools.gh."platforms.windows-x64"]
-checksum = "sha256:77aa01ed7317295ad550de0ad04f3f276b1ef0e9272e3d002ac28dd99853d211"
-url = "https://github.com/cli/cli/releases/download/v2.93.0/gh_2.93.0_windows_amd64.zip"
 provenance = "github-attestations"
 
 [[tools.hurl]]
@@ -101,10 +68,6 @@ url = "https://github.com/Orange-OpenSource/hurl/releases/download/8.0.0/hurl-8.
 checksum = "sha256:506a600b196124223b195561ea1be09a96f8a39d752abed050eaa035e7cb195a"
 url = "https://github.com/Orange-OpenSource/hurl/releases/download/8.0.0/hurl-8.0.0-x86_64-apple-darwin.tar.gz"
 
-[tools.hurl."platforms.windows-x64"]
-checksum = "sha256:24d3cd5409f81ebcc26255b06675f9735b9d272b54c33e46e323f9bd4eb4ac42"
-url = "https://github.com/Orange-OpenSource/hurl/releases/download/8.0.0/hurl-8.0.0-x86_64-pc-windows-msvc.zip"
-
 [[tools.litestream]]
 version = "0.5.11"
 backend = "aqua:benbjohnson/litestream"
@@ -113,15 +76,7 @@ backend = "aqua:benbjohnson/litestream"
 checksum = "sha256:ba0fe964f77bfb96d3e34987522fd358ebb9270f71cc3d59ee735fb3d96e386f"
 url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.11/litestream-0.5.11-linux-arm64.tar.gz"
 
-[tools.litestream."platforms.linux-arm64-musl"]
-checksum = "sha256:ba0fe964f77bfb96d3e34987522fd358ebb9270f71cc3d59ee735fb3d96e386f"
-url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.11/litestream-0.5.11-linux-arm64.tar.gz"
-
 [tools.litestream."platforms.linux-x64"]
-checksum = "sha256:2f80fdb6b0a0ff7a116ee37adf02d3de8e977ef76e052b28a6690218f0f7ab55"
-url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.11/litestream-0.5.11-linux-x86_64.tar.gz"
-
-[tools.litestream."platforms.linux-x64-musl"]
 checksum = "sha256:2f80fdb6b0a0ff7a116ee37adf02d3de8e977ef76e052b28a6690218f0f7ab55"
 url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.11/litestream-0.5.11-linux-x86_64.tar.gz"
 
@@ -133,10 +88,6 @@ url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.11/lites
 checksum = "sha256:7f42faf3a474b9d89f649a1f160b8c55a4d80e91849b1046b3276edd20696c9d"
 url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.11/litestream-0.5.11-darwin-x86_64.tar.gz"
 
-[tools.litestream."platforms.windows-x64"]
-checksum = "sha256:9116e8605d4b479e15044ccbccf2aa756be7a8a64b9237f67a074ec1742444a3"
-url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.11/litestream-0.5.11-windows-x86_64.zip"
-
 [[tools.node]]
 version = "26.0.0"
 backend = "core:node"
@@ -145,17 +96,9 @@ backend = "core:node"
 checksum = "sha256:c802664b5770102999efacf5717854f7652797db522e8cc5727a6209afea824d"
 url = "https://nodejs.org/dist/v26.0.0/node-v26.0.0-linux-arm64.tar.gz"
 
-[tools.node."platforms.linux-arm64-musl"]
-checksum = "sha256:8c374da2f289493f346ed7d68143967e4e536a38cf7e5aa7d3933146253193b1"
-url = "https://unofficial-builds.nodejs.org/download/release/v26.0.0/node-v26.0.0-linux-arm64-musl.tar.gz"
-
 [tools.node."platforms.linux-x64"]
 checksum = "sha256:42cee4d7ec80b7f7c89281cf00726b14840ac674462404dd4fd36f03964dc0af"
 url = "https://nodejs.org/dist/v26.0.0/node-v26.0.0-linux-x64.tar.gz"
-
-[tools.node."platforms.linux-x64-musl"]
-checksum = "sha256:333c376e342e5e5c0505f19eaab4990cc03f47a15dd5628c30fe64c39048b995"
-url = "https://unofficial-builds.nodejs.org/download/release/v26.0.0/node-v26.0.0-linux-x64-musl.tar.gz"
 
 [tools.node."platforms.macos-arm64"]
 checksum = "sha256:dcee8564c1a9342f9594dd5e52d533894dfef6b85aa771bbbb870baa3c403235"
@@ -164,10 +107,6 @@ url = "https://nodejs.org/dist/v26.0.0/node-v26.0.0-darwin-arm64.tar.gz"
 [tools.node."platforms.macos-x64"]
 checksum = "sha256:f488ab543fe202d8a2d56e661682117d3c56903a2bf64f2ec1ff7bd421cfd875"
 url = "https://nodejs.org/dist/v26.0.0/node-v26.0.0-darwin-x64.tar.gz"
-
-[tools.node."platforms.windows-x64"]
-checksum = "sha256:d0418640a36096e00bddb57761aa0b1b98f91904ec4ed2b9dd75cbad723becd7"
-url = "https://nodejs.org/dist/v26.0.0/node-v26.0.0-win-x64.zip"
 
 [[tools."npm:backlog.md"]]
 version = "1.45.2"
@@ -185,15 +124,7 @@ backend = "aqua:koalaman/shellcheck"
 checksum = "sha256:12b331c1d2db6b9eb13cfca64306b1b157a86eb69db83023e261eaa7e7c14588"
 url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.linux.aarch64.tar.xz"
 
-[tools.shellcheck."platforms.linux-arm64-musl"]
-checksum = "sha256:12b331c1d2db6b9eb13cfca64306b1b157a86eb69db83023e261eaa7e7c14588"
-url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.linux.aarch64.tar.xz"
-
 [tools.shellcheck."platforms.linux-x64"]
-checksum = "sha256:8c3be12b05d5c177a04c29e3c78ce89ac86f1595681cab149b65b97c4e227198"
-url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.linux.x86_64.tar.xz"
-
-[tools.shellcheck."platforms.linux-x64-musl"]
 checksum = "sha256:8c3be12b05d5c177a04c29e3c78ce89ac86f1595681cab149b65b97c4e227198"
 url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.linux.x86_64.tar.xz"
 
@@ -204,10 +135,6 @@ url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellche
 [tools.shellcheck."platforms.macos-x64"]
 checksum = "sha256:3c89db4edcab7cf1c27bff178882e0f6f27f7afdf54e859fa041fca10febe4c6"
 url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.darwin.x86_64.tar.xz"
-
-[tools.shellcheck."platforms.windows-x64"]
-checksum = "sha256:8a4e35ab0b331c85d73567b12f2a444df187f483e5079ceffa6bda1faa2e740e"
-url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.zip"
 
 [[tools.sqlite]]
 version = "3.53.2"
