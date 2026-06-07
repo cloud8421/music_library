@@ -482,6 +482,10 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
         chat_context={{@artist, @artist_info}}
         placeholder={gettext("Ask about this artist...")}
         empty_prompt={gettext("Ask anything about this artist")}
+        presets={[
+          gettext("What are this artist's most important albums?"),
+          gettext("Did this artist collaborate with any other artist?")
+        ]}
       />
 
       <.structured_modal

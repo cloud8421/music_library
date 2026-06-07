@@ -2593,3 +2593,28 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Matches default"
 msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "Did this artist collaborate with any other artist?"
+msgstr ""
+
+#: lib/music_library_web/components/record_components.ex
+#, elixir-autogen, elixir-format
+msgid "Was this album commercially successful?"
+msgstr ""
+
+#: lib/music_library_web/live/artist_live/show.ex
+#, elixir-autogen, elixir-format
+msgid "What are this artist's most important albums?"
+msgstr ""
+
+#: lib/music_library_web/components/record_components.ex
+#, elixir-autogen, elixir-format
+msgid "What's the concept behind this album?"
+msgstr ""
+
+#: lib/music_library_web/components/record_components.ex
+#, elixir-autogen, elixir-format
+msgid "What's the formation for this album?"
+msgstr ""

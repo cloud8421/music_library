@@ -799,6 +799,11 @@ defmodule MusicLibraryWeb.RecordComponents do
       chat_context={{@record, @embedding_text}}
       placeholder={gettext("Ask about this album...")}
       empty_prompt={gettext("Ask anything about this album")}
+      presets={[
+        gettext("What's the concept behind this album?"),
+        gettext("What's the formation for this album?"),
+        gettext("Was this album commercially successful?")
+      ]}
     />
     """
   end

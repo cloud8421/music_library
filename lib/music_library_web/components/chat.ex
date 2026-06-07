@@ -210,6 +210,18 @@ defmodule MusicLibraryWeb.Components.Chat do
           class="mb-4 size-12 text-zinc-300 dark:text-zinc-600"
         />
         <p class="text-sm font-medium">{@empty_prompt}</p>
+        <ul class="mt-2">
+          <li :for={preset <- @presets} class="mt-1">
+            <.link
+              phx-click="send_message"
+              phx-value-message={preset}
+              phx-target={@myself}
+              class="text-sm text-zinc-700 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-300"
+            >
+              {preset}
+            </.link>
+          </li>
+        </ul>
       </div>
 
       <div

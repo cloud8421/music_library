@@ -231,6 +231,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
         chat_context={@collection_summary}
         placeholder={gettext("Ask about your collection...")}
         empty_prompt={gettext("Ask anything about your music collection")}
+        presets={[]}
       />
 
       <div
