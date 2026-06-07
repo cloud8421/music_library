@@ -129,16 +129,19 @@ defmodule MusicLibraryWeb.Telemetry do
         unit: {:native, :millisecond},
         tags: [:route],
         tag_values: &phoenix_route_tag/1,
+        drop: &drop_dev_http_route?/1,
         reporter_options: [nav: "HTTP"]
       ),
       counter("phoenix.router_dispatch.stop.duration",
         tags: [:status],
         tag_values: &phoenix_status_tag/1,
+        drop: &drop_dev_http_route?/1,
         reporter_options: [nav: "HTTP"]
       ),
       counter("plug.router_dispatch.exception.duration",
         tags: [:status],
         tag_values: &router_exception_status_tag/1,
+        drop: &drop_dev_http_route?/1,
         reporter_options: [nav: "HTTP"]
       ),
 
@@ -243,6 +246,24 @@ defmodule MusicLibraryWeb.Telemetry do
 
   defp phoenix_route_tag(%{route: route}), do: %{route: route}
   defp phoenix_route_tag(_metadata), do: %{route: "unknown"}
+
+  defp drop_dev_http_route?(metadata) do
+    metadata
+    |> http_metric_paths()
+    |> Enum.any?(&dev_path?/1)
+  end
+
+  defp http_metric_paths(%{conn: %{request_path: request_path}, route: route}) do
+    [request_path, route]
+  end
+
+  defp http_metric_paths(%{conn: %{request_path: request_path}}), do: [request_path]
+  defp http_metric_paths(%{route: route}), do: [route]
+  defp http_metric_paths(_metadata), do: []
+
+  defp dev_path?("/dev"), do: true
+  defp dev_path?("/dev/" <> _path), do: true
+  defp dev_path?(_path), do: false
 
   defp phoenix_status_tag(%{conn: %{status: status}}), do: %{status: to_string(status)}
   defp phoenix_status_tag(_metadata), do: %{status: "unknown"}
