@@ -3,6 +3,13 @@ defmodule MusicLibraryWeb.Telemetry do
 
   import Telemetry.Metrics
 
+  @excluded_namespaces [
+    "ErrorTracker",
+    "LiveDebugger",
+    "Oban",
+    "Phoenix"
+  ]
+
   def start_link(arg) do
     Supervisor.start_link(__MODULE__, arg, name: __MODULE__)
   end
@@ -140,24 +147,28 @@ defmodule MusicLibraryWeb.Telemetry do
         unit: {:native, :millisecond},
         tags: [:view],
         tag_values: &live_view_tag/1,
+        drop: &drop_excluded_namespaces/1,
         reporter_options: [nav: "LiveView"]
       ),
       summary("phoenix.live_view.handle_params.stop.duration",
         unit: {:native, :millisecond},
         tags: [:view],
         tag_values: &live_view_tag/1,
+        drop: &drop_excluded_namespaces/1,
         reporter_options: [nav: "LiveView"]
       ),
       summary("phoenix.live_view.render.stop.duration",
         unit: {:native, :millisecond},
         tags: [:view],
         tag_values: &live_view_tag/1,
+        drop: &drop_excluded_namespaces/1,
         reporter_options: [nav: "LiveView"]
       ),
       summary("phoenix.live_view.handle_event.stop.duration",
         unit: {:native, :millisecond},
         tags: [:view, :event],
         tag_values: &live_view_event_tag/1,
+        drop: &drop_excluded_namespaces/1,
         reporter_options: [nav: "LiveView"]
       ),
 
@@ -242,18 +253,30 @@ defmodule MusicLibraryWeb.Telemetry do
 
   defp router_exception_status_tag(_metadata), do: %{status: "500"}
 
+  defp drop_excluded_namespaces(%{socket: %{view: view}}) do
+    live_view_namespace(view) in @excluded_namespaces
+  end
+
+  defp drop_excluded_namespaces(_metadata), do: false
+
   defp live_view_tag(%{socket: %{view: view}}) do
-    module = view |> inspect() |> String.split(".") |> Enum.take(-2) |> Enum.join(".")
-    %{view: module}
+    %{view: live_view_name(view)}
   end
 
   defp live_view_tag(_metadata), do: %{view: "unknown"}
 
   defp live_view_event_tag(%{socket: %{view: view}, event: event}) do
-    module = view |> inspect() |> String.split(".") |> Enum.take(-2) |> Enum.join(".")
-    %{view: module, event: event}
+    %{view: live_view_name(view), event: event}
   end
 
   defp live_view_event_tag(%{event: event}), do: %{view: "unknown", event: event}
   defp live_view_event_tag(_metadata), do: %{view: "unknown", event: "unknown"}
+
+  defp live_view_name(view) do
+    view |> inspect() |> String.split(".") |> Enum.take(-2) |> Enum.join(".")
+  end
+
+  defp live_view_namespace(view) do
+    view |> inspect() |> String.split(".") |> hd()
+  end
 end
