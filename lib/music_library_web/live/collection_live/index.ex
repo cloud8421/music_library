@@ -167,6 +167,7 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
         records={@streams.records}
         record_show_path={fn record -> ~p"/collection/#{record}" end}
         record_edit_path={fn record -> ~p"/collection/#{record}/edit" end}
+        section={:collection}
       />
 
       <.structured_modal

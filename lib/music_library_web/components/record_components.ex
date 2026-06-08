@@ -92,6 +92,7 @@ defmodule MusicLibraryWeb.RecordComponents do
   attr :record_edit_path, :any, required: true
   attr :records, :list, required: true
   attr :current_date, Date, required: false, default: nil
+  attr :section, :atom, values: [:collection, :wishlist], required: true
 
   def record_list(assigns) do
     ~H"""
@@ -136,6 +137,17 @@ defmodule MusicLibraryWeb.RecordComponents do
                 ({gettext("Unreleased")})
               </span>
             </p>
+            <div class="mt-1">
+              <.link
+                :for={genre <- record.genres}
+                class="text-xs/5 sm:text-base"
+                patch={genre_search_path(@section, genre)}
+              >
+                <.badge variant="soft">
+                  {genre}
+                </.badge>
+              </.link>
+            </div>
             <p class="mt-1 text-xs/5 text-zinc-500 sm:hidden dark:text-zinc-400">
               {format_label(record.format)} · {type_label(record.type)}
               <span :if={record.purchased_at}>

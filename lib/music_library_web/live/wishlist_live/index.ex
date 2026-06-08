@@ -134,6 +134,7 @@ defmodule MusicLibraryWeb.WishlistLive.Index do
         records={@streams.records}
         record_show_path={fn record -> ~p"/wishlist/#{record}" end}
         record_edit_path={fn record -> ~p"/wishlist/#{record}/edit" end}
+        section={:wishlist}
       />
 
       <.structured_modal

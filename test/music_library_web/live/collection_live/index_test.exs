@@ -94,6 +94,10 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
         for artist <- record.artists do
           assert_has(session, "#records-#{record.id} a", escape(artist.name))
         end
+
+        for genre <- record.genres do
+          assert_has(session, "#records-#{record.id} span", genre)
+        end
       end
 
       for record <- expected_absent do
@@ -228,6 +232,10 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
       for artist <- record.artists do
         assert_has(session, "#records-#{record.id} a", escape(artist.name))
       end
+
+      for genre <- record.genres do
+        assert_has(session, "#records-#{record.id} span", genre)
+      end
     end
 
     test "supports filters", %{conn: conn, collection: records} do
@@ -273,6 +281,10 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
         for artist <- record.artists do
           assert_has(session, "#records-#{record.id} a", escape(artist.name))
+        end
+
+        for genre <- record.genres do
+          assert_has(session, "#records-#{record.id} span", genre)
         end
       end
 
