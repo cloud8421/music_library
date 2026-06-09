@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "unbash": "3.0.0"
+    "unbash": "^4.0.1"
   },
   "scripts": {
     "test": "node --test extractCommandNames.test.ts"
