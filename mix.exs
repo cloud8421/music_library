@@ -153,7 +153,7 @@ defmodule MusicLibrary.MixProject do
       {:briefly, "~> 0.5.0"},
 
       # Markdown rendering
-      {:mdex, "~> 0.12.0"},
+      {:mdex, "~> 0.13.0"},
 
       # PDF generation
       {:typst, "~> 0.3.1"},

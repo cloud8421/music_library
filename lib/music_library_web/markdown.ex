@@ -11,7 +11,8 @@ defmodule MusicLibraryWeb.Markdown do
   @mdex_options [
     extension: [autolink: true, strikethrough: true, table: true],
     render: [unsafe: true],
-    sanitize: MDEx.Document.default_sanitize_options()
+    sanitize: MDEx.Document.default_sanitize_options(),
+    syntax_highlight: [engine: :lumis]
   ]
 
   @link_target_sanitize_options Keyword.put(
