@@ -7,6 +7,8 @@
 # General application configuration
 import Config
 
+config :mdex_native, syntax_highlighter: :lumis
+
 config :error_tracker,
   repo: MusicLibrary.Repo,
   otp_app: :music_library,
