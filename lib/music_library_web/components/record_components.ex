@@ -435,8 +435,7 @@ defmodule MusicLibraryWeb.RecordComponents do
         :for={{color, i} <- Enum.with_index(@record.dominant_colors)}
         class="animate-equalizer-bar w-0.75 rounded-sm"
         style={"background-color: #{color}; animation-delay: #{i * -0.45}s"}
-      >
-      </span>
+      ></span>
     </span>
     """
   end

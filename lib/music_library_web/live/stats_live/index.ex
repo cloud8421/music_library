@@ -439,8 +439,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
                   <span
                     class="absolute top-6 left-6 -ml-px h-full w-0.5 bg-zinc-200 group-last:hidden"
                     aria-hidden="true"
-                  >
-                  </span>
+                  ></span>
                   <div class="relative flex items-center justify-between space-x-3">
                     <div class="flex min-w-0 items-center justify-between space-x-4">
                       <img
@@ -517,8 +516,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
                   <span
                     class="absolute top-6 left-6 -ml-px h-full w-0.5 bg-zinc-200 group-last:hidden"
                     aria-hidden="true"
-                  >
-                  </span>
+                  ></span>
                   <div class="relative flex items-center justify-between space-x-3">
                     <div class="flex min-w-0 items-center justify-between space-x-4">
                       <img
