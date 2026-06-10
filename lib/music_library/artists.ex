@@ -216,6 +216,10 @@ defmodule MusicLibrary.Artists do
   def create_artist_info(attrs) do
     %ArtistInfo{}
     |> ArtistInfo.changeset(attrs)
+    # Only musicbrainz_data and discogs_data are replaced on conflict.
+    # wikipedia_data and lastfm_data are intentionally preserved and
+    # refreshed via dedicated refresh_wikipedia_data/1 and
+    # refresh_lastfm_data/1 functions.
     |> Repo.insert(on_conflict: {:replace, [:musicbrainz_data, :discogs_data]}, returning: true)
   end
 
