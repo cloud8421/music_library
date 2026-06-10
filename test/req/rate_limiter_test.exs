@@ -15,6 +15,12 @@ defmodule Req.RateLimiterTest do
     end
   end
 
+  describe "new/0" do
+    test "enables concurrent writes" do
+      assert :ets.info(RateLimiter, :write_concurrency)
+    end
+  end
+
   describe "attach/2" do
     test "attaches rate_limiter step and sets private fields" do
       request =
@@ -112,6 +118,66 @@ defmodule Req.RateLimiterTest do
 
       # Clock should not have advanced (no sleep needed)
       assert FakeClock.now() == before_second
+    end
+
+    test "concurrent callers reserve distinct cooldown slots" do
+      name = :"test_concurrent_#{System.unique_integer([:positive])}"
+      cooldown = 500
+      caller_count = 8
+      start_at = 1000
+      parent = self()
+
+      request =
+        Req.new(
+          url: "https://example.com",
+          adapter: fn request ->
+            send(parent, {:reserved_slot, FakeClock.now()})
+            {request, Req.Response.new(status: 200, body: "ok")}
+          end
+        )
+        |> RateLimiter.attach(name: name, cooldown: cooldown, clock: FakeClock)
+
+      tasks =
+        for _ <- 1..caller_count do
+          Task.async(fn ->
+            FakeClock.set(start_at)
+            send(parent, {:ready, self()})
+
+            receive do
+              :go -> :ok
+            after
+              1000 -> flunk("timed out waiting to start")
+            end
+
+            assert {:ok, _response} = Req.get(request)
+          end)
+        end
+
+      task_pids =
+        for _ <- 1..caller_count do
+          assert_receive {:ready, pid}, 1000
+          pid
+        end
+
+      Enum.each(task_pids, &send(&1, :go))
+      Enum.each(tasks, &Task.await(&1, 2000))
+
+      reserved_slots =
+        for _ <- 1..caller_count do
+          assert_receive {:reserved_slot, reserved_slot}, 1000
+          reserved_slot
+        end
+
+      sorted_slots = Enum.sort(reserved_slots)
+
+      assert Enum.uniq(sorted_slots) == sorted_slots
+      assert sorted_slots == Enum.map(0..(caller_count - 1), &(start_at + &1 * cooldown))
+
+      sorted_slots
+      |> Enum.chunk_every(2, 1, :discard)
+      |> Enum.each(fn [earlier, later] ->
+        assert later - earlier >= cooldown
+      end)
     end
 
     test "emits telemetry event when throttling" do
