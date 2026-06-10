@@ -162,7 +162,9 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
     <script :type={ColocatedHook} name=".SearchGlobalShortcut">
       export default {
         mounted() {
-          const universalSearchButton = document.querySelector("#universal-search-button");
+          const universalSearchButton = document.querySelector(
+            "#universal-search-button",
+          );
 
           document.addEventListener("keydown", (event) => {
             switch (event.key) {

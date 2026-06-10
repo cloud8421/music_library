@@ -75,7 +75,11 @@ defmodule MusicLibraryWeb.Components.Chat do
           mounted() {
             this.scrollToBottom();
             this.observer = new MutationObserver(() => this.scrollToBottom());
-            this.observer.observe(this.el, { childList: true, subtree: true, characterData: true });
+            this.observer.observe(this.el, {
+              childList: true,
+              subtree: true,
+              characterData: true,
+            });
           },
           updated() {
             this.scrollToBottom();
@@ -85,8 +89,8 @@ defmodule MusicLibraryWeb.Components.Chat do
           },
           scrollToBottom() {
             this.el.scrollTop = this.el.scrollHeight;
-          }
-        }
+          },
+        };
       </script>
     </div>
     """

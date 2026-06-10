@@ -220,8 +220,8 @@ defmodule MusicLibraryWeb.Components.RecordForm do
               },
               destroyed() {
                 clearTimeout(this.debounceTimer);
-              }
-            }
+              },
+            };
           </script>
         </div>
         <div class="space-y-4">
