@@ -114,48 +114,66 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
   defp apply_action(socket, :index, params) do
     query = params["query"] || ""
 
-    socket =
-      socket
-      |> assign(:page_title, gettext("Scrobble Anything"))
-      |> assign(:search_query, query)
-
-    if String.trim(query) != "" do
-      send(self(), {:perform_search, query})
-      assign(socket, :loading, true)
-    else
-      socket
-    end
+    socket
+    |> assign(:page_title, gettext("Scrobble Anything"))
+    |> run_search(query)
   end
 
   @impl true
   def handle_event("search", %{"query" => query}, socket) do
-    if String.trim(query) == "" do
-      {:noreply,
-       assign(socket,
-         search_query: query,
-         search_results: []
-       )}
-    else
-      send(self(), {:perform_search, query})
-      {:noreply, assign(socket, search_query: query, loading: true)}
-    end
+    {:noreply, run_search(socket, query)}
   end
 
   @impl true
-  def handle_info({:perform_search, query}, socket) do
-    case MusicBrainz.search_release_group(query, limit: 20) do
-      {:ok, results} ->
-        {:noreply,
-         assign(socket,
-           search_results: results.release_groups,
-           loading: false
-         )}
-
-      {:error, _reason} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, gettext("Failed to search for release groups"))
-         |> assign(loading: false)}
+  def handle_async({:search, query}, {:ok, {:ok, results}}, socket) do
+    if current_search?(socket, query) do
+      {:noreply,
+       assign(socket,
+         search_results: results.release_groups,
+         loading: false
+       )}
+    else
+      {:noreply, socket}
     end
+  end
+
+  def handle_async({:search, query}, {:ok, {:error, _reason}}, socket) do
+    if current_search?(socket, query) do
+      {:noreply, search_failed(socket)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_async({:search, query}, {:exit, _reason}, socket) do
+    if current_search?(socket, query) do
+      {:noreply, search_failed(socket)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  defp run_search(socket, query) do
+    if String.trim(query) == "" do
+      assign(socket,
+        search_query: query,
+        search_results: [],
+        loading: false
+      )
+    else
+      socket
+      |> assign(search_query: query, loading: true)
+      |> start_async({:search, query}, fn ->
+        MusicBrainz.search_release_group(query, limit: 20)
+      end)
+    end
+  end
+
+  defp current_search?(socket, query), do: socket.assigns.search_query == query
+
+  defp search_failed(socket) do
+    socket
+    |> put_flash(:error, gettext("Failed to search for release groups"))
+    |> assign(loading: false)
   end
 end
