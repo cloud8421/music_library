@@ -508,7 +508,7 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok, assign(socket, :current_section, :artists)}
   end
 
   @impl true
@@ -653,7 +653,6 @@ defmodule MusicLibraryWeb.ArtistLive.Show do
 
     socket
     |> assign_records(musicbrainz_id)
-    |> assign(:current_section, :artists)
     |> assign(:artist, artist)
     |> assign(:artist_info, artist_info)
     |> assign(:play_count, ListeningStats.artist_play_count(musicbrainz_id))

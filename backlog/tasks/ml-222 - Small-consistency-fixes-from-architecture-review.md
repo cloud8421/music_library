@@ -1,10 +1,11 @@
 ---
 id: ML-222
 title: Small consistency fixes from architecture review
-status: To Do
-assignee: []
+status: Done
+assignee:
+  - pi
 created_date: "2026-06-10 10:41"
-updated_date: "2026-06-10 10:57"
+updated_date: "2026-06-10 15:53"
 labels:
   - chore
 dependencies: []
@@ -34,11 +35,11 @@ Four small, unrelated consistency findings from the 2026-06-10 architecture revi
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 RefreshScrobbles error handling delegates to ErrorHandler.to_oban_result/1; a worker test covers a retryable Last.fm error snoozing and a permanent one cancelling
-- [ ] #2 ApplyScrobbleRules moduledoc states the 12-hour schedule
-- [ ] #3 create_artist_info/1 documents the on_conflict field choice
-- [ ] #4 ArtistLive.Show.mount/3 assigns current_section: :artists; existing artist page tests pass
-- [ ] #5 Each item lands as its own commit referencing this task
+- [x] #1 #1 RefreshScrobbles error handling delegates to ErrorHandler.to_oban_result/1; a worker test covers a retryable Last.fm error snoozing and a permanent one cancelling
+- [x] #2 #2 ApplyScrobbleRules moduledoc no longer mentions a schedule to avoid doc drift
+- [x] #3 #3 create_artist_info/1 documents the on_conflict field choice
+- [x] #4 #4 ArtistLive.Show.mount/3 assigns current_section: :artists; existing artist page tests pass
+- [x] #5 #5 Each item lands as its own commit referencing this task
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -47,9 +48,43 @@ Four small, unrelated consistency findings from the 2026-06-10 architecture revi
 
 One commit per item, each referencing ML-222:
 
-1. refresh*scrobbles.ex: replace the manual retryable_error?/retry_delay branch (lines 26-34) with `{:error, *} = error -> ErrorHandler.to*oban_result(error)`; add/extend worker tests stubbing Last.fm via Req.Test for a retryable error (assert {:snooze, *}) and a permanent error (assert {:cancel, \_}).
-2. apply_scrobble_rules.ex: correct the moduledoc to "every 12 hours" (match config/prod.exs cron).
-3. artists.ex create_artist_info/1: add a comment above the on_conflict option documenting that wikipedia_data/lastfm_data are intentionally preserved and refreshed via their dedicated refresh functions.
-4. artist_live/show.ex mount/3: assign current_section: :artists (keep the assignment in apply_action harmless or remove the duplicate); run artist page tests.
-Finish with mix credo --strict and precommit.
+1. refresh_scrobbles.ex: replaced the dead-code manual retryable_error?/retry_delay branch with ErrorHandler.to_oban_result/1. Also discovered that the ErrorResponse struct pattern match was dead code — LastFm.API returns atoms, not structs. The fix wraps the atom in an ErrorResponse struct before delegating. Added worker tests: success (fetches tracks), snooze on rate limit, cancel on permanent error.
+2. apply_scrobble_rules.ex: removed the stale "every 30 minutes" schedule from moduledoc entirely to avoid doc drift.
+3. artists.ex create_artist_info/1: added comment above on_conflict documenting that wikipedia_data/lastfm_data are intentionally preserved.
+4. artist_live/show.ex mount/3: assigns current_section: :artists; removed the redundant assignment from apply_action.
+
+Verified: mix credo --strict (clean), full test suite (1172 passed, 0 failures).
+
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+
+#1: Discovered the ErrorResponse struct branch was dead code — LastFm.API.get_recent_tracks returns {:error, atom}, not {:error, %ErrorResponse{}}. The atom-based retryable_error?/retry_delay logic could never be reached. Fixed by wrapping the atom in an ErrorResponse struct and routing through ErrorHandler, which handles both the snooze fallback (nil → 30s) and uniform Oban return values.
+
+#2: User directed removing schedule mention entirely instead of correcting it — avoids future doc drift when cron config changes.
+
+#3: Comment added.
+
+#4: Assignment moved to mount/3 per LiveView convention, duplicate removed from apply_action.
+
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
+Four consistency fixes from the 2026-06-10 architecture review, implemented as separate commits:
+
+1. **RefreshScrobbles → ErrorHandler** (`15438ea0`): Replaced dead-code manual retryable_error?/retry_delay branch with `ErrorHandler.to_oban_result/1`. Discovered the ErrorResponse struct match was unreachable — `LastFm.API.get_recent_tracks` returns `{:error, atom}`, not `{:error, %ErrorResponse{}}`. The fix wraps the atom in an ErrorResponse struct so ErrorHandler can apply the snooze fallback (nil → 30s) and uniform Oban return values. Added worker tests (success, snooze on rate_limit_exceeded, cancel on invalid_session_key).
+
+2. **ApplyScrobbleRules moduledoc** (`317ca4e9`): Removed the stale "every 30 minutes" schedule mention entirely, avoiding future doc drift when cron config changes.
+
+3. **create_artist_info upsert contract** (`a4f16c2b`): Added comment above the `on_conflict: {:replace, [:musicbrainz_data, :discogs_data]}` option documenting that `wikipedia_data` and `lastfm_data` are intentionally preserved and refreshed via dedicated functions.
+
+4. **ArtistLive.Show mount** (`8d290587`): Set `@current_section` in `mount/3` and removed the redundant assignment from `apply_action`. Existing artist page tests pass (11/11).
+
+All commits pass: `mix credo --strict` (clean), full test suite (1172 passed, 0 failures).
+
+<!-- SECTION:FINAL_SUMMARY:END -->
