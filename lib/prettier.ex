@@ -27,7 +27,7 @@ defmodule Prettier do
       # This example assumes that your project has prettier installed as a dependency
       # in your package.json. If not, you should pin prettier to a specific version like
       # "prettier@3.8.1" to avoid potential issues when prettier updates.
-      case System.cmd("npx", ["prettier", tmp_file], stderr_to_stdout: true) do
+      case System.cmd("prettier", [tmp_file], stderr_to_stdout: true) do
         {output, 0} ->
           {:ok, String.trim(output)}
 
