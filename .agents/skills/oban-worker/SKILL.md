@@ -59,6 +59,7 @@ end
 |-------|-------------|---------|
 | `default` | 10 | General async tasks, non-API operations |
 | `heavy_writes` | 1 | DB-intensive or serialized operations |
+| `openai` | 3 | OpenAI API calls |
 | `music_brainz` | 3 | MusicBrainz API calls |
 | `discogs` | 3 | Discogs API calls |
 | `wikipedia` | 3 | Wikipedia API calls |

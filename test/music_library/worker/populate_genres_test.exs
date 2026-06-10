@@ -26,7 +26,8 @@ defmodule MusicLibrary.Worker.PopulateGenresTest do
 
       assert_enqueued(
         worker: MusicLibrary.Worker.GenerateRecordEmbedding,
-        args: %{"record_id" => record.id}
+        args: %{"record_id" => record.id},
+        queue: :openai
       )
     end
 

@@ -191,6 +191,7 @@ HTTP 429 into `:rate_limit` vs `:auth_error` by reading the body `code`
 | -------------- | ----------- | ------------------------------------------------------------------- |
 | `default`      | 10          | General async tasks                                                 |
 | `heavy_writes` | 1           | DB-intensive or serialized operations                               |
+| `openai`       | 3           | OpenAI calls (rate-limited at Req layer via `Req.RateLimiter`)      |
 | `music_brainz` | 3           | MusicBrainz calls (rate-limited at Req layer via `Req.RateLimiter`) |
 | `discogs`      | 3           | Discogs calls (rate-limited at Req layer via `Req.RateLimiter`)     |
 | `wikipedia`    | 3           | Wikipedia calls                                                     |
@@ -214,8 +215,8 @@ HTTP 429 into `:rate_limit` vs `:auth_error` by reading the body `code`
 | `RefreshCover`                      | heavy_writes | Manual action / import                                                      |
 | `ImportFromMusicbrainzRelease`      | music_brainz | Barcode scan batch import (2+ new records)                                  |
 | `ImportFromMusicbrainzReleaseGroup` | music_brainz | Cart-style multi-record import in AddRecord component (2+ records selected) |
-| `PopulateGenres`                    | heavy_writes | Manual action (chains → GenerateRecordEmbedding)                            |
-| `GenerateRecordEmbedding`           | heavy_writes | Manual / after genre population (delegates to Similarity, skips unchanged)  |
+| `PopulateGenres`                    | openai       | Manual action (chains → GenerateRecordEmbedding)                            |
+| `GenerateRecordEmbedding`           | openai       | Manual / after genre population (delegates to Similarity, skips unchanged)  |
 | `RecordRefreshMusicBrainzData`      | music_brainz | Manual / batch                                                              |
 | `ArtistRefreshMusicBrainzData`      | music_brainz | Manual / batch                                                              |
 | `ArtistRefreshDiscogsData`          | discogs      | Manual / batch                                                              |

@@ -1,7 +1,7 @@
 defmodule MusicLibrary.Worker.PopulateGenres do
   @moduledoc false
 
-  use Oban.Worker, queue: :heavy_writes, max_attempts: 10
+  use Oban.Worker, queue: :openai, max_attempts: 10
 
   alias MusicLibrary.Records
   alias MusicLibrary.Worker.ErrorHandler

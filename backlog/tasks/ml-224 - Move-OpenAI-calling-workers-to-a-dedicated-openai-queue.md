@@ -1,10 +1,11 @@
 ---
 id: ML-224
 title: Move OpenAI-calling workers to a dedicated openai queue
-status: To Do
-assignee: []
+status: Done
+assignee:
+  - pi
 created_date: "2026-06-10 10:41"
-updated_date: "2026-06-10 10:57"
+updated_date: "2026-06-10 15:36"
 labels:
   - oban
 dependencies: []
@@ -35,10 +36,10 @@ Note: PopulateGenres chains into GenerateRecordEmbedding — confirm the chained
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 An openai queue (concurrency 3, matching other API queues) exists in the Oban config for dev and prod
-- [ ] #2 GenerateRecordEmbedding and PopulateGenres run on the openai queue; no other workers change queues
-- [ ] #3 Worker tests assert the queue assignment; chained PopulateGenres → GenerateRecordEmbedding flow still works
-- [ ] #4 docs/architecture.md queue and worker tables updated
+- [x] #1 An openai queue (concurrency 3, matching other API queues) exists in the Oban config for dev and prod
+- [x] #2 GenerateRecordEmbedding and PopulateGenres run on the openai queue; no other workers change queues
+- [x] #3 Worker tests assert the queue assignment; chained PopulateGenres → GenerateRecordEmbedding flow still works
+- [x] #4 docs/architecture.md queue and worker tables updated
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -52,3 +53,43 @@ Note: PopulateGenres chains into GenerateRecordEmbedding — confirm the chained
 5. Update docs/architecture.md: queues table, on-demand workers table rows for the two workers.
 6. Run precommit.
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+
+Starting implementation. Adding `openai` queue (concurrency 3) and moving GenerateRecordEmbedding + PopulateGenres to it.
+
+Added `openai: 3` to queues in config/config.exs. Changed GenerateRecordEmbedding and PopulateGenres to `queue: :openai`. Verified PopulateGenres → GenerateRecordEmbedding chain doesn't hardcode queue at enqueue (uses `GenerateRecordEmbedding.new()` + `Oban.insert()`). Updated populate_genres_test.exs assert_enqueued to include `queue: :openai`. Both test files pass (7/7).
+
+Ran precommit: Credo ✅, Sobelow ✅, 1169 tests passed, formatting ✅. Fixed prettier formatting on task file.
+
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
+## Changes
+
+Added a dedicated `openai` queue (concurrency 3) for OpenAI API-calling workers, matching the existing pattern where every API has its own queue with pacing enforced by `Req.RateLimiter`.
+
+### Files modified
+
+- **`config/config.exs`**: Added `openai: 3` to the Oban queues list (prod inherits queues from this config; no prod override needed)
+- **`lib/music_library/worker/generate_record_embedding.ex`**: Changed `queue: :heavy_writes` → `queue: :openai`
+- **`lib/music_library/worker/populate_genres.ex`**: Changed `queue: :heavy_writes` → `queue: :openai`
+- **`test/music_library/worker/populate_genres_test.exs`**: Added `queue: :openai` to `assert_enqueued` for the chained `GenerateRecordEmbedding` job
+- **`docs/architecture.md`**: Added `openai` row to Queues table, updated `PopulateGenres` and `GenerateRecordEmbedding` queue in On-Demand Workers table
+
+### What was verified
+
+- The PopulateGenres → GenerateRecordEmbedding chain uses `GenerateRecordEmbedding.new()` + `Oban.insert()` in `Similarity.generate_embedding_async/1` — no hardcoded queue at the enqueue site, so the queue change is self-contained in the worker definitions
+- `RecordGenerateAllEmbeddings` (bulk orchestrator) stays on `heavy_writes` — it doesn't call OpenAI directly; the individual jobs it enqueues flow to `openai`
+- No other workers changed queues
+
+### Tests
+
+Both worker test files pass (7/7). Full precommit suite passes: Credo (no issues), Sobelow, 1169 tests across 4 partitions, formatting (Elixir, assets, docs, backlog).
+
+<!-- SECTION:FINAL_SUMMARY:END -->
