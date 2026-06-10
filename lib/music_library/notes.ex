@@ -1,6 +1,10 @@
 defmodule MusicLibrary.Notes do
   @moduledoc """
   Free-text notes attached to records and artists.
+
+  Rows are keyed by `entity` + `musicbrainz_id` (no FK to `records` or
+  `artist_infos`). Because they attach to the musical entity rather than a
+  database row, notes intentionally survive record deletion and re-import.
   """
 
   alias MusicLibrary.Notes.Note

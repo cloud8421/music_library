@@ -1,6 +1,10 @@
 defmodule MusicLibrary.Chats do
   @moduledoc """
   Persistent storage for AI chat conversations about records, artists, and the collection.
+
+  Rows are keyed by `entity` + `musicbrainz_id` (no FK to `records` or
+  `artist_infos`). Because they attach to the musical entity rather than a
+  database row, chats intentionally survive record deletion and re-import.
   """
 
   import Ecto.Query, warn: false
