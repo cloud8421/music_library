@@ -80,6 +80,19 @@ defmodule MusicLibrary.ArtistsTest do
     test "returns 0 for no matches" do
       assert Artists.search_by_name_count("zzz_nonexistent_zzz") == 0
     end
+
+    test "count and search agree for accent-insensitive query" do
+      record = record_with_artist("Björk")
+      [artist] = record.artists
+      artist_info(artist.musicbrainz_id)
+
+      search_results = Artists.search_by_name("bjork", 10)
+      count = Artists.search_by_name_count("bjork")
+
+      assert Enum.count_until(search_results, 2) == 1
+      assert count == 1
+      assert count == Enum.count_until(search_results, 2)
+    end
   end
 
   describe "refresh_artist_info/1" do

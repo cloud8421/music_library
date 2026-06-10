@@ -103,7 +103,8 @@ defmodule MusicLibrary.Artists do
         normalized_query = String.downcase(trimmed_query)
 
         from(ar in ArtistRecord,
-          where: fragment("lower(artist ->> '$.name') LIKE ?", ^"%#{normalized_query}%"),
+          where:
+            fragment("lower(unaccent(artist ->> '$.name')) LIKE ?", ^"%#{normalized_query}%"),
           select: ar.musicbrainz_id,
           distinct: true
         )
