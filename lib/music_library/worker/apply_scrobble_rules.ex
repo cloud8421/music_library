@@ -2,8 +2,8 @@ defmodule MusicLibrary.Worker.ApplyScrobbleRules do
   @moduledoc """
   Oban worker that periodically applies all enabled scrobble rules.
 
-  This worker runs every 30 minutes and applies all enabled transformation rules
-  to the scrobbled_tracks table. It logs the results and handles errors gracefully.
+  Applies all enabled transformation rules to the scrobbled_tracks table.
+  It logs the results and handles errors gracefully.
   """
 
   use Oban.Worker, queue: :heavy_writes, max_attempts: 3
