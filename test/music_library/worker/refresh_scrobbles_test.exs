@@ -13,6 +13,7 @@ defmodule MusicLibrary.Worker.RefreshScrobblesTest do
       assert :ok = perform_job(RefreshScrobbles, %{})
     end
 
+    @tag :capture_log
     test "snoozes on retryable Last.fm error" do
       Req.Test.stub(LastFm.API, fn conn ->
         Req.Test.json(conn, %{"error" => 29, "message" => "Rate limit exceeded"})
@@ -21,6 +22,7 @@ defmodule MusicLibrary.Worker.RefreshScrobblesTest do
       assert {:snooze, 60} = perform_job(RefreshScrobbles, %{})
     end
 
+    @tag :capture_log
     test "cancels on permanent Last.fm error" do
       Req.Test.stub(LastFm.API, fn conn ->
         Req.Test.json(conn, %{"error" => 9, "message" => "Invalid session key"})
