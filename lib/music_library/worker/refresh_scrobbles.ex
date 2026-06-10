@@ -13,6 +13,7 @@ defmodule MusicLibrary.Worker.RefreshScrobbles do
 
   alias LastFm.{API, Config}
   alias MusicLibrary.ListeningStats
+  alias MusicLibrary.Worker.ErrorHandler
 
   @impl Oban.Worker
   def perform(_job) do
@@ -23,13 +24,11 @@ defmodule MusicLibrary.Worker.RefreshScrobbles do
         ListeningStats.update(tracks)
         :ok
 
-      {:error, %API.ErrorResponse{error: error} = resp} ->
-        if API.ErrorResponse.retryable_error?(error) do
-          seconds = error |> API.ErrorResponse.retry_delay() |> div(1000)
-          {:snooze, seconds}
-        else
-          {:cancel, resp}
-        end
+      {:error, error_atom} when is_atom(error_atom) ->
+        # Last.fm API returns atoms for application-level errors.
+        # Wrap in ErrorResponse for uniform handling through ErrorHandler.
+        error = %API.ErrorResponse{error: error_atom}
+        ErrorHandler.to_oban_result({:error, error})
 
       {:error, reason} ->
         {:error, reason}
