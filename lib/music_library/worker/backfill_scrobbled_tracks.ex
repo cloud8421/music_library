@@ -6,9 +6,12 @@ defmodule MusicLibrary.Worker.BackfillScrobbledTracks do
   next `to_uts` timestamp to continue backfilling.
   """
 
-  use Oban.Worker, queue: :heavy_writes, max_attempts: 3
+  use Oban.Worker,
+    queue: :heavy_writes,
+    max_attempts: 3,
+    unique: [period: :infinity, keys: [:to_uts], states: :incomplete]
 
-  alias MusicLibrary.{BackgroundRepo, ListeningStats}
+  alias MusicLibrary.ListeningStats
 
   @backfill_delay 1
   @batch_size 200
@@ -21,7 +24,7 @@ defmodule MusicLibrary.Worker.BackfillScrobbledTracks do
 
         %{"to_uts" => next_to_uts}
         |> new(schedule_in: @backfill_delay)
-        |> BackgroundRepo.insert()
+        |> Oban.insert()
 
       {:ok, _other_count} ->
         :ok

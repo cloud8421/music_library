@@ -14,7 +14,6 @@ defmodule MusicLibrary.ListeningStats do
 
   alias MusicLibrary.{
     Artists,
-    BackgroundRepo,
     ListeningStats.SearchParser,
     Records,
     Records.Record,
@@ -91,7 +90,7 @@ defmodule MusicLibrary.ListeningStats do
 
     %{"to_uts" => to_uts}
     |> Worker.BackfillScrobbledTracks.new()
-    |> BackgroundRepo.insert()
+    |> Oban.insert()
   end
 
   @spec artist_play_count(String.t()) :: non_neg_integer()

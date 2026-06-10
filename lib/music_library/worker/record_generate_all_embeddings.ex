@@ -1,5 +1,8 @@
 defmodule MusicLibrary.Worker.RecordGenerateAllEmbeddings do
-  use Oban.Worker, queue: :heavy_writes, max_attempts: 3
+  use Oban.Worker,
+    queue: :heavy_writes,
+    max_attempts: 3,
+    unique: [period: :infinity, states: :incomplete]
 
   alias MusicLibrary.Records
 

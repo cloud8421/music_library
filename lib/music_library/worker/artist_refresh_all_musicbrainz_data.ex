@@ -1,5 +1,8 @@
 defmodule MusicLibrary.Worker.ArtistRefreshAllMusicBrainzData do
-  use Oban.Worker, queue: :music_brainz, max_attempts: 3
+  use Oban.Worker,
+    queue: :music_brainz,
+    max_attempts: 3,
+    unique: [period: :infinity, states: :incomplete]
 
   alias MusicLibrary.Artists
 

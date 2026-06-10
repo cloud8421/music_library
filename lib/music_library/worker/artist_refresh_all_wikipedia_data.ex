@@ -1,5 +1,8 @@
 defmodule MusicLibrary.Worker.ArtistRefreshAllWikipediaData do
-  use Oban.Worker, queue: :wikipedia, max_attempts: 3
+  use Oban.Worker,
+    queue: :wikipedia,
+    max_attempts: 3,
+    unique: [period: :infinity, states: :incomplete]
 
   alias MusicLibrary.Artists
 

@@ -5,7 +5,10 @@ defmodule MusicLibrary.Worker.ImportFromMusicbrainzRelease do
   Used by barcode scan batch imports when there are multiple new records to import.
   """
 
-  use Oban.Worker, queue: :music_brainz, max_attempts: 3
+  use Oban.Worker,
+    queue: :music_brainz,
+    max_attempts: 3,
+    unique: [period: 300, keys: [:release_id]]
 
   alias MusicLibrary.Records
   alias MusicLibrary.Records.Record
@@ -23,6 +26,9 @@ defmodule MusicLibrary.Worker.ImportFromMusicbrainzRelease do
       {:ok, _record} ->
         Records.broadcast_index_changed()
         :ok
+
+      {:error, %Ecto.Changeset{}} ->
+        {:cancel, :already_imported}
 
       other ->
         ErrorHandler.to_oban_result(other)

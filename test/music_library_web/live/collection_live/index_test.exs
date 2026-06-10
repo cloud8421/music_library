@@ -664,15 +664,17 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     test "enqueues import jobs for 2+ new releases via UI", %{conn: conn} do
       barcode1 = "5037300650128"
       barcode2 = "1234567890123"
-      releases = releases(:marbles)
+      releases1 = releases(:marbles)
+      releases2 = releases(:queen_greatest_hits)
 
-      # Stub MusicBrainz for both barcode scans
+      # Stub MusicBrainz for both barcode scans, using distinct release
+      # data so uniqueness (keys: [:release_id]) does not deduplicate
       Test.stub(MusicBrainz.API, fn conn ->
         query = conn.params["query"] || ""
 
         cond do
-          String.contains?(query, barcode1) -> Test.json(conn, releases)
-          String.contains?(query, barcode2) -> Test.json(conn, releases)
+          String.contains?(query, barcode1) -> Test.json(conn, releases1)
+          String.contains?(query, barcode2) -> Test.json(conn, releases2)
           true -> Test.json(conn, %{"releases" => []})
         end
       end)
@@ -686,11 +688,11 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
 
       assert_has(session, "#cart-items li", count: 2)
 
-      # Click the "Add 2 releases" button (the button is in the cart sidebar)
+      # Click the add button
       session
       |> click_button("Add 2 releases")
 
-      # Verify exactly two distinct import jobs were enqueued
+      # Verify two distinct import jobs were enqueued with different release_ids
       enqueued = all_enqueued(worker: ImportFromMusicbrainzRelease)
       assert Enum.count_until(enqueued, 3) == 2
       assert Enum.all?(enqueued, & &1.args["release_id"])
