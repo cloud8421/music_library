@@ -148,7 +148,11 @@ defmodule MusicLibraryWeb.Components.AddRecord do
                 {item.title}
               </p>
               <div class="mt-1 flex items-center gap-2">
-                <form phx-change="change_format" phx-target={@myself}>
+                <form
+                  id={"change-format-#{item.cart_item_id}"}
+                  phx-change="change_format"
+                  phx-target={@myself}
+                >
                   <input type="hidden" name="cart_item_id" value={item.cart_item_id} />
                   <select
                     name="format"

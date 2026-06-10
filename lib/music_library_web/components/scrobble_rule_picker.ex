@@ -27,6 +27,7 @@ defmodule MusicLibraryWeb.ScrobbleRulePicker do
         </p>
       </header>
       <form
+        id="rule-picker-search-form"
         class="w-full"
         for={@query}
         phx-submit="search"

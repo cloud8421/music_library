@@ -21,6 +21,7 @@ defmodule MusicLibraryWeb.RecordSetLive.RecordPicker do
         </p>
       </header>
       <form
+        id="record-picker-search-form"
         class="w-full"
         for={@query}
         phx-submit="search"

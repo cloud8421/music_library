@@ -64,7 +64,13 @@ defmodule MusicLibraryWeb.CoreComponents do
 
   def search_form(assigns) do
     ~H"""
-    <form class="w-full sm:w-1/3" for={@query} phx-submit="search" phx-change="search">
+    <form
+      id="search-form"
+      class="w-full sm:w-1/3"
+      for={@query}
+      phx-submit="search"
+      phx-change="search"
+    >
       <.input
         type="search"
         size="sm"

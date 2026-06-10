@@ -588,6 +588,7 @@ defmodule MusicLibraryWeb.StatsLive.Index do
       <:side_actions>
         <.form
           :let={f}
+          id="on-this-day-form"
           for={to_form(%{"current_date" => @current_date})}
           phx-change="set_current_date"
         >

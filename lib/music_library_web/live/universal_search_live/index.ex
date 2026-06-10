@@ -15,7 +15,13 @@ defmodule MusicLibraryWeb.UniversalSearchLive.Index do
         open={@show_modal}
         on_close={JS.push("close_modal", value: %{}, target: "#universal-search")}
       >
-        <form class="mt-6 text-sm" phx-change="search" phx-submit="search" phx-target={@myself}>
+        <form
+          id="universal-search-form"
+          class="mt-6 text-sm"
+          phx-change="search"
+          phx-submit="search"
+          phx-target={@myself}
+        >
           <div class="relative">
             <.icon
               name="hero-magnifying-glass"
