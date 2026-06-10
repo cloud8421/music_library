@@ -1,7 +1,7 @@
 defmodule MusicBrainz.ReleaseSearchResult do
   @moduledoc false
 
-  alias MusicBrainz.ReleaseGroup
+  alias MusicBrainz.{Release, ReleaseGroup}
 
   @enforce_keys [:id, :title, :release_group, :artists, :date, :barcode, :media]
   defstruct [:id, :title, :release_group, :artists, :date, :barcode, :media]
@@ -67,7 +67,9 @@ defmodule MusicBrainz.ReleaseSearchResult do
       :multi
 
   """
-  @spec format(t()) ::
+  @type format_source :: t() | Release.t()
+
+  @spec format(format_source()) ::
           :cd | :vinyl | :dvd | :blu_ray | :digital_download | :vhs | :multi | :unknown
   def format(release_search_result) do
     sorted_frequencies =

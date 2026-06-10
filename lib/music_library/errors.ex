@@ -32,6 +32,24 @@ defmodule MusicLibrary.Errors do
           total: non_neg_integer()
         }
 
+  @type error_detail :: %{
+          required(:id) => pos_integer(),
+          required(:kind) => String.t() | nil,
+          required(:reason) => String.t() | nil,
+          required(:source_line) => String.t() | nil,
+          required(:source_function) => String.t() | nil,
+          required(:status) => :resolved | :unresolved | nil,
+          required(:fingerprint) => binary() | nil,
+          required(:last_occurrence_at) => DateTime.t() | nil,
+          required(:muted) => boolean() | nil,
+          required(:inserted_at) => DateTime.t() | nil,
+          required(:updated_at) => DateTime.t() | nil,
+          required(:occurrences) => [Occurrence.t()],
+          required(:occurrence_count) => non_neg_integer(),
+          required(:first_occurrence_at) => DateTime.t() | nil,
+          optional(atom()) => term()
+        }
+
   @spec list_errors(list_opts()) :: list_result()
   def list_errors(opts \\ []) do
     status = Keyword.get(opts, :status)
@@ -54,9 +72,9 @@ defmodule MusicLibrary.Errors do
     %{errors: errors, total: total}
   end
 
-  @spec get_error(pos_integer()) :: {:ok, Error.t()} | {:error, :not_found}
+  @spec get_error(pos_integer()) :: {:ok, error_detail()} | {:error, :not_found}
   def get_error(id) do
-    case Repo.get(Error, id) do
+    case get_error_record(id) do
       nil ->
         {:error, :not_found}
 
@@ -77,7 +95,8 @@ defmodule MusicLibrary.Errors do
           |> Repo.aggregate(:min, :inserted_at)
 
         result =
-          %{error | occurrences: occurrences}
+          error
+          |> Map.put(:occurrences, occurrences)
           |> Map.put(:occurrence_count, occurrence_count)
           |> Map.put(:first_occurrence_at, first_occurrence_at)
 
@@ -87,7 +106,7 @@ defmodule MusicLibrary.Errors do
 
   @spec mute_error(pos_integer()) :: {:ok, Error.t()} | {:error, :not_found | Ecto.Changeset.t()}
   def mute_error(id) do
-    case Repo.get(Error, id) do
+    case get_error_record(id) do
       nil -> {:error, :not_found}
       %{muted: true} = error -> {:ok, error}
       error -> ErrorTracker.mute(error)
@@ -97,7 +116,7 @@ defmodule MusicLibrary.Errors do
   @spec unmute_error(pos_integer()) ::
           {:ok, Error.t()} | {:error, :not_found | Ecto.Changeset.t()}
   def unmute_error(id) do
-    case Repo.get(Error, id) do
+    case get_error_record(id) do
       nil -> {:error, :not_found}
       %{muted: false} = error -> {:ok, error}
       error -> ErrorTracker.unmute(error)
@@ -107,7 +126,7 @@ defmodule MusicLibrary.Errors do
   @spec resolve_error(pos_integer()) ::
           {:ok, Error.t()} | {:error, :not_found | Ecto.Changeset.t()}
   def resolve_error(id) do
-    case Repo.get(Error, id) do
+    case get_error_record(id) do
       nil -> {:error, :not_found}
       %{status: :resolved} = error -> {:ok, error}
       error -> ErrorTracker.resolve(error)
@@ -117,11 +136,17 @@ defmodule MusicLibrary.Errors do
   @spec unresolve_error(pos_integer()) ::
           {:ok, Error.t()} | {:error, :not_found | Ecto.Changeset.t()}
   def unresolve_error(id) do
-    case Repo.get(Error, id) do
+    case get_error_record(id) do
       nil -> {:error, :not_found}
       %{status: :unresolved} = error -> {:ok, error}
       error -> ErrorTracker.unresolve(error)
     end
+  end
+
+  @spec get_error_record(pos_integer()) :: Error.t() | nil
+  defp get_error_record(id) do
+    from(e in Error, where: e.id == ^id)
+    |> Repo.one()
   end
 
   defp base_query(filters) do

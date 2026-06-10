@@ -232,15 +232,19 @@ defmodule MusicLibrary.Collection.Enrichment do
   end
 
   defp extract_selected_release(%Record{} = record) do
-    if release = Record.selected_release(record) do
-      %{
-        format: to_string(ReleaseSearchResult.format(release)),
-        date: release.date,
-        country: release.country,
-        catalog_number: release.catalog_number,
-        packaging: release.packaging,
-        disambiguation: release.disambiguation
-      }
+    case Record.selected_release(record) do
+      nil ->
+        nil
+
+      release ->
+        %{
+          format: to_string(ReleaseSearchResult.format(release)),
+          date: release.date,
+          country: release.country,
+          catalog_number: release.catalog_number,
+          packaging: release.packaging,
+          disambiguation: release.disambiguation
+        }
     end
   end
 end
