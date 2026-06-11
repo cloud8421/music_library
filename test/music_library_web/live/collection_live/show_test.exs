@@ -79,6 +79,31 @@ defmodule MusicLibraryWeb.CollectionLive.ShowTest do
         assert_has(session, "a", genre)
       end
     end
+
+    test "does not re-run similarity when opening edit modal for same record", %{conn: conn} do
+      record = record()
+
+      release_response = Fixtures.Release.release(:marbles)
+
+      Req.Test.stub(MusicBrainz.API, fn conn ->
+        Req.Test.json(conn, release_response)
+      end)
+
+      session =
+        conn
+        |> visit(~p"/collection/#{record.id}")
+        |> render_async()
+        |> assert_has("h2", escape(record.title))
+
+      # Navigate to edit modal - same record ID, different live_action.
+      # handle_params must NOT re-trigger assign_async, so the loading
+      # skeleton (animate-pulse) must not appear and the edit form must load.
+      session
+      |> click_link("Edit")
+      |> assert_path(~p"/collection/#{record}/show/edit")
+      |> refute_has(".animate-pulse")
+      |> assert_has("button", "Save")
+    end
   end
 
   describe "Delete record" do

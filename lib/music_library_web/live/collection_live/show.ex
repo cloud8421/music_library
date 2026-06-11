@@ -125,7 +125,22 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
         </div>
       </div>
 
-      <.similar_records similar_records={@similar_records} />
+      <.async_result :let={similar_records} assign={@similar_records}>
+        <:loading>
+          <div class="mt-8 animate-pulse">
+            <div class="mb-4 h-5 w-40 rounded bg-zinc-200 dark:bg-zinc-700"></div>
+            <div class="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 sm:gap-x-6 md:grid-cols-4 lg:grid-cols-6">
+              <div
+                :for={_ <- 1..6}
+                class="aspect-square rounded-lg bg-zinc-200 dark:bg-zinc-700"
+              >
+              </div>
+            </div>
+          </div>
+        </:loading>
+        <:failed :let={_failure}></:failed>
+        <.similar_records similar_records={similar_records} />
+      </.async_result>
 
       <.record_debug_sheet record={@record} embedding_text={@embedding_text} />
 
@@ -162,10 +177,21 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    {:noreply,
-     socket
-     |> RecordShow.assign_common_record(id, gettext("Collection"))
-     |> assign_collection_record_context()}
+    previous_id = socket.assigns[:record] && socket.assigns.record.id
+
+    socket =
+      socket
+      |> RecordShow.assign_common_record(id, gettext("Collection"))
+      |> assign_collection_record_context()
+
+    socket =
+      if previous_id == id && socket.assigns[:similar_records] do
+        socket
+      else
+        assign_similar_records(socket)
+      end
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -274,13 +300,14 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
     socket
     |> assign(:last_listened_track, ListeningStats.get_last_listened_track(record))
     |> assign(:play_count, ListeningStats.play_count(record))
-    |> assign_similar_records()
   end
 
   defp assign_similar_records(socket) do
-    similar_records =
-      Similarity.find_similar(socket.assigns.record.id, limit: 6, scope: :collection)
+    record_id = socket.assigns.record.id
 
-    assign(socket, :similar_records, similar_records)
+    assign_async(socket, :similar_records, fn ->
+      similar = Similarity.find_similar(record_id, limit: 6, scope: :collection)
+      {:ok, %{similar_records: similar}}
+    end)
   end
 end
