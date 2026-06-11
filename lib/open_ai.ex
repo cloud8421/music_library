@@ -1,6 +1,6 @@
 defmodule OpenAI do
   @moduledoc """
-  OpenAI API facade for text embeddings and streaming chat.
+  OpenAI API facade for text embeddings, non-streaming and streaming chat.
   """
 
   alias OpenAI.API
@@ -12,9 +12,24 @@ defmodule OpenAI do
           on_chunk: (String.t() -> any())
         ]
 
-  @spec gpt(OpenAI.Completion.t()) :: {:ok, map()} | {:error, term()}
-  def gpt(completion) do
-    API.gpt(completion, open_ai_config())
+  @type respond_opts :: [
+          model: String.t(),
+          temperature: float(),
+          instructions: String.t()
+        ]
+
+  @doc """
+  Calls the OpenAI Responses API without streaming.
+
+  Returns `{:ok, text}` on success.
+  """
+  @spec respond([map()], respond_opts()) :: {:ok, String.t()} | {:error, term()}
+  def respond(messages, opts \\ []) when is_list(messages) do
+    model = Keyword.get(opts, :model, "gpt-4.1")
+    instructions = Keyword.get(opts, :instructions, "")
+    temperature = Keyword.get(opts, :temperature, 0.7)
+
+    API.respond(messages, instructions, model, temperature, open_ai_config())
   end
 
   @spec chat_stream([map()], chat_stream_opts()) :: :ok | {:error, term()}

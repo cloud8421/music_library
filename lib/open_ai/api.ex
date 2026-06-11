@@ -1,6 +1,6 @@
 defmodule OpenAI.API do
   @moduledoc """
-  Low-level HTTP client for the OpenAI API (chat completions, streaming responses, embeddings).
+  Low-level HTTP client for the OpenAI API (non-streaming responses, streaming chat, embeddings).
 
   HTTP errors are returned as `OpenAI.API.ErrorResponse` structs, which classify
   rate-limit failures (retryable) separately from billing-quota failures
@@ -21,26 +21,30 @@ defmodule OpenAI.API do
 
   require Logger
 
-  @spec gpt(OpenAI.Completion.t(), OpenAI.Config.t()) ::
-          {:ok, map()} | {:error, ErrorResponse.t() | Exception.t()}
-  def gpt(completion, config) do
+  @doc """
+  Calls the OpenAI Responses API without streaming.
+
+  Returns `{:ok, text}` on success, where `text` is the response text.
+  """
+  @spec respond([map()], String.t(), String.t(), float(), OpenAI.Config.t()) ::
+          {:ok, String.t()} | {:error, ErrorResponse.t() | Exception.t()}
+  def respond(messages, instructions, model, temperature, config) do
     case config
          |> new_request()
          |> Req.merge(
-           url: "/v1/chat/completions",
+           url: "/v1/responses",
            receive_timeout: 10_000,
            connect_options: [timeout: 2_500],
            json: %{
-             model: completion.model,
-             messages: [Map.take(completion, [:content, :role])],
-             response_format: %{type: "json_object"},
-             temperature: completion.temperature
+             model: model,
+             instructions: instructions,
+             input: messages,
+             temperature: temperature
            }
          )
          |> Req.post() do
       {:ok, %{status: status, body: body}} when status in 200..299 ->
-        content = get_in(body, ["choices", Access.at(0), "message", "content"])
-        JSON.decode(content)
+        {:ok, extract_response_text(body)}
 
       {:ok, response} ->
         {:error, ErrorResponse.from_response(response)}
@@ -175,6 +179,10 @@ defmodule OpenAI.API do
           "Unexpected response: #{inspect(other)}"
         end)
     end
+  end
+
+  defp extract_response_text(body) do
+    get_in(body, ["output", Access.at(0), "content", Access.at(0), "text"])
   end
 
   defp log_attempt(request) do

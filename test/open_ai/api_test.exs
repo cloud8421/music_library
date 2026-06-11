@@ -10,20 +10,30 @@ defmodule OpenAI.APITest do
     api_cooldown: 0
   }
 
-  describe "gpt/2" do
-    test "returns parsed JSON on success" do
+  describe "respond/5" do
+    test "returns response text on success" do
       Req.Test.stub(__MODULE__, fn conn ->
-        assert conn.request_path == "/v1/chat/completions"
+        assert conn.request_path == "/v1/responses"
 
         Req.Test.json(conn, %{
-          "choices" => [
-            %{"message" => %{"content" => ~s({"result": "hello"})}}
+          "output" => [
+            %{
+              "type" => "message",
+              "role" => "assistant",
+              "content" => [%{"type" => "output_text", "text" => "Hello, world"}]
+            }
           ]
         })
       end)
 
-      completion = %{model: "gpt-4.1-mini", content: "test", role: "user", temperature: 0.5}
-      assert {:ok, %{"result" => "hello"}} = API.gpt(completion, @config)
+      assert {:ok, "Hello, world"} =
+               API.respond(
+                 [%{role: "user", content: "test"}],
+                 "instructions",
+                 "gpt-4.1",
+                 0.7,
+                 @config
+               )
     end
 
     @tag :capture_log
@@ -43,9 +53,15 @@ defmodule OpenAI.APITest do
         })
       end)
 
-      completion = %{model: "gpt-4.1-mini", content: "test", role: "user", temperature: 0.5}
+      assert {:error, %ErrorResponse{} = err} =
+               API.respond(
+                 [%{role: "user", content: "test"}],
+                 "instructions",
+                 "gpt-4.1",
+                 0.7,
+                 @config
+               )
 
-      assert {:error, %ErrorResponse{} = err} = API.gpt(completion, @config)
       assert err.status == 429
       assert err.code == "rate_limit_exceeded"
       assert err.kind == :rate_limit
@@ -68,9 +84,15 @@ defmodule OpenAI.APITest do
         })
       end)
 
-      completion = %{model: "gpt-4.1-mini", content: "test", role: "user", temperature: 0.5}
+      assert {:error, %ErrorResponse{} = err} =
+               API.respond(
+                 [%{role: "user", content: "test"}],
+                 "instructions",
+                 "gpt-4.1",
+                 0.7,
+                 @config
+               )
 
-      assert {:error, %ErrorResponse{} = err} = API.gpt(completion, @config)
       assert err.code == "insufficient_quota"
       assert err.kind == :auth_error
       refute ErrorResponse.retryable?(err)
@@ -84,10 +106,14 @@ defmodule OpenAI.APITest do
         |> Req.Test.json(%{"error" => %{"message" => "boom"}})
       end)
 
-      completion = %{model: "gpt-4.1-mini", content: "test", role: "user", temperature: 0.5}
-
       assert {:error, %ErrorResponse{kind: :server_error}} =
-               API.gpt(completion, @config)
+               API.respond(
+                 [%{role: "user", content: "test"}],
+                 "instructions",
+                 "gpt-4.1",
+                 0.7,
+                 @config
+               )
     end
   end
 

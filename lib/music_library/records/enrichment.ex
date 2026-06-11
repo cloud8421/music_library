@@ -16,11 +16,14 @@ defmodule MusicLibrary.Records.Enrichment do
                      MusicLibrary.Colors.KMeansExtractor
                    )
 
+  @genre_model "gpt-4.1-mini"
+
   @spec populate_genres(Record.t()) :: {:ok, Record.t()} | {:error, Ecto.Changeset.t() | term()}
   def populate_genres(record) do
     artists = Enum.map_join(record.artists, ",", fn a -> a.name end)
 
-    completion = %OpenAI.Completion{
+    user_message = %{
+      role: "user",
       content: """
       Provide a list of music genres applicable to the album "#{record.title}" by #{artists}.
 
@@ -30,7 +33,12 @@ defmodule MusicLibrary.Records.Enrichment do
       """
     }
 
-    with {:ok, response} <- OpenAI.gpt(completion) do
+    with {:ok, text} <-
+           OpenAI.respond([user_message],
+             model: @genre_model,
+             temperature: 0.2
+           ),
+         {:ok, response} <- JSON.decode(text) do
       record
       |> Record.add_genres(response["genres"])
       |> Repo.update()

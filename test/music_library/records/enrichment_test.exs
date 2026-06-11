@@ -70,8 +70,14 @@ defmodule MusicLibrary.Records.EnrichmentTest do
 
       Req.Test.stub(OpenAI.API, fn conn ->
         Req.Test.json(conn, %{
-          "choices" => [
-            %{"message" => %{"content" => JSON.encode!(%{"genres" => genres})}}
+          "output" => [
+            %{
+              "type" => "message",
+              "role" => "assistant",
+              "content" => [
+                %{"type" => "output_text", "text" => JSON.encode!(%{"genres" => genres})}
+              ]
+            }
           ]
         })
       end)

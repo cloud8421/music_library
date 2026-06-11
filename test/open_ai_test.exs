@@ -1,20 +1,27 @@
 defmodule OpenAITest do
   use ExUnit.Case, async: true
 
-  describe "gpt/1" do
+  describe "respond/2" do
     test "delegates to API with resolved config" do
       Req.Test.stub(OpenAI.API, fn conn ->
-        assert conn.request_path == "/v1/chat/completions"
+        assert conn.request_path == "/v1/responses"
 
         Req.Test.json(conn, %{
-          "choices" => [
-            %{"message" => %{"content" => ~s({"answer": "42"})}}
+          "output" => [
+            %{
+              "type" => "message",
+              "role" => "assistant",
+              "content" => [%{"type" => "output_text", "text" => ~s({"answer": "42"})}]
+            }
           ]
         })
       end)
 
-      completion = %{model: "gpt-4.1-mini", content: "test", role: "user", temperature: 0.5}
-      assert {:ok, %{"answer" => "42"}} = OpenAI.gpt(completion)
+      assert {:ok, ~s({"answer": "42"})} =
+               OpenAI.respond([%{role: "user", content: "test"}],
+                 model: "gpt-4.1",
+                 temperature: 0.5
+               )
     end
   end
 
