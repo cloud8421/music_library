@@ -1,9 +1,10 @@
 ---
 id: ML-228
 title: unaccounted for component when closing record editing modal
-status: To Do
+status: Done
 assignee: []
 created_date: "2026-06-11 05:43"
+updated_date: "2026-06-12 10:25"
 labels:
   - bug
   - liveview
@@ -30,6 +31,14 @@ This indicates a LiveComponent is still sending messages (or being referenced) a
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 Closing the record editing modal does not produce any "Component not found in state" log messages
-- [ ] #2 The modal continues to open, edit, and close correctly without visual or functional regressions
+- [x] #1 Closing the record editing modal does not produce any "Component not found in state" log messages
+- [x] #2 The modal continues to open, edit, and close correctly without visual or functional regressions
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+
+Closed by updating to live_view 1.2.1
+
+<!-- SECTION:NOTES:END -->
