@@ -80,7 +80,7 @@ config :music_library, OpenAI,
 
 # Configure esbuild (the version is required)
 config :esbuild,
-  version: "0.28.0",
+  version: "0.28.1",
   music_library: [
     args:
       ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --alias:@=.),
