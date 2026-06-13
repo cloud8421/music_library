@@ -4,7 +4,7 @@ title: Stop returning notify_update result from enrichment workers
 status: To Do
 assignee: []
 created_date: "2026-06-10 10:38"
-updated_date: "2026-06-10 10:55"
+updated_date: "2026-06-13 16:42"
 labels:
   - oban
   - fix
@@ -52,3 +52,18 @@ Three Oban workers return the result of `Records.notify_update/1` (spec: `:ok | 
 3. Update worker tests (test/music_library/worker/) to assert perform returns :ok on success, with external APIs stubbed via Req.Test. Add tests if a worker lacks a success-path assertion.
 4. Run the three worker test files, then precommit.
 <!-- SECTION:PLAN:END -->
+
+## Comments
+
+<!-- COMMENTS:BEGIN -->
+
+author: pi
+created: 2026-06-13 16:42
+
+---
+
+Archiving as not worth addressing after auditing `Phoenix.PubSub.broadcast/3` failure modes. In this app, PubSub uses the default `Phoenix.PubSub.PG2` adapter; `broadcast/3` is typed as `:ok | {:error, term()}`, but the default adapter's only explicit returned error is `{:error, :no_such_group}`. No subscribers and missed LiveView updates are not returned failures. Other infrastructure problems would generally raise/exit rather than return `{:error, _}`.
+
+## The retry-on-broadcast-error concern is therefore technically valid but very low value to fix. If revisited later, note that `GenerateRecordEmbedding` has the same success-path `Records.notify_update/1` return shape as the three workers listed in this task.
+
+<!-- COMMENTS:END -->
