@@ -42,8 +42,29 @@ includes = ["scripts"]
 
 [tasks.test]
 depends = [
-  "dev:partitioned-test 1",
-  "dev:partitioned-test 2",
-  "dev:partitioned-test 3",
-  "dev:partitioned-test 4",
+  "//:dev:partitioned-test 1",
+  "//:dev:partitioned-test 2",
+  "//:dev:partitioned-test 3",
+  "//:dev:partitioned-test 4",
 ]
+
+[tasks."test:clean-cover"]
+hide = true
+run = "rm -rf cover"
+
+[tasks."test:run-with-cover"]
+hide = true
+depends = ["//:test:clean-cover"]
+run = [
+  { tasks = [
+    "//:dev:partitioned-test 1 --cover",
+    "//:dev:partitioned-test 2 --cover",
+    "//:dev:partitioned-test 3 --cover",
+    "//:dev:partitioned-test 4 --cover",
+  ] },
+]
+
+[tasks."test:cover"]
+description = "Run partitioned tests and report coverage"
+depends = ["//:test:run-with-cover"]
+run = "mix test.coverage"

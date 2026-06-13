@@ -2,6 +2,7 @@
 
 #MISE description="Run project tests"
 #USAGE arg "<partition_number>" help="The number of the partition"
+#USAGE flag "--cover" help="Export coverage data for this partition"
 
 set -e
 
@@ -9,5 +10,11 @@ source "$(git rev-parse --show-toplevel)/scripts/_helpers.sh"
 
 ensure_working_directory!
 
+mix_args=(test --partitions 4)
+
+if [[ "${usage_cover:-}" == "true" ]]; then
+  mix_args+=(--cover)
+fi
+
 # shellcheck disable=SC2154
-MIX_TEST_PARTITION="${usage_partition_number}" mix test --partitions 4
+MIX_TEST_PARTITION="${usage_partition_number}" mix "${mix_args[@]}"

@@ -30,7 +30,7 @@ Show outdated dependencies.
 
 ## `dev:partitioned-test`
 
-- **Usage**: `dev:partitioned-test <partition_number>`
+- **Usage**: `dev:partitioned-test [--cover] <partition_number>`
 
 Run project tests
 
@@ -39,6 +39,12 @@ Run project tests
 #### `<partition_number>`
 
 The number of the partition
+
+### Flags
+
+#### `--cover`
+
+Export coverage data for this partition
 
 ## `dev:pi-test`
 
@@ -126,6 +132,14 @@ Run HTTP tests against production
 
 ## `test`
 
-- Depends: dev:partitioned-test 1, dev:partitioned-test 2, dev:partitioned-test 3, dev:partitioned-test 4
+- Depends: //:dev:partitioned-test 1, //:dev:partitioned-test 2, //:dev:partitioned-test 3, //:dev:partitioned-test 4
 
 - **Usage**: `test`
+
+## `test:cover`
+
+- Depends: //:test:run-with-cover
+
+- **Usage**: `test:cover`
+
+Run partitioned tests and report coverage
