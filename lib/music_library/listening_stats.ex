@@ -620,10 +620,10 @@ defmodule MusicLibrary.ListeningStats do
     record_title = record.title
 
     from t in Track,
-      where: fragment("? ->> '$.musicbrainz_id'", t.album) in ^release_ids,
+      where: fragment("json_extract(?, '$.musicbrainz_id')", t.album) in ^release_ids,
       or_where:
-        fragment("? ->> '$.title'", t.album) == ^record_title and
-          fragment("? ->> '$.name'", t.artist) == ^main_artist_name
+        fragment("json_extract(?, '$.title')", t.album) == ^record_title and
+          fragment("json_extract(?, '$.name')", t.artist) == ^main_artist_name
   end
 
   defp search_query(base_query, ""), do: base_query

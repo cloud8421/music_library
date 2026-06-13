@@ -752,7 +752,51 @@ defmodule MusicLibrary.ListeningStatsTest do
   end
 
   describe "get_last_listened_track/1" do
-    test "returns the most recent scrobbled track for a record" do
+    test "returns the most recent scrobbled track for a record by album release id" do
+      release_id = Ecto.UUID.generate()
+
+      record =
+        RecordsFixtures.record_with_artist("Release Match Artist", %{
+          title: "Release Match Album",
+          musicbrainz_data: nil,
+          release_ids: [release_id],
+          selected_release_id: release_id
+        })
+
+      now = System.system_time(:second)
+
+      _older =
+        track_fixture(%{
+          artist_name: "Different Artist",
+          album_musicbrainz_id: release_id,
+          album_title: "Different Album",
+          title: "Older Release Track",
+          scrobbled_at_uts: now - 200
+        })
+
+      track_fixture(%{
+        artist_name: "Different Artist",
+        album_musicbrainz_id: release_id,
+        album_title: "Different Album",
+        title: "Newer Release Track",
+        scrobbled_at_uts: now - 100
+      })
+
+      track_fixture(%{
+        artist_name: "Different Artist",
+        album_musicbrainz_id: Ecto.UUID.generate(),
+        album_title: "Different Album",
+        title: "Unmatched Track",
+        scrobbled_at_uts: now - 50
+      })
+
+      result = ListeningStats.get_last_listened_track(record)
+
+      assert result.title == "Newer Release Track"
+      assert result.scrobbled_at_uts == now - 100
+    end
+
+    test "returns the most recent scrobbled track for a record by title and artist fallback" do
       record = RecordsFixtures.record()
       main_artist = Record.main_artist(record)
       now = System.system_time(:second)
@@ -786,7 +830,41 @@ defmodule MusicLibrary.ListeningStatsTest do
   end
 
   describe "play_count/1" do
-    test "returns the correct scrobble count for a record" do
+    test "returns the correct scrobble count for a record by album release id" do
+      release_id = Ecto.UUID.generate()
+
+      record =
+        RecordsFixtures.record_with_artist("Release Count Artist", %{
+          title: "Release Count Album",
+          musicbrainz_data: nil,
+          release_ids: [release_id],
+          selected_release_id: release_id
+        })
+
+      now = System.system_time(:second)
+
+      for i <- 1..2 do
+        track_fixture(%{
+          artist_name: "Different Artist",
+          album_musicbrainz_id: release_id,
+          album_title: "Different Album",
+          title: "Release Track #{i}",
+          scrobbled_at_uts: now - i * 100
+        })
+      end
+
+      track_fixture(%{
+        artist_name: "Different Artist",
+        album_musicbrainz_id: Ecto.UUID.generate(),
+        album_title: "Different Album",
+        title: "Unmatched Track",
+        scrobbled_at_uts: now - 300
+      })
+
+      assert ListeningStats.play_count(record) == 2
+    end
+
+    test "returns the correct scrobble count for a record by title and artist fallback" do
       record = RecordsFixtures.record()
       main_artist = Record.main_artist(record)
       now = System.system_time(:second)
