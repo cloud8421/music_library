@@ -9,6 +9,11 @@ defmodule MusicLibrary.Assets.Cache do
   `Transform.canonical_key/1`) and `format` is the output MIME type
   (e.g. `"image/webp"`).
 
+  ## Storage characteristics
+
+  Cached values are already-encoded image binaries, so the ETS table avoids
+  `:compressed` to prevent compression overhead on the asset-serving hot path.
+
   ## TTL and pruning
 
   The TTL is configured via the `@one_week_seconds` module attribute
@@ -37,7 +42,12 @@ defmodule MusicLibrary.Assets.Cache do
 
   @spec new() :: :ets.table()
   def new do
-    :ets.new(__MODULE__, [:named_table, :public, :compressed, read_concurrency: true])
+    :ets.new(__MODULE__, [
+      :named_table,
+      :public,
+      read_concurrency: true,
+      write_concurrency: true
+    ])
   end
 
   @spec set(String.t(), String.t(), binary()) :: true
