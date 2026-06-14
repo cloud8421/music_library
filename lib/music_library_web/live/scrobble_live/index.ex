@@ -6,6 +6,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
   alias MusicBrainz.ReleaseGroupSearchResult
   alias MusicLibrary.Records
   alias MusicLibrary.ScrobbleActivity
+  alias Phoenix.LiveView.AsyncResult
 
   @impl true
   def render(assigns) do
@@ -25,69 +26,81 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
             </.button>
           </div>
         </header>
-        <%= if @search_results != [] do %>
-          <div class="space-y-3">
-            <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-200">
-              {gettext("Release Groups")}
-            </h3>
-            <ul class={[
-              "mt-5 divide-y divide-zinc-100 dark:divide-slate-300/30",
-              "max-h-125 overflow-y-auto"
-            ]}>
-              <li :for={release_group <- @search_results}>
-                <.link
-                  navigate={~p"/scrobble/#{release_group.id}"}
-                  class="flex cursor-pointer justify-between gap-x-6 py-5 hover:bg-zinc-100 dark:hover:bg-zinc-700"
-                >
-                  <div class="flex w-full shrink-0 items-center justify-between px-4">
-                    <img
-                      class="mr-4 w-20 flex-none rounded-lg"
-                      alt={release_group.title}
-                      src={ReleaseGroupSearchResult.thumb_url(release_group)}
-                      onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
-                    />
-                    <div class="min-w-0 flex-auto">
-                      <p class="truncate text-sm/6 text-zinc-700 dark:text-zinc-400">
-                        {release_group.artists}
-                      </p>
-                      <p class="mt-1 flex truncate text-sm/5 font-semibold text-wrap text-zinc-700 sm:text-base dark:text-zinc-300">
-                        {release_group.title}
-                      </p>
-                      <p class="mt-1 flex items-center gap-1 text-xs/5 text-zinc-500 dark:text-zinc-400">
-                        {Records.Record.format_release_date(release_group.release_date)}
-                        <span>&middot;</span>
-                        <.badge variant="soft" size="xs">{type_label(release_group.type)}</.badge>
-                      </p>
-                    </div>
-                  </div>
-                </.link>
-              </li>
-            </ul>
-          </div>
-        <% end %>
-
-        <%= if @loading && @search_query != "" do %>
-          <div class="py-8 text-center">
-            <.loading class="mx-auto size-8 text-zinc-400" />
-            <p class="mt-2 text-zinc-600 dark:text-zinc-400">
-              {gettext("Searching...")}
-            </p>
-          </div>
-        <% end %>
-
-        <%= if @search_query != "" && @search_results == [] && not @loading do %>
-          <div class="py-8 text-center">
-            <.icon
-              name="hero-magnifying-glass"
-              class="mx-auto size-12 text-zinc-300 dark:text-zinc-600"
-            />
-            <p class="mt-3 text-zinc-600 dark:text-zinc-400">
-              {gettext("No release groups found for \"%{query}\"", query: @search_query)}
-            </p>
-            <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-500">
-              {gettext("Try a different search term or check the spelling")}
-            </p>
-          </div>
+        <%= if @search_query != "" do %>
+          <.async_result :let={result} assign={@search}>
+            <:loading>
+              <div class="py-8 text-center">
+                <.loading class="mx-auto size-8 text-zinc-400" />
+                <p class="mt-2 text-zinc-600 dark:text-zinc-400">
+                  {gettext("Searching...")}
+                </p>
+              </div>
+            </:loading>
+            <:failed :let={_reason}>
+              <div class="py-8 text-center">
+                <.icon
+                  name="hero-exclamation-triangle"
+                  class="mx-auto size-12 text-red-300 dark:text-red-600"
+                />
+                <p class="mt-3 text-zinc-600 dark:text-zinc-400">
+                  {gettext("Failed to search for release groups")}
+                </p>
+              </div>
+            </:failed>
+            <%= if result.release_groups != [] do %>
+              <div class="space-y-3">
+                <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-200">
+                  {gettext("Release Groups")}
+                </h3>
+                <ul class={[
+                  "mt-5 divide-y divide-zinc-100 dark:divide-slate-300/30",
+                  "max-h-125 overflow-y-auto"
+                ]}>
+                  <li :for={release_group <- result.release_groups}>
+                    <.link
+                      navigate={~p"/scrobble/#{release_group.id}"}
+                      class="flex cursor-pointer justify-between gap-x-6 py-5 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                    >
+                      <div class="flex w-full shrink-0 items-center justify-between px-4">
+                        <img
+                          class="mr-4 w-20 flex-none rounded-lg"
+                          alt={release_group.title}
+                          src={ReleaseGroupSearchResult.thumb_url(release_group)}
+                          onerror={"this.src = '" <> ~p"/images/cover-not-found.png" <> "';"}
+                        />
+                        <div class="min-w-0 flex-auto">
+                          <p class="truncate text-sm/6 text-zinc-700 dark:text-zinc-400">
+                            {release_group.artists}
+                          </p>
+                          <p class="mt-1 flex truncate text-sm/5 font-semibold text-wrap text-zinc-700 sm:text-base dark:text-zinc-300">
+                            {release_group.title}
+                          </p>
+                          <p class="mt-1 flex items-center gap-1 text-xs/5 text-zinc-500 dark:text-zinc-400">
+                            {Records.Record.format_release_date(release_group.release_date)}
+                            <span>&middot;</span>
+                            <.badge variant="soft" size="xs">{type_label(release_group.type)}</.badge>
+                          </p>
+                        </div>
+                      </div>
+                    </.link>
+                  </li>
+                </ul>
+              </div>
+            <% else %>
+              <div class="py-8 text-center">
+                <.icon
+                  name="hero-magnifying-glass"
+                  class="mx-auto size-12 text-zinc-300 dark:text-zinc-600"
+                />
+                <p class="mt-3 text-zinc-600 dark:text-zinc-400">
+                  {gettext("No release groups found for \"%{query}\"", query: @search_query)}
+                </p>
+                <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-500">
+                  {gettext("Try a different search term or check the spelling")}
+                </p>
+              </div>
+            <% end %>
+          </.async_result>
         <% end %>
       </div>
     </Layouts.app>
@@ -100,8 +113,7 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
      assign(socket,
        current_section: :scrobble,
        search_query: "",
-       search_results: [],
-       loading: false,
+       search: AsyncResult.loading(),
        can_scrobble?: ScrobbleActivity.can_scrobble?()
      )}
   end
@@ -128,9 +140,10 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
   def handle_async({:search, query}, {:ok, {:ok, results}}, socket) do
     if current_search?(socket, query) do
       {:noreply,
-       assign(socket,
-         search_results: results.release_groups,
-         loading: false
+       assign(
+         socket,
+         :search,
+         AsyncResult.ok(socket.assigns.search, results)
        )}
     else
       {:noreply, socket}
@@ -157,12 +170,11 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
     if String.trim(query) == "" do
       assign(socket,
         search_query: query,
-        search_results: [],
-        loading: false
+        search: AsyncResult.loading()
       )
     else
       socket
-      |> assign(search_query: query, loading: true)
+      |> assign(search_query: query)
       |> start_async({:search, query}, fn ->
         MusicBrainz.search_release_group(query, limit: 20)
       end)
@@ -174,6 +186,6 @@ defmodule MusicLibraryWeb.ScrobbleLive.Index do
   defp search_failed(socket) do
     socket
     |> put_flash(:error, gettext("Failed to search for release groups"))
-    |> assign(loading: false)
+    |> assign(:search, AsyncResult.failed(socket.assigns.search, {:error, :search_failed}))
   end
 end
