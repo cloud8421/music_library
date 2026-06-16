@@ -40,13 +40,15 @@ Before exploring the codebase for any task, read `docs/architecture.md`. Do this
 
 <!-- usage-rules-start -->
 <!-- usage_rules-start -->
+
 ## usage_rules usage
+
 _A config-driven dev tool for Elixir projects to manage AGENTS.md files and agent skills from dependencies_
 
 ## Using Usage Rules
 
-Many packages have usage rules, which you should *thoroughly* consult before taking any
-action. These usage rules contain guidelines and rules *directly from the package authors*.
+Many packages have usage rules, which you should _thoroughly_ consult before taking any
+action. These usage rules contain guidelines and rules _directly from the package authors_.
 They are your best source of knowledge for making decisions.
 
 ## Modules & functions in the current app and dependencies
@@ -65,10 +67,9 @@ mix usage_rules.docs Enum.zip
 mix usage_rules.docs Enum.zip/1
 ```
 
-
 ## Searching Documentation
 
-You should also consult the documentation of any tools you are using, early and often. The best 
+You should also consult the documentation of any tools you are using, early and often. The best
 way to accomplish this is to use the `usage_rules.search_docs` mix task. Once you have
 found what you are looking for, use the links in the search results to get more detail. For example:
 
@@ -86,23 +87,27 @@ mix usage_rules.search_docs "making requests" -p req
 mix usage_rules.search_docs "Enum.zip" --query-by title
 ```
 
-
 <!-- usage_rules-end -->
 <!-- usage_rules:elixir-start -->
+
 ## usage_rules:elixir usage
+
 # Elixir Core Usage Rules
 
 ## Pattern Matching
+
 - Use pattern matching over conditional logic when possible
 - Prefer to match on function heads instead of using `if`/`else` or `case` in function bodies
 - `%{}` matches ANY map, not just empty maps. Use `map_size(map) == 0` guard to check for truly empty maps
 
 ## Error Handling
+
 - Use `{:ok, result}` and `{:error, reason}` tuples for operations that can fail
 - Avoid raising exceptions for control flow
 - Use `with` for chaining operations that return `{:ok, _}` or `{:error, _}`
 
 ## Common Mistakes to Avoid
+
 - Elixir has no `return` statement, nor early returns. The last expression in a block is always returned.
 - Don't use `Enum` functions on large collections when `Stream` is more appropriate
 - Avoid nested `case` statements - refactor to a single `case`, `with` or separate functions
@@ -115,6 +120,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 - There are many useful standard library functions, prefer to use them where possible
 
 ## Function Design
+
 - Use guard clauses: `when is_binary(name) and byte_size(name) > 0`
 - Prefer multiple function clauses over complex conditional logic
 - Name functions descriptively: `calculate_total_price/2` not `calc/2`
@@ -122,6 +128,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 - Names like `is_thing` should be reserved for guards
 
 ## Data Structures
+
 - Use structs over maps when the shape is known: `defstruct [:name, :age]`
 - Prefer keyword lists for options: `[timeout: 5000, retries: 3]`
 - Use maps for dynamic key-value data
@@ -134,6 +141,7 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 - Read the docs and options fully before using tasks
 
 ## Testing
+
 - Run tests in a specific file with `mix test test/my_test.exs` and a specific test with the line number `mix test path/to/test.exs:123`
 - Limit the number of failed tests with `mix test --max-failures n`
 - Use `@tag` to tag specific tests, and `mix test --only tag` to run only those tests
@@ -146,26 +154,32 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 
 <!-- usage_rules:elixir-end -->
 <!-- usage_rules:otp-start -->
+
 ## usage_rules:otp usage
+
 # OTP Usage Rules
 
 ## GenServer Best Practices
+
 - Keep state simple and serializable
 - Handle all expected messages explicitly
 - Use `handle_continue/2` for post-init work
 - Implement proper cleanup in `terminate/2` when necessary
 
 ## Process Communication
+
 - Use `GenServer.call/3` for synchronous requests expecting replies
 - Use `GenServer.cast/2` for fire-and-forget messages.
 - When in doubt, use `call` over `cast`, to ensure back-pressure
 - Set appropriate timeouts for `call/3` operations
 
 ## Fault Tolerance
+
 - Set up processes such that they can handle crashing and being restarted by supervisors
 - Use `:max_restarts` and `:max_seconds` to prevent restart loops
 
 ## Task and Async
+
 - Use `Task.Supervisor` for better fault tolerance
 - Handle task failures with `Task.yield/2` or `Task.shutdown/2`
 - Set appropriate task timeouts
@@ -173,39 +187,66 @@ mix usage_rules.search_docs "Enum.zip" --query-by title
 
 <!-- usage_rules:otp-end -->
 <!-- mdex-start -->
+
 ## mdex usage
+
 _Fast and extensible Markdown for Elixir_
 
 @deps/mdex/usage-rules.md
+
 <!-- mdex-end -->
 <!-- usage-rules-end -->
 
-<!-- BACKLOG.MD MCP GUIDELINES START -->
+<!-- BACKLOG.MD GUIDELINES START -->
 
 <CRITICAL_INSTRUCTION>
 
-## BACKLOG WORKFLOW INSTRUCTIONS
+## Backlog.md Overview (CLI)
 
-This project uses Backlog.md MCP for all task and project management activities.
+This project uses Backlog.md to track features, bugs, and structured work as tasks.
 
-**CRITICAL GUIDANCE**
+### When to Use Backlog
 
-- If your client supports MCP resources, read `backlog://workflow/overview` to understand when and how to use Backlog for this project.
-- If your client only supports tools or the above request fails, call `backlog.get_backlog_instructions()` to load the tool-oriented overview. Use the `instruction` selector when you need `task-creation`, `task-execution`, or `task-finalization`.
+Create a task when the work requires planning, decisions, or handoff notes.
 
-- **First time working here?** Read the overview resource IMMEDIATELY to learn the workflow
-- **Already familiar?** You should have the overview cached ("## Backlog.md Overview (MCP)")
-- **When to read it**: BEFORE creating tasks, or when you're unsure whether to track work
+Ask: "Do I need to think about HOW to do this?"
 
-These guides cover:
+- Yes: search for an existing task first, then create one if needed.
+- No: do the small mechanical change directly.
 
-- Decision framework for when to create tasks
-- Search-first workflow to avoid duplicates
-- Links to detailed guides for task creation, execution, and finalization
-- MCP tools reference
+Create tasks for work like bug fixes that need investigation, feature work, API changes, refactors, or anything that should be reviewed as a commitment. Skip task creation for questions, explanations, quick lookups, and obvious mechanical edits.
 
-You MUST read the overview resource to understand the complete workflow. The information is NOT summarized here.
+### Start Every Request Here
+
+Use this overview to decide what to read or run next. The detailed guides contain the procedure for creating, executing, and finalizing tasks.
+
+Search and read before changing anything:
+
+- `backlog search "query" --plain`
+- `backlog task list --status "<todo status>" --plain`
+- `backlog task list --status "<active status>" --plain`
+- `backlog task list --search "login" --labels frontend,bug --limit 20 --plain`
+- `backlog task view ML-123 --plain`
+
+### Detailed Guides
+
+Always read the relevant guide before that part of the workflow. Do not rely on this overview alone for these actions:
+
+- `backlog instructions task-creation`
+  -> Read before creating tasks: how to search, scope, and create tasks
+- `backlog instructions task-execution`
+  -> Read before planning or updating task work: how to plan, update, and work through tasks
+- `backlog instructions task-finalization`
+  -> Read before finishing tasks: how to verify, summarize, and finish tasks
+
+Use `backlog <command> --help` before unfamiliar operations. Command help includes input fields, read/write behavior, output shape, and examples.
+
+### Core Principle
+
+Backlog tracks committed work: what will be built, fixed, or changed. Use the CLI for Backlog changes so metadata, file names, relationships, and history stay consistent.
+
+Important: Do not edit Backlog task, draft, document, decision, or milestone markdown files directly. Use Backlog commands so automatic metadata stays complete.
 
 </CRITICAL_INSTRUCTION>
 
-<!-- BACKLOG.MD MCP GUIDELINES END -->
+<!-- BACKLOG.MD GUIDELINES END -->

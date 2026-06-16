@@ -5,16 +5,6 @@
       "url": "http://127.0.0.1:4003/tidewave/mcp",
       "directTools": true
     },
-    "backlog": {
-      "type": "stdio",
-      "command": "backlog",
-      "args": [
-        "mcp",
-        "start"
-      ],
-      "env": {},
-      "directTools": true
-    },
     "chrome-devtools-mcp": {
       "type": "stdio",
       "command": "npx",
