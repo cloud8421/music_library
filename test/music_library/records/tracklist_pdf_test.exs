@@ -207,9 +207,10 @@ defmodule MusicLibrary.Records.TracklistPdfTest do
   end
 
   defp pdf_page_count(pdf) when is_binary(pdf) do
-    # Count "/Type /Page" occurrences that are NOT "/Type /Pages" in the PDF binary
+    # Count "/Type /Page" or "/Type/Page" occurrences that are NOT "/Type /Pages"
+    # Typst 0.14 used "/Type /Page" (with space), Typst 0.15 uses "/Type/Page" (no space).
     pdf
-    |> String.split("/Type /Page")
+    |> String.split("/Type/Page")
     |> tl()
     |> Enum.count(fn segment -> not String.starts_with?(segment, "s") end)
   end

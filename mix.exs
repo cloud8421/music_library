@@ -156,7 +156,7 @@ defmodule MusicLibrary.MixProject do
       {:mdex, "~> 0.13.0"},
 
       # PDF generation
-      {:typst, "~> 0.3.1"},
+      {:typst, "~> 0.4.0"},
 
       # Syntax highlighting
       {:lumis, "~> 0.1"},
