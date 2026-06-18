@@ -129,6 +129,8 @@ defmodule MusicLibraryWeb.Router do
     get "/collection/on_this_day", CollectionController, :on_this_day
     get "/collection", CollectionController, :index
     post "/collection/:record_id/scrobble", CollectionController, :scrobble
+    get "/metrics", MetricsController, :index
+    get "/metrics/overview", MetricsController, :overview
     get "/errors", ErrorController, :index
     get "/errors/:id", ErrorController, :show
     post "/errors/:id/mute", ErrorController, :mute

@@ -276,11 +276,12 @@ Pi extensions provide additional tools for production observability without manu
 or browser access. Each extension reads its own environment variables from the pi
 runtime environment (not server-side config).
 
-| Extension     | Tools                                                                                                         | Env vars                                                     |
-| ------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `prod-logs`   | `fetch_production_logs`                                                                                       | `PI_COOLIFY_HOST`, `PI_COOLIFY_APP_UUID`, `PI_COOLIFY_TOKEN` |
-| `prod-errors` | `fetch_production_errors`, `fetch_production_error`, `/prod-errors`                                           | `PI_API_TOKEN`, `PI_SERVICE_FQDN_WEB`                        |
-| `ci-browser`  | `ci_list_runs`, `ci_view_run`, `ci_find_current_branch_run`, `ci_watch_run`, `ci_watch_current_branch`, `/ci` | `gh` CLI (must be installed and authenticated)               |
+| Extension      | Tools                                                                                                         | Env vars                                                     |
+| -------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `prod-logs`    | `fetch_production_logs`                                                                                       | `PI_COOLIFY_HOST`, `PI_COOLIFY_APP_UUID`, `PI_COOLIFY_TOKEN` |
+| `prod-errors`  | `fetch_production_errors`, `fetch_production_error`, `/prod-errors`                                           | `PI_API_TOKEN`, `PI_SERVICE_FQDN_WEB`                        |
+| `prod-metrics` | `fetch_production_metrics_overview`, `/prod-metrics`                                                          | `PI_API_TOKEN`, `PI_SERVICE_FQDN_WEB`                        |
+| `ci-browser`   | `ci_list_runs`, `ci_view_run`, `ci_find_current_branch_run`, `ci_watch_run`, `ci_watch_current_branch`, `/ci` | `gh` CLI (must be installed and authenticated)               |
 
 **`prod-logs` env vars:**
 
@@ -298,6 +299,22 @@ runtime environment (not server-side config).
 
 - `PI_API_TOKEN` — Must match the `API_TOKEN` env var on the production server (used for Bearer auth on `/api/v1/*`)
 - `PI_SERVICE_FQDN_WEB` — Production domain with protocol (e.g., `https://musiclibrary.claudio-ortolina.org`, no trailing slash)
+
+**`prod-metrics` tools and command:**
+
+- `fetch_production_metrics_overview` — Fetch bounded telemetry overview via LLM tool (since/categories/top filters)
+- `/prod-metrics` — Interactive TUI for browsing production metrics (refreshable, switchable time windows 15m/1h/24h, navigable, copyable rows)
+
+**`prod-metrics` env vars:**
+
+- `PI_API_TOKEN` — Bearer token for `/api/v1/metrics/*` endpoints (same as prod-errors)
+- `PI_SERVICE_FQDN_WEB` — Production domain with protocol (same as prod-errors)
+
+**`prod-metrics` notes:**
+
+- Data is read from the `GET /api/v1/metrics/overview` endpoint which queries `telemetry_datapoints` via the existing `(metric_key, time)` index.
+- Metrics may be stale by up to 5 seconds (the telemetry storage flush interval).
+- The TUI aborts in-flight requests on close and window switch; no timers are started.
 
 ---
 

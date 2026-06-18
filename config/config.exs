@@ -138,6 +138,12 @@ config :music_library, MusicLibraryWeb.Telemetry.Storage,
   retention_limit: 32_768,
   flush_interval_ms: 5_000
 
+config :music_library, MusicLibrary.TelemetryMetrics,
+  default_since: "1h",
+  max_since: "24h",
+  default_top: 10,
+  max_top: 50
+
 config :swoosh, :api_client, Swoosh.ApiClient.Req
 
 config :music_library, MusicLibrary.Mailer,

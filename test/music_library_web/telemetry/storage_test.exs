@@ -4,6 +4,7 @@ defmodule MusicLibraryWeb.Telemetry.StorageTest do
   import ExUnit.CaptureLog
   import Telemetry.Metrics, only: [summary: 2]
 
+  alias MusicLibrary.TelemetryMetrics.MetricKey
   alias MusicLibrary.TelemetryRepo
   alias MusicLibraryWeb.Telemetry.Storage
 
@@ -181,14 +182,5 @@ defmodule MusicLibraryWeb.Telemetry.StorageTest do
     count
   end
 
-  defp metric_key(metric) do
-    Enum.join(
-      [
-        inspect(metric.__struct__),
-        Enum.join(metric.name, "."),
-        Enum.join(metric.tags, ".")
-      ],
-      ":"
-    )
-  end
+  defp metric_key(metric), do: MetricKey.metric_key(metric)
 end

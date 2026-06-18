@@ -1,0 +1,9 @@
+{
+  "name": "prod-metrics",
+  "private": true,
+  "type": "module",
+  "description": "Fetch production telemetry metrics via JSON API for LLM analysis, with interactive /prod-metrics TUI",
+  "scripts": {
+    "test": "node --experimental-strip-types --test src/client.test.ts"
+  }
+}

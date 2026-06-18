@@ -23,3 +23,5 @@ run_npm_extension_tests .pi/extensions/sensitive-file-guard
 run_npm_extension_tests .pi/extensions/s3-browser
 
 run_npm_extension_tests .pi/extensions/ci-browser
+
+run_npm_extension_tests .pi/extensions/prod-metrics

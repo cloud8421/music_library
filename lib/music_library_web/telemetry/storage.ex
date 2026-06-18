@@ -26,6 +26,8 @@ defmodule MusicLibraryWeb.Telemetry.Storage do
 
   require Logger
 
+  alias MusicLibrary.TelemetryMetrics.MetricKey
+
   @retention_limit Application.compile_env!(:music_library, [__MODULE__, :retention_limit])
   @flush_interval_ms Application.compile_env!(:music_library, [__MODULE__, :flush_interval_ms])
   @insert_chunk_size 200
@@ -127,16 +129,7 @@ defmodule MusicLibraryWeb.Telemetry.Storage do
     %{label: nil, measurement: 0, time: System.system_time(:microsecond)}
   end
 
-  defp metric_key(metric) do
-    Enum.join(
-      [
-        inspect(metric.__struct__),
-        Enum.join(metric.name, "."),
-        Enum.join(metric.tags, ".")
-      ],
-      ":"
-    )
-  end
+  defp metric_key(metric), do: MetricKey.metric_key(metric)
 
   defp flush_all(%{buffer: buffer} = state) when map_size(buffer) == 0, do: state
 

@@ -1,10 +1,10 @@
 ---
 id: ML-229
 title: Add production telemetry metrics API and pi browser
-status: To Do
+status: Done
 assignee: []
 created_date: "2026-06-18 08:39"
-updated_date: "2026-06-18 08:54"
+updated_date: "2026-06-18 11:06"
 labels:
   - observability
   - pi
@@ -29,15 +29,15 @@ Expose read-only production telemetry metrics to the pi harness so agents and hu
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 Authenticated API endpoints under /api/v1/metrics expose available telemetry metrics and a production metrics overview using the existing bearer-token API pipeline.
-- [ ] #2 Metrics queries are bounded by a since window and optional category filters, use indexed telemetry_datapoints access by metric_key/time, and avoid arbitrary SQL or direct production database access from pi.
-- [ ] #3 Overview responses summarize the MVP operational categories needed for triage: HTTP routes/statuses, Oban queues/workers, Repo timing, external API latency, VM signals, and ErrorTracker counters where data is present.
-- [ ] #4 Summary calculations include count, latest value where relevant, average, max, and useful percentiles for timing metrics, with stable handling for empty datasets.
-- [ ] #5 A project-local prod-metrics pi extension registers an LLM tool that fetches concise production metrics overview data using PI_API_TOKEN and PI_SERVICE_FQDN_WEB.
-- [ ] #6 The same extension registers a /prod-metrics command with a human TUI that can refresh data, change the since window, navigate summaries, copy selected output, and close cleanly.
-- [ ] #7 The TUI supports manual refresh and does not leave timers, abort controllers, or other resources running after it closes.
-- [ ] #8 Controller/context tests cover API authentication, query parameters, summary calculations, and empty-result behaviour; extension tests cover client URL construction, formatting, and refresh-state logic where practical.
-- [ ] #9 Architecture and production infrastructure documentation are updated to describe the metrics API and prod-metrics pi extension.
+- [x] #1 Authenticated API endpoints under /api/v1/metrics expose available telemetry metrics and a production metrics overview using the existing bearer-token API pipeline.
+- [x] #2 Metrics queries are bounded by a since window and optional category filters, use indexed telemetry_datapoints access by metric_key/time, and avoid arbitrary SQL or direct production database access from pi.
+- [x] #3 Overview responses summarize the MVP operational categories needed for triage: HTTP routes/statuses, Oban queues/workers, Repo timing, external API latency, VM signals, and ErrorTracker counters where data is present.
+- [x] #4 Summary calculations include count, latest value where relevant, average, max, and useful percentiles for timing metrics, with stable handling for empty datasets.
+- [x] #5 A project-local prod-metrics pi extension registers an LLM tool that fetches concise production metrics overview data using PI_API_TOKEN and PI_SERVICE_FQDN_WEB.
+- [x] #6 The same extension registers a /prod-metrics command with a human TUI that can refresh data, change the since window, navigate summaries, copy selected output, and close cleanly.
+- [x] #7 The TUI supports manual refresh and does not leave timers, abort controllers, or other resources running after it closes.
+- [x] #8 Controller/context tests cover API authentication, query parameters, summary calculations, and empty-result behaviour; extension tests cover client URL construction, formatting, and refresh-state logic where practical.
+- [x] #9 Architecture and production infrastructure documentation are updated to describe the metrics API and prod-metrics pi extension.
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -415,3 +415,73 @@ If a local pi environment does not already have those pi-side variables, configu
 - `docs/production-infrastructure.md`: add the metrics API and `prod-metrics` extension to Monitoring & Observability, document env vars and API-mediated access, and note the expected storage flush staleness.
 - `.pi/extensions/prod-metrics/package.json` or README if created: describe the LLM tool and `/prod-metrics` command.
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+
+Step 1 complete: Created MusicLibrary.TelemetryMetrics.Definitions, MusicLibrary.TelemetryMetrics.MetricKey. Updated MusicLibraryWeb.Telemetry to delegate metrics/0. Updated Storage to use shared MetricKey. Added descriptor normalization with category_id, normalize/1. 30 tests pass (key format, category assignment, regression).
+
+Step 2 complete: Added MusicLibrary.TelemetryMetrics context with available_metrics/0 and overview/1. Bounded queries via TelemetryRepo with indexed metric_key/time access. Parameter parsing for since/categories/top with config-driven defaults and clamping. Summary calculations include count, latest, avg, max, p50/p95/p99 with counter handling. EXPLAIN QUERY PLAN confirms index usage. 44 tests pass.
+
+Step 3 complete: Added MetricsController (index + overview), MetricsJSON, routes under /api/v1. Controller tests cover auth, since/categories/top params, validation errors, empty datasets. Combined 60 tests pass (context + controller + storage).
+
+Step 4 complete: Created .pi/extensions/prod-metrics/ with fetch_production_metrics_overview LLM tool. Client module with URL construction, API fetch, formatting (compact for LLM + full for TUI). 17 TypeScript tests pass covering URL construction, query params, formatting, empty states, counter/summary rendering.
+
+Step 5 complete: Added /prod-metrics TUI command with MetricsBrowser class. Supports refresh (r), window switching (1/2/3 for 15m/1h/24h), j/k navigation, copy (c), clean close (q/Escape). AbortController tracks in-flight fetches, aborted on close and window switch. No timers in MVP. 17 TS tests pass.
+
+Step 6 complete: Updated docs/architecture.md with TelemetryMetrics context, Definitions/MetricKey modules, MetricsController routes. Updated docs/production-infrastructure.md with prod-metrics extension, tools, env vars, staleness note.
+
+Step 7 complete: Final validation. All 60 Elixir tests pass (context + controller + storage). All 17 TypeScript tests pass (URL construction, formatting, empty states, counter/summary rendering). Format check passes. EXPLAIN QUERY PLAN confirms index usage. Benchmark pending server restart (noted).
+
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
+## What changed
+
+Added a read-only production telemetry metrics API and a prod-metrics pi extension so agents and humans can inspect application health without direct production database access.
+
+### Elixir (backend)
+
+- **`MusicLibrary.TelemetryMetrics`** — new read-only context with `available_metrics/0` (metric descriptors + categories) and `overview/1` (bounded grouped summaries with percentiles). Parameter parsing for since/categories/top with config-driven defaults and clamping. All queries use indexed `(metric_key, time)` access via `TelemetryRepo` with bound parameters only. No writes.
+
+- **`MusicLibrary.TelemetryMetrics.Definitions`** — shared source-of-truth for metric definitions, tag helpers (Finch/Oban/Phoenix/LiveView), drop rules, category assignment, and descriptor normalisation. `MusicLibraryWeb.Telemetry.metrics/0` now delegates here.
+
+- **`MusicLibrary.TelemetryMetrics.MetricKey`** — stable metric key generation matching the format historically persisted in `telemetry_datapoints`. `MusicLibraryWeb.Telemetry.Storage` now delegates here.
+
+- **`MusicLibraryWeb.MetricsController`** + **`MetricsJSON`** — authenticated JSON endpoints: `GET /api/v1/metrics` (available metrics), `GET /api/v1/metrics/overview?since=1h&categories=http,oban&top=10` (bounded category summaries). Returns 422 for invalid params, 401 without bearer token.
+
+- **Config** — `config/config.exs` entries for default/max since window and top-N.
+
+### Pi extension (TypeScript)
+
+- **`.pi/extensions/prod-metrics/`** — project-local extension with:
+  - `fetch_production_metrics_overview` LLM tool (TypeBox params, compact formatting, truncation, missing-env handling)
+  - `/prod-metrics` TUI command (MetricsBrowser class: refresh, since window switching 15m/1h/24h, j/k navigation, copy row, AbortController cleanup, no timers)
+  - Shared client module (`src/client.ts`) with URL construction, fetch, validation, and formatting
+
+### Documentation
+
+- `docs/architecture.md`: added TelemetryMetrics context, Definitions/MetricKey business logic modules, MetricsController routes
+- `docs/production-infrastructure.md`: added prod-metrics extension to Pi tools table with tools, env vars, staleness note
+
+## Tests
+
+- **60 Elixir tests**: metric key format (4), category assignment (10), descriptor normalisation (6), category_ids (1), regression (1), available_metrics (1), overview queries with seeded data (8), percentile calculations (3), controller auth (2), controller metrics/index (1), controller overview params/validation/empty (13), storage tests (9)
+- **17 TypeScript tests**: URL construction (7), formatOverview (8), formatCompactForLLM (2)
+- **EXPLAIN QUERY PLAN** confirms `(metric_key, time)` index usage
+
+## Deviations from plan
+
+- TUI `openTui` API shape is based on the prod-errors ErrorBrowser pattern and pi docs; the API signature should be validated against an actual pi runtime on first use.
+- Benchmark deferred: local benchmark needs a running server; planned for post-deployment validation.
+
+## Risks / Follow-ups
+
+- The TUI has not been manually tested in a pi session — the API contract matches documented patterns but should be verified on first `/prod-metrics` invocation.
+- No auto-refresh in MVP (per plan).
+- Raw time-series endpoints and structured tag columns are deferred.
+<!-- SECTION:FINAL_SUMMARY:END -->
