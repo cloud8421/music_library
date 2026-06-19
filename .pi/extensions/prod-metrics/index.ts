@@ -570,23 +570,17 @@ export default function prodMetricsExtension(pi: ExtensionAPI) {
     }
   }
 
-  pi.registerCommand({
-    name: "prod-metrics",
-    label: "Production Metrics Browser",
+  pi.registerCommand("prod-metrics", {
     description:
       "Interactive TUI for browsing production telemetry metrics overview. " +
       "Switch between time windows (15m, 1h, 24h), navigate summaries, refresh data, and copy rows.",
-    async execute(ctx) {
+    handler: async (_args, ctx) => {
       if (ctx.mode !== "tui") {
-        return {
-          content: [
-            {
-              type: "text",
-              text: "The /prod-metrics TUI is only available in interactive TUI mode. Use the fetch_production_metrics_overview LLM tool instead.",
-            },
-          ],
-          isError: true,
-        };
+        ctx.ui.notify(
+          "The /prod-metrics TUI is only available in interactive TUI mode. Use the fetch_production_metrics_overview LLM tool instead.",
+          "warning",
+        );
+        return;
       }
 
       const token = resolveVar("api_token");
@@ -597,44 +591,52 @@ export default function prodMetricsExtension(pi: ExtensionAPI) {
       if (!fqdn) missing.push("PI_SERVICE_FQDN_WEB");
 
       if (missing.length > 0) {
-        return {
-          content: [
-            {
-              type: "text",
-              text:
-                `Cannot open metrics browser: the following environment variables are not set:\n` +
-                missing.map((v) => `  - ${v}`).join("\n") +
-                `\n\nEnsure these are configured in your pi environment.`,
-            },
-          ],
-          isError: true,
-        };
+        ctx.ui.notify(
+          `Cannot open metrics browser: missing ${missing.join(", ")}`,
+          "error",
+        );
+        return;
       }
 
-      ctx.openTui({
-        title: "Production Metrics",
-        render(browser: MetricsBrowser) {
-          return (width: number, theme: Theme) => browser.render(width, theme);
-        },
-        handleInput(browser: MetricsBrowser) {
-          return (data: string) => browser.handleInput(data);
-        },
-        factory(requestRender, notify) {
-          const browser = new MetricsBrowser(
+      let browser: MetricsBrowser | undefined;
+
+      try {
+        await ctx.ui.custom<null>((tui, theme, _kb, done) => {
+          browser = new MetricsBrowser(
             fqdn!,
             token!,
-            requestRender,
-            notify,
+            () => tui.requestRender(),
+            (msg, level) => ctx.ui.notify(msg, level),
           );
-          browser.initialLoad();
-          return browser;
-        },
-        onClose(browser: MetricsBrowser) {
-          browser.close();
-        },
-      });
 
-      return { control: "handled" };
+          browser.onClose = () => {
+            browser?.close();
+            done(null);
+          };
+          browser.onCopy = (text: string) => {
+            ctx.ui.setEditorText(text);
+            ctx.ui.notify("Copied selected metrics row to editor", "info");
+          };
+          browser.initialLoad();
+
+          return {
+            render(width: number) {
+              return browser!.render(width, theme);
+            },
+            invalidate() {
+              browser!.invalidate();
+            },
+            handleInput(data: string) {
+              browser!.handleInput(data);
+              tui.requestRender();
+            },
+          };
+        });
+      } finally {
+        browser?.close();
+      }
+
+      ctx.ui.notify("Metrics browser closed", "info");
     },
   });
 }
