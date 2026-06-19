@@ -18,7 +18,7 @@ The project uses [mise](https://mise.jdx.dev/) to manage high level configuratio
 
 ## Required first step
 
-Before exploring the codebase for any task, read `docs/architecture.md`. Do this before running file searches, opening source files, or inspecting implementation details so the system boundaries and data flow are in context.
+Read `docs/architecture.md` before codebase exploration or implementation work that depends on the app's structure, boundaries, or data flow. Do this before running file searches, opening source files, inspecting implementation details, or making code changes. You do not need to read it for open questions or operational requests that can be answered directly with a command, production log/metric/error tool, CI tool, or specialized skill without inspecting the codebase.
 
 ## When to read additional references
 
