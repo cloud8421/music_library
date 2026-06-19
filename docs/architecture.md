@@ -463,13 +463,14 @@ All events are namespaced with `music_library:` prefix.
 Project-local pi extensions live under `.pi/extensions/` and provide developer-facing
 CLI tools and LLM tools. They are TypeScript modules loaded by the pi coding agent.
 
-| Extension              | Command        | LLM Tools                                                                                              | Purpose                                                                       |
-| ---------------------- | -------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
-| `sensitive-file-guard` | —              | — (event-based)                                                                                        | Blocks access to sensitive file paths and commands via tool_call interception |
-| `s3-browser`           | `/backups`     | —                                                                                                      | Lists Litestream S3 backup files                                              |
-| `prod-errors`          | `/prod-errors` | `fetch_production_errors`, `fetch_production_error`                                                    | Browse and manage production error tracker data                               |
-| `prod-logs`            | `/prod-logs`   | `fetch_production_logs`                                                                                | Fetch and browse production log output via Coolify API                        |
-| `format-on-edit`       | —              | — (event-based)                                                                                        | Auto-formats files on edit (prettier, mix format)                             |
-| `ci-browser`           | `/ci`          | `ci_list_runs`, `ci_view_run`, `ci_find_current_branch_run`, `ci_watch_run`, `ci_watch_current_branch` | Browse and monitor GitHub Actions CI runs via `gh` CLI                        |
+| Extension              | Command         | LLM Tools                                                                                              | Purpose                                                                       |
+| ---------------------- | --------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| `sensitive-file-guard` | —               | — (event-based)                                                                                        | Blocks access to sensitive file paths and commands via tool_call interception |
+| `s3-browser`           | `/backups`      | —                                                                                                      | Lists Litestream S3 backup files                                              |
+| `prod-errors`          | `/prod-errors`  | `fetch_production_errors`, `fetch_production_error`                                                    | Browse and manage production error tracker data                               |
+| `prod-logs`            | `/prod-logs`    | `fetch_production_logs`                                                                                | Fetch and browse production log output via Coolify API                        |
+| `prod-metrics`         | `/prod-metrics` | `fetch_production_metrics_overview`                                                                    | Browse and triage production telemetry metrics via metrics API                |
+| `format-on-edit`       | —               | — (event-based)                                                                                        | Auto-formats files on edit (prettier, mix format)                             |
+| `ci-browser`           | `/ci`           | `ci_list_runs`, `ci_view_run`, `ci_find_current_branch_run`, `ci_watch_run`, `ci_watch_current_branch` | Browse and monitor GitHub Actions CI runs via `gh` CLI                        |
 
 Tests for pi extensions run via `scripts/dev/pi-test` and `.github/workflows/pi.yml`.
