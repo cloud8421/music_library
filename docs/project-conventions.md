@@ -77,7 +77,7 @@ Key rules: `json_extract()` must match expression index text exactly, subquery m
 
 ## Error Handling
 
-→ See `.agents/skills/error-investigation/SKILL.md` for production error triage, `.agents/skills/external-api-integration/SKILL.md` for ErrorResponse/ErrorHandler patterns, and `.agents/skills/oban-worker/SKILL.md` for worker return values.
+→ See `.agents/skills/production-investigation/SKILL.md` for production error, log, and metrics triage, `.agents/skills/external-api-integration/SKILL.md` for ErrorResponse/ErrorHandler patterns, and `.agents/skills/oban-worker/SKILL.md` for worker return values.
 
 - **Toast notifications:** `put_toast/3` (arity 3) in LiveViews, `put_toast!/2` (arity 2) in LiveComponents. `:info` for success, `:error` for failures.
 - **User-facing error reasons use `ErrorMessages.friendly_message/1`** — never `inspect(reason)`. Call sites keep their contextual prefix and append `": " <> ErrorMessages.friendly_message(reason)`. `Logger.error` calls keep `inspect` for debugging.

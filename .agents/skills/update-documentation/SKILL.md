@@ -108,7 +108,7 @@ that must stay in sync with the codebase. When code changes render a skill stale
 | Testing convention change          | `testing/SKILL.md` — relevant section; `project-conventions.md`                      |
 | Commit convention change           | `git-commit/SKILL.md` — relevant section; `project-conventions.md`                   |
 | UI convention change               | `ui-framework/SKILL.md` — relevant section (outside usage_rules blocks)              |
-| Production infra change            | `production-infrastructure.md`; `error-investigation/SKILL.md` if monitoring changes |
+| Production infra change            | `production-infrastructure.md`; `production-investigation/SKILL.md` if monitoring changes |
 | Dependency category added/removed  | `update-dependencies/SKILL.md` — workflow steps                                      |
 | Skill added or removed             | This file — update the table above                                                   |
 
