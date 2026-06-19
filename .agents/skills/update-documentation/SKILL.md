@@ -8,6 +8,8 @@ description: Use when the user asks to update project documentation, or after si
 Updates `docs/architecture.md`, `docs/project-conventions.md`, `docs/production-infrastructure.md`,
 and all `.agents/skills/*/SKILL.md` files to reflect recent codebase changes.
 
+This worfklow DOES NOT NEED a backing backlog task. Do not create one.
+
 ## Guards
 
 **CRITICAL: NEVER modify content within `usage_rules` generated blocks.** These blocks
@@ -89,28 +91,28 @@ that must stay in sync with the codebase. When code changes render a skill stale
 
 ### Which Skills to Check After Code Changes
 
-| Code Change                        | Skills to Check                                                                      |
-| ---------------------------------- | ------------------------------------------------------------------------------------ |
-| New/removed Oban worker            | `oban-worker/SKILL.md` — worker tables (On-Demand, Cron), queue assignments          |
-| Queue configuration change         | `oban-worker/SKILL.md` — Queues table                                                |
-| New/removed Oban plugin            | `oban-worker/SKILL.md` — Plugins table                                               |
-| New/removed API integration        | `external-api-integration/SKILL.md` — Rate limit intervals, fixture modules list     |
-| Rate limit interval change         | `external-api-integration/SKILL.md` — Intervals table, `architecture.md`             |
-| New/removed API fixture module     | `external-api-integration/SKILL.md` — Available API Fixture Modules table            |
-| New test fixture module            | `testing/SKILL.md` — Available fixture modules table                                 |
-| New SQL pattern becomes convention | `sqlite-optimization/SKILL.md` — add to patterns/anti-patterns                       |
-| New LiveView or LiveComponent      | `architecture.md` — LiveViews / LiveComponents tables                                |
-| New/removed schema or context      | `architecture.md` — Schemas / Contexts tables                                        |
-| New/renamed module (any)           | `architecture.md` — relevant section                                                 |
-| Route changes                      | `architecture.md` — Router Structure                                                 |
-| PubSub topic changes               | `architecture.md` — PubSub Topics table                                              |
-| New/removed JS hook or event       | `architecture.md` — JS Hooks / JS Event Listeners tables                             |
-| Testing convention change          | `testing/SKILL.md` — relevant section; `project-conventions.md`                      |
-| Commit convention change           | `git-commit/SKILL.md` — relevant section; `project-conventions.md`                   |
-| UI convention change               | `ui-framework/SKILL.md` — relevant section (outside usage_rules blocks)              |
+| Code Change                        | Skills to Check                                                                           |
+| ---------------------------------- | ----------------------------------------------------------------------------------------- |
+| New/removed Oban worker            | `oban-worker/SKILL.md` — worker tables (On-Demand, Cron), queue assignments               |
+| Queue configuration change         | `oban-worker/SKILL.md` — Queues table                                                     |
+| New/removed Oban plugin            | `oban-worker/SKILL.md` — Plugins table                                                    |
+| New/removed API integration        | `external-api-integration/SKILL.md` — Rate limit intervals, fixture modules list          |
+| Rate limit interval change         | `external-api-integration/SKILL.md` — Intervals table, `architecture.md`                  |
+| New/removed API fixture module     | `external-api-integration/SKILL.md` — Available API Fixture Modules table                 |
+| New test fixture module            | `testing/SKILL.md` — Available fixture modules table                                      |
+| New SQL pattern becomes convention | `sqlite-optimization/SKILL.md` — add to patterns/anti-patterns                            |
+| New LiveView or LiveComponent      | `architecture.md` — LiveViews / LiveComponents tables                                     |
+| New/removed schema or context      | `architecture.md` — Schemas / Contexts tables                                             |
+| New/renamed module (any)           | `architecture.md` — relevant section                                                      |
+| Route changes                      | `architecture.md` — Router Structure                                                      |
+| PubSub topic changes               | `architecture.md` — PubSub Topics table                                                   |
+| New/removed JS hook or event       | `architecture.md` — JS Hooks / JS Event Listeners tables                                  |
+| Testing convention change          | `testing/SKILL.md` — relevant section; `project-conventions.md`                           |
+| Commit convention change           | `git-commit/SKILL.md` — relevant section; `project-conventions.md`                        |
+| UI convention change               | `ui-framework/SKILL.md` — relevant section (outside usage_rules blocks)                   |
 | Production infra change            | `production-infrastructure.md`; `production-investigation/SKILL.md` if monitoring changes |
-| Dependency category added/removed  | `update-dependencies/SKILL.md` — workflow steps                                      |
-| Skill added or removed             | This file — update the table above                                                   |
+| Dependency category added/removed  | `update-dependencies/SKILL.md` — workflow steps                                           |
+| Skill added or removed             | This file — update the table above                                                        |
 
 ### Skill Update Workflow
 
