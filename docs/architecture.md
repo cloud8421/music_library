@@ -21,7 +21,7 @@ Key capabilities:
 - Encrypted secret storage (Cloak)
 - Presto companion display (MicroPython, 4" IPS LCD, "Records on this day")
 
-**Elixir 1.20.1, Phoenix ~> 1.8, LiveView ~> 1.1, SQLite3**
+**Elixir 1.20.2, Phoenix ~> 1.8, LiveView ~> 1.1, SQLite3**
 
 ---
 
