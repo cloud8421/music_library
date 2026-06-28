@@ -148,7 +148,7 @@ defmodule MusicLibrary.MixProject do
       {:nimble_parsec, "~> 1.4"},
 
       # Image manipulation
-      {:vix, "~> 0.39.0"},
+      {:vix, "~> 0.40.0"},
       {:dominant_colors, "~> 0.1.4"},
       {:briefly, "~> 0.5.0"},
 
