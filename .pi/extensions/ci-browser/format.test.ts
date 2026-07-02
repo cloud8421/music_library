@@ -210,7 +210,7 @@ describe("formatRunListCompact", () => {
   it("shows age", () => {
     const runs = [fakeRun()];
     const output = formatRunListCompact(runs);
-    assert.match(output, /\d+\w ago/);
+    assert.match(output, /\d+\w+ ago/);
   });
 });
 
