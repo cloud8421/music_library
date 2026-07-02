@@ -38,4 +38,5 @@ Move `get_collected_artist_ids/0` into `Collection` (which already owns the `pur
 - `lib/music_library/artists.ex`
 - `lib/music_library/collection.ex`
 - Tests for `Artists` and `Collection`
+
 <!-- SECTION:DESCRIPTION:END -->

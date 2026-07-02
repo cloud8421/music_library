@@ -45,6 +45,7 @@ Make `.pi/extensions/000-sensitive-file-guard.ts` more robust by parsing bash to
 - [x] #5 Existing sensitive path blocking behavior for non-bash tools remains unchanged.
 - [x] #6 The implementation degrades safely if bash parsing fails, either by blocking the command or falling back to the existing conservative text checks.
 - [x] #7 Focused tests or a documented local verification cover allowed and blocked bash examples, including false-positive and nested-command cases.
+
 <!-- AC:END -->
 
 ## Implementation Plan

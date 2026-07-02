@@ -33,6 +33,7 @@ When importing multiple records, the application performs the import in the back
 - [x] #4 Existing import worker tests pass
 - [x] #5 New tests verify PubSub broadcast from import workers after success
 - [x] #6 No regressions in CollectionLive.Index or WishlistLive.Index behavior
+
 <!-- AC:END -->
 
 ## Implementation Plan

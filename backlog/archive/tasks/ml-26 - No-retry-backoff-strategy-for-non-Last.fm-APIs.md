@@ -45,8 +45,10 @@ Only the Last.fm integration has structured error responses with retry classific
 
 - API-specific workers handle rate-limit responses with appropriate snooze durations
 - Transient errors use exponential backoff rather than immediate retry
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 API-specific workers handle rate-limit responses with appropriate snooze durations
 - [ ] #2 Transient errors use exponential backoff rather than immediate retry
+
 <!-- AC:END -->

@@ -35,6 +35,7 @@ Management scripts and tools superseded this functionality. It can be removed fr
 - [x] #4 `mix test` passes with no ArchiveControllerTest references
 - [x] #5 The record format `:backup` type still works (record_component format labels still show "Backup" for backup-format records)
 - [x] #6 `docs/architecture.md` no longer lists ArchiveController in the routes table
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -141,6 +142,7 @@ None required. No migrations, no environment variables, no service provisioning.
 
 - **`docs/architecture.md`**: Remove the `ArchiveController` row from the routes table. No other architecture docs need changes.
 - No changes to `docs/project-conventions.md`, `docs/production-infrastructure.md`, `docs/available-tasks.md`, or README needed.
+
 <!-- SECTION:PLAN:END -->
 
 ## Final Summary

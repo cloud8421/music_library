@@ -32,6 +32,7 @@ Adjust the Presto MicroPython app after enabling full-resolution 480x480 mode so
 - [x] #1 All hardcoded layout measurements in the Presto app are reviewed and scaled appropriately for full-resolution coordinates.
 - [x] #2 Bitmap font scale values are reviewed and adjusted so visible text is not unexpectedly small after full_res=True.
 - [x] #3 The app source passes the documented Python syntax check without writing **pycache**.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -42,6 +43,7 @@ Adjust the Presto MicroPython app after enabling full-resolution 480x480 mode so
 2. Replace bitmap font scale usages in `presto/main.py` with named full-resolution scale constants so text returns to its prior physical size.
 3. Apply the same full-resolution scaling to the small `presto/poc.py` proof-of-concept constants since it was also moved to `full_res=True`.
 4. Re-scan for stale unscaled literals that affect layout or font rendering, then run the documented `py_compile` syntax check without creating `__pycache__`.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes

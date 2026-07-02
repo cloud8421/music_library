@@ -50,9 +50,11 @@ Additionally, `unique_collected_releases_query` and `unique_wishlisted_releases_
 - Query plans for `list_tracks` and `recent_activity` show reduced nesting
 - No regression in query results
 - Benchmarks show comparable or better performance
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 Query plans for `list_tracks` and `recent_activity` show reduced nesting
 - [ ] #2 No regression in query results
 - [ ] #3 Benchmarks show comparable or better performance
+
 <!-- AC:END -->

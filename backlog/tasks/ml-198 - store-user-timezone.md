@@ -59,6 +59,7 @@ We should:
 2. Store the current user timezone the first time the user visits.
 3. On every connection, compare the user timezone with the stored one. If they differ, notify the user with a toast that the timezone has been updated, and store the updated timezone.
 4. All code paths that need a timezone can resolve from the stored value first, falling back to the default timezone.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
@@ -74,6 +75,7 @@ We should:
 - [ ] #7 The email sender job uses an explicit local date and retries independently from the scheduler so future scheduling is not lost on mail delivery failure.
 - [ ] #8 Tests cover settings persistence, LiveView hook behavior, scheduler calculations/rescheduling, affected code paths, and invalid timezone handling.
 - [ ] #9 Architecture/production docs are updated to reflect the new settings context and dynamic stored-timezone digest scheduling.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -231,4 +233,5 @@ No new paid resources are introduced. Mailgun cost remains unchanged because the
 - `docs/architecture.md`: add the Settings schema/context, scheduler worker, bootstrap supervision child, and update the Cron Workers section to describe dynamic stored-timezone scheduling for records-on-this-day. Also document any intentional settings primary-key convention exception if one is introduced.
 - `docs/production-infrastructure.md`: update the Oban/daily digest description to explain that `DEFAULT_TIMEZONE` is fallback only and the persisted timezone controls the digest schedule after first browser visit, including rollout compatibility for old no-arg jobs.
 - `docs/project-conventions.md`: update only if the implementation establishes a reusable convention for non-secret settings/preferences; otherwise no change needed.
+
 <!-- SECTION:PLAN:END -->

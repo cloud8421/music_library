@@ -29,6 +29,7 @@ Four small, unrelated consistency findings from the 2026-06-10 architecture revi
 2. **Stale moduledoc** (lib/music_library/worker/apply_scrobble_rules.ex:5): says "runs every 30 minutes"; the cron schedule is every 12 hours (config/prod.exs).
 3. **Undocumented upsert contract** (lib/music_library/artists.ex:215-218): `create_artist_info/1` replaces only `musicbrainz_data` and `discogs_data` on conflict — `wikipedia_data`/`lastfm_data` are intentionally preserved and refreshed via dedicated paths. Add a comment stating this so the on_conflict list isn't "fixed" by accident.
 4. **ArtistLive.Show mount doesn't set @current_section** (lib/music_library_web/live/artist_live/show.ex:510): it's assigned in apply_action instead, deviating from the documented LiveView convention (mount/3 sets @current_section). One-line assign in mount.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
@@ -40,6 +41,7 @@ Four small, unrelated consistency findings from the 2026-06-10 architecture revi
 - [x] #3 #3 create_artist_info/1 documents the on_conflict field choice
 - [x] #4 #4 ArtistLive.Show.mount/3 assigns current_section: :artists; existing artist page tests pass
 - [x] #5 #5 Each item lands as its own commit referencing this task
+
 <!-- AC:END -->
 
 ## Implementation Plan

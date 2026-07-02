@@ -63,10 +63,12 @@ Out of scope (tracked separately): honouring `Retry-After` / `X-*-Reset` headers
 - `lib/brave_search/api.ex:67-78` — same
 - `lib/open_ai/api.ex:30-31, 89-90` — same, never inspects `error.code` so treats `rate_limit_exceeded` and `insufficient_quota` identically
 - `lib/music_library/worker/refresh_scrobbles.ex:26-32` — example of snooze-vs-cancel logic driven by classified errors
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 Each API integration has structured error classification
 - [ ] #2 Workers can distinguish transient from permanent failures
+
 <!-- AC:END -->
 
 ## Acceptance Criteria
@@ -79,6 +81,7 @@ Out of scope (tracked separately): honouring `Retry-After` / `X-*-Reset` headers
 - [x] #4 MusicBrainz classifier treats 503 as the rate-limit signal (not 429) and is documented as such
 - [x] #5 Workers using these APIs use the classifier to return {:snooze, n} / {:error, reason} / {:cancel, reason} instead of bubbling raw bodies
 - [x] #6 Existing LastFm.API.ErrorResponse behaviour is preserved
+
 <!-- AC:END -->
 
 ## Final Summary

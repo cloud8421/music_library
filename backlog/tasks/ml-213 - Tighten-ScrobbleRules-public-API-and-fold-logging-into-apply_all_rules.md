@@ -41,6 +41,7 @@ History: ML-92 and ML-105 already refactored this module; this finding is about 
 - [ ] #3 ListeningStats aliases ScrobbleRules at the top of the module
 - [ ] #4 Tests that exercised helpers directly are rewritten against the public API; full ScrobbleRules test file passes
 - [ ] #5 mix credo --strict passes (AliasUsage, module-doc checks)
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -52,4 +53,5 @@ History: ML-92 and ML-105 already refactored this module; this finding is about 
 3. Update the three call sites to drop the explicit `|> log_apply_results()` pipe: listening_stats.ex:65 (also add `alias MusicLibrary.ScrobbleRules`), worker/apply_scrobble_rules.ex:16, scrobble_rules_live/index.ex:306.
 4. Rework tests in test/music_library/scrobble_rules_test.exs that call the now-private helpers to exercise apply_rule/apply_all_rules/count_rule_matches instead; verify log output expectations via ExUnit.CaptureLog where tests asserted logging.
 5. Run scrobble_rules + listening_stats + scrobble_rules_live tests, `mix credo --strict`, then precommit.
+
 <!-- SECTION:PLAN:END -->

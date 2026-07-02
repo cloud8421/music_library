@@ -43,8 +43,10 @@ Make Collection and Wishlist sub-modules of Records (`Records.Collection`, `Reco
 
 - No circular dependency between context modules
 - Collection/Wishlist filtering remains functional
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 No circular dependency between context modules
 - [ ] #2 Collection/Wishlist filtering remains functional
+
 <!-- AC:END -->

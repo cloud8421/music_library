@@ -44,6 +44,7 @@ The collision is deterministic: it happens every day at 2 AM UTC (3 AM London BS
 - [x] #1 `busy_timeout: 5_000` is set for `MusicLibrary.Repo` in `config/runtime.exs` production config
 - [x] #2 `RepoVacuum` cron schedule in `config/prod.exs` is set to `3 3 * * *` (3 minutes past the hour) to avoid collision with `RefreshScrobbles` every-5-min cadence
 - [ ] #3 Error #4075 no longer occurs in production after deploy
+
 <!-- AC:END -->
 
 ## Final Summary
@@ -58,4 +59,5 @@ The collision is deterministic: it happens every day at 2 AM UTC (3 AM London BS
 
 - `config/runtime.exs`: Added `busy_timeout: 5_000` to `MusicLibrary.Repo` — SQLite now waits up to 5s on lock contention instead of failing immediately
 - `config/prod.exs`: Moved `RepoVacuum` from `0 3 * * *` to `3 3 * * *` — VACUUM runs at :03 past the hour, 2 minutes before the next `RefreshScrobbles` at :05, avoiding the collision
+
 <!-- SECTION:FINAL_SUMMARY:END -->

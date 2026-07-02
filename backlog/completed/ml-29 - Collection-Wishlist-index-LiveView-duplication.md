@@ -43,9 +43,11 @@ Extract shared index behaviour into a `LiveHelpers` module or use a shared base 
 - Shared logic lives in one place
 - Both index pages retain their current functionality
 - Adding a new shared feature (e.g., new sort option) requires changes in one location
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 Shared logic lives in one place
 - [ ] #2 Both index pages retain their current functionality
 - [ ] #3 Adding a new shared feature (e.g., new sort option) requires changes in one location
+
 <!-- AC:END -->

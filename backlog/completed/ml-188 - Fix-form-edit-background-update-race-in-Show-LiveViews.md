@@ -61,6 +61,7 @@ When a user is editing a record in a modal (`live_action == :edit`) and a backgr
 - [x] #7 Tests added for all three cases: :edit guard, :show normal path, mismatched-id no-op
 - [x] #8 docs/architecture.md updated to mention live_action guard
 - [x] #9 Comment added in RecordActions.handle_record_updated/2 noting intentional bypass during :edit
+
 <!-- AC:END -->
 
 ## Implementation Notes
@@ -120,6 +121,7 @@ Run: `mix test test/music_library_web/live/collection_live/show_test.exs test/mu
 
 - Update `docs/architecture.md`: the existing line about `handle_info/2` validating inbound record updates against `socket.assigns.record.id` should also mention the `live_action` guard for form-edit safety
 - Update the task's final summary with a brief note about the design decision
+
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary

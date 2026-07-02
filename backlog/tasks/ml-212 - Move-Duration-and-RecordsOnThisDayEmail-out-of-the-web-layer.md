@@ -40,6 +40,7 @@ The dependency direction should be web→domain only. `Duration` is a trivial mo
 - [ ] #2 Duration lives in the MusicLibrary namespace; all call sites (including web ones) updated
 - [ ] #3 RecordsOnThisDayEmail is callable from the worker without a domain→web alias and emails render identical output (asset URLs, anniversary styling)
 - [ ] #4 Existing Duration and email tests are moved/updated to the new module locations and pass
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -52,4 +53,5 @@ The dependency direction should be web→domain only. `Duration` is a trivial mo
 4. Move the module to lib/music_library/records_on_this_day_email.ex (MusicLibrary namespace, near MusicLibrary.Mailer); update the worker alias and the MaintenanceLive call site.
 5. Move/adjust email tests; assert rendered HTML still contains correct cover URLs and anniversary styling (Swoosh.TestAssertions).
 6. Verify boundary: `grep -r "MusicLibraryWeb" lib/music_library/` returns nothing; update docs/architecture.md module tables; run full precommit.
+
 <!-- SECTION:PLAN:END -->

@@ -33,6 +33,7 @@ This indicates a LiveComponent is still sending messages (or being referenced) a
 
 - [x] #1 Closing the record editing modal does not produce any "Component not found in state" log messages
 - [x] #2 The modal continues to open, edit, and close correctly without visual or functional regressions
+
 <!-- AC:END -->
 
 ## Implementation Notes

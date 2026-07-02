@@ -44,8 +44,10 @@ Profile queries before and after to confirm impact.
 
 - Expression-based indexes exist for hot JSON extraction paths
 - Query plans show index usage for filtered ListeningStats queries
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 Expression-based indexes exist for hot JSON extraction paths
 - [ ] #2 Query plans show index usage for filtered ListeningStats queries
+
 <!-- AC:END -->

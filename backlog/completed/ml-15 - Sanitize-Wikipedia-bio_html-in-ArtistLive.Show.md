@@ -45,8 +45,10 @@ Either:
 
 - Either HTML sanitization applied, or annotation + justification added
 - Sobelow scan stays clean at `--exit high`
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 Either HTML sanitization applied, or annotation + justification added
 - [ ] #2 Sobelow scan stays clean at `--exit high`
+
 <!-- AC:END -->

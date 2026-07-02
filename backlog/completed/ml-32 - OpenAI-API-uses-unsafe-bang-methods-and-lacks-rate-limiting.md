@@ -46,9 +46,11 @@ The OpenAI API client is the only integration that uses `Req.post!()` (bang meth
 - OpenAI API calls return `{:ok, _}` / `{:error, _}` tuples like all other integrations
 - Rate limiter is attached with a configurable cooldown
 - `OpenAI.Config` follows the same structure as other API Config modules
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 OpenAI API calls return `{:ok, _}` / `{:error, _}` tuples like all other integrations
 - [ ] #2 Rate limiter is attached with a configurable cooldown
 - [ ] #3 `OpenAI.Config` follows the same structure as other API Config modules
+
 <!-- AC:END -->

@@ -58,6 +58,7 @@ In the `STATE_RECORD` touch dispatch, check if the tap falls within the scrobble
 - No changes to the backend API (covered by ML-177)
 - No toast/error display system
 - No debounce or double-tap prevention (can be added later)
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
@@ -73,6 +74,7 @@ In the `STATE_RECORD` touch dispatch, check if the tap falls within the scrobble
 - [x] #7 The Presto app can still be deployed with `mise run presto`
 - [x] #8 The `selected_release_id` field from the on_this_day API response is used to gate button visibility
 - [x] #9 Scrolling in the detail view still works correctly (the button scrolls with the content)
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -559,4 +561,5 @@ The Presto can browse records but had no way to trigger a Last.fm scrobble. The 
 - Blocking HTTP request freezes display during scrobble (~1-5s normal, up to 30s on WiFi drop). Acceptable for user-initiated action on single-threaded MicroPython.
 - No debounce/double-tap prevention — could be added later if needed.
 - No error toast — button reverts to "Scrobble" on failure (minimal feedback).
+
 <!-- SECTION:FINAL_SUMMARY:END -->

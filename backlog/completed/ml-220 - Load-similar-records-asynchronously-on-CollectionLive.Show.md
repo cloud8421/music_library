@@ -38,6 +38,7 @@ Note: ML-172 (To Do) covers embedding text quality — different concern, no dep
 - [x] #2 handle*async handles all three cases ({:ok, {:ok, *}}, {:ok, {:error, _}}, {:exit, _}) per project convention
 - [x] #3 Patching to/from the edit modal does not re-run the similarity query when the record is unchanged
 - [x] #4 CollectionLive.Show tests updated to use render_async() before asserting on similar-records content
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -49,6 +50,7 @@ Note: ML-172 (To Do) covers embedding text quality — different concern, no dep
 3. Template: loading placeholder (skeleton, matching the StatsLive style) while the async result is pending; unchanged rendering once loaded.
 4. Update CollectionLive.Show tests: render_async() before asserting similar-records content; add a test that opening/closing the edit modal does not re-trigger the async load (assert via no duplicated query side-effects or by asserting assigns stability).
 5. Run collection_live tests, then precommit.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -101,4 +103,5 @@ Moved `Similarity.find_similar/2` from synchronous execution in `handle_params` 
 ## Risks / Follow-ups
 
 - None. The similarity query was already bounded at personal-collection scale; this change only improves responsiveness by not blocking navigation on the scan.
+
 <!-- SECTION:FINAL_SUMMARY:END -->

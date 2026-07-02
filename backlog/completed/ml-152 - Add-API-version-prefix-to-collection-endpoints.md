@@ -37,6 +37,7 @@ Update:
 - Controller and JSON tests
 - `test/prod.hurl` (post-deploy verification that uses API endpoints)
 - `docs/architecture.md` (API route table)
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
@@ -48,6 +49,7 @@ Update:
 - [x] #3 Controller and JSON tests pass against the new `/api/v1/` paths
 - [x] #4 `test/prod.hurl` references updated to new paths
 - [x] #5 `docs/architecture.md` updated with new route paths
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -74,6 +76,7 @@ Update:
 3. `test/prod.hurl` — Update `/api/collection/latest` → `/api/v1/collection/latest`
 4. `docs/architecture.md` — Update route table entries for CollectionController, AssetController (API route), ArchiveController (API route)
 5. Asset controller tests (if any) — Check for `/api/assets/` references
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes

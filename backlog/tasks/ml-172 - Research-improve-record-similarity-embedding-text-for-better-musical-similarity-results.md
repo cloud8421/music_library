@@ -67,4 +67,5 @@ Investigate and propose alternative approaches:
 - Identify 2-3 promising approaches ranked by expected impact and implementation effort
 - For top approach(es), rough out what the new `text_representation` would look like
 - Document findings so an implementation task can follow
+
 <!-- SECTION:DESCRIPTION:END -->

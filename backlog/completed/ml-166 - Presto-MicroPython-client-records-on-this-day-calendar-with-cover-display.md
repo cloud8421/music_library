@@ -55,6 +55,7 @@ The device is a Pimoroni Presto running the stock Presto firmware (MicroPython +
 - [x] #8 Cover images are loaded and displayed from the thumb_url returned by the API
 - [x] #9 A secrets.example.py is provided documenting the required WIFI_SSID, WIFI_PASSWORD, and API_TOKEN variables
 - [x] #10 A README.md in the presto/ directory explains how to set up and deploy to the device
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -204,4 +205,5 @@ All positions, sizes, and colors defined as module-level constants at the top of
 3. If `PicoGraphics` constructor signature differs, update `init_display()`
 4. If `set_font()` font names differ, update font references
 5. If HTTPS doesn't work, switch `API_BASE` to `http://` or add SSL context
+
 <!-- SECTION:NOTES:END -->

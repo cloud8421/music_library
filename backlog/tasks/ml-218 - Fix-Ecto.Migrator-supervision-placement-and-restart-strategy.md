@@ -37,6 +37,7 @@ Production is unaffected (`skip_migrations?/0` returns true in releases; Coolify
 - [ ] #2 Migrator child spec uses restart: :temporary so a failed migration produces one clear failure instead of a restart loop
 - [ ] #3 App boots normally in dev and test; full test suite passes
 - [ ] #4 docs/architecture.md supervision tree section updated to match the new ordering
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -49,4 +50,5 @@ Production is unaffected (`skip_migrations?/0` returns true in releases; Coolify
 3. Boot the app in dev (`mise run dev:console`) and run the full test suite to confirm startup ordering.
 4. Update the supervision tree diagram in docs/architecture.md.
 5. Run precommit.
+
 <!-- SECTION:PLAN:END -->

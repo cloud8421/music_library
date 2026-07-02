@@ -51,8 +51,10 @@ Fixture: use existing `MusicLibrary.RecordsFixtures` and `MusicLibrary.ArtistInf
 
 - New test files at `test/music_library_web/live/artist_live/form_test.exs` and `test/music_library_web/live/record_set_live/record_picker_test.exs`
 - Both components exercise happy paths and at least one error/empty state
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 New test files at `test/music_library_web/live/artist_live/form_test.exs` and `test/music_library_web/live/record_set_live/record_picker_test.exs`
 - [ ] #2 Both components exercise happy paths and at least one error/empty state
+
 <!-- AC:END -->

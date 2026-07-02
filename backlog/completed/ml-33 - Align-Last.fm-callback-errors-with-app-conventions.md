@@ -47,8 +47,10 @@ Align the controller with the established convention: keep the contextual prefix
 
 - The Last.fm callback uses the same user-facing error formatting approach as the rest of the app.
 - Tests assert the controller does not expose raw backend error terms in the flash.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 The Last.fm callback uses the same user-facing error formatting approach as the rest of the app.
 - [ ] #2 Tests assert the controller does not expose raw backend error terms in the flash.
+
 <!-- AC:END -->

@@ -42,6 +42,7 @@ ordinal: 25000
 - [x] #2 manage_subscription/2 still unsubscribes from the old record and subscribes to the new record when navigating between different records
 - [x] #3 A regression test verifies same-record parameter handling does not create duplicate PubSub deliveries
 - [x] #4 Relevant tests pass
+
 <!-- AC:END -->
 
 ## Implementation Plan

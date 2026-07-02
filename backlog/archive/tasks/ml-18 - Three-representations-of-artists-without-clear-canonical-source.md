@@ -47,8 +47,10 @@ Document the purpose and canonical use case for each representation. Consider wh
 
 - Clear documentation of each representation's purpose
 - Reduced confusion about which to use in new features
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 Clear documentation of each representation's purpose
 - [ ] #2 Reduced confusion about which to use in new features
+
 <!-- AC:END -->

@@ -43,6 +43,7 @@ Add only low-cost tests for low-coverage wiring where there is a real regression
 - [x] #4 GetTimezone hook coverage verifies a provided connect-param timezone is assigned and missing connect params fall back to MusicLibrary.default_timezone/0, if this can be tested without brittle framework setup.
 - [x] #5 StaticAssets hook coverage is added only if it can assert the assigned value through an existing LiveView request without coupling to Phoenix internals.
 - [x] #6 No tests are added for Application child ordering, exhaustive route enumeration, or framework-generated static_changed?/1 behavior unless a concrete project regression is identified.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -54,6 +55,7 @@ Add only low-cost tests for low-coverage wiring where there is a real regression
 3. Create `test/music_library_web/hooks/get_timezone_test.exs` — test timezone assignment with and without connect params through a LiveView request.
 4. Evaluate StaticAssets hook coverage — add only if practical via existing LiveView without coupling to Phoenix internals.
 5. Skip: Application child ordering, route enumeration, static_changed? return value assertions.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -69,6 +71,7 @@ Created 4 test files (9 new tests):
 3. **`test/music_library_web/hooks/get_timezone_test.exs`** (2 tests) — Tests GetTimezone hook via live/2: fallback to default_timezone/0 when no connect params, and explicit timezone assignment via put_connect_params/2. Uses :sys.get_state(view.pid).socket to read socket assigns (pragmatic approach, not constructing a synthetic Socket struct).
 
 4. **`test/music_library_web/hooks/static_assets_test.exs`** (1 test) — Asserts the hook assigns :static_changed as a boolean. Same :sys.get_state approach.
+
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary

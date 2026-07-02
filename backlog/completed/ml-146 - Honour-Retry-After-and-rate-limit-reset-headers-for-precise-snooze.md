@@ -57,6 +57,7 @@ Blocked by ML-21 — requires the classification plumbing to exist first.
 - [x] #2 Workers emit {:snooze, seconds} with the parsed value for transient errors, falling back to a fixed default when the header is absent or malformed
 - [x] #3 Parsed durations are clamped to a safe range to prevent pathological values
 - [x] #4 Per-API header parsing is covered by unit tests using representative fixture responses
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -70,6 +71,7 @@ Blocked by ML-21 — requires the classification plumbing to exist first.
 - Parse provider hints for MusicBrainz and Wikipedia `retry-after`, Brave `x-ratelimit-reset`, and OpenAI `x-ratelimit-reset-requests` / `x-ratelimit-reset-tokens`; keep Discogs and Last.fm on their existing fixed fallbacks.
 - Update each affected `retry_delay_seconds/1` implementation to prefer the parsed field when present and preserve existing defaults otherwise.
 - Add focused unit coverage for the shared parser, per-API parsed/fallback behavior, and one `ErrorHandler` integration assertion showing parsed values flow through to `{:snooze, seconds}`.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -111,4 +113,5 @@ Added shared retry-delay parsing for provider retry/reset headers and wired it i
 - OpenAI retry parsing now considers `Retry-After` alongside request/token reset headers and supports compound durations like `1m30s`.
 - Zero-second retry hints clamp to the 5s minimum rather than falling back to fixed defaults.
 - Architecture docs now mention header-driven snooze delays in the external API integration notes.
+
 <!-- SECTION:FINAL_SUMMARY:END -->

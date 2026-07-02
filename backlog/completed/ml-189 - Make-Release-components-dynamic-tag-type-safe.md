@@ -47,6 +47,7 @@ The Release component (lib/music_library_web/components/release.ex:82) uses `sen
 - [ ] #1 Release component's `notify_release_loaded/2` always sends `{__MODULE__, {:loaded, release}}` (no nil check, no `on_release_loaded` attribute)
 - [ ] #2 ScrobbleLive.ReleaseShow: `handle_info` matches `{MusicLibraryWeb.Components.Release, {:loaded, release}}`, and `on_release_loaded={:release_loaded}` removed from template
 - [ ] #3 CollectionLive.Show: has a no-op `handle_info({MusicLibraryWeb.Components.Release, {:loaded, _release}}, socket)` clause
+
 <!-- AC:END -->
 
 ## Implementation Notes
@@ -95,6 +96,7 @@ end
 2. Open a release sheet from a record in CollectionLive.Show — the sheet should render correctly with no unhandled-message warnings.
 3. Run `mix test test/music_library_web/components/release_test.exs` — all existing Release component tests pass.
 4. Confirm `on_release_loaded` no longer appears in either LiveView template or the Release component.
+
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary

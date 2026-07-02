@@ -370,6 +370,7 @@ To verify locally without the production server:
 3. Start the Phoenix server: `mix phx.server`.
 4. Set `PI_SERVICE_FQDN_WEB=http://localhost:4000` and `PI_API_TOKEN` to match the local API token.
 5. Call the tools via the LLM.
+
 <!-- SECTION:PLAN:END -->
 
 ## Final Summary

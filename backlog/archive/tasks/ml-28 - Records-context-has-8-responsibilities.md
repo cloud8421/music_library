@@ -49,9 +49,11 @@ Keep the `Records` module as the public API that delegates to sub-modules.
 - Each sub-module has a single clear responsibility
 - Public API remains unchanged for callers
 - No regression in functionality
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 Each sub-module has a single clear responsibility
 - [ ] #2 Public API remains unchanged for callers
 - [ ] #3 No regression in functionality
+
 <!-- AC:END -->

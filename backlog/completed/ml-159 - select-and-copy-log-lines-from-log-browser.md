@@ -45,6 +45,7 @@ The log browser currently uses `ctx.ui.custom<void>`. To return copied text, the
 - [x] #8 All existing key bindings (scroll, page, refresh, jump) continue to work in both normal and visual modes
 - [x] #9 Help text updates to show visual mode key bindings when visual mode is active
 - [x] #10 Empty or single-line log responses handle gracefully (no crash, sensible behavior)
+
 <!-- AC:END -->
 
 ## Implementation Plan

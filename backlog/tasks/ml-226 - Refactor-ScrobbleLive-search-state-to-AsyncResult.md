@@ -42,6 +42,7 @@ Follow-up to ML-221. ML-221 keeps the existing explicit `loading` assign while m
 - [x] #3 Superseded in-flight searches still cannot overwrite newer search results.
 - [x] #4 ScrobbleLive tests cover success and failure paths with Req.Test stubs and wait for async completion where needed.
 - [x] #5 Relevant ScrobbleLive tests pass.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -53,6 +54,7 @@ Follow-up to ML-221. ML-221 keeps the existing explicit `loading` assign while m
 3. Update the template to render loading, success, empty, and failure states through the async-result rendering path while preserving the current visible copy and layout.
 4. Keep the ML-221 stale-result protection intact so older in-flight searches cannot overwrite newer results.
 5. Update ScrobbleLive tests to cover success and failure with Req.Test stubs and async waits, then run the relevant ScrobbleLive test file.
+
 <!-- SECTION:PLAN:END -->
 
 ## Final Summary

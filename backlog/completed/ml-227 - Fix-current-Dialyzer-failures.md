@@ -31,6 +31,7 @@ Run `mix dialyzer`, investigate the reported type/spec issues, and update the re
 - [x] #1 `mix dialyzer` completes without reported failures.
 - [x] #2 Any code or type/spec changes preserve existing behavior and follow project conventions.
 - [x] #3 Relevant tests are run for the changed areas, or the reason for not running them is documented in the final summary.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -45,6 +46,7 @@ Approved plan:
 4. Apply the smallest behavior-preserving changes needed.
 5. Re-run `mix dialyzer`; run focused tests for changed areas if applicable.
 6. Update the task with validation results, acceptance criteria status, and final summary.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -70,4 +72,5 @@ Validation:
 - `mix dialyzer` passes with 0 errors.
 - `mix format --check-formatted` passes.
 - Focused tests pass: `mix test test/music_library/collection/enrichment_test.exs test/music_brainz/release_search_result_test.exs test/music_library/errors_test.exs test/music_library_web/controllers/error_controller_test.exs` (85 tests, 4 doctests).
+
 <!-- SECTION:FINAL_SUMMARY:END -->

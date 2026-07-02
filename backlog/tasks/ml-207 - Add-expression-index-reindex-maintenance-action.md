@@ -47,6 +47,7 @@ SQLite 3.53 adds `REINDEX EXPRESSIONS`, which rebuilds expression indexes withou
 - [ ] #3 Success and failure states are reported clearly to the user and logged appropriately on failure.
 - [ ] #4 Tests cover the context function and Maintenance UI event path.
 - [ ] #5 Documentation records when to use the action and why it is distinct from full REINDEX or PRAGMA optimize.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -59,4 +60,5 @@ SQLite 3.53 adds `REINDEX EXPRESSIONS`, which rebuilds expression indexes withou
 4. Add tests for the context function and MaintenanceLive event, including failure handling if practical.
 5. Document when to use expression-index reindexing and how it differs from full REINDEX, PRAGMA optimize, and VACUUM.
 6. Run relevant maintenance/UI tests.
+
 <!-- SECTION:PLAN:END -->

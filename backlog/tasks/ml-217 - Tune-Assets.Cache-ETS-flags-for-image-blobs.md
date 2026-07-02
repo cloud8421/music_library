@@ -34,6 +34,7 @@ The table also lacks `write_concurrency: true` even though `Cache.set/3` is call
 - [x] #1 :compressed removed and write_concurrency: true added to the Assets.Cache ETS options
 - [x] #2 Existing Assets.Cache tests (set/get, TTL expiry, prune) pass unchanged
 - [x] #3 Cache moduledoc note updated if it mentions storage characteristics
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -45,6 +46,7 @@ Final implementation plan:
 1. Update `lib/music_library/assets/cache.ex` so `Assets.Cache.new/0` creates the named public ETS table without `:compressed`, while retaining `read_concurrency: true` and adding `write_concurrency: true`.
 2. Update the `Assets.Cache` moduledoc with a concise storage-characteristics note explaining that cached values are already-encoded image binaries and ETS compression is intentionally avoided.
 3. Verify with existing cache-path coverage and final checks: `test/music_library/worker/prune_asset_cache_test.exs`, `test/music_library_web/controllers/asset_controller_test.exs`, and the project precommit path for the changed Elixir/backlog files. Note: `test/music_library/assets/cache_test.exs` does not exist in this checkout, so prune/cache-path and controller tests are the relevant existing coverage.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -105,4 +107,5 @@ Notes:
 - There are no Definition of Done checklist items on this task.
 - `test/music_library/assets/cache_test.exs` does not exist in this checkout; existing cache coverage is through prune-worker tests and asset-controller cache-path tests.
 - The precommit format step emitted existing `module Prettier is not loaded` log lines but did not fail.
+
 <!-- SECTION:FINAL_SUMMARY:END -->

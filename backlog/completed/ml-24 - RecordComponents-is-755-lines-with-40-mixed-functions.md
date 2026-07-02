@@ -46,9 +46,11 @@ Split into focused component modules:
 - Each module has a clear, focused purpose
 - Shared action menu markup lives in one place
 - No regression in rendering
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 Each module has a clear, focused purpose
 - [ ] #2 Shared action menu markup lives in one place
 - [ ] #3 No regression in rendering
+
 <!-- AC:END -->

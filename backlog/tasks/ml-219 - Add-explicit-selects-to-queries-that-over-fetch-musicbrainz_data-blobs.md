@@ -39,6 +39,7 @@ List queries elsewhere already avoid this via `essential_fields()` on SearchInde
 - [ ] #2 find_similar projects only the fields its callers render (verify every consumer of the result map before narrowing)
 - [ ] #3 The bulk embedding enqueue paths select only the fields they use
 - [ ] #4 Tests covering Collection enrichment, similar records and bulk embedding enqueueing pass, updated where result shapes changed
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -50,4 +51,5 @@ List queries elsewhere already avoid this via `essential_fields()` on SearchInde
 3. generate_all_embeddings_async (similarity.ex:358-371): add a select for id/title/artists. In Records.Batch.generate_embeddings, narrow the streamed query to the fields the per-record function uses.
 4. Update tests asserting on result shapes (similarity tests, collection enrichment tests, batch tests); run them plus CollectionLive.Show tests.
 5. Run dialyzer (spec changes) and precommit.
+
 <!-- SECTION:PLAN:END -->

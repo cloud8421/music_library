@@ -52,6 +52,7 @@ The unauthenticated `GET /public/assets/:transform_payload` endpoint decodes arb
 - [x] #9 Existing email image URLs (width: 96) continue to serve correctly
 - [x] #10 API and authenticated asset routes continue to work unchanged
 - [x] #11 Existing controller and LiveView tests pass without modification
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -249,6 +250,7 @@ No production changes required:
 - **`Cache` `@moduledoc`**: Updated in Step 5 to describe the key as opaque rather than raw-payload-specific
 - **`docs/architecture.md`**: No update needed — asset serving path is not documented at this granularity
 - **`docs/project-conventions.md`**: No update needed
+
 <!-- SECTION:PLAN:END -->
 
 ## Final Summary
@@ -275,4 +277,5 @@ Added two complementary defenses to the public asset transform endpoint:
 
 - Full test suite: **1115 passed** (44 doctests, 1071 tests), 0 failures
 - Existing controller and LiveView tests pass without modification
+
 <!-- SECTION:FINAL_SUMMARY:END -->

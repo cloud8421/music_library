@@ -65,6 +65,7 @@ Old `/scrobble/:release_id` → 404 (personal app; bookmark churn is acceptable,
 - Preserving `?query=X` across nested URLs (browser back button already works).
 - Splitting the Release LiveComponent into separate `Content` / `Sheet` modules.
 - Changes to `MusicLibrary.ScrobbleActivity`.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
@@ -88,6 +89,7 @@ Old `/scrobble/:release_id` → 404 (personal app; bookmark churn is acceptable,
 - [x] #15 Tests added: test/music_library_web/live/scrobble_live/release_group_show_test.exs covers happy path (header fields + releases list + link targets) and fetch failure (toast + redirect); test/music_library_web/live/scrobble_live/release_show_test.exs (replacing show_test.exs) smoke-tests mount, component render, and back-link target.
 - [x] #16 Tests updated: test/music_library_web/live/scrobble_live/index_test.exs asserts release-group clicks navigate (no inline state); collection/wishlist show tests updated for the new component input shape and callsite sheet markup.
 - [x] #17 Manual UI verification via `iex -S mix phx.server`: sheet selection-bar still pins correctly on collection/wishlist show pages; page selection-bar pins to viewport bottom on scrobble page while tracks list scrolls; navigation loop /scrobble → /scrobble/:rg_id → /scrobble/:rg_id/releases/:release_id → back → back works, and `?query=X` survives the browser back button.
+
 <!-- AC:END -->
 
 ## Final Summary
@@ -160,4 +162,5 @@ Confirmed by user in dev server:
 ## Follow-ups
 
 - **ML-142.1** is now fully superseded and can be archived (not done here — archive is a user decision).
+
 <!-- SECTION:FINAL_SUMMARY:END -->

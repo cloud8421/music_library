@@ -53,9 +53,11 @@ For each site, replace with an assertion that pins a specific value the function
 - `scrobble_activity_test.exs` tests assert specific struct fields on each `{:ok, _}` site
 - No `assert X != nil` in worker test files (replace with value assertion)
 - Suite still passes
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 `scrobble_activity_test.exs` tests assert specific struct fields on each `{:ok, _}` site
 - [ ] #2 No `assert X != nil` in worker test files (replace with value assertion)
 - [ ] #3 Suite still passes
+
 <!-- AC:END -->

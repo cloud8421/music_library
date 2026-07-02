@@ -41,8 +41,10 @@ Extract the shared query builder into a private function that both the search an
 
 - Query logic is defined once per search domain
 - No regression in search results or counts
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 Query logic is defined once per search domain
 - [ ] #2 No regression in search results or counts
+
 <!-- AC:END -->

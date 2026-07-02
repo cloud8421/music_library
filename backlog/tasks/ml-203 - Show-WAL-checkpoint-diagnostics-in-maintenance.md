@@ -47,6 +47,7 @@ SQLite 3.51 added `PRAGMA wal_checkpoint=NOOP`, which reports WAL checkpoint sta
 - [ ] #3 Diagnostics cover the relevant SQLite repos or explicitly document why only a subset is shown.
 - [ ] #4 Errors from any repo are handled without crashing the maintenance page.
 - [ ] #5 Tests cover successful and failing diagnostic paths.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -59,4 +60,5 @@ SQLite 3.51 added `PRAGMA wal_checkpoint=NOOP`, which reports WAL checkpoint sta
 4. Add tests for successful diagnostics, partial/error handling, and UI rendering.
 5. Update production infrastructure or architecture docs with the diagnostic meaning and operational caveats.
 6. Run relevant maintenance/UI tests.
+
 <!-- SECTION:PLAN:END -->

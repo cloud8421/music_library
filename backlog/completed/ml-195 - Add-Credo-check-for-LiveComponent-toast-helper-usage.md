@@ -28,6 +28,7 @@ Add a custom Credo check that flags calls to `put_toast/3` from LiveComponent mo
 - [x] #2 Credo does not flag allowed `put_toast!/2` calls inside LiveComponents.
 - [x] #3 Credo does not flag `put_toast/3` usage outside LiveComponent modules.
 - [x] #4 Automated tests cover the new check behavior.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -39,6 +40,7 @@ Add a custom Credo check that flags calls to `put_toast/3` from LiveComponent mo
 3. Register the check in Credo config so `mix credo` runs it.
 4. Add focused tests for disallowed LiveComponent usage, allowed `put_toast!/2`, and allowed non-LiveComponent `put_toast/3` usage.
 5. Run the relevant test file and Credo check to validate behavior.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -70,4 +72,5 @@ Validation:
 Docs:
 
 - No documentation update needed; `docs/project-conventions.md` already documents the LiveView vs LiveComponent toast helper rule.
+
 <!-- SECTION:FINAL_SUMMARY:END -->

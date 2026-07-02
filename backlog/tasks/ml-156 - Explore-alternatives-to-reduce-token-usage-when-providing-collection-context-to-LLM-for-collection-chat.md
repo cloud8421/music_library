@@ -56,6 +56,7 @@ The `Collection.collection_summary/0` function loads ALL records from the DB, fo
 - [ ] #9 Refresh scheduling uses a true debounce/coalescing strategy so rapid/bulk mutations and mutations during an executing refresh cannot leave the active file stale
 - [ ] #10 FileStore only switches the active vector store after vector-store-file indexing succeeds; failed refreshes keep the previous active store available
 - [ ] #11 Production documentation includes OpenAI file_search/vector-store cost profile, initial refresh behavior, cleanup/rollback notes, and whether new environment variables are required
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -445,6 +446,7 @@ Update documentation:
 - `docs/architecture.md` — add `CollectionChat.FileStore`, OpenAI file/vector-store endpoints, `:open_ai` queue, refresh/cleanup workers, and updated collection chat data flow.
 - `docs/production-infrastructure.md` — add OpenAI Files/Vector Stores usage, cost profile with current pricing checked at implementation time, no-new-env-var note, initial refresh behavior, cleanup/rollback notes, and operational cautions.
 - Update any relevant tests/docs comments if function names change (`collection_summary/0`, `stats_summary/0`, `file_search_catalog/0`).
+
 <!-- SECTION:PLAN:END -->
 
 ## Definition of Done
@@ -459,4 +461,5 @@ Update documentation:
 - [ ] #6 mix credo passes
 - [ ] #7 Documentation updated (architecture.md if new modules/schemas added)
 - [ ] #8 Commit subject references ML-156
+
 <!-- DOD:END -->

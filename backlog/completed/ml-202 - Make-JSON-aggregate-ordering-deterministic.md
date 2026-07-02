@@ -42,6 +42,7 @@ Use SQLite aggregate ORDER BY support to make JSON arrays built by `json_group_a
 - [x] #3 Recent activity and top-album behaviour remains otherwise unchanged.
 - [x] #4 Tests assert deterministic matching-record ordering for representative collection/wishlist combinations.
 - [x] #5 Query plans are reviewed for the changed SQL and no obvious full-scan regression is introduced.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -345,6 +346,7 @@ Not required:
 - `docs/architecture.md` — no architecture boundary changes.
 - `docs/project-conventions.md` — it already delegates database-specific conventions to the SQLite optimization skill.
 - `docs/production-infrastructure.md` — no infrastructure change.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes

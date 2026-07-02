@@ -59,4 +59,5 @@ Affects both `CollectionLive.Index` and `WishlistLive.Index`. Barcode scanner fl
 - [ ] #14 New worker test covers happy path and error path
 - [ ] #15 Obsolete `IndexActions.handle_import/3` and `handle_event("import", ...)` clauses in Collection/Wishlist index LiveViews are removed
 - [ ] #16 `StatsLive.Index` import event handler is unchanged
+
 <!-- AC:END -->

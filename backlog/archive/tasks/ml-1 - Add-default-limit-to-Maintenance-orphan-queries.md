@@ -48,6 +48,7 @@ end
 
 - [ ] #1 Both functions apply a default limit when none is supplied
 - [ ] #2 Existing callers continue to override when they need a different value
+
 <!-- AC:END -->
 
 ## Final Summary

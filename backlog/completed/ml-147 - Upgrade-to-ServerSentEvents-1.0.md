@@ -24,4 +24,5 @@ Allows potential drastic simplification of `OpenAI.API.chat_stream/6` following 
 <!-- AC:BEGIN -->
 
 - [ ] #1 Plain refactor - dependency is updated and functionality keeps working as expected
+
 <!-- AC:END -->

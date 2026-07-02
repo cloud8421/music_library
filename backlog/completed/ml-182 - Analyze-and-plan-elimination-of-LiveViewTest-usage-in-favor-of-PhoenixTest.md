@@ -57,6 +57,7 @@ The work is broken into 6 waves by difficulty, each tracked as a subtask.
 - [x] #2 Three blocking patterns (send_update/3, send(view.pid), live_isolated) are documented with suggested workarounds
 - [x] #3 A concrete migration order is proposed, prioritizing low-risk fully-eliminable files first
 - [x] #4 Cost estimates (effort level: low/medium/high) are assigned to each file or group of files
+
 <!-- AC:END -->
 
 ## Implementation Notes
@@ -74,4 +75,5 @@ The work is broken into 6 waves by difficulty, each tracked as a subtask.
 4. **`trigger_hook` in PhoenixTest** expects JSON-encoded values, not Elixir maps. Different API from LiveViewTest's `render_hook`.
 
 5. **`render_async/1` is auto-imported by ConnCase** — can use `unwrap(&render_async/1)` without any explicit import. This is the only LiveViewTest function that remains needed for async data loading.
+
 <!-- SECTION:NOTES:END -->

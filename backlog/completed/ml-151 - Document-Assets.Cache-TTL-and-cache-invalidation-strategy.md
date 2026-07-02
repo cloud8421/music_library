@@ -27,6 +27,7 @@ Add a `@moduledoc` to `Assets.Cache` that explains:
 - The TTL value and where it's configured
 - The invalidation strategy (TTL-based expiry) and why explicit invalidation is/isn't needed
 - Update `docs/architecture.md` if the design decision has architectural relevance
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
@@ -36,6 +37,7 @@ Add a `@moduledoc` to `Assets.Cache` that explains:
 - [x] #1 `Assets.Cache` `@moduledoc` documents the TTL value and where it is configured
 - [x] #2 The invalidation strategy (TTL-based expiry) is explained with rationale
 - [x] #3 Any architectural implications are captured in `docs/architecture.md`
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -66,4 +68,5 @@ Explicit invalidation isn't needed because:
 
 1. Expand `@moduledoc` in `lib/music_library/assets/cache.ex`
 2. Expand the `Assets.Cache` entry in `docs/architecture.md` Business Logic Modules table
+
 <!-- SECTION:PLAN:END -->

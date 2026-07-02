@@ -17,6 +17,7 @@ ordinal: 33000
 - Solicit reading architecture
 - Solicit loading relevant skills
 - Make sure it'd done, and not complete
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
@@ -28,6 +29,7 @@ ordinal: 33000
 - [x] #3 Template instructs agent to load relevant skills based on their descriptions and triggers, without hardcoding a domain→skill mapping
 - [x] #4 Template distinguishes Done status from task_complete/task_archive per Backlog.md finalization workflow
 - [x] #5 Template covers the full Backlog.md execution workflow: pre-flight → present plan → work loops → finalization → after finalization
+
 <!-- AC:END -->
 
 ## Implementation Plan

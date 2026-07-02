@@ -37,6 +37,7 @@ Use Pimoroni Presto partial display updates for bounded redraws in the MicroPyth
 - [x] #2 Scrollable fixed-header views continue to render correctly during drag and release redraws.
 - [x] #3 Search input and scrobble feedback preserve existing visible behavior while avoiding unnecessary full-screen display transfers where practical.
 - [x] #4 Headless smoke tests pass, and any unverified physical-device behavior is clearly not claimed.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -48,6 +49,7 @@ Use Pimoroni Presto partial display updates for bounded redraws in the MicroPyth
 3. For fixed-header scrollable views, add a bounded redraw mode that clears/redraws only the viewport below the header and calls `partial_update` for that region during drag redraws.
 4. For small feedback updates, redraw only the search input field after query text changes and redraw only the scrobble button area when its state changes.
 5. Add focused tests around fallback/partial-update behavior if the emulator can observe it, then run the Presto smoke test suite.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes

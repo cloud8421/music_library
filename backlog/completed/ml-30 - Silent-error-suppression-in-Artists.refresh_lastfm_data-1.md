@@ -43,9 +43,11 @@ Follow the project's `best_effort_*` pattern: log a warning and return the uncha
 - Last.fm API failures are logged as warnings
 - Callers can still proceed without the Last.fm data
 - Monitoring/logs reflect when Last.fm enrichment fails
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 Last.fm API failures are logged as warnings
 - [ ] #2 Callers can still proceed without the Last.fm data
 - [ ] #3 Monitoring/logs reflect when Last.fm enrichment fails
+
 <!-- AC:END -->

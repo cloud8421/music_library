@@ -49,6 +49,7 @@ The Release component's scrobble interface has several usability gaps that make 
 - [x] #14 `ScrobbleLive.Show` per-medium scrobble handler works with tracks selected (regression test)
 - [x] #15 All new user-facing strings wrapped in gettext; `.pot`/`.po` files regenerated via `mix gettext.extract --merge`
 - [x] #16 New LiveComponent tests cover: default picker state, picker value propagating to all three scrobble handlers, sticky-bar rendering, and medium-button enabled-with-selection
+
 <!-- AC:END -->
 
 ## Implementation Notes
@@ -70,4 +71,5 @@ Verification:
 - `mise run dev:precommit` — all green (credo, sobelow, formatting, translations, 823 tests passing).
 - Browser-verified at :4003: desktop 1440px (4-disc release showed new header, per-medium buttons, sticky bar with cross-medium count), mobile 360px (header stacks to title + picker + Release button, medium scrobble collapses to icon-only), picker open/select/reset cycle worked, overflow menus rendered Print tracklist.
 - `grep -n "MapSet.size(@selected_tracks) > 0" lib/music_library_web/components/release.ex` returns only the sticky-bar visibility guard, as planned.
+
 <!-- SECTION:NOTES:END -->

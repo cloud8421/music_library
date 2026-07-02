@@ -37,6 +37,7 @@ Increase coverage where current tests would catch meaningful regressions in user
 - [x] #4 Notes component tests cover creating a new record or artist note, rendering an existing note in read mode, updating note content, and persisting the result through the Notes context.
 - [x] #5 Scrobble rules tests prove apply_all_rules/1 only updates the supplied track subset and leaves non-supplied matching tracks unchanged.
 - [x] #6 Assets image tests cover convert/3 same-format passthrough, successful JPEG/WebP conversion as supported by the app, and invalid image data returning an error tuple.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -161,6 +162,7 @@ Increase coverage where current tests would catch meaningful regressions in user
    - Include `test/music_library_web/live/artist_live/show_test.exs` or `test/music_library_web/live/wishlist_live/show_test.exs` if Notes or RecordForm coverage lands there.
 2. Run `mise run dev:lint` for formatting/static checks after Elixir test changes.
 3. Run `mise run test` as the CI-equivalent full suite when feasible. If it is skipped because of time or environment limits, record that explicitly in the task notes/final summary with the targeted commands that did pass.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -176,6 +178,7 @@ Reviewed against 10 review criteria. Five issues found, all addressed:
 3. **Medium** — Added full BraveSearch stub response shapes (search result map, download binary) and the `render_async()` calls needed after async triggers.
 4. **Minor** — Step 4 now cross-references the existing barcode scan test as a pattern for MusicBrainz.API stubbing.
 5. **Advisory** — Documentation section now mandates updating the testing skill if `mode: :global` stubs are introduced.
+
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary
@@ -226,4 +229,5 @@ Added 15 behavioral tests across 5 areas, increasing coverage for user-facing wo
 ### Documentation
 
 - Added cross-process stub pattern (set_req_test_to_shared/0) to testing skill
+
 <!-- SECTION:FINAL_SUMMARY:END -->

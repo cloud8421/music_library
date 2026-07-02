@@ -49,9 +49,11 @@ Handle invalid payloads and transform failures explicitly: replace bang-style de
 - Invalid payloads do not raise from the controller.
 - Failed image transforms do not crash the request path.
 - Tests cover malformed payload and transform failure scenarios.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 Invalid payloads do not raise from the controller.
 - [ ] #2 Failed image transforms do not crash the request path.
 - [ ] #3 Tests cover malformed payload and transform failure scenarios.
+
 <!-- AC:END -->

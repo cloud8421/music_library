@@ -37,4 +37,5 @@ The app is unified with the existing "Records On This Day" calendar: boot shows 
 - [ ] #6 Existing 'Records On This Day' calendar flow is unchanged
 - [ ] #7 GET /api/v1/collection accepts optional q parameter for FTS5 full-text search
 - [ ] #8 Empty query on API returns all records (backward compatible)
+
 <!-- AC:END -->

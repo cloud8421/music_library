@@ -46,6 +46,7 @@ Build a test harness for the Presto application so that it's possible at the ver
 - [x] #5 mise run test executes all tests and reports results
 - [x] #6 presto/README.md includes a Testing section with usage instructions
 - [x] #7 presto/AGENTS.md mentions the test harness
+
 <!-- AC:END -->
 
 ## Implementation Plan

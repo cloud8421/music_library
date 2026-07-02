@@ -40,6 +40,7 @@ Note: PopulateGenres chains into GenerateRecordEmbedding — confirm the chained
 - [x] #2 GenerateRecordEmbedding and PopulateGenres run on the openai queue; no other workers change queues
 - [x] #3 Worker tests assert the queue assignment; chained PopulateGenres → GenerateRecordEmbedding flow still works
 - [x] #4 docs/architecture.md queue and worker tables updated
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -52,6 +53,7 @@ Note: PopulateGenres chains into GenerateRecordEmbedding — confirm the chained
 4. Update worker tests: assert_enqueued with queue: :openai where queue is asserted; run both worker test files.
 5. Update docs/architecture.md: queues table, on-demand workers table rows for the two workers.
 6. Run precommit.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes

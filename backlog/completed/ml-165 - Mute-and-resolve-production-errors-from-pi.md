@@ -55,6 +55,7 @@ There are no endpoints for these two actions, so we would need to extend the app
 - [x] #12 All context function tests pass
 - [x] #13 All controller tests pass
 - [x] #14 Documentation updated: docs/architecture.md reflects new endpoints and context description
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -343,4 +344,5 @@ Added mute/unmute/resolve/unresolve capability for production errors across the 
 - Used `ErrorTracker.mute/1`, `unmute/1`, `resolve/1`, `unresolve/1` (which emit telemetry events) rather than raw `Ecto.Changeset.change/2`
 - `resolve_error/1` and `unresolve_error/1` handle the already-resolved/unresolved case explicitly (ErrorTracker's functions pattern-match on current state and would crash otherwise)
 - POST endpoints return the updated error as JSON (consistent with GET responses), using the same `error/1` render helper
+
 <!-- SECTION:FINAL_SUMMARY:END -->

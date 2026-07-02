@@ -34,6 +34,7 @@ _GitHub: created 2026-04-16 · updated 2026-04-16 · closed 2026-04-16_
 3. Run `mix test` and specifically the Mailer-sending paths (`RecordsOnThisDayEmail`, `ErrorTracker.ErrorNotifier.Email`)
 4. If something fails, restore the dep and add a comment in `mix.exs` noting what relies on it
 5. If everything passes, keep it removed
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
@@ -41,4 +42,5 @@ _GitHub: created 2026-04-16 · updated 2026-04-16 · closed 2026-04-16_
 <!-- AC:BEGIN -->
 
 - [ ] #1 Decision recorded: either dep removed, or dep retained with comment explaining transitive need
+
 <!-- AC:END -->

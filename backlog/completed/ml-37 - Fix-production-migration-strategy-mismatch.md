@@ -48,9 +48,11 @@ A deploy can start successfully against an outdated schema, creating a real risk
 - Production deploys cannot start on an unmigrated schema.
 - The documented migration strategy matches the implemented one.
 - There is at least one automated check covering the chosen behavior.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 Production deploys cannot start on an unmigrated schema.
 - [ ] #2 The documented migration strategy matches the implemented one.
 - [ ] #3 There is at least one automated check covering the chosen behavior.
+
 <!-- AC:END -->

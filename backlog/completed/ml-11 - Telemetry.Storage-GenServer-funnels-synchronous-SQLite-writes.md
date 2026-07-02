@@ -49,9 +49,11 @@ Whichever option is chosen, replace the bare `catch _, _` with either a targeted
 - Telemetry write path does not block on the GenServer mailbox
 - Error path surfaces at least once per distinct failure (not silently swallowed)
 - Existing dashboard queries continue to work
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [x] #1 Telemetry write path does not block on the GenServer mailbox
 - [x] #2 Error path surfaces at least once per distinct failure (not silently swallowed)
 - [x] #3 Existing dashboard queries continue to work
+
 <!-- AC:END -->

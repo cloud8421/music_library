@@ -37,8 +37,10 @@ Replace each `Process.sleep(50)` with `:sys.get_state(ErrorTracker.ErrorNotifier
 
 - Zero `Process.sleep` occurrences in `test/`
 - Tests remain deterministic and pass under repeated runs
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 Zero `Process.sleep` occurrences in `test/`
 - [ ] #2 Tests remain deterministic and pass under repeated runs
+
 <!-- AC:END -->

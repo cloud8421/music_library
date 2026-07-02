@@ -40,6 +40,7 @@ Three Oban workers return the result of `Records.notify_update/1` (spec: `:ok | 
 - [ ] #1 RefreshCover, RecordRefreshMusicBrainzData and PopulateGenres call Records.notify_update/1 and then return :ok explicitly on the success path
 - [ ] #2 Worker tests assert the jobs return :ok when the underlying operation succeeds
 - [ ] #3 Error paths (operation itself fails) are unchanged and still translate through ErrorHandler/cancel as before
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -51,6 +52,7 @@ Three Oban workers return the result of `Records.notify_update/1` (spec: `:ok | 
 2. In populate_genres.ex, make the `with` success body call notify_update then return :ok.
 3. Update worker tests (test/music_library/worker/) to assert perform returns :ok on success, with external APIs stubbed via Req.Test. Add tests if a worker lacks a success-path assertion.
 4. Run the three worker test files, then precommit.
+
 <!-- SECTION:PLAN:END -->
 
 ## Comments

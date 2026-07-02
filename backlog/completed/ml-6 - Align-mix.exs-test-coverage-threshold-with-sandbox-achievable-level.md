@@ -51,8 +51,10 @@ Option 2 is preferable because it keeps the threshold aspirational and surfaces 
 
 - `mix test --cover` passes under its configured threshold
 - Untestable modules are explicitly enumerated somewhere (config, moduledoc, or both)
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 `mix test --cover` passes under its configured threshold
 - [ ] #2 Untestable modules are explicitly enumerated somewhere (config, moduledoc, or both)
+
 <!-- AC:END -->

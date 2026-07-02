@@ -43,6 +43,7 @@ Add an alternative Presto Music Library application organized around the message
 - [x] #2 Scrolling, cover loading, wake handling, and API request behavior remain consistent with the current Presto app constraints.
 - [x] #3 Headless verification covers the new application screens and prevents accidental network access during render tests.
 - [x] #4 User-facing or deployment documentation is updated if introducing the alternative application changes available usage or verification instructions.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -55,6 +56,7 @@ Add an alternative Presto Music Library application organized around the message
 4. Extend emulator coverage for `music_library.py`, retaining the render/partial-update/image safety contracts and adding focused coverage of message/effect orchestration.
 5. Add a deployment task for the architecture-based entrypoint and update `presto/README.md` with its optional deployment and verification path; no root architecture or production-infrastructure update is required because the API/default app contract is unchanged.
 6. Verify with syntax compilation and `mise run test`; do not claim physical device behavior without hardware testing.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -95,4 +97,5 @@ Verified `main.py` and `music_library.py` with `py_compile` output directed to `
 ## Remaining Validation
 
 - The architecture-based entrypoint has not been exercised on a physical Pimoroni Presto device.
+
 <!-- SECTION:FINAL_SUMMARY:END -->

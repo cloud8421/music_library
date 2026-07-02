@@ -49,6 +49,7 @@ Update database maintenance to take advantage of the enhanced PRAGMA optimize be
 - [ ] #3 Existing maintenance UI and worker behaviour still report success and failure clearly.
 - [ ] #4 Tests cover the updated optimize behaviour without relying on production data.
 - [ ] #5 Relevant project documentation is updated if the maintenance behaviour changes.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -61,4 +62,5 @@ Update database maintenance to take advantage of the enhanced PRAGMA optimize be
 4. Decide whether BackgroundRepo and TelemetryRepo should be optimized from the same maintenance action; implement or document the exclusion.
 5. Update tests for the context, worker, and UI success/error paths.
 6. Update architecture/project-convention docs if the operational behaviour changes, then run the relevant test subset.
+
 <!-- SECTION:PLAN:END -->

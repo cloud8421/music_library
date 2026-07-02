@@ -47,9 +47,11 @@ Both `LiveHelpers.RecordActions` and `Components.Chat` contain branches for erro
 - `LiveHelpers.RecordActions` reaches at least 70 % line coverage
 - `Components.Chat` reaches at least 60 % line coverage
 - Both happy and error paths covered
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 `LiveHelpers.RecordActions` reaches at least 70 % line coverage
 - [ ] #2 `Components.Chat` reaches at least 60 % line coverage
 - [ ] #3 Both happy and error paths covered
+
 <!-- AC:END -->

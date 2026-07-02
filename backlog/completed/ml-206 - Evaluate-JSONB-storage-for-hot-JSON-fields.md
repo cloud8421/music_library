@@ -46,6 +46,7 @@ Run a focused spike on whether SQLite JSONB storage is worth adopting for hot JS
 - [x] #3 The assessment covers compatibility with JSON expression indexes, FTS/search triggers, Ecto schemas, tests, backups, and production rollback.
 - [x] #4 A clear go/no-go recommendation is recorded with risks and migration strategy if adoption is recommended.
 - [x] #5 Follow-up implementation tasks are created only if the recommendation is to proceed.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -61,6 +62,7 @@ Approved approach (confirmed by user 2026-06-04):
 5. Assess compatibility with JSON expression indexes, FTS/search triggers, Ecto schemas, tests, backups, production rollout, and rollback.
 6. Record findings in project/backlog documentation with a clear go/no-go recommendation, risks, and migration strategy if adoption is recommended.
 7. If the recommendation is to proceed, stop and ask before creating scoped follow-up implementation tasks; do not implement production JSONB adoption inside this spike.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -101,4 +103,5 @@ No-go for production JSONB adoption now. SQLite JSONB showed useful storage savi
 
 - Revisit only if upstream `ecto_sqlite3` gains proven JSONB round-trip support or the project intentionally implements and tests a local adapter/custom-type approach.
 - Any future adoption must handle `json_set` → `jsonb_set`, FTS mirror text compatibility, table rebuilds, expression-index verification, and rollback via `json(column)`. The spike document records the migration strategy.
+
 <!-- SECTION:FINAL_SUMMARY:END -->

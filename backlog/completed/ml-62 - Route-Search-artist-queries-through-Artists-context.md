@@ -30,4 +30,5 @@ Add `search_by_name/2` and `search_by_name_count/1` to `MusicLibrary.Artists`, t
 - `lib/music_library/artists.ex` (add functions)
 - `lib/music_library/search.ex` (delegate, remove aliases)
 - Tests for `Artists` and `Search`
+
 <!-- SECTION:DESCRIPTION:END -->

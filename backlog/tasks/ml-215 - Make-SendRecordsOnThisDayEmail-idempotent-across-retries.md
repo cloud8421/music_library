@@ -34,6 +34,7 @@ The date should be fixed at enqueue time. Since the job is cron-enqueued without
 - [ ] #2 An explicit date arg overrides the derived date for manual runs
 - [ ] #3 Timezone handling uses MusicLibrary.default_timezone() so the date matches the 7 AM Europe/London cron intent
 - [ ] #4 Existing email content tests pass unchanged
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -44,4 +45,5 @@ The date should be fixed at enqueue time. Since the job is cron-enqueued without
 2. Keep the cron entry unchanged (no args) — inserted_at at 07:00 Europe/London always lands on the correct local date.
 3. Tests via Oban.Testing.perform_job/3 (or constructing the job struct): (a) inserted_at from yesterday → email is for yesterday's date; (b) explicit date arg wins; (c) existing content assertions (Swoosh.TestAssertions) pass.
 4. Run the worker/email tests, then precommit.
+
 <!-- SECTION:PLAN:END -->

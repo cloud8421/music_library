@@ -42,9 +42,11 @@ Use `start_async` or `assign_async` to load stats data concurrently after mount,
 - Stats page initial render is faster
 - Data loads concurrently where possible
 - Loading states are shown while data is fetched
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 Stats page initial render is faster
 - [ ] #2 Data loads concurrently where possible
 - [ ] #3 Loading states are shown while data is fetched
+
 <!-- AC:END -->

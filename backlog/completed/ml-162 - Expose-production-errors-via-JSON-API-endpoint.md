@@ -46,6 +46,7 @@ This subtask covers the server-side work only: controller, JSON serialization, c
 - Uses `MusicLibrary.TelemetryRepo` (already exists)
 - Uses the `error_tracker_errors` and `error_tracker_occurrences` tables (already exist)
 - Auth via existing `require_api_token` plug (already in use by `/api/v1` pipeline)
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Implementation Plan
@@ -325,6 +326,7 @@ end
 - `context` and `breadcrumbs` are stored as JSON text. Pass native Elixir maps and lists.
 - The fixture module follows the existing pattern (`RecordsFixtures`, `RecordSetsFixtures`, etc.) — helper functions that return inserted structs via `MusicLibrary.Repo`.
 - Include a variant fixture that produces multiple errors with different status/fingerprint/muted values to exercise filtering and pagination in tests.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -350,6 +352,7 @@ Implementation completed. All 5 steps executed:
 - Added `render/2` catch-all to ErrorJSON for Phoenix error template rendering (404, 500) - module name collides with configured render_errors view.
 
 - List endpoint omits `occurrence_count` and `first_occurrence_at` per plan decision (computed only in single-error endpoint).
+
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary

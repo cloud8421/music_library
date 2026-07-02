@@ -38,8 +38,10 @@ Either:
 
 - No experimental/temporary comments remain in production code
 - Timeout configuration is intentional and documented
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 No experimental/temporary comments remain in production code
 - [ ] #2 Timeout configuration is intentional and documented
+
 <!-- AC:END -->

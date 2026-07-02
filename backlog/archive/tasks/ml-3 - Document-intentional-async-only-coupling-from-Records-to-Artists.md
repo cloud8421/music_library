@@ -47,4 +47,5 @@ Artists.refresh_artist_info_async(artist)
 
 - [ ] #1 Inline comments added at records.ex:385 and :415
 - [ ] #2 Comments explain the runtime-cycle motivation, not just "it's async"
+
 <!-- AC:END -->

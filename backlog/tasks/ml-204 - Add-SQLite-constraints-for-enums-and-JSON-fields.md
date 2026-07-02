@@ -49,6 +49,7 @@ Use SQLite 3.53 ALTER TABLE constraint support to add database-level validation 
 - [ ] #4 The migration accounts for existing data before adding constraints and avoids constraints that would fail production rows without a cleanup plan.
 - [ ] #5 Tests verify representative invalid writes fail at the database boundary and valid writes continue to work.
 - [ ] #6 Documentation or migration comments are updated so future work no longer assumes SQLite cannot alter CHECK/NOT NULL constraints.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -61,4 +62,5 @@ Use SQLite 3.53 ALTER TABLE constraint support to add database-level validation 
 4. Add tests that exercise representative database-boundary failures using direct inserts or changesets as appropriate.
 5. Update comments/docs so future migrations no longer assume SQLite cannot alter CHECK/NOT NULL constraints.
 6. Run migration/test checks on a migrated development database and verify down migration syntax.
+
 <!-- SECTION:PLAN:END -->

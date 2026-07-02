@@ -48,6 +48,7 @@ Similarly in `router.ex:55`, a brief comment noting the deliberate exception fro
 
 - [x] #1 last_fm_controller.ex has a comment documenting the trust boundary
 - [x] #2 router.ex:55 notes the deliberate pipeline exemption
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -69,6 +70,7 @@ Similarly in `router.ex:55`, a brief comment noting the deliberate exception fro
 
 - Controllers are excluded from the `Credo.Check.Readability.ModuleDoc` regex in `.credo.exs`, so `@moduledoc` here is optional for lint purposes — using it is a deliberate choice for this security-sensitive module.
 - No test changes required (documentation-only).
+
 <!-- SECTION:PLAN:END -->
 
 ## Final Summary

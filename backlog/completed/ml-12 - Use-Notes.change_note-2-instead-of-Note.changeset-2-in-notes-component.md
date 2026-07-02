@@ -43,8 +43,10 @@ Mechanical find-and-replace. Three one-line edits.
 
 - Tests still pass
 - No direct `Note.changeset` references in `lib/music_library_web/components/notes.ex`
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 Tests still pass
 - [ ] #2 No direct `Note.changeset` references in `lib/music_library_web/components/notes.ex`
+
 <!-- AC:END -->

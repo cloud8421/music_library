@@ -48,6 +48,7 @@ Target state: each API record representation exposes four named cover variants: 
 - [x] #3 The Presto application consumes the API-provided small and medium cover URLs directly and no longer contains client-side cover resizing or JPEG scale-selection logic.
 - [x] #4 Presto documentation and test fixtures describe the named cover contract and the intended 400 px detail-cover layout, and no longer refer to the legacy cover URL fields.
 - [x] #5 Relevant Phoenix and Presto tests are updated and pass.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -58,6 +59,7 @@ Target state: each API record representation exposes four named cover variants: 
 2. Update the Presto client to read the new cover names, use the 80 px row asset and `covers.medium` detail asset directly, and remove JPEG scale-selection/resizing code while preserving `DETAIL_COVER_SIZE = px(200)`, caching, placeholders, and drag-scroll network avoidance.
 3. Update documentation, fixtures, and smoke/contract tests so the API and device assumptions stay aligned.
 4. Run the focused controller tests and Presto syntax/smoke tests; note that physical Presto behavior is not verified unless the device deployment task is run on hardware.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes

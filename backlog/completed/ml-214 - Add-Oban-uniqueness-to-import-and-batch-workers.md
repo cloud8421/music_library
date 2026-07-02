@@ -28,6 +28,7 @@ Three uniqueness gaps allow wasteful duplicate job execution (data stays safe th
 1. `ImportFromMusicbrainzRelease` (lib/music_library/worker/import_from_musicbrainz_release.ex:8) has no `unique:` option — its sibling `ImportFromMusicbrainzReleaseGroup` has `unique: [period: 300, keys: [...]]`. A re-scanned barcode enqueues a duplicate; the insert hits the records unique index, returns `{:error, %Ecto.Changeset{}}`, and Oban retries 3 times, fetching MusicBrainz each attempt. The changeset error is permanent and should cancel, not retry.
 2. The five `*All` batch workers (`RecordRefreshAllMusicBrainzData`, `RecordGenerateAllEmbeddings`, `ArtistRefreshAllMusicBrainzData`, `ArtistRefreshAllDiscogsData`, `ArtistRefreshAllWikipediaData`) have no `unique:` — a manual trigger while a cron run is still streaming double-enqueues every per-record job.
 3. `BackfillScrobbledTracks` (self-chaining) has no `unique:` — a manual re-trigger mid-chain starts a parallel chain duplicating Last.fm API calls until history is exhausted.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
@@ -38,6 +39,7 @@ Three uniqueness gaps allow wasteful duplicate job execution (data stays safe th
 - [x] #2 The five \*All batch workers deduplicate against incomplete jobs (unique over non-completed states) so a manual trigger during a running batch is a no-op
 - [x] #3 BackfillScrobbledTracks enforces a single active chain (unique on to_uts over incomplete states) at both the worker and the ListeningStats enqueue site
 - [x] #4 Worker tests assert duplicate enqueue is rejected/deduplicated for each worker and assert the changeset→cancel behaviour for the import worker
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -69,6 +71,7 @@ Implementation complete. Key findings:
 3. **Barcode scan test**: Updated to use different release fixtures (marbles + queen_greatest_hits) so uniqueness on `release_id` doesn't deduplicate the two barcode scans.
 
 4. **Changeset→cancel test**: Uses a temporary unique index in the test (created + dropped) to trigger the error path, since the production index was removed.
+
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary
@@ -96,4 +99,5 @@ Added Oban uniqueness to import and batch workers to prevent wasteful duplicate 
 - Focused worker and barcode-scan test files pass.
 - `mix format --check-formatted` passes for changed Elixir files.
 - `mix credo --strict` reports no issues.
+
 <!-- SECTION:FINAL_SUMMARY:END -->

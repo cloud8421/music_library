@@ -40,4 +40,5 @@ Prevent background telemetry polling from running under the test environment whe
 - [ ] #3 Test runs do not start the telemetry_poller dependency's default VM poller unless explicitly required by a test.
 - [ ] #4 Existing telemetry storage tests continue to pass without relying on periodic poller timing.
 - [ ] #5 Running tests does not produce sandbox ownership errors from asset-size telemetry measurements.
+
 <!-- AC:END -->

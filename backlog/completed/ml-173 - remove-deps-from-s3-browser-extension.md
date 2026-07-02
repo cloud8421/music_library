@@ -47,6 +47,7 @@ The extension needs to be re-written to use a custom, no-dependencies API client
 - [x] #7 Network errors (unreachable endpoint, timeout) show a clear error, not an unhandled exception
 - [x] #8 TypeScript compiles without errors (`npx tsc --noEmit`)
 - [x] #9 After clean `npm install`, only `aws4` appears in `npm ls --all` (no transitive or phantom dependencies)
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -180,6 +181,7 @@ After implementation, update these documents:
 1. **doc-15 (research document)**: Update recommendation section to note the final decision (Route B chosen) and correct the dependency count (`aws4` has 0 transitive deps, not ~3 as initially estimated)
 2. **`docs/architecture.md`**: If it references the s3-browser extension or its dependencies, check for staleness
 3. **AGENTS.md / `docs/project-conventions.md`**: If pi extension dependency patterns are documented, update to reflect the new minimal-dependency convention
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes

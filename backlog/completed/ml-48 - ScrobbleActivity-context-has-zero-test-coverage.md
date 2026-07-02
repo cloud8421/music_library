@@ -24,4 +24,5 @@ _GitHub: created 2026-03-22 · updated 2026-03-23 · closed 2026-03-23_
 ## File
 
 - `lib/music_library/scrobble_activity.ex`
+
 <!-- SECTION:DESCRIPTION:END -->

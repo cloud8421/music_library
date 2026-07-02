@@ -46,8 +46,10 @@ HTTP timeout configuration varies significantly across API integrations with no 
 
 - All API clients have explicit, intentional timeout configuration
 - Timeout choices are documented (e.g., in Config module comments)
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 All API clients have explicit, intentional timeout configuration
 - [ ] #2 Timeout choices are documented (e.g., in Config module comments)
+
 <!-- AC:END -->

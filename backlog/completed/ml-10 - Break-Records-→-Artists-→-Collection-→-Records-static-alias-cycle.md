@@ -75,6 +75,7 @@ This removes the `Artists → Collection` edge without moving any behaviour. Wit
 
 - [x] #1 `mix xref graph --format cycles --label compile` reports no cycle involving Records/Artists/Collection
 - [x] #2 `ArtistLive.Show` tests still pass
+
 <!-- AC:END -->
 
 ## Final Summary

@@ -30,6 +30,7 @@ To prevent the pi harness from accidentally reading and sending sensitive data t
 - [x] #5 Normal file access (source code, test files, config examples like `.env.example`) is unaffected
 - [x] #6 The set of blocked paths is declared in `.pi/sensitive-paths.json` — adding/removing patterns does not require code changes
 - [x] #7 The extension loads correctly at pi startup and chains with existing extensions (MCP adapter) without conflicts
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -364,6 +365,7 @@ If future patterns grow to hundreds of entries, a trie-based matcher could be co
 ### Key Limitation
 
 - Does NOT resolve symlinks (would require `realpathSync` per tool call). Users must not symlink sensitive directories into the project tree.
+
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary

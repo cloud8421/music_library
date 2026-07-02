@@ -56,6 +56,7 @@ The record view (`CollectionLive.Show`) in the web UI already has a scrobble but
 - No changes to the Presto app (`presto/main.py`) — that's a separate task
 - No changes to the web UI LiveView
 - No medium/track selection (entire-release scrobble only for this phase)
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
@@ -70,6 +71,7 @@ The record view (`CollectionLive.Show`) in the web UI already has a scrobble but
 - [x] #6 Existing API response fields are unchanged (backward compatible)
 - [x] #7 Controller test covers success, missing release_id, missing record, auth failure, and Last.fm error cases
 - [x] #8 JSON view test verifies selected_release_id in record output
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -195,4 +197,5 @@ The work comprises 4 steps with explicit dependencies:
 - The `phoenix_ecto` library in version 4.x does NOT automatically convert `Ecto.NoResultsError` to 404 in controller actions (this was a Phoenix.Ecto 3.x feature). The implementation uses `Records.get_record/1` (non-bang) and handles nil explicitly.
 - The scrobble is synchronous — the full MusicBrainz lookup + Last.fm scrobble happens within the HTTP request cycle. This is intentional: the Presto device needs an immediate success/failure response and sub-second latency is acceptable for these API calls.
 - All 974 tests pass (43 doctests + 931 ExUnit tests).
+
 <!-- SECTION:FINAL_SUMMARY:END -->

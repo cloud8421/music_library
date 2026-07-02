@@ -26,4 +26,5 @@ Business logic like `build_biography/1` (51 lines of biography processing with l
 ## File
 
 - `lib/music_library_web/live/artist_live/show.ex`
+
 <!-- SECTION:DESCRIPTION:END -->

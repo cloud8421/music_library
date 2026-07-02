@@ -35,4 +35,5 @@ _GitHub: created 2026-03-12 · updated 2026-03-12 · closed 2026-03-12_
 - `lib/music_library_web/live/scrobbled_tracks_live/index.ex`
 - `lib/music_library_web/live/maintenance_live/index.ex`
 - Tests for all of the above
+
 <!-- SECTION:DESCRIPTION:END -->

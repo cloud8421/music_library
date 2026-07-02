@@ -21,4 +21,5 @@ _GitHub: created 2025-11-16 · updated 2026-02-10 · closed 2026-02-10_
 - Extract sql macro for `json_extract`
 - Extract sql macro for `json_set`
 - Remove extended duplication
+
 <!-- SECTION:DESCRIPTION:END -->

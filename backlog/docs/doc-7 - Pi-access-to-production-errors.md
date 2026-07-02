@@ -49,13 +49,14 @@ Pi tools (`fetch_production_errors` and `fetch_production_error`) make HTTP requ
 - Adds two new routes
 
 **Changes needed:**
-| Layer | Change |
-|-------|--------|
-| Server | New `ErrorsController` + `ErrorJSON` view or serializer |
-| Server | 2 new routes in `router.ex` under `/api/v1` scope |
+
+| Layer  | Change                                                        |
+| ------ | ------------------------------------------------------------- |
+| Server | New `ErrorsController` + `ErrorJSON` view or serializer       |
+| Server | 2 new routes in `router.ex` under `/api/v1` scope             |
 | Server | New context module (or inline queries) for error_tracker data |
-| Pi | New tool registrations in a pi extension |
-| Pi | Optional TUI extension for browsing |
+| Pi     | New tool registrations in a pi extension                      |
+| Pi     | Optional TUI extension for browsing                           |
 
 ---
 

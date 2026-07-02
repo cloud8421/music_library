@@ -35,6 +35,7 @@ For record sets, it would be useful to empty the set, which means removing all i
 - [x] #3 A confirmation prompt appears before emptying the set
 - [x] #4 Emptying a set does not delete the set itself (name, description, and metadata are preserved)
 - [x] #5 The context function `RecordSets.empty_record_set/1` returns `{:ok, record_set}` with an empty items list
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -173,4 +174,5 @@ Added `RecordSets.empty_record_set/1` context function that bulk-deletes all `Re
 - [x] #3 Confirmation prompt shown before emptying
 - [x] #4 Set metadata preserved after emptying
 - [x] #5 All existing tests still pass
+
 <!-- DOD:END -->

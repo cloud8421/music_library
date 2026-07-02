@@ -34,6 +34,7 @@ This violates the project's documented SQLite rule: "json_extract() must match e
 - [x] #1 All three fragments in scrobbles_for_record_query use json_extract(?, '$.path') form matching the index expressions exactly
 - [x] #2 EXPLAIN QUERY PLAN (via mise run dev:sqlite-console) confirms the query uses the scrobbled_tracks expression indexes instead of a full scan
 - [x] #3 Tests cover play_count/1 and get_last_listened_track/1 returning correct results for records matched by release id and by title+artist fallback
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -45,6 +46,7 @@ This violates the project's documented SQLite rule: "json_extract() must match e
 3. Capture the generated SQL after the change, run `EXPLAIN QUERY PLAN` via `mise run dev:sqlite-console`, and benchmark the same representative calls to confirm the expression indexes are used and timing improves or at least does not regress.
 4. Check `test/music_library/listening_stats_test.exs` coverage for `play_count/1` and `get_last_listened_track/1`; add cases for (a) match via album MusicBrainz release id in `release_ids` and (b) fallback match via album title + artist name.
 5. Run the relevant listening stats tests after each implementation loop, check off acceptance criteria when met, then run the project precommit checks before finalization.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes

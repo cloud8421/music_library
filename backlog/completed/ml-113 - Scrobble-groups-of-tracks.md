@@ -26,4 +26,5 @@ Specifically:
 - each track needs a checkbox beside it, default unchecked.
 - if any track gets checked, the main "Scrobble Release" button should read "Scrobble selected tracks".
 - when pressed, only selected tracks should be scrobbled. Assume that they have been played one after the other.
+
 <!-- SECTION:DESCRIPTION:END -->

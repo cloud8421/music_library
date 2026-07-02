@@ -33,6 +33,7 @@ In the stats page, right before Scrobble Activity, add a vertical bar chart that
 - [x] #6 The implementation has context-level tests for daily count generation, zero-fill behavior, ordering, and timezone boundaries.
 - [x] #7 The stats page has LiveView tests proving the chart is rendered in the correct location with expected labels/counts.
 - [x] #8 All user-facing chart text is gettext-wrapped and gettext catalogs are updated.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -240,4 +241,5 @@ Added a "Daily Scrobbles" vertical bar chart to the Stats page showing scrobble 
 
 - No production changes or migrations needed
 - Query currently loads the bounded 30-day timestamp window into memory; if the app ever has very high recent scrobble volume, revisit a materialized daily-count table.
+
 <!-- SECTION:FINAL_SUMMARY:END -->

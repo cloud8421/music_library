@@ -35,6 +35,7 @@ Update callers in:
 - `Record.changeset/2` and `add_musicbrainz_data/2`
 - `Records` context (import functions)
 - Any tests that reference the moved functions directly
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
@@ -46,6 +47,7 @@ Update callers in:
 - [x] #3 All callers are updated to use the new locations
 - [x] #4 Full test suite passes
 - [x] #5 `@moduledoc` on moved functions explains their purpose
+
 <!-- AC:END -->
 
 ## Implementation Notes

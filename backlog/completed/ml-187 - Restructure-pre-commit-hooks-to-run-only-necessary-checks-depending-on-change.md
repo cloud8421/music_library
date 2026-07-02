@@ -25,6 +25,7 @@ Currently pre-commit hooks run the entire verification suite irrespectively of t
 2. Changes to documentation only need the pretty linter.
 3. Changes to the presto application only need to run the (upcoming) presto test suite.
 4. Possibly some other patterns, need to verify the complete repo structure.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
@@ -41,6 +42,7 @@ Currently pre-commit hooks run the entire verification suite irrespectively of t
 - [x] #8 Empty STAGED exits early without errors
 - [x] #9 Combined changes from multiple categories trigger all relevant checks
 - [x] #10 Documentation updated: project-conventions.md has Pre-commit Hooks section, available-tasks.md has updated description
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -219,6 +221,7 @@ None. This is a local development tooling change. The pre-commit hook only runs 
    - Note that CI always runs the full suite
 
 2. **`docs/available-tasks.md`**: Update `dev:precommit` description from `"Run checks before a commit"` to `"Run checks before a commit (conditional on staged file types)"`
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes

@@ -33,6 +33,7 @@ The API endpoints affected are:
 - `GET /api/v1/collection/latest`
 - `GET /api/v1/collection/random`
 - `GET /api/v1/collection/on_this_day`
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
@@ -47,6 +48,7 @@ The API endpoints affected are:
 - [x] #6 Records without artist info return `artist_country: null`
 - [x] #7 Records without a selected release return `selected_release: null`
 - [x] #8 All existing tests pass (backward compatible — no existing field removed or renamed)
+
 <!-- AC:END -->
 
 ## Implementation Plan

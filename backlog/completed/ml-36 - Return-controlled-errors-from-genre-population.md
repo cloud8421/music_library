@@ -47,9 +47,11 @@ Make `populate_genres/1` consistently return tagged tuples using `with {:ok, res
 - OpenAI/API failures do not raise from `populate_genres/1`.
 - The worker behavior is explicit for retryable vs non-retryable failures.
 - Tests cover an API failure path.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 OpenAI/API failures do not raise from `populate_genres/1`.
 - [ ] #2 The worker behavior is explicit for retryable vs non-retryable failures.
 - [ ] #3 Tests cover an API failure path.
+
 <!-- AC:END -->

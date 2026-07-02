@@ -38,6 +38,7 @@ Expose read-only production telemetry metrics to the pi harness so agents and hu
 - [x] #7 The TUI supports manual refresh and does not leave timers, abort controllers, or other resources running after it closes.
 - [x] #8 Controller/context tests cover API authentication, query parameters, summary calculations, and empty-result behaviour; extension tests cover client URL construction, formatting, and refresh-state logic where practical.
 - [x] #9 Architecture and production infrastructure documentation are updated to describe the metrics API and prod-metrics pi extension.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -414,6 +415,7 @@ If a local pi environment does not already have those pi-side variables, configu
 - `docs/architecture.md`: add `MusicLibrary.TelemetryMetrics`, shared telemetry definition/key modules, `MetricsController` routes, and `.pi/extensions/prod-metrics` to project tooling.
 - `docs/production-infrastructure.md`: add the metrics API and `prod-metrics` extension to Monitoring & Observability, document env vars and API-mediated access, and note the expected storage flush staleness.
 - `.pi/extensions/prod-metrics/package.json` or README if created: describe the LLM tool and `/prod-metrics` command.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -484,4 +486,5 @@ Added a read-only production telemetry metrics API and a prod-metrics pi extensi
 - The TUI has not been manually tested in a pi session — the API contract matches documented patterns but should be verified on first `/prod-metrics` invocation.
 - No auto-refresh in MVP (per plan).
 - Raw time-series endpoints and structured tag columns are deferred.
+
 <!-- SECTION:FINAL_SUMMARY:END -->

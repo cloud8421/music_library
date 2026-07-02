@@ -32,4 +32,5 @@ Move `get_last_listened_track/1` and `play_count/1` into `MusicLibrary.Listening
 - `lib/music_library_web/live/collection_live/show.ex`
 - `lib/music_library_web/live/wishlist_live/show.ex`
 - Tests for the above
+
 <!-- SECTION:DESCRIPTION:END -->

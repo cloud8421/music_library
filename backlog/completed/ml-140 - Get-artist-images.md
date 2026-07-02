@@ -31,4 +31,5 @@ Fetch artist images via MusicBrainz url-rels → Discogs artist endpoint. Implem
 - Populate artist info when new artist is added
 - Cascade deletions
 - Tests
+
 <!-- SECTION:DESCRIPTION:END -->

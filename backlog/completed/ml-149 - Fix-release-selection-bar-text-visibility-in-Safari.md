@@ -31,6 +31,7 @@ When multiple tracks are selected in the release UI, the `selection_bar` compone
 - [x] #2 The existing Chrome rendering remains unchanged or visually equivalent.
 - [x] #3 The fix is scoped to the release selection bar and does not alter unrelated release controls.
 - [x] #4 Relevant formatting and focused verification are run or any inability to run them is documented.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -41,6 +42,7 @@ When multiple tracks are selected in the release UI, the `selection_bar` compone
 2. Identify the Safari-specific style interaction causing the left selection text to be invisible when multiple tracks are selected.
 3. Apply the smallest scoped change to the release selection bar so the text remains visible in Safari while preserving Chrome rendering.
 4. Run formatting and focused verification, then update acceptance criteria and final notes.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -68,4 +70,5 @@ Verification:
 - User confirmed in Safari that `relative` is the change that fixes the issue.
 - `mix format lib/music_library_web/components/release.ex`
 - `mix test test/music_library_web/components/release_test.exs`
+
 <!-- SECTION:FINAL_SUMMARY:END -->

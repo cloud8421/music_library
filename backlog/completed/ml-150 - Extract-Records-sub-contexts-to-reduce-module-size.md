@@ -41,6 +41,7 @@ The `SearchIndex` schema, `Record` schema, `Similarity` module, `TracklistPdf`, 
 - [x] #3 All callers (LiveViews, workers, controllers, tests) continue to work without changes to their import/alias lines
 - [x] #4 Full test suite passes with no regressions
 - [x] #5 `@moduledoc` for each new module explains its responsibility
+
 <!-- AC:END -->
 
 ## Implementation Notes
@@ -95,4 +96,5 @@ Records → delegates to Search, Import, Enrichment (compile-time: defdelegate o
 - `test/music_library/records/search_test.exs` — search tests (13 tests)
 - `test/music_library/records/import_test.exs` — import tests (3 tests)
 - `test/music_library/records/enrichment_test.exs` — enrichment tests (3 tests)
+
 <!-- SECTION:NOTES:END -->

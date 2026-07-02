@@ -19,6 +19,7 @@ Reduce the token count of collection_summary/0 by:
 1. Compacting format_group/1 (year-only dates, remove type field, reduce max genres 3→2)
 2. Adding statistical preamble (genre/formats/decade distribution) computed inline from fetched records
 3. Updating tests for the new format
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Final Summary

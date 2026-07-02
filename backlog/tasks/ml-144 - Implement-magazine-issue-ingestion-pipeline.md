@@ -52,6 +52,7 @@ Build a pipeline to ingest music magazine issues (PDF), extract structured metad
 - Workers: `IngestIssue`, `ExtractArticle`, `ResolveMentions`
 - LiveView: `MagazineLive.Index/Show` under main authenticated `live_session`
 - Surface mentions on `CollectionLive.Show`, `ArtistLive.Show` ("mentioned in Prog #166, Dec 2025")
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
@@ -64,6 +65,7 @@ Build a pipeline to ingest music magazine issues (PDF), extract structured metad
 - [ ] #4 Notes are created for matched artists/albums with article context
 - [ ] #5 Magazine mentions surface on record/artist detail pages
 - [ ] #6 Cost per issue documented and under budget estimate
+
 <!-- AC:END -->
 
 ## Definition of Done
@@ -73,4 +75,5 @@ Build a pipeline to ingest music magazine issues (PDF), extract structured metad
 - [ ] #1 I can open a page in the application, drag and drop a magazine PDF, and start ingestion
 - [ ] #2 For each artist/album in the collection and Wishlist, I can see relevant informational articles coming from ingested magazines
 - [ ] #3 I can see a list of ALL ingested items, even those which don't have direct correlation with existing records and artists
+
 <!-- DOD:END -->

@@ -38,6 +38,7 @@ Add focused tests for low-coverage modules where direct tests would be more diag
 - [x] #5 HTTP/API error tests cover MusicLibrary.HttpError default status-kind mapping and Discogs.API.ErrorResponse fallback message and retry-delay behavior.
 - [x] #6 ArtistRefreshWikipediaData worker tests cover the {:cancel, :no_english_wikipedia} branch when Wikipedia reports no English article.
 - [x] #7 StatsComponents or page-level tests cover grouped on-this-day records and anniversary labels for Today, normal years, 5-year, and 10-year milestones.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -52,6 +53,7 @@ Add focused tests for low-coverage modules where direct tests would be more diag
 6. Add the ArtistRefreshWikipediaData no-English-Wikipedia worker branch test using Wikipedia stub.
 7. Cover StatsComponents on-this-day grouped and anniversary rendering via the page-level stats test.
 8. Run tests to verify.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes

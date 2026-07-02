@@ -36,6 +36,7 @@ ordinal: 54000
 - [x] #3 Loading state behaviour is preserved (spinner while searching, cleared on result/error)
 - [x] #4 A rapid second search while one is in flight does not produce stale results overwriting newer ones (cancel or ignore superseded results)
 - [x] #5 ScrobbleLive tests updated (Req.Test stub) covering success and failure paths
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -49,6 +50,7 @@ ordinal: 54000
 5. For blank queries, clear results and loading state without starting a search.
 6. Update ScrobbleLive tests with shared Req.Test stubs and `render_async`, covering success, empty results, API failure, task exit, loading state, and stale-result protection.
 7. Run the focused ScrobbleLive test file and `mise run dev:precommit`.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -81,4 +83,5 @@ Tests:
 Risks / follow-ups:
 
 - Follow-up task ML-226 tracks the broader AsyncResult/loading-slot refactor requested by the user.
+
 <!-- SECTION:FINAL_SUMMARY:END -->

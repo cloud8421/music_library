@@ -40,4 +40,5 @@ This will be resolved when oban_web ships https://github.com/oban-bg/oban_web/co
 
 - [ ] #1 Visiting /dev/oban/crons no longer crashes with MatchError
 - [ ] #2 Cron history sparklines render correctly showing job state colors
+
 <!-- AC:END -->

@@ -38,9 +38,11 @@ Consider a generic worker pattern or macro that accepts the delegated function a
 - Boilerplate is reduced
 - Each worker remains individually identifiable for Oban queue routing and monitoring
 - No change in worker behaviour
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 Boilerplate is reduced
 - [ ] #2 Each worker remains individually identifiable for Oban queue routing and monitoring
 - [ ] #3 No change in worker behaviour
+
 <!-- AC:END -->

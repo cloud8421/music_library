@@ -41,6 +41,7 @@ The audit is divided into 4 independent phases that can be tackled in parallel o
 - [x] #3 Phase 3 (state change safety): concurrent record-mutation patterns audited; {:update, record} guards and manage_subscription patterns verified across all navigation paths
 - [x] #4 Phase 4 (performance): unnecessary round trips, redundant full-stream reloads, and synchronous mount work identified with estimated impact and fix approach
 - [x] #5 Each phase produces a written finding report with file paths, line references, severity ratings, and recommended fixes
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -230,4 +231,5 @@ Each phase is a standalone investigation that produces a findings document. Fixe
 - [x] #4 Findings are triaged by severity: HIGH (crashes/data loss), MEDIUM (wrong behavior/noticeable perf), LOW (cosmetic/redundant)
 - [x] #5 ML-168 is referenced where relevant but not duplicated — this audit identifies NEW issues only
 - [x] #6 No fixes implemented during audit — only identification and recommendation
+
 <!-- DOD:END -->

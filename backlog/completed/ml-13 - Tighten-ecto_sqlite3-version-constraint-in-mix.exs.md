@@ -40,8 +40,10 @@ Change to `{:ecto_sqlite3, "~> 0.22"}`. Matches the installed major; prevents ac
 
 - `mix deps.get` still resolves cleanly
 - `mix test` passes
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 `mix deps.get` still resolves cleanly
 - [ ] #2 `mix test` passes
+
 <!-- AC:END -->

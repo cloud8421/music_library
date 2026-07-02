@@ -44,6 +44,7 @@ Required capabilities:
 2. Open a run and view its results.
 3. Based on the current branch, find whether there is a run to watch and watch it.
 4. Expose the functionality both through the pi TUI and as tools usable by the LLM.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
@@ -59,6 +60,7 @@ Required capabilities:
 - [x] #7 Helper-level tests cover `gh` JSON parsing, run filtering/selection, formatting/truncation, watch polling terminal states, cancellation, timeout, and representative CLI error handling.
 - [x] #8 The new extension tests run through `scripts/dev/pi-test` and `.github/workflows/pi.yml`.
 - [x] #9 Relevant project documentation is updated to describe the CI pi extension and any CI/test workflow changes.
+
 <!-- AC:END -->
 
 ## Implementation Plan

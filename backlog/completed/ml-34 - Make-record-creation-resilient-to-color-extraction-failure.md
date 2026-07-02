@@ -48,9 +48,11 @@ Refactor `create_record/1` so post-insert enrichment is failure-tolerant and con
 - `create_record/1` never raises on color extraction failure.
 - The function returns a documented result tuple for both success and failure paths.
 - Tests cover a failed color extraction scenario.
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 `create_record/1` never raises on color extraction failure.
 - [ ] #2 The function returns a documented result tuple for both success and failure paths.
 - [ ] #3 Tests cover a failed color extraction scenario.
+
 <!-- AC:END -->

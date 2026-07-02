@@ -49,6 +49,7 @@ Refactor the duplicated Collection and Wishlist record show LiveViews so common 
 - [x] #4 Wishlist-specific behavior remains intact: purchase action, online store links, unreleased metadata, print-disabled release sheet, and hidden purchased_at field.
 - [x] #5 Relevant focused tests or compile checks pass after the refactor.
 - [x] #6 Architecture documentation reflects any new shared helper module added by the refactor.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -60,6 +61,7 @@ Refactor the duplicated Collection and Wishlist record show LiveViews so common 
 3. Refactor `CollectionLive.Show` and `WishlistLive.Show` to call the shared helper/components while keeping local page-specific sections and handlers: collection notes/regenerate/similar/listening details and wishlist purchase/online-store/current-date behavior.
 4. Update `docs/architecture.md` to mention the new shared `LiveHelpers.RecordShow` module in the web utility modules table.
 5. Run focused formatting/compile/tests for the touched LiveViews/components, then mark acceptance criteria based on the results.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -90,4 +92,5 @@ Verification:
 - `mix gettext.extract --check-up-to-date`
 - `mix format --check-formatted lib/music_library_web/live_helpers/record_show.ex lib/music_library_web/components/record_components.ex lib/music_library_web/live/collection_live/show.ex lib/music_library_web/live/wishlist_live/show.ex`
 - `mix credo --strict`
+
 <!-- SECTION:FINAL_SUMMARY:END -->

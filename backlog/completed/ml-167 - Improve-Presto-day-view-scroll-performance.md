@@ -33,6 +33,7 @@ Optimize the Presto MicroPython records-on-this-day client so day-view scrolling
 - [x] #4 Cover placeholders remain in use during active drag scrolling and real covers repaint after release
 - [x] #5 Thumbnail rendering does not call garbage collection once per row draw
 - [x] #6 README remains accurate if user-visible behavior changes
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -44,6 +45,7 @@ Optimize the Presto MicroPython records-on-this-day client so day-view scrolling
 3. Preload only micro_cover_url thumbnails before the first draw to avoid eager large fallback downloads.
 4. Keep placeholder rendering while dragging, remove per-row gc.collect from thumbnail drawing, and throttle drag redraws by time and pixel delta.
 5. Verify with Python syntax compilation and leave README unchanged because behavior remains the same.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes

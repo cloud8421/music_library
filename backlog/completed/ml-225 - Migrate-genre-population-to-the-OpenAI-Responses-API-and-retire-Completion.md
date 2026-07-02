@@ -38,6 +38,7 @@ Maintainer decision (2026-06-10): consolidate on the Responses API and retire `O
 - [ ] #3 The genre-tagging model is read from application config, not hardcoded
 - [x] #4 OpenAI.API.ErrorResponse classification still applies to the new call path (rate limit vs insufficient_quota behaviour covered by tests)
 - [x] #5 Req.Test stubs and Records.Enrichment tests updated; PopulateGenres worker tests pass
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -50,6 +51,7 @@ Maintainer decision (2026-06-10): consolidate on the Responses API and retire `O
 4. Deleted OpenAI.gpt/1, OpenAI.API.gpt/2, and lib/open_ai/completion.ex. Removed all gpt/2 and Completion-related tests. Grep confirms zero remaining references. Compilation clean.
 5. Updated Req.Test stubs in all 4 test files: facade test, API test, enrichment test, PopulateGenres worker test — all now stub /v1/responses with Responses API JSON shape. ErrorResponse classification tests preserved for 429 rate_limit (retryable), 429 insufficient_quota (permanent), and 500 server_error (retryable).
 6. All 1174 tests pass (0 failures). Credo and Sobelow pass.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -94,4 +96,5 @@ All 1174 tests pass (0 failures). Credo and Sobelow clean. Specifically verified
 
 - AC #3 (config-driven model) intentionally overridden per user direction: model is hardcoded as `@genre_model "gpt-4.1-mini"` in `Records.Enrichment`.
 - The `gpt-4o-mini` model is fully retired from the codebase — the only remaining hardcoded models are `gpt-4.1` (default for chat_stream/respond), `gpt-5.1` (CollectionChat), `gpt-4.1-mini` (genre), and `text-embedding-3-small` (embeddings).
+
 <!-- SECTION:FINAL_SUMMARY:END -->

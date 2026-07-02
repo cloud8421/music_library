@@ -30,6 +30,7 @@ The project-local prod-metrics pi extension currently crashes Pi during extensio
 - [x] #2 fetch_production_metrics_overview remains registered and handles missing env/API failures cleanly
 - [x] #3 /prod-metrics remains registered for TUI mode and closes/cleans up without unhandled errors
 - [x] #4 Existing prod-metrics extension tests and the project pi extension test runner pass or any remaining failures are documented
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -40,6 +41,7 @@ The project-local prod-metrics pi extension currently crashes Pi during extensio
 2. Rework /prod-metrics to use ctx.ui.custom with a MetricsBrowser component instead of ctx.openTui, preserving refresh/window/navigation/copy behavior and abort cleanup.
 3. Add a regression test covering the command registration shape so registerCommand/openTui regressions are caught.
 4. Run the prod-metrics tests and the project pi extension test runner.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -53,6 +55,7 @@ Validation passed:
 - cd .pi/extensions/prod-metrics && npm test (19 tests)
 - mise run dev:pi-test
 - PI_OFFLINE=1 pi --approve --offline --verbose --no-session --no-tools -e .pi/extensions/prod-metrics/index.ts -p "hello"
+
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary

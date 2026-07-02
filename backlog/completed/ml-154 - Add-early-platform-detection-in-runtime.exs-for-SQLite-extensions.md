@@ -39,4 +39,5 @@ The existing `raise` in `extension_path/1` stays as a defensive fallback (should
 - [x] #2 #2 `config/runtime.exs` checks `supported_platform?/0` before loading extensions and raises with a helpful message on unsupported platforms
 - [x] #3 #3 Existing supported platforms (darwin-amd64, darwin-arm64, linux-amd64, linux-arm64) continue to load extensions correctly
 - [x] #4 #4 `extension_path/1` raise stays as a defensive fallback
+
 <!-- AC:END -->

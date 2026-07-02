@@ -39,6 +39,7 @@ The existing throttle telemetry event (`[:req, :rate_limiter, :throttle]` with s
 - [x] #3 Existing rate limiter tests (sequential behaviour, zero cooldown bypass, telemetry emission) pass
 - [x] #4 ETS table created with write_concurrency: true
 - [x] #5 Telemetry event still reports the slept duration
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -50,6 +51,7 @@ The existing throttle telemetry event (`[:req, :rate_limiter, :throttle]` with s
 3. Add `write_concurrency: true` to the table options in new/0.
 4. Tests in test/req/rate_limiter_test.exs: keep existing sequential/zero-cooldown/telemetry tests green; add a concurrency test spawning N tasks calling throttle for the same name with the test clock, collecting claimed slots, asserting pairwise spacing >= cooldown and no duplicates.
 5. Run rate limiter tests, dialyzer (specs change), then precommit.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -90,4 +92,5 @@ Verification:
 Risks/follow-ups:
 
 - No known follow-up for this task. Dialyzer remains noisy outside this change.
+
 <!-- SECTION:FINAL_SUMMARY:END -->

@@ -299,6 +299,7 @@ No new changes beyond ML-162/ML-163: `PI_API_TOKEN` and `PI_SERVICE_FQDN_WEB` ar
 - **ML-163**: Not hard dependency (TUI calls API directly), but defines auth pattern.
 - `@mariozechner/pi-coding-agent` and `@mariozechner/pi-tui`: Already available.
 - No new npm dependencies.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -325,4 +326,5 @@ Added the `/prod-errors` interactive TUI command to the existing `.pi/extensions
 4. **Occurrence count omission** — The list endpoint doesn't include `occurrence_count` (per ML-162 spec), so the list view shows relative timestamps instead.
 5. **No collapsible stacktraces** — Deferred per implementation plan. Initial version shows all stacktraces inline with scrolling.
 6. **Explicit load-more** — No auto-load on scroll-to-bottom. Uses `l` key for user-controlled pagination.
+
 <!-- SECTION:NOTES:END -->

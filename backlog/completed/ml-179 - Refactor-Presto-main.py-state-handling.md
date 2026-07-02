@@ -35,6 +35,7 @@ Refactor presto/main.py in a single-file, behavior-preserving pass to reduce sca
 - [x] #4 Record-list preparation returns content height for the caller to assign to day or search state while preserving existing per-record display cache keys.
 - [x] #5 Shared vertical drag handling replaces duplicated day, search, and detail drag loops without fetching images or measuring layout in the drag hot path.
 - [x] #6 Syntax verification passes from presto/ with python3 py_compile and final notes state that physical-device behavior was not verified unless tested on hardware.
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -47,6 +48,7 @@ Refactor presto/main.py in a single-file, behavior-preserving pass to reduce sca
 4. Replace prepare_records_for_display/1 with prepare_record_list(recs), returning content height while preserving record dict cache keys and thumbnail preloading behavior.
 5. Extract the duplicated vertical drag loop into a shared helper parameterized by offset getters/setters, max offset, redraw callback, and placeholder-during-drag behavior.
 6. Run the Presto syntax check from presto/ and update the task acceptance criteria/final notes based on verification.
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes

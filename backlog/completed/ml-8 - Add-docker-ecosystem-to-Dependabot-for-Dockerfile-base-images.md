@@ -46,8 +46,10 @@ Dependabot will open PRs bumping the base image ARGs; the `mise run dev:validate
 
 - Docker base-image updates surface as Dependabot PRs
 - Existing `validate-docker-image` task runs in CI to gate them
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 Docker base-image updates surface as Dependabot PRs
 - [ ] #2 Existing `validate-docker-image` task runs in CI to gate them
+
 <!-- AC:END -->

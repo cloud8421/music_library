@@ -41,9 +41,11 @@ Rewrite `recompact_positions/1` to use a single `UPDATE ... CASE` statement, con
 - Position recompaction uses a single bulk UPDATE
 - Positions are correctly reassigned with no gaps
 - No regression in ordering behaviour
+
 <!-- SECTION:DESCRIPTION:END -->
 
 - [ ] #1 Position recompaction uses a single bulk UPDATE
 - [ ] #2 Positions are correctly reassigned with no gaps
 - [ ] #3 No regression in ordering behaviour
+
 <!-- AC:END -->

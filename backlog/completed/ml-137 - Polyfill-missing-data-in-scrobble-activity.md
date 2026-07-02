@@ -20,4 +20,5 @@ _GitHub: created 2025-04-26 · updated 2025-09-26 · closed 2025-09-26_
 - For tracked records, display the record artwork rather than the one provided by Last.fm.
 - For tracked records, when matching the artist try and match the album by title
 - Polyfill missing data when it's possible to find one record with the same title and artist
+
 <!-- SECTION:DESCRIPTION:END -->

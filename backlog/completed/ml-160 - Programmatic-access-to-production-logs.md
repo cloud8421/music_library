@@ -31,6 +31,7 @@ Evaluate and implement the best approach for the LLM to access production logs. 
 - [x] #5 When Coolify credentials are missing, the tool returns a clear error message listing which environment variables are not set
 - [x] #6 The existing /prod-logs interactive command continues to work unchanged
 - [x] #7 The tool description and guidelines teach the LLM when and how to use it effectively
+
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -153,6 +154,7 @@ The implementation is self-documenting: the tool's `description`, `promptSnippet
 - `typebox` — already available as a pi built-in import (listed in pi extension docs under "Available Imports")
 - `truncateTail`, `formatSize`, `DEFAULT_MAX_BYTES`, `DEFAULT_MAX_LINES` — all from `@mariozechner/pi-coding-agent`, a pi built-in
 - No new npm dependencies needed
+
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -167,6 +169,7 @@ Added `fetch_production_logs` tool to the existing `.pi/extensions/prod-logs/ind
 - Handler: credential check → fetch → error handling → empty check → reverse → grep → tail → join → truncate → return
 - Truncation via `truncateTail` with 50KB/2000-line limit, with clear truncation note in output
 - Existing `/prod-logs` command code is completely untouched
+
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary
@@ -194,4 +197,5 @@ Added a `fetch_production_logs` tool to `.pi/extensions/prod-logs/index.ts` usin
 2. Ask the LLM to fetch logs with `tail: 50` or `grep: "error"` — should work
 3. Unset a credential and try — should get clear error message
 4. Run `/prod-logs` — should still work unchanged
+
 <!-- SECTION:FINAL_SUMMARY:END -->
