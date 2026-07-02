@@ -83,11 +83,7 @@ export class ServerError extends Error {
 }
 
 export type S3Error =
-  | AuthError
-  | NotFoundError
-  | NetworkError
-  | AbortError
-  | ServerError;
+  AuthError | NotFoundError | NetworkError | AbortError | ServerError;
 
 // ── Signing ─────────────────────────────────────────────────────────────────
 

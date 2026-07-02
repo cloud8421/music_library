@@ -790,11 +790,7 @@ export default function ciBrowserExtension(pi: ExtensionAPI) {
 
             while (true) {
               type DetailAction =
-                | "back"
-                | "refresh"
-                | "failedLog"
-                | "watch"
-                | "copy";
+                "back" | "refresh" | "failedLog" | "watch" | "copy";
               const action = await ctx.ui.custom<DetailAction | null>(
                 (tui, theme, _kb, done) => {
                   const text = fmt.formatRunDetail(run, failedLog);
