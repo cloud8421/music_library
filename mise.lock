@@ -71,31 +71,31 @@ url = "https://github.com/sharkdp/fd/releases/download/v10.4.2/fd-v10.4.2-aarch6
 url_api = "https://api.github.com/repos/sharkdp/fd/releases/assets/370661116"
 
 [[tools.gh]]
-version = "2.95.0"
+version = "2.96.0"
 backend = "aqua:cli/cli"
 
 [tools.gh."platforms.linux-arm64"]
-checksum = "sha256:d41e0b3b6218e5741c8bb4db39b16e53a59e0e06299a8489bd38f623ef7ebaae"
-url = "https://github.com/cli/cli/releases/download/v2.95.0/gh_2.95.0_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/cli/cli/releases/assets/450525946"
+checksum = "sha256:06f86ec7103d41993b76cd78072f43595c34aaa56506d971d9860e67140bf909"
+url = "https://github.com/cli/cli/releases/download/v2.96.0/gh_2.96.0_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/464728549"
 provenance = "github-attestations"
 
 [tools.gh."platforms.linux-x64"]
-checksum = "sha256:25d1e4729e8808c9ed3d613e96ebd3f3e44446f2d368c89d878a71a36ddb3d8c"
-url = "https://github.com/cli/cli/releases/download/v2.95.0/gh_2.95.0_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/cli/cli/releases/assets/450525940"
+checksum = "sha256:83d5c2ccad5498f58bf6368acb1ab32588cf43ab3a4b1c301bf36328b1c8bd60"
+url = "https://github.com/cli/cli/releases/download/v2.96.0/gh_2.96.0_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/464728543"
 provenance = "github-attestations"
 
 [tools.gh."platforms.macos-arm64"]
-checksum = "sha256:3677f9c27965825f9c7d50395473c134edaea4b484373ef6b25de653570a0489"
-url = "https://github.com/cli/cli/releases/download/v2.95.0/gh_2.95.0_macOS_arm64.zip"
-url_api = "https://api.github.com/repos/cli/cli/releases/assets/450525983"
+checksum = "sha256:f23a0c37d963aacc3bed703ccbd59b41c5ca22101fab7f00eb2b7cad23aba463"
+url = "https://github.com/cli/cli/releases/download/v2.96.0/gh_2.96.0_macOS_arm64.zip"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/464728562"
 provenance = "github-attestations"
 
 [tools.gh."platforms.macos-x64"]
-checksum = "sha256:985707e9ac60c95ed51cddd808c338b481abe69fffa77e9d6547c3750045f77e"
-url = "https://github.com/cli/cli/releases/download/v2.95.0/gh_2.95.0_macOS_amd64.zip"
-url_api = "https://api.github.com/repos/cli/cli/releases/assets/450525980"
+checksum = "sha256:4bd449df9ad639391bc62b8032546f0fe9edcd8526e06682a4f88abd8c5d163c"
+url = "https://github.com/cli/cli/releases/download/v2.96.0/gh_2.96.0_macOS_amd64.zip"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/464728560"
 provenance = "github-attestations"
 
 [[tools.hurl]]
@@ -123,28 +123,28 @@ url = "https://github.com/Orange-OpenSource/hurl/releases/download/8.0.0/hurl-8.
 url_api = "https://api.github.com/repos/Orange-OpenSource/hurl/releases/assets/404517157"
 
 [[tools.litestream]]
-version = "0.5.12"
+version = "0.5.14"
 backend = "aqua:benbjohnson/litestream"
 
 [tools.litestream."platforms.linux-arm64"]
-checksum = "sha256:14f496b640767279e7e9eca71218150d9251bf2d488e9fae6f012543f50a20ec"
-url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.12/litestream-0.5.12-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/benbjohnson/litestream/releases/assets/441891770"
+checksum = "sha256:b49b3d01fb0a8b4d426ee613c080fba44acae0551587dc43525dcd93eee64b4f"
+url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.14/litestream-0.5.14-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/benbjohnson/litestream/releases/assets/468346419"
 
 [tools.litestream."platforms.linux-x64"]
-checksum = "sha256:e10049d206079ef12dc623d859780b2f7a06d32418dc1939004381abbafd01f1"
-url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.12/litestream-0.5.12-linux-x86_64.tar.gz"
-url_api = "https://api.github.com/repos/benbjohnson/litestream/releases/assets/441891774"
+checksum = "sha256:32083dd2af13840b273c538360b828368d7b82bbaa2c641106052dc7814ed956"
+url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.14/litestream-0.5.14-linux-x86_64.tar.gz"
+url_api = "https://api.github.com/repos/benbjohnson/litestream/releases/assets/468346362"
 
 [tools.litestream."platforms.macos-arm64"]
-checksum = "sha256:0efceca85426ab00276db1dce0a756e5c3c74cce23d2ded66310614eddb0f201"
-url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.12/litestream-0.5.12-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/benbjohnson/litestream/releases/assets/441891787"
+checksum = "sha256:d4a1f810387d66264e4c9b0c3a29aa3d5dff2d6f53cb4c55ec093594d2ef94c3"
+url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.14/litestream-0.5.14-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/benbjohnson/litestream/releases/assets/468346424"
 
 [tools.litestream."platforms.macos-x64"]
-checksum = "sha256:05185e896250fd7bbba4f80dc2996005ae9cdf581880f2f11f6ce6234721c77c"
-url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.12/litestream-0.5.12-darwin-x86_64.tar.gz"
-url_api = "https://api.github.com/repos/benbjohnson/litestream/releases/assets/441891791"
+checksum = "sha256:7432fc0a8c796c6a86f57d13a771d01795c3ea90da124c37e5af501cd08db0e4"
+url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.14/litestream-0.5.14-darwin-x86_64.tar.gz"
+url_api = "https://api.github.com/repos/benbjohnson/litestream/releases/assets/468346423"
 
 [[tools.node]]
 version = "26.0.0"
@@ -171,7 +171,7 @@ version = "1.47.1"
 backend = "npm:backlog.md"
 
 [[tools."npm:prettier"]]
-version = "3.8.4"
+version = "3.9.4"
 backend = "npm:prettier"
 
 [[tools.shellcheck]]
