@@ -196,7 +196,7 @@ HTTP 429 into `:rate_limit` vs `:auth_error` by reading the body `code`
 | `heavy_writes` | 1           | DB-intensive or serialized operations                               |
 | `openai`       | 3           | OpenAI calls (rate-limited at Req layer via `Req.RateLimiter`)      |
 | `music_brainz` | 3           | MusicBrainz calls (rate-limited at Req layer via `Req.RateLimiter`) |
-| `discogs`      | 3           | Discogs calls (rate-limited at Req layer via `Req.RateLimiter`)     |
+| `discogs`      | 1           | Discogs calls (rate-limited at Req layer via `Req.RateLimiter`)     |
 | `wikipedia`    | 3           | Wikipedia calls                                                     |
 | `last_fm`      | 3           | Last.fm calls (rate-limited at Req layer via `Req.RateLimiter`)     |
 

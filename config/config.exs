@@ -116,7 +116,7 @@ config :music_library, Oban,
     heavy_writes: 1,
     openai: 3,
     music_brainz: 3,
-    discogs: 3,
+    discogs: 1,
     wikipedia: 3,
     last_fm: 3
   ],
