@@ -72,6 +72,7 @@ CLAUDE.md
 # Dev tooling and environment
 /mise.toml
 /mise.local.toml
+/mise.lock
 /.tool-versions
 /.lexical
 .env.example
