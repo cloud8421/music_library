@@ -1,10 +1,11 @@
 ---
 id: ML-231
 title: add a record to a set from the record detail page and the listing pages
-status: Done
-assignee: []
+status: In Progress
+assignee:
+  - "@pi"
 created_date: "2026-07-12 17:16"
-updated_date: "2026-07-13 05:22"
+updated_date: "2026-07-13 05:53"
 labels: []
 dependencies: []
 documentation:
@@ -28,10 +29,10 @@ From /wishlist, /collection, and both detail routes /collection/:id and /wishlis
 - [x] #3 Selecting one or more available sets and submitting once adds the record to every selected set at that set's next position, leaves unselected sets unchanged, and does not create duplicate memberships.
 - [x] #4 The bulk add is atomic for validation or persistence failures and idempotent for stale/concurrent duplicate memberships; malformed IDs, deleted records, or missing sets cannot produce partial additions.
 - [x] #5 Successful submission closes the modal, returns to the correct listing/detail route, shows translated singular/plural feedback, and refreshes detail-page record-set links to include the new memberships.
-- [x] #6 No-set, already-in-all-sets, empty-selection, and expected failure states are accessible and translated; submission is unavailable without a new selection, and unrelated parent re-renders do not reset pending choices.
+- [ ] #6 No-set, already-in-all-sets, empty-selection, and expected failure states are accessible and translated; submission is unavailable without a new selection, and unrelated parent re-renders do not reset pending choices.
 - [x] #7 All four modal URLs work when visited directly, initialize their parent LiveView state correctly, and close to the appropriate base route.
-- [x] #8 Picker loading uses a fixed query count without preloading set items or records, bulk save avoids N+1 queries, expected indexes are used, and the documented one-off performance thresholds pass.
-- [x] #9 Context and PhoenixTest coverage verifies multi-set persistence, ordering, idempotency/rollback edge cases, checked-disabled memberships, both listing display modes, all four source routes, state restoration, and refreshed detail output.
+- [ ] #8 Picker loading uses a fixed query count without preloading set items or records, bulk save avoids N+1 queries, expected indexes are used, and the documented one-off performance thresholds pass.
+- [ ] #9 Context and PhoenixTest coverage verifies multi-set persistence, ordering, idempotency/rollback edge cases, checked-disabled memberships, both listing display modes, all four source routes, state restoration, and refreshed detail output.
 - [x] #10 Collection and wishlist record detail action menus expose the same action and open `/collection/:id/show/add-to-set` or `/wishlist/:id/show/add-to-set` without disrupting existing detail-page actions.
 - [x] #11 Gettext catalogs and `docs/architecture.md` are updated for the new actions, routes, RecordSets responsibilities, and reusable picker component; no production configuration or migration change is introduced.
 
@@ -385,6 +386,11 @@ SetPicker LiveComponent + shared modal wired to all 4 LiveViews.
 - mix credo --strict: 0 issues
 - All 1252 tests pass
 
+## Review remediation (2026-07-13)
+
+Reopened after implementation review. Plan: make grid actions and modal/status markup accessible; make deleted-record and stale-set states terminal/recoverable as specified; harden picker events; replace the deprecated transaction API; add focused SetPicker, four-route PhoenixTest, query-count, rollback, and real concurrent transaction coverage; then rerun targeted and full validation.
+
+Scope correction: remediation is limited to the review's high- and medium-severity findings. Malformed-event hardening and the deprecated transaction API are not part of this pass.
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary
