@@ -76,6 +76,22 @@ defmodule MusicLibraryWeb.LiveHelpers.IndexActions do
   end
 
   @doc """
+  Applies the :add_to_set action. Falls back to :index if the stream hasn't
+  been initialized yet.
+
+  Returns the socket (not wrapped in `{:noreply, ...}`).
+  """
+  def apply_add_to_set_action(socket, %{"id" => id} = params) do
+    config = socket.assigns.index_config
+    record = Records.get_record!(id)
+
+    socket
+    |> apply_fallback_index(params, :records, fn s, :index, p -> apply_index_action(s, p) end)
+    |> assign(:page_title, add_to_set_page_title(record, config))
+    |> assign(:record, record)
+  end
+
+  @doc """
   Loads records from the context module and assigns them to the socket stream.
 
   Returns the socket (not wrapped in `{:noreply, ...}`).
@@ -178,6 +194,21 @@ defmodule MusicLibraryWeb.LiveHelpers.IndexActions do
         record.title,
         "·",
         gettext("Edit"),
+        "·",
+        config.section_page_title
+      ],
+      " "
+    )
+  end
+
+  defp add_to_set_page_title(record, config) do
+    Enum.join(
+      [
+        Records.Record.artist_names(record),
+        "-",
+        record.title,
+        "·",
+        gettext("Add to sets"),
         "·",
         config.section_page_title
       ],

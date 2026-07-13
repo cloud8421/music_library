@@ -158,6 +158,11 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
         records={@streams.records}
         record_show_path={fn record -> ~p"/collection/#{record}" end}
         record_edit_path={fn record -> ~p"/collection/#{record}/edit" end}
+        add_to_set_path={
+          fn record ->
+            ~p"/collection/#{record}/add-to-set?#{@record_list_params |> Map.take([:query, :page, :page_size, :order]) |> Enum.reject(fn {_, v} -> v in ["", nil] end) |> Map.new()}"
+          end
+        }
         display_artist_names
         density={:high}
       />
@@ -167,6 +172,11 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
         records={@streams.records}
         record_show_path={fn record -> ~p"/collection/#{record}" end}
         record_edit_path={fn record -> ~p"/collection/#{record}/edit" end}
+        add_to_set_path={
+          fn record ->
+            ~p"/collection/#{record}/add-to-set?#{@record_list_params |> Map.take([:query, :page, :page_size, :order]) |> Enum.reject(fn {_, v} -> v in ["", nil] end) |> Map.new()}"
+          end
+        }
         section={:collection}
       />
 
@@ -218,6 +228,13 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
           patch={back_path(@record_list_params)}
         />
       </.structured_modal>
+
+      <.record_set_picker_modal
+        :if={@live_action == :add_to_set}
+        live_action={@live_action}
+        record={@record}
+        close_path={back_path(@record_list_params)}
+      />
 
       <.pagination id={:bottom_pagination} pagination_params={@record_list_params} />
 
@@ -282,6 +299,10 @@ defmodule MusicLibraryWeb.CollectionLive.Index do
 
   defp apply_action(socket, :edit, params) do
     IndexActions.apply_edit_action(socket, params)
+  end
+
+  defp apply_action(socket, :add_to_set, params) do
+    IndexActions.apply_add_to_set_action(socket, params)
   end
 
   defp apply_action(socket, :index, params) do

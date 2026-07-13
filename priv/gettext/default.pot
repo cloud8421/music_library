@@ -527,6 +527,7 @@ msgid "Add new Record · Wishlist"
 msgstr ""
 
 #: lib/music_library_web/components/barcode_scanner.ex
+#: lib/music_library_web/live/record_set_live/set_picker.ex
 #, elixir-autogen, elixir-format
 msgid "Adding..."
 msgstr ""
@@ -2617,4 +2618,61 @@ msgstr ""
 #: lib/music_library_web/components/record_components.ex
 #, elixir-autogen, elixir-format
 msgid "What's the formation for this album?"
+msgstr ""
+
+#: lib/music_library_web/live/record_set_live/set_picker.ex
+#, elixir-autogen, elixir-format
+msgid "%{count} set selected"
+msgid_plural "%{count} sets selected"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/music_library_web/live/record_set_live/set_picker.ex
+#, elixir-autogen, elixir-format
+msgid "Add to selected sets"
+msgstr ""
+
+#: lib/music_library_web/components/record_components.ex
+#: lib/music_library_web/live/record_set_live/set_picker.ex
+#: lib/music_library_web/live_helpers/index_actions.ex
+#: lib/music_library_web/live_helpers/record_show.ex
+#, elixir-autogen, elixir-format
+msgid "Add to sets"
+msgstr ""
+
+#: lib/music_library_web/live/record_set_live/set_picker.ex
+#, elixir-autogen, elixir-format
+msgid "Already in all selected sets."
+msgstr ""
+
+#: lib/music_library_web/live/record_set_live/set_picker.ex
+#, elixir-autogen, elixir-format
+msgid "No record sets available. Create one first."
+msgstr ""
+
+#: lib/music_library_web/live/record_set_live/set_picker.ex
+#, elixir-autogen, elixir-format
+msgid "Please select at least one set."
+msgstr ""
+
+#: lib/music_library_web/live/record_set_live/set_picker.ex
+#, elixir-autogen, elixir-format
+msgid "Record added to 1 set."
+msgid_plural "Record added to %{count} sets."
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/music_library_web/live/record_set_live/set_picker.ex
+#, elixir-autogen, elixir-format
+msgid "Record has been deleted."
+msgstr ""
+
+#: lib/music_library_web/live/record_set_live/set_picker.ex
+#, elixir-autogen, elixir-format
+msgid "Some sets were deleted. Your selection has been updated."
+msgstr ""
+
+#: lib/music_library_web/live/record_set_live/set_picker.ex
+#, elixir-autogen, elixir-format
+msgid "This record already belongs to every set."
 msgstr ""

@@ -12,6 +12,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
       record_includes: 1,
       record_published_releases: 1,
       record_sets_list: 1,
+      record_set_picker_modal: 1,
       record_show_action_bar: 1,
       record_show_chat: 1,
       record_show_edit_modal: 1,
@@ -56,6 +57,7 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
             can_scrobble?={@can_scrobble?}
             chat_count={@chat_count}
             edit_path={~p"/collection/#{@record}/show/edit"}
+            add_to_set_path={~p"/collection/#{@record}/show/add-to-set"}
           >
             <:dropdown_start>
               <.dropdown_link
@@ -162,6 +164,13 @@ defmodule MusicLibraryWeb.CollectionLive.Show do
         show_purchased_at={true}
         close_path={~p"/collection/#{@record}"}
         patch_path={~p"/collection/#{@record}"}
+      />
+
+      <.record_set_picker_modal
+        :if={@live_action == :add_to_set}
+        live_action={@live_action}
+        record={@record}
+        close_path={~p"/collection/#{@record}"}
       />
     </Layouts.app>
     """

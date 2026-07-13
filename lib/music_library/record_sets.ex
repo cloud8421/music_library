@@ -6,6 +6,7 @@ defmodule MusicLibrary.RecordSets do
   import Ecto.Query, warn: false
 
   alias Ecto.Changeset
+  alias MusicLibrary.Records.Record
   alias MusicLibrary.RecordSets.{RecordSet, RecordSetItem}
   alias MusicLibrary.Repo
 
@@ -107,25 +108,54 @@ defmodule MusicLibrary.RecordSets do
   end
 
   @spec add_record_to_set(RecordSet.t(), String.t()) ::
-          {:ok, RecordSet.t()} | {:error, Changeset.t()}
+          {:ok, RecordSet.t()} | {:error, Changeset.t() | :record_not_found}
   def add_record_to_set(%RecordSet{} = record_set, record_id) do
-    next_position =
-      from(i in RecordSetItem,
-        where: i.record_set_id == ^record_set.id,
-        select: coalesce(max(i.position), -1)
-      )
-      |> Repo.one!()
-      |> Kernel.+(1)
+    now = truncate_to_second(DateTime.utc_now())
 
-    %RecordSetItem{}
-    |> RecordSetItem.changeset(%{position: next_position})
-    |> Changeset.put_change(:record_set_id, record_set.id)
-    |> Changeset.put_change(:record_id, record_id)
-    |> Changeset.unique_constraint([:record_set_id, :record_id])
-    |> Repo.insert()
-    |> case do
-      {:ok, _item} -> {:ok, get_record_set!(record_set.id)}
-      error -> error
+    case do_insert_record_to_sets(record_id, [record_set.id], now) do
+      {:ok, 0} ->
+        changeset =
+          %RecordSetItem{}
+          |> RecordSetItem.changeset(%{position: 0})
+          |> Changeset.put_change(:record_set_id, record_set.id)
+          |> Changeset.put_change(:record_id, record_id)
+          |> Changeset.add_error(:record_set_id, "has already been taken")
+
+        {:error, changeset}
+
+      {:error, :record_not_found} ->
+        {:error, :record_not_found}
+
+      {:ok, _count} ->
+        {:ok, get_record_set!(record_set.id)}
+    end
+  end
+
+  @doc """
+  Adds a record to multiple record sets in a single transactional bulk operation.
+
+  Returns `{:ok, inserted_count}` where `inserted_count` is the number of new
+  memberships created. Already-existing memberships are silently skipped.
+  Returns an error tuple for empty/malformed input, missing record, or missing sets.
+  """
+  @spec add_record_to_sets(Record.t(), [String.t()]) ::
+          {:ok, non_neg_integer()}
+          | {:error, :empty_selection}
+          | {:error, {:invalid_set_ids, [term()]}}
+          | {:error, :record_not_found}
+          | {:error, {:record_sets_not_found, [String.t()]}}
+  def add_record_to_sets(%Record{} = record, set_ids) when is_list(set_ids) do
+    now = truncate_to_second(DateTime.utc_now())
+
+    case normalize_set_ids(set_ids) do
+      {:ok, []} ->
+        {:error, :empty_selection}
+
+      {:ok, normalized} ->
+        do_insert_record_to_sets(record.id, normalized, now)
+
+      {:error, _invalid} = error ->
+        error
     end
   end
 
@@ -216,6 +246,34 @@ defmodule MusicLibrary.RecordSets do
     |> Repo.all()
   end
 
+  @doc """
+  Returns lightweight set choices for picker rendering and the IDs of sets
+  the record already belongs to.
+
+  Returns `{choices, member_set_ids}` where `choices` is a list of maps with
+  `:id` and `:name` keys, and `member_set_ids` is a `MapSet` of IDs.
+  """
+  @spec list_record_set_choices_for_record(String.t()) ::
+          {[%{id: String.t(), name: String.t()}], MapSet.t()}
+  def list_record_set_choices_for_record(record_id) do
+    choices =
+      from(rs in RecordSet,
+        order_by: [fragment("? COLLATE NOCASE", rs.name), asc: rs.name, asc: rs.id],
+        select: %{id: rs.id, name: rs.name}
+      )
+      |> Repo.all()
+
+    member_set_ids =
+      from(i in RecordSetItem,
+        where: i.record_id == ^record_id,
+        select: i.record_set_id
+      )
+      |> Repo.all()
+      |> MapSet.new()
+
+    {choices, member_set_ids}
+  end
+
   defp record_sets_search_query(""), do: from(rs in RecordSet)
 
   defp record_sets_search_query(query) do
@@ -247,6 +305,8 @@ defmodule MusicLibrary.RecordSets do
     )
   end
 
+  defp truncate_to_second(dt), do: %{dt | microsecond: {0, 0}}
+
   defp recompact_positions(record_set) do
     record_set_id = record_set.id
 
@@ -259,5 +319,98 @@ defmodule MusicLibrary.RecordSets do
       |> Repo.all()
 
     reorder_records_in_set(record_set, record_ids)
+  end
+
+  # Shared immediate-transaction insert path for both single and bulk add APIs.
+  # Verifies record existence, fetches selected-set max positions, and bulk-inserts
+  # rows with on_conflict: :nothing for idempotency.
+  defp do_insert_record_to_sets(record_id, set_ids, now) do
+    Repo.transaction(
+      fn ->
+        unless record_exists?(record_id) do
+          Repo.rollback(:record_not_found)
+        end
+
+        sets_with_max =
+          from(rs in RecordSet,
+            where: rs.id in ^set_ids,
+            select: %{
+              id: rs.id,
+              max_position:
+                fragment(
+                  "(SELECT coalesce(max(i.position), -1) FROM record_set_items AS i WHERE i.record_set_id = ?)",
+                  rs.id
+                )
+            }
+          )
+          |> Repo.all()
+
+        found_ids = MapSet.new(Enum.map(sets_with_max, & &1.id))
+
+        missing =
+          Enum.reject(set_ids, fn set_id ->
+            MapSet.member?(found_ids, set_id)
+          end)
+
+        if missing != [] do
+          Repo.rollback({:record_sets_not_found, missing})
+        end
+
+        rows =
+          Enum.map(sets_with_max, fn %{id: set_id, max_position: max_pos} ->
+            %{
+              id: Ecto.UUID.generate(),
+              record_set_id: set_id,
+              record_id: record_id,
+              position: max_pos + 1,
+              inserted_at: now,
+              updated_at: now
+            }
+          end)
+
+        {inserted_count, _} =
+          Repo.insert_all(
+            RecordSetItem,
+            rows,
+            on_conflict: :nothing,
+            conflict_target: [:record_set_id, :record_id]
+          )
+
+        inserted_count
+      end,
+      mode: :immediate
+    )
+    |> case do
+      {:ok, count} -> {:ok, count}
+      {:error, :record_not_found} -> {:error, :record_not_found}
+      {:error, {:record_sets_not_found, missing}} -> {:error, {:record_sets_not_found, missing}}
+    end
+  end
+
+  defp record_exists?(record_id) do
+    from(r in Record, where: r.id == ^record_id, select: 1)
+    |> Repo.exists?()
+  end
+
+  # Normalizes and validates a list of set IDs, rejecting malformed values.
+  defp normalize_set_ids(set_ids) when is_list(set_ids) do
+    result =
+      Enum.reduce_while(set_ids, {MapSet.new(), []}, fn raw_id, {seen, invalid} ->
+        case Ecto.UUID.cast(raw_id) do
+          :error ->
+            {:halt, {seen, invalid ++ [raw_id]}}
+
+          {:ok, uuid} ->
+            {:cont, {MapSet.put(seen, uuid), invalid}}
+        end
+      end)
+
+    case result do
+      {_seen, [_ | _] = invalid} ->
+        {:error, {:invalid_set_ids, invalid}}
+
+      {seen, []} ->
+        {:ok, MapSet.to_list(seen)}
+    end
   end
 end

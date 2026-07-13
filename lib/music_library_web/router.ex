@@ -77,16 +77,20 @@ defmodule MusicLibraryWeb.Router do
         live "/collection/import", CollectionLive.Index, :import
         live "/collection/scan", CollectionLive.Index, :barcode_scan
         live "/collection/:id/edit", CollectionLive.Index, :edit
+        live "/collection/:id/add-to-set", CollectionLive.Index, :add_to_set
 
         live "/collection/:id", CollectionLive.Show, :show
         live "/collection/:id/show/edit", CollectionLive.Show, :edit
+        live "/collection/:id/show/add-to-set", CollectionLive.Show, :add_to_set
 
         live "/wishlist", WishlistLive.Index, :index
         live "/wishlist/import", WishlistLive.Index, :import
         live "/wishlist/:id/edit", WishlistLive.Index, :edit
+        live "/wishlist/:id/add-to-set", WishlistLive.Index, :add_to_set
 
         live "/wishlist/:id", WishlistLive.Show, :show
         live "/wishlist/:id/show/edit", WishlistLive.Show, :edit
+        live "/wishlist/:id/show/add-to-set", WishlistLive.Show, :add_to_set
 
         live "/artists/:musicbrainz_id", ArtistLive.Show, :show
         live "/artists/:musicbrainz_id/import", ArtistLive.Show, :import

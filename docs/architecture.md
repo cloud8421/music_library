@@ -103,7 +103,7 @@ Last.fm schemas (separate, not Ecto-persisted to main DB):
 | `Assets`               | Asset                                                                 | Binary asset storage (covers, artist images), cache tracking, pruning unreferenced assets                                                                                                                                                                                                                                                                               |
 | `Notes`                | Note                                                                  | Free-text notes for records and artists. Rows survive record deletion — keyed by `musicbrainz_id` (no FK to `records`), they attach to the musical entity.                                                                                                                                                                                                              |
 | `Chats`                | Chat, Message, StreamProvider, RecordChat, ArtistChat, CollectionChat | Persistent AI chat conversations for records, artists, and the collection, streaming AI chat behaviour and entity-specific implementations. Chats survive record deletion — keyed by `musicbrainz_id` (no FK to `records`), they attach to the musical entity.                                                                                                          |
-| `RecordSets`           | RecordSet, RecordSetItem                                              | User-curated record groupings with ordering                                                                                                                                                                                                                                                                                                                             |
+| `RecordSets`           | RecordSet, RecordSetItem                                              | User-curated record groupings with ordering, lightweight membership choices for pickers, atomic bulk assignment with serialized append allocation                                                                                                                                                                                                                       |
 | `ScrobbleRules`        | ScrobbleRule                                                          | Rules to remap Last.fm scrobble data to correct MusicBrainz IDs; searchable by match_value/target/description, orderable by alphabetical or inserted_at                                                                                                                                                                                                                 |
 | `ScrobbleActivity`     | —                                                                     | Scrobbling releases/media/tracks to Last.fm                                                                                                                                                                                                                                                                                                                             |
 | `ListeningStats`       | (LastFm.Track, RecordRelease, ArtistRecord, ArtistInfo)               | Scrobble persistence, refresh scheduling, listening analytics, track CRUD, search, listing: scrobble counts, artist play counts (from DB), recent activity, top albums/artists by period                                                                                                                                                                                |
@@ -275,23 +275,23 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 
 ### LiveViews
 
-| LiveView                        | Route                                   | Purpose                                                              |
-| ------------------------------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `StatsLive.Index`               | `/`                                     | Dashboard: counts, recent activity, records on this day              |
-| `CollectionLive.Index`          | `/collection`                           | Browse/search collected records (grid/list, paginated)               |
-| `CollectionLive.Show`           | `/collection/:id`                       | Record detail: metadata, scrobbles, similar, colors                  |
-| `WishlistLive.Index`            | `/wishlist`                             | Browse/search wishlisted records                                     |
-| `WishlistLive.Show`             | `/wishlist/:id`                         | Wishlist record detail with store links                              |
-| `ArtistLive.Show`               | `/artists/:musicbrainz_id`              | Artist bio, discography, similar artists                             |
-| `RecordSetLive.Index`           | `/record-sets`                          | Browse/manage curated record sets                                    |
-| `RecordSetLive.Show`            | `/record-sets/:id`                      | Set detail with reorderable items                                    |
-| `ScrobbleLive.Index`            | `/scrobble`                             | Search MusicBrainz release groups to scrobble                        |
-| `ScrobbleLive.ReleaseGroupShow` | `/scrobble/:rg_id`                      | List releases within a release group                                 |
-| `ScrobbleLive.ReleaseShow`      | `/scrobble/:rg_id/releases/:release_id` | Select tracks and scrobble (uses `Release` live_component)           |
-| `ScrobbledTracksLive.Index`     | `/scrobbled-tracks`                     | Browse/search Last.fm history                                        |
-| `ScrobbleRulesLive.Index`       | `/scrobble-rules`                       | Browse/search/sort scrobble remapping rules (paginated, 50 per page) |
-| `OnlineStoreTemplateLive.Index` | `/online-store-templates`               | Manage store URL templates                                           |
-| `MaintenanceLive.Index`         | `/maintenance`                          | Admin: batch jobs, DB maintenance, Last.fm connection                |
+| LiveView                        | Route                                   | Purpose                                                                  |
+| ------------------------------- | --------------------------------------- | ------------------------------------------------------------------------ |
+| `StatsLive.Index`               | `/`                                     | Dashboard: counts, recent activity, records on this day                  |
+| `CollectionLive.Index`          | `/collection`                           | Browse/search collected records (grid/list, paginated, add-to-set modal) |
+| `CollectionLive.Show`           | `/collection/:id`                       | Record detail: metadata, scrobbles, similar, colors, add-to-set modal    |
+| `WishlistLive.Index`            | `/wishlist`                             | Browse/search wishlisted records, add-to-set modal                       |
+| `WishlistLive.Show`             | `/wishlist/:id`                         | Wishlist record detail with store links, add-to-set modal                |
+| `ArtistLive.Show`               | `/artists/:musicbrainz_id`              | Artist bio, discography, similar artists                                 |
+| `RecordSetLive.Index`           | `/record-sets`                          | Browse/manage curated record sets                                        |
+| `RecordSetLive.Show`            | `/record-sets/:id`                      | Set detail with reorderable items                                        |
+| `ScrobbleLive.Index`            | `/scrobble`                             | Search MusicBrainz release groups to scrobble                            |
+| `ScrobbleLive.ReleaseGroupShow` | `/scrobble/:rg_id`                      | List releases within a release group                                     |
+| `ScrobbleLive.ReleaseShow`      | `/scrobble/:rg_id/releases/:release_id` | Select tracks and scrobble (uses `Release` live_component)               |
+| `ScrobbledTracksLive.Index`     | `/scrobbled-tracks`                     | Browse/search Last.fm history                                            |
+| `ScrobbleRulesLive.Index`       | `/scrobble-rules`                       | Browse/search/sort scrobble remapping rules (paginated, 50 per page)     |
+| `OnlineStoreTemplateLive.Index` | `/online-store-templates`               | Manage store URL templates                                               |
+| `MaintenanceLive.Index`         | `/maintenance`                          | Admin: batch jobs, DB maintenance, Last.fm connection                    |
 
 ### LiveComponents
 
@@ -300,7 +300,8 @@ All authenticated routes live inside a single `live_session` with three `on_moun
 | `RecordForm`                   | Collection/Wishlist (edit)                                                    | Record editing: cover search, genre autocomplete, color picker, file upload                   |
 | `ArtistLive.Form`              | ArtistLive.Show                                                               | Edit artist image (upload + Brave image search)                                               |
 | `RecordSetLive.Form`           | RecordSetLive.Index                                                           | Create/edit record set                                                                        |
-| `RecordSetLive.RecordPicker`   | RecordSetLive.Show                                                            | Search and add records to set                                                                 |
+| `RecordSetLive.SetPicker`      | CollectionLive.Index/Show, WishlistLive.Index/Show                            | Additive multi-set assignment via checkbox group in a route-backed modal                      |
+| `RecordSetLive.RecordPicker`   | RecordSetLive.Index, RecordSetLive.Show                                       | Search and add records to set                                                                 |
 | `ScrobbledTracksLive.Form`     | ScrobbledTracksLive.Index                                                     | Edit scrobbled track                                                                          |
 | `ScrobbleRulesLive.Form`       | ScrobbleRulesLive.Index                                                       | Create/edit scrobble rule                                                                     |
 | `ScrobbleRulePicker`           | ScrobbledTracksLive.Index, StatsLive.Index                                    | Search records and create scrobble rules inline                                               |

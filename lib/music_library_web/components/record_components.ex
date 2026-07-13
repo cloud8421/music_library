@@ -90,6 +90,7 @@ defmodule MusicLibraryWeb.RecordComponents do
 
   attr :record_show_path, :any, required: true
   attr :record_edit_path, :any, required: true
+  attr :add_to_set_path, :any, default: nil
   attr :records, :list, required: true
   attr :current_date, Date, required: false, default: nil
   attr :section, :atom, values: [:collection, :wishlist], required: true
@@ -214,6 +215,7 @@ defmodule MusicLibraryWeb.RecordComponents do
               <.record_action_links
                 record={record}
                 edit_path={@record_edit_path.(record)}
+                add_to_set_path={@add_to_set_path && @add_to_set_path.(record)}
                 hide_target={"##{id}"}
               />
             </.focus_wrap>
@@ -230,6 +232,7 @@ defmodule MusicLibraryWeb.RecordComponents do
   attr :id, :string, required: true
   attr :record_show_path, :any, required: true
   attr :record_edit_path, :any, required: true
+  attr :add_to_set_path, :any, default: nil
   attr :display_artist_names, :boolean, default: false
   attr :density, :atom, values: [:low, :high], default: :low
   attr :container_class, :string, default: "mt-6"
@@ -297,6 +300,7 @@ defmodule MusicLibraryWeb.RecordComponents do
                   <.record_action_links
                     record={record}
                     edit_path={@record_edit_path.(record)}
+                    add_to_set_path={@add_to_set_path && @add_to_set_path.(record)}
                     hide_target={"##{id}"}
                   />
                 </.focus_wrap>
@@ -568,6 +572,7 @@ defmodule MusicLibraryWeb.RecordComponents do
   attr :can_scrobble?, :boolean, required: true
   attr :chat_count, :integer, required: true
   attr :edit_path, :string, required: true
+  attr :add_to_set_path, :string, default: nil
   slot :dropdown_start
   slot :dropdown_extra
 
@@ -656,6 +661,20 @@ defmodule MusicLibraryWeb.RecordComponents do
                   data-slot="icon"
                 />
                 {gettext("Edit")}
+              </.dropdown_link>
+
+              <.dropdown_link
+                :if={@add_to_set_path}
+                id={"actions-#{@record.id}-add-to-set"}
+                patch={@add_to_set_path}
+              >
+                <.icon
+                  name="hero-folder-plus"
+                  class="mr-1 size-4"
+                  aria-hidden="true"
+                  data-slot="icon"
+                />
+                {gettext("Add to sets")}
               </.dropdown_link>
 
               <.dropdown_link
@@ -844,6 +863,28 @@ defmodule MusicLibraryWeb.RecordComponents do
     """
   end
 
+  attr :live_action, :atom, required: true
+  attr :record, Records.Record, required: true
+  attr :close_path, :string, required: true
+  attr :title, :string, default: nil
+
+  def record_set_picker_modal(assigns) do
+    ~H"""
+    <.structured_modal
+      id="add-to-set-modal"
+      on_close={JS.patch(@close_path)}
+    >
+      <.live_component
+        module={MusicLibraryWeb.RecordSetLive.SetPicker}
+        id={"add-to-set-#{@record.id}"}
+        record={@record}
+        close_path={@close_path}
+        title={@title}
+      />
+    </.structured_modal>
+    """
+  end
+
   attr :record, Records.Record, required: true
   attr :section, :atom, values: [:collection, :wishlist], required: true
 
@@ -971,6 +1012,7 @@ defmodule MusicLibraryWeb.RecordComponents do
   attr :record, :map, required: true
   attr :edit_path, :string, required: true
   attr :hide_target, :string, required: true
+  attr :add_to_set_path, :string, default: nil
 
   defp record_action_links(assigns) do
     ~H"""
@@ -983,6 +1025,22 @@ defmodule MusicLibraryWeb.RecordComponents do
       />
       {gettext("Edit")}
     </.dropdown_link>
+
+    <.dropdown_link
+      :if={@add_to_set_path}
+      id={"actions-#{@record.id}-add-to-set"}
+      patch={@add_to_set_path}
+    >
+      <.icon
+        name="hero-folder-plus"
+        class="mr-1 size-4"
+        aria-hidden="true"
+        data-slot="icon"
+      />
+      {gettext("Add to sets")}
+    </.dropdown_link>
+
+    <.dropdown_separator :if={@add_to_set_path} />
 
     <.dropdown_link
       :if={!@record.purchased_at}

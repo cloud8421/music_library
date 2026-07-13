@@ -10,6 +10,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
       record_includes: 1,
       record_published_releases: 1,
       record_sets_list: 1,
+      record_set_picker_modal: 1,
       record_show_action_bar: 1,
       record_show_chat: 1,
       record_show_edit_modal: 1,
@@ -53,6 +54,7 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
             can_scrobble?={@can_scrobble?}
             chat_count={@chat_count}
             edit_path={~p"/wishlist/#{@record}/show/edit"}
+            add_to_set_path={~p"/wishlist/#{@record}/show/add-to-set"}
           >
             <:dropdown_extra>
               <.dropdown_link
@@ -138,6 +140,13 @@ defmodule MusicLibraryWeb.WishlistLive.Show do
         show_purchased_at={false}
         close_path={~p"/wishlist/#{@record}"}
         patch_path={~p"/wishlist/#{@record}"}
+      />
+
+      <.record_set_picker_modal
+        :if={@live_action == :add_to_set}
+        live_action={@live_action}
+        record={@record}
+        close_path={~p"/wishlist/#{@record}"}
       />
     </Layouts.app>
     """

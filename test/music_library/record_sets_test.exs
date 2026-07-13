@@ -6,6 +6,7 @@ defmodule MusicLibrary.RecordSetsTest do
 
   import Ecto.Query, warn: false
 
+  alias MusicLibrary.Records.Record
   alias MusicLibrary.RecordSets
   alias MusicLibrary.RecordSets.RecordSetItem
   alias MusicLibrary.Repo
@@ -254,6 +255,233 @@ defmodule MusicLibrary.RecordSetsTest do
 
       {:ok, updated} = RecordSets.empty_record_set(set)
       assert updated.items == []
+    end
+  end
+
+  describe "list_record_set_choices_for_record/1" do
+    test "returns lightweight choices and member set IDs" do
+      set1 = record_set(%{name: "Beta"})
+      set2 = record_set(%{name: "Alpha"})
+      set3 = record_set(%{name: "Gamma"})
+      rec = record()
+
+      {:ok, _} = RecordSets.add_record_to_set(set1, rec.id)
+
+      {choices, member_set_ids} = RecordSets.list_record_set_choices_for_record(rec.id)
+
+      # Choices are lightweight maps with only :id and :name
+      assert Enum.count_until(choices, 4) >= 3
+
+      choice = hd(choices)
+      assert is_map_key(choice, :id)
+      assert is_map_key(choice, :name)
+      refute is_map_key(choice, :description)
+      refute is_map_key(choice, :items)
+
+      # Sorted by name COLLATE NOCASE, then name, then id
+      names = Enum.map(choices, & &1.name)
+      assert Enum.find_index(names, &(&1 == "Alpha")) < Enum.find_index(names, &(&1 == "Beta"))
+      assert Enum.find_index(names, &(&1 == "Beta")) < Enum.find_index(names, &(&1 == "Gamma"))
+
+      # Member set IDs contain only the set the record belongs to
+      assert MapSet.equal?(member_set_ids, MapSet.new([set1.id]))
+      refute MapSet.member?(member_set_ids, set2.id)
+      refute MapSet.member?(member_set_ids, set3.id)
+    end
+
+    test "returns empty member set IDs for record without memberships" do
+      _set = record_set()
+      rec = record()
+
+      {choices, member_set_ids} = RecordSets.list_record_set_choices_for_record(rec.id)
+
+      # At least one choice should exist from the created set
+      assert choices != []
+      assert MapSet.equal?(member_set_ids, MapSet.new())
+    end
+
+    test "picker functions return correct shape without preloading items or records" do
+      for _i <- 1..5, do: record_set()
+      rec = record()
+
+      {choices, member_set_ids} = RecordSets.list_record_set_choices_for_record(rec.id)
+
+      assert is_list(choices)
+      assert is_map_key(hd(choices), :id)
+      assert is_map_key(hd(choices), :name)
+      refute is_map_key(hd(choices), :description)
+      refute is_map_key(hd(choices), :items)
+      assert is_struct(member_set_ids, MapSet)
+    end
+  end
+
+  describe "add_record_to_sets/2" do
+    test "adds a record to multiple sets in one operation" do
+      set1 = record_set()
+      set2 = record_set()
+      set3 = record_set()
+      rec = record()
+
+      assert {:ok, 3} =
+               RecordSets.add_record_to_sets(rec, [set1.id, set2.id, set3.id])
+
+      # Verify memberships via context
+      member_sets = RecordSets.list_record_sets_for_record(rec.id)
+      member_ids = Enum.map(member_sets, & &1.id)
+      assert set1.id in member_ids
+      assert set2.id in member_ids
+      assert set3.id in member_ids
+
+      # Verify positions are sequential
+      for set <- [set1, set2, set3] do
+        updated = RecordSets.get_record_set!(set.id)
+        assert Enum.count_until(updated.items, 2) == 1
+        assert hd(updated.items).position == 0
+      end
+    end
+
+    test "assigns the next position in each set" do
+      {set, [_existing]} = record_set_with_records(1)
+      rec = record()
+
+      assert {:ok, 1} = RecordSets.add_record_to_sets(rec, [set.id])
+
+      updated = RecordSets.get_record_set!(set.id)
+      assert Enum.count_until(updated.items, 3) == 2
+
+      positions = Enum.map(updated.items, & &1.position)
+      assert Enum.sort(positions) == [0, 1]
+    end
+
+    test "deduplicates submitted set IDs" do
+      set1 = record_set()
+      set2 = record_set()
+      rec = record()
+
+      assert {:ok, 2} =
+               RecordSets.add_record_to_sets(rec, [set1.id, set1.id, set2.id, set2.id])
+
+      member_sets = RecordSets.list_record_sets_for_record(rec.id)
+      assert Enum.count_until(member_sets, 3) == 2
+    end
+
+    test "skips already-existing memberships and returns inserted count only" do
+      set1 = record_set()
+      set2 = record_set()
+      rec = record()
+
+      {:ok, _} = RecordSets.add_record_to_set(set1, rec.id)
+
+      # Submit both sets, set1 already has it
+      assert {:ok, 1} = RecordSets.add_record_to_sets(rec, [set1.id, set2.id])
+
+      member_sets = RecordSets.list_record_sets_for_record(rec.id)
+      assert Enum.count_until(member_sets, 3) == 2
+    end
+
+    test "returns zero inserted count when record already belongs to all sets" do
+      set1 = record_set()
+      rec = record()
+
+      {:ok, _} = RecordSets.add_record_to_set(set1, rec.id)
+
+      assert {:ok, 0} = RecordSets.add_record_to_sets(rec, [set1.id])
+    end
+
+    test "handles stale memberships created between load and submit" do
+      set1 = record_set()
+      set2 = record_set()
+      rec = record()
+
+      # Simulate stale state: set1 membership added after picker load
+      {:ok, _} = RecordSets.add_record_to_set(set1, rec.id)
+
+      assert {:ok, 1} = RecordSets.add_record_to_sets(rec, [set1.id, set2.id])
+
+      member_sets = RecordSets.list_record_sets_for_record(rec.id)
+      assert Enum.count_until(member_sets, 3) == 2
+    end
+
+    test "returns error for empty list after normalization" do
+      rec = record()
+
+      assert {:error, :empty_selection} = RecordSets.add_record_to_sets(rec, [])
+    end
+
+    test "returns error for malformed set IDs" do
+      rec = record()
+
+      assert {:error, {:invalid_set_ids, ["not-a-uuid"]}} =
+               RecordSets.add_record_to_sets(rec, ["not-a-uuid"])
+    end
+
+    test "returns error for mixed valid and malformed IDs" do
+      set = record_set()
+      rec = record()
+
+      assert {:error, {:invalid_set_ids, ["bad"]}} =
+               RecordSets.add_record_to_sets(rec, [set.id, "bad"])
+    end
+
+    test "returns error for missing record" do
+      set = record_set()
+
+      assert {:error, :record_not_found} =
+               RecordSets.add_record_to_sets(%Record{id: Ecto.UUID.generate()}, [set.id])
+    end
+
+    test "returns error for missing set IDs" do
+      rec = record()
+      missing_id = Ecto.UUID.generate()
+
+      assert {:error, {:record_sets_not_found, [^missing_id]}} =
+               RecordSets.add_record_to_sets(rec, [missing_id])
+    end
+
+    test "returns error for mixed valid and missing set IDs with no partial writes" do
+      set1 = record_set()
+      rec = record()
+      missing_id = Ecto.UUID.generate()
+
+      assert {:error, {:record_sets_not_found, [^missing_id]}} =
+               RecordSets.add_record_to_sets(rec, [set1.id, missing_id])
+
+      # No partial writes
+      member_sets = RecordSets.list_record_sets_for_record(rec.id)
+      assert Enum.empty?(member_sets)
+    end
+
+    test "correctly handles 25-set bulk add in one call" do
+      sets = for _i <- 1..25, do: record_set()
+      rec = record()
+
+      set_ids = Enum.map(sets, & &1.id)
+      assert {:ok, 25} = RecordSets.add_record_to_sets(rec, set_ids)
+
+      # All 25 memberships are verified
+      member_sets = RecordSets.list_record_sets_for_record(rec.id)
+      assert Enum.count_until(member_sets, 26) == 25
+    end
+  end
+
+  describe "add_record_to_set/2 preserves existing behaviour after refactor" do
+    test "adds a record to the set" do
+      set = record_set()
+      rec = record()
+
+      assert {:ok, updated} = RecordSets.add_record_to_set(set, rec.id)
+      assert Enum.count_until(updated.items, 2) == 1
+      assert hd(updated.items).record.id == rec.id
+    end
+
+    test "returns error on duplicate with changeset" do
+      set = record_set()
+      rec = record()
+
+      {:ok, _} = RecordSets.add_record_to_set(set, rec.id)
+
+      assert {:error, changeset} = RecordSets.add_record_to_set(set, rec.id)
+      assert %{record_set_id: ["has already been taken"]} = errors_on(changeset)
     end
   end
 end

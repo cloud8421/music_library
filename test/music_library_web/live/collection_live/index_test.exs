@@ -790,4 +790,64 @@ defmodule MusicLibraryWeb.CollectionLive.IndexTest do
     payload = Transform.encode!(transform)
     ~p"/assets/#{payload}"
   end
+
+  describe "add-to-set from collection listing" do
+    import MusicLibrary.Fixtures.RecordSets
+
+    setup [:fill_collection]
+
+    test "grid action menu includes Add to sets link", %{conn: conn, collection: _records} do
+      session = visit(conn, ~p"/collection")
+      html = Phoenix.LiveViewTest.render(session.view)
+      assert html =~ "add-to-set"
+    end
+
+    test "list action menu includes Add to sets link", %{conn: conn, collection: _records} do
+      session =
+        conn
+        |> visit(~p"/collection")
+        |> click_button("List")
+
+      html = Phoenix.LiveViewTest.render(session.view)
+      assert html =~ "add-to-set"
+    end
+
+    test "opens and renders the add-to-set modal", %{conn: conn, collection: [record | _]} do
+      conn
+      |> visit(~p"/collection/#{record}/add-to-set")
+      |> assert_has("#add-to-set-modal")
+      |> assert_has("h1", "Add to sets")
+    end
+
+    test "modal renders set picker with existing membership", %{
+      conn: conn,
+      collection: [record | _]
+    } do
+      set1 = record_set(%{name: "Favorites"})
+      _set2 = record_set(%{name: "Other"})
+      {:ok, _} = MusicLibrary.RecordSets.add_record_to_set(set1, record.id)
+
+      conn
+      |> visit(~p"/collection/#{record}/add-to-set")
+      |> assert_has("#set-picker-form")
+    end
+
+    test "closing modal returns to index preserving query state", %{conn: conn} do
+      conn
+      |> visit(~p"/collection?query=test&order=alphabetical&page=1")
+      |> assert_path(~p"/collection",
+        query_params: %{query: "test", order: "alphabetical", page: "1"}
+      )
+    end
+
+    test "direct modal URL initializes parent state correctly", %{
+      conn: conn,
+      collection: [record | _]
+    } do
+      conn
+      |> visit(~p"/collection/#{record}/add-to-set")
+      |> assert_has("#add-to-set-modal")
+      |> assert_has("#set-picker-heading")
+    end
+  end
 end

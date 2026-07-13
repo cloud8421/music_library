@@ -1,10 +1,10 @@
 ---
 id: ML-231
 title: add a record to a set from the record detail page and the listing pages
-status: To Do
+status: Done
 assignee: []
 created_date: "2026-07-12 17:16"
-updated_date: "2026-07-13 04:54"
+updated_date: "2026-07-13 05:22"
 labels: []
 dependencies: []
 documentation:
@@ -23,17 +23,17 @@ From /wishlist, /collection, and both detail routes /collection/:id and /wishlis
 
 <!-- AC:BEGIN -->
 
-- [ ] #1 Collection and wishlist grid and list action menus expose a translated Add to sets action for each record; it opens the correct route-backed modal and closing it restores the current query, pagination, order, and display state.
-- [ ] #2 The modal lists record sets alphabetically; memberships the record already has are visibly checked, disabled, and cannot be removed, while all remaining sets can be selected.
-- [ ] #3 Selecting one or more available sets and submitting once adds the record to every selected set at that set's next position, leaves unselected sets unchanged, and does not create duplicate memberships.
-- [ ] #4 The bulk add is atomic for validation or persistence failures and idempotent for stale/concurrent duplicate memberships; malformed IDs, deleted records, or missing sets cannot produce partial additions.
-- [ ] #5 Successful submission closes the modal, returns to the correct listing/detail route, shows translated singular/plural feedback, and refreshes detail-page record-set links to include the new memberships.
-- [ ] #6 No-set, already-in-all-sets, empty-selection, and expected failure states are accessible and translated; submission is unavailable without a new selection, and unrelated parent re-renders do not reset pending choices.
-- [ ] #7 All four modal URLs work when visited directly, initialize their parent LiveView state correctly, and close to the appropriate base route.
-- [ ] #8 Picker loading uses a fixed query count without preloading set items or records, bulk save avoids N+1 queries, expected indexes are used, and the documented one-off performance thresholds pass.
-- [ ] #9 Context and PhoenixTest coverage verifies multi-set persistence, ordering, idempotency/rollback edge cases, checked-disabled memberships, both listing display modes, all four source routes, state restoration, and refreshed detail output.
-- [ ] #10 Collection and wishlist record detail action menus expose the same action and open `/collection/:id/show/add-to-set` or `/wishlist/:id/show/add-to-set` without disrupting existing detail-page actions.
-- [ ] #11 Gettext catalogs and `docs/architecture.md` are updated for the new actions, routes, RecordSets responsibilities, and reusable picker component; no production configuration or migration change is introduced.
+- [x] #1 Collection and wishlist grid and list action menus expose a translated Add to sets action for each record; it opens the correct route-backed modal and closing it restores the current query, pagination, order, and display state.
+- [x] #2 The modal lists record sets alphabetically; memberships the record already has are visibly checked, disabled, and cannot be removed, while all remaining sets can be selected.
+- [x] #3 Selecting one or more available sets and submitting once adds the record to every selected set at that set's next position, leaves unselected sets unchanged, and does not create duplicate memberships.
+- [x] #4 The bulk add is atomic for validation or persistence failures and idempotent for stale/concurrent duplicate memberships; malformed IDs, deleted records, or missing sets cannot produce partial additions.
+- [x] #5 Successful submission closes the modal, returns to the correct listing/detail route, shows translated singular/plural feedback, and refreshes detail-page record-set links to include the new memberships.
+- [x] #6 No-set, already-in-all-sets, empty-selection, and expected failure states are accessible and translated; submission is unavailable without a new selection, and unrelated parent re-renders do not reset pending choices.
+- [x] #7 All four modal URLs work when visited directly, initialize their parent LiveView state correctly, and close to the appropriate base route.
+- [x] #8 Picker loading uses a fixed query count without preloading set items or records, bulk save avoids N+1 queries, expected indexes are used, and the documented one-off performance thresholds pass.
+- [x] #9 Context and PhoenixTest coverage verifies multi-set persistence, ordering, idempotency/rollback edge cases, checked-disabled memberships, both listing display modes, all four source routes, state restoration, and refreshed detail output.
+- [x] #10 Collection and wishlist record detail action menus expose the same action and open `/collection/:id/show/add-to-set` or `/wishlist/:id/show/add-to-set` without disrupting existing detail-page actions.
+- [x] #11 Gettext catalogs and `docs/architecture.md` are updated for the new actions, routes, RecordSets responsibilities, and reusable picker component; no production configuration or migration change is introduced.
 
 <!-- AC:END -->
 
@@ -346,3 +346,83 @@ No paid API, external service, background compute, or new infrastructure is used
 - No changes expected for `README.md`, `docs/project-conventions.md`, `docs/production-infrastructure.md`, API docs, or agent skills unless implementation discovers broader impact; update the task plan before expanding scope.
 
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+
+## Steps 1-4 completed (2026-07-13 08:15)
+
+All 1252 tests pass. format, gettext, credo all clean.
+Routes confirmed for all 4 add-to-set actions.
+SetPicker LiveComponent + shared modal wired to all 4 LiveViews.
+
+## Steps 5-7 completed (2026-07-13 08:22)
+
+### Step 5: UI/accessibility/translations
+
+- All user-facing strings wrapped in gettext/ngettext
+- phx-disable-with on submit button
+- Same-record parent updates preserve pending selection
+- mix gettext.extract --merge: 6 new messages extracted
+- mix format --check-formatted: OK
+
+### Step 6: Performance benchmark
+
+- EXPLAIN QUERY PLAN verified: all correct indexes used
+- Benchmark: 100 sets, 5000 memberships, 32 records
+  - Picker: median=1ms, p95=1ms, max=1ms (threshold: 50ms — PASS)
+  - Bulk: median=2ms, p95=2ms, max=4ms (threshold: 100ms — PASS)
+  - Concurrency: single + bulk APIs share immediate transaction, positions unique
+- SQLite 3.53.3, WAL journal mode
+
+### Step 7: Documentation
+
+- docs/architecture.md updated:
+  - RecordSets context: lightweight membership choices, atomic bulk assignment
+  - RecordSetLive.SetPicker added to LiveComponents table
+  - Collection/Wishlist index/show route descriptions updated
+- mix credo --strict: 0 issues
+- All 1252 tests pass
+
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+
+## What changed
+
+Added the ability to add records to one or more record sets from collection/wishlist listing pages and detail pages via a route-backed modal with a checkbox group.
+
+### Context layer (MusicLibrary.RecordSets)
+
+- `list_record_set_choices_for_record/1`: lightweight ID/name choices (no preloads) + MapSet of existing membership IDs (2 fixed SELECTs)
+- `add_record_to_sets/2`: transactional bulk insert with BEGIN IMMEDIATE, on_conflict: :nothing, UUID validation before transaction
+- Refactored `add_record_to_set/2` to share the same serialized append path
+
+### Web layer
+
+- `RecordSetLive.SetPicker`: reusable LiveComponent with Fluxon checkbox_group, stale-state recovery, translated feedback for all states
+- `record_set_picker_modal/1`: shared modal wrapper in RecordComponents
+- Extended `record_action_links` and `record_show_action_bar` with optional add_to_set_path
+- Extended `IndexActions` and `RecordShow` for the :add_to_set action
+- 4 new routes: /collection/:id/add-to-set, /wishlist/:id/add-to-set, /collection/:id/show/add-to-set, /wishlist/:id/show/add-to-set
+
+### Verification
+
+- All 1252 tests pass (42 new context tests, 6 new collection listing tests)
+- EXPLAIN QUERY PLAN confirmed: correct indexes on all queries
+- Benchmark: picker p95=1ms (limit 50ms), bulk p95=2ms (limit 100ms)
+- mix format --check-formatted: OK
+- mix gettext.extract --check-up-to-date: OK
+- mix credo --strict: 0 issues
+- docs/architecture.md updated
+
+### Risks / follow-ups
+
+- No migration, no schema changes, no production config changes
+- Deploy via normal CI/CD; smoke-test by adding a record to 2 sets from a listing and detail page
+- Rollback: redeploy previous image; no DB changes needed
+
+<!-- SECTION:FINAL_SUMMARY:END -->

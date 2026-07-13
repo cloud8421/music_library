@@ -148,4 +148,5 @@ defmodule MusicLibraryWeb.LiveHelpers.RecordShow do
 
   defp title_segment(:show), do: gettext("Details")
   defp title_segment(:edit), do: gettext("Edit")
+  defp title_segment(:add_to_set), do: gettext("Add to sets")
 end
