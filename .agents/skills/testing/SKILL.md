@@ -318,18 +318,21 @@ test/
 
 ### Available fixture modules
 
-| Module | Creates |
-|--------|---------|
-| `RecordsFixtures` | Records with MusicBrainz data |
-| `RecordSetsFixtures` | Record sets with items |
-| `OnlineStoreTemplatesFixtures` | Store templates |
-| `ArtistInfoFixtures` | ArtistInfo records |
-| `ScrobbleRulesFixtures` | Scrobble rules |
-| `ScrobbledTracksFixtures` | Last.fm tracks |
-| `Discogs.ArtistFixtures` | Discogs API responses |
-| `LastFm.ArtistFixtures` | Last.fm API responses |
-| `MusicBrainz.*Fixtures` | MusicBrainz API responses |
-| `Wikipedia.Fixtures` | Wikipedia API responses |
+| Module                                       | Creates                       |
+| -------------------------------------------- | ----------------------------- |
+| `MusicLibrary.Fixtures.Records`              | Records with MusicBrainz data |
+| `MusicLibrary.Fixtures.RecordSets`           | Record sets with items        |
+| `MusicLibrary.Fixtures.OnlineStoreTemplates` | Store templates               |
+| `MusicLibrary.ArtistInfoFixtures`            | ArtistInfo records            |
+| `MusicLibrary.ErrorsFixtures`                | ErrorTracker errors           |
+| `MusicLibrary.ScrobbleRulesFixtures`         | Scrobble rules                |
+| `MusicLibrary.ScrobbledTracksFixtures`       | Last.fm tracks                |
+| `BraveSearch.Fixtures`                       | Brave Search responses        |
+| `Discogs.Fixtures.Artist`                    | Discogs API responses         |
+| `LastFm.Fixtures.Artist`                     | Last.fm artist responses      |
+| `LastFm.Fixtures.RecentTracks`               | Last.fm recent tracks         |
+| `MusicBrainz.Fixtures.*`                     | MusicBrainz API responses     |
+| `Wikipedia.Fixtures`                         | Wikipedia API responses       |
 
 Always call through the fixture module — never `Repo.insert` directly.
 

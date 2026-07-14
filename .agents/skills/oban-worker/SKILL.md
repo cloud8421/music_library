@@ -13,8 +13,9 @@ consistent conventions for structure, error handling, queue assignment, and test
 1. **Does the worker delegate to a context module?** `perform/1` must be a thin wrapper.
    No business logic inline.
 
-2. **Is the queue correct?** Rate-limited APIs get dedicated queues (currently concurrency 3).
-   DB-intensive operations go to `heavy_writes`. General tasks go to `default`.
+2. **Is the queue correct?** Rate-limited APIs get dedicated queues with per-service
+   concurrency limits. DB-intensive operations go to `heavy_writes`. General tasks go to
+   `default`.
 
 3. **Does error handling use `ErrorHandler`?** Workers calling APIs route HTTP errors
    through `MusicLibrary.Worker.ErrorHandler.to_oban_result/1`.
@@ -61,7 +62,7 @@ end
 | `heavy_writes` | 1 | DB-intensive or serialized operations |
 | `openai` | 3 | OpenAI API calls |
 | `music_brainz` | 3 | MusicBrainz API calls |
-| `discogs` | 3 | Discogs API calls |
+| `discogs` | 1 | Discogs API calls |
 | `wikipedia` | 3 | Wikipedia API calls |
 | `last_fm` | 3 | Last.fm API calls |
 
@@ -127,7 +128,7 @@ difference from on-demand workers.
 | Every 12h | `ApplyScrobbleRules` | heavy_writes |
 | Every 12h | `PruneAssetCache` | default |
 | Daily 2 AM | `PruneAssets` | default |
-| Daily 3 AM | `RepoVacuum` | heavy_writes |
+| Daily 3:03 AM | `RepoVacuum` | heavy_writes |
 | Daily 4 AM | `RepoOptimize` | heavy_writes |
 | Monthly 1st, 6 AM | `RecordRefreshAllMusicBrainzData` | music_brainz |
 | Monthly 1st, 7 AM | `RecordGenerateAllEmbeddings` | heavy_writes |

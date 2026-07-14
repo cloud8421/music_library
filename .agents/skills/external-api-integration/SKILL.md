@@ -264,15 +264,16 @@ end)
 
 ### Available API Fixture Modules
 
-| Module | API |
-|--------|-----|
-| `MusicBrainz.ReleaseFixtures` | MusicBrainz release data |
-| `MusicBrainz.ReleaseGroupFixtures` | MusicBrainz release group data |
-| `MusicBrainz.ArtistFixtures` | MusicBrainz artist data |
-| `Discogs.ArtistFixtures` | Discogs artist profiles |
-| `LastFm.ArtistFixtures` | Last.fm artist info |
-| `LastFm.Fixtures.RecentTracks` | Last.fm scrobble history |
-| `Wikipedia.Fixtures` | Wikipedia extracts |
+| Module                              | API                        |
+| ----------------------------------- | -------------------------- |
+| `MusicBrainz.Fixtures.Release`      | MusicBrainz release data   |
+| `MusicBrainz.Fixtures.ReleaseGroup` | MusicBrainz release groups |
+| `MusicBrainz.Fixtures.Artist`       | MusicBrainz artist data    |
+| `BraveSearch.Fixtures`              | Brave Search responses     |
+| `Discogs.Fixtures.Artist`           | Discogs artist profiles    |
+| `LastFm.Fixtures.Artist`            | Last.fm artist info        |
+| `LastFm.Fixtures.RecentTracks`      | Last.fm scrobble history   |
+| `Wikipedia.Fixtures`                | Wikipedia extracts         |
 
 ## Adding a New API Integration
 

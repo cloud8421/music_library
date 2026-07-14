@@ -19,12 +19,12 @@ push via GitHub Actions.
 
 ## Hosting
 
-| Component         | Technology                                |
-| ----------------- | ----------------------------------------- |
-| Orchestration     | Coolify (self-hosted)                     |
-| Container runtime | Docker                                    |
-| SSL termination   | Coolify reverse proxy                     |
-| HTTP redirect     | HTTP 301 → HTTPS (enforced by app config) |
+| Component         | Technology                                                       |
+| ----------------- | ---------------------------------------------------------------- |
+| Orchestration     | Coolify (self-hosted)                                            |
+| Container runtime | Docker                                                           |
+| SSL termination   | Coolify reverse proxy                                            |
+| HTTPS enforcement | Endpoint `force_ssl` with HSTS and `x-forwarded-proto` rewriting |
 
 The Docker image is a multi-stage build:
 
