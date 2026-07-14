@@ -26,20 +26,6 @@ backend = "core:erlang"
 
 [tools.erlang.options]
 precompiled = "if_available"
-precompiled_os = "ubuntu-24.04"
-
-[tools.erlang."platforms.linux-arm64"]
-url = "https://builds.hex.pm/builds/otp/arm64/ubuntu-24.04/OTP-29.0.3.tar.gz"
-
-[tools.erlang."platforms.linux-x64"]
-url = "https://builds.hex.pm/builds/otp/amd64/ubuntu-24.04/OTP-29.0.3.tar.gz"
-
-[[tools.erlang]]
-version = "29.0.3"
-backend = "core:erlang"
-
-[tools.erlang.options]
-precompiled = "if_available"
 
 [tools.erlang."platforms.macos-arm64"]
 checksum = "sha256:bfb187843b00fdff9a9eb79f15f17ffcd48d89150212f77206279fcd51136706"
@@ -50,6 +36,20 @@ url_api = "https://api.github.com/repos/erlef/otp_builds/releases/assets/4644198
 checksum = "sha256:9fb73031da37363200df4459ef57e16bb4e00134ec94bfb92b7a1b4db640dcca"
 url = "https://github.com/erlef/otp_builds/releases/download/OTP-29.0.3/otp-x86_64-apple-darwin.tar.gz"
 url_api = "https://api.github.com/repos/erlef/otp_builds/releases/assets/464426319"
+
+[[tools.erlang]]
+version = "29.0.3"
+backend = "core:erlang"
+
+[tools.erlang.options]
+precompiled = "if_available"
+precompiled_os = "ubuntu-24.04"
+
+[tools.erlang."platforms.linux-arm64"]
+url = "https://builds.hex.pm/builds/otp/arm64/ubuntu-24.04/OTP-29.0.3.tar.gz"
+
+[tools.erlang."platforms.linux-x64"]
+url = "https://builds.hex.pm/builds/otp/amd64/ubuntu-24.04/OTP-29.0.3.tar.gz"
 
 [[tools.fd]]
 version = "10.4.2"
@@ -167,7 +167,7 @@ checksum = "sha256:f488ab543fe202d8a2d56e661682117d3c56903a2bf64f2ec1ff7bd421cfd
 url = "https://nodejs.org/dist/v26.0.0/node-v26.0.0-darwin-x64.tar.gz"
 
 [[tools."npm:backlog.md"]]
-version = "1.47.1"
+version = "1.48.0"
 backend = "npm:backlog.md"
 
 [[tools."npm:prettier"]]
