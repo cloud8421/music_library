@@ -44,7 +44,7 @@ Three separate SQLite databases, each managed by its own Ecto repo:
 
 | Repo                          | Purpose                      | Cache size | Pool size                | Busy timeout |
 | ----------------------------- | ---------------------------- | ---------- | ------------------------ | ------------ |
-| `MusicLibrary.Repo`           | Application data             | 128 MB     | `$POOL_SIZE` (default 5) | 5,000 ms     |
+| `MusicLibrary.Repo`           | Application data             | 64 MB      | `$POOL_SIZE` (default 5) | 5,000 ms     |
 | `MusicLibrary.BackgroundRepo` | Oban job queue               | 16 MB      | `$POOL_SIZE` (default 5) | —            |
 | `MusicLibrary.TelemetryRepo`  | Persistent telemetry metrics | 4 MB       | 2                        | —            |
 
