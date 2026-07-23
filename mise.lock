@@ -119,28 +119,28 @@ url = "https://github.com/Orange-OpenSource/hurl/releases/download/8.0.0/hurl-8.
 url_api = "https://api.github.com/repos/Orange-OpenSource/hurl/releases/assets/404517157"
 
 [[tools.litestream]]
-version = "0.5.14"
+version = "0.5.15"
 backend = "aqua:benbjohnson/litestream"
 
 [tools.litestream."platforms.linux-arm64"]
-checksum = "sha256:b49b3d01fb0a8b4d426ee613c080fba44acae0551587dc43525dcd93eee64b4f"
-url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.14/litestream-0.5.14-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/benbjohnson/litestream/releases/assets/468346419"
+checksum = "sha256:2b7d6c6b8cfefab545e632bf8a77b5d1e1a95ff9fd0d2754a67c8a046391125c"
+url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.15/litestream-0.5.15-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/benbjohnson/litestream/releases/assets/485229695"
 
 [tools.litestream."platforms.linux-x64"]
-checksum = "sha256:32083dd2af13840b273c538360b828368d7b82bbaa2c641106052dc7814ed956"
-url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.14/litestream-0.5.14-linux-x86_64.tar.gz"
-url_api = "https://api.github.com/repos/benbjohnson/litestream/releases/assets/468346362"
+checksum = "sha256:839a68e69d111409262775bed78ba9f73f0835cfd23d8c128da21eedaedb50ba"
+url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.15/litestream-0.5.15-linux-x86_64.tar.gz"
+url_api = "https://api.github.com/repos/benbjohnson/litestream/releases/assets/485229698"
 
 [tools.litestream."platforms.macos-arm64"]
-checksum = "sha256:d4a1f810387d66264e4c9b0c3a29aa3d5dff2d6f53cb4c55ec093594d2ef94c3"
-url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.14/litestream-0.5.14-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/benbjohnson/litestream/releases/assets/468346424"
+checksum = "sha256:5fdbeabc00c25daa979f9a430945cb3acca9b12e3026d624d530cafab78148f4"
+url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.15/litestream-0.5.15-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/benbjohnson/litestream/releases/assets/485229727"
 
 [tools.litestream."platforms.macos-x64"]
-checksum = "sha256:7432fc0a8c796c6a86f57d13a771d01795c3ea90da124c37e5af501cd08db0e4"
-url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.14/litestream-0.5.14-darwin-x86_64.tar.gz"
-url_api = "https://api.github.com/repos/benbjohnson/litestream/releases/assets/468346423"
+checksum = "sha256:d7e5eb81e3de1394df49b3a151a6a5242afb73c2698aa93185d912ad30942741"
+url = "https://github.com/benbjohnson/litestream/releases/download/v0.5.15/litestream-0.5.15-darwin-x86_64.tar.gz"
+url_api = "https://api.github.com/repos/benbjohnson/litestream/releases/assets/485229696"
 
 [[tools.node]]
 version = "26.0.0"
@@ -167,7 +167,7 @@ version = "1.48.0"
 backend = "npm:backlog.md"
 
 [[tools."npm:prettier"]]
-version = "3.9.5"
+version = "3.9.6"
 backend = "npm:prettier"
 
 [[tools.shellcheck]]
