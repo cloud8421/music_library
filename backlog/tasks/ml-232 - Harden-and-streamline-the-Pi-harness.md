@@ -4,6 +4,7 @@ title: Harden and streamline the Pi harness
 status: To Do
 assignee: []
 created_date: "2026-07-19 06:11"
+updated_date: "2026-07-23 08:47"
 labels:
   - pi
   - harness
@@ -61,3 +62,53 @@ Apply the harness-engineering principles of explicit authority, a fixed and qual
 - [ ] #10 A clean-checkout harness smoke test and the complete Pi extension test suite pass in CI.
 
 <!-- AC:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+
+## Delivery strategy
+
+Execute ML-232 through the seven focused subtasks below. The split keeps security authority, guard enforcement, reproducibility, verification, tool/context performance, and final documentation independently reviewable while making their dependencies explicit.
+
+### Wave 1: independent foundations
+
+1. **ML-232.1 — Gate Pi production mutations and scope credentials.** Delivers parent AC #1-#2. It owns the only manual production rollout and rollback section.
+2. **ML-232.2 — Harden the sensitive-file guard boundary.** Delivers parent AC #3 and documents the extension-versus-OS security boundary.
+3. **ML-232.3 — Pin and qualify the Pi worker epoch.** Delivers parent AC #4 and establishes the versions used by all later verification.
+
+These can be implemented in parallel, but each must pass its focused tests before the shared verification task begins.
+
+### Wave 2: proof and tool exposure
+
+4. **ML-232.4 — Unify Pi extension verification and error signaling.** Depends on ML-232.1-.3 and delivers parent AC #5-#6. It makes `mise run dev:pi-test` the local/CI verification owner and covers the security behavior from Wave 1.
+5. **ML-232.5 — Make optional Pi and MCP tools lazy.** Depends on ML-232.3 and delivers the tool half of parent AC #7, including the required before/after schema benchmark and representative discovery journeys.
+
+### Wave 3: context disclosure
+
+6. **ML-232.6 — Split Pi harness context for progressive disclosure.** Depends on ML-232.5 and delivers the context half of parent AC #7. It keeps the required architecture-first route while moving detailed references behind focused links and measuring context reduction.
+
+### Wave 4: ownership, documentation, and clean proof
+
+7. **ML-232.7 — Remove harness drift and document clean-checkout operation.** Depends on ML-232.4 and ML-232.6 and delivers parent AC #8-#10. It corrects the four known drift cases, creates the operational harness guide, adds clean-checkout CI smoke, and maps every parent criterion to evidence.
+
+## Simplicity and alternatives
+
+Prefer existing Pi primitives: TUI confirmation and session entries for authority, `tool_call` and `user_bash` interception for the guard, mise/npm locks for reproducibility, `pi.setActiveTools` for lazy tools, and the MCP adapter proxy for MCP discovery. Do not add a new production service, database, generalized documentation generator, or OS sandbox in this task. Those alternatives are materially larger and are documented as exclusions where relevant.
+
+## Verification and completion order
+
+Each child plan contains focused commands and objective evidence. ML-232.4 must prove the complete extension suite through one command. ML-232.5 and ML-232.6 must record one-off tool/context measurements. ML-232.7 must run the locked clean-checkout smoke in CI with no secrets or live external calls. Do not check a parent criterion until its child task is finalized under the Backlog finalization guide and the evidence matrix points to passing output or an explicitly approved manual production verification.
+
+## Architecture, performance, and cost profile
+
+Only ML-232.1 changes Phoenix API authentication/routing and production runtime configuration; it does not change schemas or databases. The remaining work changes local harness tooling, CI, and documentation ownership. Runtime complexity remains bounded and local. Required benchmarks are limited to tool-schema/context size and clean/warm harness timings; no application benchmark is needed. No new paid service is introduced. Lazy discovery may add one model round trip on first use but is expected to save thousands of repeated input tokens per turn; tests and CI must make no model, production, Coolify, or other paid API calls.
+
+## Production changes
+
+All manual production work is isolated in ML-232.1: provision scoped tokens, configure on-demand local credential lookup, verify cross-scope denial, rotate the Coolify log token if supported, then revoke obsolete broad Pi credentials. These steps require explicit user approval and include rollback. No other subtask may interact with production.
+
+## Documentation ownership
+
+ML-232.7 creates/finalizes `docs/pi-harness.md` as the supported worker/authority/verification guide. ML-232.1 updates production infrastructure and production-investigation guidance. ML-232.6 restructures architecture references and skill triggers. ML-232.7 corrects QueryReporter, documentation-skill, schedule, and pre-commit drift, then links volatile facts to their executable owners rather than copying them.
+<!-- SECTION:PLAN:END -->
