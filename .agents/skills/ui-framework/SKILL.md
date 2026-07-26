@@ -133,12 +133,17 @@ verify worktree changes visually, start a separate server in the worktree with
 <!-- usage-rules-skill-start -->
 ## Additional References
 
-- [ecto](references/ecto.md)
-- [elixir](references/elixir.md)
-- [html](references/html.md)
-- [liveview](references/liveview.md)
-- [phoenix](references/phoenix.md)
-- [fluxon](references/fluxon.md)
+### phoenix
+
+- [ecto](references/phoenix/ecto.md)
+- [elixir](references/phoenix/elixir.md)
+- [html](references/phoenix/html.md)
+- [liveview](references/phoenix/liveview.md)
+- [phoenix](references/phoenix/phoenix.md)
+
+### fluxon
+
+- [fluxon](references/fluxon/fluxon.md)
 
 ## Searching Documentation
 
