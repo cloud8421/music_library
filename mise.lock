@@ -195,5 +195,5 @@ url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellche
 url_api = "https://api.github.com/repos/koalaman/shellcheck/releases/assets/279056930"
 
 [[tools.sqlite]]
-version = "3.53.3"
+version = "3.53.4"
 backend = "asdf:sqlite"
