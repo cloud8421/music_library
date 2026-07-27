@@ -32,13 +32,7 @@ If nothing is outdated, stop here and tell the user.
 
 ### 3. Apply updates
 
-For each outdated category, run the command from the Next Step column. You have two
-options depending on what the user prefers:
-
-- **Bulk update**: run `mise run dev:update` to update everything at once.
-- **Selective update**: run individual commands from the summary table one at a time.
-
-When in doubt, ask the user which approach they prefer.
+Run `mise run dev:update` to update everything at once.
 
 ### 4. Verify
 
