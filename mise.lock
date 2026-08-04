@@ -163,7 +163,7 @@ checksum = "sha256:f488ab543fe202d8a2d56e661682117d3c56903a2bf64f2ec1ff7bd421cfd
 url = "https://nodejs.org/dist/v26.0.0/node-v26.0.0-darwin-x64.tar.gz"
 
 [[tools."npm:backlog.md"]]
-version = "1.48.0"
+version = "1.49.2"
 backend = "npm:backlog.md"
 
 [[tools."npm:prettier"]]
