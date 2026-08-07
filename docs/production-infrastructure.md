@@ -28,9 +28,9 @@ push via GitHub Actions.
 
 The Docker image is a multi-stage build:
 
-1. **Builder** — `hexpm/elixir:1.20.2-erlang-29.0.4-debian-trixie-20260713-slim` with
+1. **Builder** — `hexpm/elixir:1.20.3-erlang-29.0.5-debian-trixie-20260803-slim` with
    Node.js 26, compiles deps, builds assets (`mix assets.deploy`), generates an OTP release.
-2. **Runner** — `debian:trixie-20260713-slim` with minimal runtime deps (`libstdc++6`,
+2. **Runner** — `debian:trixie-20260803-slim` with minimal runtime deps (`libstdc++6`,
    `openssl`, `libncurses6`, `ca-certificates`). Runs as unprivileged `nobody` user.
 
 Fluxon UI (licensed dependency) is fetched during build via Docker build secrets

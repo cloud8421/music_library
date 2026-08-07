@@ -29,8 +29,8 @@ HURL_VARIABLE_coolify_host = 'https://<fqdn>'
 HURL_VARIABLE_coolify_token = 'change-me'
 
 [tools]
-elixir = "1.20.2-otp-29"
-erlang = "29.0.4"
+elixir = "1.20.3-otp-29"
+erlang = "29.0.5"
 node = "26.0.0"
 hurl = '8.0.0'
 sqlite = 'latest'
